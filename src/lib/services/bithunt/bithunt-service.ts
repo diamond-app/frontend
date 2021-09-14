@@ -12,10 +12,10 @@ class BithuntLeaderboardResponse {
 
 class BithuntProject {
   bio: string;
-  bitclout_public_key: string;
-  bitclout_url: string;
-  bitclout_username: string;
-  bitclout_verified: boolean;
+  deso_public_key: string;
+  deso_url: string;
+  deso_username: string;
+  deso_verified: boolean;
   created_at: string;
   id: number;
   name: string;
@@ -46,7 +46,7 @@ export class BithuntService {
         return projects
           .filter((project: CommunityProject) => project.Profile)
           .sort((a, b) => {
-            return b.Profile.CoinEntry.BitCloutLockedNanos - a.Profile.CoinEntry.BitCloutLockedNanos;
+            return b.Profile.CoinEntry.DeSoLockedNanos - a.Profile.CoinEntry.DeSoLockedNanos;
           });
       })
     );
@@ -76,7 +76,7 @@ export class BithuntService {
     return this.backendApi
       .GetUsersStateless(
         this.globalVars.localNode,
-        projects.projects.map((result) => result.bitclout_public_key),
+        projects.projects.map((result) => result.deso_public_key),
         true
       )
       .pipe(

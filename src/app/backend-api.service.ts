@@ -11,7 +11,7 @@ import { IdentityService } from "./identity.service";
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
   static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
-  static SendBitCloutRoute = "/api/v0/send-bitclout";
+  static SendDeSoRoute = "/api/v0/send-deso";
   static MinerControlRoute = "/api/v0/miner-control";
 
   static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
@@ -89,12 +89,10 @@ export class BackendRoutes {
   static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
-  static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
-    "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
-  static RoutePathGetUSDCentsToBitCloutReserveExchangeRate =
-    "/api/v0/admin/get-usd-cents-to-bitclout-reserve-exchange-rate";
-  static RoutePathSetBuyBitCloutFeeBasisPoints = "/api/v0/admin/set-buy-bitclout-fee-basis-points";
-  static RoutePathGetBuyBitCloutFeeBasisPoints = "/api/v0/admin/get-buy-bitclout-fee-basis-points";
+  static RoutePathSetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate";
+  static RoutePathGetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate";
+  static RoutePathSetBuyDeSoFeeBasisPoints = "/api/v0/admin/set-buy-deso-fee-basis-points";
+  static RoutePathGetBuyDeSoFeeBasisPoints = "/api/v0/admin/get-buy-deso-fee-basis-points";
   static RoutePathAdminGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathGetGlobalParams = "/api/v0/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
@@ -102,7 +100,7 @@ export class BackendRoutes {
   static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
-  static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
+  static RoutePathAdminUpdateJumioDeSo = "/api/v0/admin/update-jumio-deso";
   static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
   static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
@@ -146,12 +144,12 @@ export class ProfileEntryResponse {
   Description: string;
   ProfilePic?: string;
   CoinEntry?: {
-    BitCloutLockedNanos: number;
+    DeSoLockedNanos: number;
     CoinWatermarkNanos: number;
     CoinsInCirculationNanos: number;
     CreatorBasisPoints: number;
   };
-  CoinPriceBitCloutNanos?: number;
+  CoinPriceDeSoNanos?: number;
   StakeMultipleBasisPoints?: number;
   PublicKeyBase58Check?: string;
   UsersThatHODL?: any;
@@ -591,14 +589,14 @@ export class BackendApiService {
   }
 
   // TODO: Use Broadcast bool isntead
-  SendBitCloutPreview(
+  SendDeSoPreview(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.SendBitCloutRoute, {
+    return this.post(endpoint, BackendRoutes.SendDeSoRoute, {
       SenderPublicKeyBase58Check,
       RecipientPublicKeyOrUsername,
       AmountNanos: Math.floor(AmountNanos),
@@ -606,14 +604,14 @@ export class BackendApiService {
     });
   }
 
-  SendBitClout(
+  SendDeSo(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.SendBitCloutPreview(
+    const request = this.SendDeSoPreview(
       endpoint,
       SenderPublicKeyBase58Check,
       RecipientPublicKeyOrUsername,
@@ -1012,9 +1010,9 @@ export class BackendApiService {
     FetchSubcomments: boolean,
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
-    GetPostsByClout: boolean,
+    GetPostsByDeSo: boolean,
     MediaRequired: boolean,
-    PostsByCloutMinutesLookback: number,
+    PostsByDeSoMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsStateless, {
@@ -1027,9 +1025,9 @@ export class BackendApiService {
       FetchSubcomments,
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
-      GetPostsByClout,
+      GetPostsByDeSo,
       MediaRequired,
-      PostsByCloutMinutesLookback,
+      PostsByDeSoMinutesLookback,
       AddGlobalFeedBool,
     });
   }
@@ -1416,40 +1414,40 @@ export class BackendApiService {
     // Whether this is a "buy" or "sell"
     OperationType: string,
     // Generally, only one of these will be used depending on the OperationType
-    // set. In a Buy transaction, BitCloutToSellNanos will be converted into
+    // set. In a Buy transaction, DeSoToSellNanos will be converted into
     // creator coin on behalf of the user. In a Sell transaction,
-    // CreatorCoinToSellNanos will be converted into BitClout. In an AddBitClout
-    // operation, BitCloutToAddNanos will be aded for the user. This allows us to
+    // CreatorCoinToSellNanos will be converted into DeSo. In an AddDeSo
+    // operation, DeSoToAddNanos will be aded for the user. This allows us to
     // support multiple transaction types with same meta field.
-    BitCloutToSellNanos: number,
+    DeSoToSellNanos: number,
     CreatorCoinToSellNanos: number,
-    BitCloutToAddNanos: number,
-    // When a user converts BitClout into CreatorCoin, MinCreatorCoinExpectedNanos
+    DeSoToAddNanos: number,
+    // When a user converts DeSo into CreatorCoin, MinCreatorCoinExpectedNanos
     // specifies the minimum amount of creator coin that the user expects from their
-    // transaction. And vice versa when a user is converting CreatorCoin for BitClout.
+    // transaction. And vice versa when a user is converting CreatorCoin for DeSo.
     // Specifying these fields prevents the front-running of users' buy/sell. Setting
     // them to zero turns off the check. Give it your best shot, Ivan.
-    MinBitCloutExpectedNanos: number,
+    MinDeSoExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
 
     MinFeeRateNanosPerKB: number,
     Broadcast: boolean,
     InTutorial: boolean = false
   ): Observable<any> {
-    BitCloutToSellNanos = Math.floor(BitCloutToSellNanos);
+    DeSoToSellNanos = Math.floor(DeSoToSellNanos);
     CreatorCoinToSellNanos = Math.floor(CreatorCoinToSellNanos);
-    BitCloutToAddNanos = Math.floor(BitCloutToAddNanos);
-    MinBitCloutExpectedNanos = Math.floor(MinBitCloutExpectedNanos);
+    DeSoToAddNanos = Math.floor(DeSoToAddNanos);
+    MinDeSoExpectedNanos = Math.floor(MinDeSoExpectedNanos);
     MinCreatorCoinExpectedNanos = Math.floor(MinCreatorCoinExpectedNanos);
 
     let request = this.post(endpoint, BackendRoutes.RoutePathBuyOrSellCreatorCoin, {
       UpdaterPublicKeyBase58Check,
       CreatorPublicKeyBase58Check,
       OperationType,
-      BitCloutToSellNanos,
+      DeSoToSellNanos,
       CreatorCoinToSellNanos,
-      BitCloutToAddNanos,
-      MinBitCloutExpectedNanos,
+      DeSoToAddNanos,
+      MinDeSoExpectedNanos,
       MinCreatorCoinExpectedNanos,
       MinFeeRateNanosPerKB,
       // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
@@ -1755,34 +1753,30 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
-  SetUSDCentsToBitCloutReserveExchangeRate(
+  SetUSDCentsToDeSoReserveExchangeRate(
     endpoint: string,
     AdminPublicKey: string,
-    USDCentsPerBitClout: number
+    USDCentsPerDeSo: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToBitCloutReserveExchangeRate, AdminPublicKey, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate, AdminPublicKey, {
       AdminPublicKey,
-      USDCentsPerBitClout,
+      USDCentsPerDeSo,
     });
   }
 
-  GetUSDCentsToBitCloutReserveExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToBitCloutReserveExchangeRate);
+  GetUSDCentsToDeSoReserveExchangeRate(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate);
   }
 
-  SetBuyBitCloutFeeBasisPoints(
-    endpoint: string,
-    AdminPublicKey: string,
-    BuyBitCloutFeeBasisPoints: number
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyBitCloutFeeBasisPoints, AdminPublicKey, {
+  SetBuyDeSoFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDeSoFeeBasisPoints: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints, AdminPublicKey, {
       AdminPublicKey,
-      BuyBitCloutFeeBasisPoints,
+      BuyDeSoFeeBasisPoints,
     });
   }
 
-  GetBuyBitCloutFeeBasisPoints(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetBuyBitCloutFeeBasisPoints);
+  GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetBuyDeSoFeeBasisPoints);
   }
 
   UpdateGlobalParams(
@@ -1876,9 +1870,9 @@ export class BackendApiService {
     });
   }
 
-  AdminUpdateJumioBitClout(endpoint: string, AdminPublicKey: string, BitCloutNanos: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
-      BitCloutNanos,
+  AdminUpdateJumioDeSo(endpoint: string, AdminPublicKey: string, DeSoNanos: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioDeSo, AdminPublicKey, {
+      DeSoNanos,
       AdminPublicKey,
     });
   }
@@ -2080,7 +2074,7 @@ export class BackendApiService {
 
   parsePostError(err): string {
     if (err.status === 0) {
-      return "BitClout is experiencing heavy load. Please try again in one minute.";
+      return "DeSo is experiencing heavy load. Please try again in one minute.";
     }
 
     let errorMessage = JSON.stringify(err);
@@ -2101,7 +2095,7 @@ export class BackendApiService {
 
   parseProfileError(err): string {
     if (err.status === 0) {
-      return "BitClout is experiencing heavy load. Please try again in one minute.";
+      return "DeSo is experiencing heavy load. Please try again in one minute.";
     }
 
     let errorMessage = JSON.stringify(err);
@@ -2130,7 +2124,7 @@ export class BackendApiService {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
         errorMessage = "You must own this creator coin before transferring it.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroBitCloutAfterFounderReward") >= 0) {
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroDeSoAfterFounderReward") >= 0) {
         errorMessage =
           "This creator has set their founder's reward to 100%. " +
           "You cannot buy creators that have set their founder's reward to 100%.";
@@ -2141,7 +2135,7 @@ export class BackendApiService {
 
   parseMessageError(err): string {
     if (err.status === 0) {
-      return "BitClout is experiencing heavy load. Please try again in one minute.";
+      return "DeSo is experiencing heavy load. Please try again in one minute.";
     }
 
     let errorMessage = JSON.stringify(err);

@@ -32,12 +32,12 @@ export class RightBarCreatorsComponent implements OnInit {
   static GAINERS: RightBarTabOption = {
     name: "Top Daily Gainers",
     width: 175,
-    poweredBy: { name: "BitClout Pulse", link: "https://bitcloutpulse.com" },
+    poweredBy: { name: "DeSo Pulse", link: "https://bitcloutpulse.com" },
   };
   static DIAMONDS: RightBarTabOption = {
     name: "Top Daily Diamonded Creators",
     width: 275,
-    poweredBy: { name: "BitClout Pulse", link: "https://bitcloutpulse.com" },
+    poweredBy: { name: "DeSo Pulse", link: "https://bitcloutpulse.com" },
   };
   static COMMUNITY: RightBarTabOption = {
     name: "Top Community Projects",
