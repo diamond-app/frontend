@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { GetStarterDeSoPageComponent } from "./get-starter-deso-page.component";
+import { GetStarterDESOPageComponent } from "./get-starter-deso-page.component";
 
-describe("GetStarterDeSoPageComponent", () => {
-  let component: GetStarterDeSoPageComponent;
-  let fixture: ComponentFixture<GetStarterDeSoPageComponent>;
+describe("GetStarterDESOPageComponent", () => {
+  let component: GetStarterDESOPageComponent;
+  let fixture: ComponentFixture<GetStarterDESOPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GetStarterDeSoPageComponent],
+      declarations: [GetStarterDESOPageComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GetStarterDeSoPageComponent);
+    fixture = TestBed.createComponent(GetStarterDESOPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

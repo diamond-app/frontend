@@ -155,7 +155,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedPriceFromHighToLow *
-        (a.ProfileEntryResponse.CoinEntry.DeSoLockedNanos - b.ProfileEntryResponse.CoinEntry.DeSoLockedNanos)
+        (a.ProfileEntryResponse.CoinEntry.DESOLockedNanos - b.ProfileEntryResponse.CoinEntry.DESOLockedNanos)
       );
     });
   }
@@ -210,14 +210,14 @@ export class WalletComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  unminedDeSoToolTip() {
+  unminedDESOToolTip() {
     return (
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Mined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.BalanceNanos, 9) +
+      this.globalVars.nanosToDESO(this.globalVars.loggedInUser.BalanceNanos, 9) +
       " DeSo.\n\n" +
       "Unmined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
+      this.globalVars.nanosToDESO(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
       " DeSo."
     );
   }
@@ -226,10 +226,10 @@ export class WalletComponent implements OnInit, OnDestroy {
     return (
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Net unmined transactions:\n" +
-      this.globalVars.nanosToDeSo(creator.NetBalanceInMempool, 9) +
+      this.globalVars.nanosToDESO(creator.NetBalanceInMempool, 9) +
       " DeSo.\n\n" +
       "Balance w/unmined transactions:\n" +
-      this.globalVars.nanosToDeSo(creator.BalanceNanos, 9) +
+      this.globalVars.nanosToDESO(creator.BalanceNanos, 9) +
       " DeSo.\n\n"
     );
   }
@@ -308,7 +308,7 @@ export class WalletComponent implements OnInit, OnDestroy {
                 10 * 100,
                 1.25 * 100 * 100,
                 false,
-                this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+                this.globalVars.feeRateDESOPerKB * 1e9 /*MinFeeRateNanosPerKB*/
               )
               .subscribe(
                 () => {

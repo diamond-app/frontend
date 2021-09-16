@@ -16,10 +16,10 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
-          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToDeSo(highBid) }} DESO&nbsp;</span>
+          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToDESO(highBid) }} DESO&nbsp;</span>
           <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(highBid, 2)}})</span>
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToDeSo(lowBid) }} DESO&nbsp;</span>
+          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToDESO(lowBid) }} DESO&nbsp;</span>
           <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(lowBid, 2)}})</span>
         </div>
         <div class="pb-15px">
@@ -147,13 +147,13 @@
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDeSo(nft.HighestBidAmountNanos)}} DESO </div>
+                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDESO(nft.HighestBidAmountNanos)}} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2)}})</div>
               </div>
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
+                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDESO(nft.MinBidAmountNanos) }} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.MinBidAmountNanos, 2)}})</div>
               </div>
              </div>

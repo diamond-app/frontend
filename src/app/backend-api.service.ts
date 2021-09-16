@@ -11,7 +11,7 @@ import { IdentityService } from "./identity.service";
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
   static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
-  static SendDeSoRoute = "/api/v0/send-deso";
+  static SendDESORoute = "/api/v0/send-deso";
   static MinerControlRoute = "/api/v0/miner-control";
 
   static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
@@ -89,10 +89,10 @@ export class BackendRoutes {
   static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
-  static RoutePathSetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathGetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathSetBuyDeSoFeeBasisPoints = "/api/v0/admin/set-buy-deso-fee-basis-points";
-  static RoutePathGetBuyDeSoFeeBasisPoints = "/api/v0/admin/get-buy-deso-fee-basis-points";
+  static RoutePathSetUSDCentsToDESOReserveExchangeRate = "/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate";
+  static RoutePathGetUSDCentsToDESOReserveExchangeRate = "/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate";
+  static RoutePathSetBuyDESOFeeBasisPoints = "/api/v0/admin/set-buy-deso-fee-basis-points";
+  static RoutePathGetBuyDESOFeeBasisPoints = "/api/v0/admin/get-buy-deso-fee-basis-points";
   static RoutePathAdminGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathGetGlobalParams = "/api/v0/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
@@ -100,7 +100,7 @@ export class BackendRoutes {
   static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
-  static RoutePathAdminUpdateJumioDeSo = "/api/v0/admin/update-jumio-deso";
+  static RoutePathAdminUpdateJumioDESO = "/api/v0/admin/update-jumio-deso";
   static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
   static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
@@ -144,12 +144,12 @@ export class ProfileEntryResponse {
   Description: string;
   ProfilePic?: string;
   CoinEntry?: {
-    DeSoLockedNanos: number;
+    DESOLockedNanos: number;
     CoinWatermarkNanos: number;
     CoinsInCirculationNanos: number;
     CreatorBasisPoints: number;
   };
-  CoinPriceDeSoNanos?: number;
+  CoinPriceDESONanos?: number;
   StakeMultipleBasisPoints?: number;
   PublicKeyBase58Check?: string;
   UsersThatHODL?: any;
@@ -589,14 +589,14 @@ export class BackendApiService {
   }
 
   // TODO: Use Broadcast bool isntead
-  SendDeSoPreview(
+  SendDESOPreview(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.SendDeSoRoute, {
+    return this.post(endpoint, BackendRoutes.SendDESORoute, {
       SenderPublicKeyBase58Check,
       RecipientPublicKeyOrUsername,
       AmountNanos: Math.floor(AmountNanos),
@@ -604,14 +604,14 @@ export class BackendApiService {
     });
   }
 
-  SendDeSo(
+  SendDESO(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.SendDeSoPreview(
+    const request = this.SendDESOPreview(
       endpoint,
       SenderPublicKeyBase58Check,
       RecipientPublicKeyOrUsername,
@@ -1010,9 +1010,9 @@ export class BackendApiService {
     FetchSubcomments: boolean,
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
-    GetPostsByDeSo: boolean,
+    GetPostsByDESO: boolean,
     MediaRequired: boolean,
-    PostsByDeSoMinutesLookback: number,
+    PostsByDESOMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsStateless, {
@@ -1025,9 +1025,9 @@ export class BackendApiService {
       FetchSubcomments,
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
-      GetPostsByDeSo,
+      GetPostsByDESO,
       MediaRequired,
-      PostsByDeSoMinutesLookback,
+      PostsByDESOMinutesLookback,
       AddGlobalFeedBool,
     });
   }
@@ -1414,40 +1414,40 @@ export class BackendApiService {
     // Whether this is a "buy" or "sell"
     OperationType: string,
     // Generally, only one of these will be used depending on the OperationType
-    // set. In a Buy transaction, DeSoToSellNanos will be converted into
+    // set. In a Buy transaction, DESOToSellNanos will be converted into
     // creator coin on behalf of the user. In a Sell transaction,
-    // CreatorCoinToSellNanos will be converted into DeSo. In an AddDeSo
-    // operation, DeSoToAddNanos will be aded for the user. This allows us to
+    // CreatorCoinToSellNanos will be converted into DESO. In an AddDESO
+    // operation, DESOToAddNanos will be aded for the user. This allows us to
     // support multiple transaction types with same meta field.
-    DeSoToSellNanos: number,
+    DESOToSellNanos: number,
     CreatorCoinToSellNanos: number,
-    DeSoToAddNanos: number,
-    // When a user converts DeSo into CreatorCoin, MinCreatorCoinExpectedNanos
+    DESOToAddNanos: number,
+    // When a user converts DESO into CreatorCoin, MinCreatorCoinExpectedNanos
     // specifies the minimum amount of creator coin that the user expects from their
-    // transaction. And vice versa when a user is converting CreatorCoin for DeSo.
+    // transaction. And vice versa when a user is converting CreatorCoin for DESO.
     // Specifying these fields prevents the front-running of users' buy/sell. Setting
     // them to zero turns off the check. Give it your best shot, Ivan.
-    MinDeSoExpectedNanos: number,
+    MinDESOExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
 
     MinFeeRateNanosPerKB: number,
     Broadcast: boolean,
     InTutorial: boolean = false
   ): Observable<any> {
-    DeSoToSellNanos = Math.floor(DeSoToSellNanos);
+    DESOToSellNanos = Math.floor(DESOToSellNanos);
     CreatorCoinToSellNanos = Math.floor(CreatorCoinToSellNanos);
-    DeSoToAddNanos = Math.floor(DeSoToAddNanos);
-    MinDeSoExpectedNanos = Math.floor(MinDeSoExpectedNanos);
+    DESOToAddNanos = Math.floor(DESOToAddNanos);
+    MinDESOExpectedNanos = Math.floor(MinDESOExpectedNanos);
     MinCreatorCoinExpectedNanos = Math.floor(MinCreatorCoinExpectedNanos);
 
     let request = this.post(endpoint, BackendRoutes.RoutePathBuyOrSellCreatorCoin, {
       UpdaterPublicKeyBase58Check,
       CreatorPublicKeyBase58Check,
       OperationType,
-      DeSoToSellNanos,
+      DESOToSellNanos,
       CreatorCoinToSellNanos,
-      DeSoToAddNanos,
-      MinDeSoExpectedNanos,
+      DESOToAddNanos,
+      MinDESOExpectedNanos,
       MinCreatorCoinExpectedNanos,
       MinFeeRateNanosPerKB,
       // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
@@ -1753,30 +1753,30 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
-  SetUSDCentsToDeSoReserveExchangeRate(
+  SetUSDCentsToDESOReserveExchangeRate(
     endpoint: string,
     AdminPublicKey: string,
-    USDCentsPerDeSo: number
+    USDCentsPerDESO: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate, AdminPublicKey, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDESOReserveExchangeRate, AdminPublicKey, {
       AdminPublicKey,
-      USDCentsPerDeSo,
+      USDCentsPerDESO,
     });
   }
 
-  GetUSDCentsToDeSoReserveExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate);
+  GetUSDCentsToDESOReserveExchangeRate(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDESOReserveExchangeRate);
   }
 
-  SetBuyDeSoFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDeSoFeeBasisPoints: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints, AdminPublicKey, {
+  SetBuyDESOFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDESOFeeBasisPoints: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDESOFeeBasisPoints, AdminPublicKey, {
       AdminPublicKey,
-      BuyDeSoFeeBasisPoints,
+      BuyDESOFeeBasisPoints,
     });
   }
 
-  GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetBuyDeSoFeeBasisPoints);
+  GetBuyDESOFeeBasisPoints(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetBuyDESOFeeBasisPoints);
   }
 
   UpdateGlobalParams(
@@ -1870,9 +1870,9 @@ export class BackendApiService {
     });
   }
 
-  AdminUpdateJumioDeSo(endpoint: string, AdminPublicKey: string, DeSoNanos: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioDeSo, AdminPublicKey, {
-      DeSoNanos,
+  AdminUpdateJumioDESO(endpoint: string, AdminPublicKey: string, DESONanos: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioDESO, AdminPublicKey, {
+      DESONanos,
       AdminPublicKey,
     });
   }

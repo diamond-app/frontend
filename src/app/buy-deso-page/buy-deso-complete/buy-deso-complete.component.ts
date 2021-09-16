@@ -6,19 +6,19 @@ import { GlobalVarsService } from "../../global-vars.service";
   templateUrl: "./buy-deso-complete.component.html",
   styleUrls: ["./buy-deso-complete.component.scss"],
 })
-export class BuyDeSoCompleteComponent implements OnInit {
-  @Output() buyMoreDeSoClicked = new EventEmitter();
+export class BuyDESOCompleteComponent implements OnInit {
+  @Output() buyMoreDESOClicked = new EventEmitter();
 
   globalVars: GlobalVarsService;
 
-  amountOfDeSoBought: number = 0;
+  amountOfDESOBought: number = 0;
 
   constructor(private _globalVars: GlobalVarsService) {
     this.globalVars = _globalVars;
   }
 
-  triggerBuyMoreDeSo() {
-    this.buyMoreDeSoClicked.emit();
+  triggerBuyMoreDESO() {
+    this.buyMoreDESOClicked.emit();
   }
 
   ngOnInit() {

@@ -15,7 +15,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
   // orders will execute as long as the value doesn't slip by more than 25%
   ALLOWED_SLIPPAGE_PERCENT = 75;
 
-  DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorDeSoReceivedIsLessThanMinimumSetBySeller";
+  DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorDESOReceivedIsLessThanMinimumSetBySeller";
   CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorCreatorCoinLessThanMinimumSetByUser";
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
@@ -72,8 +72,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
     this.creatorCoinTradeBeingCalled = true;
 
-    const minDeSoExpectedNanos =
-      this.creatorCoinTrade.expectedDeSoReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
+    const minDESOExpectedNanos =
+      this.creatorCoinTrade.expectedDESOReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
 
     const minCreatorCoinExpectedNanos =
       this.creatorCoinTrade.expectedCreatorCoinReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
@@ -91,20 +91,20 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         this.creatorCoinTrade.operationType() /*OperationType*/,
-        this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
+        this.creatorCoinTrade.desoToSell * 1e9 /*DESOToSellNanos*/,
         this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-        0 /*DeSoToAddNanos*/,
-        minDeSoExpectedNanos /*MinDeSoExpectedNanos*/,
+        0 /*DESOToAddNanos*/,
+        minDESOExpectedNanos /*MinDESOExpectedNanos*/,
         minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/,
 
-        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+        this.appData.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/,
         true,
         this.inTutorial
       )
       .subscribe(
         (response) => {
           const {
-            ExpectedDeSoReturnedNanos,
+            ExpectedDESOReturnedNanos,
             ExpectedCreatorCoinReturnedNanos,
             SpendAmountNanos,
             TotalInputNanos,
@@ -114,7 +114,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.globalVars.logEvent("coins : trade", {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
             Operation: this.creatorCoinTrade.operationType(),
-            ExpectedDeSoReturnedNanos,
+            ExpectedDESOReturnedNanos,
             ExpectedCreatorCoinReturnedNanos,
             SpendAmountNanos,
             TotalInputNanos,
@@ -123,7 +123,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = ExpectedCreatorCoinReturnedNanos || 0;
-          this.creatorCoinTrade.expectedDeSoReturnedNanos = ExpectedDeSoReturnedNanos || 0;
+          this.creatorCoinTrade.expectedDESOReturnedNanos = ExpectedDESOReturnedNanos || 0;
 
           const observable =
             this.creatorCoinTrade.followCreator &&
@@ -170,7 +170,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
         this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+        this.appData.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/,
         true
       )
       .subscribe(

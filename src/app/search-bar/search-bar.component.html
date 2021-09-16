@@ -11,8 +11,8 @@
         <span
           class="input-group-text search-bar__icon"
           [ngStyle]="{
-          'border-top-left-radius': isSearchForUsersToSendDeSo ? '0.25rem' : '',
-          'border-bottom-left-radius': isSearchForUsersToSendDeSo ? '0.25rem' : ''
+          'border-top-left-radius': isSearchForUsersToSendDESO ? '0.25rem' : '',
+          'border-bottom-left-radius': isSearchForUsersToSendDESO ? '0.25rem' : ''
           }"
         >
           <i class="icon-search"></i>
@@ -28,7 +28,7 @@
         type="text"
         class="form-control shadow-none search-bar__fix-active"
         style="font-size: 15px; padding-left: 0; border-left-color: rgba(0, 0, 0, 0)"
-        [ngClass]="{ 'br-12px': !isSearchForUsersToSendDeSo }"
+        [ngClass]="{ 'br-12px': !isSearchForUsersToSendDESO }"
         placeholder="Search"
       />
     </div>
@@ -66,9 +66,9 @@
           >
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
-          <span *ngIf="creator.CoinPriceDeSoNanos">&nbsp;&middot;&nbsp;</span>
+          <span *ngIf="creator.CoinPriceDESONanos">&nbsp;&middot;&nbsp;</span>
         </div>
-        <div class="fc-muted" *ngIf="creator.CoinPriceDeSoNanos">~{{ globalVars.nanosToUSD(creator.CoinPriceDeSoNanos, 2) }}</div>
+        <div class="fc-muted" *ngIf="creator.CoinPriceDESONanos">~{{ globalVars.nanosToUSD(creator.CoinPriceDESONanos, 2) }}</div>
       </div>
     </div>
     <!-- Search Cloutavista -->

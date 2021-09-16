@@ -149,7 +149,7 @@ export class NotificationsListComponent {
         }
         result.icon = "fas fa-money-bill-wave-alt fc-green";
         result.action =
-          `${actorName} sent you ${this.globalVars.nanosToDeSo(txnAmountNanos)} ` +
+          `${actorName} sent you ${this.globalVars.nanosToDESO(txnAmountNanos)} ` +
           `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       }
       return result;
@@ -164,15 +164,15 @@ export class NotificationsListComponent {
 
       if (ccMeta.OperationType === "buy") {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
-          ccMeta.DeSoToSellNanos,
+          ccMeta.DESOToSellNanos,
           2
         )}</b> worth of <b>$${userProfile.Username}</b>!`;
         return result;
       } else if (ccMeta.OperationType === "sell") {
-        // TODO: We cannot compute the USD value of the sale without saving the amount of DeSo
+        // TODO: We cannot compute the USD value of the sale without saving the amount of DESO
         // that was used to complete the transaction in the backend, which we are too lazy to do.
         // So for now we just tell the user the amount of their coin that was sold.
-        result.action = `${actorName} sold <b>${this.globalVars.nanosToDeSo(ccMeta.CreatorCoinToSellNanos)} $${
+        result.action = `${actorName} sold <b>${this.globalVars.nanosToDESO(ccMeta.CreatorCoinToSellNanos)} $${
           userProfile.Username
         }.</b>`;
         return result;
@@ -196,7 +196,7 @@ export class NotificationsListComponent {
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
         result.icon = "fas fa-paper-plane fc-blue";
-        result.action = `${actorName} sent you <b>${this.globalVars.nanosToDeSo(
+        result.action = `${actorName} sent you <b>${this.globalVars.nanosToDESO(
           cctMeta.CreatorCoinToTransferNanos,
           6
         )} ${cctMeta.CreatorUsername} coins`;
@@ -288,7 +288,7 @@ export class NotificationsListComponent {
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
       result.action = nftBidMeta.BidAmountNanos
-        ? `${actorName} bid ${this.globalVars.nanosToDeSo(
+        ? `${actorName} bid ${this.globalVars.nanosToDESO(
             nftBidMeta.BidAmountNanos,
             2
           )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
@@ -307,7 +307,7 @@ export class NotificationsListComponent {
       const postHash = acceptNFTBidMeta.NFTPostHashHex;
 
       result.post = this.postMap[postHash];
-      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
+      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDESO(
         acceptNFTBidMeta.BidAmountNanos,
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;

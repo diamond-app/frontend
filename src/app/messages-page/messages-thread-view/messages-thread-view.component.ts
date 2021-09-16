@@ -119,7 +119,7 @@ export class MessagesThreadViewComponent {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.messageThread.PublicKeyBase58Check,
         textToSend,
-        this.globalVars.feeRateDeSoPerKB * 1e9
+        this.globalVars.feeRateDESOPerKB * 1e9
       )
       .subscribe(
         (res: any) => {

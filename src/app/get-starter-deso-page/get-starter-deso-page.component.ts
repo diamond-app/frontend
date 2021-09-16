@@ -5,6 +5,6 @@ import { Component, OnInit } from "@angular/core";
   templateUrl: "./get-starter-deso-page.component.html",
   styleUrls: ["./get-starter-deso-page.component.scss"],
 })
-export class GetStarterDeSoPageComponent {
+export class GetStarterDESOPageComponent {
   constructor() {}
 }

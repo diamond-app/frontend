@@ -20,7 +20,7 @@
   <search-bar
     [showCloutavista]="false"
     [startingSearchText]="startingSearchText"
-    [isSearchForUsersToSendDeSo]="true"
+    [isSearchForUsersToSendDESO]="true"
     (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
   ></search-bar>
 </div>
@@ -41,7 +41,7 @@
     *ngIf="!loadingMax"
     class="btn btn-primary font-weight-bold fs-15px ml-5px py-10px"
     style="line-height: 15px; border-radius: 3px"
-    (click)="_clickMaxDeSo()"
+    (click)="_clickMaxDESO()"
   >
     Max
   </button>
@@ -60,7 +60,7 @@
   class="d-flex align-items-center fs-15px lh-15px pl-15px mt-5px ml-15px mr-15px border border-color-grey background-color-light-grey"
   style="height: 40px; border-radius: 3px"
 >
-  {{ globalVars.nanosToDeSo(networkFee * 1e9) }}
+  {{ globalVars.nanosToDESO(networkFee * 1e9) }}
   (≈ {{ globalVars.nanosToUSD(networkFee * 1e9) }} USD)
 </div>
 
@@ -69,25 +69,25 @@
   class="d-flex align-items-center fs-15px lh-15px pl-15px mt-5px ml-15px mr-15px mb-15px border border-color-grey background-color-light-grey"
   style="height: 40px; border-radius: 3px"
 >
-  {{ globalVars.nanosToDeSo((transferAmount + networkFee) * 1e9) }}
+  {{ globalVars.nanosToDESO((transferAmount + networkFee) * 1e9) }}
   (≈ {{ globalVars.nanosToUSD((transferAmount + networkFee) * 1e9) }} USD)
 </div>
 
-<div *ngIf="transferDeSoError != ''" class="fs-15px fc-red ml-15px pb-15px">
-  {{ transferDeSoError }}
+<div *ngIf="transferDESOError != ''" class="fs-15px fc-red ml-15px pb-15px">
+  {{ transferDESOError }}
 </div>
 
 <button
-  *ngIf="!sendingDeSo"
+  *ngIf="!sendingDESO"
   class="btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px"
   style="line-height: 15px; border-radius: 3px"
-  (click)="_clickSendDeSo()"
+  (click)="_clickSendDESO()"
 >
-  Send DeSo
+  Send DESO
 </button>
 
 <button
-  *ngIf="sendingDeSo"
+  *ngIf="sendingDESO"
   class="btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px"
   style="line-height: 15px; border-radius: 3px"
   disabled
@@ -97,7 +97,7 @@
 
 <div class="p-15px d-flex flex-column align-items-center">
   <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
-  <img [src]="sendDeSoQRCode | sanitizeQRCode"/>
+  <img [src]="sendDESOQRCode | sanitizeQRCode"/>
 </div>
 
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->

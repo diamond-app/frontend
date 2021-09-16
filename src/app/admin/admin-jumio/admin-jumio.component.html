@@ -3,16 +3,16 @@
     Set Jumio Starter $DESO amount (in nanos):
     <div class="d-flex mt-5px">
       <input
-        [(ngModel)]="jumioDeSoNanos"
-        (keydown.enter)="updateJumioDeSoNanos()"
+        [(ngModel)]="jumioDESONanos"
+        (keydown.enter)="updateJumioDESONanos()"
         class="form-control w-100 fs-15px lh-15px"
         placeholder="Enter an amount"
         type="number"
       />
-      <button *ngIf="!updatingJumioDeSoNanos" (click)="updateJumioDeSoNanos()" class="btn btn-outline-primary fs-15px ml-5px">
+      <button *ngIf="!updatingJumioDESONanos" (click)="updateJumioDESONanos()" class="btn btn-outline-primary fs-15px ml-5px">
         Update
       </button>
-      <button *ngIf="updatingJumioDeSoNanos" class="btn btn-primary fs-15px ml-5px" disabled>
+      <button *ngIf="updatingJumioDESONanos" class="btn btn-primary fs-15px ml-5px" disabled>
         Working...
       </button>
     </div>

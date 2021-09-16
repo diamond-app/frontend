@@ -344,7 +344,7 @@ export class FeedPostComponent implements OnInit {
             {},
             "" /*Sub*/,
             true /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            this.globalVars.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
             (response) => {

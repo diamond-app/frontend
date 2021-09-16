@@ -15,9 +15,9 @@ class Messages {
   static CONNECTION_PROBLEM = `We had a problem processing your transaction. Please wait a few minutes and try again.`;
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
 
-  static CONFIRM_BUY_DESO = `Are you ready to exchange %s Bitcoin with a fee of %s Bitcoin for %s DeSo?`;
-  static ZERO_DESO_ERROR = `You must purchase a non-zero amount DeSo`;
-  static NEGATIVE_DESO_ERROR = `You must purchase a non-negative amount of DeSo`;
+  static CONFIRM_BUY_DESO = `Are you ready to exchange %s Bitcoin with a fee of %s Bitcoin for %s DESO?`;
+  static ZERO_DESO_ERROR = `You must purchase a non-zero amount DESO`;
+  static NEGATIVE_DESO_ERROR = `You must purchase a non-negative amount of DESO`;
 }
 
 @Component({
@@ -25,7 +25,7 @@ class Messages {
   templateUrl: "./buy-deso.component.html",
   styleUrls: ["./buy-deso.component.scss"],
 })
-export class BuyDeSoComponent implements OnInit {
+export class BuyDESOComponent implements OnInit {
   appData: GlobalVarsService;
 
   showHowItWorks = false;
@@ -36,13 +36,13 @@ export class BuyDeSoComponent implements OnInit {
   wyreService: WyreService;
   showBuyComplete: boolean = false;
 
-  BuyDeSoComponent = BuyDeSoComponent;
+  BuyDESOComponent = BuyDESOComponent;
 
   static BUY_WITH_USD = "Buy with USD";
   static BUY_WITH_BTC = "Buy with Bitcoin";
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_USD, BuyDeSoComponent.BUY_WITH_BTC];
-  activeTab = BuyDeSoComponent.BUY_WITH_USD;
+  buyTabs = [BuyDESOComponent.BUY_WITH_USD, BuyDESOComponent.BUY_WITH_BTC];
+  activeTab = BuyDESOComponent.BUY_WITH_USD;
   constructor(
     private ref: ChangeDetectorRef,
     private globalVars: GlobalVarsService,
@@ -55,7 +55,7 @@ export class BuyDeSoComponent implements OnInit {
     this.appData = globalVars;
     this.route.queryParams.subscribe((params: Params) => {
       if (params.btc) {
-        this.activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+        this.activeTab = BuyDESOComponent.BUY_WITH_BTC;
         this.router.navigate([], { queryParams: {} });
       }
     });
@@ -66,7 +66,7 @@ export class BuyDeSoComponent implements OnInit {
     return this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
   }
 
-  onBuyMoreDeSoClicked() {
+  onBuyMoreDESOClicked() {
     this.showBuyComplete = false;
     this._queryBitcoinAPI();
   }
@@ -79,7 +79,7 @@ export class BuyDeSoComponent implements OnInit {
       "(though this should be extremely rare).\n\n" +
       "Once you've deposited Bitcoin, you can swap it for DeSo in step two below. If it's your first " +
       "time doing this, we recommend starting with a small test amount of Bitcoin to get comfortable with the flow.\n\n" +
-      "Note that the DeSo blockchain currently only supports conversion of Bitcoin into DeSo, not the other way " +
+      "Note that the DeSo blockchain currently only supports conversion of Bitcoin into DESO, not the other way " +
       "around. This is a technical limitation due to the fact that the Bitcoin blockchain does not support " +
       'the features required for a fully-decentralized "atomic swap" in the reverse direction. This being said, DeSo can be ' +
       "sent to anybody instantly, and crypto exchanges can eventually list it for trading in the same way they list Bitcoin."
@@ -133,14 +133,14 @@ export class BuyDeSoComponent implements OnInit {
         return Messages.INSUFFICIENT_BALANCE;
       } else if (rawError.includes("so high")) {
         return `The amount of Bitcoin you've deposited is too low. Please deposit at least ${(
-          (this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) /
+          (this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) /
           1e8
         ).toFixed(4)} Bitcoin.`;
       } else if (rawError.includes("total=0")) {
-        return `You must purchase a non-zero amount of DeSo.`;
+        return `You must purchase a non-zero amount of DESO.`;
       } else if (rawError.includes("You must burn at least .0001 Bitcoins")) {
         return `You must exchange at least  ${(
-          (this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) /
+          (this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) /
           1e8
         ).toFixed(4)} Bitcoin.`;
       } else {
@@ -155,7 +155,7 @@ export class BuyDeSoComponent implements OnInit {
     return sprintf(Messages.UNKOWN_PROBLEM, JSON.stringify(err));
   }
 
-  buyDeSoFields = {
+  buyDESOFields = {
     desoToBuy: "",
     bitcoinToExchange: "",
     bitcoinTransactionFeeRateSatoshisPerKB: 1000 * 1000,
@@ -190,25 +190,25 @@ export class BuyDeSoComponent implements OnInit {
         this.btcDepositAddress(),
         this.appData.loggedInUser.PublicKeyBase58Check,
         Math.floor(bitcoinToExchange * 1e8),
-        Math.floor(this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB),
+        Math.floor(this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB),
         false
       )
       .toPromise()
       .then(
         (res) => {
           if (res == null || res.FeeSatoshis == null) {
-            this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
-            this.buyDeSoFields.error = Messages.UNKOWN_PROBLEM;
+            this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis = "0";
+            this.buyDESOFields.error = Messages.UNKOWN_PROBLEM;
             return null;
           }
-          this.buyDeSoFields.error = "";
-          this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = res.FeeSatoshis;
+          this.buyDESOFields.error = "";
+          this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis = res.FeeSatoshis;
           return res;
         },
         (err) => {
           console.error("Problem updating Bitcoin fee Satoshis Per KB", err);
-          this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
-          this.buyDeSoFields.error = this._extractBurnError(err);
+          this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis = "0";
+          this.buyDESOFields.error = this._extractBurnError(err);
           return null;
         }
       );
@@ -225,36 +225,36 @@ export class BuyDeSoComponent implements OnInit {
     return Object.keys(txnObj).length;
   }
 
-  _clickBuyDeSo() {
+  _clickBuyDESO() {
     if (this.appData == null || this.appData.loggedInUser == null) {
       return;
     }
 
-    if (this.buyDeSoFields.desoToBuy == "" || parseFloat(this.buyDeSoFields.desoToBuy) === 0) {
+    if (this.buyDESOFields.desoToBuy == "" || parseFloat(this.buyDESOFields.desoToBuy) === 0) {
       this.appData._alertError(Messages.ZERO_DESO_ERROR);
       return;
     }
-    if (parseFloat(this.buyDeSoFields.desoToBuy) < 0) {
+    if (parseFloat(this.buyDESOFields.desoToBuy) < 0) {
       this.appData._alertError(Messages.NEGATIVE_DESO_ERROR);
       return;
     }
 
-    if (this.buyDeSoFields.error != null && this.buyDeSoFields.error !== "") {
-      this.appData._alertError(this.buyDeSoFields.error);
+    if (this.buyDESOFields.error != null && this.buyDESOFields.error !== "") {
+      this.appData._alertError(this.buyDESOFields.error);
       return;
     }
 
-    let confirmBuyDeSoString = sprintf(
+    let confirmBuyDESOString = sprintf(
       Messages.CONFIRM_BUY_DESO,
-      this.buyDeSoFields.bitcoinToExchange,
-      (parseFloat(this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) / 1e8).toFixed(8),
-      this.buyDeSoFields.desoToBuy
+      this.buyDESOFields.bitcoinToExchange,
+      (parseFloat(this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis) / 1e8).toFixed(8),
+      this.buyDESOFields.desoToBuy
     );
 
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: confirmBuyDeSoString,
+      html: confirmBuyDESOString,
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-light",
@@ -271,8 +271,8 @@ export class BuyDeSoComponent implements OnInit {
             this.appData.latestBitcoinAPIResponse,
             this.btcDepositAddress(),
             this.appData.loggedInUser.PublicKeyBase58Check,
-            Math.floor(parseFloat(this.buyDeSoFields.bitcoinToExchange) * 1e8),
-            Math.floor(this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB),
+            Math.floor(parseFloat(this.buyDESOFields.bitcoinToExchange) * 1e8),
+            Math.floor(this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB),
             true
           )
           .toPromise()
@@ -280,25 +280,25 @@ export class BuyDeSoComponent implements OnInit {
             (res) => {
               if (res == null || res.FeeSatoshis == null) {
                 this.globalVars.logEvent("bitpop : buy : error");
-                this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
-                this.buyDeSoFields.error = Messages.UNKOWN_PROBLEM;
+                this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis = "0";
+                this.buyDESOFields.error = Messages.UNKOWN_PROBLEM;
                 return null;
               }
-              this.globalVars.logEvent("bitpop : buy", this.buyDeSoFields);
+              this.globalVars.logEvent("bitpop : buy", this.buyDESOFields);
 
               // Reset all the form fields and run a BitcoinAPI update
-              this.buyDeSoFields.error = "";
-              this.buyDeSoFields.desoToBuy = "";
-              this.buyDeSoFields.bitcoinToExchange = "";
-              this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
+              this.buyDESOFields.error = "";
+              this.buyDESOFields.desoToBuy = "";
+              this.buyDESOFields.bitcoinToExchange = "";
+              this.buyDESOFields.bitcoinTotalTransactionFeeSatoshis = "0";
               // Update the BitcoinAPIResponse
               this.appData.latestBitcoinAPIResponse = null;
 
               // This will update the balance and a bunch of other things.
               this.appData.updateEverything(
-                res.DeSoTxnHashHex,
-                this._clickBuyDeSoSuccess,
-                this._clickBuyDeSoSuccessButTimeout,
+                res.DESOTxnHashHex,
+                this._clickBuyDESOSuccess,
+                this._clickBuyDESOSuccessButTimeout,
                 this
               );
 
@@ -306,7 +306,7 @@ export class BuyDeSoComponent implements OnInit {
             },
             (err) => {
               this.globalVars.logEvent("bitpop : buy : error");
-              this._clickBuyDeSoFailure(this, this._extractBurnError(err));
+              this._clickBuyDESOFailure(this, this._extractBurnError(err));
               return null;
             }
           );
@@ -314,14 +314,14 @@ export class BuyDeSoComponent implements OnInit {
     });
   }
 
-  _clickBuyDeSoSuccess(comp: BuyDeSoComponent) {
+  _clickBuyDESOSuccess(comp: BuyDESOComponent) {
     comp.waitingOnTxnConfirmation = false;
     comp.appData.celebrate();
     comp.showBuyComplete = true;
     comp.ref.detectChanges();
   }
 
-  _clickBuyDeSoSuccessButTimeout(comp: BuyDeSoComponent) {
+  _clickBuyDESOSuccessButTimeout(comp: BuyDESOComponent) {
     this.appData.logEvent("bitpop : buy : read-timeout");
     comp.waitingOnTxnConfirmation = false;
     let errString =
@@ -331,7 +331,7 @@ export class BuyDeSoComponent implements OnInit {
     comp.appData._alertSuccess(errString);
   }
 
-  _clickBuyDeSoFailure(comp: BuyDeSoComponent, errString: string) {
+  _clickBuyDESOFailure(comp: BuyDESOComponent, errString: string) {
     comp.waitingOnTxnConfirmation = false;
     // The error about "replace by fee" has a link in it, and we want that link
     // to render. There is no risk of injection here.
@@ -356,7 +356,7 @@ export class BuyDeSoComponent implements OnInit {
     comp.appData._alertError(errString);
   }
 
-  _clickMaxDeSo() {
+  _clickMaxDESO() {
     this._updateBitcoinFee(-1).then(
       (res) => {
         if (res == null || res.BurnAmountSatoshis == null) {
@@ -365,8 +365,8 @@ export class BuyDeSoComponent implements OnInit {
 
         // The fee should have been updated by the time we get here so
         // just update the Bitcoin and DeSo amounts.
-        this.buyDeSoFields.bitcoinToExchange = (res.BurnAmountSatoshis / 1e8).toFixed(8);
-        this._updateBitcoinToExchange(this.buyDeSoFields.bitcoinToExchange);
+        this.buyDESOFields.bitcoinToExchange = (res.BurnAmountSatoshis / 1e8).toFixed(8);
+        this._updateBitcoinToExchange(this.buyDESOFields.bitcoinToExchange);
       },
       (err) => {
         // The error should have been set by the time we get here.
@@ -374,8 +374,8 @@ export class BuyDeSoComponent implements OnInit {
     );
   }
 
-  _computeSatoshisToBurnGivenDeSoNanos(amountNanos: number) {
-    if (!this.appData.satoshisPerDeSoExchangeRate) {
+  _computeSatoshisToBurnGivenDESONanos(amountNanos: number) {
+    if (!this.appData.satoshisPerDESOExchangeRate) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
@@ -393,18 +393,18 @@ export class BuyDeSoComponent implements OnInit {
       return 0;
     }
 
-    const amountDeSo = amountNanos / 1e9;
+    const amountDESO = amountNanos / 1e9;
 
     return (
-      amountDeSo *
-      (this.globalVars.satoshisPerDeSoExchangeRate * (1 + this.globalVars.BuyDeSoFeeBasisPoints / (100 * 100)))
+      amountDESO *
+      (this.globalVars.satoshisPerDESOExchangeRate * (1 + this.globalVars.BuyDESOFeeBasisPoints / (100 * 100)))
     );
   }
 
   _computeNanosToCreateGivenSatoshisToBurn(satoshisToBurn: number): number {
     // Account for the case where we haven't fetched the protocol exchange rate yet.
     // For some reason this was taking 20 seconds in prod...
-    if (!this.appData.satoshisPerDeSoExchangeRate) {
+    if (!this.appData.satoshisPerDESOExchangeRate) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
@@ -423,48 +423,48 @@ export class BuyDeSoComponent implements OnInit {
     }
     return (
       (satoshisToBurn /
-        (this.globalVars.satoshisPerDeSoExchangeRate *
-          (1 + this.globalVars.BuyDeSoFeeBasisPoints / (100 * 100)))) *
+        (this.globalVars.satoshisPerDESOExchangeRate *
+          (1 + this.globalVars.BuyDESOFeeBasisPoints / (100 * 100)))) *
       1e9
     );
   }
 
-  _updateDeSoToBuy(newVal) {
+  _updateDESOToBuy(newVal) {
     if (newVal == null || newVal === "") {
-      this.buyDeSoFields.desoToBuy = "";
-      this.buyDeSoFields.bitcoinToExchange = "";
+      this.buyDESOFields.desoToBuy = "";
+      this.buyDESOFields.bitcoinToExchange = "";
     } else {
       // The .999 factor comes in due to having to consider BitcoinExchangeFeeBasisPoints
       // that goes to pay the miner.
-      this.buyDeSoFields.bitcoinToExchange = (
-        this._computeSatoshisToBurnGivenDeSoNanos(newVal * 1e9) / 1e8
+      this.buyDESOFields.bitcoinToExchange = (
+        this._computeSatoshisToBurnGivenDESONanos(newVal * 1e9) / 1e8
       ).toFixed(8);
     }
 
     // Update the Bitcoin fee.
-    this._updateBitcoinFee(parseFloat(this.buyDeSoFields.bitcoinToExchange));
+    this._updateBitcoinFee(parseFloat(this.buyDESOFields.bitcoinToExchange));
   }
 
   _updateBitcoinToExchange(newVal) {
     if (newVal == null || newVal === "") {
-      this.buyDeSoFields.bitcoinToExchange = "";
-      this.buyDeSoFields.desoToBuy = "";
+      this.buyDESOFields.bitcoinToExchange = "";
+      this.buyDESOFields.desoToBuy = "";
     } else {
-      // Compute the amount of DeSo the user can buy for this amount of Bitcoin and
+      // Compute the amount of DESO the user can buy for this amount of Bitcoin and
       // set it.
       //
       // The .999 factor comes in due to having to consider BitcoinExchangeFeeBasisPoints
       // that goes to pay the miner.
-      this.buyDeSoFields.desoToBuy = (
-        this._computeNanosToCreateGivenSatoshisToBurn(parseFloat(this.buyDeSoFields.bitcoinToExchange) * 1e8) / 1e9
+      this.buyDESOFields.desoToBuy = (
+        this._computeNanosToCreateGivenSatoshisToBurn(parseFloat(this.buyDESOFields.bitcoinToExchange) * 1e8) / 1e9
       ).toFixed(9);
     }
 
     // Update the Bitcoin fee.
-    this._updateBitcoinFee(parseFloat(this.buyDeSoFields.bitcoinToExchange));
+    this._updateBitcoinFee(parseFloat(this.buyDESOFields.bitcoinToExchange));
   }
   _updateSatoshisPerKB() {
-    this._updateBitcoinFee(parseFloat(this.buyDeSoFields.bitcoinToExchange));
+    this._updateBitcoinFee(parseFloat(this.buyDESOFields.bitcoinToExchange));
   }
 
   _queryBitcoinAPI() {
@@ -504,8 +504,8 @@ export class BuyDeSoComponent implements OnInit {
     this.backendApi.GetBitcoinFeeRateSatoshisPerKB().subscribe(
       (res: any) => {
         if (res.priority != null) {
-          this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB = 2.0 * res.priority * 1000;
-          // console.log('Using Bitcoin sats/KB fee: ', this.buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB)
+          this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB = 2.0 * res.priority * 1000;
+          // console.log('Using Bitcoin sats/KB fee: ', this.buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB)
         } else {
           console.error("res.priority was null so didn't set default fee: ", res);
         }
@@ -516,9 +516,9 @@ export class BuyDeSoComponent implements OnInit {
     );
 
     this._queryBitcoinAPI();
-    // Force an update of the exchange rate when loading the Buy DeSo page to ensure our computations are using the
+    // Force an update of the exchange rate when loading the Buy DESO page to ensure our computations are using the
     // latest rates.
-    this.globalVars._updateDeSoExchangeRate();
+    this.globalVars._updateDESOExchangeRate();
   }
 
   _handleTabClick(tab: string): void {

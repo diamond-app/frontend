@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { UpdateProfileGetStarterDeSoComponent } from "./update-profile-get-starter-deso.component";
+import { UpdateProfileGetStarterDESOComponent } from "./update-profile-get-starter-deso.component";
 
-describe("UpdateProfileGetStarterDeSoComponent", () => {
-  let component: UpdateProfileGetStarterDeSoComponent;
-  let fixture: ComponentFixture<UpdateProfileGetStarterDeSoComponent>;
+describe("UpdateProfileGetStarterDESOComponent", () => {
+  let component: UpdateProfileGetStarterDESOComponent;
+  let fixture: ComponentFixture<UpdateProfileGetStarterDESOComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UpdateProfileGetStarterDeSoComponent],
+      declarations: [UpdateProfileGetStarterDESOComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UpdateProfileGetStarterDeSoComponent);
+    fixture = TestBed.createComponent(UpdateProfileGetStarterDESOComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

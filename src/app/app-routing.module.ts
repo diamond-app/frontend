@@ -5,7 +5,7 @@ import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows
 import { NotFoundPageComponent } from "./not-found-page/not-found-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
-import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
+import { BuyDESOPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
@@ -13,14 +13,14 @@ import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-pa
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
-import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
+import { TransferDESOPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
 import { TosPageComponent } from "./tos-page/tos-page.component";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { ViewportScroller } from "@angular/common";
 import { filter } from "rxjs/operators";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
-import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
+import { GetStarterDESOPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
@@ -89,7 +89,7 @@ const routes: Routes = [
   { path: RouteNames.CREATORS, component: CreatorsLeaderboardPageComponent, pathMatch: "full" },
   { path: RouteNames.USER_PREFIX + "/:username", component: CreatorProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.SETTINGS, component: SettingsPageComponent, pathMatch: "full" },
-  { path: RouteNames.BUY_DESO, component: BuyDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.BUY_DESO, component: BuyDESOPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
@@ -103,7 +103,7 @@ const routes: Routes = [
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
-  { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.SEND_DESO, component: TransferDESOPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },
   { path: "tos", component: TosPageComponent, pathMatch: "full" },
   { path: RouteNames.ADMIN, component: AdminPageComponent, pathMatch: "full" },
@@ -123,7 +123,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/:tradeType", component: TradeCreatorPageComponent, pathMatch: "full" },
-  { path: RouteNames.GET_STARTER_DESO, component: GetStarterDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.GET_STARTER_DESO, component: GetStarterDESOPageComponent, pathMatch: "full" },
   { path: RouteNames.TRENDS, component: TrendsPageComponent, pathMatch: "full" },
   { path: RouteNames.VERIFY_EMAIL + "/:publicKey/:emailHash", component: VerifyEmailComponent, pathMatch: "full" },
   // TUTORIAL ROUTES

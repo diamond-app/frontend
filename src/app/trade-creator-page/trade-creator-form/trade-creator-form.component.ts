@@ -42,7 +42,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedDeSoReturnedNanos: number = 0;
+  expectedDESOReturnedNanos: number = 0;
 
   loggedInUserSubscription: Subscription;
   intervalsSet = [];
@@ -155,7 +155,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
           this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+          this.appData.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -192,13 +192,13 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.operationType() /*OperationType*/,
-          this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
+          this.creatorCoinTrade.desoToSell * 1e9 /*DESOToSellNanos*/,
           this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-          0 /*DeSoToAddNanos*/,
-          0 /*MinDeSoExpectedNanos*/,
+          0 /*DESOToAddNanos*/,
+          0 /*MinDESOExpectedNanos*/,
           0 /*MinCreatorCoinExpectedNanos*/,
 
-          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+          this.appData.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -210,7 +210,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             }
 
             this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
-            this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
+            this.creatorCoinTrade.expectedDESOReturnedNanos = response.ExpectedDESOReturnedNanos || 0;
             this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
             this.isUpdatingAmounts = false;
           },
@@ -385,12 +385,12 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }, 10);
 
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // We poll for the fee because we need to wait for feeRateDeSoPerKB
+      // We poll for the fee because we need to wait for feeRateDESOPerKB
       // to be set. If we don't wait for this, things get messed up.
       let isFetching = false;
       const pollForFee = setInterval(() => {
-        if (this.appData.feeRateDeSoPerKB == 0 || isFetching) {
-          // Do nothing. feeRateDeSoPerKB hasn't been set yet. If we ask for a fee now,
+        if (this.appData.feeRateDESOPerKB == 0 || isFetching) {
+          // Do nothing. feeRateDESOPerKB hasn't been set yet. If we ask for a fee now,
           // we'll get a misleading value.
           return;
         }
@@ -398,13 +398,13 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         // This is a hack to get an estimate of the current fee
         isFetching = true;
         this.backendApi
-          .SendDeSoPreview(
+          .SendDESOPreview(
             this.appData.localNode,
             this.appData.loggedInUser.PublicKeyBase58Check,
             this.appData.loggedInUser.PublicKeyBase58Check,
             // A negative amount causes the max value to be returned as the spend amount.
             -1,
-            this.appData.feeRateDeSoPerKB * 1e9 /* min fee rate */
+            this.appData.feeRateDESOPerKB * 1e9 /* min fee rate */
           )
           .subscribe(
             (response: any) => {

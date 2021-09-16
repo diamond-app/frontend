@@ -178,7 +178,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
       false /*IsHidden*/,
       // End params
-      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+      this.globalVars.feeRateDESOPerKB * 1e9 /*MinFeeRateNanosPerKB*/
     );
   }
 

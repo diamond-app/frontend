@@ -15,8 +15,8 @@ export class AdminJumioComponent {
   resettingJumio = false;
   executingJumioCallback = false;
 
-  jumioDeSoNanos: number = 0;
-  updatingJumioDeSoNanos = false;
+  jumioDESONanos: number = 0;
+  updatingJumioDESONanos = false;
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -24,7 +24,7 @@ export class AdminJumioComponent {
     private route: ActivatedRoute,
     private backendApi: BackendApiService
   ) {
-    this.jumioDeSoNanos = globalVars.jumioDeSoNanos;
+    this.jumioDESONanos = globalVars.jumioDESONanos;
   }
 
   _resetJumio(): void {
@@ -81,12 +81,12 @@ export class AdminJumioComponent {
       .add(() => (this.executingJumioCallback = false));
   }
 
-  updateJumioDeSoNanos(): void {
+  updateJumioDESONanos(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToDeSo(
-        this.jumioDeSoNanos
+      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToDESO(
+        this.jumioDESONanos
       )}.`,
       showConfirmButton: true,
       showCancelButton: true,
@@ -99,22 +99,22 @@ export class AdminJumioComponent {
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        this.updatingJumioDeSoNanos = true;
+        this.updatingJumioDESONanos = true;
         this.backendApi
-          .AdminUpdateJumioDeSo(
+          .AdminUpdateJumioDESO(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.jumioDeSoNanos
+            this.jumioDESONanos
           )
           .subscribe(
             (res) => {
-              this.globalVars.jumioDeSoNanos = res.DeSoNanos;
+              this.globalVars.jumioDESONanos = res.DESONanos;
             },
             (err) => {
               console.error(err);
             }
           )
-          .add(() => (this.updatingJumioDeSoNanos = false));
+          .add(() => (this.updatingJumioDESONanos = false));
       }
     });
   }

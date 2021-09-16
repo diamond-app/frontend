@@ -7,7 +7,7 @@ import { Title } from "@angular/platform-browser";
   templateUrl: "./buy-deso-page.component.html",
   styleUrls: ["./buy-deso-page.component.scss"],
 })
-export class BuyDeSoPageComponent implements OnInit {
+export class BuyDESOPageComponent implements OnInit {
   isLeftBarMobileOpen: boolean = false;
 
   ngOnInit() {

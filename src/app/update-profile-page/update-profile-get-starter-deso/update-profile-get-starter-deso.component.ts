@@ -7,7 +7,7 @@ import { RouteNames } from "../../app-routing.module";
   templateUrl: "./update-profile-get-starter-deso.component.html",
   styleUrls: ["./update-profile-get-starter-deso.component.scss"],
 })
-export class UpdateProfileGetStarterDeSoComponent {
+export class UpdateProfileGetStarterDESOComponent {
   RouteNames = RouteNames;
 
   constructor(public globalVars: GlobalVarsService) {}

@@ -16,7 +16,7 @@ import currencyToSymbolMap from "currency-symbol-map/map";
   templateUrl: "./buy-deso-usd.component.html",
   styleUrls: ["./buy-deso-usd.component.scss"],
 })
-export class BuyDeSoUSDComponent implements OnInit {
+export class BuyDESOUSDComponent implements OnInit {
   wyreService: WyreService;
 
   amount = 99;
@@ -62,7 +62,7 @@ export class BuyDeSoUSDComponent implements OnInit {
           target: this.globalVars.getTargetComponentSelector(),
           icon: "success",
           title: `Purchase Completed`,
-          html: `Your purchase of approximately ${this.getDeSoReceived(btcPurchased).toFixed(
+          html: `Your purchase of approximately ${this.getDESOReceived(btcPurchased).toFixed(
             4
           )} DeSo was successful. It may take a few minutes to appear in your wallet.`,
           showConfirmButton: true,
@@ -161,14 +161,14 @@ export class BuyDeSoUSDComponent implements OnInit {
       this.quotationError = `Maximum purchase amount is ${this.maxUsdAmount} USD`;
       return;
     }
-    this.desoReceived = this.getDeSoReceived(quotation.destAmount).toFixed(4);
+    this.desoReceived = this.getDESOReceived(quotation.destAmount).toFixed(4);
     this.fees = quotation.sourceAmount - quotation.sourceAmountWithoutFees;
   }
 
-  getDeSoReceived(btcReceived: number): number {
+  getDESOReceived(btcReceived: number): number {
     return (
       (btcReceived * 1e8) /
-      (this.globalVars.satoshisPerDeSoExchangeRate * (1 + this.globalVars.BuyDeSoFeeBasisPoints / (100 * 100)))
+      (this.globalVars.satoshisPerDESOExchangeRate * (1 + this.globalVars.BuyDESOFeeBasisPoints / (100 * 100)))
     );
   }
 

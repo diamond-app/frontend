@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TransferDeSoComponent } from "./transfer-deso.component";
+import { TransferDESOComponent } from "./transfer-deso.component";
 
-describe("TransferDeSoComponent", () => {
-  let component: TransferDeSoComponent;
-  let fixture: ComponentFixture<TransferDeSoComponent>;
+describe("TransferDESOComponent", () => {
+  let component: TransferDESOComponent;
+  let fixture: ComponentFixture<TransferDESOComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TransferDeSoComponent],
+      declarations: [TransferDESOComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TransferDeSoComponent);
+    fixture = TestBed.createComponent(TransferDESOComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

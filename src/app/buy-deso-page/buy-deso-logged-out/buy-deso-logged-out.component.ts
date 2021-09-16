@@ -6,6 +6,6 @@ import { GlobalVarsService } from "../../global-vars.service";
   templateUrl: "./buy-deso-logged-out.component.html",
   styleUrls: ["./buy-deso-logged-out.component.scss"],
 })
-export class BuyDeSoLoggedOutComponent {
+export class BuyDESOLoggedOutComponent {
   constructor(public globalVars: GlobalVarsService) {}
 }

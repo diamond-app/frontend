@@ -93,7 +93,7 @@ export class SignUpComponent {
     this.nextPage();
   }
 
-  skipButtonClickedOnStarterDeSoStep() {
+  skipButtonClickedOnStarterDESOStep() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
     this.nextPage();
   }
@@ -121,7 +121,7 @@ export class SignUpComponent {
       });
   }
 
-  buyDeSoClicked(): void {
+  buyDESOClicked(): void {
     this.globalVars.logEvent("account : create : buy-deso");
     this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO], {
       queryParams: { stepNum: null },
@@ -129,7 +129,7 @@ export class SignUpComponent {
     });
   }
 
-  buyDeSoSkipped(): void {
+  buyDESOSkipped(): void {
     this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
       queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },

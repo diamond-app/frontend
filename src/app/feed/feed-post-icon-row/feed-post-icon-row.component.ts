@@ -226,7 +226,7 @@ export class FeedPostIconRowComponent {
         "" /*Sub*/,
         false /*IsHidden*/,
         // What should the fee rate be for this?
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+        this.globalVars.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
@@ -278,7 +278,7 @@ export class FeedPostIconRowComponent {
         "" /*Sub*/,
         true /*IsHidden*/,
         // What should the fee rate be for this?
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+        this.globalVars.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
@@ -335,7 +335,7 @@ export class FeedPostIconRowComponent {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.postContent.PostHashHex,
         isUnlike,
-        this.globalVars.feeRateDeSoPerKB * 1e9
+        this.globalVars.feeRateDESOPerKB * 1e9
       )
       .subscribe(
         (res) => {
@@ -436,7 +436,7 @@ export class FeedPostIconRowComponent {
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
         diamonds,
-        this.globalVars.feeRateDeSoPerKB * 1e9,
+        this.globalVars.feeRateDESOPerKB * 1e9,
         this.inTutorial
       )
       .toPromise()

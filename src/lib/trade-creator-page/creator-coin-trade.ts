@@ -7,7 +7,7 @@ export class CreatorCoinTrade {
   static SELL_VERB = "Sell";
   static TRANSFER_VERB = "Transfer";
 
-  static DESO_CURRENCY_STRING = "DeSo";
+  static DESO_CURRENCY_STRING = "DESO";
   static USD_CURRENCY_STRING = "USD";
   static CREATOR_COIN_CURRENCY_STRING = "Creator coin";
 
@@ -20,7 +20,7 @@ export class CreatorCoinTrade {
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedDeSoReturnedNanos: number = 0;
+  expectedDESOReturnedNanos: number = 0;
 
   // ProfileEntry response from server
   creatorProfile: ProfileEntryResponse;
@@ -91,9 +91,9 @@ export class CreatorCoinTrade {
       // If buying creator coins, you can specify DeSo and USD
       //
       // You can't specify an amount in creator coin right now. The API endpoint to buy/sell
-      // creator coin takes an amount of DeSo to sell. We don't have a DeSo <=> creator
+      // creator coin takes an amount of DESO to sell. We don't have a DeSo <=> creator
       // coin exchange rate, so we have no way to convert a user-specified amount of creator coin
-      // into an amount of DeSo
+      // into an amount of DESO
       //
       // We don't have an exchange rate because the price depends on the amount of
       // creator coin you specify
@@ -193,15 +193,15 @@ export class CreatorCoinTrade {
     if (this.isBuyingCreatorCoin) {
       return (this.expectedCreatorCoinReturnedNanos || 0) / 1e9;
     } else {
-      return (this.expectedDeSoReturnedNanos || 0) / 1e9;
+      return (this.expectedDESOReturnedNanos || 0) / 1e9;
     }
   }
 
   assetReturnedAmountInUsd() {
     if (this.isBuyingCreatorCoin) {
-      return (this.desoToSell || 0) * this.usdPriceOfDeSo();
+      return (this.desoToSell || 0) * this.usdPriceOfDESO();
     } else {
-      return (this.expectedDeSoReturnedNanos / 1e9) * this.usdPriceOfDeSo();
+      return (this.expectedDESOReturnedNanos / 1e9) * this.usdPriceOfDESO();
     }
   }
 
@@ -213,7 +213,7 @@ export class CreatorCoinTrade {
 
     // sell creator coin fields
     this.creatorCoinToSell = 0;
-    this.expectedDeSoReturnedNanos = 0;
+    this.expectedDESOReturnedNanos = 0;
 
     this.networkFeeNanos = 0;
   }
@@ -268,7 +268,7 @@ export class CreatorCoinTrade {
         // return inputAmountNanos / this.desoPriceOfCreatorCoin()
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
-        return inputAmountNanos * this.usdPriceOfDeSo();
+        return inputAmountNanos * this.usdPriceOfDESO();
       }
     } else if (inputCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
       if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
@@ -281,7 +281,7 @@ export class CreatorCoinTrade {
       }
     } else if (inputCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
       if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
-        return inputAmountNanos / this.usdPriceOfDeSo();
+        return inputAmountNanos / this.usdPriceOfDESO();
       } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
@@ -302,15 +302,15 @@ export class CreatorCoinTrade {
     } else if (this.isBuyingCreatorCoin) {
       desoPerCoin = (this.desoToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
     } else {
-      desoPerCoin = this.expectedDeSoReturnedNanos / (this.creatorCoinToSell * 1e9);
+      desoPerCoin = this.expectedDESOReturnedNanos / (this.creatorCoinToSell * 1e9);
     }
 
-    return desoPerCoin * this.usdPriceOfDeSo();
+    return desoPerCoin * this.usdPriceOfDESO();
   }
 
   // USD per DeSo
   // 1 DeSo == how much USD?
-  usdPriceOfDeSo() {
+  usdPriceOfDESO() {
     return 1e9 / this.globalVars.nanosPerUSDExchangeRate;
   }
 
@@ -324,7 +324,7 @@ export class CreatorCoinTrade {
     if (this.isBuyingCreatorCoin) {
       return this.desoToSell / (this.expectedCreatorCoinReturnedNanos / 1e9);
     } else {
-      return this.expectedDeSoReturnedNanos / 1e9 / this.creatorCoinToSell;
+      return this.expectedDESOReturnedNanos / 1e9 / this.creatorCoinToSell;
     }
   }
 
@@ -332,7 +332,7 @@ export class CreatorCoinTrade {
   // 1 asset-to-sell == how much USD?
   usdPriceOfAssetToSell() {
     if (this.isBuyingCreatorCoin) {
-      return this.usdPriceOfDeSo();
+      return this.usdPriceOfDESO();
     } else {
       return this.usdPriceOfCreatorCoin();
     }

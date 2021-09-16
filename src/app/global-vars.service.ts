@@ -113,7 +113,7 @@ export class GlobalVarsService {
 
   // map[pubkey]->bool of globomods
   globoMods: any;
-  feeRateDeSoPerKB = 1000 / 1e9;
+  feeRateDESOPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
   messageResponse = null;
@@ -129,7 +129,7 @@ export class GlobalVarsService {
   // hodls and the users who hodl him.
   youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
-  // Map of diamond level to DeSo nanos.
+  // Map of diamond level to DESO nanos.
   diamondLevelMap = {};
 
   // TODO(performance): We used to call the functions called by this function every
@@ -159,7 +159,7 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
-  // Whether or not to show the Buy DeSo with USD flow.
+  // Whether or not to show the Buy DESO with USD flow.
   showBuyWithUSD = false;
 
   // Whether or not to show the Jumio verification flow.
@@ -174,7 +174,7 @@ export class GlobalVarsService {
   // Support email for this node (renders Help in the left bar nav)
   supportEmail: string = null;
 
-  satoshisPerDeSoExchangeRate: number;
+  satoshisPerDESOExchangeRate: number;
   nanosPerUSDExchangeRate: number;
   // This is the USD to Bitcoin exchange rate according to external
   // sources.
@@ -184,7 +184,7 @@ export class GlobalVarsService {
   NanosSold: number;
   ProtocolUSDCentsPerBitcoinExchangeRate: number;
 
-  nanosToDeSoMemo = {};
+  nanosToDESOMemo = {};
   formatUSDMemo = {};
 
   confetti: any;
@@ -193,15 +193,15 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  // Price of DeSo values
-  ExchangeUSDCentsPerDeSo: number;
-  USDCentsPerDeSoReservePrice: number;
-  BuyDeSoFeeBasisPoints: number = 0;
+  // Price of DESO values
+  ExchangeUSDCentsPerDESO: number;
+  USDCentsPerDESOReservePrice: number;
+  BuyDESOFeeBasisPoints: number = 0;
 
   // Timestamp of last profile update
   profileUpdateTimestamp: number;
 
-  jumioDeSoNanos = 0;
+  jumioDESONanos = 0;
 
   referralUSDCents: number = 0;
 
@@ -404,12 +404,12 @@ export class GlobalVarsService {
     return this.abbreviateNumber(val, 0, true);
   }
 
-  nanosToDeSo(nanos: number, maximumFractionDigits?: number): string {
-    if (this.nanosToDeSoMemo[nanos] && this.nanosToDeSoMemo[nanos][maximumFractionDigits]) {
-      return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
+  nanosToDESO(nanos: number, maximumFractionDigits?: number): string {
+    if (this.nanosToDESOMemo[nanos] && this.nanosToDESOMemo[nanos][maximumFractionDigits]) {
+      return this.nanosToDESOMemo[nanos][maximumFractionDigits];
     }
 
-    this.nanosToDeSoMemo[nanos] = this.nanosToDeSoMemo[nanos] || {};
+    this.nanosToDESOMemo[nanos] = this.nanosToDESOMemo[nanos] || {};
 
     if (!maximumFractionDigits && nanos > 0) {
       // maximumFractionDigits defaults to 3.
@@ -430,13 +430,13 @@ export class GlobalVarsService {
     // Always show at least 2 digits
     const minimumFractionDigits = 2;
     const num = nanos / 1e9;
-    this.nanosToDeSoMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
+    this.nanosToDESOMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
       style: "decimal",
       currency: "USD",
       minimumFractionDigits,
       maximumFractionDigits,
     });
-    return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
+    return this.nanosToDESOMemo[nanos][maximumFractionDigits];
   }
 
   formatUSD(num: number, decimal: number): string {
@@ -498,7 +498,7 @@ export class GlobalVarsService {
     return viewportWidth <= 992;
   }
 
-  // Calculates the amount of DeSo one would receive if they sold an amount equal to creatorCoinAmountNano
+  // Calculates the amount of DESO one would receive if they sold an amount equal to creatorCoinAmountNano
   // given the current state of a creator's coin as defined by the coinEntry
   desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
     // These calculations are derived from the Bancor pricing formula, which
@@ -511,12 +511,12 @@ export class GlobalVarsService {
     // - B0 * (1 - (1 - dS / S0)^(1/RR))
     // - where:
     //     dS = bigDeltaCreatorCoin,
-    //     B0 = bigCurrentDeSoLocked
+    //     B0 = bigCurrentDESOLocked
     //     S0 = bigCurrentCreatorCoinSupply
     //     RR = params.CreatorCoinReserveRatio
-    const desoLockedNanos = coinEntry.DeSoLockedNanos;
+    const desoLockedNanos = coinEntry.DESOLockedNanos;
     const currentCreatorCoinSupply = coinEntry.CoinsInCirculationNanos;
-    // const deltaDeSo = creatorCoinAmountNano;
+    // const deltaDESO = creatorCoinAmountNano;
     const desoBeforeFeesNanos =
       desoLockedNanos *
       (1 -
@@ -538,12 +538,12 @@ export class GlobalVarsService {
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceDeSoNanos, abbreviate: boolean = false): string {
-    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceDeSoNanos);
+  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceDESONanos, abbreviate: boolean = false): string {
+    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceDESONanos);
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  createProfileFeeInDeSo(): number {
+  createProfileFeeInDESO(): number {
     return this.createProfileFeeNanos / 1e9;
   }
 
@@ -691,23 +691,23 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+  _alertError(err: any, showBuyDESO: boolean = false, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyDeSo || showBuyCreatorCoin,
+      showCancelButton: showBuyDESO || showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyDeSo ? "Buy DeSo" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyDESO ? "Buy DESO" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
-      if (showBuyDeSo && res.isConfirmed) {
+      if (showBuyDESO && res.isConfirmed) {
         this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
       }
       if (showBuyCreatorCoin && res.isConfirmed) {
@@ -804,7 +804,7 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
-  // Helper to launch the get free DeSo flow in identity.
+  // Helper to launch the get free DESO flow in identity.
   launchGetFreeDESOFlow() {
     this.logEvent("identity : jumio : launch");
     this.identityService
@@ -863,7 +863,7 @@ export class GlobalVarsService {
 
     this.getReferralUSDCents();
     this.userList = userList;
-    this.satoshisPerDeSoExchangeRate = 0;
+    this.satoshisPerDESOExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
@@ -895,7 +895,7 @@ export class GlobalVarsService {
       if (!this.defaultFeeRateNanosPerKB) {
         return false;
       }
-      this.feeRateDeSoPerKB = this.defaultFeeRateNanosPerKB / 1e9;
+      this.feeRateDESOPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
   }
@@ -904,7 +904,7 @@ export class GlobalVarsService {
     const pulseService = new PulseService(this.httpClient, this.backendApi, this);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      pulseService.getDESOLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
@@ -970,20 +970,20 @@ export class GlobalVarsService {
     return "app-page";
   }
 
-  _updateDeSoExchangeRate() {
+  _updateDESOExchangeRate() {
     this.backendApi.GetExchangeRate(this.localNode).subscribe(
       (res: any) => {
-        this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
+        this.satoshisPerDESOExchangeRate = res.SatoshisPerDESOExchangeRate;
 
         this.NanosSold = res.NanosSold;
         this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
 
-        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
-        this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
-        this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
+        this.ExchangeUSDCentsPerDESO = res.USDCentsPerDESOExchangeRate;
+        this.USDCentsPerDESOReservePrice = res.USDCentsPerDESOReserveExchangeRate;
+        this.BuyDESOFeeBasisPoints = res.BuyDESOFeeBasisPoints;
 
         const nanosPerUnit = 1e9;
-        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerDeSo / 100);
+        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerDESO / 100);
         this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
         this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
         this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
@@ -1131,10 +1131,10 @@ export class GlobalVarsService {
     }, timeoutMillis);
   }
 
-  getFreeDeSoMessage(): string {
+  getFreeDESOMessage(): string {
     return this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
-      : this.nanosToUSD(this.jumioDeSoNanos, 0);
+      : this.nanosToUSD(this.jumioDESONanos, 0);
   }
 
   getReferralUSDCents(): void {

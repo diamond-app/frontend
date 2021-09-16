@@ -33,9 +33,9 @@
         Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
         {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
       </li>
-      <li *ngIf="order.DeSoPurchasedNanos">DeSo Nanos Purchased: {{ order.DeSoPurchasedNanos }}</li>
+      <li *ngIf="order.DESOPurchasedNanos">DeSo Nanos Purchased: {{ order.DESOPurchasedNanos }}</li>
       <li style="word-break: break-word" *ngIf="order.BasicTransferTxnHash">
-        DeSo Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
+        DESO Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
       </li>
     </ul>
   </div>

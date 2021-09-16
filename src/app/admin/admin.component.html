@@ -65,14 +65,14 @@
         <a
           class="btn btn-primary"
           style="vertical-align: middle; float: right; text-align: center;"
-          (click)="_searchPostsByDeSo()"
+          (click)="_searchPostsByDESO()"
         >
           Search
         </a>
       </div>
 
     </div>
-    <simple-center-loader *ngIf="searchingForPostsByDeSo; else showPosts"></simple-center-loader>
+    <simple-center-loader *ngIf="searchingForPostsByDESO; else showPosts"></simple-center-loader>
     <ng-template #showPosts>
       <div *ngFor="let post of activePosts; let ii = index">
         <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
@@ -710,7 +710,7 @@
     </div>
 
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Create Profile Fee In DeSo
+      Create Profile Fee In DESO
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="updateGlobalParamsValues.CreateProfileFeeNanos"
@@ -803,7 +803,7 @@
     </div>
 
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Create NFT Fee in DeSo
+      Create NFT Fee in DESO
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="updateGlobalParamsValues.CreateNFTFeeNanos"
@@ -911,47 +911,47 @@
       </ul>
     </ul>
 
-    <!-- USD Cents Per DeSo Reserve Price  -->
+    <!-- USD Cents Per DESO Reserve Price  -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update USD to DeSo Reserve Price ($)
+      Update USD to DESO Reserve Price ($)
       <div class="d-flex mt-5px">
         <input
-          [(ngModel)]="usdToDeSoReserveExchangeRate"
-          (keydown.enter)="updateUSDToDeSoReserveExchangeRate()"
+          [(ngModel)]="usdToDESOReserveExchangeRate"
+          (keydown.enter)="updateUSDToDESOReserveExchangeRate()"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter the new USD to DeSo Reserve Exchange Rate"
           type="number"
         />
         <button
-          *ngIf="!submittingUSDToDeSoReserveExchangeRateUpdate"
-          (click)="updateUSDToDeSoReserveExchangeRate()"
+          *ngIf="!submittingUSDToDESOReserveExchangeRateUpdate"
+          (click)="updateUSDToDESOReserveExchangeRate()"
           class="btn btn-outline-primary fs-15px ml-5px"
         >
          Update
         </button>
-        <button *ngIf="submittingUSDToDeSoReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingUSDToDESOReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
       </div>
     </div>
 
-    <!-- Buy DeSo Fee Rate-->
+    <!-- Buy DESO Fee Rate-->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update Buy DeSo Fee Rate (%)
+      Update Buy DESO Fee Rate (%)
       <div class="d-flex mt-5px">
         <input
-          [(ngModel)]="buyDeSoFeeRate"
-          (keydown.enter)="updateBuyDeSoFeeRate()"
+          [(ngModel)]="buyDESOFeeRate"
+          (keydown.enter)="updateBuyDESOFeeRate()"
           class="form-control w-100 fs-15px lh-15px"
-          placeholder="Enter Buy DeSo Fee Rate"
+          placeholder="Enter Buy DESO Fee Rate"
           type="number"
         />
         <button
-          *ngIf="!submittingBuyDeSoFeeRate"
-          (click)="updateBuyDeSoFeeRate()"
+          *ngIf="!submittingBuyDESOFeeRate"
+          (click)="updateBuyDESOFeeRate()"
           class="btn btn-outline-primary fs-15px ml-5px"
         >
           Update
         </button>
-        <button *ngIf="submittingBuyDeSoFeeRate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingBuyDESOFeeRate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
       </div>
     </div>
 

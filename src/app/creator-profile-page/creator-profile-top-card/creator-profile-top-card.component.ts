@@ -114,7 +114,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDESONanos),
       3,
       true
     );
@@ -122,7 +122,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DESOLockedNanos),
       3,
       true
     );

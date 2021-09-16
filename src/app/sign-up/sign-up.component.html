@@ -18,11 +18,11 @@
   <div class="w-100 pl-15px pr-15px">
     <!-- Step 3 -->
     <div *ngIf="stepNum == 3">
-      <!-- Get starter DeSo -->
+      <!-- Get starter DESO -->
       <sign-up-get-starter-deso
         [displayForSignupFlow]="true"
         (backToPreviousSignupStepClicked)="backToPreviousSignupStepClicked()"
-        (skipButtonClicked)="skipButtonClickedOnStarterDeSoStep()"
+        (skipButtonClicked)="skipButtonClickedOnStarterDESOStep()"
         (phoneNumberVerified)="phoneNumberVerified()"
       ></sign-up-get-starter-deso>
     </div>
@@ -31,7 +31,7 @@
     <div *ngIf="stepNum == 4">
       <div *ngIf="showPhoneNumberVerifiedContent" class="border-color-grey border-bottom py-15px">
         <div class="p-15px br-12px background-color-grey fs-15px">
-          Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow
+          Your phone number was verified. We sent you a small amount of DESO, which is enough to post and follow
           people.
         </div>
       </div>
@@ -83,8 +83,8 @@
       </div>
 
       <div class="d-flex justify-content-end mt-15px pt-10px">
-        <button (click)="buyDeSoSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
-        <button (click)="buyDeSoClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
+        <button (click)="buyDESOSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
+        <button (click)="buyDESOClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
           Buy $DESO
         </button>
       </div>

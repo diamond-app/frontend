@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { BuyDeSoLoggedOutComponent } from "./buy-deso-logged-out.component";
+import { BuyDESOLoggedOutComponent } from "./buy-deso-logged-out.component";
 
-describe("BuyDeSoLoggedOutComponent", () => {
-  let component: BuyDeSoLoggedOutComponent;
-  let fixture: ComponentFixture<BuyDeSoLoggedOutComponent>;
+describe("BuyDESOLoggedOutComponent", () => {
+  let component: BuyDESOLoggedOutComponent;
+  let fixture: ComponentFixture<BuyDESOLoggedOutComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BuyDeSoLoggedOutComponent],
+      declarations: [BuyDESOLoggedOutComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BuyDeSoLoggedOutComponent);
+    fixture = TestBed.createComponent(BuyDESOLoggedOutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

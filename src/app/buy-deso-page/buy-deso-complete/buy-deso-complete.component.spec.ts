@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { BuyDeSoCompleteComponent } from "./buy-deso-complete.component";
+import { BuyDESOCompleteComponent } from "./buy-deso-complete.component";
 
-describe("BuyDeSoCompleteComponent", () => {
-  let component: BuyDeSoCompleteComponent;
-  let fixture: ComponentFixture<BuyDeSoCompleteComponent>;
+describe("BuyDESOCompleteComponent", () => {
+  let component: BuyDESOCompleteComponent;
+  let fixture: ComponentFixture<BuyDESOCompleteComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BuyDeSoCompleteComponent],
+      declarations: [BuyDESOCompleteComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BuyDeSoCompleteComponent);
+    fixture = TestBed.createComponent(BuyDESOCompleteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

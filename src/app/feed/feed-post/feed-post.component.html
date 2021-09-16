@@ -138,7 +138,7 @@
             queryParamsHandling="merge"
           >
             <span class="text-grey5">
-              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDESONanos, 2) }}
             </span>
 
             <!-- Buy link -->
@@ -488,7 +488,7 @@
           }}
         </span>
         <div *ngIf="nftLastAcceptedBidAmountNanos">
-          <b>Last price: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos) }} $DESO</b>
+          <b>Last price: {{ globalVars.nanosToDESO(nftLastAcceptedBidAmountNanos) }} $DESO</b>
         </div>
       </div>
       <button
@@ -509,11 +509,11 @@
     <div></div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{ 'pt-15px': globalVars.isMobile() }">
       <div *ngIf="highBid != null">
-        Highest: {{ globalVars.nanosToDeSo(highBid, 5) }} DESO
+        Highest: {{ globalVars.nanosToDESO(highBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
       <div *ngIf="lowBid != null">
-        From: {{ globalVars.nanosToDeSo(lowBid, 5) }} DESO
+        From: {{ globalVars.nanosToDESO(lowBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>

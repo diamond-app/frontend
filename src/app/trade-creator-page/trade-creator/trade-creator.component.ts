@@ -42,7 +42,7 @@ export class TradeCreatorComponent implements OnInit {
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedDeSoReturnedNanos: number;
+  expectedDESOReturnedNanos: number;
 
   // show different header text if we're at the "Invest In Yourself" stage of the tutorial
   investInYourself: boolean = false;
@@ -203,8 +203,8 @@ export class TradeCreatorComponent implements OnInit {
 
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
-    const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
-    balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
+    const jumioDESONanos = this.appData.jumioDESONanos > 0 ? this.appData.jumioDESONanos : 1e8;
+    balance = balance > jumioDESONanos ? jumioDESONanos : balance;
     const percentToBuy =
       this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
     this.creatorCoinTrade.desoToSell = (balance * percentToBuy) / 1e9;
@@ -231,7 +231,7 @@ export class TradeCreatorComponent implements OnInit {
     this.creatorCoinTrade.creatorCoinToSell = (creatorCoinsPurchasedInTutorial * 0.05) / 1e9;
     this.getBuyOrSellObservable().subscribe(
       (response) => {
-        this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
+        this.creatorCoinTrade.expectedDESOReturnedNanos = response.ExpectedDESOReturnedNanos || 0;
       },
       (err) => {
         console.error(err);
@@ -246,12 +246,12 @@ export class TradeCreatorComponent implements OnInit {
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
       this.creatorCoinTrade.operationType() /*OperationType*/,
-      this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
+      this.creatorCoinTrade.desoToSell * 1e9 /*DESOToSellNanos*/,
       this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-      0 /*DeSoToAddNanos*/,
-      0 /*MinDeSoExpectedNanos*/,
+      0 /*DESOToAddNanos*/,
+      0 /*MinDESOExpectedNanos*/,
       0 /*MinCreatorCoinExpectedNanos*/,
-      this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+      this.appData.feeRateDESOPerKB * 1e9 /*feeRateNanosPerKB*/,
       false
     );
   }

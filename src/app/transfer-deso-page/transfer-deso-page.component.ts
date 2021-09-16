@@ -5,6 +5,6 @@ import { Component, OnInit } from "@angular/core";
   templateUrl: "./transfer-deso-page.component.html",
   styleUrls: ["./transfer-deso-page.component.scss"],
 })
-export class TransferDeSoPageComponent {
+export class TransferDESOPageComponent {
   constructor() {}
 }

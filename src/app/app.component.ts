@@ -164,8 +164,8 @@ export class AppComponent implements OnInit {
     );
   }
 
-  _updateDeSoExchangeRate() {
-    this.globalVars._updateDeSoExchangeRate();
+  _updateDESOExchangeRate() {
+    this.globalVars._updateDESOExchangeRate();
   }
 
   _updateAppState() {
@@ -177,7 +177,7 @@ export class AppComponent implements OnInit {
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
         this.globalVars.showJumio = res.HasJumioIntegration;
-        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
+        this.globalVars.jumioDESONanos = res.JumioDESONanos;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.supportEmail = res.SupportEmail;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
+        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDESOSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
       });
@@ -235,7 +235,7 @@ export class AppComponent implements OnInit {
                 return;
               }
 
-              this._updateDeSoExchangeRate();
+              this._updateDESOExchangeRate();
               this._updateAppState();
 
               this._updateTopLevelData().add(() => {
@@ -255,7 +255,7 @@ export class AppComponent implements OnInit {
       if (this.globalVars.pausePolling) {
         return;
       }
-      this._updateDeSoExchangeRate();
+      this._updateDESOExchangeRate();
       this._updateAppState();
       return this._updateTopLevelData();
     }
@@ -265,16 +265,16 @@ export class AppComponent implements OnInit {
     // Load the theme
     this.themeService.init();
 
-    // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
+    // Update the DESO <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
-      this._updateDeSoExchangeRate();
+      this._updateDESOExchangeRate();
     }, 5 * 60 * 1000);
 
     this.globalVars.updateEverything = this._updateEverything;
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
-    this._updateDeSoExchangeRate();
+    this._updateDESOExchangeRate();
     this._updateAppState();
 
     this.identityService.info().subscribe((res) => {

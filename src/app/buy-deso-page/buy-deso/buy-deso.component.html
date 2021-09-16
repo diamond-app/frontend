@@ -17,14 +17,14 @@
         <div
           class="pb-15px"
           *ngIf="globalVars.showBuyWithUSD"
-          [ngClass]="{ 'mb-10px': activeTab === BuyDeSoComponent.BUY_WITH_BTC }"
+          [ngClass]="{ 'mb-10px': activeTab === BuyDESOComponent.BUY_WITH_BTC }"
         >
           <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
         </div>
-        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
+        <div *ngIf="activeTab === BuyDESOComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
           <buy-deso-usd></buy-deso-usd>
         </div>
-        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_BTC || !globalVars.showBuyWithUSD">
+        <div *ngIf="activeTab === BuyDESOComponent.BUY_WITH_BTC || !globalVars.showBuyWithUSD">
           <!-- Step One Box -->
           <div class="w-100 border-top border-color-grey">
             <div
@@ -62,7 +62,7 @@
                 <span>
                   Minimum deposit is currently
                   <b>
-                    {{ ((buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
+                    {{ ((buyDESOFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
                   </b>
                   <i
                     (click)="tooltip3.toggle()"
@@ -181,18 +181,18 @@
                   class="form-control w-50 fs-15px lh-15px"
                   style="text-align: right"
                   placeholder="0"
-                  [(ngModel)]="buyDeSoFields.desoToBuy"
-                  (ngModelChange)="_updateDeSoToBuy($event)"
+                  [(ngModel)]="buyDESOFields.desoToBuy"
+                  (ngModelChange)="_updateDESOToBuy($event)"
                 />
                 <div class="ml-2 w-50 fs-15px">
                   $DESO &middot;
-                  <a class="text-grey7" (click)="_clickMaxDeSo()">
+                  <a class="text-grey7" (click)="_clickMaxDESO()">
                     <u>Max</u>
                   </a>
                 </div>
               </div>
-              <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyDeSoFeeBasisPoints">
-                <i>Includes {{ globalVars.BuyDeSoFeeBasisPoints / 100 }}% slippage</i>
+              <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyDESOFeeBasisPoints">
+                <i>Includes {{ globalVars.BuyDESOFeeBasisPoints / 100 }}% slippage</i>
               </div>
 
               <!-- Bitcoin to exchange input-->
@@ -204,7 +204,7 @@
                   id="exampleInputEmail1"
                   aria-describedby="emailHelp"
                   placeholder="0"
-                  [(ngModel)]="buyDeSoFields.bitcoinToExchange"
+                  [(ngModel)]="buyDESOFields.bitcoinToExchange"
                   (ngModelChange)="_updateBitcoinToExchange($event)"
                 />
                 <div class="ml-2 w-50 fs-15px">Bitcoin</div>
@@ -223,18 +223,18 @@
                 ></i>
 
                 <div class="mt-1 w-100 fs-15px">
-                  <div *ngIf="buyDeSoFields.error == null || buyDeSoFields.error === ''">
-                    {{ (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis / 1e8).toFixed(8) }} Bitcoin ≈
+                  <div *ngIf="buyDESOFields.error == null || buyDESOFields.error === ''">
+                    {{ (buyDESOFields.bitcoinTotalTransactionFeeSatoshis / 1e8).toFixed(8) }} Bitcoin ≈
                     {{
                       appData.formatUSD(
-                        (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis * appData.usdPerBitcoinExchangeRate) /
+                        (buyDESOFields.bitcoinTotalTransactionFeeSatoshis * appData.usdPerBitcoinExchangeRate) /
                           1e8,
                         2
                       )
                     }}
                     USD
                   </div>
-                  <div *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''" style="margin-top: 0">
+                  <div *ngIf="buyDESOFields.error != null && buyDESOFields.error !== ''" style="margin-top: 0">
                     0.00000000 Bitcoin ≈ {{ appData.formatUSD(0, 2) }} USD
                   </div>
                 </div>
@@ -244,19 +244,19 @@
               <div class="fs-15px mt-15px text-grey7">
                 Total Bitcoin to swap
                 <div class="mt-1 w-100 fs-15px">
-                  <div *ngIf="!buyDeSoFields.error">
+                  <div *ngIf="!buyDESOFields.error">
                     {{
                       (
-                        (buyDeSoFields.bitcoinToExchange * 1e8 +
-                          buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) /
+                        (buyDESOFields.bitcoinToExchange * 1e8 +
+                          buyDESOFields.bitcoinTotalTransactionFeeSatoshis) /
                         1e8
                       ).toFixed(8)
                     }}
                     Bitcoin ≈
                     {{
                       appData.formatUSD(
-                        ((buyDeSoFields.bitcoinToExchange * 1e8 +
-                          buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) *
+                        ((buyDESOFields.bitcoinToExchange * 1e8 +
+                          buyDESOFields.bitcoinTotalTransactionFeeSatoshis) *
                           appData.usdPerBitcoinExchangeRate) /
                           1e8,
                         2
@@ -264,23 +264,23 @@
                     }}
                     USD
                   </div>
-                  <div *ngIf="buyDeSoFields.error" style="margin-top: 0">
+                  <div *ngIf="buyDESOFields.error" style="margin-top: 0">
                     0.00000000 Bitcoin ≈ {{ appData.formatUSD(0, 2) }} USD
                   </div>
                 </div>
               </div>
 
               <div
-                *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''"
+                *ngIf="buyDESOFields.error != null && buyDESOFields.error !== ''"
                 class="w-100 fs-18px mt-15px"
               >
                 <div class="red">
-                  {{ buyDeSoFields.error }}
+                  {{ buyDESOFields.error }}
                 </div>
               </div>
               <button
                 class="btn btn-primary font-weight-bold mt-25px mb-15px fs-15px btn-lg"
-                (click)="_clickBuyDeSo()"
+                (click)="_clickBuyDESO()"
               >
                 Buy $DESO
               </button>
@@ -304,5 +304,5 @@
 </div>
 
 <ng-template #showBuyCompleteElseBlock>
-  <buy-deso-complete (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"></buy-deso-complete>
+  <buy-deso-complete (buyMoreDESOClicked)="onBuyMoreDESOClicked()"></buy-deso-complete>
 </ng-template>

@@ -8,7 +8,7 @@ class NetworkConstants {
   static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;
-  static TOTAL_DESO_INVALID = `The total DeSo is currently an invalid value. Is your balance insufficient?`;
+  static TOTAL_DESO_INVALID = `The total DESO is currently an invalid value. Is your balance insufficient?`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
 }
 
@@ -51,10 +51,10 @@ export class NetworkInfoComponent implements OnInit {
 
   _copyNetworkInfo(infoToCopy: string, minerPublicKeyIdx: number) {
     if (infoToCopy === "lastBlockHeight") {
-      this.globalVars._copyText(this.globalVars.nodeInfo.DeSoStatus.LatestHeaderHeight);
+      this.globalVars._copyText(this.globalVars.nodeInfo.Status.LatestHeaderHeight);
       this.isCopied.lastBlockHeight = true;
     } else if (infoToCopy === "lastBlockHash") {
-      this.globalVars._copyText(this.globalVars.nodeInfo.DeSoStatus.LatestHeaderHash);
+      this.globalVars._copyText(this.globalVars.nodeInfo.Status.LatestHeaderHash);
       this.isCopied.lastBlockHash = true;
     } else if (infoToCopy === "minerPublicKey") {
       this.globalVars._copyText(this.globalVars.nodeInfo.MinerPublicKeys[minerPublicKeyIdx]);

@@ -20,23 +20,23 @@ class PulseLeaderboardResponse {
   };
 }
 
-const DeSoLocked = "bitclout_locked_24h";
+const DESOLocked = "bitclout_locked_24h";
 const Diamonds = "diamonds_received_24h";
 
 export enum PulseLeaderboardType {
-  DeSoLocked = "bitclout_locked_24h",
+  DESOLocked = "bitclout_locked_24h",
   Diamonds = "diamonds_received_24h",
 }
 
 export class LeaderboardResponse {
   Profile: ProfileEntryResponse;
-  DeSoLockedGained: number;
+  DESOLockedGained: number;
   DiamondsReceived: number;
   User: User;
 }
 
 export const LeaderboardToDataAttribute = {
-  [PulseLeaderboardType.DeSoLocked]: "net_change_24h_bitclout_nanos",
+  [PulseLeaderboardType.DESOLocked]: "net_change_24h_bitclout_nanos",
   [PulseLeaderboardType.Diamonds]: "diamonds",
 };
 
@@ -77,20 +77,20 @@ export class PulseService {
     );
   }
 
-  getDeSoLockedLeaderboard(): Observable<LeaderboardResponse[]> {
-    return this.getDeSoLockedPage(0);
+  getDESOLockedLeaderboard(): Observable<LeaderboardResponse[]> {
+    return this.getDESOLockedPage(0);
   }
 
-  getDeSoLockedPage(
+  getDESOLockedPage(
     pageNumber: number,
     pageSize: number = PulseService.pulsePageSize,
     skipFilters = false
   ): Observable<any> {
     return this.httpClient
-      .get(this.constructPulseURL(PulseLeaderboardType.DeSoLocked, pageNumber, pageSize))
+      .get(this.constructPulseURL(PulseLeaderboardType.DESOLocked, pageNumber, pageSize))
       .pipe(
         switchMap((res: PulseLeaderboardResponse) =>
-          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.DeSoLocked, skipFilters)
+          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.DESOLocked, skipFilters)
         )
       );
   }
@@ -126,8 +126,8 @@ export class PulseService {
             return {
               User: user,
               Profile: user.ProfileEntryResponse,
-              DeSoLockedGained:
-                leaderboardType === PulseLeaderboardType.DeSoLocked
+              DESOLockedGained:
+                leaderboardType === PulseLeaderboardType.DESOLocked
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
               DiamondsReceived:

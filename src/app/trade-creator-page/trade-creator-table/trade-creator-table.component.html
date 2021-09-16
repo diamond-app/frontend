@@ -28,8 +28,8 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Network Fee</span>
 
     <div class="d-inline-block" style="text-align: end">
-      {{ globalVars.nanosToDeSo(creatorCoinTrade.networkFeeNanos, 9) }}
-      DeSo
+      {{ globalVars.nanosToDESO(creatorCoinTrade.networkFeeNanos, 9) }}
+      DESO
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-none d-lg-inline">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
@@ -89,7 +89,7 @@
     <div class="d-inline-block">
       <span *ngIf="!inTutorial">
         ~{{ creatorCoinTrade.desoPriceOfCreatorCoin().toFixed(4) }}
-        DeSo
+        DESO
       </span>
 
 

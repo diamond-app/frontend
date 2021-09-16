@@ -11,7 +11,7 @@ import { ActivatedRoute } from "@angular/router";
   templateUrl: "./sign-up-get-starter-deso.component.html",
   styleUrls: ["./sign-up-get-starter-deso.component.scss"],
 })
-export class SignUpGetStarterDeSoComponent implements OnInit {
+export class SignUpGetStarterDESOComponent implements OnInit {
   static CREATE_PHONE_NUMBER_VERIFICATION_SCREEN = "create_phone_number_verification_screen";
   static SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN = "submit_phone_number_verification_screen";
   static COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN = "completed_phone_number_verification_screen";
@@ -34,8 +34,8 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
   sendingPhoneNumberVerificationText = false;
   submittingPhoneNumberVerificationCode = false;
   screenToShow = null;
-  //screenToShow = SignUpGetStarterDeSoComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN;
-  SignUpGetStarterDeSoComponent = SignUpGetStarterDeSoComponent;
+  //screenToShow = SignUpGetStarterDESOComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN;
+  SignUpGetStarterDESOComponent = SignUpGetStarterDESOComponent;
   phoneNumber: string;
   phoneNumberCountryCode: string = null;
   resentVerificationCode = false;
@@ -57,9 +57,9 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
       }
 
       if (this.globalVars.loggedInUser.HasPhoneNumber) {
-        this.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+        this.screenToShow = SignUpGetStarterDESOComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
       } else {
-        this.screenToShow = SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
+        this.screenToShow = SignUpGetStarterDESOComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
       }
 
       clearInterval(interval);
@@ -71,7 +71,7 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
   }
 
   backButtonClickedOnSubmitVerificationScreen() {
-    this.screenToShow = SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
+    this.screenToShow = SignUpGetStarterDESOComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
   }
 
   sendVerificationText() {
@@ -140,7 +140,7 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.screenToShow = SignUpGetStarterDeSoComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN;
+          this.screenToShow = SignUpGetStarterDESOComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN;
           this.globalVars.logEvent("account : create : send-verification-text: success");
         },
         (err) => {
@@ -205,8 +205,8 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
           // Pull the CanCreateProfile boolean from the server
           this.globalVars.updateEverything(
             res.TxnHashHex,
-            this._getStarterDeSoSuccess,
-            this._getStarterDeSoFailure,
+            this._getStarterDESOSuccess,
+            this._getStarterDESOFailure,
             this
           );
           this.globalVars.logEvent("account : create : submit-verification-code: success");
@@ -218,17 +218,17 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
       );
   }
 
-  _getStarterDeSoSuccess(comp: any): void {
-    comp.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+  _getStarterDESOSuccess(comp: any): void {
+    comp.screenToShow = SignUpGetStarterDESOComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
     comp.submittingPhoneNumberVerificationCode = false;
     comp.phoneNumberVerified.emit();
   }
 
-  _getStarterDeSoFailure(comp: any): void {
+  _getStarterDESOFailure(comp: any): void {
     comp.globalVars._alertError(
-      "Your starter DeSo is on it's way.  The transaction broadcast successfully but read node timeout exceeded. Please refresh."
+      "Your starter DESO is on it's way.  The transaction broadcast successfully but read node timeout exceeded. Please refresh."
     );
-    comp.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+    comp.screenToShow = SignUpGetStarterDESOComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
     comp.submittingPhoneNumberVerificationCode = false;
     comp.phoneNumberVerified.emit();
   }

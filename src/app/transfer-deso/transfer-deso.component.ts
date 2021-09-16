@@ -12,7 +12,7 @@ class Messages {
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
-  static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
+  static SEND_DESO_MIN = `You must send a non-zero amount of DESO`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
   static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
   static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
@@ -24,20 +24,20 @@ class Messages {
   templateUrl: "./transfer-deso.component.html",
   styleUrls: ["./transfer-deso.component.scss"],
 })
-export class TransferDeSoComponent implements OnInit {
+export class TransferDESOComponent implements OnInit {
   globalVars: GlobalVarsService;
-  transferDeSoError = "";
+  transferDESOError = "";
   startingSearchText = "";
   payToPublicKey = "";
   payToCreator: ProfileEntryResponse;
   transferAmount = 0;
   networkFee = 0;
-  feeRateDeSoPerKB: string;
-  callingUpdateSendDeSoTxnFee = false;
+  feeRateDESOPerKB: string;
+  callingUpdateSendDESOTxnFee = false;
   loadingMax = false;
-  sendingDeSo = false;
+  sendingDESO = false;
 
-  sendDeSoQRCode: string;
+  sendDESOQRCode: string;
 
   constructor(
     private backendApi: BackendApiService,
@@ -54,23 +54,23 @@ export class TransferDeSoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.feeRateDeSoPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
+    this.feeRateDESOPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
     this.titleService.setTitle("Send $DESO - DeSo");
-    this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
+    this.sendDESOQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
       this.globalVars.loggedInUser.PublicKeyBase58Check
     }`;
   }
 
-  _clickMaxDeSo() {
+  _clickMaxDESO() {
     this.loadingMax = true;
     this.backendApi
-      .SendDeSoPreview(
+      .SendDESOPreview(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.payToPublicKey,
         // A negative amount causes the max value to be returned as the spend amount.
         -1,
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+        Math.floor(parseFloat(this.feeRateDESOPerKB) * 1e9)
       )
       .subscribe(
         (res: any) => {
@@ -80,19 +80,19 @@ export class TransferDeSoComponent implements OnInit {
             return null;
           }
 
-          this.transferDeSoError = "";
+          this.transferDESOError = "";
           this.networkFee = res.FeeNanos / 1e9;
           this.transferAmount = res.SpendAmountNanos / 1e9;
         },
         (error) => {
           this.loadingMax = false;
           console.error(error);
-          this.transferDeSoError = this._extractError(error);
+          this.transferDESOError = this._extractError(error);
         }
       );
   }
 
-  _clickSendDeSo() {
+  _clickSendDESO() {
     if (this.globalVars.loggedInUser == null) {
       this.globalVars._alertError("User must be logged in in order to send DeSo");
       return;
@@ -103,8 +103,8 @@ export class TransferDeSoComponent implements OnInit {
       return;
     }
 
-    if (this.transferDeSoError != null && this.transferDeSoError !== "") {
-      this.globalVars._alertError(this.transferDeSoError);
+    if (this.transferDESOError != null && this.transferDESOError !== "") {
+      this.globalVars._alertError(this.transferDESOError);
       return;
     }
 
@@ -120,23 +120,23 @@ export class TransferDeSoComponent implements OnInit {
     }
 
     // Recompute the fee one more time and offer a confirmation.
-    let desoTxnFeePromise = this._updateSendDeSoTxnFee(true /*force*/);
+    let desoTxnFeePromise = this._updateSendDESOTxnFee(true /*force*/);
 
     if (desoTxnFeePromise == null) {
       this.globalVars._alertError("There was a problem processing this transaction.");
       return;
     }
 
-    this.sendingDeSo = true;
+    this.sendingDESO = true;
     desoTxnFeePromise.then(
       (res) => {
         // If res is null then an error should be set.
         if (res == null || res.FeeNanos == null || res.SpendAmountNanos == null) {
-          this.sendingDeSo = false;
+          this.sendingDESO = false;
           this.globalVars._alertError(
-            this.transferDeSoError,
+            this.transferDESOError,
             false,
-            this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
+            this.transferDESOError === Messages.MUST_PURCHASE_CREATOR_COIN
           );
           return;
         }
@@ -146,9 +146,9 @@ export class TransferDeSoComponent implements OnInit {
           title: "Are you ready?",
           html: sprintf(
             isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY,
-            this.globalVars.nanosToDeSo(res.SpendAmountNanos),
-            this.globalVars.nanosToDeSo(res.FeeNanos),
-            this.globalVars.nanosToDeSo(res.SpendAmountNanos + res.FeeNanos),
+            this.globalVars.nanosToDESO(res.SpendAmountNanos),
+            this.globalVars.nanosToDESO(res.FeeNanos),
+            this.globalVars.nanosToDESO(res.SpendAmountNanos + res.FeeNanos),
             this.payToPublicKey
           ),
           showCancelButton: true,
@@ -161,12 +161,12 @@ export class TransferDeSoComponent implements OnInit {
         }).then((res: any) => {
           if (res.isConfirmed) {
             this.backendApi
-              .SendDeSo(
+              .SendDESO(
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 this.payToPublicKey,
                 this.transferAmount * 1e9,
-                Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+                Math.floor(parseFloat(this.feeRateDESOPerKB) * 1e9)
               )
               .subscribe(
                 (res: any) => {
@@ -191,22 +191,22 @@ export class TransferDeSoComponent implements OnInit {
                     FeeNanos,
                   });
 
-                  this.transferDeSoError = "";
+                  this.transferDESOError = "";
                   this.networkFee = res.FeeNanos / 1e9;
                   this.transferAmount = 0.0;
 
                   // This will update the user's balance.
-                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
+                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDESOSuccess, this._sendDESOFailure, this);
                 },
                 (error) => {
-                  this.sendingDeSo = false;
+                  this.sendingDESO = false;
                   console.error(error);
-                  this.transferDeSoError = this._extractError(error);
-                  this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDeSoError });
+                  this.transferDESOError = this._extractError(error);
+                  this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDESOError });
                   this.globalVars._alertError(
-                    this.transferDeSoError,
+                    this.transferDESOError,
                     false,
-                    this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
+                    this.transferDESOError === Messages.MUST_PURCHASE_CREATOR_COIN
                   );
                 }
               );
@@ -214,7 +214,7 @@ export class TransferDeSoComponent implements OnInit {
             return;
           } else {
             // This is the case where the user clicks "cancel."
-            this.sendingDeSo = false;
+            this.sendingDESO = false;
           }
 
           return;
@@ -223,29 +223,29 @@ export class TransferDeSoComponent implements OnInit {
       },
       (err) => {
         // If an error is returned then the error message should be set.
-        this.globalVars._alertError(this.transferDeSoError);
+        this.globalVars._alertError(this.transferDESOError);
         return;
       }
     );
   }
 
-  _sendDeSoSuccess(comp: any) {
+  _sendDESOSuccess(comp: any) {
     // the button should no longer say "Working..."
     comp.globalVars._alertSuccess(sprintf("Successfully completed transaction."));
-    comp.sendingDeSo = false;
+    comp.sendingDESO = false;
   }
-  _sendDeSoFailure(comp: any) {
+  _sendDESOFailure(comp: any) {
     comp.appData._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
-    comp.sendingDeSo = false;
+    comp.sendingDESO = false;
   }
 
-  _updateSendDeSoTxnFee(force: boolean): Promise<any> {
+  _updateSendDESOTxnFee(force: boolean): Promise<any> {
     if (!this.globalVars.loggedInUser) {
       return;
     }
 
-    if (this.callingUpdateSendDeSoTxnFee && !force) {
-      console.log("Not calling _updateSendDeSoTxnFee because callingUpdateSendDeSoTxnFee is false");
+    if (this.callingUpdateSendDESOTxnFee && !force) {
+      console.log("Not calling _updateSendDESOTxnFee because callingUpdateSendDESOTxnFee is false");
       return;
     }
 
@@ -253,35 +253,35 @@ export class TransferDeSoComponent implements OnInit {
       return;
     }
 
-    this.callingUpdateSendDeSoTxnFee = true;
+    this.callingUpdateSendDESOTxnFee = true;
     return this.backendApi
-      .SendDeSoPreview(
+      .SendDESOPreview(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.payToPublicKey,
         Math.floor(this.transferAmount * 1e9),
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+        Math.floor(parseFloat(this.feeRateDESOPerKB) * 1e9)
       )
       .toPromise()
       .then(
         (res: any) => {
-          this.callingUpdateSendDeSoTxnFee = false;
+          this.callingUpdateSendDESOTxnFee = false;
 
           if (res == null || res.FeeNanos == null) {
-            this.transferDeSoError = Messages.CONNECTION_PROBLEM;
+            this.transferDESOError = Messages.CONNECTION_PROBLEM;
 
             return null;
           }
 
-          this.transferDeSoError = "";
+          this.transferDESOError = "";
           this.networkFee = res.FeeNanos / 1e9;
           return res;
         },
         (error) => {
-          this.callingUpdateSendDeSoTxnFee = false;
+          this.callingUpdateSendDESOTxnFee = false;
 
           console.error(error);
-          this.transferDeSoError = this._extractError(error);
+          this.transferDESOError = this._extractError(error);
           return null;
         }
       );
@@ -299,7 +299,7 @@ export class TransferDeSoComponent implements OnInit {
       } else if (rawError.includes("RuleErrorTxnMustHaveAtLeastOneInput")) {
         return Messages.SEND_DESO_MIN;
       } else if (
-        (rawError.includes("SendDeSo: Problem") && rawError.includes("Invalid input format")) ||
+        (rawError.includes("SendDESO: Problem") && rawError.includes("Invalid input format")) ||
         rawError.includes("Checksum does not match")
       ) {
         return Messages.INVALID_PUBLIC_KEY;

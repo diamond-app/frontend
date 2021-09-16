@@ -7,6 +7,6 @@ import { RouteNames } from "../../app-routing.module";
   templateUrl: "./get-starter-deso.component.html",
   styleUrls: ["./get-starter-deso.component.scss"],
 })
-export class GetStarterDeSoComponent {
+export class GetStarterDESOComponent {
   constructor() {}
 }

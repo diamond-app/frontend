@@ -27,7 +27,7 @@ import { FeedPostDropdownComponent } from "./feed/feed-post-dropdown/feed-post-d
 import { FeedPostIconRowComponent } from "./feed/feed-post-icon-row/feed-post-icon-row.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
 import { CreatorsLeaderboardComponent } from "./creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
-import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
+import { BuyDESOPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
@@ -39,8 +39,8 @@ import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-p
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
 import { TradeCreatorComponent } from "./trade-creator-page/trade-creator/trade-creator.component";
-import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
-import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
+import { BuyDESOComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
+import { BuyDESOUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-form/trade-creator-form.component";
 import { TradeCreatorPreviewComponent } from "./trade-creator-page/trade-creator-preview/trade-creator-preview.component";
 import { TradeCreatorCompleteComponent } from "./trade-creator-page/trade-creator-complete/trade-creator-complete.component";
@@ -57,10 +57,10 @@ import { UpdateProfileComponent } from "./update-profile-page/update-profile/upd
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { BottomBarMobileComponent } from "./bottom-bar-mobile/bottom-bar-mobile.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
-import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
-import { TransferDeSoComponent } from "./transfer-deso/transfer-deso.component";
-import { BuyDeSoLoggedOutComponent } from "./buy-deso-page/buy-deso-logged-out/buy-deso-logged-out.component";
-import { BuyDeSoCompleteComponent } from "./buy-deso-page/buy-deso-complete/buy-deso-complete.component";
+import { TransferDESOPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
+import { TransferDESOComponent } from "./transfer-deso/transfer-deso.component";
+import { BuyDESOLoggedOutComponent } from "./buy-deso-page/buy-deso-logged-out/buy-deso-logged-out.component";
+import { BuyDESOCompleteComponent } from "./buy-deso-page/buy-deso-complete/buy-deso-complete.component";
 import { MessagesInboxComponent } from "./messages-page/messages-inbox/messages-inbox.component";
 import { MessagesThreadComponent } from "./messages-page/messages-thread/messages-thread.component";
 import { MessageComponent } from "./messages-page/message/message.component";
@@ -95,10 +95,10 @@ import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
-import { SignUpGetStarterDeSoComponent } from "./sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component";
-import { UpdateProfileGetStarterDeSoComponent } from "./update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component";
-import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { GetStarterDeSoComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
+import { SignUpGetStarterDESOComponent } from "./sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component";
+import { UpdateProfileGetStarterDESOComponent } from "./update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component";
+import { GetStarterDESOPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
+import { GetStarterDESOComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
 import { CommentModalComponent } from "./comment-modal/comment-modal.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { Toast, ToastrModule } from "ngx-toastr";
@@ -181,7 +181,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     FeedPostIconRowComponent,
     CreatorsLeaderboardPageComponent,
     CreatorsLeaderboardComponent,
-    BuyDeSoPageComponent,
+    BuyDESOPageComponent,
     WalletComponent,
     MessagesPageComponent,
     SettingsPageComponent,
@@ -194,8 +194,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
-    BuyDeSoComponent,
-    BuyDeSoUSDComponent,
+    BuyDESOComponent,
+    BuyDESOUSDComponent,
     TradeCreatorFormComponent,
     TradeCreatorPreviewComponent,
     TradeCreatorCompleteComponent,
@@ -212,10 +212,10 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     RightBarCreatorsLeaderboardComponent,
     BottomBarMobileComponent,
     LeftBarMobileComponent,
-    TransferDeSoPageComponent,
-    TransferDeSoComponent,
-    BuyDeSoLoggedOutComponent,
-    BuyDeSoCompleteComponent,
+    TransferDESOPageComponent,
+    TransferDESOComponent,
+    BuyDESOLoggedOutComponent,
+    BuyDESOCompleteComponent,
     MessagesInboxComponent,
     MessagesThreadComponent,
     MessageComponent,
@@ -240,10 +240,10 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     PageComponent,
     LandingPageComponent,
     SignUpComponent,
-    SignUpGetStarterDeSoComponent,
-    UpdateProfileGetStarterDeSoComponent,
-    GetStarterDeSoPageComponent,
-    GetStarterDeSoComponent,
+    SignUpGetStarterDESOComponent,
+    UpdateProfileGetStarterDESOComponent,
+    GetStarterDESOPageComponent,
+    GetStarterDESOComponent,
     CommentModalComponent,
     WalletActionsDropdownComponent,
     PickACoinPageComponent,

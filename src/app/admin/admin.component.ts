@@ -11,7 +11,7 @@ class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
-  static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
+  static SEND_DESO_MIN = `You must send a non-zero amount of DESO`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
 }
 
@@ -24,7 +24,7 @@ class Messages {
 export class AdminComponent implements OnInit {
   globalVars: GlobalVarsService;
   adminPosts = [];
-  adminPostsByDeSo = [];
+  adminPostsByDESO = [];
   activePosts = [];
   activeTab: string;
   activePostTab: string;
@@ -32,8 +32,8 @@ export class AdminComponent implements OnInit {
   loadingMorePosts = false;
   loadingMempoolStats = true;
   loadingGlobalParams = true;
-  loadingPostsByDeSo = false;
-  searchingForPostsByDeSo = false;
+  loadingPostsByDESO = false;
+  searchingForPostsByDESO = false;
   @Input() isMobile = false;
 
   blacklistPubKeyOrUsername = "";
@@ -58,8 +58,8 @@ export class AdminComponent implements OnInit {
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
-  submittingUSDToDeSoReserveExchangeRateUpdate = false;
-  submittingBuyDeSoFeeRate = false;
+  submittingUSDToDESOReserveExchangeRateUpdate = false;
+  submittingBuyDESOFeeRate = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -70,8 +70,8 @@ export class AdminComponent implements OnInit {
   mempoolSummaryStats: any = {};
   mempoolTxnCount = 0;
   bitcoinExchangeRate: number;
-  usdToDeSoReserveExchangeRate: number;
-  buyDeSoFeeRate: number;
+  usdToDESOReserveExchangeRate: number;
+  buyDESOFeeRate: number;
   updatingBitcoinExchangeRate = false;
   updatingGlobalParams = false;
   updatingUSDToBitcoin = false;
@@ -79,7 +79,7 @@ export class AdminComponent implements OnInit {
   updatingMinimumNetworkFee = false;
   updatingMaxCopiesPerNFT = false;
   updatingCreateNFTFeeNanos = false;
-  feeRateDeSoPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
+  feeRateDESOPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
   bitcoinBlockHashOrHeight = "";
   evictBitcoinTxnHashes = "";
   usernameToVerify = "";
@@ -107,7 +107,7 @@ export class AdminComponent implements OnInit {
   adminTabs = ["Posts", "Profiles", "NFTs", "Tutorial", "Network", "Mempool", "Wyre", "Jumio", "Referral Program"];
 
   POSTS_TAB = "Posts";
-  POSTS_BY_DESO_TAB = "Posts By DeSo";
+  POSTS_BY_DESO_TAB = "Posts By DESO";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_DESO_TAB];
 
   // Fields for SwapIdentity
@@ -124,7 +124,7 @@ export class AdminComponent implements OnInit {
   searchedForPubKey = false;
 
   // These are the options used to populate the dropdown for selecting a time window over which we want to fetch
-  // posts ordered by DeSo.
+  // posts ordered by DESO.
   timeWindowOptions = {
     "15m": 15,
     "30m": 30,
@@ -167,16 +167,16 @@ export class AdminComponent implements OnInit {
     this.loadingPosts = true;
     this.activePostTab = this.POSTS_TAB;
     this._loadPosts();
-    this._loadPostsByDeSo();
+    this._loadPostsByDESO();
 
     // Get the latest mempool stats.
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
 
-    // Get current fee percentage and reserve USD to DeSo exchange price.
-    this._loadBuyDeSoFeeRate();
-    this._loadUSDToDeSoReserveExchangeRate();
+    O
+    this._loadBuyDESOFeeRate();
+    this._loadUSDToDESOReserveExchangeRate();
 
     this.titleService.setTitle("Admin - DeSo");
   }
@@ -213,19 +213,19 @@ export class AdminComponent implements OnInit {
   _postTabClicked(postTabName: string) {
     this.activePostTab = postTabName;
     if (postTabName === this.POSTS_BY_DESO_TAB) {
-      this.activePosts = this.adminPostsByDeSo;
+      this.activePosts = this.adminPostsByDESO;
     } else {
       this.activePosts = this.adminPosts;
     }
   }
 
-  _searchPostsByDeSo() {
-    this.searchingForPostsByDeSo = true;
-    this._loadPostsByDeSo();
+  _searchPostsByDESO() {
+    this.searchingForPostsByDESO = true;
+    this._loadPostsByDESO();
   }
 
-  _loadPostsByDeSo() {
-    this.loadingPostsByDeSo = true;
+  _loadPostsByDESO() {
+    this.loadingPostsByDESO = true;
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
@@ -254,9 +254,9 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.adminPostsByDeSo = res.PostsFound;
+          this.adminPostsByDESO = res.PostsFound;
           if (this.activePostTab === this.POSTS_BY_DESO_TAB) {
-            this.activePosts = this.adminPostsByDeSo;
+            this.activePosts = this.adminPostsByDESO;
           }
         },
         (err) => {
@@ -265,8 +265,8 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        this.loadingPostsByDeSo = false;
-        this.searchingForPostsByDeSo = false;
+        this.loadingPostsByDESO = false;
+        this.searchingForPostsByDESO = false;
       });
   }
 
@@ -438,16 +438,16 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  _loadBuyDeSoFeeRate(): void {
-    this.backendApi.GetBuyDeSoFeeBasisPoints(this.globalVars.localNode).subscribe(
-      (res) => (this.buyDeSoFeeRate = res.BuyDeSoFeeBasisPoints / 100),
+  _loadBuyDESOFeeRate(): void {
+    this.backendApi.GetBuyDESOFeeBasisPoints(this.globalVars.localNode).subscribe(
+      (res) => (this.buyDESOFeeRate = res.BuyDESOFeeBasisPoints / 100),
       (err) => console.log(err)
     );
   }
 
-  _loadUSDToDeSoReserveExchangeRate(): void {
-    this.backendApi.GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode).subscribe(
-      (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
+  _loadUSDToDESOReserveExchangeRate(): void {
+    this.backendApi.GetUSDCentsToDESOReserveExchangeRate(this.globalVars.localNode).subscribe(
+      (res) => (this.usdToDESOReserveExchangeRate = res.USDCentsPerDESO / 100),
       (err) => console.log(err)
     );
   }
@@ -723,7 +723,7 @@ export class AdminComponent implements OnInit {
       } else if (rawError.includes("RuleErrorTxnMustHaveAtLeastOneInput")) {
         return Messages.SEND_DESO_MIN;
       } else if (
-        (rawError.includes("SendDeSo: Problem") && rawError.includes("Invalid input format")) ||
+        (rawError.includes("SendDESO: Problem") && rawError.includes("Invalid input format")) ||
         rawError.includes("Checksum does not match")
       ) {
         return Messages.INVALID_PUBLIC_KEY;
@@ -764,11 +764,11 @@ export class AdminComponent implements OnInit {
     this.updateGlobalParams(-1, -1, -1, -1, this.updateGlobalParamsValues.CreateNFTFeeNanos);
   }
 
-  updateUSDToDeSoReserveExchangeRate(): void {
+  updateUSDToDESOReserveExchangeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the reserve exchange rate of USD to DeSo to be $${this.usdToDeSoReserveExchangeRate}`,
+      html: `You are about to update the reserve exchange rate of USD to DeSo to be $${this.usdToDESOReserveExchangeRate}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -778,34 +778,34 @@ export class AdminComponent implements OnInit {
       reverseButtons: true,
     }).then((res) => {
       if (res.isConfirmed) {
-        this.submittingUSDToDeSoReserveExchangeRateUpdate = true;
+        this.submittingUSDToDESOReserveExchangeRateUpdate = true;
         this.backendApi
-          .SetUSDCentsToDeSoReserveExchangeRate(
+          .SetUSDCentsToDESOReserveExchangeRate(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.usdToDeSoReserveExchangeRate * 100
+            this.usdToDESOReserveExchangeRate * 100
           )
           .subscribe(
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSo / 100)
+                sprintf("Successfully updated the reserve exchange to $%d/DESO", res.USDCentsPerDESO / 100)
               );
             },
             (err: any) => {
               this.globalVars._alertError(this.extractError(err));
             }
           )
-          .add(() => (this.submittingUSDToDeSoReserveExchangeRateUpdate = false));
+          .add(() => (this.submittingUSDToDESOReserveExchangeRateUpdate = false));
       }
     });
   }
 
-  updateBuyDeSoFeeRate(): void {
+  updateBuyDESOFeeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the Buy DeSo Fee to be ${this.buyDeSoFeeRate}%`,
+      html: `You are about to update the Buy DESO Fee to be ${this.buyDESOFeeRate}%`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -815,25 +815,25 @@ export class AdminComponent implements OnInit {
       reverseButtons: true,
     }).then((res) => {
       if (res.isConfirmed) {
-        this.submittingBuyDeSoFeeRate = true;
+        this.submittingBuyDESOFeeRate = true;
         this.backendApi
-          .SetBuyDeSoFeeBasisPoints(
+          .SetBuyDESOFeeBasisPoints(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.buyDeSoFeeRate * 100
+            this.buyDESOFeeRate * 100
           )
           .subscribe(
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSo / 100)
+                sprintf("Successfully updated the Buy DESO Fee to %d%", res.USDCentsPerDESO / 100)
               );
             },
             (err: any) => {
               this.globalVars._alertError(this.extractError(err));
             }
           )
-          .add(() => (this.submittingBuyDeSoFeeRate = false));
+          .add(() => (this.submittingBuyDESOFeeRate = false));
       }
     });
   }
@@ -881,7 +881,7 @@ export class AdminComponent implements OnInit {
                 ? minimumNetworkFeeNanosPerKB
                 : this.globalParams.MinimumNetworkFeeNanosPerKB >= 0
                 ? this.globalParams.MinimumNetworkFeeNanosPerKB
-                : Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+                : Math.floor(parseFloat(this.feeRateDESOPerKB) * 1e9)
             )
             .subscribe(
               (res: any) => {
@@ -894,13 +894,13 @@ export class AdminComponent implements OnInit {
                 if (minimumNetworkFeeNanosPerKB >= 0) {
                   this.globalParams.MinimumNetworkFeeNanosPerKB = minimumNetworkFeeNanosPerKB;
                 }
-                const totalFeeDeSo = res.FeeNanos / 1e9;
+                const totalFeeDESO = res.FeeNanos / 1e9;
 
                 this.globalVars._alertSuccess(
                   sprintf(
                     "Successfully updated global params rate. TxID: %s for a fee of %d DeSo",
                     res.TransactionIDBase58Check,
-                    totalFeeDeSo
+                    totalFeeDESO
                   )
                 );
               },
@@ -1102,7 +1102,7 @@ export class AdminComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.swapIdentityFromUsernameOrPublicKey,
         this.swapIdentityToUsernameOrPublicKey,
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
+        Math.floor(parseFloat(this.feeRateDESOPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
       )
       .subscribe(
         (res: any) => {
@@ -1185,7 +1185,7 @@ export class AdminComponent implements OnInit {
             stakeMultipleBasisPoints /*NewStakeMultipleBasisPoints*/,
             false /*IsHidden*/,
             // End params
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+            this.globalVars.feeRateDESOPerKB * 1e9 /*MinFeeRateNanosPerKB*/
           )
           .subscribe(
             () => {

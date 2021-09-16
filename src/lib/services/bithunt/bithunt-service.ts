@@ -9,7 +9,7 @@ import * as _ from "lodash";
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
 }
-
+// TODO: revert these
 class BithuntProject {
   bio: string;
   deso_public_key: string;
@@ -46,7 +46,7 @@ export class BithuntService {
         return projects
           .filter((project: CommunityProject) => project.Profile)
           .sort((a, b) => {
-            return b.Profile.CoinEntry.DeSoLockedNanos - a.Profile.CoinEntry.DeSoLockedNanos;
+            return b.Profile.CoinEntry.DESOLockedNanos - a.Profile.CoinEntry.DESOLockedNanos;
           });
       })
     );
