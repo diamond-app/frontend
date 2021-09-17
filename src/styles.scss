@@ -1137,11 +1137,11 @@ input.bs-timepicker-field {
   }
 }
 
-/* reclout hover animation */
+/* repost hover animation */
 .feed-post-icon-row__icon.icon-repost {
   &:hover {
-    background-color: $reclout-hover;
-    color: $reclout-color;
+    background-color: $repost-hover;
+    color: $repost-color;
   }
 }
 /* like button hover animation */
@@ -1787,7 +1787,7 @@ input.bs-timepicker-field {
 
 
 //
-// Simple profile card (for likes, reclouts, diamonds modal)
+// Simple profile card (for likes, reposts, diamonds modal)
 //
 
 .simple-profile-card__avatar {
@@ -2300,7 +2300,7 @@ input {
   border-top-right-radius: calc(.3rem - 1px);
 }
 
-.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);

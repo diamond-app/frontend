@@ -188,7 +188,7 @@ export class AdminComponent implements OnInit {
       .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, "", "get_info")
       .subscribe(
         (res: any) => {
-          if (res == null || res.DeSoStatus == null) {
+          if (res == null || res.Status == null) {
             return;
           }
 
@@ -440,14 +440,20 @@ export class AdminComponent implements OnInit {
   _loadBuyDESOFeeRate(): void {
     this.backendApi.GetBuyDESOFeeBasisPoints(this.globalVars.localNode).subscribe(
       (res) => (this.buyDESOFeeRate = res.BuyDESOFeeBasisPoints / 100),
-      (err) => console.log(err)
+      (err) => {
+        console.log(err);
+        this.buyDESOFeeRate = 0;
+      }
     );
   }
 
   _loadUSDToDESOReserveExchangeRate(): void {
     this.backendApi.GetUSDCentsToDESOReserveExchangeRate(this.globalVars.localNode).subscribe(
       (res) => (this.usdToDESOReserveExchangeRate = res.USDCentsPerDESO / 100),
-      (err) => console.log(err)
+      (err) => {
+        console.log(err);
+        this.usdToDESOReserveExchangeRate = 0;
+      }
     );
   }
 

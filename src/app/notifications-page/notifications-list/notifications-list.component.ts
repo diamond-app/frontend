@@ -235,7 +235,7 @@ export class NotificationsListComponent {
           }
 
           return result;
-        } else if (currentPkObj.Metadata === "RecloutedPublicKeyBase58Check") {
+        } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;

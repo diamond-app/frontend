@@ -766,17 +766,17 @@ export class GlobalVarsService {
     return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
   }
 
-  isVanillaReclout(post: PostEntryResponse): boolean {
-    return !post.Body && !post.ImageURLs?.length && !!post.RecloutedPostEntryResponse;
+  isVanillaRepost(post: PostEntryResponse): boolean {
+    return !post.Body && !post.ImageURLs?.length && !!post.RepostedPostEntryResponse;
   }
 
   getPostContentHashHex(post: PostEntryResponse): string {
-    return this.isVanillaReclout(post) ? post.RecloutedPostEntryResponse.PostHashHex : post.PostHashHex;
+    return this.isVanillaRepost(post) ? post.RepostedPostEntryResponse.PostHashHex : post.PostHashHex;
   }
 
   incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
-    if (this.isVanillaReclout(post)) {
-      post.RecloutedPostEntryResponse.CommentCount += 1;
+    if (this.isVanillaRepost(post)) {
+      post.RepostedPostEntryResponse.CommentCount += 1;
     } else {
       post.CommentCount += 1;
     }
@@ -888,6 +888,8 @@ export class GlobalVarsService {
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
       identityServiceURL = "https://identity.bitclout.com";
+      // TODO: uncomment the line below and delete the line above after all DNS changes are complete.
+      // identityServiceURL = "https://identity.deso.org";
       this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
     }
     this.identityService.identityServiceURL = identityServiceURL;

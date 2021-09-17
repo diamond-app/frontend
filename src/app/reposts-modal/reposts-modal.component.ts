@@ -6,10 +6,10 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
-  selector: "reclouts-modal",
-  templateUrl: "./reclouts-modal.component.html",
+  selector: "reposts-modal",
+  templateUrl: "./reposts-modal.component.html",
 })
-export class RecloutsModalComponent implements OnInit {
+export class RepostsModalComponent implements OnInit {
   @Input() postHashHex: string;
   diamonds = [];
   loading = false;
@@ -37,7 +37,7 @@ export class RecloutsModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetRecloutsForPost(
+      .GetRepostsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -47,20 +47,20 @@ export class RecloutsModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let recloutersPage = res.Reclouters;
+          let repostersPage = res.Reposters;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += recloutersPage.length;
+          this.pageOffset += repostersPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (recloutersPage.length < this.pageSize) {
+          if (repostersPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return recloutersPage;
+          return repostersPage;
         },
         (err) => {
           this.errorLoading = true;

@@ -106,8 +106,8 @@ import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondsModalComponent } from "./diamonds-modal/diamonds-modal.component";
-import { RecloutsModalComponent } from "./reclouts-modal/reclouts-modal.component";
-import { QuoteRecloutsModalComponent } from "./quote-reclouts-modal/quote-reclouts-modal.component";
+import { RepostsModalComponent } from "./reposts-modal/reposts-modal.component";
+import { QuoteRepostsModalComponent } from "./quote-reposts-modal/quote-reposts-modal.component";
 import { LikesModalComponent } from "./likes-modal/likes-modal.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
 import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
@@ -249,8 +249,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     PickACoinPageComponent,
     CreatorDiamondsComponent,
     DiamondsModalComponent,
-    RecloutsModalComponent,
-    QuoteRecloutsModalComponent,
+    RepostsModalComponent,
+    QuoteRepostsModalComponent,
     LikesModalComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,

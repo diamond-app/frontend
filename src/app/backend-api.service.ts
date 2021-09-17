@@ -50,8 +50,8 @@ export class BackendRoutes {
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
   static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
-  static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
-  static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
+  static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
+  static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathVerifyEmail = "/api/v0/verify-email";
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
@@ -215,23 +215,23 @@ export class PostEntryResponse {
   PosterPublicKeyBase58Check: string;
   ParentStakeID: string;
   Body: string;
-  RecloutedPostHashHex: string;
+  RepostedPostHashHex: string;
   ImageURLs: string[];
-  RecloutPost: PostEntryResponse;
+  RepostPost: PostEntryResponse;
   CreatorBasisPoints: number;
   StakeMultipleBasisPoints: number;
   TimestampNanos: number;
   IsHidden: boolean;
   ConfirmationBlockHeight: number;
-  // PostEntryResponse of the post that this post reclouts.
-  RecloutedPostEntryResponse: PostEntryResponse;
+  // PostEntryResponse of the post that this post reposts.
+  RepostedPostEntryResponse: PostEntryResponse;
   // The profile associated with this post.
   ProfileEntryResponse: ProfileEntryResponse;
   // The comments associated with this post.
   Comments: PostEntryResponse[];
   LikeCount: number;
-  RecloutCount: number;
-  QuoteRecloutCount: number;
+  RepostCount: number;
+  QuoteRepostCount: number;
   DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
@@ -261,11 +261,11 @@ export class PostEntryReaderState {
   // This is true if the reader has liked the associated post.
   LikedByReader?: boolean;
 
-  // This is true if the reader has reclouted the associated post.
-  RecloutedByReader?: boolean;
+  // This is true if the reader has reposted the associated post.
+  RepostedByReader?: boolean;
 
-  // This is the post hash hex of the reclout
-  RecloutPostHashHex?: string;
+  // This is the post hash hex of the repost
+  RepostPostHashHex?: string;
 
   // Level of diamond the user gave this post.
   DiamondLevelBestowed?: number;
@@ -975,7 +975,7 @@ export class BackendApiService {
     ParentStakeID: string,
     Title: string,
     BodyObj: any,
-    RecloutedPostHashHex: string,
+    RepostedPostHashHex: string,
     PostExtraData: any,
     Sub: string,
     IsHidden: boolean,
@@ -988,7 +988,7 @@ export class BackendApiService {
       ParentStakeID,
       Title,
       BodyObj,
-      RecloutedPostHashHex,
+      RepostedPostHashHex,
       PostExtraData,
       Sub,
       IsHidden,
@@ -1373,14 +1373,14 @@ export class BackendApiService {
     });
   }
 
-  GetRecloutsForPost(
+  GetRepostsForPost(
     endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetRepostsForPost, {
       PostHashHex,
       Offset,
       Limit,
@@ -1388,14 +1388,14 @@ export class BackendApiService {
     });
   }
 
-  GetQuoteRecloutsForPost(
+  GetQuoteRepostsForPost(
     endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRepostsForPost, {
       PostHashHex,
       Offset,
       Limit,

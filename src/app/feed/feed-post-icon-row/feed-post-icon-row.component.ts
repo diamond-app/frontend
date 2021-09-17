@@ -23,14 +23,14 @@ export class FeedPostIconRowComponent {
   @Input() postContent: PostEntryResponse;
   @Input() parentPost: PostEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
-  @Input() afterRecloutCreatedCallback: any = null;
+  @Input() afterRepostCreatedCallback: any = null;
   @Input() hideNumbers: boolean = false;
   // Will need additional inputs if we walk through actions other than diamonds.
   @Input() inTutorial: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
 
-  sendingRecloutRequest = false;
+  sendingRepostRequest = false;
 
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 4;
@@ -188,11 +188,11 @@ export class FeedPostIconRowComponent {
     });
   }
 
-  userHasReclouted(): boolean {
-    return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RecloutedByReader;
+  userHasReposted(): boolean {
+    return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RepostedByReader;
   }
 
-  _reclout(event: any) {
+  _repost(event: any) {
     if (this.inTutorial) {
       return;
     }
@@ -201,9 +201,9 @@ export class FeedPostIconRowComponent {
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("reclout");
+      return this._preventNonLoggedInUserActions("repost");
     } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : reclout : profile");
+      this.globalVars.logEvent("alert : repost : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
@@ -211,13 +211,13 @@ export class FeedPostIconRowComponent {
       this.postContent.PostEntryReaderState = {};
     }
 
-    this.sendingRecloutRequest = true;
+    this.sendingRepostRequest = true;
     this._detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RecloutPostHashHex || "" /*PostHashHexToModify*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {},
@@ -230,28 +230,28 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : reclout");
-          // Only set the RecloutPostHashHex if this is the first time a user is reclouting a post.
-          if (!this.postContent.PostEntryReaderState.RecloutPostHashHex) {
-            this.postContent.PostEntryReaderState.RecloutPostHashHex = response.PostHashHex;
+          this.globalVars.logEvent("post : repost");
+          // Only set the RepostPostHashHex if this is the first time a user is reposting a post.
+          if (!this.postContent.PostEntryReaderState.RepostPostHashHex) {
+            this.postContent.PostEntryReaderState.RepostPostHashHex = response.PostHashHex;
           }
-          this.postContent.RecloutCount += 1;
-          this.postContent.PostEntryReaderState.RecloutedByReader = true;
-          this.sendingRecloutRequest = false;
+          this.postContent.RepostCount += 1;
+          this.postContent.PostEntryReaderState.RepostedByReader = true;
+          this.sendingRepostRequest = false;
           this._detectChanges();
         },
         (err) => {
           console.error(err);
-          this.sendingRecloutRequest = false;
+          this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : reclout : error", { parsedError });
+          this.globalVars.logEvent("post : repost : error", { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
       );
   }
 
-  _undoReclout(event: any) {
+  _undoRepost(event: any) {
     if (this.inTutorial) {
       return;
     }
@@ -260,16 +260,16 @@ export class FeedPostIconRowComponent {
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("undo reclout");
+      return this._preventNonLoggedInUserActions("undo repost");
     }
-    this.sendingRecloutRequest = true;
+    this.sendingRepostRequest = true;
 
     this._detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RecloutPostHashHex || "" /*PostHashHexToModify*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {} /*BodyObj*/,
@@ -282,17 +282,17 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : unreclout");
-          this.postContent.RecloutCount--;
-          this.postContent.PostEntryReaderState.RecloutedByReader = false;
-          this.sendingRecloutRequest = false;
+          this.globalVars.logEvent("post : unrepost");
+          this.postContent.RepostCount--;
+          this.postContent.PostEntryReaderState.RepostedByReader = false;
+          this.sendingRepostRequest = false;
           this._detectChanges();
         },
         (err) => {
           console.error(err);
-          this.sendingRecloutRequest = false;
+          this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : unreclout : error", { parsedError });
+          this.globalVars.logEvent("post : unrepost : error", { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
@@ -365,9 +365,9 @@ export class FeedPostIconRowComponent {
       SharedDialogs.showCreateProfileToPostDialog(this.router);
     } else {
       const initialState = {
-        // If we are quoting a post, make sure we pass the content so we don't reclout a reclout.
+        // If we are quoting a post, make sure we pass the content so we don't repost a repost.
         parentPost: this.postContent,
-        afterCommentCreatedCallback: isQuote ? this.afterRecloutCreatedCallback : this.afterCommentCreatedCallback,
+        afterCommentCreatedCallback: isQuote ? this.afterRepostCreatedCallback : this.afterCommentCreatedCallback,
         isQuote,
       };
 

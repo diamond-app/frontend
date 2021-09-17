@@ -6,10 +6,10 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
-  selector: "quote-reclouts-modal",
-  templateUrl: "./quote-reclouts-modal.component.html",
+  selector: "quote-reposts-modal",
+  templateUrl: "./quote-reposts-modal.component.html",
 })
-export class QuoteRecloutsModalComponent implements OnInit {
+export class QuoteRepostsModalComponent implements OnInit {
   @Input() postHashHex: string;
   diamonds = [];
   loading = false;
@@ -37,7 +37,7 @@ export class QuoteRecloutsModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetQuoteRecloutsForPost(
+      .GetQuoteRepostsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -47,20 +47,20 @@ export class QuoteRecloutsModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let quoteRecloutsPage = res.QuoteReclouts;
+          let quoteRepostsPage = res.QuoteReposts;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += quoteRecloutsPage.length;
+          this.pageOffset += quoteRepostsPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (quoteRecloutsPage.length < this.pageSize) {
+          if (quoteRepostsPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return quoteRecloutsPage;
+          return quoteRepostsPage;
         },
         (err) => {
           this.errorLoading = true;
