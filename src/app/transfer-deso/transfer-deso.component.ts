@@ -11,11 +11,11 @@ class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
-  static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
+  static INSUFFICIENT_BALANCE = `You don't have enough DESO to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DESO`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
-  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
-  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
+  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DESO for a total of %s DESO to public key %s";
+  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DESO for a total of %s DESO to username %s";
   static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
 }
 
@@ -94,7 +94,7 @@ export class TransferDESOComponent implements OnInit {
 
   _clickSendDESO() {
     if (this.globalVars.loggedInUser == null) {
-      this.globalVars._alertError("User must be logged in in order to send DeSo");
+      this.globalVars._alertError("User must be logged in in order to send DESO");
       return;
     }
 

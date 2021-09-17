@@ -9,13 +9,12 @@ import * as _ from "lodash";
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
 }
-// TODO: revert these
 class BithuntProject {
   bio: string;
-  deso_public_key: string;
-  deso_url: string;
-  deso_username: string;
-  deso_verified: boolean;
+  bitclout_public_key: string;
+  bitclout_url: string;
+  bitclout_username: string;
+  bitclout_verified: boolean;
   created_at: string;
   id: number;
   name: string;
@@ -31,7 +30,7 @@ export class CommunityProject {
 const bithuntURL = "https://bithunt.bitclout.com/public/projects";
 
 export class BithuntService {
-  static bithuntPageSize = 25
+  static bithuntPageSize = 25;
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
@@ -76,7 +75,7 @@ export class BithuntService {
     return this.backendApi
       .GetUsersStateless(
         this.globalVars.localNode,
-        projects.projects.map((result) => result.deso_public_key),
+        projects.projects.map((result) => result.bitclout_public_key),
         true
       )
       .pipe(

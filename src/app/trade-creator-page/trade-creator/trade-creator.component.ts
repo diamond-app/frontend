@@ -1,4 +1,4 @@
-// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy DeSo or
+// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy DESO or
 // creator coin
 
 // TODO: creator coin buys: need warning about potential slippage

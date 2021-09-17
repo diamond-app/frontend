@@ -73,21 +73,21 @@ export class BuyDESOComponent implements OnInit {
 
   stepOneTooltip() {
     return (
-      "DeSo can be purchased in just a few minutes using Bitcoin through a completely decentralized process.\n\n" +
+      "DESO can be purchased in just a few minutes using Bitcoin through a completely decentralized process.\n\n" +
       "To get started, simply send Bitcoin to your deposit address below. Note that deposits should show up " +
       "within thirty seconds or so but sometimes, for various technical reasons, it can take up to an hour " +
       "(though this should be extremely rare).\n\n" +
-      "Once you've deposited Bitcoin, you can swap it for DeSo in step two below. If it's your first " +
+      "Once you've deposited Bitcoin, you can swap it for DESO in step two below. If it's your first " +
       "time doing this, we recommend starting with a small test amount of Bitcoin to get comfortable with the flow.\n\n" +
       "Note that the DeSo blockchain currently only supports conversion of Bitcoin into DESO, not the other way " +
       "around. This is a technical limitation due to the fact that the Bitcoin blockchain does not support " +
-      'the features required for a fully-decentralized "atomic swap" in the reverse direction. This being said, DeSo can be ' +
+      'the features required for a fully-decentralized "atomic swap" in the reverse direction. This being said, DESO can be ' +
       "sent to anybody instantly, and crypto exchanges can eventually list it for trading in the same way they list Bitcoin."
     );
   }
 
   depositBitcoinTooltip() {
-    return "Send Bitcoin to this address so that you can swap it for DeSo in step two below.";
+    return "Send Bitcoin to this address so that you can swap it for DESO in step two below.";
   }
 
   minDepositTooltip() {
@@ -101,8 +101,8 @@ export class BuyDESOComponent implements OnInit {
   withdrawBitcoinTooltip() {
     return (
       "If you send too much Bitcoin to your deposit address and need to get it back, you " +
-      "can access the Bitcoin in this address by importing your DeSo seed phrase into most standard Bitcoin wallets " +
-      "like Electrum and choosing m/44'/0'/0'/0/0 as your derivation path. This works because your DeSo seed phrase is " +
+      "can access the Bitcoin in this address by importing your DESO seed phrase into most standard Bitcoin wallets " +
+      "like Electrum and choosing m/44'/0'/0'/0/0 as your derivation path. This works because your DESO seed phrase is " +
       "what's used to generate your Bitcoin deposit address."
     );
   }
@@ -116,7 +116,7 @@ export class BuyDESOComponent implements OnInit {
 
   bitcoinNetworkFeeTooltip() {
     return (
-      "The process of exchanging Bitcoin for DeSo requires posting a transaction to " +
+      "The process of exchanging Bitcoin for DESO requires posting a transaction to " +
       "the Bitcoin blockchain. For this reason, we must add a network fee to " +
       "incentivize miners to process the transaction."
     );
@@ -325,7 +325,7 @@ export class BuyDESOComponent implements OnInit {
     this.appData.logEvent("bitpop : buy : read-timeout");
     comp.waitingOnTxnConfirmation = false;
     let errString =
-      "Your DeSo purchase was successfully broadcast. Due to high load" +
+      "Your DESO purchase was successfully broadcast. Due to high load" +
       " your balance may take up to half an hour to show up in your wallet. Please " +
       " check back and hit the 'help' button if you have any problems.";
     comp.appData._alertSuccess(errString);
@@ -364,7 +364,7 @@ export class BuyDESOComponent implements OnInit {
         }
 
         // The fee should have been updated by the time we get here so
-        // just update the Bitcoin and DeSo amounts.
+        // just update the Bitcoin and DESO amounts.
         this.buyDESOFields.bitcoinToExchange = (res.BurnAmountSatoshis / 1e8).toFixed(8);
         this._updateBitcoinToExchange(this.buyDESOFields.bitcoinToExchange);
       },

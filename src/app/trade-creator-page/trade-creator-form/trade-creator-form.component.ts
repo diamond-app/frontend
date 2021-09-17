@@ -27,7 +27,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   // so that we don't accidentally underestimate (causing an error)
   FEE_LEEWAY_MULTIPLE = 1.1;
 
-  // Leave some DeSo in the user's account so they can do normal site activity (like, post, etc)
+  // Leave some DESO in the user's account so they can do normal site activity (like, post, etc)
   MIN_DESO_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
@@ -98,7 +98,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
 
   _setAssetToSellAmount() {
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // convert user-specified amount to DeSo
+      // convert user-specified amount to DESO
       // note: convertAmount takes nanos and returns nanos
       this.creatorCoinTrade.desoToSell = this.creatorCoinTrade.convertAmount(
         this.creatorCoinTrade.amount.value /* input amount */,
@@ -279,7 +279,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }
 
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // if buying creator coin, leave some DeSo left over so that people can continue
+      // if buying creator coin, leave some DESO left over so that people can continue
       // to use the site (like, post, sell creator coins, etc) (i.e. don't drain the full balance)
       balance -= this.MIN_DESO_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS / 1e9;
     }

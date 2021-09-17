@@ -84,14 +84,14 @@ export class CreatorCoinTrade {
     this.isBuyingCreatorCoin = this.tradeType === CreatorCoinTrade.BUY_VERB;
   }
 
-  // returns a map like {DeSo: 'DeSo', USD: 'USD', Creator Coin: 'balajis coin'}
+  // returns a map like {DESO: 'DESO', USD: 'USD', Creator Coin: 'balajis coin'}
   currencyConstantsToHumanLabel() {
     let map = {};
     if (this.isBuyingCreatorCoin) {
-      // If buying creator coins, you can specify DeSo and USD
+      // If buying creator coins, you can specify DESO and USD
       //
       // You can't specify an amount in creator coin right now. The API endpoint to buy/sell
-      // creator coin takes an amount of DESO to sell. We don't have a DeSo <=> creator
+      // creator coin takes an amount of DESO to sell. We don't have a DESO <=> creator
       // coin exchange rate, so we have no way to convert a user-specified amount of creator coin
       // into an amount of DESO
       //
@@ -101,7 +101,7 @@ export class CreatorCoinTrade {
       map[CreatorCoinTrade.USD_CURRENCY_STRING] = CreatorCoinTrade.USD_CURRENCY_STRING;
     } else {
       // If selling creator coins, you can only specify an amount in creator coin, because
-      // we don't have a DeSo <=> creator coin exchange rate
+      // we don't have a DESO <=> creator coin exchange rate
       //
       // USD is the same: we don't have a USD <=> creator coin exchange rate, so we can't convert
       // a USD amount into a creator coin amount
@@ -308,13 +308,13 @@ export class CreatorCoinTrade {
     return desoPerCoin * this.usdPriceOfDESO();
   }
 
-  // USD per DeSo
-  // 1 DeSo == how much USD?
+  // USD per DESO
+  // 1 DESO == how much USD?
   usdPriceOfDESO() {
     return 1e9 / this.globalVars.nanosPerUSDExchangeRate;
   }
 
-  // DeSo per creator coin
+  // DESO per creator coin
   desoPriceOfCreatorCoin() {
     if (this.isBuyingOwnCoin()) {
       return (

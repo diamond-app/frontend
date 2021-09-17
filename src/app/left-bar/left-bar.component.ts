@@ -64,7 +64,7 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
-    // If the user hes less than 1/100th of a DeSo they need more DeSo for the tutorial.
+    // If the user hes less than 1/100th of a DESO they need more DESO for the tutorial.
     if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),

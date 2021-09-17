@@ -10,7 +10,7 @@ import { Title } from "@angular/platform-browser";
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
-  static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
+  static INSUFFICIENT_BALANCE = `You don't have enough DESO to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DESO`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
 }
@@ -174,7 +174,6 @@ export class AdminComponent implements OnInit {
     this._loadNextBlockStats();
     this._loadGlobalParams();
 
-    O
     this._loadBuyDESOFeeRate();
     this._loadUSDToDESOReserveExchangeRate();
 
@@ -768,7 +767,7 @@ export class AdminComponent implements OnInit {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the reserve exchange rate of USD to DeSo to be $${this.usdToDESOReserveExchangeRate}`,
+      html: `You are about to update the reserve exchange rate of USD to DESO to be $${this.usdToDESOReserveExchangeRate}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -898,7 +897,7 @@ export class AdminComponent implements OnInit {
 
                 this.globalVars._alertSuccess(
                   sprintf(
-                    "Successfully updated global params rate. TxID: %s for a fee of %d DeSo",
+                    "Successfully updated global params rate. TxID: %s for a fee of %d DESO",
                     res.TransactionIDBase58Check,
                     totalFeeDESO
                   )
