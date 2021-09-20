@@ -28,9 +28,6 @@ class Messages {
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
 
-  showHowItWorks = false;
-  showAreYouReady = false;
-  showPendingTransactions = true;
   waitingOnTxnConfirmation = false;
   queryingBitcoinAPI = false;
   wyreService: WyreService;
@@ -40,11 +37,13 @@ export class BuyDeSoComponent implements OnInit {
 
   static BUY_WITH_USD = "Buy with USD";
   static BUY_WITH_BTC = "Buy with Bitcoin";
+  static BUY_WITH_ETH = "Buy with ETH";
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_USD, BuyDeSoComponent.BUY_WITH_BTC];
-  activeTab = BuyDeSoComponent.BUY_WITH_USD;
+  buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
+  activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+
   constructor(
-    private ref: ChangeDetectorRef,
+    public ref: ChangeDetectorRef,
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private identityService: IdentityService,
@@ -73,21 +72,17 @@ export class BuyDeSoComponent implements OnInit {
 
   stepOneTooltip() {
     return (
-      "DeSo can be purchased in just a few minutes using Bitcoin through a completely decentralized process.\n\n" +
+      "DESO can be purchased in just a few minutes using Bitcoin.\n\n" +
       "To get started, simply send Bitcoin to your deposit address below. Note that deposits should show up " +
       "within thirty seconds or so but sometimes, for various technical reasons, it can take up to an hour " +
       "(though this should be extremely rare).\n\n" +
-      "Once you've deposited Bitcoin, you can swap it for DeSo in step two below. If it's your first " +
-      "time doing this, we recommend starting with a small test amount of Bitcoin to get comfortable with the flow.\n\n" +
-      "Note that the DeSo blockchain currently only supports conversion of Bitcoin into DeSo, not the other way " +
-      "around. This is a technical limitation due to the fact that the Bitcoin blockchain does not support " +
-      'the features required for a fully-decentralized "atomic swap" in the reverse direction. This being said, DeSo can be ' +
-      "sent to anybody instantly, and crypto exchanges can eventually list it for trading in the same way they list Bitcoin."
+      "Once you've deposited Bitcoin, you can swap it for DESO in step two below. If it's your first " +
+      "time doing this, we recommend starting with a small test amount of Bitcoin to get comfortable with the flow."
     );
   }
 
   depositBitcoinTooltip() {
-    return "Send Bitcoin to this address so that you can swap it for DeSo in step two below.";
+    return "Send Bitcoin to this address so that you can swap it for DESO in step two below.";
   }
 
   minDepositTooltip() {
@@ -460,9 +455,6 @@ export class BuyDeSoComponent implements OnInit {
     // Update the Bitcoin fee.
     this._updateBitcoinFee(parseFloat(this.buyDeSoFields.bitcoinToExchange));
   }
-  _updateSatoshisPerKB() {
-    this._updateBitcoinFee(parseFloat(this.buyDeSoFields.bitcoinToExchange));
-  }
 
   _queryBitcoinAPI() {
     // If we are already querying the bitcoin API, abort mission!
@@ -494,8 +486,16 @@ export class BuyDeSoComponent implements OnInit {
 
   ngOnInit() {
     window.scroll(0, 0);
-    this.showAreYouReady =
-      this.appData != null && this.appData.loggedInUser != null && this.appData.loggedInUser.BalanceNanos === 0;
+
+    // Add extra tabs
+    if (this.globalVars.showBuyWithUSD) {
+      this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_USD);
+      this.activeTab = BuyDeSoComponent.BUY_WITH_USD;
+    }
+
+    if (this.globalVars.showBuyWithETH) {
+      this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
+    }
 
     // Query the website to get the fees.
     this.backendApi.GetBitcoinFeeRateSatoshisPerKB().subscribe(
@@ -520,9 +520,5 @@ export class BuyDeSoComponent implements OnInit {
 
   _handleTabClick(tab: string): void {
     this.activeTab = tab;
-  }
-
-  _openExchangeSignUp(): void {
-    window.open("https://exchange.blockchain.com/trade/signup");
   }
 }

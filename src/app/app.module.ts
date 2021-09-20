@@ -148,13 +148,14 @@ import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-program-mgr.component";
 import { ReferralsComponent } from "./referrals/referrals.component";
+import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import { DragDropModule } from "@angular/cdk/drag-drop";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -291,6 +292,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
+    BuyDeSoEthComponent,
   ],
   imports: [
     BrowserModule,
