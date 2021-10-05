@@ -25,6 +25,10 @@ export class MessagesFilterMenuComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  closePopUp() {
+    this.globalVars.openSettingsTray = false;
+  }
+
   updateGlobalMessagesPreferences() {
     this.messagesInbox._toggleSettingsTray(); // Close the settings tray
 
@@ -69,7 +73,7 @@ export class MessagesFilterMenuComponent implements OnInit {
     } else if (this.messageSortAlgorithm === "holders") {
       return "Largest Holders";
     } else {
-      return "Most clout";
+      return "Most deso";
     }
   }
 }

@@ -12,10 +12,25 @@ $feed-border-radius: 12px;
 // regular style toast
 @import '~ngx-toastr/toastr';
 
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./assets/fonts/Gilroy-Regular.ttf')  format('truetype');
+  font-weight: normal;
+  ascent-override: 100%;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./assets/fonts/Gilroy-SemiBold.ttf')  format('truetype');
+  font-weight: 600;
+  ascent-override: 100%;
+}
+
 // New themeing class
 .main {
-  background: var(--background) !important; // TODO: remove all !important, this is a platform to extend
-  color: var(--text) !important; // TODO: remove all !important, this is a platform to extend
+  background: var(--background);
+  color: var(--text);
+  font-family: Gilroy, Arial, sans-serif;
 }
 
 html {
@@ -27,7 +42,7 @@ html {
 }
 
 html, body {
-  font-family: 'Roboto Mono';
+  font-family: Gilroy, Arial, sans-serif;
   min-height: 100%; // allows for scrolling
 }
 
@@ -47,7 +62,7 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: 'Roboto Mono';
+  font-family: Gilroy, Arial, sans-serif;
   font-weight: normal;
 }
 
@@ -130,7 +145,7 @@ pre, code{
 //
 
 $global__top-bar__height: 60px;
-$global__top-bar__desktop-height: 80px;
+$global__top-bar__desktop-height: 20px;
 $global__nav__width: 245px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
@@ -214,11 +229,16 @@ $green-font-color: #19B028;
 .max-width-420px { max-width: 420px }
 
 // Custom font classes.
-.fc-default { color: var(--norm); }
-.fc-muted { color: var(--textalt); }
-.fc-blue { color: var(--cblue); }
+.fc-default { color: var(--text); }
+.fc-secondary { color: var(--text-secondary); }
+.fc-muted { color: var(--text-muted); }
+.fc-blue { color: var(--highlight); }
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
+.fc-success { color: var(--success); }
+.fc-error { color: var(--error); }
+.fc-landing-page { color: $landing-page-fc; }
+.fc-none { color: rgba(0, 0, 0, 0); }
 
 .font-weight-500 { font-weight: 500 }
 
@@ -233,6 +253,7 @@ $green-font-color: #19B028;
 .fs-22px { font-size: 22px; }
 .fs-20px { font-size: 20px; }
 .fs-18px { font-size: 18px; }
+.fs-17px { font-size: 17px; }
 .fs-16px { font-size: 16px; }
 .fs-15px { font-size: 15px; }
 .fs-15px-important { font-size: 15px !important; }
@@ -249,8 +270,8 @@ $green-font-color: #19B028;
 .lh-14px { line-height: 14px; }
 .lh-13px { line-height: 13px; }
 .lh-12px { line-height: 12px; }
-.roboto-regular { font-family: 'Roboto' }
-.roboto-mono { font-family: 'Roboto Mono' }
+.roboto-regular { font-family: Gilroy, Arial, sans-serif }
+.roboto-mono { font-family: Gilroy, Arial, sans-serif }
 
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
@@ -259,13 +280,24 @@ $green-font-color: #19B028;
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--border); } // mocks call this G4
-.background-color-light-grey { background-color: var(--secondary); }
-.background-color-light-grey-important { background-color: var(--secondary) !important }
+.background-color-light-grey { background-color: var(--tile-secondary-bg); }
+.background-color-light-grey-important { background-color: var(--background-secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
+.background-color-white { background-color: var(--tile-bg); }
+.background-color-main { background-color: var(--tile-bg); }
+.background-color-secondary { background-color: var(--tile-secondary-bg); }
+.background-color-background { background-color: var(--background); }
 .background-color-lemon-chiffon { background-color: lemonchiffon; }
-.background-color-white { background-color: var(--background); }
 
 // Custom padding classes.
+.p-40px { padding: 40px; }
+.pt-40px { padding-top: 40px; }
+.pr-40px { padding-right: 40px; }
+.pb-40px { padding-bottom: 40px; }
+.pl-40px { padding-left: 40px; }
+.py-40px { padding-top: 40px; padding-bottom: 40px; }
+.px-40px { padding-left: 40px; padding-right: 40px; }
+
 .p-35px { padding: 35px; }
 .pt-35px { padding-top: 35px; }
 .pr-35px { padding-right: 35px; }
@@ -306,6 +338,14 @@ $green-font-color: #19B028;
 .py-20px { padding-top: 20px; padding-bottom: 20px;}
 .px-20px { padding-left: 20px; padding-right: 20px;}
 
+.p-16px { padding: 16px; }
+.pt-16px { padding-top: 16px; }
+.pr-16px { padding-right: 16px; }
+.pb-16px { padding-bottom: 16px; }
+.pl-16px { padding-left: 16px; }
+.py-16px { padding-top: 16px; padding-bottom: 16px;}
+.px-16px { padding-left: 16px; padding-right: 16px;}
+
 .p-15px { padding: 15px; }
 .pt-15px { padding-top: 15px; }
 .pr-15px { padding-right: 15px; }
@@ -321,6 +361,14 @@ $green-font-color: #19B028;
 .pl-10px { padding-left: 10px; }
 .py-10px { padding-top: 10px; padding-bottom: 10px;}
 .px-10px { padding-left: 10px; padding-right: 10px;}
+
+.p-10px { padding: 8px; }
+.pt-8px { padding-top: 8px; }
+.pr-8px { padding-right: 8px; }
+.pb-8px { padding-bottom: 8px; }
+.pl-8px { padding-left: 8px; }
+.py-8px { padding-top: 8px; padding-bottom: 8px;}
+.px-8px { padding-left: 8px; padding-right: 8px;}
 
 .p-5px { padding: 5px; }
 .pt-5px { padding-top: 5px; }
@@ -362,11 +410,23 @@ $green-font-color: #19B028;
 .mb-5px { margin-bottom: 5px; }
 .ml-5px { margin-left: 5px; }
 
+.m-8px { margin: 8px; }
+.mt-8px { margin-top: 8px; }
+.mr-8px { margin-right: 8px; }
+.mb-8px { margin-bottom: 8px; }
+.ml-8px { margin-left: 8px; }
+
 .m-10px { margin: 10px; }
 .mt-10px { margin-top: 10px; }
 .mr-10px { margin-right: 10px; }
 .mb-10px { margin-bottom: 10px; }
 .ml-10px { margin-left: 10px; }
+
+.m-12px { margin: 12px; }
+.mt-12px { margin-top: 12px; }
+.mr-12px { margin-right: 12px; }
+.mb-12px { margin-bottom: 12px; }
+.ml-12px { margin-left: 12px; }
 
 .m-15px { margin: 15px; }
 .mt-15px { margin-top: 15px; }
@@ -375,6 +435,14 @@ $green-font-color: #19B028;
 .ml-15px { margin-left: 15px; }
 .mx-15px { margin-left: 15px; margin-right: 15px; }
 .my-15px { margin-top: 15px; margin-bottom: 15px; }
+
+.m-16px { margin: 16px; }
+.mt-16px { margin-top: 16px; }
+.mr-16px { margin-right: 16px; }
+.mb-16px { margin-bottom: 16px; }
+.ml-16px { margin-left: 16px; }
+.mx-16px { margin-left: 16px; margin-right: 16px; }
+.my-16px { margin-top: 16px; margin-bottom: 16px; }
 
 .m-20px { margin: 20px; }
 .mt-20px { margin-top: 20px; }
@@ -404,11 +472,47 @@ $green-font-color: #19B028;
 .br-4px { border-radius: 4px; }
 .br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
+.br-10px { border-radius: 10px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
 
+.right-20px {
+  position: absolute;
+  right: 20px;
+}
+
 .position-fixed { position: fixed; }
+
+.feather-xsmall {
+  height: 14px !important;
+  width: 14px !important;
+}
+
+.feather-small {
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.feather-medium {
+  height: 20px !important;
+  width: 20px !important;
+}
+
+.feather-large {
+  height: 24px !important;
+  width: 24px !important;
+}
+
+.feather-xlarge {
+  height: 34px !important;
+  width: 34px !important;
+}
+
+.feather-xxlarge {
+  height: 90px !important;
+  width: 90px !important;
+}
 
 .global__container {
   min-height: 100vh;
@@ -440,7 +544,7 @@ $green-font-color: #19B028;
   width: 100%;
   min-height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   margin: 0;
   padding: 0;
@@ -463,6 +567,250 @@ $green-font-color: #19B028;
 
   .global__mobile {
       display: flex;
+  }
+  feed {
+    tab-selector {
+      .tab-selector__container {
+        position: fixed;
+        background: var(--tile-bg);
+        z-index: 1;
+      }
+    }
+  }
+  .mobile-scroll {
+    padding: 0px 8px;
+  }
+  browse-page {
+    top-bar-mobile-header {
+      .global__top-bar__height {
+        border-bottom: none !important;
+      }
+    }
+  }
+  top-bar-mobile-header {
+    search-bar {
+      .global__top-bar__height {
+        margin-top: 0px !important;
+      }
+    }
+  }
+  post-thread-page {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .feed-post__container {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
+  mint-nft-page {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .nft-modal-container {
+      border-radius: 0px;
+    }
+    .global__content__inner {
+      background: var(--tile-bg);
+    }
+    .mint-nft__create-btn {
+      width: calc(100vw - 32px);
+      margin: 16px 16px 80px 16px;
+    }
+  }
+  left-bar {
+    jumio-status {
+      .jumio-status {
+        margin-top: 0px;
+      }
+    }
+  }
+  nft-post-page {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .feed-post__container {
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+    .nft-auction-table-container {
+      height: 356px;
+      overflow-y: scroll;
+    }
+    .nft-post-auction-action {
+      width: calc(50vw - 28px) !important;
+    }
+  }
+  sell-nft-page {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .nft-modal-container {
+      border-radius: 0px;
+      margin-bottom: 45px
+    }
+    .global__content__inner {
+      background: var(--tile-bg);
+    }
+    .mint-nft__create-btn {
+      width: calc(100vw - 32px);
+      margin: 0px;
+    }
+  }
+  .modal-dialog-centered {
+    margin: 1.75rem auto;
+  }
+  .modal-header {
+    justify-content: center !important;
+    .modal-header-x {
+      right: auto !important;
+    }
+  }
+  place-bid-modal {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .nft-modal-container {
+      border-radius: 0px;
+    }
+    .floating-bottom-bar {
+      justify-content: flex-start;
+    }
+    background: var(--tile-bg);
+  }
+  app-messages-page {
+    .global__mobile-scrollable-section {
+      padding-left: 0px;
+    }
+    #messagesContainer {
+      height: calc(100vh - 210px)
+    }
+    .messages-thread-view__message-builder {
+      position: fixed;
+      top: auto;
+      bottom: 0px;
+      width: 100%;
+    }
+  }
+  message-recipient-modal {
+    #searchBarRoot {
+      margin-top: 0px;
+      .global__top-bar__height {
+        margin-top: 0px;
+      }
+    }
+    .message-recipient-modal__header {
+      flex-flow: column;
+      height: 114px;
+      width: calc(100vw - 28px);
+    }
+    .search-bar {
+      max-width: calc(100vw - 60px);
+    }
+    .search-bar__results-dropdown {
+      top: 113px !important;
+    }
+  }
+  app-notifications-page {
+    #header-content-spacer {
+      margin-top: 60px !important;
+    }
+    background: var(--tile-bg);
+  }
+  wallet {
+    .creator-profile__ellipsis-restriction {
+      max-width: 200px;
+    }
+    .wallet__buy-button {
+      width: calc(50vw - 30px);
+    }
+    .wallet-column {
+      -ms-flex:0 0 33.333333%;
+      flex:0 0 33.333333%;
+      max-width:33.333333%;
+      position:relative;
+      width:100%;
+      padding-right:15px;
+      padding-left:15px;
+    }
+    .wallet-actions-container {
+      background: var(--tile-bg);
+      border-radius: 8px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+      width: 225px;
+    }
+    .dropdown-menu-item {
+      color: var(--text-secondary);
+    }
+  }
+  creator-profile-details {
+    tab-selector {
+      .tab-selector__container {
+        justify-content: center;
+      }
+    }
+    .creator-profile-details__coin-info {
+      height: 100px !important;
+    }
+  }
+  creator-profile-nfts {
+    .creator-profile-nfts__dropdown {
+      max-width: calc(50vw - 50px);
+    }
+  }
+  quote-reposts-page, likes-page, reposts-page, diamonds-page {
+    #header-content-spacer {
+      margin-top: 54px !important;
+    }
+    .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+      border-radius: 0px;
+    }
+  }
+  wallet-page, creator-profile-page, referrals {
+    .global__content__inner {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+  }
+}
+
+.floating-bottom-bar {
+  position: fixed;
+  bottom: 0px;
+  background: var(--tile-bg);
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-dialog-high {
+  .modal-content {
+    position: fixed;
+    top: 100px;
+    right: 14px !important;
+    left: 14px !important;
+  }
+}
+
+.modal-dialog-light {
+  .modal-content {
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.circle-div {
+  height: 80px;
+  width: 80px;
+  background: var(--border);
+  border-radius: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  i-feather {
+    color: var(--text-muted);
   }
 }
 
@@ -494,6 +842,7 @@ $green-font-color: #19B028;
 }
 
 .global__mobile-scrollable-section {
+  padding-left: 10px;
   height: -webkit-fill-available;
   flex-grow: 1;
   overflow-y: scroll;
@@ -537,6 +886,201 @@ input.bs-timepicker-field {
   border-color: var(--border) !important;
 }
 
+.loading-container {
+  font-family: Gilroy, Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+app-landing-page {
+  background: white;
+}
+@keyframes slideInFromTopRight {
+  0% {
+    transform: translate(10px, -30px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(10deg);
+  }
+}
+
+@keyframes slideInFromTopLeft {
+  0% {
+    transform: translate(-5px, -30px) rotate(-10deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(-10deg);
+  }
+}
+
+.landing-page-top-bar {
+  margin: 8px auto 0px auto;
+  z-index: 1;
+  max-width: 1200px;
+  padding: 24px;
+}
+
+.landing-page-content-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
+}
+
+.landing-page-svg {
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.landing-page-container-1 {
+  height: 1000px;
+}
+
+.landing-page-nft-card-holder {
+  padding: 35px;
+  width: 461.15px;
+  height: 623.09px;
+  position: absolute;
+  border-radius: 30px;
+}
+
+.landing-page-robot-1 {
+  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopLeft;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.6);
+  right: 79px;
+  top: 145.75px;
+  @media (max-width: 1150px) and (min-width: 992px) {
+    right: -70px;
+  }
+  transform: rotate(-10deg);
+}
+
+.landing-page-robot-2 {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.13);
+  transform: rotate(10deg);
+  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopRight;
+  z-index: 2;
+  right: -125px;
+  top: 185px;
+  @media (max-width: 1150px) and (min-width: 992px) {
+    right: -274px;
+  }
+  backdrop-filter: blur(20px);
+}
+
+.landing-page-header-main {
+  font-size: 90px;
+  line-height: 94px;
+  font-weight: normal;
+  color: $landing-page-fc;
+}
+
+.landing-page-title {
+  z-index: 1;
+  font-weight: 500;
+  font-size: 54px;
+  line-height: 62px;
+  color: $landing-page-fc;
+}
+
+.landing-page-subtext {
+  font-size: 24px;
+  line-height: 38px;
+  font-weight: 500;
+  color: $landing-page-fc
+}
+
+.landing-page-content-text {
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 30px;
+  color: $landing-page-fc;
+}
+
+.landing-page-btn {
+  padding: 33px 66px;
+  width: 262px;
+  height: 88px;
+  box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1);
+  border-radius: 16px;
+  border: none;
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.landing-page-primary-btn {
+  background: $landing-page-dark;
+  backdrop-filter: blur(14px);
+  color: white;
+}
+
+.landing-page-secondary-btn {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  color: $landing-page-dark;
+}
+
+.landing-page-blob-1 {
+  background: #4ACFFF;
+  filter: blur(100px);
+  width: 316.57px;
+  height: 497.15px;
+  top: 324.57px;
+  right: 400px;
+  background-image: url('/assets/img/blob-1.svg');
+}
+
+.landing-page-blob-2 {
+  width: 305.03px;
+  height: 305.03px;
+  background: #FF3333;
+  filter: blur(200px);
+  top: 479.29px;
+  right: -174px;
+}
+
+.landing-page-blob-3 {
+  width: 769.39px;
+  height: 769.39px;
+  top: 155.71px;
+  right: -20px;
+  background: linear-gradient(180deg, #FFD8FC 0%, #FF41F2 100%);
+  filter: blur(303.509px);
+}
+
+.landing-page-blob-4 {
+  width: 270.9px;
+  height: 400px;
+  left: 20px;
+  top: 202.5px;
+  background: #4ACFFF;
+  filter: blur(125px);
+  position: absolute;
+}
+
+.landing-page-blob-5 {
+  width: 400px;
+  height: 400px;
+  left: 49.57px;
+  top: 150px;
+  background: linear-gradient(180deg, #FFD8FC 0%, #FF41F2 100%);
+  filter: blur(197.375px);
+}
+
+.landing-page-blob-6 {
+  width: 198.36px;
+  height: 198.36px;
+  left: 350px;
+  top: 390px;
+  background: #FF3333;
+  filter: blur(150px);
+}
 
 //
 // Top-level css for the feed.
@@ -554,7 +1098,7 @@ input.bs-timepicker-field {
 }
 
 .light-grey-divider {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .top-bar-mobile__avatar {
@@ -582,14 +1126,16 @@ input.bs-timepicker-field {
 
 .bottom-bar__message-notifications-bubble {
   position:absolute;
-  top: 5px;
+  top: 10px;
+  width: 12px;
+  height: 12px;
+  padding-top: 1px;
   font-style: normal;
   margin-left: 15px;
-  font-size: 14px;
-  padding: 1px 7px;
+  font-size: 12px;
   border-radius: 100%;
-  color: white;
-  background-color: $buy-button-blue;
+  background: var(--error);
+  color: var(--text-inverted)
 }
 
 // flex -> width -> fixed -> inner
@@ -604,10 +1150,16 @@ input.bs-timepicker-field {
 
 .global__nav__width {
   width: $global__nav__width;
+  @media (max-width: 992px) {
+    width: 100%;
+  }
 }
 
 .global__nav__fixed {
-  top: 0;
+  top: 64px;
+  @media (max-width: 992px) {
+    top: 42px;
+  }
   height: 100%;
   position: fixed;
 }
@@ -616,10 +1168,20 @@ input.bs-timepicker-field {
   width: $global__nav__width;
   overflow-y: auto;
   height: 100%;
-  padding: 0 10px;
+  @media (max-width: 992px) {
+    height: calc(100vh - 42px);
+    width: 75vw;
+    max-width: 280px;
+    min-width: 245px;
+  }
+  padding: 0 20px;
 }
 
 .global__content__flex {
+  @media (max-width: 992px) {
+    margin-top: 5px;
+  }
+  margin-top: 20px;
   flex-grow: 1;
   align-items: flex-start;
   flex-shrink: 1;
@@ -649,27 +1211,35 @@ input.bs-timepicker-field {
 }
 
 .global__sidebar__fixed {
-  top: 0;
-  height: 100%;
+  top: 64px;
+  height: calc(100% - 64px);
   position: fixed;
+  overflow-y: scroll;
 }
 
 .global__sidebar__inner {
+  margin-top: 20px;
   width: $global__sidebar__width;
-  overflow-y: auto;
-  height: 100%;
-  padding-left: 25px;
+  height: calc(100% - 20px);
+  padding-left: 20px;
 }
 
 .global__center__width {
   width: $global__center__width;
 }
 
+browse-page {
+  .global__center__inner {
+    margin-top: 0px;
+  }
+}
+
 .global__center__inner {
   min-height: 100vh;
   width: $global__center__width;
-  border-left: var(--border) solid 1px;
-  border-right: var(--border) solid 1px;
+  @media (min-width: 992px) {
+    margin-top: 4px;
+  }
 }
 
 .global__top-bar {
@@ -688,12 +1258,149 @@ input.bs-timepicker-field {
   }
 }
 
+.error-container {
+  background: var(--error-light);
+  color: var(--error);
+  height: 48px;
+  font-size: 15px;
+  line-height: 24px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+feed-create-post {
+  background: var(--tile-bg);
+  textarea {
+    &.background-color-white {
+      background: var(--tile-bg) !important;
+    }
+  }
+
+}
+
+feed-create-post-modal {
+  .create-post {
+    border-radius: 10px 10px 0px 0px;
+  }
+  .create-post-icon-bar {
+    background: var(--tile-bg);
+    border-radius: 0px 0px 10px 10px;
+    margin: 0px;
+    padding: 16px 16px 32px 16px;
+    button {
+      margin-right: 16px;
+    }
+  }
+}
+
 .feed-create-post__character-counter {
   margin-top: 2px;
 }
 
 .feed-create-post__image-icon {
   margin-top: 2px;
+}
+
+.create-post {
+  border-radius: 10px;
+  background: var(--tile-bg);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--text-secondary);
+  textarea {
+    margin-top: 12px;
+  }
+}
+
+nft-post {
+  .nft-post-details {
+    background: var(--tile-bg);
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  post-thread {
+    .post-thread__container {
+      border: none;
+    }
+    .post-thread__comment-container {
+      border-top: none;
+      margin-top: 0px;
+      .feed-post__container {
+        border-radius: 0px;
+      }
+    }
+  }
+}
+
+tab-selector {
+  .tab-selector-links {
+    border-bottom: 1px solid var(--border);
+    .active-tab {
+      color: var(--highlight);
+      border-bottom: 1.5px solid var(--highlight);
+    }
+  }
+  button {
+    background: var(--tile-bg);
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    font-weight: 600;
+    position: relative;
+    span {
+      padding: 0px 9px;
+      position: relative;
+    }
+  }
+  .new-tab-indicator {
+    margin-left: 8px;
+    background: var(--tile-bg);
+    color: var(--highlight);
+    position: relative;
+    top: -1px;
+    height: 32px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    span {
+      padding: 0px 12px;
+      position: relative;
+      font-size: 13px;
+      font-weight: normal;
+    }
+  }
+}
+
+.create-post-icon-bar {
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  margin: 16px 16px 32px 16px;
+  i-feather {
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+    color: var(--text-muted);
+    margin-right: 25px;
+  }
+  button {
+    position: absolute;
+    right: 0px;
+    background: var(--highlight);
+    width: 82px;
+    height: 48px;
+    border-radius: 16px;
+    border: none;
+    color: var(--tile-bg);
+    &:hover {
+      color: var(--tile-bg);
+    }
+  }
 }
 
 .global__top-bar__height {
@@ -723,7 +1430,33 @@ input.bs-timepicker-field {
   max-width: 280px;
   min-width: 245px;
   height: 100vh;
-  background-color: var(--background);
+  background-color: var(--tile-bg);
+}
+
+.left-bar-mobile__deso-price {
+  background: var(--tile-secondary-bg);
+  padding: 7px 8px 7px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+left-bar-mobile {
+  .left-desktop-selector {
+    background: none;
+    border: none;
+    padding: 0px;
+  }
+  .global__nav__inner {
+    padding: 0px;
+  }
+  jumio-status {
+    .jumio-status {
+      background: var(--tile-bg);
+      padding: 7px 8px 7px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+  }
 }
 
 .right-bar-select-box {
@@ -740,32 +1473,40 @@ input.bs-timepicker-field {
 
   height: 100px;
   width: 100px;
-  border: 1px solid $light-color;
   background-color: transparent;
   position: relative;
-  border-radius: 100%;
+  border-radius: 12px;
+}
 
-  .update-profile__image-delete {
-    width: 2rem;
-    height: 2rem;
-    position: absolute;
-    right: -1rem;
-    top: -1rem;
-    border-radius: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: $light-color;
-    border: 2px solid $light-color;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.25rem;
-    vertical-align: middle;
-    padding-bottom: .15rem;
-    background-color: $x-color;
+.update-profile__image-delete {
+  width: 36px;
+  height: 36px;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--error);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.25rem;
+  vertical-align: middle;
+  padding-bottom: .15rem;
+  background-color: var(--tile-bg);
+  i-feather {
+    margin-top: -5px;
+    height: 20px;
+    width: 20px;
   }
 }
 
+feed-create-post {
+  .update-profile__image-delete {
+    border-radius: 12px;
+  }
+}
 .holdings__creator-coin-name {
   @media (max-width: 992px) {
     padding-top: 15px;
@@ -788,15 +1529,15 @@ input.bs-timepicker-field {
 
 .holdings__divider {
   height: 66px;
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .holdings__avatar {
-  height: 28px;
-  width: 28px;
+  height: 50px;
+  width: 50px;
   min-width: 28px;
   margin-right: 15px;
-  border-radius: 3px;
+  border-radius: 12px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -881,11 +1622,14 @@ input.bs-timepicker-field {
 .change-account-selector {
 	position: relative;
 	z-index: 30;
-	background-color: var(--secondary);
+	background-color: var(--tile-bg);
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
-	border: 1px solid var(--border);
+  border-radius: 16px;
+	border: 1px solid var(--borderheavy);
+  font-size: 15px;
+
 }
 
 .change-account-selector_list__inner {
@@ -902,12 +1646,20 @@ input.bs-timepicker-field {
 }
 
 .change-account-selector_list {
-	background-color: var(--secondary);
+	background-color: var(--tile-bg);
 	padding: 0px 0px 10px;
-	margin-top: 10px;
+	margin-top: 3px;
 	width: 100%;
 	z-index: 99;
 	border: 1px solid var(--border);
+  font-size: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.change-account-selector_list_accounts {
+  max-height: 35vh;
+  overflow-y: scroll;
 }
 
 .change-account-selector_list-item{
@@ -938,24 +1690,72 @@ input.bs-timepicker-field {
   color:var(--hover);
 }
 
+.tutorial-header {
+  padding: 16px;
+  background: var(--background-secondary);
+  width: 100%;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.tutorial-header-step {
+  font-weight: normal;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.tutorial-title {
+  font-size: 20px;
+  color: var(--text);
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.tutorial-bottom-card {
+  border-radius: 0px 0px 10px 10px;
+}
+
+.search-bar {
+  border-radius: 16px;
+  color: var(--text-muted);
+  i-feather {
+    height: 16px;
+    width: 16px;
+    color: var(--text);
+    svg {
+      position: relative;
+      top: -7px;
+    }
+  }
+  input {
+    background: var(--tile-secondary-bg) !important;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
+}
+
 .search-bar__icon {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  background-color: var(--formbg);
-  border-color: var(--border);
-  border-right-color: rgba(0,0,0,0);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  background: var(--tile-secondary-bg);
+  border: none;
 }
 
 .search-bar__results-dropdown {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  margin-top: 10px;
+  box-shadow: rgba(101, 119, 134, 0.2) 0px 10px 15px, rgba(101, 119, 134, 0.15) 0px 10px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
-  background-color: var(--background);
+  background: var(--background);
   position: relative;
-  top: -22px;
+  top: -10px;
   border: solid 1px var(--border);
   z-index: 5; // the input has a z-index of 3 at one point.
   max-height: 600px;
@@ -977,18 +1777,52 @@ input.bs-timepicker-field {
 }
 
 .search-bar__fix-active {
-  border-color: var(--secondary);
+  border-color: var(--background-secondary);
   border-left: 0px;
 }
 
 .search-bar__fix-active:active, .search-bar__fix-active:focus {
-  border-color: var(--secondary);
+  border-color: var(--background-secondary);
   border-left: 0px;
 }
 
 .post-thread__comment-container {
-  border-top: 4px solid var(--secondary);
+  border-radius: 10px;
+  .post-thread__single-comment {
+    border-bottom: 1px solid var(--border);
+  }
+  .feed-post-container {
+    background: var(--tile-bg);
+    margin-bottom: 0px;
+    border-radius: 0px;
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .first-item {
+    .feed-post-container {
+      border-top: 1px solid var(--border);
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
+    }
+  }
+  .last-item {
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    .feed-post-container {
+      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  }
+
   flex-grow: 1;
+  margin-top: 20px;
+}
+
+.pinned-post {
+  border-left: 3px solid var(--highlight) !important;
+  &.border {
+    border-left: 3px solid var(--highlight) !important;
+  }
 }
 
 .post-thread__subcomment-container {
@@ -996,8 +1830,26 @@ input.bs-timepicker-field {
 }
 
 .post-thread__container {
-  display: flex;
-  flex-flow: column;
+  background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  .feed-post-container {
+    margin-bottom: 0px;
+  }
+  .post-thread__header {
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 24px;
+    padding: 16px;
+    i-feather {
+      cursor: pointer;
+      height: 20px;
+      width: 20px;
+      margin-right: 12px;
+    }
+  }
 }
 
 .interaction-modal__header {
@@ -1046,6 +1898,80 @@ input.bs-timepicker-field {
   text-shadow: 0 1px 0 #fff;
 }
 
+.jumio-status {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--tile-bg);
+  color: var(--highlight);
+  font-size: 15px;
+  line-height: 24px;
+  span {
+    margin: 0px 8px;
+  }
+}
+
+.trend-box {
+  background: var(--tile-secondary-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.trend-title {
+  margin: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--text);
+}
+
+.trend-selector {
+  position: absolute;
+  right: 16px;
+  .feed-post__dropdown-menu-item-repost {
+    left: -190px !important;
+  }
+}
+
+.trend-entry {
+  a {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    .trend-holder {
+      margin: 12px 16px;
+    }
+  }
+  follow-button {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--text-secondary);
+    a {
+      border: none;
+    }
+  }
+}
+
+.trend-name {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 24px;
+  margin-top: 2px;
+  i-feather {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.trend-end {
+  position: absolute;
+  right: 16px;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
+}
+
 .feed-create-post__avatar_default {
   background-image: url('/assets/img/default_profile_pic.png');
 }
@@ -1059,20 +1985,60 @@ input.bs-timepicker-field {
   box-shadow: none;
 }
 
+.feed-post-container {
+  margin-bottom: 12px;
+}
+
 .js-feed-post-hover:hover {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .feed-post__quoted-content:hover {
   background-color: var(--secalt) !important;
 }
 
+.feed-post__nft-list-view-unlockable {
+  color: var(--text-muted);
+  font-size: 15px;
+  i-feather {
+    margin: 0px 8px;
+    width: 11.33px;
+    height: 15.33px;
+  }
+}
+
+bs-dropdown-container {
+  z-index: 3000 !important;
+}
+
+.bc-dropdown-menu {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  div {
+    margin: 6px;
+  }
+}
+
 .feed-post__dropdown-menu-item {
-  background-color: var(--secondary);
-  color: var(--gray);
+  color: var(--text-muted);
   &:hover {
-    background-color: var(--secalt);
-    color: var(--gray);
+    color: var(--text);
+  }
+  i-feather {
+    height: 14px;
+    width: 14px;
+  }
+}
+
+.feed-post__dropdown-menu-item-repost {
+  background-color: var(--tile-bg);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 0px;
+  div {
+    margin: 11px;
   }
 }
 
@@ -1095,7 +2061,7 @@ input.bs-timepicker-field {
   align-items: center;
   overflow: hidden;
   max-height: 450px;
-  border-radius: 20px;
+  border-radius: 16px;
   margin-top: 10px;
   margin-bottom: 5px;
 }
@@ -1103,6 +2069,27 @@ input.bs-timepicker-field {
 .feed-post__image {
   flex-shrink: 0;
   width: 100%;
+}
+
+.feed-post__video-container {
+  position: relative;
+  padding-top: 56.25%;
+  width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+.feed-post__video {
+  border: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
 }
 
 .feed-post__blue-border {
@@ -1121,39 +2108,80 @@ input.bs-timepicker-field {
 }
 
 .feed-post-icon-row__icon {
-  font-size: 25px;
   border-radius: 50%;
-  margin-right: 2px;
+  margin-right: 4px;
+  width: 30px !important;
+  height: 30px !important;
+
+  svg {
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 20px !important;
+    height: 20px !important;
+
+  }
   &:hover {
-    background-color: var(--secondary);
+    background-color: var(--background-secondary);
+  }
+  &.fa-spinner {
+    svg {
+      display: none;
+    }
   }
 }
 
-.feed-post-icon-row__icon.icon-reply {
+.feed-post-icon-row__icon-repost-option {
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 8px;
+
+}
+
+.feed-post-icon-row__icon-repost-option-text {
+  color: var(--text-muted);
+  &:hover {
+    color: var(--text);
+  }
+  font-weight: normal;
+  font-size: 15px;
+  line-hieght: 24px;
+}
+
+.feed-post-icon-row__icon.reply-icon {
   margin-left: -6px;
   &:hover {
     background-color: $comment-hover;
     color: $comment-color;
+    transition: background-color .5s;
   }
 }
 
-/* reclout hover animation */
-.feed-post-icon-row__icon.icon-repost {
+/* repost hover animation */
+.feed-post-icon-row__icon.repost-icon {
   &:hover {
-    background-color: $reclout-hover;
-    color: $reclout-color;
+    background-color: $repost-hover;
+    color: $repost-hover;
+    transition: background-color .5s;
   }
 }
+
 /* like button hover animation */
-.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
+.feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
   &:hover{
     background-color: $like-hover;
     color: $like-color;
+    transition: background-color .5s;
+  }
+}
+
+.feed-post-icon-row__icon.icon-heart-fill{
+  svg {
+    fill: currentColor;
   }
 }
 
 /* diamond button hover animation */
-.feed-post-icon-row__icon.icon-diamond{
+.feed-post-icon-row__icon.diamond-icon{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
@@ -1172,8 +2200,65 @@ input.bs-timepicker-field {
 .feed-post__icon-row-holder {
 }
 
+.desktop-top-bar-width {
+  max-width: 1212px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.desktop-top-bar {
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  position: fixed;
+  height: 64px;
+  background: var(--tile-bg);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .bitclout-logo{
+    svg {
+      width: 16.93px;
+      height: 24px;
+    }
+    span {
+      top: 5px;
+      position: relative;
+      color: var(--text-secondary);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 32px;
+      letter-spacing: -.012em;
+    }
+  }
+  search-bar {
+    position: relative;
+    width: 343px;
+    .search-bar,input {
+      height: 48px;
+      i-feather {
+        margin: 0px 12px;
+      }
+    }
+  }
+  change-account-selector {
+    position: relative;
+    top: 2px;
+    width: 164px;
+    height: 48px;
+  }
+}
+
+.desktop-create-post{
+  background: var(--tile-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
 .feed-post__container {
-  font-size: 15px
+  background: var(--tile-bg);
+  border-radius: 10px;
 }
 
 .feed-post__container.feed-post__parent-post-font-size {
@@ -1181,35 +2266,225 @@ input.bs-timepicker-field {
 }
 
 .feed-post__coin-price-holder {
-  background-color: var(--secalt);
+  @media (max-width: 992px) {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 0px;
+  }
+  margin-left: 8px;
+  height: 24px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background-color: var(--tile-secondary-bg);
+  font-family: Gilroy, Arial, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text);
+}
+
+.feed-post__coin-price {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text);
 }
 
 .feed-post__avatar {
   display: block;
   height: 50px;
   width: 50px;
-
+  border-radius: 12px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
 
+.feed-post__username {
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 200;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: var(--text);
+  font-feature-settings: 'ss10' on, 'ss08' on;
+}
+
 .feed-post__avatar-container {
   width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  height: 56px;
   margin-right: 15px;
+}
+
+.feed-post__follow-btn {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
 }
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  border-right: 2px solid var(--secondary);
-  border-color: var(--secondary);
+  border-right: 2px solid var(--background-secondary);
+  border-color: var(--background-secondary);
   width: 55%;
 }
 
+.feed-post__content {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  outline: none;
+}
+
+.js-feed-post-icon-row__container{
+  color: var(--text-muted);
+  span {
+    font-size: 13px;
+    line-height: 20px;
+  }
+}
+
+.feed-post__nft-footer {
+  padding: 16px;
+  background: var(--nft-section-bg);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--text-inverted);
+  border-radius: 0px 0px 10px 10px;
+}
+
+.nft-modal__header {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--text);
+}
+
+.nft-modal__subtitle {
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.nft-content {
+  margin: 0px 0px;
+  position: relative;
+}
+
+.nft-top-row {
+  width: 284px;
+  position: relative;
+  display: flex;
+}
+
+.nft-unlockable-content {
+  display: inline;
+  margin-left: 16px;
+  color: var(--text-inverted-muted);
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.nft-bid-btn {
+  button {
+    color: var(--text);
+    width: 118px;
+    border-radius: 12px;
+    background: var(--tile-bg);
+    margin: 0px 0px;
+    padding: 6px 12px;
+    font-style: normal;
+    font-width: normal;
+    font-size: 13px;
+    line-height: 20px;
+    border: none;
+    heigth: 20px;
+    span {
+      top: 1px;
+      i-feather {
+        height: 20px;
+        width: 20px;
+      }
+      svg {
+        height: 16px;
+        width: 16px;
+      }
+    }
+  }
+}
+
+feed-post-dropdown {
+  position: absolute;
+  right: 0px;
+}
+
+.left-bar-active-indicator {
+  width: 4px;
+  border-radius: 10px;
+}
+
+.left-bar-active-indicator-active {
+  background: var(--highlight);
+}
+
+
+.left-bar-button {
+  height: 56px;
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--text-secondary);
+  a {
+    color: var(--text-secondary);
+  }
+  i-feather {
+    margin-right: 20px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: -1px;
+  }
+}
+
+.left-bar__post-button {
+  width: 100%;
+  height: 48px;
+  background: var(--highlight);
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 24px;
+  border: none;
+  color: var(--tile-bg);
+}
+
+.left-bar-active {
+  a {
+    color: var(--highlight);
+  }
+  i-feather {
+    color: var(--highlight);
+  }
+}
+
 .left-bar__dot-active {
-  font-size: 50px;
-  line-height: 18px;
-  color: $buy-button-blue !important;
+  border-left: 2px solid var(--highlight);
+  border-end-end-radius: 10px;
 }
 
 .left-bar__dot-unread {
@@ -1224,11 +2499,34 @@ input.bs-timepicker-field {
   color: rgba(0,0,0,0);
 }
 
+.left-desktop-selector {
+  background: var(--tile-bg);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+
+right-bar-creators {
+  .global__sidebar__inner {
+    z-index: 0;
+  }
+}
+
+.right-bar-creators__wallet-container {
+  border: 1px solid var(--border);
+  background: var(--background-secondary);
+  padding: 16px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
 .right-bar-creators-leaderboard__creator-avatar {
-  height: 28px;
-  width: 28px;
+  height: 40px;
+  width: 40px;
   margin-right: 10px;
-  border-radius: 3px;
+  border-radius: 12px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -1236,12 +2534,30 @@ input.bs-timepicker-field {
 }
 
 .right-bar-creators__balance-box {
-  background-color: var(--secondary);
-  color: var(--text);
+  background-color: var(--tile-secondary-bg);
+  color: var(--text-secondary);
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  .deso-metrics {
+    margin: 16px;
+  }
+  .divider {
+    width: 100%;
+    border: 1px solid var(--border);
+  }
+  .buy-deso {
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--highlight);
+    margin-top: 5px;
+    margin: 12px 0px;
+  }
 }
 
 .creator-leaderboard__load-more:hover {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .feed__light-grey-divider {
@@ -1264,26 +2580,72 @@ input.bs-timepicker-field {
   }
 }
 
-.creator-profile__avatar {
-  // mobile
-  @media (max-width: 992px) {
-    top: 62px;
+.creator-profile__bid-details {
+  font-size: 15px;
+  color: var(--text-muted);
+  padding: 0px 16px 8px 16px;
+  background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  i-feather {
+    position: relative;
+    top: -1px;
   }
-  // desktop
-  @media (min-width: 993px) {
-    top: 37px;
-  }
+}
 
-  position: absolute;
-  height: 86px;
-  width: 86px;
-  border-radius: 3px;
-  border: 3px solid white;
-  margin-left: 15px;
+.creator-profile-nfts__bid-card {
+  .creator-profile-nfts__list-container {
+    border-bottom: none;
+  }
+}
+
+.creator-profile-top-card__edit-btn {
+  color: var(--highlight);
+}
+
+.creator-profile-top-card__buy-btn {
+  width: 78px;
+  height: 48px;
+  background: var(--highlight);
+  color: var(--tile-bg);
+  margin-left: 24px;
+  border-radius: 16px;
+  padding-top: 12px;
+  &:hover {
+    color: var(--tile-bg);
+  }
+}
+
+.creator-profile__avatar {
+  position: relative;
+  height: 72px;
+  width: 72px;
+  border-radius: 12px;
 
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.creator-profile__username-price {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+
+.creator-profile__update-buy {
+  position: absolute;
+  right: 16px;
+  i-feather {
+    height: 16px;
+    width: 16px;
+
+  }
+}
+
+.creator-profile-details__no-results {
+  background: var(--tile-bg);
+  padding: 70px 0px 104px 0px;
+  border-radius: 0px 0px 10px 10px;
 }
 
 .creator-profile-details__hodler-avatar {
@@ -1313,7 +2675,421 @@ input.bs-timepicker-field {
   text-overflow: ellipsis;
 }
 
-.buy-bitclout__copy-button {
+.creator-profile__divider-border {
+  width: 100%;
+  border-top: 1px solid var(--text-inverted);
+  margin-bottom: 20px;
+  margin-top: 5px;
+}
+
+.creator-profile__public-key {
+  margin-bottom: 16px;
+  i-feather {
+    &.copy-button, &.check-indicator {
+      width: 16px;
+      height: 16px;
+      margin-left: 8px;
+    }
+    &.check-indicator{
+      color: var(--highlight);
+    }
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.update-profile__avatar{
+  display: flex;
+  justify-content: center;
+  background: var(--nft-section-bg);
+  padding: 24px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.update-profile__text {
+  background: var(--tile-bg);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.update-profile__title {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  i-feather {
+    height: 16px !important;
+    width: 16px !important;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+}
+
+.update-profile__update-btn {
+  padding-top: 10px;
+  height: 48px;
+  width: 100%;
+  border-radius: 16px;
+  color: var(--tile-bg);
+  background: var(--highlight);
+  font-size: 17px;
+  font-weight: 600;
+  &:hover {
+    color: var(--tile-bg);
+  }
+}
+
+wallet-page {
+  .global__content__inner {
+    border: none !important;
+  }
+}
+
+.wallet__container {
+  background: var(--tile-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  @media (min-width: 992px) {
+    margin-top: 4px;
+  }
+}
+
+.wallet__table {
+  background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+buy-creator-coins-tutorial-page, wallet-tutorial-page {
+  .global__center__inner {
+    min-height: auto;
+  }
+  .global__container {
+    min-height: auto;
+  }
+}
+
+wallet-tutorial-page {
+  .global__mobile-scrollable-section {
+    padding-left: 0px;
+  }
+  .wallet-highlighted-creator {
+    border: 1px solid var(--highlight) !important;
+    border-radius: 10px;
+  }
+  .wallet__table {
+    margin-top: 0px;
+    border-radius: 0px 0px 10px 10px;
+    tab-selector {
+      .tab-selector__container {
+        background: var(--background-secondary);
+      }
+      .active-tab {
+        color: var(--text-secondary);
+        font-weight: 600;
+        border: none;
+      }
+    }
+  }
+}
+
+.wiggle {
+  animation: shake 3s cubic-bezier(.36,.07,.19,.97) both infinite;
+  animation-delay: 5s;
+  transform: rotate(0deg);
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  2.5%, 27.5% {
+    transform: rotate(0deg);
+  }
+
+  5%, 20% {
+    transform: rotate(5deg);
+  }
+
+  7.5%, 12.5%, 17.5% {
+    transform: rotate(-5deg);
+  }
+
+  10%, 15% {
+    transform: rotate(0deg);
+  }
+}
+
+.buy-deso-modal {
+  max-width: 630px;
+}
+
+transfer-deso {
+  .search-bar__icon {
+    border-radius: 16px 0px 0px 16px;
+  }
+  search-bar {
+    .search-bar__results-dropdown {
+      margin-top: 14px;
+    }
+    .search-bar {
+      height: 48px;
+      margin-top: 8px;
+    }
+    input {
+      height: 48px !important;
+    }
+  }
+  simple-profile-card {
+    .simple-profile-card__container {
+      padding-top: 0px;
+      padding-bottom: 0px;
+      margin-top: 18px;
+    }
+    .container {
+      margin-top: 28px;
+      margin-bottom: 6px;
+    }
+  }
+  .mint-nft__sub-title {
+    margin-top: 30px;
+  }
+}
+
+.viewport {
+  height: 600px;
+  overflow-y: auto;
+}
+
+.cdk-overlay-container{
+  z-index: 1050;
+}
+
+.update-profile__username {
+  margin-top: 16px;
+}
+
+modal-container {
+  .update-profile-modal {
+    max-width: 400px;
+  }
+}
+
+update-profile {
+  .update-profile__holder {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  .update-profile__avatar-title {
+    display: none;
+  }
+  .update-profile__image {
+    height: 140px;
+    width: 140px;
+  }
+  button {
+    margin-top: 10px;
+    i-feather {
+      height: 16px !important;
+      width: 16px !important;
+      margin-right: 10px;
+    }
+    border: 1px solid var(--tile-bg);
+    background: none;
+    border-radius: 12px;
+    padding-top: 2px;
+    color: var(--tile-bg);
+    height: 32px;
+    width: 136px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .form-control,textarea {
+    border: none;
+    border-radius: 16px;
+    background: var(--tile-secondary-bg) !important;
+    resize: none;
+  }
+  .update-profile__cc-percent-symbol {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    i-feather {
+      height: 16px;
+      width: 16px;
+    }
+  }
+}
+
+create-profile-tutorial-page {
+  .update-profile__holder,.update-profile__avatar,.update-profile__text {
+    border-radius: 0px;
+    box-shadow: none;
+  }
+  .update-profile__holder {
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+}
+
+create-post-tutorial-page {
+  feed-create-post {
+    background: var(--tile-bg);
+  }
+}
+
+creator-diamonds {
+  .creator-diamonds__no-diamonds {
+    padding-bottom: 70px;
+    background: var(--tile-bg);
+  }
+
+  .creator-diamonds__tab-container {
+    background: var(--tile-bg);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  .creator-diamonds__header {
+    background: var(--tile-bg);
+    padding: 0px 16px;
+    color: var(--text-muted);
+  }
+  .diamond-row {
+    background: var(--tile-bg);
+    padding: 0px 16px;
+  }
+  .diamond-total-row {
+    background: var(--tile-bg);
+    padding: 0px 16px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+}
+
+.creator-profile-nfts__header {
+  background: var(--tile-bg);
+  height: 80px;
+  border-radius: 10px 10px 0px 0px;
+  border: 1px solid var(--border);
+  &.card-view {
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+}
+
+.creator-profile-nfts__no-nfts {
+  padding: 70px 0px;
+  background: var(--tile-bg);
+}
+
+creator-profile-nfts {
+  .card-view.bid-view {
+    feed-post {
+      .feed-post-container {
+        border-radius: 12px 12px 0px 0px;
+        margin-bottom: 0px;
+        border-bottom: none !important;
+      }
+      .feed-post__nft-footer {
+        border-radius: 0px !important;
+      }
+    }
+    .creator-profile__bid-details {
+      background: var(--nft-section-bg);
+      color: var(--text-inverted-muted);
+      border-radius: 0px 0px 12px 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-top: none;
+      position: relative;
+      top: -1px;
+    }
+  }
+}
+
+.creator-profile-nfts__dropdown {
+  color: var(--tile-secondary-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  height: 48px;
+  width: 193px;
+  margin-left: 16px;
+  color: var(--text);
+  font-size: 15px;
+  text-align: left;
+  padding: 12px;
+  position: relative;
+  i-feather {
+    position: absolute;
+    right: 12px;
+  }
+}
+
+.creator-profile-nfts__dropdown-menu {
+    left: -55px;
+}
+
+creator-profile-nfts {
+  .creator-profile-nfts__list-container {
+    background: var(--tile-bg);
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .last-item {
+    .creator-profile-nfts__list-container {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
+  .feed-post__avatar-container {
+    height: 50px;
+    width: 50px;
+  }
+  .creator-profile-nfts__list-body {
+    width: 100%;
+  }
+  .creator-profile-nfts__nft-image-preview {
+    height: 50px;
+    width: 50px;
+    border-radius: 4px;
+  }
+}
+
+.buy-deso__container {
+  background: var(--tile-bg);
+  border-radius: 10px;
+  padding-top: 16px;
+}
+
+.buy-deso__currency-dropdown {
+  max-height: 45vh;
+  overflow-y: scroll;
+}
+
+.buy-deso__country-selector {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--tile-secondary-bg);
+  width: 105px;
+  height: 48px;
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.buy-deso__country-dropdown {
+  max-height: 28vh;
+  overflow-y: scroll;
+  right: 138px !important;
+}
+
+.buy-deso__copy-button {
   display: flex;
   align-items: center;
   justify-content: middle;
@@ -1324,21 +3100,21 @@ input.bs-timepicker-field {
   padding: 5px;
 }
 
-.buy-bitclout__copy-button:hover {
+.buy-deso__copy-button:hover {
   background-color: $buy-button-blue;
   color: white;
 }
 
-.buy-bitclout__title-holder {
+.buy-deso__title-holder {
   position: relative;
   top: 20px;
 }
 
-.buy-bitclout__amount-background {
+.buy-deso__amount-background {
   background-color: var(--background);
 }
 
-.buy-bitclout__box-label-adjustment {
+.buy-deso__box-label-adjustment {
   position: relative;
   width: fit-content;
   background-color: var(--background) !important;
@@ -1350,7 +3126,32 @@ input.bs-timepicker-field {
   border-radius: 25%;
   margin-right: 2px;
   &:hover {
-    background-color: var(--secondary);
+    background-color: var(--background-secondary);
+  }
+}
+
+.messages-page__header {
+  border: 1px solid var(--border);
+  padding: 0px 16px;
+  background: var(--tile-bg);
+  height: 80px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  span {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.012em;
+    font-weight: 600;
+  }
+  button {
+    width: 156px;
+    height: 48px;
+    background: var(--highlight);
+    color: var(--tile-bg);
+    border-radius: 16px;
+    font-size: 17px;
+    line-height: 24px;
+    border: none;
   }
 }
 
@@ -1362,14 +3163,59 @@ input.bs-timepicker-field {
 
 }
 
-.messages-inbox__selected-thread {
-  border-right: solid 3px $buy-button-blue;
-}
-
 .messages-inbox__threads {
   overflow-y: scroll;
   // Subtract the height of the search and header
   height: calc(100% - 160px);
+}
+
+.messages-inbox__header {
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+}
+
+.messages-inbox__custom-settings {
+  position: absolute;
+  right: 16px;
+  top: 24px;
+}
+
+.messages-filter-menu__container {
+  position: absolute;
+  background: var(--tile-bg);
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.messages-filter-menu__title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 12px 16px;
+  color: var(--text-secondary);
+}
+
+.messages-filter-menu__dropdown {
+  border-radius: 16px !important;
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--tile-secondary-bg);
+  position: relative;
+  left: 16px;
+  width: 80%
+}
+
+.messages-filter-menu__checkboxes {
+  button {
+    margin-left: 16px;
+  }
+  span {
+    margin-left: 9px;
+    font-weight: 500;
+    font-size: 15px;
+  }
 }
 
 .messages-filter-menu__checkbox {
@@ -1377,10 +3223,81 @@ input.bs-timepicker-field {
   float: left;
 }
 
+.messages-filter-menu__buttons {
+  margin-top: 20px;
+  margin-left: 16px;
+  font-size: 17px;
+  color: var(--text-secondary);
+  button {
+    border-radius: 16px;
+    margin-right: 24px;
+    width: 94px;
+    height: 48px;
+    background: var(--highlight);
+    color: var(--tile-bg);
+    &:hover {
+      color: var(--tile-bg);
+    }
+  }
+}
+
+.checkbox-circle {
+  i-feather {
+    display: none;
+    position: relative;
+    top: -5px;
+  }
+  padding: 3px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 100%;
+  background: none;
+  transition: background-color .5s;
+  &.radio {
+    transition: background-color 0s;
+  }
+  &.checked {
+    background: var(--highlight);
+    i-feather {
+      display: inline;
+      color: var(--tile-bg);
+    }
+    &.radio {
+      transition: background-color .5s;
+    }
+  }
+}
+
+.messages-mobile__new-message-circle {
+  z-index: 3;
+  position: fixed;
+  right: 10px;
+  bottom: 90px;
+  height: 58px;
+  width: 58px;
+  text-align: center;
+  border: none;
+  color: var(--text-inverted);
+  line-height: 0.65;
+  background: var(--highlight);
+  border-radius: 100%;
+  &:hover {
+    color: var(--text-inverted);
+  }
+}
+
+.messages-thread__container {
+  background: var(--background);
+  &.messages-inbox__selected-thread {
+    background: var(--text-inverted);
+  }
+}
+
 .messages-thread__avatar {
-  height: 45px;
-  width: 45px;
-  min-width: 45px;
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
   border-radius: 12px;
 
   background-size: cover;
@@ -1391,7 +3308,7 @@ input.bs-timepicker-field {
 .messages-thread__desktop-column {
   width: 100%;
   max-width: 600px;
-  border-right: solid 1px var(--secondary);
+  border-right: solid 1px var(--background-secondary);
 }
 
 .messages-thread__border-radius {
@@ -1403,6 +3320,63 @@ input.bs-timepicker-field {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.messages-thread-view__container {
+  position: relative;
+  background: var(--tile-bg);
+  border-right: 1px solid var(--border);
+}
+
+.messages-thread-view__message-builder {
+  position: relative;
+  top: 0px;
+  height: 120px;
+  background: var(--tile-bg);
+  border-top: 1px solid var(--border);
+  textarea {
+    padding: 16px;
+    border: none;
+    border-radius: 0px;
+    resize: none;
+    outline: none;
+    &:focus {
+      outline: none;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+    }
+  }
+  button {
+    width: 89px;
+    height: 48px;
+    background: var(--highlight);
+  }
+}
+
+.message-recipient-modal__header {
+  height: 80px;
+  background: var(--tile-bg);
+  padding: 16px;
+  search-bar {
+    .border-bottom {
+      border: none !important;
+    }
+    .search-bar {
+      width: 343px;
+      height: 48px;
+    }
+    input,#searchBarRoot {
+      height: 48px;
+    }
+    .search-bar__results-dropdown {
+      position: absolute;
+      top: 80px;
+      left: 0px;
+      margin-top: 0px;
+      background: var(--background);
+    }
+  }
 }
 
 .message__min-height {
@@ -1426,13 +3400,23 @@ input.bs-timepicker-field {
   border-radius: 12px;
 }
 
+.messages-page__container {
+  // This is the height of the entire view, minus the heights of the top-bar, margins, and bottom message constructor
+  height: calc(100vh - 190px);
+}
+
+.messages-page__height-div,#messagesContainer {
+  height: calc(100vh - 164px);
+}
+
 .message__sender-bubble-color {
-  background-color: #005BFF;
-  color: white;
+  background-color: var(--nft-section-bg);
+  color: var(--text-inverted);
 }
 
 .message__non-sender-bubble-color {
-  background-color: #F8F8F8;
+  background-color: var(--background);
+  color: var(--text-secondary);
 }
 
 .message-thread__unread-light-blue {
@@ -1480,13 +3464,23 @@ input.bs-timepicker-field {
   top: -70px;
   right: 22px;
   font-size: 44px;
-  padding-top: 10px;
   height: 55px;
   width: 58px;
   text-align: center;
-  border: 2px solid #3498db;
+  border: none;
   color: white;
   line-height: 0.65;
+  background: var(--highlight);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-bar-mobile__text{
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.01em;
 }
 
 
@@ -1538,6 +3532,14 @@ input.bs-timepicker-field {
   background-position: center;
 }
 
+trade-creator-form {
+  search-bar {
+    .search-bar__fix-active {
+      height: 48px;
+    }
+  }
+}
+
 //
 // Not found page
 //
@@ -1547,12 +3549,13 @@ input.bs-timepicker-field {
 
 // Notifications
 .notifications__avatar {
-   height: 28px;
-   width: 28px;
-   border-radius: 3px;
+   height: 40px;
+   width: 40px;
+   border-radius: 12px;
    background-size: cover;
    background-repeat: no-repeat;
    background-position: center center;
+  position: relative;
 }
 
 .notifications__action {
@@ -1561,9 +3564,51 @@ input.bs-timepicker-field {
 }
 
 .notifications__icon {
-   margin-right: 14px;
-   width: 20px;
-   text-align: center;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  background: var(--tile-bg);
+  i-feather {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 992px) {
+  app-notifications-page {
+    .global__content__flex {
+      margin-top: 0px;
+    }
+    #header-content-spacer {
+      margin-top: 60px;
+    }
+  }
+}
+
+
+app-notifications-list {
+  .global__top-bar {
+    position: relative;
+    height: 72px;
+    background: var(--tile-bg);
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .notifications__list-item{
+    border: 1px solid var(--border);
+    background: var(--tile-bg);
+    &.last-item {
+      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  }
 }
 
 // Landing page
@@ -1579,10 +3624,9 @@ input.bs-timepicker-field {
 .landing__logo {
   height: 28px;
   flex: 0 0 130px;
-  background: url("/assets/img/camelcase_logo.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
   text-indent: -9999px;
 
   @media (max-width: 992px) {
@@ -1610,15 +3654,15 @@ input.bs-timepicker-field {
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 15px;
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
   color: var(--text);
   border-color: var(--border);
 }
 
 .landing__hero {
   padding: 100px 0;
-  border-left: 1px solid var(--secondary) !important;
-  border-right: 1px solid var(--secondary) !important;
+  border-left: 1px solid var(--background-secondary) !important;
+  border-right: 1px solid var(--background-secondary) !important;
   color: var(--text);
 }
 
@@ -1677,7 +3721,7 @@ input.bs-timepicker-field {
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--secondary) 90%);
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--background-secondary) 90%);
   width: 100%;
   height: 4em;
 }
@@ -1690,9 +3734,9 @@ input.bs-timepicker-field {
 
 .landing__platform {
   padding: 100px 0;
-  border-top: 1px solid var(--secondary) !important;
-  border-right: 1px solid var(--secondary) !important;
-  border-left: 1px solid var(--secondary) !important;
+  border-top: 1px solid var(--background-secondary) !important;
+  border-right: 1px solid var(--background-secondary) !important;
+  border-left: 1px solid var(--background-secondary) !important;
 }
 
 .landing__platform-header {
@@ -1710,7 +3754,7 @@ input.bs-timepicker-field {
 
 .landing__echo {
   background-color: var(--background);
-  border-top: 1px solid var(--secondary);
+  border-top: 1px solid var(--background-secondary);
   padding: 50px 0;
 }
 
@@ -1787,7 +3831,7 @@ input.bs-timepicker-field {
 
 
 //
-// Simple profile card (for likes, reclouts, diamonds modal)
+// Simple profile card (for likes, reposts, diamonds modal)
 //
 
 .simple-profile-card__avatar {
@@ -2053,7 +4097,7 @@ em {
   }
 }
 
-/*Begin BitClout config*/
+/*Begin DeSo config*/
 .flex-center {
   display: flex;
   align-items: center;
@@ -2163,12 +4207,12 @@ input {
   color: var(--text) !important;
 }
 
-.clout {
+.deso {
   filter: var(--filter);
 }
 
 .selector {
-  background: var(--secondary);
+  background: var(--background-secondary);
   outline: none;
   border-radius: 5px;
   padding: 5px;
@@ -2180,18 +4224,13 @@ input {
 }
 
 .notification {
-  border-radius: 3px;
-  background-color: var(--background);
-  color: #fe3537;
-  border: 1px #fe3537 solid;
   text-align: center;
   line-height: 18px;
-  height: 20px;
   padding: 0px 5px;
 }
 
 .bg-light {
-  background-color: var(--secondary) !important;
+  background-color: var(--background-secondary) !important;
 }
 
 // Animations by Carsen Klock @carsenk
@@ -2238,17 +4277,11 @@ input {
 
 .comment-modal {
   color: var(--text);
-  border: 1px solid var(--mborder);
-  background-color: var(--secondary);
   background-clip: padding-box;
   opacity: 1;
   flex-direction: column;
   width: 100%;
   display: flex;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
   outline: 0;
   position: relative;
 }
@@ -2273,55 +4306,265 @@ input {
   background-color: var(--formbg) !important;
 }
 
+.modal-dialog {
+  max-width: 630px;
+}
+
+.modal-dialog-thin {
+  max-width: 360px;
+}
+
 .modal-content {
+  font-family: Gilroy, Arial, sans-serif;
+  background: none;
+  border: none;
   position: relative;
-  background-color: var(--secalt);
-  color: var(--text);
-  border: 1px solid var(--mborder);
   background-clip: padding-box;
   opacity: 1;
   flex-direction: column;
   width: 100%;
   display: flex;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
   outline: 0;
+  comment-modal {
+    .feed-post__container {
+      padding: 16px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+    }
+    .feed-post-container {
+      margin-bottom: 0px;
+    }
+    .feed-create-comment-form__reply-container {
+      background: var(--tile-bg);
+      margin-left: 0px;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 15px !important;
+      color: var(--text-muted);
+      span {
+        font-weight: 600;
+      }
+    }
+    feed-create-post {
+      border-radius: 0px 0px 10px 10px;
+    }
+    .create-post {
+      border-radius: 0px;
+      textarea {
+        margin-top: 0px;
+        border: none;
+        background: var(--tile-secondary-bg) !important;
+        color: var(--text) !important;
+      }
+      .feed-create-post__avatar {
+        width: 55px;
+        height: 55px;
+      }
+    }
+    .create-post-icon-bar {
+      border-radius: 10px;
+      margin: 0px;
+      border-top-right-radius: 0px;
+      border-top-left-radius: 0px;
+      height: 80px;
+      padding: 16px;
+      button {
+        right: 16px;
+      }
+    }
+  }
 }
 
 .modal-header {
-  border-bottom: 1px solid var(--mborder) !important;
+  padding: 0px;
+  border: none;
+  .modal-header-x {
+    background: var(--tile-bg);
+    height: 56px;
+    width: 56px;
+    border-radius: 32px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    i-feather {
+      display: flex;
+      align-items: center;
+    }
+  }
+  i-feather {
+    color: var(--text);
+    height: 24px;
+    width: 24px;
+    position: relative;
+    top: 16px;
+    left: 16px;
+  }
+}
+
+.creator-profile__container {
+  background: var(--tile-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 15px;
+}
+
+creator-profile-details {
+  .tab-selector__container{
+    margin-bottom: 15px;
+  }
+  .creator-profile-details__coin-container {
+    .font-weight-bold {
+      font-weight: 600 !important;
+    }
+  }
+  .creator-profile-details__coin-info {
+    background: var(--nft-section-bg);
+    color: var(--text-inverted);
+    font-size: 13px;
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+}
+
+creator-profile-hodlers {
+  .creator-profile-hodlers__header {
+    padding-top: 16px;
+    background: var(--tile-bg);
+  }
+
+  .creator-profile-hodlers__row {
+    padding: 0px 16px;
+    background: var(--tile-bg);
+  }
+  .total-row {
+    border-radius: 0px 0px 10px 10px;
+  }
+}
+
+.modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1rem 1rem;
-  border-top-left-radius: calc(.3rem - 1px);
-  border-top-right-radius: calc(.3rem - 1px);
+  margin-bottom: 20px;
+  height: 56px;
 }
 
-.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
-  background-color: var(--background);
+.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+  background-color: var(--tile-bg);
   color: var(--text);
-  border: var(--mborder);
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  simple-profile-card {
+    .simple-profile-card__container {
+      padding: 16px;
+    }
+  }
+}
+
+.mint-nft__section {
+  padding: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.mint-nft__text {
+  color: var(--text-muted);
+  size: 15px;
+}
+.mint-nft__title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.mint-nft__sub-title {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  margin: 16px 0px 8px 0px;
+}
+.mint-nft__type-selector {
+  width: 40%;
+  height: 186px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: border .5s;
+  &.nft-type-selected {
+    border-color: var(--highlight);
+    .mint-nft__type-selector-title {
+      color: var(--highlight);
+    }
+  }
+}
+.mint-nft__type-selector-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  text-align: center;
+  transition: color .5s;
+}
+.mint-nft__dropdown-btn {
+  border: 1px solid var(--border);
+  border-radius: 16px 0px 0px 16px;
+  background: var(--tile-secondary-bg);
+  width: 96px;
+  height: 48px;
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+.mint-nft__input {
+  padding: 12px;
+  height: 48px;
+  background: var(--tile-secondary-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.mint-nft__price-half {
+  width: 50%;
+  margin-left: 8px;
+}
+.mint-nft__price-full {
+  width: 100%;
+  margin-left: 0px;
+}
+.mint-nft__floating-span {
+  position: absolute;
+  top: 12px;
+  right: 32px;
+}
+.mint-nft__sub-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.mint-nft__create-btn {
+  width: 137px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--highlight);
+  color: var(--tile-bg);
+  font-size: 17px;
+  margin: 24px 0px 105px 0px;
+  border: none;
 }
 
 .nft-modal-container {
   color: var(--text);
   border: 1px solid var(--mborder);
-  background-color: var(--secondary);
+  background: var(--tile-bg);
   background-clip: padding-box;
   flex-direction: column;
   width: 100%;
   display: flex;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
+  border-radius: 10px;
   outline: 0;
   position: relative;
 }
@@ -2329,6 +4572,100 @@ input {
 .nft-modal-radio-size {
   height: 15px;
   width: 15px;
+}
+
+.nft-modal-bid-details {
+  background: var(--tile-secondary-bg);
+  border-radius: 10px;
+  font-size: 15px;
+  margin: 16px 0px;
+}
+
+.place-bid-rows {
+  @media (min-width: 992px) {
+    max-height: 250px;
+    overflow-y: scroll;
+  }
+}
+
+sell-nft-modal {
+  .mint-nft__section {
+    border-bottom: none;
+  }
+}
+
+.sell-nft__row {
+  background: var(--tile-secondary-bg);
+  border-radius: 10px;
+  padding: 16px 0px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  width: 100%
+}
+
+.place-bid-dropdown {
+  left: -48px !important;;
+}
+
+.danger-button {
+  width: 137px;
+  height: 48px;
+  background: var(--error);
+  border-radius: 16px;
+  color: var(--tile-bg);
+  border: none;
+  &:hover {
+    color: var(--tile-bg);
+  }
+  &.disabled-button {
+    background: var(--error-light)
+  }
+}
+
+.primary-button {
+  width: 137px;
+  height: 48px;
+  background: var(--highlight);
+  border-radius: 16px;
+  color: var(--tile-bg);
+  border: none;
+  &:hover {
+    color: var(--tile-bg);
+  }
+  &.disabled-button {
+    background: var(--highlight-secondary)
+  }
+}
+
+.plain-button {
+  width: 137px;
+  height: 48px;
+  background: var(--tile-bg);
+  border: 1px solid var(--text-secondary);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  &:hover {
+    color: var(--text-secondary);
+  }
+  &.disabled-button {
+    background: var(--tile-bg)
+  }
+}
+
+.light-button {
+  width: 137px;
+  height: 48px;
+  background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text);
+  font-weight: 600;
+  &:hover {
+    color: var(--text);
+  }
+  &.disabled-button {
+    background: var(--tile-bg)
+  }
 }
 
 .nft-modal-separator {
@@ -2346,12 +4683,36 @@ input {
 .interaction-detail {
   &:hover, &:active, &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
-    color: var(--grey);
+    color: var(--text-secondary);
   }
+  cursor: pointer;
 }
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
   color: var(--text);
+}
+
+.toast-bottom-center {
+  width: auto;
+  bottom: 20px;
+  left: 50vw;
+  right: auto;
+  pointer-events: auto;
+}
+
+.info-toast {
+  background: var(--highlight);
+  padding: 8px 16px;
+  color: var(--tile-bg);
+  font-size: 17px;
+  border-radius: 4px;
+  font-family: Gilroy, Arial, sans-serif;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  right: 50vw;
+  .toast-link {
+    font-weight: 600;
+    margin-left: 16px;
+  }
 }
 
 .mat-option, option {
@@ -2360,7 +4721,7 @@ input {
 }
 
 .mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
@@ -2379,9 +4740,71 @@ input {
   background-color: var(--hover);
 }
 
+.tutorial-header-hide {
+  .introjs-skipbutton {
+    display: none;
+  }
+}
+
+.tutorial-tooltip {
+  min-width: 300px;
+  max-width: 550px;
+  font-family: Gilroy Arial sans-serif;
+  border-radius: 12px;
+  background: var(--tile-bg);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  .introjs-button {
+    border-radius: 12px !important;
+    background: none;
+    border: 1px solid var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
+    &:hover {
+      color: var(--text-secondary) !important;
+    }
+    &.introjs-disabled {
+      background: var(--tile-bg) !important;
+      color: var(--text-muted) !important;
+      border-color: var(--text-muted) !important;
+    }
+  }
+}
+
 .swal2-popup {
-  background-color: var(--background) !important;
+  z-index: 100000000;
+  background-color: var(--tile-bg) !important;
   color: var(--text);
+  border-radius: 10px !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  button {
+    height: 48px;
+    min-width: 70px;
+    border-radius: 16px !important;
+    font-size: 20px !important;
+    padding: 6px 16px !important;
+  }
+  .btn-light {
+    background: var(--highlight) !important;
+    color: var(--tile-bg) !important;
+    border: none;
+    &:hover {
+      color: var(--tile-bg) !important;
+    }
+    &.disabled-button {
+      background: var(--highlight-secondary) !important;
+    }
+  }
+  .no, .swal2-cancel {
+    background: var(--tile-bg) !important;
+    border: 1px solid var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
+    &:hover {
+      color: var(--text-secondary) !important;
+    }
+    &.disabled-button {
+      background: var(--tile-bg) !important;
+    }
+  }
+
 }
 
 //
@@ -2456,6 +4879,7 @@ input {
 }
 
 .cloutavista-button {
+  font-family: Gilroy, Arial, sans-serif;
   position: sticky;
   bottom: 0px;
   a {
@@ -2511,12 +4935,12 @@ input {
         top: 50px; left: 0px;
       }
 
+      filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
       // Need to position box above top bar when explainer is triggered
       z-index: 30;
       position: absolute;
       width: 340px; height: 55px;
-      background: var(--background);
-      border: 1px solid var(--border);
+      background: var(--tile-bg);
       border-radius: 20px;
       // On mobile, need to position this box further left so it doesn't leave the screen
       @media (max-width: 991.98px) {
@@ -2533,7 +4957,7 @@ input {
         transform: translate(0, 50px) scale(0);
         width: 47px; height: 20px;
         display: inline-block;
-        background: var(--secondary);
+        background: var(--background-secondary);
         background-color: transparent;
         content: '\f219';
         border-radius: 15px;
@@ -2541,6 +4965,8 @@ input {
         text-align: center;
 
         .diamond-reaction {
+          width: 30px;
+          height: 30px;
           font-size: 25px;
           top: -30px;
           left: -2px;

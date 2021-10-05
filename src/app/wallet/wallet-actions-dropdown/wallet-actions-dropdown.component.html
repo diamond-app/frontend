@@ -1,41 +1,37 @@
-<div class="btn-group" dropdown #dropdown="bs-dropdown">
-  <a dropdownToggle id="walletActionsButton" class="dropdown-basic link--unstyled" aria-controls="dropdown-basic">
-    <i class="fas fa-exchange-alt fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
-  </a>
-  <div *ngIf="!inTutorial || (isHighlightedCreator && showSellOnly)">
-    <div
-      id="dropdown-basic"
-      *dropdownMenu
-      aria-labelledby="walletActionsButton"
-      class="dropdown-menu dropdown-menu-right p-0px"
-      style="min-width: max-content"
+<div class="btn-group" dropdown #dropdown="bs-dropdown" (mouseenter)="stopIconHide()" (mouseleave)="hideIcons()">
+  <div class="wallet-actions-container d-flex align-content-between" *ngIf="showIcons && (!inTutorial || (isHighlightedCreator && showSellOnly))" [ngClass]="{ 'selected-wallet-actions-container': inTutorial && isHighlightedCreator }">
+    <a
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="openBuyCreatorCoinModal($event, buyTradeType)"
+      *ngIf="!showSellOnly"
     >
-      <a
-        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-        [routerLink]="AppRoutingModule.buyCreatorPath(hodlingUsername)"
-        queryParamsHandling="merge"
-        *ngIf="!showSellOnly"
-      >
-        <i class="fas fa-plus fs-12px"></i>
-        Buy
-      </a>
-      <a
-        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-        [routerLink]="inTutorial ? ['', RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, hodlingUsername].join('/') : AppRoutingModule.sellCreatorPath(hodlingUsername)"
-        queryParamsHandling="merge"
-      >
-        <i class="fas fa-minus fs-12px"></i>
-        Sell
-      </a>
-      <a
-        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-        [routerLink]="AppRoutingModule.transferCreatorPath(hodlingUsername)"
-        queryParamsHandling="merge"
-        *ngIf="!showSellOnly"
-      >
-        <i class="fas fa-paper-plane fs-12px"></i>
-        Send
-      </a>
-    </div>
+      <i class="fas fa-plus fs-12px"></i>
+      Buy
+    </a>
+    <a
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="openBuyCreatorCoinModal($event, sellTradeType)"
+    >
+      <i class="fas fa-minus fs-12px"></i>
+      Sell
+    </a>
+    <a
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="openSendCloutModal($event)"
+      *ngIf="!showSellOnly"
+    >
+      <i class="fas fa-paper-plane fs-12px"></i>
+      Send
+    </a>
+    <a
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="showIcons = false"
+      *ngIf="!showSellOnly && globalVars.isMobile()"
+    >
+      <i-feather name="x" class="feather-small fc-secondary"></i-feather>
+    </a>
   </div>
+  <a (click)="showIcons = true" *ngIf="!showIcons">
+    <i class="fas fa-ellipsis-h fs-18px fc-secondary wallet-actions-icon"></i>
+  </a>
 </div>

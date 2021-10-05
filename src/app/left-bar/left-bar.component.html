@@ -1,183 +1,153 @@
 <div class="global__nav__width">
   <div class="global__nav__fixed">
     <!-- Logged-in Left Bar -->
-    <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <a
-          class="link--unstyled d-flex align-items-center"
-          (click)="globalVars.isLeftBarMobileOpen = false"
-          [routerLink]="homeLink()"
-          queryParamsHandling="merge"
-        >
-          <img
-            src="assets/img/camelcase_logo.svg"
-            class="clout"
-            style="height: 27px; margin-left: 17px; margin-bottom: 3px"
-          />
-        </a>
-
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer">
-          <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
-        </div>
-      </div>
-
-      <div class="pt-10px"></div>
-
-      <div style="margin-left: 25px" class="position-relative">
-        <change-account-selector></change-account-selector>
-      </div>
-
-      <!-- Left Bar Buttons -->
-
-      <div class="pt-15px"></div>
-
-      <div *ngIf="!inTutorial">
-        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.TRENDS"
-          [buttonLabel]="'Trends'"
-        ></left-bar-button>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.CREATORS"
-          [buttonLabel]="'Buy Creator Coins'"
-        ></left-bar-button>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-          [buttonLabel]="'Buy $CLOUT'"
-        ></left-bar-button>
-
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
-          <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+    <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner d-flex flex-column justify-content-between">
+      <div>
+        <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
+          <div class="d-flex justify-content-between fc-secondary">
+            <a
+              class="link--unstyled d-flex align-items-center"
+              (click)="globalVars.isLeftBarMobileOpen = false"
+              [routerLink]="homeLink()"
+              queryParamsHandling="merge"
+            >
+              <img
+                [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+                class="deso"
+                style="height: 27px"
+              />
+            </a>
+            <i-feather name="x" class="feather-large cursor-pointer d-flex align-items-center" (click)="closeMobile.emit()"></i-feather>
+          </div>
+          <div class="pt-20px"></div>
+          <change-account-selector></change-account-selector>
         </div>
 
-        <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
-        <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-          [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
-          [buttonLabel]="'My NFT Bids'"
-          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-        ></left-bar-button>
-        <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-          [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
-          [buttonLabel]="'My NFT Gallery'"
-          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-        ></left-bar-button>
-
-        <div class="p-15px"></div>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.PICK_A_COIN"
-          [buttonLabel]="'Send Creator Coins'"
-        ></left-bar-button>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
-          [buttonLabel]="'Send $CLOUT'"
-        ></left-bar-button>
-
-        <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
-
-        <div class="p-15px"></div>
-
-        <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
+        <!-- Left Bar Buttons -->
+        <div class="pt-20px"></div>
+        <div class="left-desktop-selector" *ngIf="!inTutorial">
+          <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
           <left-bar-button
-            [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+            [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
+            [buttonLabel]="'Notifications'"
+            [isUnread]="globalVars.hasUnreadNotifications"
+            [iconName]="'bell'"
+          ></left-bar-button>
+          <left-bar-button
+            [hasNotifications]="true"
+            [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
+            [buttonLabel]="'Messages'"
+            [iconName]="'message-square'"
+          ></left-bar-button>
+          <left-bar-button
+            *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+            [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
             [queryParams]="{ 'tab':'posts' }"
-            [buttonLabel]="'Profile'"
+            [buttonLabel]="'My Profile'"
+            [iconName]="'user'"
           ></left-bar-button>
-        </div>
-        <ng-template #elseBlock>
           <left-bar-button
-            [link]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
+            *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+            [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
             [buttonLabel]="'Update Profile'"
+            [iconName]="'user'"
           ></left-bar-button>
-        </ng-template>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-          [buttonLabel]="'Notifications'"
-          [isUnread]="globalVars.hasUnreadNotifications"
-        ></left-bar-button>
-
-        <left-bar-button
-          [hasNotifications]="true"
-          [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-          [buttonLabel]="'Messages'"
-        ></left-bar-button>
-
-        <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
-
-        <left-bar-button
-          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0" 
-          [link]="'/' + globalVars.RouteNames.REFERRALS" 
-          [buttonLabel]="'Referrals'"
-        ></left-bar-button>
-
-        <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
-          <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
-        </div>
-
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-          <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-          <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+          <div
+            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+            style="height: 56px"
+            (click)="startTutorial()"
+          >
+            <i-feather name="monitor" class="feather-medium d-flex align-items-center"></i-feather>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
+          </div>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
+          <left-bar-button
+            *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
+            [link]="'/' + globalVars.RouteNames.REFERRALS"
+            [buttonLabel]="'Referrals'"
+            [iconName]="'share-2'"
+          ></left-bar-button>
+          <div
+            *ngIf="globalVars.supportEmail"
+            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+            style="height: 56px"
+            (click)="getHelpMailToAttr()"
+          >
+            <i-feather name="help-circle" class="feather-medium d-flex align-items-center"></i-feather>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Help</a>
+          </div>
+          <left-bar-button
+            *ngIf="globalVars.showAdminTools()"
+            [link]="'/' + globalVars.RouteNames.ADMIN"
+            [buttonLabel]="'Admin'"
+            [iconName]="'codesandbox'"
+          ></left-bar-button>
+          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">Post</button>
         </div>
       </div>
-      <div class="p-15px"></div>
-
-      <left-bar-button
-        *ngIf="globalVars.showAdminTools()"
-        [link]="'/' + globalVars.RouteNames.ADMIN"
-        [buttonLabel]="'Admin'"
-      ></left-bar-button>
+      <div *ngIf="isMobile">
+        <!-- Referral links alert -->
+        <div
+          *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
+          class="d-flex border border-color-grey background-color-white p-10px mx-16px br-10px fs-13px"
+        >
+          <div class="fc-secondary">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
+          <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold" (click)="closeMobile.emit()">Find out more</a>
+        </div>
+        <div
+          *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
+          class="p-16px"
+        >
+          <jumio-status [message]="'Get'"></jumio-status>
+        </div>
+        <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
+          <div>
+            <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>
+            <span>1≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
+          </div>
+          <a href="/buy-bitclout" class="fc-blue fs-15px font-weight-bold">Buy</a>
+        </div>
+        <div class="w-100 border-bottom"></div>
+        <div class="fc-secondary cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
+          <i-feather name="power" class="feather-medium"></i-feather>
+          <span class="fc-17px font-weight-bold ml-10px">Logout</span>
+        </div>
+      </div>
     </div>
 
     <!-- Logged-out Left Bar -->
-    <div *ngIf="globalVars.loggedInUser == null && !inTutorial" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <a
-          class="link--unstyled d-flex align-items-center"
-          (click)="globalVars.isLeftBarMobileOpen = false"
-          [routerLink]="homeLink()"
-          queryParamsHandling="merge"
-        >
-          <img
-            src="assets/img/camelcase_logo.svg"
-            class="clout"
-            style="height: 27px; margin-left: 17px; margin-bottom: 3px"
-          />
-        </a>
-
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px">
+    <div *ngIf="globalVars.loggedInUser == null" class="global__nav__inner">
+      <div class="pt-20px"></div>
+      <div *ngIf="isMobile" class="d-flex w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px" style="height: 80px">
+        <div class="flex-grow-1 d-flex justify-content-between">
+          <a
+            class="link--unstyled d-flex align-items-center"
+            (click)="globalVars.isLeftBarMobileOpen = false"
+            [routerLink]="homeLink()"
+            queryParamsHandling="merge"
+          >
+            <img
+              [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+              class="deso"
+              style="height: 27px"
+            />
+          </a>
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
       </div>
 
-      <div class="pt-10px"></div>
+      <div class="pt-5px"></div>
+      <div class="left-desktop-selector">
+        <!-- Left Bar Buttons -->
+        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
 
-      <div style="margin-left: 25px" class="mr-15px">
-        <change-account-selector></change-account-selector>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.BUY_DESO"
+          [buttonLabel]="'Buy $DESO'"
+          [iconName]="'dollar-sign'"
+        ></left-bar-button>
       </div>
 
-      <div class="pt-15px"></div>
-
-      <!-- Left Bar Buttons -->
-      <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.CREATORS"
-        [buttonLabel]="'Buy Creator Coins'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-        [buttonLabel]="'Buy $CLOUT'"
-      ></left-bar-button>
     </div>
   </div>
 </div>

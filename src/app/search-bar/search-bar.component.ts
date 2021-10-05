@@ -15,9 +15,13 @@ export class SearchBarComponent implements OnInit {
   @ViewChild("searchBarRoot", { static: true }) searchBarRoot: ElementRef;
   @Input() isSearchForUsersToMessage: boolean;
   @Input() showCloutavista: boolean = true;
-  @Input() isSearchForUsersToSendClout: boolean;
+  @Input() isSearchForUsersToSendDESO: boolean;
   @Input() startingSearchText: string;
+  // If the results appear right under the bar.
+  // If true, make the bottom border radii for the search bar 0 to connect with the results
+  @Input() resultsUnderBar: boolean = false;
   @Output() creatorToMessage = new EventEmitter<any>();
+  @Output() searchUpdated = new EventEmitter<any>();
   searchText: string;
   creators: ProfileEntryResponse[] = [];
   loading: boolean;
@@ -66,6 +70,7 @@ export class SearchBarComponent implements OnInit {
               return;
             }
             this.creators = [res.Profile];
+            this.searchUpdated.emit(this.creators?.length > 0);
             if (this.startingSearchText) {
               // If starting search text is set, we handle the selection of the creator.
               this._handleCreatorSelect(res.Profile);
@@ -75,6 +80,7 @@ export class SearchBarComponent implements OnInit {
         (err) => {
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
+            this.searchUpdated.emit(this.loading);
             // a 404 occurs for anonymous public keys.
             if (err.status === 404 && this.globalVars.isMaybePublicKey(requestedSearchText)) {
               const anonProfile = { PublicKeyBase58Check: requestedSearchText, Username: "", Description: "" };
@@ -112,6 +118,7 @@ export class SearchBarComponent implements OnInit {
             this.globalVars.logEvent("search : creators : username");
             this.loading = false;
             this.creators = response.ProfilesFound;
+            this.searchUpdated.emit(this.creators?.length > 0);
             // If starting search text is set, we handle the selection of the creator.
             if (this.startingSearchText && response.ProfilesFound.length) {
               this._handleCreatorSelect(response.ProfilesFound[0]);
@@ -123,6 +130,7 @@ export class SearchBarComponent implements OnInit {
           // the request for the current search text
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
+            this.searchUpdated.emit(this.loading);
           }
           console.error(err);
           this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
@@ -155,7 +163,7 @@ export class SearchBarComponent implements OnInit {
   _handleCreatorSelect(creator: any) {
     this.globalVars.logEvent("search : creators : select");
     if (creator && creator != "") {
-      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendClout) {
+      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendDESO) {
         this.creatorToMessage.emit(creator);
       } else {
         this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, creator.Username], {
@@ -168,7 +176,7 @@ export class SearchBarComponent implements OnInit {
       // this user should be redirected to the profile page of the user with the username
       // equal to that of the current searchText.
       if (this.searchText !== "" && !this.isSearchForUsersToMessage) {
-        if (this.isSearchForUsersToSendClout) {
+        if (this.isSearchForUsersToSendDESO) {
           this.creatorToMessage.emit(this.creators[0]);
         } else {
           this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.searchText], {
@@ -205,6 +213,7 @@ export class SearchBarComponent implements OnInit {
       // show the loader now before calling the debounced search
       // to improve the user experience
       this.loading = true;
+      this.searchUpdated.emit(this.loading);
       // Then we filter the creator list based on the search text.
       this.debouncedSearchFunction();
     }

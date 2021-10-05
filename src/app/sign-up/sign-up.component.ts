@@ -5,6 +5,8 @@ import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, User } from "../backend-api.service";
 import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
 import { FeedComponent } from "../feed/feed.component";
+import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "sign-up",
@@ -27,7 +29,8 @@ export class SignUpComponent {
     private globalVars: GlobalVarsService,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private modalService: BsModalService
   ) {
     this.route.queryParams.subscribe((queryParams) => {
       this.stepNum = 1;
@@ -93,7 +96,7 @@ export class SignUpComponent {
     this.nextPage();
   }
 
-  skipButtonClickedOnStarterBitCloutStep() {
+  skipButtonClickedOnStarterDeSoStep() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
     this.nextPage();
   }
@@ -121,19 +124,29 @@ export class SignUpComponent {
       });
   }
 
-  buyBitCloutClicked(): void {
+  buyDeSoClicked(): void {
     this.globalVars.logEvent("account : create : buy-bitclout");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_BITCLOUT], {
-      queryParams: { stepNum: null },
+    this.openBuyDeSoModal();
+  }
+
+  buyDeSoSkipped(): void {
+    this.globalVars.logEvent("account : create : buy-deso : skip");
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+      queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
       queryParamsHandling: "merge",
     });
   }
 
-  buyBitCloutSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout : skip");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
-      queryParamsHandling: "merge",
+  openBuyDeSoModal() {
+    const modal = this.modalService.show(BuyDeSoComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+    });
+    const onHideEvent = modal.onHide;
+    onHideEvent.subscribe((response) => {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
+        queryParamsHandling: "merge",
+      });
     });
   }
 }

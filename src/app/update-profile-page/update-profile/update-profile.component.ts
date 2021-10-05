@@ -1,10 +1,15 @@
 import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import { ThemeService } from "../../theme/theme.service";
+import * as introJs from "intro.js/intro.js";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { environment } from "src/environments/environment";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -28,6 +33,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
 
+  introJS = introJs();
+  skipTutorialExitPrompt = false;
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -46,18 +53,26 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     founderRewardError: false,
   };
   profileUpdated = false;
+  emailAddress = "";
+  initialEmailAddress = "";
+  invalidEmailEntered = false;
 
   constructor(
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    public themeService: ThemeService,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
-    this.titleService.setTitle("Update Profile - BitClout");
+    this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
+    if (this.inTutorial) {
+      this.globalVars.preventBackButton();
+    }
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -92,6 +107,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateFormBasedOnLoggedInUser() {
     if (this.globalVars.loggedInUser) {
+      this._getUserMetadata();
       const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
@@ -112,6 +128,48 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
       }
     }
+  }
+
+  _getUserMetadata() {
+    this.backendApi
+      .GetUserGlobalMetadata(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
+      )
+      .subscribe(
+        (res) => {
+          this.emailAddress = res.Email;
+          this.initialEmailAddress = this.emailAddress;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  _validateEmail(email) {
+    if (email === "" || this.globalVars.emailRegExp.test(email)) {
+      this.invalidEmailEntered = false;
+    } else {
+      this.invalidEmailEntered = true;
+    }
+  }
+
+  _updateEmail() {
+    this.backendApi
+      .UpdateUserGlobalMetadata(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.emailAddress /*EmailAddress*/,
+        null /*MessageReadStateUpdatesByContact*/
+      )
+      .subscribe(
+        (res) => {},
+        (err) => {
+          console.log(err);
+          this.globalVars.logEvent("profile : update : error", { err });
+        }
+      )
   }
 
   _setProfileUpdates() {
@@ -178,7 +236,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
       false /*IsHidden*/,
       // End params
-      this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
     );
   }
 
@@ -187,6 +245,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     // browsers may do this.
     this.usernameInput = this.usernameInput.trim();
 
+    // TODO: Add errors for emails
     const hasErrors = this._setProfileErrors();
     if (hasErrors) {
       this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
@@ -194,6 +253,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
 
     this.updateProfileBeingCalled = true;
+    if (this.initialEmailAddress != this.emailAddress) {
+      this._updateEmail();
+    }
     this._setProfileUpdates();
     this._callBackendUpdateProfile().subscribe(
       (res) => {
@@ -201,6 +263,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
+        if (this.inTutorial) {
+          this.exitTutorial();
+        }
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
@@ -218,12 +283,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             confirmButton: "btn btn-light",
             cancelButton: "btn btn-light no",
           },
-          confirmButtonText: lowBalance ? "Buy $CLOUT" : null,
+          confirmButtonText: lowBalance ? "Buy $DESO" : null,
           cancelButtonText: lowBalance ? "Later" : null,
           showCancelButton: !!lowBalance,
         }).then((res) => {
           if (lowBalance && res.isConfirmed) {
-            this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+            this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
           }
         });
       }
@@ -253,12 +318,21 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         confirmButtonText: "Buy Your Coin",
       }).then((res) => {
         if (res.isConfirmed) {
-          comp.router.navigate([
-            AppRoutingModule.buyCreatorPath(comp.globalVars.loggedInUser.ProfileEntryResponse.Username),
-          ]);
+          comp.openBuyCreatorCoinModal();
         }
       });
     }
+  }
+
+  openBuyCreatorCoinModal() {
+    const initialState = {
+      username: this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
+    };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState,
+    });
   }
 
   _updateProfileFailure(comp: UpdateProfileComponent) {
@@ -285,10 +359,71 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     reader.onload = (event: any) => {
       const base64Image = btoa(event.target.result);
       this.profilePicInput = `data:${file.type};base64,${base64Image}`;
+      if (this.inTutorial) {
+        setTimeout(() => {
+          this.introJS.refresh();
+        }, 5);
+      }
     };
   }
 
   _resetImage() {
     this.profilePicInput = "";
+  }
+
+  selectChangeHandler(event: any) {
+    const newTheme = event.target.value;
+    this.themeService.setTheme(newTheme);
+  }
+
+  ngAfterViewInit() {
+    if (this.inTutorial) {
+      this.initiateIntro();
+    }
+  }
+
+  initiateIntro() {
+    this.updateProfileIntro();
+  }
+
+  updateProfileIntro() {
+    this.introJS = introJs();
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Update Your Profile <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: true,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          title,
+          intro: `Everyone needs a profile! Let's update yours.`,
+        },
+        {
+          title,
+          intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
+          element: document.querySelector(".update-profile__holder"),
+        },
+      ],
+    });
+    this.introJS.onexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+  }
+
+  tutorialCleanUp() {}
+
+  exitTutorial() {
+    if (this.inTutorial) {
+      this.skipTutorialExitPrompt = true;
+      this.introJS.exit(true);
+      this.skipTutorialExitPrompt = false;
+    }
   }
 }

@@ -1,10 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
+import { MessagesInboxComponent } from "./messages-inbox/messages-inbox.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-messages-page",
@@ -12,6 +15,7 @@ import { Title } from "@angular/platform-browser";
   styleUrls: ["./messages-page.component.scss"],
 })
 export class MessagesPageComponent {
+  @ViewChild(MessagesInboxComponent /* #name or Type*/, { static: false }) messagesInboxComponent;
   lastContactFetched = null;
   intervalsSet = [];
   selectedThread: any;
@@ -20,16 +24,45 @@ export class MessagesPageComponent {
   selectedThreadProfilePic = "";
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
+  environment = environment;
+
+  backButtonFunction = () => {
+    this.showThreadView = false;
+  };
 
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Messages - BitClout");
+    this.titleService.setTitle(`Messages - ${environment.node.name}`);
+  }
+
+  // send logged in users to browse
+  homeLink(): string | string[] {
+    if (this.globalVars.showLandingPage()) {
+      return "/" + this.globalVars.RouteNames.LANDING;
+    }
+    return "/" + this.globalVars.RouteNames.BROWSE;
+  }
+
+  openNewMessageModal() {
+    const modalClass = this.globalVars.isMobile()
+      ? "modal-dialog-centered modal-dialog-high modal-dialog-light"
+      : "modal-dialog-centered";
+    const backdrop = !this.globalVars.isMobile();
+    const messageSelectorModal = this.modalService.show(MessageRecipientModalComponent, {
+      class: modalClass,
+      backdrop,
+      animated: !this.globalVars.isMobile(),
+    });
+    messageSelectorModal.content.userSelected.subscribe((event) => {
+      this.messagesInboxComponent._handleCreatorSelectedInSearch(event);
+    });
   }
 
   _handleMessageThreadSelectedMobile(thread: any) {

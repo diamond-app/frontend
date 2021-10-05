@@ -3,10 +3,10 @@ import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TextFieldModule } from "@angular/cdk/text-field";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { BackendApiService } from "./backend-api.service";
@@ -27,7 +27,7 @@ import { FeedPostDropdownComponent } from "./feed/feed-post-dropdown/feed-post-d
 import { FeedPostIconRowComponent } from "./feed/feed-post-icon-row/feed-post-icon-row.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
 import { CreatorsLeaderboardComponent } from "./creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
-import { BuyBitcloutPageComponent } from "./buy-bitclout-page/buy-bitclout-page.component";
+import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
@@ -39,12 +39,13 @@ import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-p
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
 import { TradeCreatorComponent } from "./trade-creator-page/trade-creator/trade-creator.component";
-import { BuyBitcloutComponent } from "./buy-bitclout-page/buy-bitclout/buy-bitclout.component";
-import { BuyBitcloutUSDComponent } from "./buy-bitclout-page/buy-bitclout-usd/buy-bitclout-usd.component";
+import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
+import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-form/trade-creator-form.component";
 import { TradeCreatorPreviewComponent } from "./trade-creator-page/trade-creator-preview/trade-creator-preview.component";
 import { TradeCreatorCompleteComponent } from "./trade-creator-page/trade-creator-complete/trade-creator-complete.component";
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
+import { UpdateProfileModalComponent } from "./update-profile-page/update-profile-modal/update-profile-modal.component";
 import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
@@ -57,15 +58,16 @@ import { UpdateProfileComponent } from "./update-profile-page/update-profile/upd
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { BottomBarMobileComponent } from "./bottom-bar-mobile/bottom-bar-mobile.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
-import { TransferBitcloutPageComponent } from "./transfer-bitclout-page/transfer-bitclout-page.component";
-import { TransferBitcloutComponent } from "./transfer-bitclout/transfer-bitclout.component";
-import { BuyBitcloutLoggedOutComponent } from "./buy-bitclout-page/buy-bitclout-logged-out/buy-bitclout-logged-out.component";
-import { BuyBitcloutCompleteComponent } from "./buy-bitclout-page/buy-bitclout-complete/buy-bitclout-complete.component";
+import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
+import { TransferDeSoComponent } from "./transfer-deso/transfer-deso.component";
+import { BuyDeSoLoggedOutComponent } from "./buy-deso-page/buy-deso-logged-out/buy-deso-logged-out.component";
+import { BuyDeSoCompleteComponent } from "./buy-deso-page/buy-deso-complete/buy-deso-complete.component";
 import { MessagesInboxComponent } from "./messages-page/messages-inbox/messages-inbox.component";
 import { MessagesThreadComponent } from "./messages-page/messages-thread/messages-thread.component";
 import { MessageComponent } from "./messages-page/message/message.component";
 import { MessagesThreadViewComponent } from "./messages-page/messages-thread-view/messages-thread-view.component";
 import { TopBarMobileNavigationControlComponent } from "./top-bar-mobile/top-bar-mobile-navigation-control/top-bar-mobile-navigation-control.component";
+import { TopBarMobileHeaderComponent } from "./top-bar-mobile/top-bar-mobile-header/top-bar-mobile-header.component";
 import { BottomBarMobileTabComponent } from "./bottom-bar-mobile/bottom-bar-mobile-tab/bottom-bar-mobile-tab.component";
 import { NotFoundComponent } from "./not-found-page/not-found/not-found.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
@@ -95,24 +97,33 @@ import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
-import { SignUpGetStarterBitcloutComponent } from "./sign-up/sign-up-get-starter-bitclout/sign-up-get-starter-bitclout.component";
-import { UpdateProfileGetStarterBitcloutComponent } from "./update-profile-page/update-profile-get-starter-bitclout/update-profile-get-starter-bitclout.component";
-import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get-starter-bitclout-page.component";
-import { GetStarterBitcloutComponent } from "./get-starter-bitclout-page/get-starter-bitclout/get-starter-bitclout.component";
+import { SignUpGetStarterDeSoComponent } from "./sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component";
+import { UpdateProfileGetStarterDeSoComponent } from "./update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component";
+import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
+import { GetStarterDeSoComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
 import { CommentModalComponent } from "./comment-modal/comment-modal.component";
 import { WalletComponent } from "./wallet/wallet.component";
+import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { DiamondsModalComponent } from "./diamonds-modal/diamonds-modal.component";
-import { RecloutsModalComponent } from "./reclouts-modal/reclouts-modal.component";
-import { QuoteRecloutsModalComponent } from "./quote-reclouts-modal/quote-reclouts-modal.component";
-import { LikesModalComponent } from "./likes-modal/likes-modal.component";
+import { DiamondsDetailsComponent } from "./diamonds-details/diamonds-details.component";
+import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
+import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
+import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
+import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
+import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
+import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
+import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component"
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
 import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
+import { DiamondsModalComponent } from "./diamonds-details/diamonds-modal/diamonds-modal.component";
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
@@ -120,14 +131,18 @@ import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
-import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
+import { MintNftComponent } from "./mint-nft/mint-nft.component";
+import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
 import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
-import { PlaceBidModalComponent } from "./place-bid-modal/place-bid-modal.component";
+import { PlaceBidComponent } from "./place-bid/place-bid.component";
+import { PlaceBidModalComponent } from "./place-bid/place-bid-modal/place-bid-modal.component";
+import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
 import { NftSoldModalComponent } from "./nft-sold-modal/nft-sold-modal.component";
 import { NftModalHeaderComponent } from "./nft-modal-header/nft-modal-header.component";
 import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
-import { SellNftModalComponent } from "./sell-nft-modal/sell-nft-modal.component";
+import { SellNftComponent } from "./sell-nft/sell-nft.component";
+import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
 import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
@@ -148,21 +163,30 @@ import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
+import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
+import { IconsModule } from "./icons/icons.module";
+import { LottieModule } from "ngx-lottie";
+import player from "lottie-web";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { BuyBitcloutEthComponent } from "./buy-bitclout-page/buy-bitclout-eth/buy-bitclout-eth.component";
-import { ReferralProgramMgrComponent } from './referral-program-mgr/referral-program-mgr.component';
-import { ReferralsComponent } from './referrals/referrals.component';
+import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-program-mgr.component";
+import { ReferralsComponent } from "./referrals/referrals.component";
+import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
+import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 
-// Modular Themes for BitClout by Carsen Klock @carsenk
+// Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
 const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
 const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
 const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
+
+export function playerFactory() {
+  return player;
+}
 
 @NgModule({
   declarations: [
@@ -183,8 +207,9 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     FeedPostIconRowComponent,
     CreatorsLeaderboardPageComponent,
     CreatorsLeaderboardComponent,
-    BuyBitcloutPageComponent,
+    BuyDeSoPageComponent,
     WalletComponent,
+    WalletWidgetComponent,
     MessagesPageComponent,
     SettingsPageComponent,
     CreatorProfilePageComponent,
@@ -196,12 +221,13 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
-    BuyBitcloutComponent,
-    BuyBitcloutUSDComponent,
+    BuyDeSoComponent,
+    BuyDeSoUSDComponent,
     TradeCreatorFormComponent,
     TradeCreatorPreviewComponent,
     TradeCreatorCompleteComponent,
     UpdateProfilePageComponent,
+    UpdateProfileModalComponent,
     NotificationsPageComponent,
     SearchBarComponent,
     SimpleCenterLoaderComponent,
@@ -214,15 +240,18 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     RightBarCreatorsLeaderboardComponent,
     BottomBarMobileComponent,
     LeftBarMobileComponent,
-    TransferBitcloutPageComponent,
-    TransferBitcloutComponent,
-    BuyBitcloutLoggedOutComponent,
-    BuyBitcloutCompleteComponent,
+    TransferDeSoPageComponent,
+    TransferDeSoComponent,
+    BuyDeSoLoggedOutComponent,
+    BuyDeSoCompleteComponent,
     MessagesInboxComponent,
     MessagesThreadComponent,
     MessageComponent,
     MessagesThreadViewComponent,
+    MessageRecipientModalComponent,
+    FeedCreatePostModalComponent,
     TopBarMobileNavigationControlComponent,
+    TopBarMobileHeaderComponent,
     BottomBarMobileTabComponent,
     NotFoundComponent,
     CreatePostPageComponent,
@@ -242,17 +271,25 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     PageComponent,
     LandingPageComponent,
     SignUpComponent,
-    SignUpGetStarterBitcloutComponent,
-    UpdateProfileGetStarterBitcloutComponent,
-    GetStarterBitcloutPageComponent,
-    GetStarterBitcloutComponent,
+    SignUpGetStarterDeSoComponent,
+    UpdateProfileGetStarterDeSoComponent,
+    GetStarterDeSoPageComponent,
+    GetStarterDeSoComponent,
     CommentModalComponent,
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
+    DiamondsDetailsComponent,
+    DiamondsPageComponent,
     DiamondsModalComponent,
-    RecloutsModalComponent,
-    QuoteRecloutsModalComponent,
+    RepostsDetailsComponent,
+    RepostsPageComponent,
+    RepostsModalComponent,
+    QuoteRepostsDetailsComponent,
+    QuoteRepostsModalComponent,
+    QuoteRepostsPageComponent,
+    LikesDetailsComponent,
+    LikesPageComponent,
     LikesModalComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
@@ -263,14 +300,18 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TrendsPageComponent,
     TrendsComponent,
     SanitizeQRCodePipe,
-    MintNftModalComponent,
+    MintNftComponent,
+    MintNftPageComponent,
     CreateNftAuctionModalComponent,
     BidPlacedModalComponent,
+    PlaceBidComponent,
     PlaceBidModalComponent,
+    PlaceBidPageComponent,
     NftSoldModalComponent,
     NftModalHeaderComponent,
     CloseNftAuctionModalComponent,
-    SellNftModalComponent,
+    SellNftComponent,
+    SellNftPageComponent,
     AddUnlockableModalComponent,
     NftPostPageComponent,
     NftPostComponent,
@@ -293,7 +334,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
-    BuyBitcloutEthComponent,
+    BuyDeSoEthComponent,
+    SanitizeVideoUrlPipe,
   ],
   imports: [
     BrowserModule,
@@ -302,6 +344,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     FormsModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -323,6 +366,9 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
+    IconsModule,
+    LottieModule,
+    LottieModule.forRoot({ player: playerFactory }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

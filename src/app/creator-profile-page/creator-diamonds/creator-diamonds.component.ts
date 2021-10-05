@@ -26,6 +26,7 @@ export class CreatorDiamondsComponent implements OnInit {
   totalAnonDiamonds = 0;
   totalAnonDiamondValue = 0;
   highestAnonDiamondLevel = 0;
+  maxGivableDiamonds = GlobalVarsService.MAX_DIAMONDS_GIVABLE;
 
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
@@ -33,6 +34,10 @@ export class CreatorDiamondsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchDiamonds();
+  }
+
+  _handleTabClick(tab) {
+    this.onChange(tab);
   }
 
   fetchDiamonds(): Subscription {

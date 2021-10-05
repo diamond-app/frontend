@@ -1,0 +1,70 @@
+<left-bar-mobile></left-bar-mobile>
+
+<!-- The staked posts have a z-index > 0 so we have to put the top bar above them. -->
+<div class="w-100 position-fixed background-color-white" style="z-index: 10">
+  <div
+    class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
+  >
+    <div *ngIf="!simpleTopBar && !isSearching" class="d-flex align-items-center fc-secondary">
+      <top-bar-mobile-navigation-control
+        *ngIf="!inTutorial"
+        class="mr-15px d-inline-block"
+      ></top-bar-mobile-navigation-control>
+      <a
+        class="link--unstyled d-flex align-items-center ml-5px"
+        (click)="globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="homeLink()"
+        queryParamsHandling="merge"
+      >
+        <img
+          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          class="deso"
+          style="height: 30px"
+        />
+      </a>
+      <span class="fc-muted fs-15px font-weight-normal ml-10px position-relative">≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
+    </div>
+
+    <i-feather
+      *ngIf="!simpleTopBar && !isSearching && !inTutorial"
+      name="search"
+      class="feather-medium cursor-pointer position-relative"
+      style="top: -3px"
+      (click)="initiateSearch()"
+    ></i-feather>
+    <div *ngIf="!simpleTopBar && isSearching" class="d-flex justify-content-center align-items-center w-100">
+      <div class="position-relative" style="width: calc(100vw - 59px); height: 36.5px">
+        <search-bar class="w-100"></search-bar>
+      </div>
+      <i-feather name="x" class="feather-large cursor-pointer ml-5px" (click)="isSearching = false"></i-feather>
+    </div>
+    <div *ngIf="simpleTopBar" class="d-flex flex-column justify-content-end w-100 px-15px">
+      <div class="d-flex justify-content-between w-100">
+        <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="backButtonFn()"></i-feather>
+        <div
+          class="d-flex align-items-center"
+          [ngClass]="{ 'cursor-pointer': profileEntryResponse }"
+          [routerLink]="profileEntryResponse ? AppRoutingModule.profilePath(profileEntryResponse.Username) : []"
+          queryParamsHandling="merge"
+        >
+          <div
+            *ngIf="publicKeyBase58Check"
+            class="messages-thread__avatar mr-15px"
+            [avatar]="publicKeyBase58Check"
+          ></div>
+          {{ title }}
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile login row-->
+  <div
+    *ngIf="!this.globalVars.loggedInUser"
+    class="d-lg-none p-5px background-color-light-grey border-color-grey font-weight-bold"
+  >
+    <a class="pl-10px" (click)="globalVars.launchLoginFlow()">Log in</a>
+    <a class="pl-15px" (click)="globalVars.launchSignupFlow()">Sign up</a>
+  </div>
+</div>

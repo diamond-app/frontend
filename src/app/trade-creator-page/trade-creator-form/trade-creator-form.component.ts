@@ -3,7 +3,7 @@ import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
@@ -27,22 +27,27 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   // so that we don't accidentally underestimate (causing an error)
   FEE_LEEWAY_MULTIPLE = 1.1;
 
-  // Leave some BitClout in the user's account so they can do normal site activity (like, post, etc)
-  MIN_BITCLOUT_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
+  // Leave some DeSo in the user's account so they can do normal site activity (like, post, etc)
+  MIN_DESO_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() hideWarning: boolean;
   @Output() previewClicked = new EventEmitter();
+  @Output() buyDesoClicked = new EventEmitter();
+  @Output() closeModal = new EventEmitter();
 
   router: Router;
   appData: GlobalVarsService;
 
+  buyTab = CreatorCoinTrade.BUY_VERB;
+
   // buy creator coin data
-  bitCloutToSell: number;
+  desoToSell: number;
   expectedCreatorCoinReturnedNanos: number = 0;
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedBitCloutReturnedNanos: number = 0;
+  expectedDeSoReturnedNanos: number = 0;
 
   loggedInUserSubscription: Subscription;
   intervalsSet = [];
@@ -96,14 +101,22 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     this.previewClicked.emit();
   }
 
+  _onBuyDeSoClicked() {
+    this.buyDesoClicked.emit();
+  }
+
+  _closeModal() {
+    this.closeModal.emit();
+  }
+
   _setAssetToSellAmount() {
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // convert user-specified amount to bitclout
+      // convert user-specified amount to deso
       // note: convertAmount takes nanos and returns nanos
-      this.creatorCoinTrade.bitCloutToSell = this.creatorCoinTrade.convertAmount(
+      this.creatorCoinTrade.desoToSell = this.creatorCoinTrade.convertAmount(
         this.creatorCoinTrade.amount.value /* input amount */,
         this.creatorCoinTrade.selectedCurrency /* input currency */,
-        CreatorCoinTrade.BITCLOUT_CURRENCY_STRING /* target currency */
+        CreatorCoinTrade.DESO_CURRENCY_STRING /* target currency */
       );
     } else {
       // convert user-specified amount to creator coin
@@ -155,7 +168,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
           this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-          this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
+          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -192,13 +205,13 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.operationType() /*OperationType*/,
-          this.creatorCoinTrade.bitCloutToSell * 1e9 /*BitCloutToSellNanos*/,
+          this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
           this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-          0 /*BitCloutToAddNanos*/,
-          0 /*MinBitCloutExpectedNanos*/,
+          0 /*DeSoToAddNanos*/,
+          0 /*MinDeSoExpectedNanos*/,
           0 /*MinCreatorCoinExpectedNanos*/,
 
-          this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
+          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -210,7 +223,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             }
 
             this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
-            this.creatorCoinTrade.expectedBitCloutReturnedNanos = response.ExpectedBitCloutReturnedNanos || 0;
+            this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
             this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
             this.isUpdatingAmounts = false;
           },
@@ -251,7 +264,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     this._setAssetToSellAmount();
 
     // If we get to this point and there are no amounts, there is nothing to update.
-    if (this.creatorCoinTrade.bitCloutToSell === 0 && this.creatorCoinTrade.creatorCoinToSell === 0) {
+    if (this.creatorCoinTrade.desoToSell === 0 && this.creatorCoinTrade.creatorCoinToSell === 0) {
       return false;
     }
 
@@ -279,14 +292,14 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }
 
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // if buying creator coin, leave some bitclout left over so that people can continue
+      // if buying creator coin, leave some deso left over so that people can continue
       // to use the site (like, post, sell creator coins, etc) (i.e. don't drain the full balance)
-      balance -= this.MIN_BITCLOUT_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS / 1e9;
+      balance -= this.MIN_DESO_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS / 1e9;
     }
 
     let assetToSellCurrency;
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      assetToSellCurrency = CreatorCoinTrade.BITCLOUT_CURRENCY_STRING;
+      assetToSellCurrency = CreatorCoinTrade.DESO_CURRENCY_STRING;
     } else {
       assetToSellCurrency = CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING;
     }
@@ -361,7 +374,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     this.router = _router;
   }
 
-  ngOnInit() {
+  initializeForm() {
     // Populate a default currency if it's not already set. selectedCurrency may be already set
     // if the user is going back from the Preview screen.
     //
@@ -385,12 +398,12 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }, 10);
 
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      // We poll for the fee because we need to wait for feeRateBitCloutPerKB
+      // We poll for the fee because we need to wait for feeRateDeSoPerKB
       // to be set. If we don't wait for this, things get messed up.
       let isFetching = false;
       const pollForFee = setInterval(() => {
-        if (this.appData.feeRateBitCloutPerKB == 0 || isFetching) {
-          // Do nothing. feeRateBitCloutPerKB hasn't been set yet. If we ask for a fee now,
+        if (this.appData.feeRateDeSoPerKB == 0 || isFetching) {
+          // Do nothing. feeRateDeSoPerKB hasn't been set yet. If we ask for a fee now,
           // we'll get a misleading value.
           return;
         }
@@ -398,13 +411,13 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         // This is a hack to get an estimate of the current fee
         isFetching = true;
         this.backendApi
-          .SendBitCloutPreview(
+          .SendDeSoPreview(
             this.appData.localNode,
             this.appData.loggedInUser.PublicKeyBase58Check,
             this.appData.loggedInUser.PublicKeyBase58Check,
             // A negative amount causes the max value to be returned as the spend amount.
             -1,
-            this.appData.feeRateBitCloutPerKB * 1e9 /* min fee rate */
+            this.appData.feeRateDeSoPerKB * 1e9 /* min fee rate */
           )
           .subscribe(
             (response: any) => {
@@ -426,8 +439,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       this.creatorCoinTrade.currentFeeForSellNanos = 0;
       if (
         this.globalVars.loggedInUser.PublicKeyBase58Check ===
-          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
-        !this.creatorCoinTrade.isCreatorCoinTransfer()
+        this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+        !this.creatorCoinTrade.isCreatorCoinTransfer() &&
+        !this.hideWarning
       ) {
         const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
@@ -441,7 +455,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           showConfirmButton: false,
           icon: "warning",
           denyButtonText: "Proceed",
-          cancelButtonText: "Go Back",
+          cancelButtonText: "Cancel",
           customClass: {
             denyButton: "btn btn-light",
             cancelButton: "btn btn-light no",
@@ -454,6 +468,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  ngOnInit() {
+    this.initializeForm();
   }
 
   ngOnDestroy() {
