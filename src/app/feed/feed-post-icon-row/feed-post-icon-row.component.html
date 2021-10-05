@@ -1,5 +1,5 @@
 <div
-  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px unselectable"
+  class="mt-15px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable"
 >
   <div
     class="cursor-pointer d-flex align-items-center"
@@ -7,8 +7,12 @@
     data-toggle="modal"
     data-target=".js-feed-post-icon-row__comment-modal"
   >
-    <i class="icon-reply feed-post-icon-row__icon"></i>
-    <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+    <div>
+      <i-feather name="message-square" class="feed-post-icon-row__icon reply-icon"></i-feather>
+    </div>
+    <div>
+      <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+    </div>
   </div>
 
   <div
@@ -17,59 +21,67 @@
     dropdown
     #dropdown="bs-dropdown"
     [ngClass]="{
-      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
+      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
     }"
   >
-    <a
-      class="link--unstyled"
-      dropdownToggle
-      id="recloutActionsButton"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="false"
-    >
-      <i class="icon-repost feed-post-icon-row__icon"></i>
-    </a>
-    <div
-      class="dropdown-menu p-0 fs-12px border background-color-light-grey"
-      style="min-width: 6rem"
-      *dropdownMenu
-      aria-labelledby="recloutActionsButton"
-    >
+    <div>
       <a
-        *ngIf="sendingRecloutRequest; else recloutOptions"
-        class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
+        class="link--unstyled"
+        dropdownToggle
+        id="repostActionsButton"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
       >
-        <div class="fc-muted">Loading...</div>
+        <i-feather name="repeat" class="feed-post-icon-row__icon repost-icon"></i-feather>
       </a>
-      <ng-template #recloutOptions>
+    </div>
+    <div
+      class="dropdown-menu feed-post__dropdown-menu-item-repost"
+      style="min-width: 7rem"
+      *dropdownMenu
+      aria-labelledby="repostActionsButton"
+    >
+      <div>
         <a
-          *ngIf="userHasReclouted(); else recloutElseBlock"
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
-          (click)="_undoReclout($event)"
+          *ngIf="sendingRepostRequest; else repostOptions"
+          class="dropdown-menu-item d-block p-5px"
         >
-          <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
+          <div class="fc-muted">Loading...</div>
+        </a>
+      </div>
+      <ng-template #repostOptions>
+        <a
+          *ngIf="userHasReposted(); else repostElseBlock"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+          (click)="_undoRepost($event)"
+        >
+          <i-feather
+            name="repeat"
+            class="feed-post-icon-row__icon repost-icon position-relative"
+            style="right: 5px"
+          ></i-feather>
           Hide
         </a>
-        <ng-template #recloutElseBlock>
+        <ng-template #repostElseBlock>
           <a
-            class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
-            (click)="_reclout($event)"
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+            (click)="_repost($event)"
           >
-            <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
-            Reclout
+            <i-feather name="repeat" class="feed-post-icon-row__icon-repost-option"></i-feather>
+            Repost
           </a>
         </ng-template>
         <a
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
           (click)="openModal($event, true)"
         >
-          <i class="fas fa-pencil-alt feed-post-icon-row__icon pl-5px" style="font-size: 10px"></i>
+          <i-feather name="quote" class="feed-post-icon-row__icon-repost-option"></i-feather>
           Quote
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
   </div>
 
   <div
@@ -77,18 +89,35 @@
     [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
     class="cursor-pointer d-flex align-items-center"
   >
-    <i
+    <i-feather
       [ngClass]="{
         is_animating: animateLike,
-        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+        'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
       (click)="animateLike = !animateLike"
+      name="heart"
       class="feed-post-icon-row__icon"
-    ></i>
+    ></i-feather>
     <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
-
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
+    <i-feather
+      name="link-2"
+      class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
+      (click)="copyPostLinkToClipboard($event)"
+    ></i-feather>
+    <span
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+      (auxclick)="onTimestampClickHandler($event)"
+    >
+      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    </span>
+  </div>
   <ng-template #popTemplate>
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
@@ -127,15 +156,22 @@
       (mouseover)="addDiamondSelection($event)"
       (mouseleave)="removeDiamondSelection()"
     >
-      <i
-        class="feed-post-icon-row__icon mr-2"
+      <i-feather
+        name="diamond"
+        class="feed-post-icon-row__icon"
         [ngClass]="{
-          'icon-diamond': !sendingDiamonds,
-          'fas fa-spinner fa-spin': sendingDiamonds,
+          'diamond-icon': !sendingDiamonds,
+          'd-none': sendingDiamonds,
           'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
         }"
         [ngStyle]="{
           visibility: diamondDragging ? 'hidden' : 'visible'
+        }"
+      ></i-feather>
+      <i
+        [ngClass]="{
+          'd-none': !sendingDiamonds,
+          'fas fa-spinner fa-spin mr-5px': sendingDiamonds
         }"
       ></i>
       <a
@@ -170,8 +206,9 @@
             (mouseleave)="diamondHovered = -1"
           >
             <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
-            <i
-              class="icon-diamond diamond-reaction"
+            <i-feather
+              name="diamond"
+              class="diamond-reaction"
               [ngStyle]="{
                 color:
                   diamondIndex < getCurrentDiamondLevel() ||
@@ -180,7 +217,7 @@
                     ? 'var(--cblue)'
                     : 'var(--grey)'
               }"
-            ></i>
+            ></i-feather>
           </div>
           <div
             class="reaction-icon show"
@@ -207,23 +244,6 @@
         cdkDrag
       ></div>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
-  </div>
-
-  <div class="d-none d-lg-flex cursor-pointer align-items-center">
-    <i
-      class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
-      (click)="copyPostLinkToClipboard($event)"
-    ></i>
-    <span
-      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
-      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-      mat-raised-button
-      #tooltip="matTooltip"
-      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
-      (auxclick)="onTimestampClickHandler($event)"
-    >
-      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-    </span>
+    <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">{{ postContent.DiamondCount }}</span>
   </div>
 </div>

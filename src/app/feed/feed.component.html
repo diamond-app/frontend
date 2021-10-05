@@ -1,71 +1,39 @@
 <div class="d-flex flex-column">
-  <!-- Top Bar -->
-  <div
-    *ngIf="!isMobile"
-    class="global__top-bar d-flex align-items-center px-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
-  >
-    <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-      Home
-    </div>
-  </div>
-
-  <div class="global__top-bar__height"></div>
   <div *ngIf="!isMobile">
     <!-- Create Post -->
-    <div class="border-bottom border-color-grey formbg">
+    <div *ngIf="globalVars.loggedInUser != null" class="desktop-create-post">
       <feed-create-post
         [numberOfRowsInTextArea]="2"
         [postRefreshFunc]="prependPostToFeed.bind(this)"
       ></feed-create-post>
     </div>
-
-    <!-- Light Grey Divider -->
-    <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
-  <!-- Mobile BitClout Price -->
+  <!-- Mobile DeSo Price -->
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
-    <div>$CLOUT Price&nbsp;&nbsp;&nbsp;</div>
+    <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
-
-  <!-- Mobile email confirmation alert -->
-  <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
-    class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
-  >
-    <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
-    <div>
-      <div *ngIf="globalVars.loggedInUser.HasEmail">
-        <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
-        <span *ngIf="globalVars.resentVerifyEmail">Sent!</span>
-      </div>
-      <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
-    </div>
-  </div>
-
   <!-- Referral links alert -->
   <div
-    *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
-    class="d-flex border-bottom border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
+    *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0 && !globalVars.isMobile()"
+    class="d-flex border border-color-grey background-color-white py-5px px-16px mt-5px fs-13px br-10px"
   >
-    <div style="color: #333333">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
+    <div class="fc-secondary">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
     <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold">Find out more</a>
   </div>
 
-  <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
-    class="border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
-  >
-    <jumio-status></jumio-status>
-  </div>
-
   <!-- Tab Selector -->
-  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <tab-selector
+    [buttonSelector]="!isMobile"
+    [tabs]="feedTabs"
+    [activeTab]="activeTab"
+    [newTabs]="newTabs"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
@@ -73,10 +41,11 @@
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
+  <div *ngIf="isMobile" style="margin-top: 60px"></div>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingPosts()">
-    <div *ngFor="let post of postsToShow()">
+    <div class="mobile-scroll" *ngFor="let post of postsToShow()">
       <div *ngIf="post.ProfileEntryResponse">
         <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
@@ -88,7 +57,7 @@
           [post]="post"
           [includePaddingOnPost]="true"
           [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-          [afterRecloutCreatedCallback]="prependPostToFeed.bind(this)"
+          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"

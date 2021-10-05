@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "feed",
@@ -17,8 +18,9 @@ import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static GLOBAL_TAB = "Global";
   static FOLLOWING_TAB = "Following";
-  static SHOWCASE_TAB = "⚡ NFT Showcase ⚡";
+  static SHOWCASE_TAB = "NFT Showcase";
   static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
+  static NEW_TABS = [FeedComponent.SHOWCASE_TAB]
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
   static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
@@ -60,6 +62,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   // So if user1 is following folks, and we switch to user2 who isn't following anyone,
   // the empty follow feed will be the first tab (which is incorrect) and
   feedTabs = [];
+  newTabs = FeedComponent.NEW_TABS;
 
   constructor(
     private appData: GlobalVarsService,
@@ -111,7 +114,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this._initializeFeeds();
-    this.titleService.setTitle("Feed - BitClout");
+    this.titleService.setTitle(`Feed - ${environment.node.name}`);
   }
 
   ngAfterViewChecked() {

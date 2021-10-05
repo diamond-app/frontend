@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { ProfileEntryResponse } from "../backend-api.service";
+import { TradeCreatorComponent } from "../trade-creator-page/trade-creator/trade-creator.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "simple-profile-card",
@@ -11,15 +13,19 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() profile: ProfileEntryResponse;
   @Input() diamondLevel = -1;
   @Input() showHeartIcon = false;
-  @Input() showRecloutIcon = false;
+  @Input() showRepostIcon = false;
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
   @Input() hideFollowLink = false;
   @Input() isBold = true;
   @Input() inTutorial: boolean = false;
+  @Input() followButtonOppositeSide: boolean = false;
   @Input() showTutorialBuy: boolean = false;
+  // Whether the "buy" button should wiggle to prompt the user to click it
+  @Input() tutorialWiggle = false;
+  @Output() exitTutorial = new EventEmitter<any>();
 
-  constructor(public globalVars: GlobalVarsService, private router: Router) {}
+  constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
   ngOnInit(): void {}
 
@@ -53,5 +59,21 @@ export class SimpleProfileCardComponent implements OnInit {
       ],
       { queryParamsHandling: "merge" }
     );
+  }
+
+  openBuyCreatorCoinModal(event) {
+    this.exitTutorial.emit();
+    this.globalVars.logEvent("buy : creator : select");
+    event.stopPropagation();
+    const initialState = {
+      username: this.profile.Username,
+      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
+      inTutorial: this.inTutorial,
+      tutorialBuy: this.showTutorialBuy,
+    };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState,
+    });
   }
 }

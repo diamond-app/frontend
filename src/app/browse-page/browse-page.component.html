@@ -2,15 +2,37 @@
   DESKTOP
   -->
 <div *ngIf="!mobile" class="global__desktop">
-  <left-bar></left-bar>
-  <div class="global__content__flex">
-    <div class="global__center__width">
-      <div class="global__center__inner">
-        <feed></feed>
+  <div class="desktop-top-bar">
+    <div class="d-flex justify-content-between align-items-center w-100 h-100 desktop-top-bar-width">
+      <a
+        class="link--unstyled d-flex align-items-center ml-15px"
+        (click)="globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="homeLink()"
+        queryParamsHandling="merge"
+      >
+        <img
+          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          class="deso"
+          style="height: 30px"
+        />
+      </a>
+      <div class="position-relative" style="width: 343px; height: 48px">
+        <search-bar [resultsUnderBar]="true"></search-bar>
       </div>
+      <change-account-selector></change-account-selector>
     </div>
-    <div class="global__sidebar__width">
-      <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+  </div>
+  <div class="d-flex" style="margin-top: 64px">
+    <left-bar></left-bar>
+    <div class="global__content__flex">
+      <div class="global__center__width">
+        <div class="global__center__inner">
+          <feed></feed>
+        </div>
+      </div>
+      <div class="global__sidebar__width">
+        <right-bar-creators class="global__sidebar__fixed disable-scrollbars"></right-bar-creators>
+      </div>
     </div>
   </div>
 </div>
@@ -19,30 +41,8 @@
   MOBILE
   -->
 <div *ngIf="mobile" class="d-lg-none d-flex flex-column h-100">
-  <left-bar-mobile></left-bar-mobile>
-
-  <!-- The staked posts have a z-index > 0 so we have to put the top bar above them. -->
-  <div class="w-100 position-fixed background-color-white" style="z-index: 10">
-    <div
-      class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
-    >
-      <div class="d-flex align-items-center">
-        <top-bar-mobile-navigation-control class="mr-15px d-inline-block"></top-bar-mobile-navigation-control>
-        Home
-      </div>
-
-      <search-bar class="pl-15px d-lg-none"></search-bar>
-    </div>
-
-    <!-- Mobile login row-->
-    <div
-      *ngIf="!this.globalVars.loggedInUser"
-      class="d-lg-none p-5px background-color-light-grey border-color-grey font-weight-bold"
-    >
-      <a class="pl-10px" (click)="globalVars.launchLoginFlow()">Log in</a>
-      <a class="pl-15px" (click)="globalVars.launchSignupFlow()">Sign up</a>
-    </div>
-  </div>
+  <top-bar-mobile-header></top-bar-mobile-header>
+  <div class="mt-30px"></div>
 
   <div style="flex-grow: 1">
     <div *ngIf="!globalVars.loggedInUser" style="height: 30px"></div>

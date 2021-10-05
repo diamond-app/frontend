@@ -39,8 +39,20 @@ export class CreatorProfileNftsComponent implements OnInit {
   static FOR_SALE = "For Sale";
   static MY_BIDS = "My Bids";
   static MY_GALLERY = "Gallery";
+  static ORDER_RECENT = "recent";
+  static ORDER_POPULAR = "popular";
+  static ORDER_PRICE = "price";
+  static ORDER_PRICE_ASC = "price asc";
+  static ORDER_PRICE_DESC = "price desc";
   tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.MY_GALLERY];
   activeTab: string;
+  orderNFTsBy: string = CreatorProfileNftsComponent.ORDER_RECENT;
+  sortFields: { [key: string]: { field: string; order: "asc" | "desc" } } = {
+    [CreatorProfileNftsComponent.ORDER_RECENT]: { field: "PostEntryResponse.TimestampNanos", order: "desc" },
+    [CreatorProfileNftsComponent.ORDER_POPULAR]: { field: "PostEntryResponse.LikeCount", order: "desc" },
+    [CreatorProfileNftsComponent.ORDER_PRICE_ASC]: { field: "LowestBidAmountNanos", order: "desc" },
+    [CreatorProfileNftsComponent.ORDER_PRICE_DESC]: { field: "HighestBidAmountNanos", order: "desc" },
+  };
 
   nftTabMap = {
     my_bids: CreatorProfileNftsComponent.MY_BIDS,
@@ -53,7 +65,7 @@ export class CreatorProfileNftsComponent implements OnInit {
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
     [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
   };
-
+  cardView = false;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
 
   @Output() blockUser = new EventEmitter();
@@ -93,6 +105,15 @@ export class CreatorProfileNftsComponent implements OnInit {
     }
   }
 
+  updateNFTOrder(order: string): void {
+    this.orderNFTsBy = order;
+    const sortDetails = this.sortFields[this.orderNFTsBy];
+    this.myBids = _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
+    this.nftResponse = _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset();
+  }
+
   getNFTBids(): Subscription {
     return this.backendApi
       .GetNFTBidsForUser(
@@ -116,7 +137,8 @@ export class CreatorProfileNftsComponent implements OnInit {
             return bidEntry;
           });
           this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
-          return this.myBids;
+          const sortDetails = this.sortFields[this.orderNFTsBy];
+          return _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
         }
       );
   }
@@ -145,7 +167,8 @@ export class CreatorProfileNftsComponent implements OnInit {
             }
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
-          return this.nftResponse;
+          const sortDetails = this.sortFields[this.orderNFTsBy];
+          return _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
         }
       );
   }

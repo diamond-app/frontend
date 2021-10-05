@@ -6,6 +6,10 @@ import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
+import { filter, get } from "lodash";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "left-bar",
@@ -14,6 +18,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 })
 export class LeftBarComponent {
   MessagesInboxComponent = MessagesInboxComponent;
+  environment = environment;
 
   @HostBinding("class") get classes() {
     return !this.isMobile ? "global__nav__flex" : "";
@@ -28,6 +33,7 @@ export class LeftBarComponent {
 
   constructor(
     public globalVars: GlobalVarsService,
+    private modalService: BsModalService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private router: Router
@@ -45,7 +51,14 @@ export class LeftBarComponent {
     return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
+  openCreatePostModal() {
+    this.modalService.show(FeedCreatePostModalComponent, {
+      class: "modal-dialog-centered",
+    });
+  }
+
   getHelpMailToAttr(): string {
+    this.logHelp();
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
     const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
@@ -60,25 +73,46 @@ export class LeftBarComponent {
     this.globalVars.logEvent("help : click");
   }
 
+  launchLogoutFlow() {
+    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+      this.globalVars.userList = filter(this.globalVars.userList, (user) => {
+        return res?.users && user?.PublicKeyBase58Check in res?.users;
+      });
+      if (!res?.users) {
+        this.globalVars.userList = [];
+      }
+      let loggedInUser = get(Object.keys(res?.users),"[0]");
+      if (this.globalVars.userList.length === 0) {
+        loggedInUser = null;
+        this.globalVars.setLoggedInUser(null);
+      }
+      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
+      this.globalVars.updateEverything().add(() => {
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+      });
+    });
+  }
+
   startTutorial(): void {
     if (this.inTutorial) {
       return;
     }
-    // If the user hes less than 1/100th of a clout they need more clout for the tutorial.
+    // If the user hes less than 1/100th of a deso they need more deso for the tutorial.
     if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `You need 0.01 $CLOUT to complete the tutorial`,
+        title: `You need 0.01 $DESO to complete the tutorial`,
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
           confirmButton: "btn btn-light",
         },
-        confirmButtonText: "Buy $CLOUT",
+        confirmButtonText: "Buy $DESO",
       }).then((res) => {
         if (res.isConfirmed) {
-          this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+          this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
         }
       });
       return;
@@ -91,7 +125,7 @@ export class LeftBarComponent {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Tutorial",
-      html: "Learn how BitClout works!",
+      html: "Learn how DeSo works!",
       showConfirmButton: true,
       // Only show skip option to admins and users who do not need to complete tutorial
       showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,

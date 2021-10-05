@@ -6,6 +6,8 @@ import { FeedComponent } from "../../feed/feed.component";
 import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
+import { Location } from "@angular/common";
+import { environment } from "src/environments/environment";
 
 import * as _ from "lodash";
 
@@ -24,6 +26,7 @@ export class PostThreadComponent {
 
   @Input() hideHeader: boolean = false;
   @Input() hideCurrentPost: boolean = false;
+  @Output() postLoaded = new EventEmitter();
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +35,8 @@ export class PostThreadComponent {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private toastr: ToastrService,
-    private titleService: Title
+    private titleService: Title,
+    private location: Location
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -315,7 +319,11 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
+        const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
+        this.postLoaded.emit(
+          `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
+        );
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
       },
       (err) => {
         // TODO: post threads: rollbar

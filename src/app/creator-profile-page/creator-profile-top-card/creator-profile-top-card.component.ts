@@ -7,6 +7,11 @@ import { FollowChangeObservableResult } from "../../../lib/observable-results/fo
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
 import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { UpdateProfileModalComponent } from "../../update-profile-page/update-profile-modal/update-profile-modal.component";
+import {CreatorsLeaderboardComponent} from "../../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
+import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -31,7 +36,12 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private modalService: BsModalService
+  ) {
     this.globalVars = _globalVars;
 
     // If the user follows/unfollows this user, update the follower count
@@ -68,6 +78,18 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     window.open(
       `https://report.bitclout.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
     );
+  }
+
+  openModal(event) {
+    // Prevent the post navigation click from occurring.
+    event.stopPropagation();
+
+    const initialState = { loggedInUser: this.globalVars.loggedInUser };
+    // If the user has an account and a profile, open the modal so they can comment.
+    this.modalService.show(UpdateProfileModalComponent, {
+      class: "modal-dialog-centered update-profile-modal",
+      initialState,
+    });
   }
 
   updateWellKnownCreatorsList(): void {
@@ -114,7 +136,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceBitCloutNanos),
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
       3,
       true
     );
@@ -122,7 +144,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.BitCloutLockedNanos),
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
       3,
       true
     );
@@ -136,6 +158,15 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
         this.followerCount -= 1;
       }
     }
+  }
+
+  openBuyCreatorCoinModal(event) {
+    event.stopPropagation();
+    const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState,
+    });
   }
 
   _copyPublicKey() {

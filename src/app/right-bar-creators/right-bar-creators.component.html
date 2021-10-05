@@ -1,89 +1,126 @@
 <div class="global__sidebar__inner">
-  <!-- Search Bar -->
-  <search-bar *ngIf="!inTutorial"></search-bar>
-
-  <div class="pt-10px"></div>
-
-  <!-- BitClout Price / Balance -->
-  <div class="right-bar-creators__balance-box br-12px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
-    <div class="d-flex justify-content-between">
-      <div>$CLOUT Price</div>
-      <div>
-        <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
-        <span class="text-grey5">&nbsp;USD per coin</span>
-      </div>
-    </div>
-    <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-      <div class="d-flex" style="min-width: 150px">Your $CLOUT</div>
-      <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
-        <div>
-          <!-- Amount in BitClout-->
-          {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }}
-        </div>
-
-        <div class="d-flex text-grey5">
-          <!-- Amount in USD-->
-          <div class="ml-10px mr-10px">≈</div>
-          <div *ngIf="globalVars.satoshisPerBitCloutExchangeRate">
-            <span>
-              {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD
-            </span>
-          </div>
-          <div *ngIf="!globalVars.satoshisPerBitCloutExchangeRate">Fetching... USD</div>
-        </div>
-      </div>
-    </div>
-    <div class="mt-3">
-      <jumio-status></jumio-status>
-    </div>
-  </div>
-
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light br-12px p-15px mb-30px fs-13px">
-    <p>Your email is not verified.</p>
-    <div *ngIf="globalVars.loggedInUser.HasEmail">
-      <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
-      <p *ngIf="globalVars.resentVerifyEmail">Sent!</p>
-    </div>
-    <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
-  </div>
-
   <!-- Sign Up Flow -->
   <div *ngIf="globalVars.loggedInUser == null" class="mb-30px">
     <right-bar-signup></right-bar-signup>
   </div>
-
-  <!-- Title -->
-  <div
-    class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column"
-    [ngClass]="{ 'pb-10px': !activeRightTabOption.poweredBy }"
-    *ngIf="!inTutorial"
-  >
+  <!-- DESO Price / Balance -->
+  <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
     <div>
-      <select
-        #rightBarSelect
-        id="right-bar-chart-select"
-        class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
-        [ngStyle]="{ width: selectedOptionWidth }"
-        (change)="selectTab()"
-        [(ngModel)]="activeTab"
-      >
-        <option
-          *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
-          [value]="option.key"
-          class="fs-15px text-grey5 font-weight-bold"
-        >
-          {{ option.key }}
-        </option>
-      </select>
-    </div>
-    <div class="pt-5px" *ngIf="activeRightTabOption.poweredBy">
-      <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
-        <i class="fas fa-external-link-alt pr-5px"></i>
-        Powered by {{ activeRightTabOption.poweredBy.name }}
+      <div class="d-flex">
+        <div class="w-100 deso-metrics">
+          <div class="d-flex justify-content-between">
+            <div>$DESO Price</div>
+            <div>
+              <span>1≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
+              <span>&nbsp;USD</span>
+            </div>
+          </div>
+          <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
+            <div class="d-flex" style="min-width: 150px">Your $DESO</div>
+            <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
+              <div>
+                <!-- Amount in BitClout-->
+                {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }}
+                <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
+              </div>
+              <!-- Amount in USD-->
+              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <a (click)="openBuyCloutModal()">
+        <div class="d-flex justify-content-center cursor-pointer">
+          <div class="buy-deso">
+            <span>Buy $DESO</span>
+          </div>
+        </div>
       </a>
     </div>
   </div>
 
-  <!-- Creators -->
-  <right-bar-creators-leaderboard [activeTab]="activeTab" *ngIf="!inTutorial"></right-bar-creators-leaderboard>
+  <jumio-status *ngIf="!inTutorial"></jumio-status>
+
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-20px fs-13px">
+    <div class="jumio-status">
+      <div class="cursor-pointer">
+        <div *ngIf="globalVars.loggedInUser.HasEmail">
+          <a (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">
+            <i-feather name="send"></i-feather>
+            <span>Resend Verification Email</span>
+            <i-feather name="chevron-right" class="right-20px"></i-feather>
+          </a>
+          <div *ngIf="globalVars.resentVerifyEmail">
+            <i-feather name="check"></i-feather>
+            <span>Sent</span>
+          </div>
+        </div>
+        <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">
+          <i-feather name="mail"></i-feather>
+          <span>Update your email</span>
+          <i-feather name="chevron-right" class="right-20px"></i-feather>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Creator Coin Info -->
+  <wallet-widget *ngIf="!inTutorial"></wallet-widget>
+
+  <div class="trend-box" *ngIf="!inTutorial">
+    <!-- Title -->
+    <div
+      class="trend-title"
+    >
+      <div class="d-flex">
+        <span>{{ activeTab }}</span>
+        <!-- Dropdown -->
+        <div
+          (click)="$event.stopPropagation()"
+          class="btn-group cursor-pointer d-flex align-items-center trend-selector"
+          dropdown
+          #dropdown="bs-dropdown"
+        >
+          <div>
+            <a
+              class="link--unstyled"
+              dropdownToggle
+              id="trendsActionsButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-ellipsis-h"></i>
+            </a>
+          </div>
+          <div
+            class="dropdown-menu feed-post__dropdown-menu-item-repost"
+            style="min-width: 6rem"
+            *dropdownMenu
+          >
+            <div>
+              <a
+                *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
+                class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+                (click)="this.switchCreatorTab(option.key, $event)"
+                data-toggle="dropdown"
+              >
+                {{option.key}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex" *ngIf="activeRightTabOption.poweredBy">
+        <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+          <i class="fas fa-external-link-alt pr-5px"></i>
+          Powered by {{ activeRightTabOption.poweredBy.name }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Creators -->
+    <right-bar-creators-leaderboard [activeTab]="activeTab" *ngIf="!inTutorial"></right-bar-creators-leaderboard>
+  </div>
 </div>

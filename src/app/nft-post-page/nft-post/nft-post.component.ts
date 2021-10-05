@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import {ChangeDetectorRef, Component, EventEmitter, Output, ViewChild} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -14,11 +14,11 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Location } from "@angular/common";
 import * as _ from "lodash";
-import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
 import { Subscription } from "rxjs";
-import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
+import { ToastrService } from "ngx-toastr";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "nft-post",
@@ -27,6 +27,7 @@ import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 })
 export class NftPostComponent {
   @ViewChild(FeedPostComponent) feedPost: FeedPostComponent;
+  @Output() postLoaded = new EventEmitter();
 
   nftPost: PostEntryResponse;
   nftPostHashHex: string;
@@ -43,6 +44,7 @@ export class NftPostComponent {
   selectedBids: boolean[];
   selectedBid: NFTBidEntryResponse;
   showBidsView: boolean = true;
+  selectAllSelected: boolean = false;
   bids: NFTBidEntryResponse[];
   owners: NFTEntryResponse[];
 
@@ -52,7 +54,7 @@ export class NftPostComponent {
 
   static ALL_BIDS = "All Bids";
   static MY_BIDS = "My Bids";
-  static MY_AUCTIONS = "My Auctions";
+  static MY_AUCTIONS = "My Auction";
   static OWNERS = "Owners";
   static THREAD = "Thread";
 
@@ -72,7 +74,8 @@ export class NftPostComponent {
     private changeRef: ChangeDetectorRef,
     private modalService: BsModalService,
     private titleService: Title,
-    private location: Location
+    private location: Location,
+    private toastr: ToastrService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -133,7 +136,10 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
+        this.postLoaded.emit(
+          `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
+        );
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this.refreshBidData();
       },
       (err) => {
@@ -227,41 +233,18 @@ export class NftPostComponent {
     if (this.sellNFTDisabled) {
       return;
     }
-    const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
-      class: "modal-dialog-center",
-      initialState: {
+    this.router.navigate(["/" + RouteNames.SELL_NFT + "/" + this.nftPost.PostHashHex], {
+      queryParamsHandling: "merge",
+      state: {
         post: this.nftPost,
         nftEntries: this.nftBidData.NFTEntryResponses,
         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
       },
     });
-    const onHiddenEvent = sellNFTModalDetails.onHidden;
-    onHiddenEvent.subscribe((response) => {
-      if (response === "nft sold") {
-        this.loading = true;
-        this.refreshPosts();
-        this.feedPost.getNFTEntries();
-      } else if (response === "unlockable content opened") {
-        const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
-          class: "modal-dialog-centered",
-          initialState: {
-            post: this.nftPost,
-            selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
-          },
-        });
-        const onHiddenEvent = unlockableModalDetails.onHidden;
-        onHiddenEvent.subscribe((response) => {
-          if (response === "nft sold") {
-            this.loading = true;
-            this.refreshPosts();
-            this.feedPost.getNFTEntries();
-          }
-        });
-      }
-    });
   }
 
   checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {
+    this.selectAllSelected = false;
     if (bidEntry.selected) {
       // De-select any bid entries for the same serial number.
       this.nftBidData.BidEntryResponses.forEach((bidEntryResponse) => {
@@ -287,7 +270,7 @@ export class NftPostComponent {
 
   closeAuction(): void {
     const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
-      class: "modal-dialog-centered",
+      class: "modal-dialog-centered modal-dialog-thin",
       initialState: {
         post: this.nftPost,
         myAvailableSerialNumbers: this.myAvailableSerialNumbers,
@@ -296,6 +279,10 @@ export class NftPostComponent {
     const onHiddenEvent = closeNftAuctionModalDetails.onHidden;
     onHiddenEvent.subscribe((response) => {
       if (response === "auction cancelled") {
+        this.toastr.show("Your auction was closed", null, {
+          toastClass: "info-toast",
+          positionClass: "toast-bottom-center",
+        });
         this.refreshBidData();
         this.feedPost.getNFTEntries();
       }
@@ -428,27 +415,37 @@ export class NftPostComponent {
   }
 
   selectHighestBids(): void {
-    let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
-    this.bids.forEach((bid) => {
-      const highestBid = highestNFTMap[bid.SerialNumber];
-      if (
-        (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) &&
-        bid.BidderBalanceNanos >= bid.BidAmountNanos
-      ) {
-        highestNFTMap[bid.SerialNumber] = bid;
-      }
-    });
-    this.bids.forEach((bid) => {
-      const highestBid = highestNFTMap[bid.SerialNumber];
-      bid.selected =
-        highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
-        highestBid.BidAmountNanos === bid.BidAmountNanos &&
-        highestBid.SerialNumber === bid.SerialNumber;
-      if (this.nftPost.NumNFTCopies === 1 && bid.selected) {
-        this.selectedBid = highestBid;
-      }
-    });
-    this.sellNFTDisabled = false;
+    // If all highest are already selected, deselect all
+    if (this.selectAllSelected) {
+      this.bids.forEach((bid) => {
+        bid.selected = false;
+      });
+      this.selectAllSelected = false;
+      this.sellNFTDisabled = true;
+    } else {
+      let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
+      this.bids.forEach((bid) => {
+        const highestBid = highestNFTMap[bid.SerialNumber];
+        if (
+          (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) &&
+          bid.BidderBalanceNanos >= bid.BidAmountNanos
+        ) {
+          highestNFTMap[bid.SerialNumber] = bid;
+        }
+      });
+      this.bids.forEach((bid) => {
+        const highestBid = highestNFTMap[bid.SerialNumber];
+        bid.selected =
+          highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
+          highestBid.BidAmountNanos === bid.BidAmountNanos &&
+          highestBid.SerialNumber === bid.SerialNumber;
+        if (this.nftPost.NumNFTCopies === 1 && bid.selected) {
+          this.selectedBid = highestBid;
+        }
+      });
+      this.sellNFTDisabled = false;
+      this.selectAllSelected = true;
+    }
   }
 
   cancelBid(bidEntry: NFTBidEntryResponse): void {
@@ -476,6 +473,10 @@ export class NftPostComponent {
           .subscribe(
             (res) => {
               this.refreshBidData();
+              this.toastr.show("Your bid was cancelled", null, {
+                toastClass: "info-toast",
+                positionClass: "toast-bottom-center",
+              });
             },
             (err) => {
               console.error(err);

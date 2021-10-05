@@ -5,6 +5,7 @@ import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { AnimationOptions } from 'ngx-lottie';
 
 @Component({
   selector: "app-notifications-list",
@@ -16,7 +17,7 @@ export class NotificationsListComponent {
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
@@ -117,11 +118,13 @@ export class NotificationsListComponent {
     const result = {
       actor, // who created the notification
       icon: null,
+      iconClass: null,
       action: null, // the action they took
       post: null, // the post involved
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
       bidInfo: null,
+      comment: null, // the text of the comment
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
@@ -149,9 +152,12 @@ export class NotificationsListComponent {
         }
         result.icon = "fas fa-money-bill-wave-alt fc-green";
         result.action =
-          `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-          `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+          `${actorName} sent you ${this.globalVars.nanosToDeSo(txnAmountNanos)} ` +
+          `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       }
+      result.icon = "coin";
+      result.iconClass = "fc-blue";
+
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.
@@ -160,19 +166,20 @@ export class NotificationsListComponent {
         return null;
       }
 
-      result.icon = "fas fa-money-bill-wave-alt fc-green";
+      result.icon = "coin";
+      result.iconClass = "fc-blue";
 
       if (ccMeta.OperationType === "buy") {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
-          ccMeta.BitCloutToSellNanos,
+          ccMeta.DeSoToSellNanos,
           2
-        )}</b> worth of <b>$${userProfile.Username}</b>!`;
+        )}</b> worth of <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>!`;
         return result;
       } else if (ccMeta.OperationType === "sell") {
-        // TODO: We cannot compute the USD value of the sale without saving the amount of BitClout
+        // TODO: We cannot compute the USD value of the sale without saving the amount of DeSo
         // that was used to complete the transaction in the backend, which we are too lazy to do.
         // So for now we just tell the user the amount of their coin that was sold.
-        result.action = `${actorName} sold <b>${this.globalVars.nanosToBitClout(ccMeta.CreatorCoinToSellNanos)} $${
+        result.action = `${actorName} sold <b>${this.globalVars.nanosToDeSo(ccMeta.CreatorCoinToSellNanos)} $${
           userProfile.Username
         }.</b>`;
         return result;
@@ -184,7 +191,8 @@ export class NotificationsListComponent {
       }
 
       if (cctMeta.DiamondLevel) {
-        result.icon = "icon-diamond fc-blue";
+        result.icon = "diamond";
+        result.iconClass = "fc-blue";
         let postText = "";
         if (cctMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
@@ -195,8 +203,9 @@ export class NotificationsListComponent {
           cctMeta.DiamondLevel > 1 ? "s" : ""
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
-        result.icon = "fas fa-paper-plane fc-blue";
-        result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
+        result.icon = "send";
+        result.iconClass = "fc-blue";
+        result.action = `${actorName} sent you <b>${this.globalVars.nanosToDeSo(
           cctMeta.CreatorCoinToTransferNanos,
           6
         )} ${cctMeta.CreatorUsername} coins`;
@@ -221,6 +230,12 @@ export class NotificationsListComponent {
 
         // In this case, we are dealing with a reply to a post we made.
         if (currentPkObj.Metadata === "ParentPosterPublicKeyBase58Check") {
+          result.icon = "message-square";
+          result.iconClass = "fc-blue";
+          const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
+          const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${postContent}`;
+          result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
           result.parentPost = this.postMap[spMeta.ParentPostHashHex];
           if (result.post === null || result.parentPost === null) {
@@ -235,7 +250,23 @@ export class NotificationsListComponent {
           }
 
           return result;
-        } else if (currentPkObj.Metadata === "RecloutedPublicKeyBase58Check") {
+        } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
+          const post = this.postMap[postHash];
+          result.icon = "repeat";
+          result.iconClass = "fc-blue";
+          const repostAction = post.Body === "" ? "Reposting" : "Quote reposting";
+          const repostedPost = post.RepostedPostEntryResponse;
+          const truncatedPost = _.truncate(_.escape(`${repostedPost.Body} ${repostedPost.ImageURLs?.[0] || ""}`));
+          const repostedPostContent = `<i class="fc-muted">${truncatedPost}</i>`;
+          // Repost
+          if (post.Body === "") {
+            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${repostedPostContent}`;
+          } else {
+            // Quote Repost
+            const truncatedQuoteRepost = this.truncatePost(postHash);
+            const quoteRepostContent = `<i class="fc-muted">"${truncatedQuoteRepost}"</i>`;
+            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${quoteRepostContent} ${repostedPostContent}`;
+          }
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;
@@ -250,10 +281,12 @@ export class NotificationsListComponent {
       }
 
       if (followMeta.IsUnfollow) {
-        result.icon = "fas fa-user fc-blue";
+        result.icon = "user";
+        result.iconClass = "fc-blue";
         result.action = `${actorName} unfollowed you`;
       } else {
-        result.icon = "fas fa-user fc-blue";
+        result.icon = "user";
+        result.iconClass = "fc-blue";
         result.action = `${actorName} followed you`;
       }
 
@@ -272,7 +305,8 @@ export class NotificationsListComponent {
       }
       const action = likeMeta.IsUnlike ? "unliked" : "liked";
 
-      result.icon = likeMeta.IsUnlike ? "fas fa-heart-broken fc-red" : "fas fa-heart fc-red";
+      result.icon = likeMeta.IsUnlike ? "heart" : "heart";
+      result.iconClass = likeMeta.IsUnlike ? "fc-red" : "fc-red";
       result.action = `${actorName} ${action} <i class="text-grey7">${postText}</i>`;
       result.link = AppRoutingModule.postPath(postHash);
 
@@ -286,16 +320,18 @@ export class NotificationsListComponent {
       const postHash = nftBidMeta.NFTPostHashHex;
 
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
-      result.post = this.postMap[postHash];
+      const truncatedPost = this.truncatePost(postHash);
+      const postText = `<i class="fc-muted">${truncatedPost}</i>`;
       result.action = nftBidMeta.BidAmountNanos
-        ? `${actorName} bid ${this.globalVars.nanosToBitClout(
+        ? `${actorName} bid ${this.globalVars.nanosToDeSo(
             nftBidMeta.BidAmountNanos,
             2
-          )} CLOUT (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+          )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
             nftBidMeta.SerialNumber
-          }`
-        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
-      result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
+          } ${postText}`
+        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
+      result.icon = "coin";
+      result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
       return result;
     } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
@@ -307,11 +343,12 @@ export class NotificationsListComponent {
       const postHash = acceptNFTBidMeta.NFTPostHashHex;
 
       result.post = this.postMap[postHash];
-      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToBitClout(
+      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
         acceptNFTBidMeta.BidAmountNanos,
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
-      result.icon = "fas fa-trophy";
+      result.icon = "award";
+      result.iconClass = "fc-blue";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
     }
