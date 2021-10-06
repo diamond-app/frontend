@@ -463,7 +463,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   _handleTabClick(tab: string) {
     if (tab === FeedComponent.SHOWCASE_TAB) {
-      window.open("https://polygram.cc/explore", "_blank");
+      window.open("https://polygram.cc", "_blank");
     } else {
       this.activeTab = tab;
       this.router.navigate([], {

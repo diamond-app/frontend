@@ -137,7 +137,7 @@
         </div>
       </div>
 
-      <div class="pt-5px"></div>
+      <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
       <div class="left-desktop-selector">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
