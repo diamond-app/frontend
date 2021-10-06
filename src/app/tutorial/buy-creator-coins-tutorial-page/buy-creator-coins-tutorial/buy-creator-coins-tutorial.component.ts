@@ -98,11 +98,11 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       steps: [
         {
           title,
-          intro: "Welcome to BitClout!<br /><br />Let's start by learning how to invest in creators.",
+          intro: `Welcome to ${environment.node.name}!<br /><br />Let's start by learning how to invest in creators.`,
         },
         {
           title,
-          intro: "Every creator on BitClout has a coin that you can buy and sell.",
+          intro: `Every creator on ${environment.node.name} has a coin that you can buy and sell.`,
           element: document.querySelector("#creator-coins-holder"),
           position: "bottom",
         },

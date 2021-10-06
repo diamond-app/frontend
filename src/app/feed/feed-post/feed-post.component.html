@@ -168,12 +168,8 @@
             class="feed-post__coin-price-holder"
             (click)="openBuyCreatorCoinModal($event, postContent.ProfileEntryResponse.Username)"
           >
-            <span class="text-grey5">
-              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
-            </span>
-
             <!-- Buy link -->
-            Buy
+            <span class="p-10px">Buy</span>
           </a>
         </ng-template>
 

@@ -32,6 +32,7 @@ export type ProfileUpdateErrors = {
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
+  environment =  environment;
 
   introJS = introJs();
   skipTutorialExitPrompt = false;

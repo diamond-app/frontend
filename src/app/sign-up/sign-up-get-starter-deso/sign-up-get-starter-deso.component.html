@@ -7,7 +7,7 @@ HTML / ts than what I did here. If this is causing problems for you, LMK and I
 can refactor.
 -->
 
-<div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN">
+<div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN" class="pb-15px">
   <div *ngIf="displayForSignupFlow">
     <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
     <div class="mt-15px fs-24px font-weight-bold">Get Starter DeSo</div>
@@ -21,8 +21,8 @@ can refactor.
 
   <form #f="ngForm" [formGroup]="phoneForm" class="form-group mt-15px">
     <ngx-intl-tel-input
-      style="font-size: 15px !important"
-      [cssClass]="'form-control sign-up__phone-input'"
+      style="font-size: 15px !important;"
+      [cssClass]="'form-control sign-up__phone-input br-12px'"
       [separateDialCode]="true"
       [enableAutoCountrySelect]="true"
       [enablePlaceholder]="true"
@@ -69,20 +69,21 @@ can refactor.
 
   <div class="d-flex mt-15px justify-content-end">
     <div>
-      <a
+      <button
         *ngIf="displayForSignupFlow"
         (click)="onSkipButtonClicked()"
-        class="btn btn-outline-primary font-weight-bold fs-15px"
+        class="plain-button" style="width: 80px"
       >
         Skip
-      </a>
-      <a
+      </button>
+      <button
         (click)="sendVerificationText()"
         [ngClass]="{ disabled: !phoneForm.valid, 'btn-loading': sendingPhoneNumberVerificationText }"
-        class="btn btn-primary font-weight-bold fs-15px ml-10px"
+        class="primary-button ml-10px"
+        style="width: 80px"
       >
         Next
-      </a>
+      </button>
     </div>
   </div>
 </div>

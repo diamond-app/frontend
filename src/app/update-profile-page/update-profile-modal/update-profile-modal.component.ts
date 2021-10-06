@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { BsModalRef } from "ngx-bootstrap/modal";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "update-profile-modal",
@@ -24,6 +25,6 @@ export class UpdateProfileModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Update Profile - BitClout");
+    this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
   }
 }

@@ -101,23 +101,6 @@
     ></i-feather>
     <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
-  <div class="d-none d-lg-flex cursor-pointer align-items-center">
-    <i-feather
-      name="link-2"
-      class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
-      (click)="copyPostLinkToClipboard($event)"
-    ></i-feather>
-    <span
-      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
-      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-      mat-raised-button
-      #tooltip="matTooltip"
-      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
-      (auxclick)="onTimestampClickHandler($event)"
-    >
-      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-    </span>
-  </div>
   <ng-template #popTemplate>
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
@@ -245,5 +228,22 @@
       ></div>
     </div>
     <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">{{ postContent.DiamondCount }}</span>
+  </div>
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
+    <i-feather
+      name="link-2"
+      class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
+      (click)="copyPostLinkToClipboard($event)"
+    ></i-feather>
+    <span
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+      (auxclick)="onTimestampClickHandler($event)"
+    >
+      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    </span>
   </div>
 </div>
