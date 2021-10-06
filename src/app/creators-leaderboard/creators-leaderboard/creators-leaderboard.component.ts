@@ -6,8 +6,9 @@ import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/fo
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
-import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { filter } from "lodash";
+import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { environment } from "src/environments/environment";
 
 @Component({
@@ -76,7 +77,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          const chunk = res.ProfilesFound;
+          const chunk = filter(res.ProfilesFound, { IsReserved: false });
 
           // Index 0 means we're done. if the array is empty we're done.
           // subtract one so we don't fetch the last notification twice

@@ -22,10 +22,11 @@ import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-s
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
+import { filter } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
-import {LocationStrategy} from "@angular/common";
+import { LocationStrategy } from "@angular/common";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -961,7 +962,8 @@ export class GlobalVarsService {
         )
         .subscribe(
           (response) => {
-            this.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+            // @ts-ignore
+            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false }).slice(
               0,
               RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
             ).map((profile) => {
