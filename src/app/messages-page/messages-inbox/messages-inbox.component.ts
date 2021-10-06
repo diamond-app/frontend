@@ -49,7 +49,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.activeTab =
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
           ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
-          : storedTab;
+          : storedTab
+          ? storedTab
+          : MessagesInboxComponent.QUERYTOTAB.all;
 
       // Set the default active tab if there's nothing saved in local storage
       if (this.activeTab === null) {
