@@ -5,15 +5,15 @@
       <div class="fc-landing-page d-flex align-items-center">
         <i-feather name="deso" class="feather-large fc-none"></i-feather>
         <span class="fs-25px ml-10px mr-25px">DeSo</span>
-        <span class="ml-25px fs-16px">About</span>
-        <span class="ml-20px fs-16px">Vision</span>
+        <a class="fc-landing-page ml-25px fs-16px cursor-pointer" href="https://docs.deso.org/">About</a>
+        <a class="fc-landing-page ml-20px fs-16px cursor-pointer" href="https://docs.deso.org/#the-ultimate-vision">Vision</a>
       </div>
       <div class="fc-landing-page">
-        <span class="mr-15px">
+        <a class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
           <i-feather name="lock" class="feather-medium mr-5px position-relative" style="top: -2px"></i-feather>
           Login
-        </span>
-        <button style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px">Sign up today</button>
+        </a>
+        <button style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -25,8 +25,8 @@
           Neque vitae tempus quam pellentesque nec nam. Dui ut ornare lectus sit.
         </h3>
         <div class="d-flex justify-content-between" style="margin-right: 30px; margin-top: 43px">
-          <button class="landing-page-btn landing-page-primary-btn">Sign up today</button>
-          <button class="landing-page-btn landing-page-secondary-btn">Explore artists</button>
+          <button class="landing-page-btn landing-page-primary-btn" (click)="globalVars.launchSignupFlow()">Sign up today</button>
+          <button class="landing-page-btn landing-page-secondary-btn" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">Explore artists</button>
         </div>
       </div>
       <div class="landing-page-nft-card-holder landing-page-robot-2">
