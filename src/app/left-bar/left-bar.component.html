@@ -17,7 +17,7 @@
                 style="height: 27px"
               />
             </a>
-            <i-feather name="x" class="feather-large cursor-pointer d-flex align-items-center" (click)="closeMobile.emit()"></i-feather>
+            <i-feather name="x" class="feather-large cursor-pointer fs-0px" (click)="closeMobile.emit()"></i-feather>
           </div>
           <div class="pt-20px"></div>
           <change-account-selector></change-account-selector>
@@ -57,7 +57,7 @@
             style="height: 56px"
             (click)="startTutorial()"
           >
-            <i-feather name="monitor" class="feather-medium d-flex align-items-center"></i-feather>
+            <i-feather name="monitor" class="feather-medium fs-0px"></i-feather>
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
@@ -74,7 +74,7 @@
             [href]="getHelpMailToAttr()"
             target="_blank"
           >
-            <i-feather name="help-circle" class="feather-medium d-flex align-items-center"></i-feather>
+            <i-feather name="help-circle" class="feather-medium fs-0px"></i-feather>
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Help</a>
           </a>
           <left-bar-button

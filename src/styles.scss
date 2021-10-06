@@ -261,6 +261,7 @@ $green-font-color: #19B028;
 .fs-13px { font-size: 13px; }
 .fs-12px { font-size: 12px !important; }
 .fs-10px { font-size: 10px !important; }
+.fs-0px { font-size: 0px !important; }
 // line heights
 .lh-24px { line-height: 24px; }
 .lh-20px { line-height: 20px; }
@@ -3468,7 +3469,6 @@ creator-profile-nfts {
   position: absolute;
   top: -70px;
   right: 22px;
-  font-size: 44px;
   height: 55px;
   width: 58px;
   text-align: center;
