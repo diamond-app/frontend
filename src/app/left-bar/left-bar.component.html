@@ -67,15 +67,16 @@
             [buttonLabel]="'Referrals'"
             [iconName]="'share-2'"
           ></left-bar-button>
-          <div
+          <a
             *ngIf="globalVars.supportEmail"
             class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
             style="height: 56px"
-            (click)="getHelpMailToAttr()"
+            [href]="getHelpMailToAttr()"
+            target="_blank"
           >
             <i-feather name="help-circle" class="feather-medium d-flex align-items-center"></i-feather>
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Help</a>
-          </div>
+          </a>
           <left-bar-button
             *ngIf="globalVars.showAdminTools()"
             [link]="'/' + globalVars.RouteNames.ADMIN"
