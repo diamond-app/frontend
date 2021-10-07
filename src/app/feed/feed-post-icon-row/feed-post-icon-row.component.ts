@@ -548,62 +548,63 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      this._preventNonLoggedInUserActions("diamond");
-      return;
-    }
-    // Disable diamond selection if diamonds are being sent
-    if (this.sendingDiamonds) {
-      return;
-    }
-
-    if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
-      event.stopPropagation();
-      return;
-    }
-
-    // Block user from selecting diamond level below already gifted amount
-    if (index < this.getCurrentDiamondLevel()) {
-      return;
-    }
-
-    if (
-      this.postContent.PostEntryReaderState?.DiamondLevelBestowed &&
-      index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed
-    ) {
-      this.globalVars._alertError("You cannot downgrade a diamond");
-      return;
-    }
-    this.diamondSelected = index + 1;
-    if (event) {
-      event.stopPropagation();
-    }
-    if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
-      SwalHelper.fire({
-        target: this.globalVars.getTargetComponentSelector(),
-        icon: "info",
-        title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
-        html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
-          this.diamondSelected
-        )} to @${this.postContent.ProfileEntryResponse?.Username}`,
-        showCancelButton: true,
-        showConfirmButton: true,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
-        },
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-      }).then(async (res: any) => {
-        if (res.isConfirmed) {
-          await this.sendDiamonds(this.diamondSelected);
-        }
-      });
-    } else {
-      await this.sendDiamonds(this.diamondSelected);
-    }
+    this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
+    // if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+    //   this._preventNonLoggedInUserActions("diamond");
+    //   return;
+    // }
+    // // Disable diamond selection if diamonds are being sent
+    // if (this.sendingDiamonds) {
+    //   return;
+    // }
+    //
+    // if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
+    //   event.stopPropagation();
+    //   return;
+    // }
+    //
+    // // Block user from selecting diamond level below already gifted amount
+    // if (index < this.getCurrentDiamondLevel()) {
+    //   return;
+    // }
+    //
+    // if (
+    //   this.postContent.PostEntryReaderState?.DiamondLevelBestowed &&
+    //   index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed
+    // ) {
+    //   this.globalVars._alertError("You cannot downgrade a diamond");
+    //   return;
+    // }
+    // this.diamondSelected = index + 1;
+    // if (event) {
+    //   event.stopPropagation();
+    // }
+    // if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
+    //   SwalHelper.fire({
+    //     target: this.globalVars.getTargetComponentSelector(),
+    //     icon: "info",
+    //     title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
+    //     html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
+    //       this.diamondSelected
+    //     )} to @${this.postContent.ProfileEntryResponse?.Username}`,
+    //     showCancelButton: true,
+    //     showConfirmButton: true,
+    //     focusConfirm: true,
+    //     customClass: {
+    //       confirmButton: "btn btn-light",
+    //       cancelButton: "btn btn-light no",
+    //     },
+    //     confirmButtonText: "Confirm",
+    //     cancelButtonText: "Cancel",
+    //     reverseButtons: true,
+    //   }).then(async (res: any) => {
+    //     if (res.isConfirmed) {
+    //       await this.sendDiamonds(this.diamondSelected);
+    //     }
+    //   });
+    // } else {
+    //   await this.sendDiamonds(this.diamondSelected);
+    // }
   }
 
   getCurrentDiamondLevel(): number {

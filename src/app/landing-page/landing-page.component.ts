@@ -3,6 +3,7 @@ import { AppRoutingModule } from "../app-routing.module";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
+import AOS from "aos";
 
 @Component({
   selector: "app-landing-page",
@@ -120,6 +121,10 @@ export class LandingPageComponent implements OnInit {
     if (!this.globalVars.showLandingPage()) {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParamsHandling: "merge" });
     }
+    AOS.init({
+      disable: "mobile",
+      anchorPlacement: "bottom-bottom",
+    });
   }
 
   // https://bitclout.com/api/v0/get-single-profile-picture/BC1YLj3a3xppVPtAoMAzh1FFYtCTiGomjaA5PRcqS1PVRk8KqDw385y

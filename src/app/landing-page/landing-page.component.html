@@ -19,8 +19,8 @@
     <!--Title text-->
     <div class="landing-page-content-container d-flex flex-column justify-content-center">
       <div class="d-flex align-items-center justify-content-between w-100 h-100" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-        <div style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
-          <h1 class="landing-page-header-main">You deserve more than a <img src="assets/img/landing-page-thumbs-up.png" width="89px" height="86px" style="position: relative; top: -17px" /></h1>
+        <div data-aos="fade" data-aos-delay="250" style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
+          <h1 class="landing-page-header-main"><span>You deserve more than a </span><span style="line-height: 110px"><img src="assets/img/landing-page-thumbs-up.png" width="89px" height="86px" style="position: relative; top: -17px" /></span></h1>
           <h3 class="landing-page-subtext" style="margin-top: 18px">
             Get diamonds and invest in creators like never before. Your next post could be worth millions!
           </h3>
@@ -80,7 +80,7 @@
             </div>
           </div>
           <div class="w-100 d-flex justify-content-center align-items-center" [ngStyle]="{ 'height': globalVars.isMobile() ? '900px' : '100%' }">
-            <div class="position-relative">
+            <div class="position-relative landing-page-rotating-blur">
               <div class="landing-page-blob-2 landing-page-svg"></div>
               <div class="landing-page-svg landing-page-blob-1"></div>
               <div class="landing-page-svg landing-page-blob-3"></div>
@@ -94,10 +94,10 @@
   </div>
   <!--Second section-->
   <div class="landing-page-content-container" style="padding-left: 0px; padding-right: 0px">
-    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
-      <div class="position-relative" style="margin-left: -10px" [ngClass]="{ 'd-flex justify-content-center': globalVars.isMobile() }">
-        <img src="/assets/img/landing-page-diamond-shower-device.png" width="525.18px" height="848.98px" style="top: 60px; left: -30px; z-index: 2;" class="position-relative landing-page-diamond-device"/>
-        <img src="/assets/img/landing-page-diamond-shower-bg.png" width="529.59px" height="529.59px" style="top: 173px; left: 23px; z-index: 1;" class="position-absolute landing-page-diamond-square"/>
+    <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '150px' : '75px' }" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
+      <div data-aos="fade-right" data-aos-offset="200" class="position-relative" style="margin-left: -10px" [ngClass]="{ 'd-flex justify-content-center w-100': globalVars.isMobile() }">
+        <img src="/assets/img/landing-page-diamond-shower-device.png" width="356px" height="722px" style="top: 60px; z-index: 2;" class="position-relative landing-page-diamond-device"/>
+        <img src="/assets/img/landing-page-diamond-shower-bg.png" width="529.59px" height="529.59px" style="top: 173px; z-index: 1;" class="position-absolute landing-page-diamond-square"/>
         <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
           <div class="position-absolute">
             <div class="landing-page-svg landing-page-blob-5"></div>
@@ -106,13 +106,13 @@
           </div>
         </div>
       </div>
-      <div style="z-index: 1" [ngStyle]="{'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
+      <div data-aos="fade-left" style="z-index: 1" [ngStyle]="{'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
         <div class="landing-page-title">Get Diamonds, Not Likes</div>
         <div class="fs-24px fc-landing-page-title mt-15px ml-5px">What if every like on your posts got you up to $1000?</div>
       </div>
     </div>
     <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '-50px' : '75px' }" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <div style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
+      <div data-aos="fade-down" data-aos-offset="300" style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
         <div class="landing-page-title">Your next post could be worth millions...</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
@@ -133,7 +133,7 @@
           </span>
         </div>
       </div>
-      <div [ngStyle]="{ 'margin-top': globalVars.isMobile() ? '150px': '0px' }">
+      <div data-aos="fade-up" data-aos-offset="600" [ngStyle]="{ 'margin-top': globalVars.isMobile() ? '150px': '0px' }">
         <div class="position-relative">
           <div class="position-relative" style="width: 425.13px; height: 506.44px">
             <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
@@ -161,7 +161,7 @@
       </div>
     </div>
     <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
-      <div class="position-relative" [ngStyle]="{ 'left': globalVars.isMobile() ? '-80px': '0px' }">
+      <div data-aos="zoom-in-left" data-aos-offset="600" class="position-relative" [ngStyle]="{ 'left': globalVars.isMobile() ? '-80px': '0px' }">
         <img src="/assets/img/landing-page-device.png" width="426.09px" height="745.5px" style="top: 67px; left: 90px; z-index: 1;" class="position-relative landing-page-device"/>
         <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
           <div class="position-relative">
@@ -171,7 +171,7 @@
           </div>
         </div>
       </div>
-      <div style="z-index: 1" [ngClass]="{ 'p-25px': globalVars.isMobile(), 'ml-40px': !globalVars.isMobile() }" [ngStyle]="{ width: !globalVars.isMobile() ? '600px' : 'auto' }">
+      <div data-aos="zoom-in-right" data-aos-offset="400" style="z-index: 1" [ngClass]="{ 'p-25px': globalVars.isMobile(), 'ml-40px': !globalVars.isMobile() }" [ngStyle]="{ width: !globalVars.isMobile() ? '600px' : 'auto' }">
         <div class="landing-page-title">Investing in art is now as easy as using Instagram</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
@@ -196,11 +196,13 @@
   </div>
   <div class="landing-page-content-container">
     <div class="w-100 d-flex justify-content-center align-items-center flex-column">
-      <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">Invest in creators like never before</div>
-      <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
-        <div class="d-flex">
-          <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
-          <span class="pl-15px">All of the amounts presented below are real, if you want you can <a href="https://www.cloutomy.com" target="_blank" class="fc-landing-page"><u>check them out here.</u></a></span>
+      <div data-aos="zoom-in" data-aos-offset="500">
+        <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">Invest in creators like never before</div>
+        <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
+          <div class="d-flex">
+            <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
+            <span class="pl-15px">All of the amounts presented below are real, if you want you can <a href="https://www.cloutomy.com" target="_blank" class="fc-landing-page"><u>check them out here.</u></a></span>
+          </div>
         </div>
       </div>
       <div class="position-relative h-100 w-100">
@@ -211,7 +213,7 @@
         <div class="position-absolute" style="left: -250px; bottom: 120px">
           <div class="landing-page-svg landing-page-blob-4"></div>
         </div>
-        <div class="landing-page-creator-coins-table position-relative fs-20px pt-10px" style="z-index: 1" [ngClass]="{ 'pt-40px pl-40px': !globalVars.isMobile() }">
+        <div data-aos="slide-up" data-aos-offset="500" class="landing-page-creator-coins-table position-relative fs-20px pt-10px" style="z-index: 1" [ngClass]="{ 'pt-40px pl-40px': !globalVars.isMobile() }">
           <div class="w-100 h-100 fc-landing-page" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
             <div class="d-flex align-items-center font-weight-bold pb-10px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
               <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">Rank</div>
@@ -239,7 +241,7 @@
   </div>
   <div class="landing-page-content-container">
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <div class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+      <div data-aos="slide-up" data-aos-offset="500" class="position-relative landing-page-creator-coin-explainer-container mr-25px">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
           <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
         </div>
@@ -248,7 +250,7 @@
           <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can have an optional coin associated with their profile, and earn fees on every buy.</div>
         </div>
       </div>
-      <div class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+      <div data-aos="slide-up" data-aos-offset="500" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container mr-25px">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
           <img class="position-relative" width="213.71px" height="154.35px" style="top: 82.63px" src="assets/img/landing-page-cash.png"/>
         </div>
@@ -257,7 +259,7 @@
           <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can attribute an optional royalty on every NFT sale back to their coin-holders</div>
         </div>
       </div>
-      <div class="position-relative landing-page-creator-coin-explainer-container">
+      <div data-aos="slide-up" data-aos-offset="500" data-aos-delay="500" class="position-relative landing-page-creator-coin-explainer-container">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
           <img class="position-relative" width="160.19px" height="147.03px" style="top: 69px" src="assets/img/landing-page-hodl.png"/>
         </div>

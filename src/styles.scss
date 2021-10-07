@@ -241,6 +241,9 @@ $green-font-color: #19B028;
 .fc-landing-page-title { color: $landing-page-dark; }
 .fc-none { color: rgba(0, 0, 0, 0); }
 
+.z-1 { z-index: 1; }
+.z-2 { z-index: 2; }
+
 .font-weight-500 { font-weight: 500 }
 
 .fs-1 { font-size: 2.5rem }
@@ -927,6 +930,21 @@ app-landing-page {
   }
 }
 
+@keyframes blurRotate {
+  0%   { transform:rotate(0deg); }
+  100% { transform:rotate(270deg); }
+}
+
+.landing-page-rotating-blur {
+  animation: 12s ease 0s infinite blurRotate alternate
+}
+
+app-landing-page {
+  .aos-init {
+    z-index: 1;
+  }
+}
+
 .landing-page-top-bar {
   margin: 8px auto 0px auto;
   z-index: 1;
@@ -978,18 +996,21 @@ app-landing-page {
 }
 
 .landing-page-diamond-square {
+  left: 23px;
   @media (max-width: 992px) {
-    right: calc((100vw - 350px) / 2);
     width: 350px;
-    height: auto;
+    height: 350px;
+    left: auto;
+    position: relative;
   }
 }
 
 .landing-page-diamond-device {
+  left: 110px;
   @media (max-width: 992px) {
-    width: 386px;
-    height: auto;
-    right: 44px;
+    left: auto;
+    width: 253px;
+    height: 513px;
   }
 }
 
