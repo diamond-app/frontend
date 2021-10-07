@@ -679,8 +679,7 @@ export class GlobalVarsService {
   }
 
   showLandingPage() {
-    // return this.userList && this.userList.length === 0;
-    return false;
+    return this.userList && this.userList.length === 0;
   }
 
   _globopoll(passedFunc: any, expirationSecs?: any) {

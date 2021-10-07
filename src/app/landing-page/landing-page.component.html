@@ -5,10 +5,10 @@
       <div class="fc-landing-page d-flex align-items-center">
         <i-feather name="deso" class="feather-large fc-none"></i-feather>
         <span class="fs-25px ml-10px mr-25px">DeSo</span>
-        <a class="fc-landing-page ml-25px fs-16px cursor-pointer" href="https://docs.deso.org/">About</a>
-        <a class="fc-landing-page ml-20px fs-16px cursor-pointer" href="https://docs.deso.org/#the-ultimate-vision">Vision</a>
+        <a *ngIf="!globalVars.isMobile()" class="fc-landing-page ml-25px fs-16px cursor-pointer" href="https://docs.deso.org/">About</a>
+        <a *ngIf="!globalVars.isMobile()" class="fc-landing-page ml-20px fs-16px cursor-pointer" href="https://docs.deso.org/#the-ultimate-vision">Vision</a>
       </div>
-      <div class="fc-landing-page">
+      <div *ngIf="!globalVars.isMobile()" class="fc-landing-page">
         <a class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
           <i-feather name="lock" class="feather-medium mr-5px position-relative" style="top: -2px"></i-feather>
           Login
@@ -18,123 +18,297 @@
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
     <!--Title text-->
-    <div class="landing-page-content-container">
-      <div style="position: absolute; top: 300px; width: 596px; z-index: 1">
-        <h1 class="landing-page-header-main">Sit amet purus gravida</h1>
-        <h3 class="landing-page-subtext" style="margin-top: 18px">
-          Neque vitae tempus quam pellentesque nec nam. Dui ut ornare lectus sit.
-        </h3>
-        <div class="d-flex justify-content-between" style="margin-right: 30px; margin-top: 43px">
-          <button class="landing-page-btn landing-page-primary-btn" (click)="globalVars.launchSignupFlow()">Sign up today</button>
-          <button class="landing-page-btn landing-page-secondary-btn" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">Explore artists</button>
-        </div>
-      </div>
-      <div class="landing-page-nft-card-holder landing-page-robot-2">
-        <img class="position-relative" src="/assets/img/example-nft-2.jpg" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
-        <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px">
-          <div class="d-flex flex-column">
-            <div style="font-size: 26px; line-height: 28px; font-weight: 600">Mekaverse #147</div>
-            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 10px">For Sale</div>
+    <div class="landing-page-content-container d-flex flex-column justify-content-center">
+      <div class="d-flex align-items-center justify-content-between w-100 h-100" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+        <div style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
+          <h1 class="landing-page-header-main">You deserve more than a <img src="assets/img/landing-page-thumbs-up.png" width="89px" height="86px" style="position: relative; top: -17px" /></h1>
+          <h3 class="landing-page-subtext" style="margin-top: 18px">
+            Get diamonds and invest in creators like never before. Your next post could be worth millions!
+          </h3>
+          <div
+            class="d-flex justify-content-between"
+            style="margin-top: 43px"
+            [ngClass]="{ 'mr-30px': !globalVars.isMobile(), 'flex-column': globalVars.isMobile() }"
+          >
+            <button
+              class="landing-page-btn landing-page-primary-btn"
+              (click)="globalVars.launchSignupFlow()"
+              [ngClass]="{ 'w-100': globalVars.isMobile() }"
+            >
+              Sign up today
+            </button>
+            <button
+              class="landing-page-btn landing-page-secondary-btn"
+              [routerLink]="'/' + globalVars.RouteNames.CREATORS"
+              queryParamsHandling="merge"
+              [ngClass]="{ 'w-100 mt-15px': globalVars.isMobile() }"
+            >
+              Explore artists
+            </button>
           </div>
-          <div class="d-flex flex-column align-items-end">
-            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 2px">Min Bid</div>
-            <div class="d-flex justify-content-end" style="font-size: 26px; line-height: 28px; font-weight: 600; margin-top: 5px">
-              <i-feather name="deso" class="feather-medium fc-none fs-0px mt-5px mr-16px"></i-feather>
-              0.9
+        </div>
+        <div class="position-relative h-100 w-100" style="width: 600px !important">
+          <div class="landing-page-nft-card-holder landing-page-robot-2">
+            <img class="position-relative" src="/assets/img/example-nft-2.jpg" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
+            <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
+              <div class="d-flex flex-column">
+                <div class="landing-page-nft-card-fs-large">Mekaverse #147</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
+              </div>
+              <div class="d-flex flex-column align-items-end">
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Min Bid</div>
+                <div class="d-flex justify-content-end landing-page-nft-card-fs-large" style="margin-top: 5px">
+                  <i-feather name="deso" class="feather-medium fc-none fs-0px mt-5px mr-16px"></i-feather>
+                  0.9
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="landing-page-nft-card-holder landing-page-robot-1">
+            <img class="position-relative" src="/assets/img/example-nft-1.jpg" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
+            <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
+              <div class="d-flex flex-column">
+                <div class="landing-page-nft-card-fs-large">Mekaverse #147</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
+              </div>
+              <div class="d-flex flex-column align-items-end">
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Min Bid</div>
+                <div class="d-flex justify-content-end landing-page-nft-card-fs-large" style="margin-top: 5px">
+                  <i-feather name="deso" class="feather-medium fc-none fs-0px mt-5px mr-16px"></i-feather>
+                  0.9
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-100 d-flex justify-content-center align-items-center" [ngStyle]="{ 'height': globalVars.isMobile() ? '900px' : '100%' }">
+            <div class="position-relative">
+              <div class="landing-page-blob-2 landing-page-svg"></div>
+              <div class="landing-page-svg landing-page-blob-1"></div>
+              <div class="landing-page-svg landing-page-blob-3"></div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="landing-page-nft-card-holder landing-page-robot-1">
-        <img class="position-relative" src="/assets/img/example-nft-1.jpg" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
-        <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px">
-          <div class="d-flex flex-column">
-            <div style="font-size: 26px; line-height: 28px; font-weight: 600">Mekaverse #149</div>
-            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 10px">For Sale</div>
-          </div>
-          <div class="d-flex flex-column align-items-end">
-            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 2px">Min Bid</div>
-            <div class="d-flex justify-content-end" style="font-size: 26px; line-height: 28px; font-weight: 600; margin-top: 5px">
-              <i-feather name="deso" class="feather-medium fc-none fs-0px mt-5px mr-16px"></i-feather>
-              0.9
-            </div>
-          </div>
-        </div>
+
       </div>
       <!--Background blobs-->
-      <div class="landing-page-blob-2 landing-page-svg"></div>
-      <div class="landing-page-svg landing-page-blob-1"></div>
-      <div class="landing-page-svg landing-page-blob-3"></div>
     </div>
   </div>
   <!--Second section-->
-  <div class="landing-page-content-container">
-    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px">
-      <div>
-        <img src="/assets/img/landing-page-device.png" width="426.09px" height="745.5px" style="top: 67px; left: 90px; z-index: 1;" class="position-relative"/>
-        <div class="landing-page-svg landing-page-blob-5"></div>
-        <div class="landing-page-svg landing-page-blob-4"></div>
-        <div class="landing-page-svg landing-page-blob-6"></div>
+  <div class="landing-page-content-container" style="padding-left: 0px; padding-right: 0px">
+    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
+      <div class="position-relative" style="margin-left: -10px" [ngClass]="{ 'd-flex justify-content-center': globalVars.isMobile() }">
+        <img src="/assets/img/landing-page-diamond-shower-device.png" width="525.18px" height="848.98px" style="top: 60px; left: -30px; z-index: 2;" class="position-relative landing-page-diamond-device"/>
+        <img src="/assets/img/landing-page-diamond-shower-bg.png" width="529.59px" height="529.59px" style="top: 173px; left: 23px; z-index: 1;" class="position-absolute landing-page-diamond-square"/>
+        <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
+          <div class="position-absolute">
+            <div class="landing-page-svg landing-page-blob-5"></div>
+            <div class="landing-page-svg landing-page-blob-4"></div>
+            <div class="landing-page-svg landing-page-blob-6"></div>
+          </div>
+        </div>
       </div>
-      <div style="width: 585px; z-index: 1; margin-left: 40px">
-        <div class="landing-page-title">Lorum Ispum</div>
+      <div style="z-index: 1" [ngStyle]="{'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
+        <div class="landing-page-title">Get Diamonds, Not Likes</div>
+        <div class="fs-24px fc-landing-page-title mt-15px ml-5px">What if every like on your posts got you up to $1000?</div>
+      </div>
+    </div>
+    <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '50px' : '75px' }" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <div style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
+        <div class="landing-page-title">Your next post could be worth millions...</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Ac tortor dignissim convallis aenean et tortor at risus. Etiam tempor
+            Making an account on Diamond is as simple as creating an account on Instagram
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+            Minting your first "NFT" is as easy as making a post - just a single click
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Vel turpis nunc eget lorem.
+            Investing in NFTs is one-click, too!
+          </span>
+        </div>
+      </div>
+      <div [ngStyle]="{ 'margin-top': globalVars.isMobile() ? '200px': '0px' }">
+        <div class="position-relative">
+          <div class="position-relative" style="width: 425.13px; height: 506.44px">
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
+              <div class="position-absolute">
+                <div class="landing-page-svg landing-page-blob-5"></div>
+                <div class="landing-page-svg landing-page-blob-4" style="left: -250px"></div>
+                <div class="landing-page-svg landing-page-blob-6"></div>
+              </div>
+            </div>
+            <img src="/assets/img/landing-page-network-top.svg" height="146.05px" width="453.37px" class="position-absolute landing-page-network-top" style="z-index: 1; top: -120px">
+            <img src="/assets/img/landing-page-network-bulb-pink.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; top: -75px; left: 70px">
+            <img src="/assets/img/landing-page-network-left.svg" height="376.57px" width="218.81px" class="position-absolute landing-page-network-left" style="z-index: 1; left: -200px; top: 50px">
+            <img src="/assets/img/landing-page-network-right.svg" height="376.57px" width="218.81px" class="position-absolute landing-page-network-right" style="z-index: 1; right: -183px; top: 53px">
+            <img src="/assets/img/landing-page-network-bulb-blue.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; right: -83px; top: 64px">
+            <img src="/assets/img/landing-page-network-bulb-violet.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; right: -83px; top: 368px">
+            <img src="/assets/img/landing-page-network-bottom.svg" width="453.37px" height="146.05px" class="position-absolute landing-page-network-bottom" style="z-index: 1; bottom: -120px">
+            <div class="landing-page-row-3-box position-relative">
+              <div class="landing-page-row-3-inner-box">
+                <img src="/assets/img/landing-page-nft-box.png" height="338px" width="338px" style="border-radius: 27px" />
+                <button class="landing-page-primary-btn landing-page-btn mt-16px" style="height: 72px; width: 338px; padding: 0px">Mint NFT Now!</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
+      <div class="position-relative" [ngStyle]="{ 'left': globalVars.isMobile() ? '-80px': '0px' }">
+        <img src="/assets/img/landing-page-device.png" width="426.09px" height="745.5px" style="top: 67px; left: 90px; z-index: 1;" class="position-relative landing-page-device"/>
+        <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
+          <div class="position-relative">
+            <div class="landing-page-svg landing-page-blob-5"></div>
+            <div class="landing-page-svg landing-page-blob-4"></div>
+            <div class="landing-page-svg landing-page-blob-6"></div>
+          </div>
+        </div>
+      </div>
+      <div style="z-index: 1" [ngClass]="{ 'p-25px': globalVars.isMobile(), 'ml-40px': !globalVars.isMobile() }" [ngStyle]="{ width: !globalVars.isMobile() ? '600px' : 'auto' }">
+        <div class="landing-page-title">Investing in art is now as easy as using Instagram</div>
+        <div class="d-flex mt-30px mr-20px">
+          <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            For the first time, NFTs can show up directly in your social feed like posts. Engage like never before - with comments, likes, and diamonds
+          </span>
+        </div>
+        <div class="d-flex mt-15px mr-20px">
+          <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            NFTs are the future of social media and now, for the first time, they can be tied to your social profile
+          </span>
+        </div>
+        <div class="d-flex mt-15px mr-20px">
+          <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            Show off your gallery on your profile, too!
           </span>
         </div>
       </div>
     </div>
-    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px">
-      <div style="width: 585px; z-index: 1; margin-left: 40px">
-        <div class="landing-page-title">Lorum Ispum</div>
-        <div class="d-flex mt-30px mr-20px">
-          <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Ac tortor dignissim convallis aenean et tortor at risus. Etiam tempor
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Vel turpis nunc eget lorem.
-          </span>
+  </div>
+  <div class="landing-page-content-container">
+    <div class="w-100 d-flex justify-content-center align-items-center flex-column">
+      <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">Invest in creators like never before</div>
+      <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
+        <div class="d-flex">
+          <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
+          <span class="pl-15px">All of the amounts presented below are real, if you want you can check them out here.</span>
         </div>
       </div>
-      <div>
-        <div class="position-relative">
-          <div>
-            <img src="/assets/img/landing-page-network-top.svg" height="146.05px" width="453.37px" class="position-relative" style="z-index: 1">
-          </div>
-          <img src="/assets/img/landing-page-network-left.svg" height="376.57px" width="218.81px" class="position-relative" style="z-index: 1">
-          <img src="/assets/img/landing-page-network-right.svg" height="376.57px" width="218.81px" class="position-relative" style="z-index: 1">
-          <br/>
-          <img src="/assets/img/landing-page-network-bottom.svg" width="453.37px" height="146.05px" class="position-relative" style="z-index: 1">
+      <div class="position-relative h-100 w-100">
+        <div class="position-absolute" style="right: -25px; top: 50px">
+          <div class="landing-page-svg landing-page-blob-5"></div>
+          <div class="landing-page-svg landing-page-blob-6"></div>
         </div>
-        <div class="landing-page-svg landing-page-blob-5"></div>
-        <div class="landing-page-svg landing-page-blob-4"></div>
+        <div class="position-absolute" style="left: -250px; bottom: 120px">
+          <div class="landing-page-svg landing-page-blob-4"></div>
+        </div>
+        <div class="landing-page-creator-coins-table position-relative fs-20px pt-10px" style="z-index: 1" [ngClass]="{ 'pt-40px pl-40px': !globalVars.isMobile() }">
+          <div class="w-100 h-100 fc-landing-page" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
+            <div class="d-flex align-items-center font-weight-bold pb-10px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
+              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">Rank</div>
+              <div class="col-6">Creator</div>
+              <div class="col-2">Earnings</div>
+            </div>
+            <div *ngFor="let creator of featuredCreators; let idx = index" class="d-flex align-items-center landing-page-row">
+              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">#{{idx + 1}}</div>
+              <div class="col-6">
+                <img class="landing-page-profile-pic" src="{{ creator.pic }}" />
+                {{ creator.name }}
+              </div>
+              <div class="col-2">{{ creator.earnings }}</div>
+            </div>
+            <div class="landing-page-creator-coins-fade-out"></div>
+          </div>
+        </div>
+      </div>
+      <button class="landing-page-btn landing-page-secondary-btn" style="height: 88px; width: 368px; margin-top: 48px">
+        Explore Creator Earnings
+      </button>
+    </div>
+  </div>
+  <div class="landing-page-content-container">
+    <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <div class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Creators can have coins</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can have an optional coin associated with their profile, and earn fees on every buy.</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative" width="213.71px" height="154.35px" style="top: 82.63px" src="assets/img/landing-page-cash.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">2. Coins can have royalties</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can attribute an optional royalty on every NFT sale back to their coin-holders</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative" width="160.19px" height="147.03px" style="top: 69px" src="assets/img/landing-page-hodl.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">3. HODL to the moon!</div>
+          <div class="fs-20px mt-16px text-align-center fc-landing-page">Hold your favorite creator's coin to grow with them</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="landing-page-content-container">
+    <div class="d-flex justify-content-center position-relative" style="z-index: 1" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <button class="landing-page-btn landing-page-primary-btn mr-30px">
+        Sign up today
+      </button>
+      <button class="landing-page-btn landing-page-secondary-btn" [ngClass]="{ 'mt-15px': globalVars.isMobile() }">
+        Explore artists
+      </button>
+    </div>
+  </div>
+  <div class="landing-page-content-container d-flex justify-content-center">
+    <div class="position-relative w-100 h-100">
+      <div class="position-absolute" style="top: 50%; left: 50%">
+        <div class="landing-page-svg landing-page-blob-5" style="left: 150px"></div>
+        <div class="landing-page-svg landing-page-blob-4" style="bottom: -68px"></div>
         <div class="landing-page-svg landing-page-blob-6"></div>
+      </div>
+      <div class="landing-page-build-on-deso-container d-flex flex-column align-items-center">
+        <img src="assets/deso/camelcase_logo.svg" width="142px"/>
+        <div class="landing-page-title text-align-center mt-25px">Build on the Decentralized Social Blockchain</div>
+        <div class="fs-24px fc-landing-page text-align-center mt-20px">Diamonds are forever, and so are your followers because everything is stored on the blockchain. You'll never lose your content because it's all truly yours.</div>
+        <button class="landing-page-btn landing-page-secondary-btn mt-25px" [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '466px', height: globalVars.isMobile() ? '74px' : '88px' }" style="padding: 0px">
+          Learn more about the DeSo Blockchain
+        </button>
       </div>
     </div>
   </div>
   <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; background-image: url('/assets/img/static.png')"></div>
+  <div class="landing-page-footer-border"></div>
+  <div class="position-relative d-flex justify-content-between landing-page-top-bar landing-page-footer-border" style="padding: 50px 0px; margin-top: 0px; margin-bottom: 0px" [ngClass]="{ 'flex-column align-items-center': globalVars.isMobile() }">
+    <div class="fc-landing-page d-flex align-items-center">
+      <i-feather name="deso" class="feather-large fc-none"></i-feather>
+      <span class="fs-25px ml-10px mr-25px">DeSo</span>
+    </div>
+    <div class="fs-18px">
+      <a class="fc-landing-page mr-40px">Login</a>
+      <a class="fc-landing-page mr-40px">Sign up</a>
+      <a class="fc-landing-page mr-40px">Vision</a>
+      <a class="fc-landing-page mr-40px">About</a>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center align-items-center py-30px">
+    <span style="color: #73767b" class="fs-18px" [ngClass]="{ 'fs-12px': globalVars.isMobile() }">Copyright © 2022 Diamond Labs | All Rights Reserved</span>
+  </div>
 </div>
