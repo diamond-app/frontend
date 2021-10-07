@@ -117,7 +117,7 @@ export class LandingPageComponent implements OnInit {
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
 
   ngOnInit() {
-    if (!this.globalVars.showLandingPage()) {
+    if (!this.globalVars.showLandingPage() || true) {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParamsHandling: "merge" });
     }
   }

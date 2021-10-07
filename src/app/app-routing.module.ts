@@ -43,6 +43,7 @@ import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-pag
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
+import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -99,7 +100,7 @@ class RouteNames {
 const routes: Routes = [
   { path: "", component: LandingPageComponent, pathMatch: "full" },
   { path: RouteNames.BROWSE, component: BrowsePageComponent, pathMatch: "full" },
-  { path: RouteNames.CREATORS, component: CreatorsLeaderboardPageComponent, pathMatch: "full" },
+  { path: RouteNames.CREATORS, component: CreatorsLeaderboardAppPageComponent, pathMatch: "full" },
   { path: RouteNames.USER_PREFIX + "/:username", component: CreatorProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.SETTINGS, component: SettingsPageComponent, pathMatch: "full" },
   { path: RouteNames.BUY_DESO, component: BuyDeSoPageComponent, pathMatch: "full" },

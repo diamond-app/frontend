@@ -27,6 +27,8 @@ import { FeedPostDropdownComponent } from "./feed/feed-post-dropdown/feed-post-d
 import { FeedPostIconRowComponent } from "./feed/feed-post-icon-row/feed-post-icon-row.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
 import { CreatorsLeaderboardComponent } from "./creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
+import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
+import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
@@ -203,6 +205,8 @@ export function playerFactory() {
     FeedPostIconRowComponent,
     CreatorsLeaderboardPageComponent,
     CreatorsLeaderboardComponent,
+    CreatorsLeaderboardModalComponent,
+    CreatorsLeaderboardAppPageComponent,
     BuyDeSoPageComponent,
     WalletComponent,
     WalletWidgetComponent,

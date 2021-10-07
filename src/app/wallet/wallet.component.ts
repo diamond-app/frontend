@@ -15,6 +15,7 @@ import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-l
 import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
 import { document } from "ngx-bootstrap/utils";
+import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 
 @Component({
   selector: "wallet",
@@ -146,7 +147,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openBuyCreatorCoinsModal() {
-    this.modalService.show(CreatorsLeaderboardComponent, {
+    this.modalService.show(CreatorsLeaderboardModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }

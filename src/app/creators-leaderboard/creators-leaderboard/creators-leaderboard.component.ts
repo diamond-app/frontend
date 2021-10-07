@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
@@ -20,6 +20,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
   static PAGE_SIZE = 100;
   static WINDOW_VIEWPORT = true;
   static BUFFER_SIZE = 5;
+  @Output() closeModal = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
   appData: GlobalVarsService;
@@ -43,7 +44,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    public bsModalRef: BsModalRef,
     private modalService: BsModalService
   ) {
     this.appData = globalVars;
@@ -101,7 +101,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
-    this.bsModalRef.hide();
+    this.closeModal.emit();
     const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorComponent, {
       class: "modal-dialog-centered buy-deso-modal",
