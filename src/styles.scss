@@ -914,7 +914,7 @@ app-landing-page {
 }
 @keyframes slideInFromTopRight {
   0% {
-    transform: translate(10px, -30px) rotate(10deg);
+    transform: translate(-100px, 0px) rotate(0deg);
   }
   100% {
     transform: translate(0px, 0px) rotate(10deg);
@@ -923,7 +923,7 @@ app-landing-page {
 
 @keyframes slideInFromTopLeft {
   0% {
-    transform: translate(-5px, -30px) rotate(-10deg);
+    transform: translate(100px, 0px) rotate(0deg);
   }
   100% {
     transform: translate(0px, 0px) rotate(-10deg);
@@ -1107,7 +1107,7 @@ app-landing-page {
 }
 
 .landing-page-robot-1 {
-  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopLeft;
+  animation: .5s ease 0s 1 slideInFromTopLeft;
   z-index: 1;
   background: rgba(255, 255, 255, 0.6);
   right: 79px;
@@ -1125,7 +1125,7 @@ app-landing-page {
   background: rgba(255, 255, 255, 0.7);
   box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.13);
   transform: rotate(10deg);
-  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopRight;
+  animation: .5s ease 0s 1 slideInFromTopRight;
   z-index: 2;
   right: -125px;
   top: 185px;
