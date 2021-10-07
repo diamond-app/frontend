@@ -988,7 +988,7 @@ app-landing-page {
 .landing-page-diamond-device {
   @media (max-width: 992px) {
     width: 386px;
-    height: auto;
+    height: 623px;
     right: 44px;
   }
 }
@@ -1216,7 +1216,7 @@ app-landing-page {
   //background: #FF3333;
   //filter: blur(200px);
   top: 40px;
-  right: -450px;
+  right: -250px;
   position: absolute;
   background-image: url('/assets/img/blob-2.svg');
 }
@@ -1260,8 +1260,8 @@ app-landing-page {
 .landing-page-blob-6 {
   width: 300px;
   height: 300px;
-  left: 100px;
-  top: 80px;
+  left: -200px;
+  top: -180px;
   //background: #FF3333;
   background-image: url('/assets/img/blob-2.svg');
   //filter: blur(150px);
