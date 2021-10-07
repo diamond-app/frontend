@@ -957,7 +957,7 @@ app-landing-page {
 .landing-page-container-1 {
   height: 1000px;
   @media (max-width: 992px) {
-    margin-bottom: 600px;
+    margin-bottom: 300px;
   }
 }
 
@@ -1049,7 +1049,7 @@ app-landing-page {
 }
 
 .landing-page-creator-coin-explainer-container {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   @media (min-width: 992px) {
     width: 388px;
     margin-bottom: 0px;
@@ -1155,10 +1155,16 @@ app-landing-page {
 }
 
 .landing-page-btn {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
   padding: 33px 66px;
   width: 262px;
   height: 88px;
+  cursor: pointer;
   @media (max-width: 992px) {
+    padding: 0px;
     width: 100%;
   }
   box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1);
@@ -1180,6 +1186,11 @@ app-landing-page {
   color: $landing-page-dark;
 }
 
+.landing-page-button-subtext {
+  font-size: 16px;
+  color: #DFE3E9;
+}
+
 .landing-page-blob-1 {
   background: #4ACFFF;
   filter: blur(100px);
@@ -1187,6 +1198,10 @@ app-landing-page {
   height: 497.15px;
   top: -220px;
   right: 200px;
+  @media (max-width: 992px) {
+    height: 350px;
+    width: 221px
+  }
   position: absolute;
   background-image: url('/assets/img/blob-1.svg');
 }
@@ -1194,6 +1209,10 @@ app-landing-page {
 .landing-page-blob-2 {
   width: 305.03px;
   height: 305.03px;
+  @media (max-width: 992px) {
+    height: 205px;
+    width: 205px
+  }
   background: #FF3333;
   filter: blur(200px);
   top: 150px;
@@ -1204,6 +1223,10 @@ app-landing-page {
 .landing-page-blob-3 {
   width: 769.39px;
   height: 769.39px;
+  @media (max-width: 992px) {
+    height: 500px;
+    width: 500px;
+  }
   top: -400px;
   right: -350px;
   position: absolute;
