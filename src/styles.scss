@@ -778,10 +778,8 @@ $green-font-color: #19B028;
       border-radius: 0px;
     }
   }
-  creator-profile-page {
-    #header-content-spacer.logged-out {
-      margin-top: 100px !important;
-    }
+  #header-content-spacer.logged-out {
+    margin-top: 100px !important;
   }
   wallet-page, creator-profile-page, referrals {
     .global__content__inner {
