@@ -1106,6 +1106,16 @@ app-landing-page {
   border-top: 1px solid rgba(27, 28, 30, .1);
 }
 
+.landing-page-thumbs-up {
+  position: relative;
+  top: -17px;
+  @media (max-width: 992px) {
+    height: 50px;
+    width: 50px;
+    top: -10px
+  }
+}
+
 .landing-page-robot-1 {
   animation: .5s ease 0s 1 slideInFromTopLeft;
   z-index: 1;
