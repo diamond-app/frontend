@@ -182,6 +182,7 @@ export class PlaceBidComponent implements OnInit {
 
   selectSerialNumber(idx: number) {
     this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+    this.saveSelection();
   }
 
   deselectSerialNumber() {

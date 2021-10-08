@@ -140,7 +140,7 @@
 
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
       <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
-      <div class="container fs-15px pb-15px px-0px">
+      <div class="container fs-15px px-0px">
         <div class="row no-gutters py-15px create-nft-auction-row-border d-flex align-items-center" style="height: 56px">
           <div class="col-3 mb-0px cursor-pointer" (click)="updateBidSort(SN_FIELD)">
             Number
@@ -196,19 +196,6 @@
            </div>
           </div>
         </div>
-      </div>
-      <div [ngClass]="{ 'floating-bottom-bar': globalVars.isMobile() }">
-        <button
-          class="primary-button"
-          [ngClass]="{ 'disabled-button': !selectedSerialNumber }"
-          [disabled]="!selectedSerialNumber"
-          (click)="saveSelection()"
-        >
-          Set your bid
-        </button>
-        <a class="ml-25px fc-blue fs-15px" (click)="navigateToBuyDeSo()">
-          Buy DESO
-        </a>
       </div>
     </div>
     <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
