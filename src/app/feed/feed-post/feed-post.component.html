@@ -35,7 +35,12 @@
           <span>Unlockable content</span>
         </span>
       </div>
-      <div>From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+      <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+      <div *ngIf="postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
+        Last: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos, 2) }} $DESO ~{{
+          globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
+        }}
+      </div>
     </div>
 
     <div *ngIf="postContent?.ImageURLs[0]">
@@ -477,8 +482,11 @@
             }}
           </span>
         </div>
-        <div *ngIf="lowBid !== undefined">
-          From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}
+        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+        <div *ngIf="nftLastAcceptedBidAmountNanos !== undefined && postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
+          Last: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos, 2) }} $DESO ~{{
+          globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
+          }}
         </div>
       </div>
       <div
