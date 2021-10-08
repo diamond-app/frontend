@@ -28,6 +28,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
   isLeftBarMobileOpen = false;
   isLoadingProfilesForFirstTime = false;
   profilesToShow = [];
+  showReserved = false;
 
   // FIME: Replace with real value
   fakeNumHodlers = Math.ceil(Math.random() * 1000) + 1000;
@@ -77,7 +78,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          const chunk = filter(res.ProfilesFound, { IsReserved: false });
+          const chunk = this.showReserved ? res.ProfilesFound : filter(res.ProfilesFound, { IsReserved: false });
 
           // Index 0 means we're done. if the array is empty we're done.
           // subtract one so we don't fetch the last notification twice
@@ -107,6 +108,12 @@ export class CreatorsLeaderboardComponent implements OnInit {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
+  }
+
+  refreshData() {
+    this.isLoadingProfilesForFirstTime = true;
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset();
   }
 
   ngOnInit() {

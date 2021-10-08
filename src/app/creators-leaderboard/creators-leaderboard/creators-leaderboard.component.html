@@ -4,7 +4,16 @@
       <div class="mint-nft__title">Buy Creator Coin</div>
       <div class="mint-nft__sub-text">All creators have a coin. Buy your favorites and get on their team!</div>
     </div>
-
+    <div class="d-flex align-items-center px-16px">
+      <button
+        class="checkbox-circle mr-8px"
+        [ngClass]="{ checked: showReserved }"
+        (click)="showReserved = !showReserved; refreshData()"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Show Reserved Profiles</span>
+    </div>
     <div>
       <!-- Headers -->
       <div class="fs-15px">
