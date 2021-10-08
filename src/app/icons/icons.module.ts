@@ -54,6 +54,7 @@ import {
   TrendingUp,
   User,
   UserPlus,
+  Users,
   UserX,
   X,
 } from "angular-feather/icons";
@@ -144,6 +145,7 @@ const icons = {
   Trash2,
   TrendingUp,
   User,
+  Users,
   UserPlus,
   UserX,
   X,

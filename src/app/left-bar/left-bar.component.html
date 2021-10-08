@@ -61,6 +61,7 @@
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
             [link]="'/' + globalVars.RouteNames.REFERRALS"

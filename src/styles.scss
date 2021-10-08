@@ -2666,6 +2666,25 @@ bs-dropdown-container {
   line-height: 24px;
 }
 
+#diamond-container{
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-bisibility: hidden;
+  perspective: 1000;
+  transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
+  svg {
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-bisibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0, 0, 0);
+    transform: translateZ(0);
+  }
+}
+
 .feed-post__content {
   font-style: normal;
   font-weight: normal;

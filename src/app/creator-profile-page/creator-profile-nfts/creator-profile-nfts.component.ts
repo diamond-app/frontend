@@ -149,7 +149,8 @@ export class CreatorProfileNftsComponent implements OnInit {
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        isForSale
+        isForSale,
+        false
       )
       .subscribe(
         (res: {
