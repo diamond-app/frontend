@@ -65,7 +65,7 @@ export class CreatorProfileNftsComponent implements OnInit {
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
     [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
   };
-  cardView = false;
+  cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
 
   @Output() blockUser = new EventEmitter();

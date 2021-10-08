@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, HostListener, OnInit } from "@angular/core";
 import { AppRoutingModule } from "../app-routing.module";
-import { GlobalVarsService } from "../global-vars.service";
+import { ConfettiSvg, GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
 import AOS from "aos";
@@ -116,6 +116,11 @@ export class LandingPageComponent implements OnInit {
   ];
 
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
+  @HostListener("document:aos:in:diamond", ["$event"])
+  aosEvent(event) {
+    console.log(event);
+    // this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
+  }
 
   ngOnInit() {
     if (!this.globalVars.showLandingPage()) {
@@ -126,8 +131,6 @@ export class LandingPageComponent implements OnInit {
       anchorPlacement: "bottom-bottom",
     });
   }
-
-  // https://bitclout.com/api/v0/get-single-profile-picture/BC1YLj3a3xppVPtAoMAzh1FFYtCTiGomjaA5PRcqS1PVRk8KqDw385y
 
 
   getLogoBackground() {

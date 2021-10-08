@@ -1210,12 +1210,19 @@ app-landing-page {
   background: $landing-page-dark;
   backdrop-filter: blur(14px);
   color: white;
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
 }
 
 .landing-page-secondary-btn {
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(5px);
   color: $landing-page-dark;
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .landing-page-button-subtext {
