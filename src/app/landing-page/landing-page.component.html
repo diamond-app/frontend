@@ -96,10 +96,11 @@
   <div class="landing-page-content-container" style="padding-left: 0px; padding-right: 0px">
     <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '150px' : '75px' }" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
       <div data-aos="fade-right" data-aos-id="diamond" data-aos-offset="-200" class="position-relative" style="margin-left: -10px" [ngClass]="{ 'd-flex justify-content-center w-100': globalVars.isMobile() }">
-        <div style="width: 356px; height: 722px; top: 60px; z-index: 2" class="position-relative landing-page-diamond-device">
-          <img src="/assets/img/landing-page-diamond-shower-device.png" width="356px" height="722px" style="top: 0px; left: 0px; z-index: 2" class="position-absolute landing-page-diamond-device"/>
+        <div *ngIf="!globalVars.isMobile()" style="width: 356px; height: 722px; top: 60px; z-index: 2" class="position-relative landing-page-diamond-device">
+          <img src="/assets/img/landing-page-diamond-shower-device-no-diamonds.png" width="356px" height="722px" style="top: 0px; left: 0px; z-index: 2" class="position-absolute landing-page-diamond-device"/>
           <canvas width="356px" height="722px" style="position: absolute; z-index: 3" id="diamond-container"></canvas>
         </div>
+        <img *ngIf="globalVars.isMobile()" src="/assets/img/landing-page-diamond-shower-device.png" width="356px" height="722px" style="top: 60px; z-index: 2" class="position-relative landing-page-diamond-device"/>
         <img src="/assets/img/landing-page-diamond-shower-bg.png" width="529.59px" height="529.59px" style="top: 173px; z-index: 1;" class="position-absolute landing-page-diamond-square"/>
         <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
           <div class="position-absolute">
