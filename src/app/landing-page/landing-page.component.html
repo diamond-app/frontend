@@ -201,7 +201,7 @@
         <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
           <div class="d-flex">
             <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
-            <span class="pl-15px">All of the amounts presented below are real, if you want you can <a href="https://www.cloutomy.com" target="_blank" class="fc-landing-page"><u>check them out here.</u></a></span>
+            <span class="pl-15px">All of the amounts presented below are real. <a href="https://www.cloutomy.com" target="_blank" class="fc-landing-page"><u>Check them out here.</u></a></span>
           </div>
         </div>
       </div>
@@ -241,7 +241,7 @@
   </div>
   <div class="landing-page-content-container">
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <div data-aos="slide-up" data-aos-offset="500" class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+      <div data-aos="slide-up" data-aos-offset="500" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
           <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
         </div>
@@ -250,7 +250,7 @@
           <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can have an optional coin associated with their profile, and earn fees on every buy.</div>
         </div>
       </div>
-      <div data-aos="slide-up" data-aos-offset="500" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container mr-25px">
+      <div data-aos="slide-up" data-aos-offset="500" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
           <img class="position-relative" width="213.71px" height="154.35px" style="top: 82.63px" src="assets/img/landing-page-cash.png"/>
         </div>
