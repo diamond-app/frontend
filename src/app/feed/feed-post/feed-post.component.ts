@@ -199,9 +199,10 @@ export class FeedPostComponent implements OnInit {
         this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
         this.changeDetector.detectChanges();
         this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-        console.log('Here are the bids');
-        console.log(this.availableSerialNumbers);
-        this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        this.lowBid =
+          _.minBy(this.availableSerialNumbers, (availableSerialNumber) => {
+            return Math.max(availableSerialNumber?.HighestBidAmountNanos, availableSerialNumber?.MinBidAmountNanos);
+          })?.HighestBidAmountNanos || 0;
         if (this.nftEntryResponses.length === 1) {
           this.nftLastAcceptedBidAmountNanos = this.nftEntryResponses[0].LastAcceptedBidAmountNanos;
           if (this.nftEntryResponses[0].MinBidAmountNanos > 0) {
