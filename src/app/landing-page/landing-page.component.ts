@@ -3,6 +3,7 @@ import { AppRoutingModule } from "../app-routing.module";
 import { ConfettiSvg, GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
+import ConfettiGenerator from "confetti-js";
 import AOS from "aos";
 
 @Component({
@@ -13,6 +14,7 @@ import AOS from "aos";
 export class LandingPageComponent implements OnInit {
   AppRoutingModule = AppRoutingModule;
   environment = environment;
+  hasRainedDiamonds = false;
 
   featuredCreators = [
     {
@@ -119,7 +121,37 @@ export class LandingPageComponent implements OnInit {
   @HostListener("document:aos:in:diamond", ["$event"])
   aosEvent(event) {
     console.log(event);
-    // this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
+    if (!this.hasRainedDiamonds) {
+      setTimeout(() => {
+        this.celebrate();
+      }, 1000);
+      this.hasRainedDiamonds = true;
+    }
+  }
+
+  celebrate() {
+    const canvasID = "diamond-container";
+    console.log(document.getElementById(canvasID));
+    const confettiSettings = {
+      target: canvasID,
+      max: 40,
+      respawn: false,
+      size: 1.5,
+      width: 356,
+      height: 722,
+      start_from_edge: true,
+      rotate: true,
+      clock: 100,
+    };
+    const svgList = [ConfettiSvg.DIAMOND];
+    if (svgList.length > 0) {
+      confettiSettings["props"] = svgList.map((svg) => {
+        return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...{ size: 10, weight: 1 } };
+      });
+    }
+    confettiSettings.clock = 100;
+    const confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
   }
 
   ngOnInit() {
