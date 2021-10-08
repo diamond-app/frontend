@@ -35,9 +35,9 @@
           <span>Unlockable content</span>
         </span>
       </div>
-      <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+      <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
       <div *ngIf="postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-        Last: ~{{
+        Last price: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
         }}
       </div>
@@ -482,9 +482,9 @@
             }}
           </span>
         </div>
-        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">From: ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
         <div *ngIf="nftLastAcceptedBidAmountNanos !== undefined && postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-          Last: ~{{
+          Last price: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
           }}
         </div>
