@@ -95,7 +95,7 @@ export class GlobalVarsService {
   messagesPerFetch = 25;
   openSettingsTray = false;
   newMessagesFromPage = 0;
-  messagesRequestsHoldersOnly = true;
+  messagesRequestsHoldersOnly = false;
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
@@ -247,7 +247,7 @@ export class GlobalVarsService {
     // Set the request parameters if it's a known tab.
     // Custom is set in the filter menu component and saved in local storage.
     if (tabName !== "Custom") {
-      this.messagesRequestsHoldersOnly = tabName === "My Holders";
+      this.messagesRequestsHoldersOnly = tabName === "Holders";
       this.messagesRequestsHoldingsOnly = false;
       this.messagesRequestsFollowersOnly = false;
       this.messagesRequestsFollowedOnly = false;

@@ -19,7 +19,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   };
   static TABTOQUERY = {
     All: "all",
-    "Holders": "my-holders",
+    Holders: "my-holders",
     Custom: "custom",
   };
 
