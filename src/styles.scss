@@ -2086,7 +2086,7 @@ feed-create-post {
 .search-bar__results-dropdown {
   margin-top: 10px;
   box-shadow: rgba(101, 119, 134, 0.2) 0px 10px 15px, rgba(101, 119, 134, 0.15) 0px 10px 3px 1px;
-  border-radius: 0px 0px 3px 3px;
+  border-radius: 0px 0px 16px 16px;
   cursor: pointer;
   background: var(--background);
   position: relative;
@@ -3705,6 +3705,7 @@ creator-profile-nfts {
       height: 48px;
     }
     .search-bar__results-dropdown {
+      border-radius: 0px 0px 10px 10px;
       position: absolute;
       top: 80px;
       left: 0px;
@@ -5213,6 +5214,7 @@ sell-nft-modal {
 }
 
 .cloutavista-button {
+  border-radius: 0px 0px 16px 16px;
   font-family: Gilroy, Arial, sans-serif;
   position: sticky;
   bottom: 0px;
