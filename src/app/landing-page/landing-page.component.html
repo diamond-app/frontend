@@ -7,12 +7,15 @@
         <a *ngIf="!globalVars.isMobile()" class="fc-landing-page ml-25px fs-16px cursor-pointer" href="https://docs.deso.org/">About</a>
         <a *ngIf="!globalVars.isMobile()" class="fc-landing-page ml-20px fs-16px cursor-pointer" href="https://docs.deso.org/#the-ultimate-vision">Vision</a>
       </div>
-      <div *ngIf="!globalVars.isMobile()" class="fc-landing-page d-flex align-items-center">
+      <div class="fc-landing-page d-flex align-items-center">
         <a class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
-          <i-feather name="lock" class="feather-small mr-5px position-relative" style="top: -2px"></i-feather>
+          <i-feather *ngIf="!globalVars.isMobile()" name="lock" class="feather-small mr-5px position-relative" style="top: -2px"></i-feather>
           Login
         </a>
-        <button style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
+        <a *ngIf="globalVars.isMobile()" class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
+          Sign Up
+        </a>
+        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -312,7 +315,7 @@
   <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; background-image: url('/assets/img/static.png')"></div>
   <div class="landing-page-footer-border"></div>
   <div class="position-relative d-flex justify-content-between landing-page-top-bar landing-page-footer-border" style="padding: 50px 0px; margin-top: 0px; margin-bottom: 0px" [ngClass]="{ 'flex-column align-items-center': globalVars.isMobile() }">
-    <div class="fc-landing-page d-flex align-items-center">
+    <div class="fc-landing-page d-flex align-items-center" [ngClass]=" {'mb-16px': globalVars.isMobile()} ">
       <img src="assets/diamond/camelcase_logo.svg" height="28.63px"/>
     </div>
     <div class="fs-18px">
