@@ -6,7 +6,7 @@
   <br />
   <span *ngIf="globalVars.createProfileFeeNanos > 0">
     Creating a profile currently costs
-    <b>{{ globalVars.createProfileFeeInDeSo() }} DeSo (≈ {{ globalVars.createProfileFeeInUsd() }} USD)</b>
+    <b>{{ globalVars.createProfileFeeInDeSo() }} DESO (≈ {{ globalVars.createProfileFeeInUsd() }} USD)</b>
   </span>
 </div>
 
@@ -17,13 +17,13 @@
   [queryParamsHandling]="'merge'"
   *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio"
 >
-  Get Starter DeSo
+  Get Starter DESO
 </a>
 
 <div class="fs-15px mt-15px" *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio">Or</div>
 
 <div class="fs-15px mt-15px">
   <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_DESO" queryParamsHandling="merge">
-    Purchase {{ globalVars.createProfileFeeInUsd() }} USD of DeSo
+    Purchase {{ globalVars.createProfileFeeInUsd() }} USD of DESO
   </a>
 </div>

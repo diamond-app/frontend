@@ -25,7 +25,8 @@
     </a>
     <div
       *ngIf="hasNotifications && globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
-      class="ml-5px fs-12px notification p-0px font-weight-normal"
+      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      style="top: 2px; padding: 0px"
     >
       {{
         globalVars.messageResponse.NumberOfUnreadThreads > 999
