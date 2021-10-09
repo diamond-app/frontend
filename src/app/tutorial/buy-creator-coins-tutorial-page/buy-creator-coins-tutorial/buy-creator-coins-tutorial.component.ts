@@ -46,6 +46,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
       this.investInYourself = true;
       this.loading = false;
+      this.initiateIntro();
       return;
     }
     this.backendApi
@@ -68,6 +69,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
             );
           }
           this.loading = false;
+          this.initiateIntro();
         },
         (err) => {
           console.error(err);
@@ -163,10 +165,6 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       }
     });
     this.introJS.start();
-  }
-
-  ngAfterViewInit() {
-    this.initiateIntro();
   }
 
   exitTutorial() {

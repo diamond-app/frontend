@@ -20,6 +20,8 @@ export class LeftBarComponent {
   MessagesInboxComponent = MessagesInboxComponent;
   environment = environment;
 
+  TutorialStatus = TutorialStatus;
+
   @HostBinding("class") get classes() {
     return !this.isMobile ? "global__nav__flex" : "";
   }
