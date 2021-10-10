@@ -33,6 +33,7 @@
             [isUnread]="globalVars.hasUnreadNotifications"
             [iconName]="'bell'"
           ></left-bar-button>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"
             [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
@@ -62,7 +63,6 @@
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
-          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
             [link]="'/' + globalVars.RouteNames.REFERRALS"
@@ -140,6 +140,7 @@
       </div>
 
       <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
+      <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
       <div class="left-desktop-selector">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>

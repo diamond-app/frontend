@@ -1584,7 +1584,7 @@ browse-page {
 }
 
 .global__center__inner {
-  min-height: 100vh;
+  min-height: calc(100vh - 84px);
   width: $global__center__width;
   @media (min-width: 992px) {
     margin-top: 4px;
