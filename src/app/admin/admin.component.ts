@@ -152,6 +152,10 @@ export class AdminComponent implements OnInit {
 
   hotFeedPosts = [];
   loadingHotFeed = false;
+  hotFeedInteractionCap = 0;
+  hotFeedTimeDecayBlocks = 0;
+  updatingHotFeedInteractionCap = false;
+  updatingHotFeedTimeDecayBlocks = false;
 
   constructor(
     private _globalVars: GlobalVarsService,
@@ -307,6 +311,9 @@ export class AdminComponent implements OnInit {
       )
       .add(() => { this.loadingHotFeed = false; });
   }
+
+  updateHotFeedInteractionCap() {}
+  updateHotFeedTimeDecayBlocks() {}
 
   _loadPosts() {
     this.loadingMorePosts = true;
