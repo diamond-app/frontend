@@ -18,7 +18,7 @@ import { environment } from "src/environments/environment";
 })
 export class CreatorsLeaderboardComponent implements OnInit {
   static PAGE_SIZE = 100;
-  static WINDOW_VIEWPORT = false;
+  static WINDOW_VIEWPORT = true;
   static BUFFER_SIZE = 5;
   @Output() closeModal = new EventEmitter();
 
