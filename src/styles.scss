@@ -1583,6 +1583,19 @@ browse-page {
   }
 }
 
+.spinner-color {
+  color: green;
+  stroke: green;
+  svg {
+    stroke: green;
+    color: green;
+    path {
+      stroke: green;
+      color: green;
+    }
+  }
+}
+
 .global__center__inner {
   min-height: calc(100vh - 84px);
   width: $global__center__width;
