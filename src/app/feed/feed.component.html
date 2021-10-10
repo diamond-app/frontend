@@ -35,6 +35,10 @@
   <div [id]="getPullToRefreshMarkerId()"></div>
   <div *ngIf="isMobile" style="margin-top: 60px"></div>
 
+  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
+    <nft-showcase></nft-showcase>
+  </div>
+
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingPosts()">
     <div class="mobile-scroll" *ngFor="let post of postsToShow()">

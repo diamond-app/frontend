@@ -354,7 +354,7 @@
                   class="py-5px px-10px admin__add-to-feed-button"
                 >
                   <i class="fas fa-folder-plus"></i>
-                  Add to global feed
+                  &nbsp;Whitelist
                 </div>
                 <div
                   *ngIf="!postContent.InGlobalFeed && addingPostToGlobalFeed"
@@ -369,7 +369,7 @@
                   class="py-5px px-10px admin__remove-from-feed-button"
                 >
                   <i class="fas fa-check"></i>
-                  On global feed
+                  Whitelisted<span *ngIf="postContent.InHotFeed"> & in Hot Feed🔥</span>
                 </div>
                 <div
                   *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
@@ -380,7 +380,7 @@
                 </div>
 
                 <div>
-                  &nbsp;&middot;
+                  &nbsp;&nbsp;&middot;
                   <a
                     [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
                     queryParamsHandling="merge"
@@ -389,8 +389,13 @@
                   </a>
                 </div>
 
+                <div *ngIf="post.HotnessScore && post.HotnessScore > 0">
+                  &nbsp;&nbsp;&middot;
+                  {{getHotnessScore()}}
+                </div>
+
                 <div class="text-grey8A">
-                  &nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+                  &nbsp;&nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
                 </div>
               </div>
             </div>

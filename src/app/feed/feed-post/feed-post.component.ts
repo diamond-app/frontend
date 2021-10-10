@@ -335,6 +335,10 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
+  getHotnessScore() {
+    return Math.round(this.post.HotnessScore / 1e7) / 100;
+  }
+
   hidePost() {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
@@ -479,6 +483,7 @@ export class FeedPostComponent implements OnInit {
       .subscribe(
         (res) => {
           this.post.InGlobalFeed = !this.post.InGlobalFeed;
+          this.post.InHotFeed = !this.post.InHotFeed;
           this.globalVars.logEvent("admin: add-post-to-global-feed", {
             postHashHex,
             userPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,

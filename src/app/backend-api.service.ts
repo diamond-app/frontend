@@ -119,6 +119,7 @@ export class BackendRoutes {
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
   static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
   static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
+  static RoutePathAdminGetUnfilteredHotFeed = "/api/v0/admin/get-unfiltered-hot-feed";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -252,6 +253,7 @@ export class PostEntryResponse {
   PostEntryReaderState?: PostEntryReaderState;
   // True if this post hash hex is in the global feed.
   InGlobalFeed: boolean;
+  InHotFeed: boolean;
   CommentCount: number;
   // A list of parent posts for this post (ordered: root -> closest parent post).
   ParentPosts: PostEntryResponse[];
@@ -264,6 +266,7 @@ export class PostEntryResponse {
   IsNFT: boolean;
   NFTRoyaltyToCoinBasisPoints: number;
   NFTRoyaltyToCreatorBasisPoints: number;
+  HotnessScore: number;
 }
 
 export class DiamondsPost {
@@ -1963,6 +1966,17 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminJumioCallback, AdminPublicKey, {
       PublicKeyBase58Check,
       Username,
+      AdminPublicKey,
+    });
+  }
+
+  AdminGetUnfilteredHotFeed(
+    endpoint: string,
+    AdminPublicKey: string,
+    ResponseLimit: number,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUnfilteredHotFeed, AdminPublicKey, {
+      ResponseLimit,
       AdminPublicKey,
     });
   }

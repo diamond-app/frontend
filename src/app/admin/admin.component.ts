@@ -105,7 +105,18 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "NFTs", "Tutorial", "Network", "Mempool", "Wyre", "Jumio", "Referral Program"];
+  adminTabs = [
+    "Posts",
+    "Hot Feed",
+    "Profiles",
+    "NFTs",
+    "Tutorial",
+    "Network",
+    "Mempool",
+    "Wyre",
+    "Jumio",
+    "Referral Program"
+  ];
 
   POSTS_TAB = "Posts";
   POSTS_BY_DESO_TAB = "Posts By DESO";
@@ -139,6 +150,9 @@ export class AdminComponent implements OnInit {
   getUserAdminDataPublicKey = "";
   getUserAdminDataResponse = null;
 
+  hotFeedPosts = [];
+  loadingHotFeed = false;
+
   constructor(
     private _globalVars: GlobalVarsService,
     private router: Router,
@@ -169,6 +183,7 @@ export class AdminComponent implements OnInit {
     this.activePostTab = this.POSTS_TAB;
     this._loadPosts();
     this._loadPostsByDESO();
+    this._loadHotFeed();
 
     // Get the latest mempool stats.
     this._loadMempoolStats();
@@ -269,6 +284,28 @@ export class AdminComponent implements OnInit {
         this.loadingPostsByDESO = false;
         this.searchingForPostsByDESO = false;
       });
+  }
+
+  _loadHotFeed() {
+    this.loadingHotFeed = true;
+
+    this.backendApi
+      .AdminGetUnfilteredHotFeed(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        50,
+      )
+      .subscribe(
+        (res) => {
+          this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error loading hot feed: " + this.backendApi.stringifyError(err));
+        }
+      )
+      .add(() => { this.loadingHotFeed = false; });
   }
 
   _loadPosts() {

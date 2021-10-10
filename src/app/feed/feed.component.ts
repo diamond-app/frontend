@@ -16,10 +16,10 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static GLOBAL_TAB = "Global";
+  static HOT_TAB = "Hot🔥";
+  static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
-  static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
   static NEW_TABS = [FeedComponent.SHOWCASE_TAB];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
@@ -450,10 +450,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (numFollowing >= FeedComponent.MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT) {
       defaultActiveTab = FeedComponent.FOLLOWING_TAB;
     } else {
-      defaultActiveTab = FeedComponent.GLOBAL_TAB;
+      defaultActiveTab = FeedComponent.HOT_TAB;
     }
 
-    this.feedTabs = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
+    this.feedTabs = [FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
 
     if (!this.activeTab) {
       this.activeTab = defaultActiveTab;
