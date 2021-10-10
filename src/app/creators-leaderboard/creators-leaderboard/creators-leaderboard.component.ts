@@ -17,7 +17,7 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./creators-leaderboard.component.scss"],
 })
 export class CreatorsLeaderboardComponent implements OnInit {
-  static PAGE_SIZE = 100;
+  static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = false;
   static BUFFER_SIZE = 5;
   @Output() closeModal = new EventEmitter();
@@ -27,6 +27,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
   profileEntryResponses = [];
   isLeftBarMobileOpen = false;
   isLoadingProfilesForFirstTime = false;
+  isLoadingMore: boolean = false;
   profilesToShow = [];
   showReserved = false;
 
@@ -60,6 +61,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
+    this.isLoadingMore = true;
 
     return this.backendApi
       .GetProfiles(
@@ -78,7 +80,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          const chunk = this.showReserved ? res.ProfilesFound : filter(res.ProfilesFound, { IsReserved: false });
+          const chunk = res.ProfilesFound;
 
           // Index 0 means we're done. if the array is empty we're done.
           // subtract one so we don't fetch the last notification twice
@@ -89,15 +91,17 @@ export class CreatorsLeaderboardComponent implements OnInit {
             this.lastPage = page;
           }
 
-          // We successfully loaded some profiles, so we're no longer loading for the first time
-          this.isLoadingProfilesForFirstTime = false;
-
           return chunk;
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
         }
-      );
+      )
+      .finally(() => {
+        this.isLoadingMore = false;
+        // We successfully loaded some profiles, so we're no longer loading for the first time
+        this.isLoadingProfilesForFirstTime = false;
+      });
   }
 
   openBuyCreatorCoinModal(event, username: string) {
@@ -132,7 +136,8 @@ export class CreatorsLeaderboardComponent implements OnInit {
     CreatorsLeaderboardComponent.PAGE_SIZE,
     this.getPage.bind(this),
     CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
-    CreatorsLeaderboardComponent.BUFFER_SIZE
+    CreatorsLeaderboardComponent.BUFFER_SIZE,
+    1
   );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
