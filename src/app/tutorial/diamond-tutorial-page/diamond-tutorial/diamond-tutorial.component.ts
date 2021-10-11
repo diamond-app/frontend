@@ -43,6 +43,7 @@ export class DiamondTutorialComponent implements OnInit {
       )
       .subscribe((res) => {
         this.post = res.PostFound;
+        this.initiateIntro();
       })
       .add(() => (this.loading = false));
   }
@@ -53,10 +54,6 @@ export class DiamondTutorialComponent implements OnInit {
     this.globalVars.loggedInUser.MustCompleteTutorial = false;
     this.globalVars.logEvent("diamond : send : next");
     this.router.navigate([RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST]);
-  }
-
-  ngAfterViewInit() {
-    this.initiateIntro();
   }
 
   initiateIntro() {

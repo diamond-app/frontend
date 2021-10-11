@@ -21,23 +21,6 @@ export class BottomBarMobileTabComponent {
     private ref: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    setTimeout(() => {
-      if (this.queryParams?.feedTab) {
-        this.activatedRoute.queryParams.subscribe((params) => {
-          if (
-            includes(this.iconDiv.nativeElement.className, "fc-blue") &&
-            this.queryParams?.feedTab === params?.feedTab
-          ) {
-            this.iconDiv.nativeElement.style.color = "var(--highlight)";
-          } else {
-            this.iconDiv.nativeElement.style.color = "var(--text-secondary)";
-          }
-        });
-      }
-    }, 50);
-  }
-
   clearNavigationHistory() {
     if (this.queryParams?.feedTab) {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {

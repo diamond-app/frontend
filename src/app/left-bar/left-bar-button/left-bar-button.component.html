@@ -11,6 +11,7 @@
     routerLinkActive
     #rla="routerLinkActive"
     [ngClass]="{ 'left-bar-active': rla.isActive }"
+    queryParamsHandling="merge"
     class="d-flex justify-content-center align-items-center left-bar-button">
     <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
     <a

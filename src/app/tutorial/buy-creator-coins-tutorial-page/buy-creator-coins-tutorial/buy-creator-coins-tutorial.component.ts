@@ -119,7 +119,8 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           title,
           intro:
             'Let\'s choose a creator to invest in! <br /><br /><b>Click the "Buy" button above</b> next to the creator you want to invest in.',
-          element: document.querySelector("#tutorial-creators-to-invest-in"),
+          element: document.querySelector("#creator-coins-holder"),
+          position: "bottom",
         },
       ],
     });

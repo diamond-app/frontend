@@ -406,7 +406,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         {
           title,
           intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
-          element: document.querySelector(".update-profile__holder"),
+          element: document.querySelector("#update-profile-tutorial-holder"),
+          position: "bottom",
         },
       ],
     });

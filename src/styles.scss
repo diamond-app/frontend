@@ -931,11 +931,19 @@ app-landing-page {
 
 @keyframes blurRotate {
   0%   { transform:rotate(0deg); }
-  100% { transform:rotate(270deg); }
+  100% { transform:rotate(45deg); }
+}
+
+@keyframes blurBreathe {
+  0%   { transform:scale(.75); }
+  100% { transform:scale(1.25); }
 }
 
 .landing-page-rotating-blur {
-  animation: 12s ease 0s infinite blurRotate alternate
+  animation: 12s ease 0s infinite blurRotate alternate, 4s ease 0s infinite blurBreathe alternate;
+  @media (max-width: 992px) {
+    top: -140px;
+  }
 }
 
 app-landing-page {
@@ -974,7 +982,7 @@ app-landing-page {
 .landing-page-container-1 {
   height: 1000px;
   @media (max-width: 992px) {
-    margin-bottom: 300px;
+    margin-bottom: 40px;
   }
 }
 
@@ -1040,7 +1048,7 @@ app-landing-page {
 .landing-page-info-tile {
   padding: 20px 55px;
   @media (min-width: 992px) {
-    width: 526.79px;
+    width: 650px;
     height: 125.09px;
     padding: 0px 55px;
   }
@@ -1117,28 +1125,28 @@ app-landing-page {
 }
 
 .landing-page-robot-1 {
-  animation: .5s ease 0s 1 slideInFromTopLeft;
+  animation: 1s ease 0.5s 1 slideInFromTopLeft forwards;
+  transform: translate(100px, 0px) rotate(0deg);
   z-index: 1;
   background: rgba(255, 255, 255, 0.6);
   right: 79px;
-  top: 145.75px;
+  top: 45.75px;
   @media (max-width: 1150px) and (min-width: 992px) {
     right: -70px;
   }
   @media (max-width: 992px) {
     right: 36%
   }
-  transform: rotate(-10deg);
 }
 
 .landing-page-robot-2 {
+  transform: translate(-100px, 0px) rotate(0deg);
   background: rgba(255, 255, 255, 0.7);
   box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.13);
-  transform: rotate(10deg);
-  animation: .5s ease 0s 1 slideInFromTopRight;
+  animation: 1s ease 0.5s 1 slideInFromTopRight forwards;
   z-index: 2;
   right: -125px;
-  top: 185px;
+  top: 85px;
   @media (max-width: 1150px) and (min-width: 992px) {
     right: -274px;
   }
@@ -1156,7 +1164,7 @@ app-landing-page {
     line-height: 50px;
   }
   font-weight: normal;
-  color: $landing-page-fc;
+  color: $landing-page-dark;
 }
 
 .landing-page-title {
@@ -1186,15 +1194,16 @@ app-landing-page {
 }
 
 .landing-page-btn {
+  transition: background 0.5s;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  padding: 33px 66px;
   width: 262px;
   height: 88px;
   cursor: pointer;
   @media (max-width: 992px) {
+    height: 68px;
     padding: 0px;
     width: 100%;
   }
@@ -1244,8 +1253,8 @@ app-landing-page {
   top: -220px;
   right: 200px;
   @media (max-width: 992px) {
-    height: 350px;
-    width: 221px
+    left: -200px;
+    top: -255px;
   }
   position: absolute;
   background-image: url('/assets/img/blob-1.svg');
@@ -1255,8 +1264,7 @@ app-landing-page {
   width: 305.03px;
   height: 305.03px;
   @media (max-width: 992px) {
-    height: 205px;
-    width: 205px
+    top: 0px;
   }
   background: #FF3333;
   -webkit-backface-visibility: hidden;
@@ -1275,12 +1283,11 @@ app-landing-page {
 .landing-page-blob-3 {
   width: 769.39px;
   height: 769.39px;
-  @media (max-width: 992px) {
-    height: 500px;
-    width: 500px;
-  }
   top: -400px;
   right: -350px;
+  @media (max-width: 992px) {
+    top: -600px;
+  }
   position: absolute;
   background: linear-gradient(180deg, #FFD8FC 0%, #FF41F2 100%);
   -webkit-backface-visibility: hidden;
@@ -1352,7 +1359,7 @@ app-landing-page {
 .landing-page-row-3-box {
   background: rgba(255, 255, 255, 0.7);
   box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.1);
-  //backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-radius: 30px;
   z-index: 2;
   position: relative;
@@ -1411,6 +1418,7 @@ app-landing-page {
 }
 
 .landing-page-build-on-deso-container {
+  backdrop-filter: blur(20px);
   padding: 70px 24px 70px 24px;
   @media (min-width: 992px) {
     width: 1012px;
@@ -1575,8 +1583,21 @@ browse-page {
   }
 }
 
+.spinner-color {
+  color: green;
+  stroke: green;
+  svg {
+    stroke: green;
+    color: green;
+    path {
+      stroke: green;
+      color: green;
+    }
+  }
+}
+
 .global__center__inner {
-  min-height: 100vh;
+  min-height: calc(100vh - 84px);
   width: $global__center__width;
   @media (min-width: 992px) {
     margin-top: 4px;

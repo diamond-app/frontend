@@ -56,6 +56,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   balanceEntryToHighlight: BalanceEntryResponse;
 
   nextButtonText: string;
+  tutorialInitiated = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -126,7 +127,6 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.initiateIntro();
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
         // Last Item of myItems is Visible => data-padding-forward should be zero.
@@ -303,7 +303,13 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
 
   scrollerReset() {
     this.infiniteScroller.reset();
-    this.datasource.adapter.reset().then(() => this.datasource.adapter.check());
+    this.datasource.adapter.reset().then(() => {
+      if (!this.tutorialInitiated) {
+        this.initiateIntro();
+        this.tutorialInitiated = true;
+      }
+      this.datasource.adapter.check();
+    });
   }
 
   isHighlightedCreator(balanceEntryResponse: BalanceEntryResponse): boolean {
