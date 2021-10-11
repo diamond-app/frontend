@@ -294,7 +294,7 @@ export class TradeCreatorComponent implements OnInit {
       } else if (this.creatorCoinTrade.tradeType === this.buyVerb && this.investInYourself) {
         this.buySelfIntro();
       }
-    }, 500);
+    }, 250);
   }
 
   buySelfIntro() {

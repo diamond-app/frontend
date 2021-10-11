@@ -139,6 +139,7 @@ export class LeftBarComponent {
       confirmButtonText: "Start Tutorial",
       cancelButtonText: "Cancel",
     }).then((res) => {
+      this.closeMobile.emit();
       this.backendApi
         .StartOrSkipTutorial(
           this.globalVars.localNode,
