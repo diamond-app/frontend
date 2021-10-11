@@ -131,7 +131,6 @@ export class LandingPageComponent implements OnInit {
 
   celebrate() {
     const canvasID = "diamond-container";
-    console.log(document.getElementById(canvasID));
     const confettiSettings = {
       target: canvasID,
       max: 40,
