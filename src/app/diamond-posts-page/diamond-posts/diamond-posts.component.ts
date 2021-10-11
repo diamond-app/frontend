@@ -5,6 +5,8 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import * as _ from "lodash";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { document } from "ngx-bootstrap/utils";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "diamond-posts",
@@ -45,6 +47,7 @@ export class DiamondPostsComponent {
   };
 
   lastPage = null;
+  subscriptions = new Subscription();
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -98,6 +101,25 @@ export class DiamondPostsComponent {
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
       });
+  }
+
+  ngAfterViewInit() {
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        setTimeout(() => {
+          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+        }, 5);
+      })
+    );
+  }
+
+  // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
+  // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
+  correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    if (dataPaddingForwardElement) {
+      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+    }
   }
 
   diamondArray(n: number): Array<number> {

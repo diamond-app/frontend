@@ -64,6 +64,7 @@ export class TradeCreatorComponent implements OnInit {
   sellVerb = CreatorCoinTrade.SELL_VERB;
 
   skipTutorialExitPrompt = false;
+  tutorialLoaded = false;
 
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
@@ -107,11 +108,12 @@ export class TradeCreatorComponent implements OnInit {
 
   readyForDisplay() {
     return (
-      this.creatorProfile &&
-      // USD calculations don't work correctly until we have the exchange rate
-      this.appData.nanosPerUSDExchangeRate &&
-      // Need to make sure the USD exchange rate is actually loaded, not a random default
-      this.appData.nanosPerUSDExchangeRate != GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE
+      (this.creatorProfile &&
+        // USD calculations don't work correctly until we have the exchange rate
+        this.appData.nanosPerUSDExchangeRate &&
+        // Need to make sure the USD exchange rate is actually loaded, not a random default
+        this.appData.nanosPerUSDExchangeRate != GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE) &&
+      (!this.inTutorial || this.tutorialLoaded)
     );
   }
 
@@ -286,6 +288,7 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   initiateIntro() {
+    this.tutorialLoaded = true;
     setTimeout(() => {
       if (this.creatorCoinTrade.tradeType === this.buyVerb && !this.investInYourself) {
         this.buyCreatorIntro();

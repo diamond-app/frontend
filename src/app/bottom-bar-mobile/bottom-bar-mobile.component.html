@@ -50,18 +50,6 @@
     <bottom-bar-mobile-tab
       *ngIf="globalVars.loggedInUser"
       class="w-100 h-100 text-center"
-      [link]="'/' + globalVars.RouteNames.BROWSE"
-      [queryParams]="{ feedTab: showcaseTab }"
-    >
-      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
-        <i-feather name="shopping-bag" class="feather-medium"></i-feather>
-        <div class="mt-5px">Market</div>
-      </div>
-    </bottom-bar-mobile-tab>
-
-    <bottom-bar-mobile-tab
-      *ngIf="globalVars.loggedInUser"
-      class="w-100 h-100 text-center"
       [link]="'/' + globalVars.RouteNames.WALLET"
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">

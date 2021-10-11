@@ -308,7 +308,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         this.initiateIntro();
         this.tutorialInitiated = true;
       }
-      this.datasource.adapter.check()
+      this.datasource.adapter.check();
     });
   }
 
