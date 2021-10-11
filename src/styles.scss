@@ -3976,7 +3976,9 @@ app-notifications-list {
     border: 1px solid var(--border);
   }
   .notifications__list-item{
-    border: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     background: var(--tile-bg);
     &.last-item {
       border-bottom-right-radius: 10px;
@@ -4571,6 +4573,10 @@ input {
 
 .border-right {
   border-right: 1px solid var(--border) !important;
+}
+
+.border-none {
+  border: none !important;
 }
 
 .text-black {

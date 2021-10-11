@@ -1,9 +1,16 @@
 <!-- Top Bar -->
 <div
   *ngIf="!globalVars.isMobile()"
-  class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
 >
-  Notifications
+  <span>Notifications</span>
+  <i-feather
+    name="credit-card"
+    class="cursor-pointer position-relative fs-0px"
+    style="right: 16px; transform: 'rotate(180deg)'"
+    (click)="expandNotifications = !expandNotifications"
+    [ngClass]="{ 'fc-blue': expandNotifications }"
+  ></i-feather>
 </div>
 <div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>
@@ -16,9 +23,9 @@
     #uiScroll
     *uiScroll="let item of datasource; let index = index"
     class="notifications__list-item"
-    [ngClass]="{ 'last-item': index === totalItems - 1 }"
+    [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
   >
-    <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
+    <div class="p-10px cursor-pointer" *ngIf="item.action && (!item.post || !expandNotifications)" [routerLink]="item.link">
       <div class="d-flex flex-row align-items-center">
         <div
           class="notifications__avatar"
@@ -32,15 +39,38 @@
         <div class="notifications__action" [innerHtml]="item.action"></div>
       </div>
     </div>
-    <div class="p-10px fc-15px" *ngIf="item.comment">
-      {{ item.comment }}
-    </div>
-    <div class="cursor-pointer" *ngIf="item.post">
+<!--    <div class="p-10px fc-15px" *ngIf="item.comment">-->
+<!--      {{ item.comment }}-->
+<!--    </div>-->
+<!--    <div class="cursor-pointer" *ngIf="item.post">-->
+<!--      <div *ngFor="let comment of item.post.Comments">-->
+<!--        <div class="px-15px pb-15px post-thread__subcomment-container">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
+      <feed-post
+        [post]="item.post"
+        [includePaddingOnPost]="true"
+        [showReplyingToContent]="!!item.parentPost"
+        [parentPost]="item.parentPost"
+        [contentShouldLinkToThread]="true"
+        [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
+      ></feed-post>
       <div *ngFor="let comment of item.post.Comments">
         <div class="px-15px pb-15px post-thread__subcomment-container">
+          <feed-post
+            [includePaddingOnPost]="false"
+            [post]="comment"
+            [parentPost]="item.post"
+            [contentShouldLinkToThread]="true"
+            [showIconRow]="false"
+            [showDropdown]="false"
+            [showReplyToContent]="false"
+            [isSubcomment]="true"
+          ></feed-post>
         </div>
       </div>
-    </div>
   </div>
 
 </div>

@@ -1,11 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import { AnimationOptions } from 'ngx-lottie';
 
 @Component({
   selector: "app-notifications-list",
@@ -35,6 +34,7 @@ export class NotificationsListComponent {
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
+  expandNotifications = true;
 
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {

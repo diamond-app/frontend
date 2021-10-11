@@ -16,7 +16,7 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static HOT_TAB = "Hot🔥";
+  static HOT_TAB = "Hot 🔥";
   static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
@@ -270,8 +270,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     return (
       this.postsToShow().length > 0 &&
       (
-        this.activeTab === FeedComponent.GLOBAL_TAB || 
-        this.activeTab === FeedComponent.FOLLOWING_TAB || 
+        this.activeTab === FeedComponent.GLOBAL_TAB ||
+        this.activeTab === FeedComponent.FOLLOWING_TAB ||
         this.activeTab === FeedComponent.HOT_TAB
       )
     );
