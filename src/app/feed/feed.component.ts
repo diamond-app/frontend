@@ -35,6 +35,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   nextNFTShowcaseTime;
 
+  hotFeedPostHashes = [];
+
   followedPublicKeyToProfileEntry = {};
 
   // We load the first batch of follow feed posts on page load and whenever the user follows someone
@@ -42,6 +44,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   // We load the first batch of global feed posts on page load
   loadingFirstBatchOfGlobalFeedPosts = false;
+
+  // We load the first batch of follow feed posts on page load and whenever the user follows someone
+  loadingFirstBatchOfHotFeedPosts = false;
 
   // We load the user's following on page load. This boolean tracks whether we're currently loading
   // or whether we've finished.
@@ -52,6 +57,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   serverHasMoreGlobalFeedPosts = true;
   loadingMoreFollowFeedPosts = false;
   loadingMoreGlobalFeedPosts = false;
+  loadingMoreHotFeedPosts = false;
 
   pullToRefreshHandler;
 
@@ -131,6 +137,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         onRefresh: () => {
           const globalPostsPromise = this._loadPosts(true);
           const followPostsPromise = this._loadFollowFeedPosts(true);
+          const hotPostsPromise = this._loadHotFeedPosts(true);
           return this.activeTab === FeedComponent.FOLLOWING_TAB ? followPostsPromise : globalPostsPromise;
         },
       });
@@ -163,6 +170,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
       this._reloadFollowFeed();
+    }
+
+    // Request the hot feed (so we have it ready for display if needed)
+    if (this.globalVars.hotFeedPosts.length === 0) {
+      this.loadingFirstBatchOfHotFeedPosts = true;
+      this._loadHotFeedPosts();
     }
 
     // The activeTab is set after we load the following based on whether the user is
@@ -215,6 +228,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       // No need to delay on the Following tab. It handles the "slow switching" issue itself.
       return this.globalVars.followFeedPosts;
+    } else if (this.activeTab === FeedComponent.HOT_TAB) {
+      return this.globalVars.hotFeedPosts;
     } else {
       return this.globalVars.postsToShow;
     }
@@ -229,6 +244,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       // No need to delay on the Following tab. It handles the "slow switching" issue itself.
       return this.loadingMoreFollowFeedPosts;
+    } else if (this.activeTab === FeedComponent.HOT_TAB) {
+      return this.loadingMoreHotFeedPosts;
     } else {
       return this.loadingMoreGlobalFeedPosts;
     }
@@ -252,7 +269,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   showGlobalOrFollowingPosts() {
     return (
       this.postsToShow().length > 0 &&
-      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB)
+      (
+        this.activeTab === FeedComponent.GLOBAL_TAB || 
+        this.activeTab === FeedComponent.FOLLOWING_TAB || 
+        this.activeTab === FeedComponent.HOT_TAB
+      )
     );
   }
 
@@ -268,6 +289,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadMorePosts() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       this._loadFollowFeedPosts();
+    } else if (this.activeTab === FeedComponent.HOT_TAB) {
+      this._loadHotFeedPosts();
     } else {
       this._loadPosts();
     }
@@ -434,6 +457,46 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         finalize(() => {
           this.loadingFirstBatchOfFollowFeedPosts = false;
           this.loadingMoreFollowFeedPosts = false;
+        }),
+        first()
+      )
+      .toPromise();
+  }
+
+  _loadHotFeedPosts(reload: boolean = false) {
+    this.loadingMoreHotFeedPosts = true;
+
+    // Get the reader's public key for the request.
+    let readerPubKey = "";
+    if (this.globalVars.loggedInUser) {
+      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    }
+
+    return this.backendApi
+      .GetHotFeed(
+        this.globalVars.localNode,
+        readerPubKey,
+        this.hotFeedPostHashes,
+        this.FeedComponent.NUM_TO_FETCH,
+      )
+      .pipe(
+        tap(
+          (res) => {
+            this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
+            for(let ii=0; ii < this.globalVars.hotFeedPosts.length; ii++) {
+              this.hotFeedPostHashes = this.hotFeedPostHashes.concat(
+                this.globalVars.hotFeedPosts[ii].PostHashHex
+              );
+            }
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+          }
+        ),
+        finalize(() => {
+          this.loadingFirstBatchOfHotFeedPosts = false;
+          this.loadingMoreHotFeedPosts = false;
         }),
         first()
       )

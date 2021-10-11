@@ -54,6 +54,7 @@ export class BackendRoutes {
   static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+  static RoutePathGetHotFeed = "/api/v0/get-hot-feed"
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -1058,6 +1059,19 @@ export class BackendApiService {
       MediaRequired,
       PostsByDESOMinutesLookback,
       AddGlobalFeedBool,
+    });
+  }
+
+  GetHotFeed(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    SeenPosts,
+    ResponseLimit,
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
+      ReaderPublicKeyBase58Check,
+      SeenPosts,
+      ResponseLimit,
     });
   }
 
