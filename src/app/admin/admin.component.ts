@@ -151,7 +151,9 @@ export class AdminComponent implements OnInit {
   getUserAdminDataResponse = null;
 
   hotFeedPosts = [];
+  hotFeedPostHashes = [];
   loadingHotFeed = false;
+  loadingMoreHotFeed = false;
   hotFeedInteractionCap = 0;
   hotFeedTimeDecayBlocks = 0;
   updatingHotFeedInteractionCap = false;
@@ -293,27 +295,98 @@ export class AdminComponent implements OnInit {
   _loadHotFeed() {
     this.loadingHotFeed = true;
 
+    // If the user is a super admin, fetch the hot feed algo constants.
+    if(this.globalVars.showSuperAdminTools() && (
+      this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0
+    )) {
+      this.backendApi
+        .AdminGetHotFeedAlgorithm(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+        ).subscribe(
+          (res) => {
+            this.hotFeedInteractionCap = res.InteractionCap / 1e9;
+            this.hotFeedTimeDecayBlocks = res.TimeDecayBlocks;
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError(
+              "Error getting hot feed constants: " + this.backendApi.stringifyError(err));
+          }
+        )
+    }
+
+    // Fetch the hot feed.
+    if(this.hotFeedPostHashes.length > 0) {
+      this.loadingMoreHotFeed = true;
+    } 
     this.backendApi
       .AdminGetUnfilteredHotFeed(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         50,
-      )
-      .subscribe(
+        this.hotFeedPostHashes,
+      ).subscribe(
         (res) => {
           this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
+          for(let ii = 0; ii < res.HotFeedPage.length; ii++) {
+            this.hotFeedPostHashes = this.hotFeedPostHashes.concat(res.HotFeedPage[ii].PostHashHex)
+          }
         },
         (err) => {
           console.error(err);
           this.globalVars._alertError(
             "Error loading hot feed: " + this.backendApi.stringifyError(err));
         }
-      )
-      .add(() => { this.loadingHotFeed = false; });
+      ).add(() => { 
+        this.loadingHotFeed = false; 
+        this.loadingMoreHotFeed = false;
+      });
   }
 
-  updateHotFeedInteractionCap() {}
-  updateHotFeedTimeDecayBlocks() {}
+  updateHotFeedInteractionCap() {
+    this.updatingHotFeedInteractionCap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedInteractionCap * 1e9,
+        0,
+      ).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully updated InteractionCap. The hot feed will take ~10s to recompute."
+          )
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error updating InteractionCap: " + this.backendApi.stringifyError(err));
+        }
+      ).add(() => { this.updatingHotFeedInteractionCap = false; });
+  }
+
+  updateHotFeedTimeDecayBlocks() {
+    this.updatingHotFeedTimeDecayBlocks = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        this.hotFeedTimeDecayBlocks,
+      ).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully updated TimeDecayBlocks. The hot feed will take ~10s to recompute."
+          )
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error updating hot TimeDecayBlocks: " + this.backendApi.stringifyError(err));
+        }
+      ).add(() => { this.updatingHotFeedTimeDecayBlocks = false; });
+  }
 
   _loadPosts() {
     this.loadingMorePosts = true;

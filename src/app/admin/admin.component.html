@@ -115,7 +115,7 @@
 
     <!-- Update Global Params (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Update Interaction Cap
+      Update Interaction Cap (max $DESO locked)
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="hotFeedInteractionCap"
@@ -177,7 +177,7 @@
       Select posts below to whitelist.
     </div>
 
-    <simple-center-loader *ngIf="loadingHotFeed; else showHotFeed"></simple-center-loader>
+    <simple-center-loader *ngIf="loadingHotFeed && hotFeedPosts.length == 0; else showHotFeed"></simple-center-loader>
     <ng-template #showHotFeed>
       <div *ngFor="let post of hotFeedPosts; let ii = index">
         <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
@@ -200,6 +200,15 @@
         </div>
       </div>
     </ng-template>
+
+    <div
+      *ngIf="hotFeedPosts.length > 0"
+      class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
+      (click)="_loadHotFeed()"
+    >
+      <div *ngIf="!loadingMoreHotFeed" class="fs-15px">Load More</div>
+      <div *ngIf="loadingMoreHotFeed" class="fs-15px">Loading...</div>
+    </div>
   </div>
 
   <!-- Profile Blacklisting -->

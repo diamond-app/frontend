@@ -120,6 +120,8 @@ export class BackendRoutes {
   static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
   static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
   static RoutePathAdminGetUnfilteredHotFeed = "/api/v0/admin/get-unfiltered-hot-feed";
+  static RoutePathAdminGetHotFeedAlgorithm = "/api/v0/admin/get-hot-feed-algorithm";
+  static RoutePathAdminUpdateHotFeedAlgorithm = "/api/v0/admin/update-hot-feed-algorithm";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -1974,10 +1976,34 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     ResponseLimit: number,
+    SeenPosts: Array<string>,
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUnfilteredHotFeed, AdminPublicKey, {
-      ResponseLimit,
       AdminPublicKey,
+      ResponseLimit,
+      SeenPosts,
+    });
+  }
+
+  AdminGetHotFeedAlgorithm(
+    endpoint: string,
+    AdminPublicKey: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedAlgorithm, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminUpdateHotFeedAlgorithm(
+    endpoint: string,
+    AdminPublicKey: string,
+    InteractionCap: number,
+    TimeDecayBlocks: number,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
+      AdminPublicKey,
+      InteractionCap,
+      TimeDecayBlocks,
     });
   }
 
