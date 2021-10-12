@@ -837,7 +837,6 @@ export class GlobalVarsService {
     this.logEvent("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
-        accessLevelRequest: 4,
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         referralCode: localStorage.getItem("referralCode"),
       })
@@ -851,7 +850,7 @@ export class GlobalVarsService {
     this.logEvent(`account : ${event} : launch`);
     this.identityService
       .launch("/log-in", {
-        accessLevelRequest: 4,
+        accessLevelRequest: "4",
         referralCode: localStorage.getItem("referralCode"),
       })
       .subscribe((res) => {

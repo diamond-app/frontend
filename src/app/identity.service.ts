@@ -42,7 +42,7 @@ export class IdentityService {
 
   launch(
     path?: string,
-    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string, accessLevelRequest?: number }
+    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string, accessLevelRequest?: string }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
@@ -68,6 +68,10 @@ export class IdentityService {
 
     if (params?.public_key) {
       httpParams = httpParams.append("public_key", params.public_key);
+    }
+
+    if (params?.accessLevelRequest) {
+      httpParams = httpParams.append("accessLevelRequest", params.accessLevelRequest);
     }
 
     const paramsStr = httpParams.toString();

@@ -464,7 +464,6 @@ export class BackendApiService {
                 if (signed.approvalRequired) {
                   return this.identityService
                     .launch("/approve", {
-                      accessLevelRequest: 4,
                       tx: res.TransactionHex,
                     })
                     .pipe(
