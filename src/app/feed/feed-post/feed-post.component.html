@@ -458,6 +458,8 @@
     *ngIf="showNFTDetails && postContent.IsNFT"
     class="fs-15px w-100 feed-post__nft-footer"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
+    (click)="onPostClicked($event)"
+    [ngClass]="{ 'cursor-pointer': contentShouldLinkToThread }"
   >
     <div class="d-flex justify-content-between h-100">
       <div class="d-flex flex-column justify-content-between">

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
@@ -10,19 +10,22 @@ import { Location } from "@angular/common";
 import { environment } from "src/environments/environment";
 
 import * as _ from "lodash";
+import { document } from "ngx-bootstrap/utils";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "post-thread",
   templateUrl: "./post-thread.component.html",
   styleUrls: ["./post-thread.component.scss"],
 })
-export class PostThreadComponent {
+export class PostThreadComponent implements AfterViewInit {
   currentPost;
   currentPostHashHex: string;
   scrollingDisabled = false;
   showToast = false;
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
+  subscriptions = new Subscription();
 
   @Input() hideHeader: boolean = false;
   @Input() hideCurrentPost: boolean = false;
@@ -56,6 +59,28 @@ export class PostThreadComponent {
     // Note: this may lead to performance issues in a big thread, so this may not be
     // a good long-term solution
     this.currentPost = _.cloneDeep(this.currentPost);
+  }
+
+  ngAfterViewInit() {
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        if(lastVisible.element.parentElement) {
+          setTimeout(() => {
+            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+          //   this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+          }, 1);
+        }
+      })
+    );
+  }
+
+  // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
+  // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
+  correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    if (dataPaddingForwardElement) {
+      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+    }
   }
 
   // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
