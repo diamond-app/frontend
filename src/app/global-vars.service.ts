@@ -881,15 +881,6 @@ export class GlobalVarsService {
     this._setUpLoggedInUserObservable();
     this._setUpFollowChangeObservable();
 
-    route.queryParams.subscribe((queryParams) => {
-      if (queryParams.r) {
-        localStorage.setItem("referralCode", queryParams.r);
-        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
-        this.getReferralUSDCents();
-      }
-    });
-
-    this.getReferralUSDCents();
     this.userList = userList;
     this.satoshisPerDeSoExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
@@ -908,6 +899,15 @@ export class GlobalVarsService {
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
+    route.queryParams.subscribe((queryParams) => {
+      if (queryParams.r) {
+        localStorage.setItem("referralCode", queryParams.r);
+        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        this.getReferralUSDCents();
+      }
+    });
+
+    this.getReferralUSDCents();
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
@@ -1190,17 +1190,15 @@ export class GlobalVarsService {
   getReferralUSDCents(): void {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
-      this.backendApi
-        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
-        .subscribe((res) => {
-          const referralInfo = res.ReferralInfoResponse.Info;
-          if (
-            res.ReferralInfoResponse.IsActive &&
-            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
-          ) {
-            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
-          }
-        });
+      this.backendApi.GetReferralInfoForReferralHash(this.localNode, referralHash).subscribe((res) => {
+        const referralInfo = res.ReferralInfoResponse.Info;
+        if (
+          res.ReferralInfoResponse.IsActive &&
+          (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
+        ) {
+          this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+        }
+      });
     }
   }
 }
