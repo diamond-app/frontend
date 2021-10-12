@@ -1,24 +1,22 @@
-<!--Header-->
-<div
-  class="d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold border-bottom border-color-grey"
-  style="min-height: 80px"
->
-  <div class="d-flex align-items-center">
-    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-
-    <div class="font-weight-bold fs-18px">
-      {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+<div class="background-color-white br-10px pb-16px">
+  <!--Header-->
+  <div
+    class="d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold border-bottom border-color-grey back"
+    style="min-height: 80px"
+  >
+    <div class="d-flex align-items-center">
+      <div class="font-weight-bold fs-18px">
+        {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+      </div>
     </div>
   </div>
 
-  <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>
-</div>
-
-<!--CTA-->
-<div class="text-center px-20px not-found__content-container">
-  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
-  or
-  <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
-  <br />
-  to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
+  <!--CTA-->
+  <div class="text-center px-20px not-found__content-container" style="margin-top: 16px">
+    <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
+    or
+    <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
+    <br />
+    to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
+  </div>
 </div>

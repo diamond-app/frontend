@@ -5,8 +5,8 @@ import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, User } from "../backend-api.service";
 import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
 import { FeedComponent } from "../feed/feed.component";
-import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "sign-up",
@@ -138,7 +138,7 @@ export class SignUpComponent {
   }
 
   openBuyDeSoModal() {
-    const modal = this.modalService.show(BuyDeSoComponent, {
+    const modal = this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
     const onHideEvent = modal.onHide;

@@ -13,10 +13,10 @@ import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-t
 import { RouteNames } from "../../app-routing.module";
 import { Observable, Subscription } from "rxjs";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { BuyDeSoComponent } from "../../buy-deso-page/buy-deso/buy-deso.component";
 import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
 import * as introJs from "intro.js/intro.js";
 import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
+import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "trade-creator",
@@ -201,7 +201,7 @@ export class TradeCreatorComponent implements OnInit {
 
   openBuyCloutModal() {
     this.bsModalRef.hide();
-    this.modalService.show(BuyDeSoComponent, {
+    this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }

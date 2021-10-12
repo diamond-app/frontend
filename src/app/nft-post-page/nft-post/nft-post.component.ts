@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Output, ViewChild} from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {

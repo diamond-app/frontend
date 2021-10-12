@@ -9,13 +9,12 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { TransferDeSoComponent } from "../transfer-deso/transfer-deso.component";
-import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
 import { document } from "ngx-bootstrap/utils";
 import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "wallet",
@@ -159,7 +158,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openBuyDeSoModal() {
-    this.modalService.show(BuyDeSoComponent, {
+    this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }

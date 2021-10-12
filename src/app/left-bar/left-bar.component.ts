@@ -10,6 +10,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { filter, get } from "lodash";
 import { environment } from "src/environments/environment";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "left-bar",
@@ -96,6 +97,12 @@ export class LeftBarComponent {
     });
   }
 
+  openBuyDeSoModal() {
+    this.modalService.show(BuyDesoModalComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+    });
+  }
+
   startTutorial(): void {
     if (this.inTutorial) {
       return;
@@ -114,7 +121,7 @@ export class LeftBarComponent {
         confirmButtonText: "Buy $DESO",
       }).then((res) => {
         if (res.isConfirmed) {
-          this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+          this.openBuyDeSoModal();
         }
       });
       return;

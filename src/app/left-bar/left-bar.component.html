@@ -144,11 +144,10 @@
       </div>
 
       <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
-      <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
       <div class="left-desktop-selector">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
-
+        <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BUY_DESO"
           [buttonLabel]="'Buy $DESO'"

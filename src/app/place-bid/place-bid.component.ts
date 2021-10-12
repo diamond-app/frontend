@@ -5,9 +5,9 @@ import * as _ from "lodash";
 import { Router } from "@angular/router";
 import { isNumber } from "lodash";
 import { ToastrService } from "ngx-toastr";
-import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Location } from "@angular/common";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "place-bid",
@@ -141,7 +141,7 @@ export class PlaceBidComponent implements OnInit {
   }
 
   openBuyDeSoModal() {
-    this.modalService.show(BuyDeSoComponent, {
+    this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }

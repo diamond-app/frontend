@@ -110,7 +110,7 @@
     >
       Go to the next step
     </button>
-    <a class="fc-muted ml-25px" (click)="parentComponent.bsModalRef.hide()">Cancel</a>
+    <a class="fc-muted ml-25px" (click)="parentComponent.closeModal.emit()">Cancel</a>
   </div>
 </div>
 
@@ -239,6 +239,6 @@
   <div class="border-bottom w-100"></div>
   <div class="m-16px">
     <button class="primary-button" (click)="clickBuyDESO()">Buy $DESO</button>
-    <a class="fc-muted ml-25px" (click)="parentComponent.bsModalRef.hide()">Cancel</a>
+    <a class="fc-muted ml-25px" (click)="parentComponent.closeModal.emit()">Cancel</a>
   </div>
 </div>

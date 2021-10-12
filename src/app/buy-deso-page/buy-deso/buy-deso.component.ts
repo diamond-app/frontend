@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { sprintf } from "sprintf-js";
@@ -8,7 +8,6 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
-import {BsModalRef} from "ngx-bootstrap/modal";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -28,6 +27,7 @@ class Messages {
 })
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
+  @Output() closeModal = new EventEmitter();
 
   waitingOnTxnConfirmation = false;
   queryingBitcoinAPI = false;
@@ -52,8 +52,7 @@ export class BuyDeSoComponent implements OnInit {
     private identityService: IdentityService,
     private route: ActivatedRoute,
     private router: Router,
-    private httpClient: HttpClient,
-    public bsModalRef: BsModalRef
+    private httpClient: HttpClient
   ) {
     this.appData = globalVars;
     this.route.queryParams.subscribe((params: Params) => {

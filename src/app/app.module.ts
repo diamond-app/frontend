@@ -30,6 +30,7 @@ import { CreatorsLeaderboardComponent } from "./creators-leaderboard/creators-le
 import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
+import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
@@ -210,6 +211,7 @@ export function playerFactory() {
     CreatorsLeaderboardModalComponent,
     CreatorsLeaderboardAppPageComponent,
     BuyDeSoPageComponent,
+    BuyDesoModalComponent,
     WalletComponent,
     WalletWidgetComponent,
     MessagesPageComponent,

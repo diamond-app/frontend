@@ -1,8 +1,3 @@
-<div class="modal-header">
-  <div class="modal-header-x" (click)="bsModalRef.hide()">
-    <i-feather name="x"></i-feather>
-  </div>
-</div>
 <div class="buy-deso__container">
   <div *ngIf="!showBuyComplete; else showBuyCompleteElseBlock">
     <div class="mint-nft__title mx-16px">
@@ -133,7 +128,7 @@
                 >
                   Go to the next step
                 </button>
-                <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
+                <a class="fc-muted ml-25px" (click)="closeModal.emit()">Cancel</a>
               </div>
             </div>
             <div *ngIf="buyWithBTCStep === 2">
@@ -282,7 +277,7 @@
               <div class="border-bottom w-100"></div>
               <div class="m-16px">
                 <button class="primary-button" (click)="_clickBuyDeSo()">Buy $DESO</button>
-                <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
+                <a class="fc-muted ml-25px" (click)="closeModal.emit()">Cancel</a>
               </div>
             </div>
           </div>
