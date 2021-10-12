@@ -508,18 +508,17 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // defaultActiveTab is "Following" if the user is following anybody. Otherwise
     // the default is global.
-    let defaultActiveTab;
-    const numFollowing = Object.keys(this.followedPublicKeyToProfileEntry).length;
-    if (numFollowing >= FeedComponent.MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT) {
-      defaultActiveTab = FeedComponent.FOLLOWING_TAB;
-    } else {
-      defaultActiveTab = FeedComponent.HOT_TAB;
-    }
+    const defaultActiveTab = FeedComponent.HOT_TAB;
 
     this.feedTabs = [FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
 
     if (!this.activeTab) {
-      this.activeTab = defaultActiveTab;
+      const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");
+      if (!storedTab) {
+        this.activeTab = defaultActiveTab;
+      } else {
+        this.activeTab = storedTab;
+      }
     }
     this._handleTabClick(this.activeTab);
   }
@@ -528,6 +527,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (tab === FeedComponent.SHOWCASE_TAB) {
       window.open("https://polygram.cc", "_blank");
     } else {
+      this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;
       this.router.navigate([], {
         relativeTo: this.route,

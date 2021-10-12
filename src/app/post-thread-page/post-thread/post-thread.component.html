@@ -1,6 +1,6 @@
 
 <!-- FIXME: TODO: post threads: loading skeletons -->
-<div *ngIf="currentPost" style="padding-bottom: 20vh" class="d-flex flex-column">
+<div *ngIf="currentPost" class="d-flex flex-column">
   <div class="post-thread__container">
     <div
       class="d-flex align-items-center justify-content-between post-thread__header"
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="post-thread__comment-container">
+  <div class="post-thread__comment-container" id="comment-scroller">
     <div #uiScroll *uiScroll="let item of datasource; let i = index" [attr.data-index]="i">
       <div class="post-thread__single-comment" [ngClass]="{ 'first-item': i === 0, 'last-item': i === currentPost?.Comments?.length - 1 }">
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
