@@ -7,6 +7,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import RouteNamesService from "src/app/route-names.service";
+import { PostMultiplierComponent } from "../feed-post-dropdown/post-multiplier/post-multiplier.component";
 
 // RPH Modals
 import { MintNftComponent } from "../../mint-nft/mint-nft.component";
@@ -177,6 +178,13 @@ export class FeedPostDropdownComponent {
 
   blockUser() {
     this.userBlocked.emit();
+  }
+
+  addMultiplier() {
+    this.modalService.show(PostMultiplierComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState: { post: this.post },
+    });
   }
 
   _addPostToGlobalFeed(event: any) {

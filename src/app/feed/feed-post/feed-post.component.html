@@ -394,6 +394,11 @@
                   {{getHotnessScore()}}
                 </div>
 
+                <div *ngIf="post.PostMultiplier !== 0 && post.PostMultiplier !== 1">
+                  &nbsp;&nbsp;&middot;
+                  ⭐ Multiplier: {{post.PostMultiplier}} ⭐
+                </div>
+
                 <div class="text-grey8A">
                   &nbsp;&nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
                 </div>
