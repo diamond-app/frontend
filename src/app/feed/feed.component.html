@@ -41,31 +41,34 @@
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">
-    <div class="mobile-scroll" *ngFor="let post of postsToShow()">
-      <div *ngIf="post.ProfileEntryResponse">
-        <!--
-            The post.parentPost stuff is a hack to make it so that a new comment shows up
-            in the feed with the "replying to @[parentPost.Username]" content diplayed.
-            post.parentPost is set in appendCommentAfterParentPost
-          -->
-        <feed-post
-          *ngIf="!post.IsHidden"
-          [post]="post"
-          [includePaddingOnPost]="true"
-          [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
-          [showReplyingToContent]="!!post.parentPost"
-          [parentPost]="post.parentPost"
-          [contentShouldLinkToThread]="true"
-          [showLeftSelectedBorder]="post.IsPinned"
-          [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
-          [cardStyle]="true"
-          [showNFTDetails]="true"
-          (postDeleted)="onPostHidden($event)"
-          (userBlocked)="userBlocked()"
-        ></feed-post>
+    <cdk-virtual-scroll-viewport itemSize="20" style="height: calc(100vh - 466px)">
+      <div class="mobile-scroll" *cdkVirtualFor="let post of this.postsToShow()">
+        <div *ngIf="post.ProfileEntryResponse">
+          <!--
+              The post.parentPost stuff is a hack to make it so that a new comment shows up
+              in the feed with the "replying to @[parentPost.Username]" content diplayed.
+              post.parentPost is set in appendCommentAfterParentPost
+            -->
+          <feed-post
+            *ngIf="!post.IsHidden"
+            [post]="post"
+            [includePaddingOnPost]="true"
+            [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
+            [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
+            [showReplyingToContent]="!!post.parentPost"
+            [parentPost]="post.parentPost"
+            [contentShouldLinkToThread]="true"
+            [showLeftSelectedBorder]="post.IsPinned"
+            [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+            [cardStyle]="true"
+            [showNFTDetails]="true"
+            (postDeleted)="onPostHidden($event)"
+            (userBlocked)="userBlocked()"
+          ></feed-post>
+        </div>
       </div>
-    </div>
+
+    </cdk-virtual-scroll-viewport>
 
     <div
       *ngIf="showMoreButton()"

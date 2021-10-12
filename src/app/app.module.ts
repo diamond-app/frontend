@@ -179,6 +179,7 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+import { ScrollingModule } from "@angular/cdk/scrolling";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -364,11 +365,12 @@ export function playerFactory() {
       themes: [lightTheme, darkTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light")
     }),
     IconsModule,
     LottieModule,
     LottieModule.forRoot({ player: playerFactory }),
+    ScrollingModule,
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],
