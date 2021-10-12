@@ -41,8 +41,7 @@
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">
-<!--    177-->
-    <cdk-virtual-scroll-viewport itemSize="10" [ngStyle]="{ height: globalVars.isMobile() ? 'calc(100vh - 177px)' : 'calc(100vh - 294px)' }">
+    <cdk-virtual-scroll-viewport itemSize="5" [ngStyle]="{ height: globalVars.isMobile() ? 'calc(100vh - 177px)' : 'calc(100vh - 294px)' }">
       <div class="mobile-scroll" *cdkVirtualFor="let post of postsToShow()">
         <div *ngIf="post.ProfileEntryResponse">
           <!--
