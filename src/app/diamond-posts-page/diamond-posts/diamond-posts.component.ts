@@ -106,9 +106,11 @@ export class DiamondPostsComponent {
   ngAfterViewInit() {
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        setTimeout(() => {
-          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-        }, 5);
+        if (lastVisible.element.parentElement) {
+          setTimeout(() => {
+            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+          }, 5);
+        }
       })
     );
   }

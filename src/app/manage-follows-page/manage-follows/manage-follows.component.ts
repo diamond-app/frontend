@@ -161,7 +161,7 @@ export class ManageFollowsComponent implements OnDestroy {
   }
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService
