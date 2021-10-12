@@ -28,7 +28,7 @@ export class CloudflareStreamService {
       console.error("invalid VideoID");
       return of([false, true]);
     }
-    return this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoID).pipe(
+    return this.backendApi.GetVideoStatus(this.globalVars.localNode, videoID).pipe(
       catchError((error) => {
         console.error(error);
         return of({
