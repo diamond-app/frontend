@@ -837,6 +837,7 @@ export class GlobalVarsService {
     this.logEvent("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
+        accessLevelRequest: 4,
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         referralCode: localStorage.getItem("referralCode"),
       })
@@ -857,9 +858,9 @@ export class GlobalVarsService {
         this.logEvent(`account : ${event} : success`);
         this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
         this.updateEverything().add(() => {
-        this.flowRedirect(res.signedUp);
+          this.flowRedirect(res.signedUp);
+        });
       });
-    });
   }
 
   launchLoginFlow() {
