@@ -42,7 +42,7 @@ export class IdentityService {
 
   launch(
     path?: string,
-    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string }
+    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string, accessLevelRequest: number }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
@@ -88,7 +88,7 @@ export class IdentityService {
   }
 
   // Outgoing messages
-  
+
   burn(payload: {
     accessLevel: number;
     accessLevelHmac: string;
