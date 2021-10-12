@@ -90,12 +90,16 @@
       </div>
       <div *ngIf="isMobile">
         <!-- Referral links alert -->
+<!--          <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold" (click)="closeMobile.emit()">Find out more</a>-->
         <div
           *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
-          class="d-flex border border-color-grey background-color-white p-10px mx-16px mb-16px br-10px fs-13px"
+          class="d-flex border border-color-grey background-color-white p-10px mx-16px mb-16px br-10px fs-15px fc-blue cursor-pointer"
+          [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
+          (click)="closeMobile.emit()"
         >
-          <div class="fc-secondary">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
-          <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold" (click)="closeMobile.emit()">Find out more</a>
+          <i-feather name="share-2" class="feather-large fs-0px"></i-feather>
+          <div style="margin-left: 8px">Use your referral link</div>
+          <i-feather name="chevron-right" class="feather-large right-20px fs-0px"></i-feather>
         </div>
         <div
           *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"

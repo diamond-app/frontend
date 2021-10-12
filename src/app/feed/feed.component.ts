@@ -485,7 +485,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
             for(let ii=0; ii < this.globalVars.hotFeedPosts.length; ii++) {
               this.hotFeedPostHashes = this.hotFeedPostHashes.concat(
-                this.globalVars.hotFeedPosts[ii].PostHashHex
+                this.globalVars.hotFeedPosts[ii]?.PostHashHex
               );
             }
           },

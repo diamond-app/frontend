@@ -41,42 +41,40 @@
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">
-    <cdk-virtual-scroll-viewport itemSize="5" [ngStyle]="{ height: globalVars.isMobile() ? 'calc(100vh - 177px)' : 'calc(100vh - 294px)' }">
-      <div class="mobile-scroll" *cdkVirtualFor="let post of postsToShow()">
-        <div *ngIf="post.ProfileEntryResponse">
-          <!--
-              The post.parentPost stuff is a hack to make it so that a new comment shows up
-              in the feed with the "replying to @[parentPost.Username]" content diplayed.
-              post.parentPost is set in appendCommentAfterParentPost
-            -->
-          <feed-post
-            *ngIf="!post.IsHidden"
-            [post]="post"
-            [includePaddingOnPost]="true"
-            [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-            [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
-            [showReplyingToContent]="!!post.parentPost"
-            [parentPost]="post.parentPost"
-            [contentShouldLinkToThread]="true"
-            [showLeftSelectedBorder]="post.IsPinned"
-            [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
-            [cardStyle]="true"
-            [showNFTDetails]="true"
-            (postDeleted)="onPostHidden($event)"
-            (userBlocked)="userBlocked()"
-          ></feed-post>
-        </div>
+    <div class="mobile-scroll" *ngFor="let post of postsToShow()">
+      <div *ngIf="post.ProfileEntryResponse">
+        <!--
+            The post.parentPost stuff is a hack to make it so that a new comment shows up
+            in the feed with the "replying to @[parentPost.Username]" content diplayed.
+            post.parentPost is set in appendCommentAfterParentPost
+          -->
+        <feed-post
+          *ngIf="!post.IsHidden"
+          [post]="post"
+          [includePaddingOnPost]="true"
+          [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
+          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
+          [showReplyingToContent]="!!post.parentPost"
+          [parentPost]="post.parentPost"
+          [contentShouldLinkToThread]="true"
+          [showLeftSelectedBorder]="post.IsPinned"
+          [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [cardStyle]="true"
+          [showNFTDetails]="true"
+          (postDeleted)="onPostHidden($event)"
+          (userBlocked)="userBlocked()"
+        ></feed-post>
       </div>
+    </div>
 
-      <div
-        *ngIf="showMoreButton()"
-        class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
-        (click)="loadMorePosts()"
-      >
-        <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
-        <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
-      </div>
-    </cdk-virtual-scroll-viewport>
+    <div
+      *ngIf="showMoreButton()"
+      class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
+      (click)="loadMorePosts()"
+    >
+      <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
+      <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
+    </div>
   </div>
 
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
@@ -102,7 +100,7 @@
       to find more people to follow
     </div>
   </div>
-<!--  <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>-->
+  <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <!--  <div class="global__bottom-bar-mobile-height"></div>-->
 <!--  <div class="global__bottom-bar-mobile-height"></div>-->

@@ -760,12 +760,13 @@ export class GlobalVarsService {
       confettiSettings["props"] = svgList.map((svg) => {
         return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
       });
+      confettiSettings.max = 200;
       if (svgList.indexOf(ConfettiSvg.DIAMOND) >= 0) {
         confettiSettings.clock = 150;
+        confettiSettings.max = 100;
       } else {
         confettiSettings.clock = 75;
       }
-      confettiSettings.max = 200;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
