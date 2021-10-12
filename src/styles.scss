@@ -3386,6 +3386,7 @@ creator-profile-nfts {
 }
 
 .creator-profile-nfts__dropdown {
+  background: var(--tile-secondary-bg);
   color: var(--tile-secondary-bg);
   border-radius: 16px;
   border: 1px solid var(--border);
@@ -5127,6 +5128,7 @@ sell-nft-modal {
 }
 
 .tutorial-tooltip {
+  color: var(--text);
   min-width: 300px;
   max-width: 550px;
   font-family: Gilroy Arial sans-serif;
@@ -5134,6 +5136,7 @@ sell-nft-modal {
   background: var(--tile-bg);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   .introjs-button {
+    text-shadow: none;
     border-radius: 12px !important;
     background: none;
     border: 1px solid var(--text-secondary) !important;
@@ -5155,6 +5158,9 @@ sell-nft-modal {
   color: var(--text);
   border-radius: 10px !important;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  .swal2-title, .swal2-content {
+    color: var(--text);
+  }
   button {
     height: 48px;
     min-width: 70px;

@@ -54,7 +54,7 @@
       >
         <div class="search-bar__avatar m-10px" [avatar]="creator.PublicKeyBase58Check"></div>
         <div>
-          <span>{{ creator.Username || creator.PublicKeyBase58Check }}</span>
+          <span class="fc-default">{{ creator.Username || creator.PublicKeyBase58Check }}</span>
           <span
             *ngIf="creator.IsReserved && !creator.IsVerified"
             class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"

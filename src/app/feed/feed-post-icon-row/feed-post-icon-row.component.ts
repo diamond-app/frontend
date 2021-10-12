@@ -443,6 +443,7 @@ export class FeedPostIconRowComponent {
       .then(
         (res) => {
           this.sendingDiamonds = false;
+          this.diamondSent.emit();
           this.globalVars.logEvent("diamond: send", {
             SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
             ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
@@ -472,7 +473,6 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
-    comp.diamondSent.emit(null);
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {

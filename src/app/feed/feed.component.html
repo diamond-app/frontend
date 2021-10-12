@@ -40,7 +40,7 @@
   </div>
 
   <!-- Posts -->
-  <div *ngIf="showGlobalOrFollowingPosts()">
+  <div *ngIf="showGlobalOrFollowingOrHotPosts()">
     <div class="mobile-scroll" *ngFor="let post of postsToShow()">
       <div *ngIf="post.ProfileEntryResponse">
         <!--

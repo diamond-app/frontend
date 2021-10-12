@@ -266,7 +266,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  showGlobalOrFollowingPosts() {
+  showGlobalOrFollowingOrHotPosts() {
     return (
       this.postsToShow().length > 0 &&
       (
@@ -353,9 +353,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           (res) => {
             if (lastPostHash !== "") {
               res.PostsFound.shift();
-              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(res.PostsFound);
+              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(_.filter(res.PostsFound, { IsPinned: false }));
             } else {
-              this.globalVars.postsToShow = res.PostsFound;
+              this.globalVars.postsToShow = _.filter(res.PostsFound, { IsPinned: false });
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH - 1) {
               // I'm not sure what the expected behavior is for the global feed. It may sometimes

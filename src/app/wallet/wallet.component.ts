@@ -445,7 +445,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             this.balanceEntryToHighlight.BalanceNanos,
             this.balanceEntryToHighlight.ProfileEntryResponse.CoinEntry
           )} of your very own $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
-          element: document.querySelector(".wallet-highlighted-creator"),
+          element: document.querySelector(".global__center__inner"),
         },
       ],
     });
@@ -482,7 +482,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           title,
           intro: "Here in your wallet you can see which coins you own, and how much they are currently worth.",
-          element: document.querySelector(".wallet-highlighted-creator"),
+          element: document.querySelector(".global__center__inner"),
         },
         {
           title,
@@ -519,7 +519,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           title,
           intro: `You can now see the updated amount of $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin in your wallet.`,
-          element: document.querySelector(".wallet-highlighted-creator"),
+          element: document.querySelector(".global__center__inner"),
         },
       ],
     });
