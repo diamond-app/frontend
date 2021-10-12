@@ -180,6 +180,7 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { ScrollingModule } from "@angular/cdk/scrolling";
+import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -337,6 +338,7 @@ export function playerFactory() {
     CreatePostTutorialPageComponent,
     BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
+    PostMultiplierComponent,
   ],
   imports: [
     BrowserModule,
