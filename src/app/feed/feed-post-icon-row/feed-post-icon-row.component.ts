@@ -90,7 +90,7 @@ export class FeedPostIconRowComponent {
     this.diamondDragStarted = new Date();
     this.diamondDragging = true;
     this.addDiamondSelection({ type: "initiateDrag" });
-    this.ref.detectChanges();
+    // this.ref.detectChanges();
   }
 
   // Calculate where the drag box has been dragged to, make updates accordingly
@@ -118,7 +118,7 @@ export class FeedPostIconRowComponent {
     }
     // If the drag box is at the alloted lower boundry or below, set confirm status to true
     this.diamondDragCancel = event.distance.y > 30;
-    this.ref.detectChanges();
+    // this.ref.detectChanges();
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -136,7 +136,7 @@ export class FeedPostIconRowComponent {
       // If it was moved, the endDrag fn will do it.
       this.resetDragVariables();
     }
-    this.ref.detectChanges();
+    // this.ref.detectChanges();
   }
 
   // End dragging procedure. Triggered when the dragged element is released
@@ -151,7 +151,7 @@ export class FeedPostIconRowComponent {
     this.resetDragVariables();
     // Move the drag box back to it's original position
     event.source._dragRef.reset();
-    this.ref.detectChanges();
+    // this.ref.detectChanges();
   }
 
   resetDragVariables() {
@@ -478,13 +478,13 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
-    this.ref.detectChanges();
+    comp.ref.detectChanges();
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
-    this.ref.detectChanges();
+    comp.ref.detectChanges();
   }
 
   getPost(postHashHex) {
