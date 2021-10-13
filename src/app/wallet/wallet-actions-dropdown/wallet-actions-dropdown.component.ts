@@ -23,6 +23,7 @@ export class WalletActionsDropdownComponent implements OnInit {
   iconHideTimeout: NodeJS.Timer;
   buyTradeType = this.globalVars.RouteNames.BUY_CREATOR;
   sellTradeType = this.globalVars.RouteNames.SELL_CREATOR;
+  transferTradeType = this.globalVars.RouteNames.TRANSFER_CREATOR;
 
   constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
 
