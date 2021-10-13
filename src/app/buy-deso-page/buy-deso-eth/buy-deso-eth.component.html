@@ -41,13 +41,11 @@
             name="check-circle"
             style="top: -2px"
           ></i-feather>
-          <i-feather
+          <a
             *ngIf="!keyIsCopied"
             (click)="_copyPublicKey()"
-            name="copy"
-            class="feather-large position-relative cursor-pointer"
-            style="top: -2px"
-          ></i-feather>
+            class="fs-16px fc-blue"
+          >Copy</a>
         </div>
       </div>
     </div>
