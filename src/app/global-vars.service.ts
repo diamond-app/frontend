@@ -975,7 +975,6 @@ export class GlobalVarsService {
     }
     route.queryParams.subscribe((queryParams) => {
       if (queryParams.r) {
-        this.logEvent("referral : code", queryParams.r);
         localStorage.setItem("referralCode", queryParams.r);
         const inAppBrowser = this.checkForInAppBrowser();
         if (!inAppBrowser) {
