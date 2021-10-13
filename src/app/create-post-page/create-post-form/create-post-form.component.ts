@@ -21,7 +21,7 @@ export class CreatePostFormComponent {
       this.exitTutorial();
       this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: FeedComponent.GLOBAL_TAB },
+        queryParams: { feedTab: FeedComponent.HOT_TAB },
       });
       return;
     }
