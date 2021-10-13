@@ -104,14 +104,14 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         },
         {
           title,
-          intro: `Every creator on ${environment.node.name} has a coin that you can buy and sell.`,
+          intro: `Many creators on ${environment.node.name} have a coin that you can buy and sell.`,
           element: document.querySelector("#creator-coins-holder"),
           position: "bottom",
         },
         {
           title,
           intro:
-            "Prices go up when people buy, or when cashflows go to the coin.<br /><br />Prices go down when people sell.",
+            "Prices go up when people buy, or when cashflows go to the coin. Prices go down when people sell. <br /><br />Coins can also give you access to exclusive content, events, and much more...",
           element: document.querySelector("#creator-coins-holder"),
           position: "bottom",
         },
