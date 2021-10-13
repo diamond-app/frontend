@@ -879,11 +879,11 @@ export class GlobalVarsService {
       });
   }
 
-  checkForInAppBrowser(): boolean {
+  checkForInAppBrowser(): string {
     if (!this.isMobile()) {
-      return false;
+      return null;
     } else {
-      let inAppBrowser = false;
+      let inAppBrowser = null;
       // @ts-ignore
       const standalone = window.navigator.standalone,
         userAgent = window.navigator.userAgent.toLowerCase(),
@@ -897,20 +897,12 @@ export class GlobalVarsService {
           // Standalone
         } else if (!standalone && !safari) {
           // In-app browser
-          this.modalService.show(DirectToNativeBrowserModalComponent, {
-            class: "modal-dialog-centered buy-deso-modal",
-            initialState: { deviceType: "iOS" },
-          });
-          inAppBrowser = true;
+          inAppBrowser = "iOS";
         }
       } else {
         if (userAgent.includes("wv")) {
           // Android in app browser
-          this.modalService.show(DirectToNativeBrowserModalComponent, {
-            class: "modal-dialog-centered buy-deso-modal",
-            initialState: { deviceType: "Android" },
-          });
-          inAppBrowser = true;
+          inAppBrowser = "Android";
         } else {
           // Android standalone browser
         }
@@ -923,6 +915,11 @@ export class GlobalVarsService {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
       this.launchIdentityFlow("login");
+    } else {
+      this.modalService.show(DirectToNativeBrowserModalComponent, {
+        class: "modal-dialog-centered buy-deso-modal",
+        initialState: { deviceType: inAppBrowser },
+      });
     }
   }
 
@@ -972,7 +969,8 @@ export class GlobalVarsService {
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
     route.queryParams.subscribe((queryParams) => {
-      if (queryParams.r) {
+      const inAppBrowser = this.checkForInAppBrowser();
+      if (queryParams.r && !inAppBrowser) {
         localStorage.setItem("referralCode", queryParams.r);
         this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
         this.getReferralUSDCents();
