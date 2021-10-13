@@ -64,11 +64,11 @@
             ETH
           </div>
         </div>
-        <div *ngIf="!loadingBalance" class="position-relative w-100">
+        <div class="position-relative w-100">
           <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
-            {{ ethBalance.toFixed(8) }} ETH
+            {{ loadingBalance ? "Loading..." : ethBalance.toFixed(8) + " ETH" }}
           </div>
-          <span class="mint-nft__floating-span fc-muted">
+          <span class="mint-nft__floating-span fc-muted" *ngIf="!loadingBalance">
             {{ globalVars.formatUSD(ethBalance * globalVars.usdPerETHExchangeRate, 2) }}
             USD
           </span>

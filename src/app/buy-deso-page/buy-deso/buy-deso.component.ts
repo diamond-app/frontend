@@ -71,6 +71,7 @@ export class BuyDeSoComponent implements OnInit {
   onBuyMoreDeSoClicked() {
     this.showBuyComplete = false;
     this._queryBitcoinAPI();
+    this.buyWithBTCStep = 1;
   }
 
   stepOneTooltip() {
