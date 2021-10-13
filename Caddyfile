@@ -41,6 +41,7 @@ header @html Content-Security-Policy "
     bitcoinfees.earn.com
     api.blockcypher.com
     amp.bitclout.com api.bitclout.green api.bitclout.blue
+    amp.diamondapp.com
     api.bitclout.navy
     api.testwyre.com
     api.sendwyre.com
