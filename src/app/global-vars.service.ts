@@ -892,7 +892,11 @@ export class GlobalVarsService {
         alert("In app browser");
       }
     } else {
-      alert("Not IOS");
+      if (userAgent.includes('wv')) {
+        alert("Alert android");
+      } else {
+        alert("Not IOS");
+      }
     }
     this.launchIdentityFlow("login");
   }
