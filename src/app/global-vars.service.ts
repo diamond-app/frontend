@@ -877,6 +877,23 @@ export class GlobalVarsService {
   }
 
   launchLoginFlow() {
+    // @ts-ignore
+    const standalone = window.navigator.standalone,
+      userAgent = window.navigator.userAgent.toLowerCase(),
+      safari = /safari/.test(userAgent),
+      ios = /iphone|ipod|ipad/.test(userAgent);
+
+    if (ios) {
+      if (!standalone && safari) {
+        alert("Safari");
+      } else if (standalone && !safari) {
+        alert("Standalone");
+      } else if (!standalone && !safari) {
+        alert("In app browser");
+      }
+    } else {
+      alert("Not IOS");
+    }
     this.launchIdentityFlow("login");
   }
 
@@ -988,14 +1005,13 @@ export class GlobalVarsService {
         .subscribe(
           (response) => {
             // @ts-ignore
-            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false }).slice(
-              0,
-              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
-            ).map((profile) => {
-              return {
-                Profile: profile,
-              };
-            });
+            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false })
+              .slice(0, RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES)
+              .map((profile) => {
+                return {
+                  Profile: profile,
+                };
+              });
           },
           (err) => {
             console.error(err);
@@ -1197,7 +1213,7 @@ export class GlobalVarsService {
     if (!input) {
       return null;
     }
-    if (input[input.length - 1] === 's') {
+    if (input[input.length - 1] === "s") {
       return `${input}'`;
     } else {
       return `${input}'s`;
