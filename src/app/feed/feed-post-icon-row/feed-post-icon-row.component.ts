@@ -391,6 +391,12 @@ export class FeedPostIconRowComponent {
     this.globalVars._copyText(this._getPostUrl());
   }
 
+  tooltipDetectChanges() {
+    setTimeout(() => {
+      this.ref.detectChanges();
+    }, 50);
+  }
+
   onTimestampClickHandler(event) {
     if (this.inTutorial) {
       return;
@@ -523,7 +529,7 @@ export class FeedPostIconRowComponent {
     }
 
     // Don't trigger diamond purchases on tap on tablet
-    if (event && event.pointerType === "touch" && !fromDragEvent) {
+    if (event && event.pointerType === "touch" && !fromDragEvent && !this.inTutorial) {
       event.stopPropagation();
       return;
     }

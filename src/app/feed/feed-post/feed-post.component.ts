@@ -600,11 +600,17 @@ export class FeedPostComponent implements OnInit {
   }
 
   showUnlockableContent = false;
+  tooltipDetectChanges() {
+    setTimeout(() => {
+      this.ref.detectChanges();
+    }, 50);
+  }
   toggleShowUnlockableContent(): void {
     if (!this.decryptableNFTEntryResponses?.length) {
       return;
     }
     this.showUnlockableContent = !this.showUnlockableContent;
+    this.ref.detectChanges();
   }
   showmOfNNFTTooltip = false;
   toggleShowMOfNNFTTooltip(): void {

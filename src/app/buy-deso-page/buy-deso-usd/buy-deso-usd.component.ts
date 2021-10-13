@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { HttpClient } from "@angular/common/http";
 import { WyreService } from "../../../lib/services/wyre/wyre";
@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
 import currencyToSymbolMap from "currency-symbol-map/map";
-import { BsModalRef } from "ngx-bootstrap/modal";
+import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
 
 @Component({
   selector: "buy-deso-usd",
@@ -18,6 +18,7 @@ import { BsModalRef } from "ngx-bootstrap/modal";
   styleUrls: ["./buy-deso-usd.component.scss"],
 })
 export class BuyDeSoUSDComponent implements OnInit {
+  @Input() parentComponent: BuyDeSoComponent;
   wyreService: WyreService;
 
   amount = 99;
@@ -46,8 +47,7 @@ export class BuyDeSoUSDComponent implements OnInit {
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router,
-    public bsModalRef: BsModalRef
+    private router: Router
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
     this.supportedFiatCurrencies = this.wyreService.getSupportedFiatCurrencies();

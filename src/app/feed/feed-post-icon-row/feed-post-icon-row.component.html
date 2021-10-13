@@ -239,6 +239,8 @@
       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
       mat-raised-button
       #tooltip="matTooltip"
+      (mouseenter)="tooltipDetectChanges()"
+      (mouseleave)="tooltipDetectChanges()"
       [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
       (auxclick)="onTimestampClickHandler($event)"
     >

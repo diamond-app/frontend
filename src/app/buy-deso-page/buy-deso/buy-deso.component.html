@@ -13,7 +13,7 @@
             <tab-selector [buttonSelector]="false" [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
           </div>
           <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
-            <buy-deso-usd></buy-deso-usd>
+            <buy-deso-usd [parentComponent]="this"></buy-deso-usd>
           </div>
           <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_BTC || (!globalVars.showBuyWithUSD && !globalVars.showBuyWithETH)">
             <div *ngIf="buyWithBTCStep === 1">
