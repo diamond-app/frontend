@@ -37,18 +37,10 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loggedInUserProfile: ProfileEntryResponse;
   investInYourself: boolean = false;
 
-  tutorialStarted = false;
-
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
     this.globalVars.preventBackButton();
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
-    // Sometimes the tutorial status doesn't keep up with the navigation from the tutorial. In these cases, we just want to do a hard reload
-    setTimeout(() => {
-      if (!this.tutorialStarted) {
-        window.location.reload();
-      }
-    }, 3000);
     // If the user just completed their profile, we instruct them to buy their own coin.
     if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
@@ -86,7 +78,6 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   }
 
   initiateIntro() {
-    this.tutorialStarted = true;
     setTimeout(() => {
       if (!this.investInYourself) {
         this.investInOthersIntro();
