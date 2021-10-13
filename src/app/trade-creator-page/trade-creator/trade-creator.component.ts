@@ -101,7 +101,7 @@ export class TradeCreatorComponent implements OnInit {
         ]);
         window.location.reload();
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_SELF) {
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile?.Username]);
       }
     }
   }
@@ -137,7 +137,7 @@ export class TradeCreatorComponent implements OnInit {
     // get the username of the creator
     let creatorUsername = this.username;
     let tradeType = this.tradeType;
-    if (!this.creatorProfile || creatorUsername != this.creatorProfile.Username) {
+    if (!this.creatorProfile || creatorUsername != this.creatorProfile?.Username) {
       this._getCreatorProfile(creatorUsername);
     }
 
@@ -220,7 +220,7 @@ export class TradeCreatorComponent implements OnInit {
       this._getCreatorProfile(this.username).add(() => {
         this.investInYourself =
           this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
-          this.creatorCoinTrade.creatorProfile.Username;
+          this.creatorCoinTrade.creatorProfile?.Username;
         if (this.creatorCoinTrade.isBuyingCreatorCoin) {
           this.setUpBuyTutorial();
         } else {
@@ -274,7 +274,7 @@ export class TradeCreatorComponent implements OnInit {
     return this.backendApi.BuyOrSellCreatorCoin(
       this.appData.localNode,
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+      this.creatorCoinTrade.creatorProfile?.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
       this.creatorCoinTrade.operationType() /*OperationType*/,
       this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
       this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
@@ -320,7 +320,7 @@ export class TradeCreatorComponent implements OnInit {
           title,
           intro: `Let's invest in yourself by purchasing $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
-            .toFixed(2)} ${this.creatorCoinTrade.creatorProfile.Username} coins`,
+            .toFixed(2)} ${this.creatorCoinTrade.creatorProfile?.Username} coins`,
           element: document.querySelector("#tutorial-amount-purchasing"),
         },
         {
@@ -378,7 +378,7 @@ export class TradeCreatorComponent implements OnInit {
           intro: `Let's invest $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
             .toFixed(2)} in ${this.globalVars.addOwnershipApostrophe(
-            this.creatorCoinTrade.creatorProfile.Username
+            this.creatorCoinTrade.creatorProfile?.Username
           )} coin`,
           element: document.querySelector("#tutorial-amount-purchasing"),
         },
@@ -433,12 +433,12 @@ export class TradeCreatorComponent implements OnInit {
         },
         {
           title,
-          intro: `Let's sell a small amount of the $${this.creatorCoinTrade.creatorProfile.Username} coin you just bought.`,
+          intro: `Let's sell a small amount of the $${this.creatorCoinTrade.creatorProfile?.Username} coin you just bought.`,
           element: document.querySelector("#tutorial-amount-selling"),
         },
         {
           title,
-          intro: `<b>Click "Confirm Sell" to sell some of your $${this.creatorCoinTrade.creatorProfile.Username} coin .</b>`,
+          intro: `<b>Click "Confirm Sell" to sell some of your $${this.creatorCoinTrade.creatorProfile?.Username} coin .</b>`,
           element: document.querySelector("#tutorial-confirm-buy"),
         },
       ],
