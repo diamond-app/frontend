@@ -830,8 +830,12 @@ export class GlobalVarsService {
       event = "tutorial : " + event;
     }
 
+    if (!data) {
+      data = {};
+    }
+
     // Attach node name
-    data.node = environment.node.name
+    data.node = environment.node.name;
 
     // Attach referralCode
     const referralCode = this.referralCode();
