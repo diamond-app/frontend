@@ -10,6 +10,7 @@ import { TextFieldModule } from "@angular/cdk/text-field";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { BackendApiService } from "./backend-api.service";
+import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { GlobalVarsService } from "./global-vars.service";
 import { IdentityService } from "./identity.service";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
@@ -212,6 +213,7 @@ export function playerFactory() {
     CreatorsLeaderboardAppPageComponent,
     BuyDeSoPageComponent,
     BuyDesoModalComponent,
+    DirectToNativeBrowserModalComponent,
     WalletComponent,
     WalletWidgetComponent,
     MessagesPageComponent,

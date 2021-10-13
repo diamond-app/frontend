@@ -27,6 +27,8 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
+import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -61,7 +63,8 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
-    private locationStrategy: LocationStrategy
+    private locationStrategy: LocationStrategy,
+    private modalService: BsModalService
   ) {}
 
   static MAX_POST_LENGTH = 560;
@@ -876,7 +879,8 @@ export class GlobalVarsService {
       });
   }
 
-  launchLoginFlow() {
+  checkForInAppBrowser(): boolean {
+    let inAppBrowser = false;
     // @ts-ignore
     const standalone = window.navigator.standalone,
       userAgent = window.navigator.userAgent.toLowerCase(),
@@ -885,24 +889,43 @@ export class GlobalVarsService {
 
     if (ios) {
       if (!standalone && safari) {
-        alert("Safari");
+        // Safari
       } else if (standalone && !safari) {
-        alert("Standalone");
+        // Standalone
       } else if (!standalone && !safari) {
-        alert("In app browser");
+        // In-app browser
+        this.modalService.show(DirectToNativeBrowserModalComponent, {
+          class: "modal-dialog-centered buy-deso-modal",
+          initialState: { deviceType: "iOS" },
+        });
+        inAppBrowser = true;
       }
     } else {
-      if (userAgent.includes('wv')) {
-        alert("Alert android");
+      if (userAgent.includes("wv")) {
+        // Android in app browser
+        this.modalService.show(DirectToNativeBrowserModalComponent, {
+          class: "modal-dialog-centered buy-deso-modal",
+          initialState: { deviceType: "Android" },
+        });
+        inAppBrowser = true;
       } else {
-        alert("Not IOS");
+        // Android standalone browser
       }
     }
-    this.launchIdentityFlow("login");
+  }
+
+  launchLoginFlow() {
+    const inAppBrowser = this.checkForInAppBrowser();
+    if (!inAppBrowser) {
+      this.launchIdentityFlow("login");
+    }
   }
 
   launchSignupFlow() {
-    this.launchIdentityFlow("create");
+    const inAppBrowser = this.checkForInAppBrowser();
+    if (!inAppBrowser) {
+      this.launchIdentityFlow("create");
+    }
   }
 
   referralCode(): string {

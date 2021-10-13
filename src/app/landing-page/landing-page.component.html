@@ -10,7 +10,7 @@
           <i-feather *ngIf="!globalVars.isMobile()" name="lock-2" class="feather-small mr-5px position-relative" style="top: -2px"></i-feather>
           Login
         </a>
-        <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchLoginFlow()">
+        <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchSignupFlow()">
           Sign Up
         </a>
         <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
@@ -318,7 +318,7 @@
     </div>
     <div class="fs-18px">
       <a class="fc-landing-page mr-40px" (click)="globalVars.launchLoginFlow()">Login</a>
-      <a class="fc-landing-page mr-40px" (click)="globalVars.launchLoginFlow()">Sign up</a>
+      <a class="fc-landing-page mr-40px" (click)="globalVars.launchSignupFlow()">Sign up</a>
     </div>
   </div>
   <div class="d-flex justify-content-center align-items-center py-30px">
