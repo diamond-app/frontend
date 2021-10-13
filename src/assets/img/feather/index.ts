@@ -1,6 +1,6 @@
 export { BellNotification } from "./bellNotification";
 export { Bitclout } from "./bitclout";
-export { BitcloutCircle } from "./bitcloutCircle";
+export { CreatorCoin } from "./creatorCoin";
 export { Card } from "./card";
 export { Coin } from "./coin";
 export { Deso } from "./deso";

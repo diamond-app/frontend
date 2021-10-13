@@ -37,7 +37,6 @@
     [tabs]="feedTabs"
     [activeTab]="activeTab"
     [newTabs]="newTabs"
-    [deadTabs]="deadTabs"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
 
@@ -61,6 +60,10 @@
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
+  <div
+    *ngIf="isMobile && !(globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0)"
+    style="margin-top: 60px"
+  ></div>
 
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
     <nft-showcase></nft-showcase>
