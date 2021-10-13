@@ -829,6 +829,16 @@ export class GlobalVarsService {
     if (this.userInTutorial(this.loggedInUser)) {
       event = "tutorial : " + event;
     }
+
+    // Attach node name
+    data.node = environment.node.name
+
+    // Attach referralCode
+    const referralCode = this.referralCode();
+    if (referralCode) {
+      data.referralCode = referralCode;
+    }
+
     this.amplitude.logEvent(event, data);
   }
 
@@ -838,7 +848,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
-        referralCode: localStorage.getItem("referralCode"),
+        referralCode: this.referralCode(),
       })
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
@@ -851,7 +861,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/log-in", {
         accessLevelRequest: "4",
-        referralCode: localStorage.getItem("referralCode"),
+        referralCode: this.referralCode(),
       })
       .subscribe((res) => {
         this.logEvent(`account : ${event} : success`);
@@ -868,6 +878,10 @@ export class GlobalVarsService {
 
   launchSignupFlow() {
     this.launchIdentityFlow("create");
+  }
+
+  referralCode(): string {
+    return localStorage.getItem("referralCode");
   }
 
   flowRedirect(signedUp: boolean): void {

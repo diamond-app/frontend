@@ -70,7 +70,7 @@
             [iconName]="'share-2'"
           ></left-bar-button>
           <a
-            *ngIf="globalVars.supportEmail"
+            *ngIf="environment.supportEmail"
             class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
             style="height: 56px"
             [href]="getHelpMailToAttr()"
