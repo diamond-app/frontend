@@ -117,6 +117,7 @@ export class FeedPostIconRowComponent {
     }
     // If the drag box is at the alloted lower boundry or below, set confirm status to true
     this.diamondDragCancel = event.distance.y > 30;
+    this.ref.detectChanges();
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -134,6 +135,7 @@ export class FeedPostIconRowComponent {
       // If it was moved, the endDrag fn will do it.
       this.resetDragVariables();
     }
+    this.ref.detectChanges();
   }
 
   // End dragging procedure. Triggered when the dragged element is released
@@ -148,6 +150,7 @@ export class FeedPostIconRowComponent {
     this.resetDragVariables();
     // Move the drag box back to it's original position
     event.source._dragRef.reset();
+    this.ref.detectChanges();
   }
 
   resetDragVariables() {
@@ -157,6 +160,7 @@ export class FeedPostIconRowComponent {
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;
     this.diamondDragLeftExplainer = false;
+    this.ref.detectChanges();
   }
 
   _detectChanges() {
@@ -300,6 +304,8 @@ export class FeedPostIconRowComponent {
   }
 
   toggleLike(event: any) {
+    this.animateLike = !this.animateLike;
+
     if (this.inTutorial) {
       return;
     }
@@ -458,6 +464,7 @@ export class FeedPostIconRowComponent {
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
           this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
+          this.ref.detectChanges();
         },
         (err) => {
           if (err.status === 0) {
@@ -538,6 +545,7 @@ export class FeedPostIconRowComponent {
         }, idx * this.diamondAnimationDelay);
       }
     }
+    this.ref.detectChanges();
   }
 
   removeDiamondSelection() {
@@ -545,6 +553,7 @@ export class FeedPostIconRowComponent {
       clearTimeout(this.diamondTimeouts[idx]);
       this.diamondsVisible[idx] = false;
     }
+    this.ref.detectChanges();
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
@@ -613,5 +622,10 @@ export class FeedPostIconRowComponent {
   getPopoverContainerClass() {
     const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
     return "diamond-popover-container " + mobileClass;
+  }
+
+  handleRepostClick(event) {
+    event.stopPropagation();
+    this.ref.detectChanges();
   }
 }

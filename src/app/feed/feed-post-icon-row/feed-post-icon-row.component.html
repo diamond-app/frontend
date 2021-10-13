@@ -16,7 +16,7 @@
   </div>
 
   <div
-    (click)="$event.stopPropagation()"
+    (click)="handleRepostClick($event)"
     class="btn-group cursor-pointer d-flex align-items-center"
     dropdown
     #dropdown="bs-dropdown"
@@ -95,7 +95,6 @@
         'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
-      (click)="animateLike = !animateLike"
       name="heart"
       class="feed-post-icon-row__icon"
     ></i-feather>
