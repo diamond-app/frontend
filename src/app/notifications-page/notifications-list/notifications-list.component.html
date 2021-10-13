@@ -33,7 +33,7 @@
           [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
         >
           <div *ngIf="item.icon" class="notifications__icon">
-            <i-feather name="{{item.icon}}" class="feather-xsmall {{item.iconClass}}"></i-feather>
+            <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
           </div>
         </div>
         <div class="notifications__action" [innerHtml]="item.action"></div>
