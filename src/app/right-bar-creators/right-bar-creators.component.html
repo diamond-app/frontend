@@ -65,18 +65,6 @@
     </div>
   </div>
 
-  <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0 && !inTutorial" class="bg-light mb-20px fs-13px">
-    <div class="jumio-status">
-      <div class="cursor-pointer">
-        <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold">
-          <i-feather name="share-2"></i-feather>
-          <span>You have a referral link</span>
-          <i-feather name="chevron-right" class="right-20px"></i-feather>
-        </a>
-      </div>
-    </div>
-  </div>
-
   <!-- Creator Coin Info -->
   <wallet-widget *ngIf="!inTutorial"></wallet-widget>
 

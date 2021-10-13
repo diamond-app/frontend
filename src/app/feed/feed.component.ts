@@ -61,6 +61,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   pullToRefreshHandler;
 
+  referralExpiration = new Date("2021-10-19T22:00:00.000Z");
+
   // This is [Following, Global, Market] if the user is following anybody. Otherwise,
   // it's [Global, Following, Market].
   //
