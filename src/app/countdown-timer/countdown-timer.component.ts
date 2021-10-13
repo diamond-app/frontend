@@ -13,8 +13,10 @@ export class CountdownTimerComponent implements OnInit {
   @Input() borderRadiusSize: number = 0;
   @Input() fontWeight: number = 400;
   @Input() timerText: string = "";
+  @Input() confetti: boolean = true;
   @Input() justifyLeft: boolean = false;
   @Input() justifyAround: boolean = false;
+  @Input() padding: boolean = true;
 
   static milliPerSecond: number = 1000;
   static secondsPerMinute: number = 60;
@@ -99,7 +101,7 @@ export class CountdownTimerComponent implements OnInit {
 
   celebrateIfTimeEnd(now: number): void {
     const diff = (now - this.timerEnd) / 1000;
-    if (diff > 0 && diff < 3) {
+    if (diff > 0 && diff < 3 && this.confetti) {
       this.globalVars.celebrate();
     }
   }
