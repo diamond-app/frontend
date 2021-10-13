@@ -14,6 +14,7 @@
         [parentPost]="post.parentPost"
         [contentShouldLinkToThread]="true"
         [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+        [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
       ></feed-post>
     </div>
   </div>

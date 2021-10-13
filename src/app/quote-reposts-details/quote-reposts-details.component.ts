@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class QuoteRepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
+  @Input() bsModalRef;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -19,7 +20,7 @@ export class QuoteRepostsDetailsComponent implements OnInit {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {

@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class RepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
+  @Input() bsModalRef;
   diamonds = [];
   loading = false;
   errorLoading = false;
