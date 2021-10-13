@@ -27,6 +27,8 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
+import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -61,7 +63,8 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
-    private locationStrategy: LocationStrategy
+    private locationStrategy: LocationStrategy,
+    private modalService: BsModalService
   ) {}
 
   static MAX_POST_LENGTH = 560;
@@ -876,12 +879,58 @@ export class GlobalVarsService {
       });
   }
 
+  checkForInAppBrowser(): boolean {
+    if (!this.isMobile()) {
+      return false;
+    } else {
+      let inAppBrowser = false;
+      // @ts-ignore
+      const standalone = window.navigator.standalone,
+        userAgent = window.navigator.userAgent.toLowerCase(),
+        safari = /safari/.test(userAgent),
+        ios = /iphone|ipod|ipad/.test(userAgent);
+
+      if (ios) {
+        if (!standalone && safari) {
+          // Safari
+        } else if (standalone && !safari) {
+          // Standalone
+        } else if (!standalone && !safari) {
+          // In-app browser
+          this.modalService.show(DirectToNativeBrowserModalComponent, {
+            class: "modal-dialog-centered buy-deso-modal",
+            initialState: { deviceType: "iOS" },
+          });
+          inAppBrowser = true;
+        }
+      } else {
+        if (userAgent.includes("wv")) {
+          // Android in app browser
+          this.modalService.show(DirectToNativeBrowserModalComponent, {
+            class: "modal-dialog-centered buy-deso-modal",
+            initialState: { deviceType: "Android" },
+          });
+          inAppBrowser = true;
+        } else {
+          // Android standalone browser
+        }
+      }
+      return inAppBrowser;
+    }
+  }
+
   launchLoginFlow() {
-    this.launchIdentityFlow("login");
+    const inAppBrowser = this.checkForInAppBrowser();
+    if (!inAppBrowser) {
+      this.launchIdentityFlow("login");
+    }
   }
 
   launchSignupFlow() {
-    this.launchIdentityFlow("create");
+    const inAppBrowser = this.checkForInAppBrowser();
+    if (!inAppBrowser) {
+      this.launchIdentityFlow("create");
+    }
   }
 
   referralCode(): string {
@@ -988,14 +1037,13 @@ export class GlobalVarsService {
         .subscribe(
           (response) => {
             // @ts-ignore
-            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false }).slice(
-              0,
-              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
-            ).map((profile) => {
-              return {
-                Profile: profile,
-              };
-            });
+            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false })
+              .slice(0, RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES)
+              .map((profile) => {
+                return {
+                  Profile: profile,
+                };
+              });
           },
           (err) => {
             console.error(err);
@@ -1197,7 +1245,7 @@ export class GlobalVarsService {
     if (!input) {
       return null;
     }
-    if (input[input.length - 1] === 's') {
+    if (input[input.length - 1] === "s") {
       return `${input}'`;
     } else {
       return `${input}'s`;

@@ -5139,6 +5139,20 @@ sell-nft-modal {
   background-color: var(--hover);
 }
 
+.direct-to-native-browser-container {
+  color: var(--text);
+  font-size: 20px;
+  padding: 16px;
+  height: auto;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 500;
+  background: var(--tile-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
 .tutorial-header-hide {
   .introjs-skipbutton {
     display: none;
