@@ -215,6 +215,7 @@ export class FeedPostComponent implements OnInit {
             this.nftMinBidAmountNanos = this.nftEntryResponses[0].MinBidAmountNanos;
           }
         }
+        this.ref.detectChanges();
       });
   }
 

@@ -478,7 +478,6 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
-    this.ref.detectChanges();
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
