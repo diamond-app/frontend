@@ -97,9 +97,10 @@
           <jumio-status [message]="'Get'"></jumio-status>
         </div>
         <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
-          <div>
-            <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>
-            <span>1≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
+          <div class="d-flex align-items-center">
+<!--            <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>-->
+            <img src="assets/diamond/desologo.svg" width="14px" height="14px"/>
+            <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
           </div>
           <a href="/buy-bitclout" class="fc-blue fs-15px font-weight-bold">Buy</a>
         </div>
