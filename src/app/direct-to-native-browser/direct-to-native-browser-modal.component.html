@@ -2,7 +2,9 @@
   [ngStyle]="{ width: deviceType === 'iOS' ? '250px' : '225px' }"
   class="d-flex justify-content-between flex-column align-items-center direct-to-native-browser-container"
 >
-  <i-feather name="arrow-up" class="feather-large fs-0px"></i-feather>
+  <div class="w-100 d-flex justify-content-end mb-5px">
+    <i-feather name="arrow-up" class="feather-large fs-0px"></i-feather>
+  </div>
   <div *ngIf="deviceType === 'iOS'" class="d-flex flex-column">
     <div class="d-flex align-items-center">1. Tap elipses <i-feather name="more-horizontal" class="ml-5px feather-large fs-0px"></i-feather></div>
     <div>2. Select <b>Open in Safari</b></div>

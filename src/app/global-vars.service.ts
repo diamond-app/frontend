@@ -880,39 +880,43 @@ export class GlobalVarsService {
   }
 
   checkForInAppBrowser(): boolean {
-    let inAppBrowser = false;
-    // @ts-ignore
-    const standalone = window.navigator.standalone,
-      userAgent = window.navigator.userAgent.toLowerCase(),
-      safari = /safari/.test(userAgent),
-      ios = /iphone|ipod|ipad/.test(userAgent);
-
-    if (ios) {
-      if (!standalone && safari) {
-        // Safari
-      } else if (standalone && !safari) {
-        // Standalone
-      } else if (!standalone && !safari) {
-        // In-app browser
-        this.modalService.show(DirectToNativeBrowserModalComponent, {
-          class: "modal-dialog-centered buy-deso-modal",
-          initialState: { deviceType: "iOS" },
-        });
-        inAppBrowser = true;
-      }
+    if (!this.isMobile()) {
+      return false;
     } else {
-      if (userAgent.includes("wv")) {
-        // Android in app browser
-        this.modalService.show(DirectToNativeBrowserModalComponent, {
-          class: "modal-dialog-centered buy-deso-modal",
-          initialState: { deviceType: "Android" },
-        });
-        inAppBrowser = true;
+      let inAppBrowser = false;
+      // @ts-ignore
+      const standalone = window.navigator.standalone,
+        userAgent = window.navigator.userAgent.toLowerCase(),
+        safari = /safari/.test(userAgent),
+        ios = /iphone|ipod|ipad/.test(userAgent);
+
+      if (ios) {
+        if (!standalone && safari) {
+          // Safari
+        } else if (standalone && !safari) {
+          // Standalone
+        } else if (!standalone && !safari) {
+          // In-app browser
+          this.modalService.show(DirectToNativeBrowserModalComponent, {
+            class: "modal-dialog-centered buy-deso-modal",
+            initialState: { deviceType: "iOS" },
+          });
+          inAppBrowser = true;
+        }
       } else {
-        // Android standalone browser
+        if (userAgent.includes("wv")) {
+          // Android in app browser
+          this.modalService.show(DirectToNativeBrowserModalComponent, {
+            class: "modal-dialog-centered buy-deso-modal",
+            initialState: { deviceType: "Android" },
+          });
+          inAppBrowser = true;
+        } else {
+          // Android standalone browser
+        }
       }
+      return inAppBrowser;
     }
-    return inAppBrowser;
   }
 
   launchLoginFlow() {
