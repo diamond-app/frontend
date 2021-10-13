@@ -61,7 +61,7 @@ import {
 import {
   BellNotification,
   Bitclout,
-  BitcloutCircle,
+  CreatorCoin,
   Card,
   Coin,
   Deso,
@@ -90,7 +90,7 @@ const icons = {
   Bell,
   BellNotification,
   Bitclout,
-  BitcloutCircle,
+  BitcloutCircle: CreatorCoin,
   Card,
   Check,
   CheckCircle,

@@ -26,7 +26,7 @@
       class="background-color-white fs-16px br-10px p-10px border my-20px fc-blue feed-referral-header d-flex align-items-center"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have a {{ globalVars.getFreeDESOMessage() }} referral link</span>
+      <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in</span>
       <countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer>
     </div>
   </a>
@@ -37,7 +37,6 @@
     [tabs]="feedTabs"
     [activeTab]="activeTab"
     [newTabs]="newTabs"
-    [deadTabs]="deadTabs"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
 
@@ -50,8 +49,7 @@
       class="background-color-white fs-16px br-10px p-10px border mt-16px mb-10px fc-blue feed-referral-header d-flex align-items-center"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have a {{ globalVars.getFreeDESOMessage() }} referral link</span>
-      <countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer>
+      <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in<br><countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer></span>
     </div>
   </a>
 
@@ -61,6 +59,10 @@
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
+  <div
+    *ngIf="isMobile && !(globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0)"
+    style="margin-top: 60px"
+  ></div>
 
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
     <nft-showcase></nft-showcase>
