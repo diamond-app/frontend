@@ -927,6 +927,11 @@ export class GlobalVarsService {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
       this.launchIdentityFlow("create");
+    } else {
+      this.modalService.show(DirectToNativeBrowserModalComponent, {
+        class: "modal-dialog-centered buy-deso-modal",
+        initialState: { deviceType: inAppBrowser },
+      });
     }
   }
 
@@ -969,10 +974,12 @@ export class GlobalVarsService {
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
     route.queryParams.subscribe((queryParams) => {
-      const inAppBrowser = this.checkForInAppBrowser();
-      if (queryParams.r && !inAppBrowser) {
+      if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
-        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        const inAppBrowser = this.checkForInAppBrowser();
+        if (!inAppBrowser) {
+          this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        }
         this.getReferralUSDCents();
       }
     });
