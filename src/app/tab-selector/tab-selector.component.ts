@@ -11,11 +11,13 @@ export class TabSelectorComponent {
   @Input() activeTab: string;
   @Input() newTabs: string[] = [];
   @Input() buttonSelector: boolean = true;
+  @Input() deadTabs: Set<string> = new Set(); // A set of tabs that can't be clicked.
 
   constructor() {}
 
   _tabClicked(tab: string) {
     this.tabClick.emit(tab);
+    if (this.deadTabs.has(tab)) {return} 
     this.activeTab = tab;
   }
 }

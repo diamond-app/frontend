@@ -44,6 +44,9 @@ export class FeedPostComponent implements OnInit {
     } else {
       this.postContent = post;
     }
+    setTimeout(()=>{
+      this.ref.detectChanges();
+    }, 0)
   }
 
   @Input() set blocked(value: boolean) {

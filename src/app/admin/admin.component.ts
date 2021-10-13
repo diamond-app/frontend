@@ -329,7 +329,7 @@ export class AdminComponent implements OnInit {
       ).subscribe(
         (res) => {
           this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
-          for(let ii = 0; ii < res.HotFeedPage.length; ii++) {
+          for(let ii = 0; ii < res.HotFeedPage?.length; ii++) {
             this.hotFeedPostHashes = this.hotFeedPostHashes.concat(res.HotFeedPage[ii].PostHashHex)
           }
         },

@@ -32,6 +32,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   followChangeSubscription: Subscription;
   FeedComponent = FeedComponent;
   switchingTabs = false;
+  deadTabs = new Set([this.FeedComponent.SHOWCASE_TAB])
 
   nextNFTShowcaseTime;
 
