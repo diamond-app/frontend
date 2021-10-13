@@ -184,8 +184,8 @@
             [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
             class="reaction-icon transformable"
             (click)="onDiamondSelected($event, diamondIndex)"
-            (mouseover)="diamondHovered = diamondIndex"
-            (mouseleave)="diamondHovered = -1"
+            (mouseover)="setDiamondHovered(diamondIndex)"
+            (mouseleave)="setDiamondHovered(-1)"
           >
             <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
             <i-feather
@@ -204,8 +204,8 @@
           <div
             class="reaction-icon show"
             (click)="toggleExplainer($event)"
-            (mouseover)="collapseDiamondInfo = false"
-            (mouseleave)="collapseDiamondInfo = true"
+            (mouseover)="setCollapseDiamondInfo(false)"
+            (mouseleave)="setCollapseDiamondInfo(true)"
           >
             <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
           </div>

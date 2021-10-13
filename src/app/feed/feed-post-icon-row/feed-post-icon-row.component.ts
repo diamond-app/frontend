@@ -90,6 +90,7 @@ export class FeedPostIconRowComponent {
     this.diamondDragStarted = new Date();
     this.diamondDragging = true;
     this.addDiamondSelection({ type: "initiateDrag" });
+    this.ref.detectChanges();
   }
 
   // Calculate where the drag box has been dragged to, make updates accordingly
@@ -163,10 +164,6 @@ export class FeedPostIconRowComponent {
     this.ref.detectChanges();
   }
 
-  _detectChanges() {
-    this.ref.detectChanges();
-  }
-
   _preventNonLoggedInUserActions(action: string) {
     this.globalVars.logEvent(`alert : ${action} : account`);
 
@@ -216,7 +213,7 @@ export class FeedPostIconRowComponent {
     }
 
     this.sendingRepostRequest = true;
-    this._detectChanges();
+    this.ref.detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -242,7 +239,7 @@ export class FeedPostIconRowComponent {
           this.postContent.RepostCount += 1;
           this.postContent.PostEntryReaderState.RepostedByReader = true;
           this.sendingRepostRequest = false;
-          this._detectChanges();
+          this.ref.detectChanges();
         },
         (err) => {
           console.error(err);
@@ -250,7 +247,7 @@ export class FeedPostIconRowComponent {
           const parsedError = this.backendApi.parsePostError(err);
           this.globalVars.logEvent("post : repost : error", { parsedError });
           this.globalVars._alertError(parsedError);
-          this._detectChanges();
+          this.ref.detectChanges();
         }
       );
   }
@@ -268,7 +265,7 @@ export class FeedPostIconRowComponent {
     }
     this.sendingRepostRequest = true;
 
-    this._detectChanges();
+    this.ref.detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -290,7 +287,7 @@ export class FeedPostIconRowComponent {
           this.postContent.RepostCount--;
           this.postContent.PostEntryReaderState.RepostedByReader = false;
           this.sendingRepostRequest = false;
-          this._detectChanges();
+          this.ref.detectChanges();
         },
         (err) => {
           console.error(err);
@@ -298,7 +295,7 @@ export class FeedPostIconRowComponent {
           const parsedError = this.backendApi.parsePostError(err);
           this.globalVars.logEvent("post : unrepost : error", { parsedError });
           this.globalVars._alertError(parsedError);
-          this._detectChanges();
+          this.ref.detectChanges();
         }
       );
   }
@@ -431,6 +428,7 @@ export class FeedPostIconRowComponent {
   toggleExplainer(event) {
     event.stopPropagation();
     this.collapseDiamondInfo = !this.collapseDiamondInfo;
+    this.ref.detectChanges();
   }
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
@@ -480,11 +478,13 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
+    this.ref.detectChanges();
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    this.ref.detectChanges();
   }
 
   getPost(postHashHex) {
@@ -509,6 +509,7 @@ export class FeedPostIconRowComponent {
     if (popoverElement && e.target !== popoverElement && !popoverElement.contains(e.target as any)) {
       e.stopPropagation();
     }
+    this.ref.detectChanges();
   };
 
   async sendOneDiamond(event: any, fromDragEvent: boolean) {
@@ -542,9 +543,19 @@ export class FeedPostIconRowComponent {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
+          this.ref.detectChanges();
         }, idx * this.diamondAnimationDelay);
       }
     }
+  }
+
+  setDiamondHovered(diamondIndex) {
+    this.diamondHovered = diamondIndex;
+    this.ref.detectChanges();
+  }
+
+  setCollapseDiamondInfo(collapseVal) {
+    this.collapseDiamondInfo = collapseVal;
     this.ref.detectChanges();
   }
 
