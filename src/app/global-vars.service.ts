@@ -912,6 +912,7 @@ export class GlobalVarsService {
         // Android standalone browser
       }
     }
+    return inAppBrowser;
   }
 
   launchLoginFlow() {
