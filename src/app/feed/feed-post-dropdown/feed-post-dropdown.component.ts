@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import RouteNamesService from "src/app/route-names.service";
@@ -29,6 +30,8 @@ export class FeedPostDropdownComponent {
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
 
+  @ViewChild(BsDropdownDirective) dropdown:BsDropdownDirective;
+
   showSharePost: boolean = false;
 
   constructor(
@@ -37,7 +40,8 @@ export class FeedPostDropdownComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private modalService: BsModalService,
-    private platformLocation: PlatformLocation
+    private platformLocation: PlatformLocation,
+    public ref: ChangeDetectorRef,
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
@@ -49,6 +53,11 @@ export class FeedPostDropdownComponent {
     window.open(
       `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
     );
+  }
+
+  dropdownClicked(event) {
+    this.ref.detectChanges();
+    event.stopPropagation();
   }
 
   dropNFT() {
@@ -193,6 +202,8 @@ export class FeedPostDropdownComponent {
 
   _pinPostToGlobalFeed(event: any) {
     this.togglePostPin.emit(event);
+    this.post.IsPinned = !this.post.IsPinned;
+    this.dropdown.hide();
   }
 
   copyPostLinkToClipboard(event) {
@@ -202,6 +213,8 @@ export class FeedPostDropdownComponent {
     event.stopPropagation();
 
     this.globalVars._copyText(this._getPostUrl());
+
+    this.dropdown.hide();
   }
 
   sharePostUrl(event): void {
