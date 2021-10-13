@@ -72,7 +72,7 @@ export class SimpleProfileCardComponent implements OnInit {
       tutorialBuy: this.showTutorialBuy,
     };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
+      class: "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal",
       initialState,
     });
   }

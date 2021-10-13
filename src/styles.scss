@@ -3216,6 +3216,12 @@ wallet-tutorial-page {
   max-width: 630px;
 }
 
+.buy-deso-tutorial-modal {
+  .modal-content {
+    margin-bottom: 200px;
+  }
+}
+
 transfer-deso {
   .search-bar__icon {
     border-radius: 16px 0px 0px 16px;
@@ -5139,6 +5145,11 @@ sell-nft-modal {
   .introjs-skipbutton {
     display: none;
   }
+}
+
+.tutorial-tooltip-right {
+  left: auto !important;
+  right: 0px !important;
 }
 
 .tutorial-tooltip {

@@ -37,10 +37,18 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loggedInUserProfile: ProfileEntryResponse;
   investInYourself: boolean = false;
 
+  tutorialStarted = false;
+
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
     this.globalVars.preventBackButton();
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
+    // Sometimes the tutorial status doesn't keep up with the navigation from the tutorial. In these cases, we just want to do a hard reload
+    setTimeout(() => {
+      if (!this.tutorialStarted) {
+        window.location.reload();
+      }
+    }, 3000);
     // If the user just completed their profile, we instruct them to buy their own coin.
     if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
@@ -78,6 +86,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   }
 
   initiateIntro() {
+    this.tutorialStarted = true;
     setTimeout(() => {
       if (!this.investInYourself) {
         this.investInOthersIntro();
@@ -139,7 +148,10 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   investInYourselfIntro() {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    if (this.globalVars.isMobile()) {
+      tooltipClass = tooltipClass + " tutorial-tooltip-right";
+    };
     const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
     this.introJS.setOptions({
       tooltipClass,
@@ -166,6 +178,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       }
     });
     this.introJS.start();
+    window.scrollTo(0, 0);
   }
 
   exitTutorial() {
