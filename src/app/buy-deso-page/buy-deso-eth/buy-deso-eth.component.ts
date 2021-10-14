@@ -168,6 +168,7 @@ export class BuyDeSoEthComponent implements OnInit {
       if (res.isConfirmed) {
         // Execute the buy
         this.parentComponent.waitingOnTxnConfirmation = true;
+        this.parentComponent.showCloseButton.emit(false);
         this.backendApi
           .ExchangeETH(
             this.globalVars.localNode,

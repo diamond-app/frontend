@@ -50,6 +50,15 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     });
   }
 
+  showElipsisDropdownMenu() {
+    return (
+      this.globalVars.loggedInUser &&
+      (!this.profileBelongsToLoggedInUser() ||
+        ((!this.profile.IsFeaturedTutorialUpAndComingCreator || !this.profile.IsFeaturedTutorialWellKnownCreator) &&
+          this.globalVars.showSuperAdminTools()))
+    );
+  }
+
   profileBelongsToLoggedInUser(): boolean {
     return (
       this.globalVars.loggedInUser?.ProfileEntryResponse &&

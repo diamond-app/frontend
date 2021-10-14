@@ -88,6 +88,7 @@ export class RightBarCreatorsComponent implements OnInit {
   openBuyCloutModal() {
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
     });
   }
 }
