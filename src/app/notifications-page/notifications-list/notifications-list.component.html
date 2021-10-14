@@ -25,7 +25,7 @@
     class="notifications__list-item"
     [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
   >
-    <div class="p-10px cursor-pointer" *ngIf="item.action && (!item.post || !expandNotifications)" [routerLink]="item.link">
+    <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
       <div class="d-flex flex-row align-items-center">
         <div
           class="notifications__avatar"
@@ -39,15 +39,6 @@
         <div class="notifications__action" [innerHtml]="item.action"></div>
       </div>
     </div>
-<!--    <div class="p-10px fc-15px" *ngIf="item.comment">-->
-<!--      {{ item.comment }}-->
-<!--    </div>-->
-<!--    <div class="cursor-pointer" *ngIf="item.post">-->
-<!--      <div *ngFor="let comment of item.post.Comments">-->
-<!--        <div class="px-15px pb-15px post-thread__subcomment-container">-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
     <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
       <feed-post
         [post]="item.post"
