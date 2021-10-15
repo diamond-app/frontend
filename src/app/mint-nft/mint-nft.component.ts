@@ -143,7 +143,6 @@ export class MintNftComponent {
             enableHtml: true,
             positionClass: "toast-bottom-center",
           });
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex], { queryParamsHandling: "merge" });
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -154,6 +153,7 @@ export class MintNftComponent {
 
   _mintNFTSuccess(comp: MintNftComponent) {
     comp.minting = false;
+    this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex], { queryParamsHandling: "merge" });
   }
 
   _mintNFTFailure(comp: MintNftComponent) {
