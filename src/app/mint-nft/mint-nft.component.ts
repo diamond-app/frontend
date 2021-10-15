@@ -136,14 +136,7 @@ export class MintNftComponent {
       )
       .subscribe(
         (res) => {
-          const link = `/${this.globalVars.RouteNames.NFT}/${this.postHashHex}`;
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
-          this.toastr.show(`NFT Created<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
-            toastClass: "info-toast",
-            enableHtml: true,
-            positionClass: "toast-bottom-center",
-          });
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex], { queryParamsHandling: "merge" });
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -154,6 +147,13 @@ export class MintNftComponent {
 
   _mintNFTSuccess(comp: MintNftComponent) {
     comp.minting = false;
+    const link = `/${comp.globalVars.RouteNames.NFT}/${comp.postHashHex}`;
+    comp.toastr.show(`NFT Created<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
+      toastClass: "info-toast",
+      enableHtml: true,
+      positionClass: "toast-bottom-center",
+    });
+    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.postHashHex], { queryParamsHandling: "merge" });
   }
 
   _mintNFTFailure(comp: MintNftComponent) {
