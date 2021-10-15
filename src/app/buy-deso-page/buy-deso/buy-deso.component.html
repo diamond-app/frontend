@@ -23,7 +23,7 @@
                   Step 1/2
                   <i
                     (click)="tooltip1.toggle()"
-                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    class="fas fa-info-circle fc-muted fs-15px global__tooltip-icon"
                     matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                     [matTooltip]="stepOneTooltip()"
                     #tooltip1="matTooltip"
@@ -34,7 +34,7 @@
                     Send Bitcoin to this address
                     <i
                       (click)="tooltip2.toggle()"
-                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                      class="fas fa-info-circle fc-muted fs-15px global__tooltip-icon"
                       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                       [matTooltip]="depositBitcoinTooltip()"
                       #tooltip2="matTooltip"
@@ -109,7 +109,7 @@
                     {{ ((buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
                     <i
                       (click)="tooltip3.toggle()"
-                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2"
+                      class="fas fa-info-circle fc-muted fs-15px global__tooltip-icon ml-2"
                       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                       [matTooltip]="minDepositTooltip()"
                       #tooltip3="matTooltip"
@@ -214,7 +214,7 @@
                   </span>
                   <i
                     (click)="tooltip4.toggle()"
-                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    class="fas fa-info-circle fc-muted fs-15px global__tooltip-icon"
                     matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                     [matTooltip]="bitcoinNetworkFeeTooltip()"
                     #tooltip4="matTooltip"
