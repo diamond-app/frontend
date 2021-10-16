@@ -124,6 +124,8 @@ export class BackendRoutes {
   static RoutePathAdminGetHotFeedAlgorithm = "/api/v0/admin/get-hot-feed-algorithm";
   static RoutePathAdminUpdateHotFeedAlgorithm = "/api/v0/admin/update-hot-feed-algorithm";
   static RoutePathAdminUpdateHotFeedPostMultiplier = "/api/v0/admin/update-hot-feed-post-multiplier";
+  static RoutePathAdminUpdateHotFeedUserMultiplier = "/api/v0/admin/update-hot-feed-user-multiplier";
+  static RoutePathAdminGetHotFeedUserMultiplier = "/api/v0/admin/get-hot-feed-user-multiplier";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -2033,6 +2035,32 @@ export class BackendApiService {
       AdminPublicKey,
       PostHashHex,
       Multiplier,
+    });
+  }
+
+  AdminUpdateHotFeedUserMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string,
+    InteractionMultiplier: number,
+    PostsMultiplier: number,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedUserMultiplier, AdminPublicKey, {
+      AdminPublicKey,
+      Username,
+      InteractionMultiplier,
+      PostsMultiplier,
+    });
+  }
+
+  AdminGetHotFeedUserMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedUserMultiplier, AdminPublicKey, {
+      AdminPublicKey,
+      Username,
     });
   }
 

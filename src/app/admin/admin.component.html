@@ -113,7 +113,7 @@
       Update the hot feed algorithm by updating the values below.
     </div>
 
-    <!-- Update Global Params (Super Admin Only) -->
+    <!-- Update HotFeed Interaction Cap (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
       Update Interaction Cap (max $DESO locked)
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
@@ -129,7 +129,6 @@
           (click)="updateHotFeedInteractionCap()"
           class="btn btn-outline-primary fs-15px ml-5px"
           style="width: fit-content"
-          [ngStyle]="{ disabled: updatingGlobalParams }"
         >
           Update
         </button>
@@ -142,7 +141,7 @@
       </div>
     </div>
 
-    <!-- Update Global Params (Super Admin Only) -->
+    <!-- Update HotFeed Time Decay Blocks (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Update Time Decay Blocks
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
@@ -158,7 +157,6 @@
           (click)="updateHotFeedTimeDecayBlocks()"
           class="btn btn-outline-primary fs-15px ml-5px"
           style="width: fit-content"
-          [ngStyle]="{ disabled: updatingGlobalParams }"
         >
           Update
         </button>
@@ -169,6 +167,100 @@
           Updating...
         </button>
       </div>
+    </div>
+
+    <!-- Update HotFeed User Posts Multiplier (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update User Posts Multiplier <span class="font-weight-normal">(boost all of a user's posts)</span>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForPostsMultiplier"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <input
+          [(ngModel)]="hotFeedUserPostsMultiplier"
+          type="number"
+          class="form-control fs-15px lh-15px w-100 ml-5px"
+          placeholder="Posts Multiplier"
+        />
+        <button
+          *ngIf="!updatingHotFeedUserPostsMultiplier"
+          (click)="updateHotFeedUserPostsMultiplier()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedUserPostsMultiplier"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed User Interaction Multiplier (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update User Interaction Multiplier <span class="font-weight-normal">(boost all of a user's interactions)</span>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForInteractionMultiplier"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <input
+          [(ngModel)]="hotFeedUserInteractionMultiplier"
+          type="number"
+          class="form-control fs-15px lh-15px w-100 ml-5px"
+          placeholder="Interaction Multiplier"
+        />
+        <button
+          *ngIf="!updatingHotFeedUserInteractionMultiplier"
+          (click)="updateHotFeedUserInteractionMultiplier()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedUserInteractionMultiplier"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Look Up HotFeed User Multipliers (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      <i class="fa fa-search"></i>&nbsp;
+      Look Up User Interaction Multipliers
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForSearch"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <button
+          *ngIf="!searchingHotFeedUserMultipliers"
+          (click)="searchForHotFeedUserMultipliers()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Search
+        </button>
+        <button
+          *ngIf="searchingHotFeedUserMultipliers"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Searching...
+        </button>
+      </div>
+    </div>
+    <div *ngIf="hotFeedUserSearchResults" class="px-15px pb-15px" style="white-space: pre">
+      {{ hotFeedUserSearchResults }}
     </div>
 
     <div class="
