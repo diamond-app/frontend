@@ -20,26 +20,26 @@
           {{ activeTab }}
           <i-feather name="chevron-down" class="feather-small"></i-feather>
         </button>
-        <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
+        <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu background-color-white" *dropdownMenu>
           <div>
             <a
-              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="onActiveTabChange(CreatorProfileNftsComponent.FOR_SALE)"
+              class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_GALLERY)"
             >
-              For Sale
+              Gallery
             </a>
             <a
               *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
-              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_BIDS)"
             >
               My Bids
             </a>
             <a
-              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_GALLERY)"
+              class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.FOR_SALE)"
             >
-              Gallery
+              For Sale
             </a>
           </div>
         </div>
