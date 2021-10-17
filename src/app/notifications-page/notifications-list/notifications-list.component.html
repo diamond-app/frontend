@@ -4,19 +4,20 @@
   class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
 >
   <span>Notifications</span>
-  <div class="d-flex">
-    <i-feather name="more-horizontal" class="feather-medium mr-10px cursor-pointer" (click)="showFilters = !showFilters"></i-feather>
-    <i-feather
-      name="credit-card"
-      class="cursor-pointer position-relative fs-0px mr-16px"
-      style="transform: 'rotate(180deg)'"
-      (click)="expandNotifications = !expandNotifications"
-      [ngClass]="{ 'fc-blue': expandNotifications }"
-    ></i-feather>
-  </div>
+  <i-feather
+    name="more-horizontal"
+    class="feather-medium mr-10px cursor-pointer fs-0px"
+    (click)="showFilters = !showFilters"
+  ></i-feather>
 </div>
 <div *ngIf="showFilters" class="position-relative" style="z-index: 2">
-  <notifications-filter-menu [filteredOutSet]="filteredOutSet" (filterUpdated)="updateFilter($event)"></notifications-filter-menu>
+  <notifications-filter-menu
+    [filteredOutSet]="filteredOutSet"
+    [expandNotifications]="expandNotifications"
+    (filterUpdated)="updateFilter($event)"
+    (compactViewUpdated)="updateCompactView()"
+    (closeFilter)="closeFilterMenu()"
+  ></notifications-filter-menu>
 </div>
 <div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>
@@ -34,7 +35,7 @@
       class="notifications__list-item"
       [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
     >
-      <div class="p-10px cursor-pointer" *ngIf="item.action && (!item.post || !expandNotifications)" [routerLink]="item.link">
+      <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
         <div class="d-flex flex-row align-items-center">
           <div
             class="notifications__avatar"
@@ -45,7 +46,7 @@
               <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
             </div>
           </div>
-          <div class="notifications__action" [innerHtml]="item.action"></div>
+          <div class="notifications__action" [innerHtml]="expandNotifications ? item.action : item.action + ' ' + item.actionDetails"></div>
         </div>
       </div>
       <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
@@ -71,13 +72,12 @@
             ></feed-post>
           </div>
         </div>
+      </div>
     </div>
-
-    </div>
-
+  </div>
+  <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="d-lg-none global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>
-<simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>
-<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-<div class="d-lg-none global__bottom-bar-mobile-height"></div>
-<div class="global__bottom-bar-mobile-height"></div>
-<div class="global__bottom-bar-mobile-height"></div>

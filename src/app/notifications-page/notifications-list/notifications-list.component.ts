@@ -47,6 +47,14 @@ export class NotificationsListComponent {
     }
   }
 
+  updateCompactView() {
+    this.expandNotifications = !this.expandNotifications;
+  }
+
+  closeFilterMenu() {
+    this.showFilters = false;
+  }
+
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {
       return [];
@@ -132,6 +140,7 @@ export class NotificationsListComponent {
       category: null, // category used for filtering
       iconClass: null,
       action: null, // the action they took
+      actionDetails: null, // Summarized details of the action for compact mode
       post: null, // the post involved
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
@@ -251,7 +260,11 @@ export class NotificationsListComponent {
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
-          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${postContent}`;
+          const truncatedComment = this.truncatePost(postHash);
+          const commentContent = `<i class="fc-muted">"${truncatedComment}"</i>`;
+          const actionDetails = `${commentContent} ${postContent}`;
+          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.actionDetails = actionDetails;
           result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
           result.parentPost = this.postMap[spMeta.ParentPostHashHex];
@@ -261,6 +274,14 @@ export class NotificationsListComponent {
 
           return result;
         } else if (currentPkObj.Metadata === "MentionedPublicKeyBase58Check") {
+          result.icon = "message-square";
+          result.category = "comment";
+          result.iconClass = "fc-blue";
+          const truncatedPost = this.truncatePost(postHash);
+          const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+
+          result.action = `${actorName} Mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.actionDetails = postContent;
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;
@@ -270,7 +291,7 @@ export class NotificationsListComponent {
         } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           const post = this.postMap[postHash];
           result.icon = "repeat";
-          result.comment = "repost";
+          result.category = "repost";
           result.iconClass = "fc-blue";
           const repostAction = post.Body === "" ? "Reposting" : "Quote reposting";
           const repostedPost = post.RepostedPostEntryResponse;
@@ -278,12 +299,14 @@ export class NotificationsListComponent {
           const repostedPostContent = `<i class="fc-muted">${truncatedPost}</i>`;
           // Repost
           if (post.Body === "") {
-            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${repostedPostContent}`;
+            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+            result.actionDetails = repostedPostContent;
           } else {
             // Quote Repost
             const truncatedQuoteRepost = this.truncatePost(postHash);
             const quoteRepostContent = `<i class="fc-muted">"${truncatedQuoteRepost}"</i>`;
-            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${quoteRepostContent} ${repostedPostContent}`;
+            result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+            result.actionDetails = `${quoteRepostContent} ${repostedPostContent}`;
           }
           result.post = this.postMap[postHash];
           if (result.post === null) {

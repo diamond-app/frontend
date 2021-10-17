@@ -278,7 +278,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           icon: "error",
           title: `An Error Occurred`,
           html: parsedError,
-          showConfirmButton: true,
+          showConfirmButton: !this.inTutorial,
           focusConfirm: true,
           customClass: {
             confirmButton: "btn btn-light",

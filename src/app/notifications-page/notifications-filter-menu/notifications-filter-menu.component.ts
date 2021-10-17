@@ -9,11 +9,18 @@ import { BackendApiService } from "../../backend-api.service";
 export class NotificationsFilterMenuComponent {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
   @Output() filterUpdated = new EventEmitter();
+  @Output() compactViewUpdated = new EventEmitter();
+  @Output() closeFilter = new EventEmitter();
 
   @Input() filteredOutSet: Set<string>;
+  @Input() expandNotifications: boolean;
 
   updateFilters(filter) {
     this.filterUpdated.emit(filter);
+  }
+
+  updateCompactView() {
+    this.compactViewUpdated.emit();
   }
 
   public messageFilterFollowingMe = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");

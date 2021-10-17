@@ -1,6 +1,7 @@
 <div class="fs-16px messages-filter-menu__container border">
-  <div class="mr-15px ml-15px pt-15px pb-5px font-weight-bold">
-    Custom Inbox Settings
+  <div class="mr-15px ml-15px pt-15px pb-15px font-weight-bold d-flex align-items-center justify-content-between">
+    <span>Custom Inbox Settings</span>
+    <i-feather name="x" class="fs-0px feather-medium cursor-pointer" (click)="closeFilter.emit()"></i-feather>
   </div>
 
   <div class="w-100 border-color-grey border-bottom"></div>
@@ -85,38 +86,23 @@
     </div>
   </div>
   <div class="w-100 border-color-grey border-bottom"></div>
-  <div class="mt-15px">
-    <span class="messages-filter-menu__title">Order by</span>
-    <div class="w-100 mt-15px">
-      <div class="btn-group w-90" dropdown>
-        <button
-          id="button-basic"
-          dropdownToggle
-          type="button"
-          class="btn messages-filter-menu__dropdown fc-secondary"
-          aria-controls="dropdown-basic"
-        >
-          Test
-          <i-feather name="chevron-down" class="feather-small position-absolute" style="right: 12px;"></i-feather>
-        </button>
-        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-          <li role="menuitem"><a class="dropdown-item fs-16px">Most recent</a></li>
-          <li role="menuitem"><a class="dropdown-item fs-16px">Most deso</a></li>
-          <li role="menuitem">
-            <a class="dropdown-item fs-16px">Most followed</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item fs-16px">Largest Holder</a>
-          </li>
-        </ul>
-      </div>
+  <div class="p-15px">
+    <span class="messages-filter-menu__title" style="margin-left: 0px">View</span>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: expandNotifications }"
+        (click)="updateCompactView()"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Expanded</span>
     </div>
   </div>
-
-  <div class="d-flex flex-center w-100 pb-15px">
-    <div class="w-100 messages-filter-menu__buttons">
-      <button class="btn">Update</button>
-      <a>Cancel</a>
-    </div>
-  </div>
+<!--  <div class="d-flex flex-center w-100 pb-15px">-->
+<!--    <div class="w-100 messages-filter-menu__buttons">-->
+<!--      <button class="btn">Update</button>-->
+<!--      <a>Cancel</a>-->
+<!--    </div>-->
+<!--  </div>-->
 </div>

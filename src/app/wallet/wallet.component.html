@@ -132,7 +132,7 @@
         <div
           class="row no-gutters d-flex align-items-center p-16px fs-15px"
         >
-          <div class="col-3 mb-0 cursor-pointer fc-muted text-link_hover wallet-column" (click)="sortWallet('username')">
+          <div class="col-lg-5 col-7 mb-0 cursor-pointer fc-muted text-link_hover wallet-column" (click)="sortWallet('username')">
             <i-feather
               class="feather-small position-relative"
               *ngIf="sortedUsernameFromHighToLow !== 0"
@@ -161,7 +161,7 @@
               Value
             </span>
           </div>
-          <div class="wallet-column col-4 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
+          <div class="wallet-column col-lg-2 col-2 cursor-pointer fc-muted text-link_hover" style="text-align: end; margin-bottom: 0px">
             <span>
               Actions
             </span>
@@ -191,12 +191,12 @@
                 creator &&
                 (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
               "
-              class="row no-gutters fc-default py-10px px-16px border-top"
+              class="row no-gutters fc-default py-10px px-16px border-top d-flex"
               [ngClass]="{ 'wallet-highlighted-creator': isHighlightedCreator(creator) }"
             >
               <!-- Name-->
               <a
-                class="wallet-column col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
+                class="wallet-column col-lg-5 col-7 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
                 [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
                 queryParamsHandling="merge"
                 [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
@@ -228,7 +228,7 @@
                 </div>
               </a>
               <!-- Price-->
-              <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+              <div class="wallet-column col-lg-2 col-2 d-none d-lg-flex align-items-center justify-content-end">
                 <div class="d-flex align-items-center justify-content-end">
                   {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                 </div>
@@ -257,7 +257,7 @@
 
               <!-- Buy / Sell / Transfer Dropdown -->
               <div
-                class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
+                class="wallet__dropdown-parent wallet-column col-lg-2 col-2 d-flex align-items-center justify-content-end fc-secondary m-0"
               >
                 <div
                   style="min-width: 50px"
