@@ -36,7 +36,7 @@
             <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
           </div>
         </div>
-        <div class="notifications__action" [innerHtml]="expandNotifications ? item.action : item.action + ' ' + item.actionDetails"></div>
+        <div class="notifications__action" [innerHtml]="!expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action"></div>
       </div>
     </div>
     <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
