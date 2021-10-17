@@ -253,6 +253,7 @@ export class NotificationsListComponent {
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(postHash);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+
           result.action = `${actorName} Mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = postContent;
           result.post = this.postMap[postHash];

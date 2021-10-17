@@ -160,6 +160,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   openBuyDeSoModal() {
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
     });
   }
 

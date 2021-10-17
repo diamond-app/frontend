@@ -1,5 +1,5 @@
 <!-- Step One Box -->
-<div *ngIf="buyWithEthStep === 1" class="pl-10px">
+<div *ngIf="buyWithEthStep === 1 && !parentComponent.waitingOnTxnConfirmation" class="pl-10px">
   <!-- Step One Box -->
   <div class="mx-16px">
     <div class="fs-17px font-weight-bold mt-20px mb-5px">
@@ -112,7 +112,7 @@
   </div>
 </div>
 
-<div *ngIf="buyWithEthStep === 2">
+<div *ngIf="buyWithEthStep === 2 && !parentComponent.waitingOnTxnConfirmation">
   <div class="mx-16px">
     <div class="fs-17px font-weight-bold mt-20px mb-5px fc-default">
       Step 2/2
@@ -133,7 +133,7 @@
       </div>
       <div class="position-relative w-100">
         <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
-          {{ (globalVars.latestBitcoinAPIResponse.final_balance / 1e8).toFixed(8) }}
+          {{ this.ethBalance.toFixed(8) }}
         </div>
       </div>
     </div>

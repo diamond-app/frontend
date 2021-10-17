@@ -140,6 +140,7 @@ export class SignUpComponent {
   openBuyDeSoModal() {
     const modal = this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
     });
     const onHideEvent = modal.onHide;
     onHideEvent.subscribe((response) => {

@@ -11,6 +11,7 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 })
 export class BuyDesoModalComponent implements OnInit {
   isLeftBarMobileOpen: boolean = false;
+  showCloseButton: boolean = true;
 
   ngOnInit() {
     this.titleService.setTitle(`Buy $DESO - ${environment.node.name}`);
