@@ -16,7 +16,7 @@
   </div>
 </div>
 <div *ngIf="showFilters" class="position-relative" style="z-index: 2">
-  <notifications-filter-menu></notifications-filter-menu>
+  <notifications-filter-menu [filteredOutSet]="filteredOutSet" (filterUpdated)="updateFilter($event)"></notifications-filter-menu>
 </div>
 <div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>
@@ -28,56 +28,52 @@
   <div
     #uiScroll
     *uiScroll="let item of datasource; let index = index"
-    class="notifications__list-item"
-    [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
   >
-    <div class="p-10px cursor-pointer" *ngIf="item.action && (!item.post || !expandNotifications)" [routerLink]="item.link">
-      <div class="d-flex flex-row align-items-center">
-        <div
-          class="notifications__avatar"
-          [avatar]="item.actor.PublicKeyBase58Check"
-          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
-        >
-          <div *ngIf="item.icon" class="notifications__icon">
-            <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
+    <div
+      *ngIf="!filteredOutSet.has(item.category)"
+      class="notifications__list-item"
+      [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
+    >
+      <div class="p-10px cursor-pointer" *ngIf="item.action && (!item.post || !expandNotifications)" [routerLink]="item.link">
+        <div class="d-flex flex-row align-items-center">
+          <div
+            class="notifications__avatar"
+            [avatar]="item.actor.PublicKeyBase58Check"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
+          >
+            <div *ngIf="item.icon" class="notifications__icon">
+              <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
+            </div>
+          </div>
+          <div class="notifications__action" [innerHtml]="item.action"></div>
+        </div>
+      </div>
+      <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
+        <feed-post
+          [post]="item.post"
+          [includePaddingOnPost]="true"
+          [showReplyingToContent]="!!item.parentPost"
+          [parentPost]="item.parentPost"
+          [contentShouldLinkToThread]="true"
+          [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
+        ></feed-post>
+        <div *ngFor="let comment of item.post.Comments">
+          <div class="px-15px pb-15px post-thread__subcomment-container">
+            <feed-post
+              [includePaddingOnPost]="false"
+              [post]="comment"
+              [parentPost]="item.post"
+              [contentShouldLinkToThread]="true"
+              [showIconRow]="false"
+              [showDropdown]="false"
+              [showReplyToContent]="false"
+              [isSubcomment]="true"
+            ></feed-post>
           </div>
         </div>
-        <div class="notifications__action" [innerHtml]="item.action"></div>
-      </div>
     </div>
-<!--    <div class="p-10px fc-15px" *ngIf="item.comment">-->
-<!--      {{ item.comment }}-->
-<!--    </div>-->
-<!--    <div class="cursor-pointer" *ngIf="item.post">-->
-<!--      <div *ngFor="let comment of item.post.Comments">-->
-<!--        <div class="px-15px pb-15px post-thread__subcomment-container">-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-    <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
-      <feed-post
-        [post]="item.post"
-        [includePaddingOnPost]="true"
-        [showReplyingToContent]="!!item.parentPost"
-        [parentPost]="item.parentPost"
-        [contentShouldLinkToThread]="true"
-        [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
-      ></feed-post>
-      <div *ngFor="let comment of item.post.Comments">
-        <div class="px-15px pb-15px post-thread__subcomment-container">
-          <feed-post
-            [includePaddingOnPost]="false"
-            [post]="comment"
-            [parentPost]="item.post"
-            [contentShouldLinkToThread]="true"
-            [showIconRow]="false"
-            [showDropdown]="false"
-            [showReplyToContent]="false"
-            [isSubcomment]="true"
-          ></feed-post>
-        </div>
-      </div>
-  </div>
+
+    </div>
 
 </div>
 <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>

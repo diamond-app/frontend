@@ -5,53 +5,83 @@
 
   <div class="w-100 border-color-grey border-bottom"></div>
 
-  <div class="pt-15px pb-15px">
-    <span class="messages-filter-menu__title">Only show</span>
+  <div class="p-15px">
+    <span class="messages-filter-menu__title" style="margin-left: 0px">Only show</span>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('like') }"
+        (click)="updateFilters('like')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Likes</span>
+    </div>
 
-    <div class="w-100 d-flex pl-5px mt-15px flex-column messages-filter-menu__checkboxes">
-      <div class="mt-5px d-flex flex-row align-items-center">
-        <button
-          class="checkbox-circle"
-          [ngClass]="{ checked: messageFilterHoldsMe }"
-          (click)="messageFilterHoldsMe = !messageFilterHoldsMe"
-        >
-          <i-feather name="check"></i-feather>
-        </button>
-        <span>Holders</span>
-      </div>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('diamond') }"
+        (click)="updateFilters('diamond')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Diamonds</span>
+    </div>
 
-      <div class="mt-5px d-flex flex-row align-items-center">
-        <button
-          class="checkbox-circle"
-          [ngClass]="{ checked: messageFilterIHold }"
-          (click)="messageFilterIHold = !messageFilterIHold"
-        >
-          <i-feather name="check"></i-feather>
-        </button>
-        <span>Holdings</span>
-      </div>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('creator coin') }"
+        (click)="updateFilters('creator coin')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Creator Coin</span>
+    </div>
 
-      <div class="mt-5px d-flex flex-row align-items-center">
-        <button
-          class="checkbox-circle"
-          [ngClass]="{ checked: messageFilterFollowingMe }"
-          (click)="messageFilterFollowingMe = !messageFilterFollowingMe"
-        >
-          <i-feather name="check"></i-feather>
-        </button>
-        <span>Followers</span>
-      </div>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('follow') }"
+        (click)="updateFilters('follow')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Follows</span>
+    </div>
 
-      <div class="mt-5px d-flex flex-row align-items-center">
-        <button
-          class="checkbox-circle"
-          [ngClass]="{ checked: messageFilterIFollow }"
-          (click)="messageFilterIFollow = !messageFilterIFollow"
-        >
-          <i-feather name="check"></i-feather>
-        </button>
-        <span>Following</span>
-      </div>
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('comment') }"
+        (click)="updateFilters('comment')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Comments / Mentions</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('repost') }"
+        (click)="updateFilters('repost')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Reposts</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-5px"
+        [ngClass]="{ checked: !filteredOutSet.has('nft') }"
+        (click)="updateFilters('nft')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>NFT</span>
     </div>
   </div>
   <div class="w-100 border-color-grey border-bottom"></div>

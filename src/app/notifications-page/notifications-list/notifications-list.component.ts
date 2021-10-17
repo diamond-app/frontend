@@ -37,6 +37,15 @@ export class NotificationsListComponent {
   expandNotifications = true;
 
   showFilters = false;
+  filteredOutSet = new Set();
+
+  updateFilter(filter) {
+    if (this.filteredOutSet.has(filter)) {
+      this.filteredOutSet.delete(filter);
+    } else {
+      this.filteredOutSet.add(filter);
+    }
+  }
 
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {
@@ -120,6 +129,7 @@ export class NotificationsListComponent {
     const result = {
       actor, // who created the notification
       icon: null,
+      category: null, // category used for filtering
       iconClass: null,
       action: null, // the action they took
       post: null, // the post involved
@@ -136,6 +146,7 @@ export class NotificationsListComponent {
       }
       if (basicTransferMeta.DiamondLevel) {
         result.icon = "icon-diamond fc-blue";
+        result.category = "diamond";
         let postText = "";
         if (basicTransferMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(basicTransferMeta.PostHashHex);
@@ -152,13 +163,13 @@ export class NotificationsListComponent {
             txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
           }
         }
-        result.icon = "fas fa-money-bill-wave-alt fc-green";
+        result.icon = "coin";
+        result.iconClass = "fc-blue";
+        result.category = "creator coin";
         result.action =
           `${actorName} sent you ${this.globalVars.nanosToDeSo(txnAmountNanos)} ` +
           `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       }
-      result.icon = "coin";
-      result.iconClass = "fc-blue";
 
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
@@ -169,6 +180,7 @@ export class NotificationsListComponent {
       }
 
       result.icon = "coin";
+      result.category = "creator coin";
       result.iconClass = "fc-blue";
 
       if (ccMeta.OperationType === "buy") {
@@ -195,6 +207,7 @@ export class NotificationsListComponent {
       if (cctMeta.DiamondLevel) {
         result.icon = "diamond";
         result.iconClass = "fc-blue";
+        result.category = "diamond";
         let postText = "";
         if (cctMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
@@ -206,6 +219,7 @@ export class NotificationsListComponent {
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
         result.icon = "send";
+        result.category = "creator coin";
         result.iconClass = "fc-blue";
         result.action = `${actorName} sent you <b>${this.globalVars.nanosToDeSo(
           cctMeta.CreatorCoinToTransferNanos,
@@ -233,6 +247,7 @@ export class NotificationsListComponent {
         // In this case, we are dealing with a reply to a post we made.
         if (currentPkObj.Metadata === "ParentPosterPublicKeyBase58Check") {
           result.icon = "message-square";
+          result.category = "comment";
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
@@ -255,6 +270,7 @@ export class NotificationsListComponent {
         } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           const post = this.postMap[postHash];
           result.icon = "repeat";
+          result.comment = "repost";
           result.iconClass = "fc-blue";
           const repostAction = post.Body === "" ? "Reposting" : "Quote reposting";
           const repostedPost = post.RepostedPostEntryResponse;
@@ -284,10 +300,12 @@ export class NotificationsListComponent {
 
       if (followMeta.IsUnfollow) {
         result.icon = "user";
+        result.category = "follow";
         result.iconClass = "fc-blue";
         result.action = `${actorName} unfollowed you`;
       } else {
         result.icon = "user";
+        result.category = "follow";
         result.iconClass = "fc-blue";
         result.action = `${actorName} followed you`;
       }
@@ -308,6 +326,7 @@ export class NotificationsListComponent {
       const action = likeMeta.IsUnlike ? "unliked" : "liked";
 
       result.icon = likeMeta.IsUnlike ? "heart" : "heart";
+      result.category = "like";
       result.iconClass = likeMeta.IsUnlike ? "fc-red" : "fc-red";
       result.action = `${actorName} ${action} <i class="text-grey7">${postText}</i>`;
       result.link = AppRoutingModule.postPath(postHash);
@@ -333,6 +352,7 @@ export class NotificationsListComponent {
           } ${postText}`
         : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
       result.icon = "coin";
+      result.category = "nft";
       result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
       return result;
@@ -350,6 +370,7 @@ export class NotificationsListComponent {
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
       result.icon = "award";
+      result.category = "nft";
       result.iconClass = "fc-blue";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
