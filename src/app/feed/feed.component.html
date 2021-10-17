@@ -71,7 +71,7 @@
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">
     <div class="mobile-scroll" *ngFor="let post of postsToShow()">
-      <div *ngIf="post.ProfileEntryResponse">
+      <div *ngIf="post && post.ProfileEntryResponse">
         <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
             in the feed with the "replying to @[parentPost.Username]" content diplayed.
