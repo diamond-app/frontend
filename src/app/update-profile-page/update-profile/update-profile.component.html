@@ -13,7 +13,7 @@
 
 <div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
   <div class="d-flex flex-column">
-    <div style="flex-grow: 1" id="update-profile-tutorial-holder" [ngStyle]="{ 'min-height': globalVars.isMobile() && inTutorial ? '1500px': 'auto' }">
+    <div style="flex-grow: 1" id="update-profile-tutorial-holder" [ngStyle]="{ 'min-height': inTutorial ? '1500px': 'auto' }">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
 
       <!-- Create Profile Fee Warning -->
