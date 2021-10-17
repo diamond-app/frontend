@@ -4,13 +4,19 @@
   class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
 >
   <span>Notifications</span>
-  <i-feather
-    name="credit-card"
-    class="cursor-pointer position-relative fs-0px"
-    style="right: 16px; transform: 'rotate(180deg)'"
-    (click)="expandNotifications = !expandNotifications"
-    [ngClass]="{ 'fc-blue': expandNotifications }"
-  ></i-feather>
+  <div class="d-flex">
+    <i-feather name="more-horizontal" class="feather-medium mr-10px cursor-pointer" (click)="showFilters = !showFilters"></i-feather>
+    <i-feather
+      name="credit-card"
+      class="cursor-pointer position-relative fs-0px mr-16px"
+      style="transform: 'rotate(180deg)'"
+      (click)="expandNotifications = !expandNotifications"
+      [ngClass]="{ 'fc-blue': expandNotifications }"
+    ></i-feather>
+  </div>
+</div>
+<div *ngIf="showFilters" class="position-relative" style="z-index: 2">
+  <notifications-filter-menu></notifications-filter-menu>
 </div>
 <div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>

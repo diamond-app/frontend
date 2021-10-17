@@ -36,6 +36,8 @@ export class NotificationsListComponent {
   totalItems = null;
   expandNotifications = true;
 
+  showFilters = false;
+
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {
       return [];
