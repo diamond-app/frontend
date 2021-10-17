@@ -12,11 +12,10 @@
 </div>
 <div *ngIf="showFilters" class="position-relative" style="z-index: 2">
   <notifications-filter-menu
-    [filteredOutSet]="filteredOutSet"
-    [expandNotifications]="expandNotifications"
-    (filterUpdated)="updateFilter($event)"
-    (compactViewUpdated)="updateCompactView()"
+    [filteredOutSetInput]="filteredOutSet"
+    [expandNotificationsInput]="expandNotifications"
     (closeFilter)="closeFilterMenu()"
+    (updateSettingsEvent)="updateSettings($event)"
   ></notifications-filter-menu>
 </div>
 <div *ngIf="loadingFirstPage">

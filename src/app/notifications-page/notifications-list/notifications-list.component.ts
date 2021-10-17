@@ -39,16 +39,18 @@ export class NotificationsListComponent {
   showFilters = false;
   filteredOutSet = new Set();
 
-  updateFilter(filter) {
-    if (this.filteredOutSet.has(filter)) {
-      this.filteredOutSet.delete(filter);
-    } else {
-      this.filteredOutSet.add(filter);
-    }
+  updateSettings(settings) {
+    this.filteredOutSet = settings.filteredOutSet;
+    this.expandNotifications = settings.expandNotifications;
+    console.log("here are expanded ", this.expandNotifications);
+    this.scrollerReset();
   }
 
-  updateCompactView() {
-    this.expandNotifications = !this.expandNotifications;
+  scrollerReset() {
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset().then(() => {
+      this.datasource.adapter.check();
+    });
   }
 
   closeFilterMenu() {

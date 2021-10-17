@@ -6,21 +6,43 @@ import { BackendApiService } from "../../backend-api.service";
   selector: "notifications-filter-menu",
   templateUrl: "./notifications-filter-menu.component.html",
 })
-export class NotificationsFilterMenuComponent {
+export class NotificationsFilterMenuComponent implements OnInit {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
-  @Output() filterUpdated = new EventEmitter();
-  @Output() compactViewUpdated = new EventEmitter();
   @Output() closeFilter = new EventEmitter();
+  @Output() updateSettingsEvent = new EventEmitter();
 
-  @Input() filteredOutSet: Set<string>;
-  @Input() expandNotifications: boolean;
+  @Input() filteredOutSetInput: Set<string>;
+  @Input() expandNotificationsInput: boolean;
+
+  filteredOutSet: Set<string>;
+  expandNotifications: boolean;
+
+  ngOnInit() {
+    this.filteredOutSet = new Set(this.filteredOutSetInput);
+    this.expandNotifications = this.expandNotificationsInput;
+  }
 
   updateFilters(filter) {
-    this.filterUpdated.emit(filter);
+    if (this.filteredOutSet.has(filter)) {
+      this.filteredOutSet.delete(filter);
+    } else {
+      this.filteredOutSet.add(filter)
+    }
+  }
+
+  updateSettings() {
+    const settings = {
+      filteredOutSet: this.filteredOutSet,
+      expandNotifications: this.expandNotifications
+    }
+    console.log("Here are the settings");
+    console.log(settings);
+    this.updateSettingsEvent.emit(settings);
+    this.closeFilter.emit();
   }
 
   updateCompactView() {
-    this.compactViewUpdated.emit();
+    this.expandNotifications = !this.expandNotifications
   }
 
   public messageFilterFollowingMe = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
