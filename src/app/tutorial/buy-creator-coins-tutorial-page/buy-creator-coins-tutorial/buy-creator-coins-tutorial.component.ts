@@ -37,6 +37,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loggedInUserProfile: ProfileEntryResponse;
   investInYourself: boolean = false;
 
+  // Count steps in tutorial
+  stepCounter = 0;
+
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
     this.globalVars.preventBackButton();
@@ -125,7 +128,8 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       ],
     });
     this.introJS.onchange((targetElement) => {
-      if (targetElement?.id === "tutorial-creators-to-invest-in") {
+      this.stepCounter += 1;
+      if (this.stepCounter >= 3) {
         this.tutorialWiggle = true;
       }
     });

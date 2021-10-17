@@ -234,7 +234,9 @@ export class NotificationsListComponent {
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
-          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${postContent}`;
+          const truncatedComment = this.truncatePost(postHash);
+          const commentContent = `<i class="fc-muted">"${truncatedComment}"</i>`;
+          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${commentContent} ${postContent}`;
           result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
           result.parentPost = this.postMap[spMeta.ParentPostHashHex];
@@ -244,6 +246,11 @@ export class NotificationsListComponent {
 
           return result;
         } else if (currentPkObj.Metadata === "MentionedPublicKeyBase58Check") {
+          result.icon = "message-square";
+          result.iconClass = "fc-blue";
+          const truncatedPost = this.truncatePost(postHash);
+          const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+          result.action = `${actorName} Mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${postContent}`;
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;
