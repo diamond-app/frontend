@@ -113,7 +113,15 @@ export class NotificationsListComponent implements OnInit {
 
           console.log(_.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)));
 
-          return chunk;
+          // If there aren't any elements from this chunk that will be displayed due to filters, and we're not in the last chunk,
+          // return the next chunk
+          if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
+            console.log("Getting next page");
+            return this.getPage(page + 1);
+          } else {
+            return chunk;
+          }
+
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
@@ -121,17 +129,6 @@ export class NotificationsListComponent implements OnInit {
       )
       .finally(() => {
         // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
-        console.log("last page", this.lastPage);
-        console.log("filtered items", this.totalFilteredItems);
-        let extraPages = false;
-        if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
-          console.log("Getting next page");
-          extraPages = true;
-          this.getPage(page + 1);
-        }
-        if (extraPages) {
-          this.datasource.adapter.check();
-        }
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
       });
