@@ -275,7 +275,7 @@ export class NotificationsListComponent implements OnInit {
           const truncatedComment = this.truncatePost(postHash);
           const commentContent = `<i class="fc-muted">"${truncatedComment}"</i>`;
           const actionDetails = `${commentContent} ${postContent}`;
-          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.action = `${actorName} replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = actionDetails;
           result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
@@ -292,7 +292,7 @@ export class NotificationsListComponent implements OnInit {
           const truncatedPost = this.truncatePost(postHash);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
 
-          result.action = `${actorName} Mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.action = `${actorName} mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = postContent;
           result.post = this.postMap[postHash];
           if (result.post === null) {
@@ -333,17 +333,10 @@ export class NotificationsListComponent implements OnInit {
         return null;
       }
 
-      if (followMeta.IsUnfollow) {
-        result.icon = "user";
-        result.category = "follow";
-        result.iconClass = "fc-blue";
-        result.action = `${actorName} unfollowed you`;
-      } else {
-        result.icon = "user";
-        result.category = "follow";
-        result.iconClass = "fc-blue";
-        result.action = `${actorName} followed you`;
-      }
+      result.icon = "user";
+      result.category = "follow";
+      result.iconClass = "fc-blue";
+      result.action = `${actorName} ${followMeta.IsUnfollow ? "un" : ""}followed you`;
 
       return result;
     } else if (txnMeta.TxnType === "LIKE") {

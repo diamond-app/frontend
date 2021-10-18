@@ -1,6 +1,5 @@
 <!-- Top Bar -->
 <div
-  *ngIf="!globalVars.isMobile()"
   class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
 >
   <span>Notifications</span>
@@ -30,9 +29,12 @@
     *uiScroll="let item of datasource; let index = index"
   >
     <div
-      *ngIf="!filteredOutSet.hasOwnProperty(item.category)"
       class="notifications__list-item"
-      [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
+      [ngClass]="{
+        'last-item': index === totalItems - 1,
+        'border-none': (!item.action && !expandNotifications) || filteredOutSet.hasOwnProperty(item.category)
+      }"
+      [ngStyle]="{ 'max-height': filteredOutSet.hasOwnProperty(item.category) ? '0px' : 'unset' }"
     >
       <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
         <div class="d-flex flex-row align-items-center">
@@ -48,7 +50,7 @@
           <div
             class="notifications__action"
             [innerHtml]="
-              expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action
+              !expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action
             "
           ></div>
         </div>

@@ -3988,11 +3988,14 @@ trade-creator-form {
 app-notifications-list {
   .global__top-bar {
     position: relative;
-    height: 72px;
+    height: 50px;
     background: var(--tile-bg);
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    border: 1px solid var(--border);
+    @media (min-width: 992px) {
+      height: 72px;
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
+      border: 1px solid var(--border);
+    }
   }
   .notifications__list-item{
     border-left: 1px solid var(--border);
