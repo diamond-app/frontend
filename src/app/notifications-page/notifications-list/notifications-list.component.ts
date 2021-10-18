@@ -118,12 +118,15 @@ export class NotificationsListComponent implements OnInit {
         }
       )
       .finally(() => {
-        this.loadingFirstPage = false;
-        this.loadingNextPage = false;
         // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
+        console.log("last page", this.lastPage);
+        console.log("filtered items", this.totalFilteredItems);
         if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
+          console.log("Getting next page");
           this.getPage(page + 1);
         }
+        this.loadingFirstPage = false;
+        this.loadingNextPage = false;
       });
   }
 
