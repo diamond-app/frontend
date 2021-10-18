@@ -113,15 +113,7 @@ export class NotificationsListComponent implements OnInit {
 
           console.log(_.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)));
 
-          // If there aren't any elements from this chunk that will be displayed due to filters, and we're not in the last chunk,
-          // return the next chunk
-          if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
-            console.log("Getting next page");
-            return this.getPage(page + 1);
-          } else {
-            return chunk;
-          }
-
+          return chunk;
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
@@ -129,6 +121,25 @@ export class NotificationsListComponent implements OnInit {
       )
       .finally(() => {
         // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
+        // return the next chunk
+        let findingStartIndex = false;
+        if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
+          console.log("Getting next page");
+          findingStartIndex = true;
+          this.getPage(page + 1);
+        }
+
+        if (findingStartIndex && this.totalFilteredItems > 0) {
+          this.infiniteScroller = new InfiniteScroller(
+            NotificationsListComponent.PAGE_SIZE,
+            this.getPage.bind(this),
+            NotificationsListComponent.WINDOW_VIEWPORT,
+            NotificationsListComponent.BUFFER_SIZE,
+            page
+          );
+          this.scrollerReset();
+        }
+        // Set new start index and restart UIScroll
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
       });

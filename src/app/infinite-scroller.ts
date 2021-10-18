@@ -12,7 +12,8 @@ export class InfiniteScroller {
     private getPage: (page: number) => any[] | Promise<any>,
     private windowViewport: boolean,
     private bufferSize: number = 50,
-    private padding: number = 0.5
+    private padding: number = 0.5,
+    private startIndex: number = 0
   ) {}
 
   settings = {
@@ -20,7 +21,7 @@ export class InfiniteScroller {
     infinite: true,
     minIndex: 0,
     padding: this.padding,
-    startIndex: 0,
+    startIndex: this.startIndex,
     windowViewport: this.windowViewport,
   };
 
