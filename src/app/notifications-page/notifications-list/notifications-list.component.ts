@@ -34,6 +34,7 @@ export class NotificationsListComponent implements OnInit {
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
+  totalFilteredItems = null;
   expandNotifications = true;
 
   showFilters = false;
@@ -106,6 +107,10 @@ export class NotificationsListComponent implements OnInit {
           // Track the total number of items for our empty state
           this.totalItems = (this.totalItems || 0) + chunk.length;
 
+          this.totalFilteredItems =
+            (this.totalItems || 0) +
+            _.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)).length;
+
           return chunk;
         },
         (err) => {
@@ -115,6 +120,10 @@ export class NotificationsListComponent implements OnInit {
       .finally(() => {
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
+        // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
+        if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
+          this.getPage(page + 1);
+        }
       });
   }
 
