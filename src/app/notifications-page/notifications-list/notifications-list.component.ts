@@ -68,7 +68,7 @@ export class NotificationsListComponent implements OnInit {
     this.showFilters = false;
   }
 
-  getPage(page: number) {
+  getPage(page: number, findingStartIndex: boolean = false) {
     if (this.lastPage && page > this.lastPage) {
       return [];
     }
@@ -123,13 +123,13 @@ export class NotificationsListComponent implements OnInit {
       .finally(() => {
         // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
         // return the next chunk
-        let findingStartIndex = false;
         if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
           console.log("Getting next page");
           findingStartIndex = true;
-          this.getPage(page + 1);
+          this.getPage(page + 1, true);
         }
 
+        console.log("Is it finding the start index", findingStartIndex, this.totalFilteredItems);
         if (findingStartIndex && this.totalFilteredItems > 0) {
           console.log('Here they are');
           this.infiniteScroller = new InfiniteScroller(
