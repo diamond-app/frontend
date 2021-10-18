@@ -108,8 +108,10 @@ export class NotificationsListComponent implements OnInit {
           this.totalItems = (this.totalItems || 0) + chunk.length;
 
           this.totalFilteredItems =
-            (this.totalItems || 0) +
+            (this.totalFilteredItems || 0) +
             _.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)).length;
+
+          console.log(_.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)));
 
           return chunk;
         },
