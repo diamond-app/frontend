@@ -150,14 +150,24 @@ export class AdminComponent implements OnInit {
   getUserAdminDataPublicKey = "";
   getUserAdminDataResponse = null;
 
+  // Hot feed.
   hotFeedPosts = [];
   hotFeedPostHashes = [];
   loadingHotFeed = false;
   loadingMoreHotFeed = false;
   hotFeedInteractionCap = 0;
   hotFeedTimeDecayBlocks = 0;
+  hotFeedUserForInteractionMultiplier: string;
+  hotFeedUserInteractionMultiplier: number;
+  hotFeedUserForPostsMultiplier: string;
+  hotFeedUserPostsMultiplier: number;
   updatingHotFeedInteractionCap = false;
   updatingHotFeedTimeDecayBlocks = false;
+  updatingHotFeedUserInteractionMultiplier = false;
+  updatingHotFeedUserPostsMultiplier = false;
+  searchingHotFeedUserMultipliers = false;
+  hotFeedUserForSearch: string;
+  hotFeedUserSearchResults;
 
   constructor(
     private _globalVars: GlobalVarsService,
@@ -386,6 +396,68 @@ export class AdminComponent implements OnInit {
             "Error updating hot TimeDecayBlocks: " + this.backendApi.stringifyError(err));
         }
       ).add(() => { this.updatingHotFeedTimeDecayBlocks = false; });
+  }
+
+  updateHotFeedUserPostsMultiplier() {
+    this.updatingHotFeedUserPostsMultiplier = true;
+    this.backendApi
+      .AdminUpdateHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForPostsMultiplier,
+        -1, /*InteractionMultiplier -- negative values are ignored*/
+        this.hotFeedUserPostsMultiplier,
+      ).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Successfully updated posts multiplier.")
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error updating posts multiplier: " + this.backendApi.stringifyError(err));
+        }
+      ).add(() => { this.updatingHotFeedUserPostsMultiplier = false; });
+  }
+
+  updateHotFeedUserInteractionMultiplier() {
+    this.updatingHotFeedUserInteractionMultiplier = true;
+    this.backendApi
+      .AdminUpdateHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForInteractionMultiplier,
+        this.hotFeedUserInteractionMultiplier,
+        -1, /*PostsMultiplier -- negative values are ignored*/
+      ).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Successfully updated interaction multiplier.")
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error updating interaction multiplier: " + this.backendApi.stringifyError(err));
+        }
+      ).add(() => { this.updatingHotFeedUserInteractionMultiplier = false; });
+  }
+
+  searchForHotFeedUserMultipliers() {
+    this.searchingHotFeedUserMultipliers = true;
+    this.backendApi
+      .AdminGetHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForSearch,
+      ).subscribe(
+        (res) => { this.hotFeedUserSearchResults = JSON.stringify({
+          "InteractionMultiplier": res.InteractionMultiplier,
+          "PostsMultiplier": res.PostsMultiplier,
+        }, null, 4)},
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error fetching user's multipliers: " + this.backendApi.stringifyError(err));
+        }
+      ).add(() => { this.searchingHotFeedUserMultipliers = false; });
   }
 
   _loadPosts() {
