@@ -72,7 +72,8 @@ export class NotificationsListComponent implements OnInit {
     if (this.lastPage && page > this.lastPage) {
       return [];
     }
-
+    console.log('Here is the page num');
+    console.log(page);
     this.loadingNextPage = true;
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
@@ -130,6 +131,7 @@ export class NotificationsListComponent implements OnInit {
         }
 
         if (findingStartIndex && this.totalFilteredItems > 0) {
+          console.log('Here they are');
           this.infiniteScroller = new InfiniteScroller(
             NotificationsListComponent.PAGE_SIZE,
             this.getPage.bind(this),
