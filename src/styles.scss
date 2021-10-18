@@ -739,11 +739,7 @@ $green-font-color: #19B028;
       width: calc(50vw - 30px);
     }
     .wallet-column {
-      -ms-flex:0 0 33.333333%;
-      flex:0 0 33.333333%;
-      max-width:33.333333%;
       position:relative;
-      width:100%;
       padding-right:15px;
       padding-left:15px;
     }
@@ -1705,6 +1701,9 @@ tab-selector {
     .active-tab {
       color: var(--highlight);
       border-bottom: 1.5px solid var(--highlight);
+      &.first-tab {
+        padding-left: 0px;
+      }
     }
   }
   button {
@@ -2375,6 +2374,7 @@ bs-dropdown-container {
 }
 
 .bc-dropdown-menu {
+  background: var(--tile-bg);
   border-radius: 16px;
   border: none;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);

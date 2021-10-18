@@ -203,6 +203,7 @@ export class TradeCreatorComponent implements OnInit {
     this.bsModalRef.hide();
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
     });
   }
 

@@ -143,6 +143,7 @@ export class PlaceBidComponent implements OnInit {
   openBuyDeSoModal() {
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
     });
   }
 
