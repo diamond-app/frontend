@@ -30,7 +30,7 @@
     *uiScroll="let item of datasource; let index = index"
   >
     <div
-      *ngIf="!filteredOutSet.has(item.category)"
+      *ngIf="!filteredOutSet.hasOwnProperty(item.category)"
       class="notifications__list-item"
       [ngClass]="{ 'last-item': index === totalItems - 1, 'border-none': !item.action && !expandNotifications }"
     >
@@ -45,7 +45,12 @@
               <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
             </div>
           </div>
-          <div class="notifications__action" [innerHtml]="expandNotifications ? item.action : item.action + ' ' + item.actionDetails"></div>
+          <div
+            class="notifications__action"
+            [innerHtml]="
+              expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action
+            "
+          ></div>
         </div>
       </div>
       <div class="cursor-pointer" *ngIf="item.post && expandNotifications">

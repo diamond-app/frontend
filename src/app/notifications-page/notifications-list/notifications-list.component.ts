@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
@@ -11,7 +11,7 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
   templateUrl: "./notifications-list.component.html",
   styleUrls: ["./notifications-list.component.scss"],
 })
-export class NotificationsListComponent {
+export class NotificationsListComponent implements OnInit {
   static BUFFER_SIZE = 10;
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
@@ -37,19 +37,29 @@ export class NotificationsListComponent {
   expandNotifications = true;
 
   showFilters = false;
-  filteredOutSet = new Set();
+  filteredOutSet = {};
+
+  ngOnInit() {
+    const savedNotificationFilterPreferences = this.backendApi.GetStorage("notificationFilterPreferences");
+    const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
+    this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
+    this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
+  }
 
   updateSettings(settings) {
     this.filteredOutSet = settings.filteredOutSet;
     this.expandNotifications = settings.expandNotifications;
-    console.log("here are expanded ", this.expandNotifications);
+    this.backendApi.SetStorage("notificationFilterPreferences", this.filteredOutSet);
+    this.backendApi.SetStorage("notificationViewPreference", this.expandNotifications);
     this.scrollerReset();
   }
 
   scrollerReset() {
+    this.loadingFirstPage = true;
     this.infiniteScroller.reset();
     this.datasource.adapter.reset().then(() => {
       this.datasource.adapter.check();
+      this.loadingFirstPage = false;
     });
   }
 

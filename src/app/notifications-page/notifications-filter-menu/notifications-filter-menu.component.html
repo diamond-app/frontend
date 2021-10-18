@@ -8,89 +8,96 @@
 
   <div class="p-15px">
     <span class="messages-filter-menu__title" style="margin-left: 0px">Only show</span>
-    <div class="mt-5px d-flex flex-row align-items-center">
+    <div class="mt-10px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSetInput.has('like') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('like') }"
         (click)="updateFilters('like')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="heart" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Likes</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('diamond') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('diamond') }"
         (click)="updateFilters('diamond')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="diamond" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Diamonds</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('creator coin') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('creator coin') }"
         (click)="updateFilters('creator coin')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="coin" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Creator Coin</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('follow') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('follow') }"
         (click)="updateFilters('follow')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="user" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Follows</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('comment') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('comment') }"
         (click)="updateFilters('comment')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="message-square" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Comments / Mentions</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('repost') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('repost') }"
         (click)="updateFilters('repost')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="repeat" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>Reposts</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
-        [ngClass]="{ checked: !filteredOutSet.has('nft') }"
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('nft') }"
         (click)="updateFilters('nft')"
       >
         <i-feather name="check"></i-feather>
       </button>
+      <i-feather name="award" class="feather-medium fs-0px mr-5px"></i-feather>
       <span>NFT</span>
     </div>
   </div>
   <div class="w-100 border-color-grey border-bottom"></div>
   <div class="p-15px">
     <span class="messages-filter-menu__title" style="margin-left: 0px">View</span>
-    <div class="mt-5px d-flex flex-row align-items-center">
+    <div class="mt-10px d-flex flex-row align-items-center">
       <button
-        class="checkbox-circle mr-5px"
+        class="checkbox-circle mr-10px"
         [ngClass]="{ checked: expandNotifications }"
         (click)="updateCompactView()"
       >
@@ -102,7 +109,7 @@
   <div class="d-flex flex-center w-100 pb-15px">
     <div class="w-100 messages-filter-menu__buttons">
       <button class="btn" (click)="updateSettings()">Update</button>
-      <a class="cursor-pointer" (click)="closeFilter.emit()">Cancel</a>
+      <a class="cursor-pointer fc-muted" (click)="closeFilter.emit()">Cancel</a>
     </div>
   </div>
 </div>
