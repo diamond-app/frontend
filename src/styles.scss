@@ -89,6 +89,13 @@ pre, code{
     white-space:normal;
 }
 
+.invisible {
+  visibility: hidden !important;
+  .diamond-icon {
+    visibility: hidden !important;
+  }
+}
+
 .countdown-timer {
   text-align: center;
   color: #252B37;
