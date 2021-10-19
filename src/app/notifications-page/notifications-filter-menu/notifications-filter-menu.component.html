@@ -35,13 +35,13 @@
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
         class="checkbox-circle mr-10px"
-        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('creator coin') }"
-        (click)="updateFilters('creator coin')"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('transfer') }"
+        (click)="updateFilters('transfer')"
       >
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="coin" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>Creator Coin</span>
+      <span>Creator Coin / $DESO</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -59,25 +59,13 @@
     <div class="mt-5px d-flex flex-row align-items-center">
       <button
         class="checkbox-circle mr-10px"
-        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('comment') }"
-        (click)="updateFilters('comment')"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('post') }"
+        (click)="updateFilters('post')"
       >
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="message-square" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>Mentions / Replies</span>
-    </div>
-
-    <div class="mt-5px d-flex flex-row align-items-center">
-      <button
-        class="checkbox-circle mr-10px"
-        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('repost') }"
-        (click)="updateFilters('repost')"
-      >
-        <i-feather name="check"></i-feather>
-      </button>
-      <i-feather name="repeat" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>Reposts</span>
+      <span>Mentions / Replies / Reposts</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">

@@ -1574,12 +1574,14 @@ export class BackendApiService {
     endpoint: string,
     PublicKeyBase58Check: string,
     FetchStartIndex: number,
-    NumToFetch: number
+    NumToFetch: number,
+    FilteredOutNotificationCategories: {}
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNotifications, {
       PublicKeyBase58Check,
       FetchStartIndex,
       NumToFetch,
+      FilteredOutNotificationCategories
     });
   }
 

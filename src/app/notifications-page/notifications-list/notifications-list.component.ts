@@ -67,15 +67,6 @@ export class NotificationsListComponent implements OnInit {
     });
   }
 
-  scrollerResetToIndex(idx) {
-    this.loadingFirstPage = true;
-    this.datasource.adapter.reload(idx).then(() => {
-      console.log('Reloaded');
-      this.correctDataPaddingBackwardElementHeight(document.getElementById("notification-scroller"));
-      this.loadingFirstPage = false;
-    });
-  }
-
   closeFilterMenu() {
     this.showFilters = false;
   }
@@ -84,8 +75,6 @@ export class NotificationsListComponent implements OnInit {
     if (this.lastPage && page > this.lastPage) {
       return [];
     }
-    console.log('Here is the page num');
-    console.log(page);
     this.loadingNextPage = true;
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
@@ -93,7 +82,8 @@ export class NotificationsListComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
-        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/
+        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
+        this.filteredOutSet
       )
       .toPromise()
       .then(
@@ -120,46 +110,16 @@ export class NotificationsListComponent implements OnInit {
           // Track the total number of items for our empty state
           this.totalItems = (this.totalItems || 0) + chunk.length;
 
-          this.totalFilteredItems =
-            (this.totalFilteredItems || 0) +
-            _.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)).length;
-
-          console.log(_.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)));
-
-          // return chunk;
-          return _.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category));
+          return chunk;
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
         }
       )
       .finally(() => {
-        // If all the results from this page get are filtered out, and we aren't yet on the last page, get the next page
-        // return the next chunk
-        if (!(this.lastPage && page > this.lastPage) && this.totalFilteredItems === 0) {
-          console.log("Getting next page");
-          findingStartIndex = true;
-          this.getPage(page + 1, true);
-        }
-
-        console.log("Is it finding the start index", findingStartIndex, this.totalFilteredItems);
-        if (findingStartIndex && this.totalFilteredItems > 0) {
-          console.log('Here they are');
-          this.scrollerResetToIndex(50 * page);
-        }
-        // Set new start index and restart UIScroll
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
       });
-  }
-
-  // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
-  // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
-  correctDataPaddingBackwardElementHeight(viewportElement: HTMLElement): void {
-    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-backward]`);
-    if (dataPaddingForwardElement) {
-      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
-    }
   }
 
   // NOTE: the outputs of this function are inserted directly into the DOM

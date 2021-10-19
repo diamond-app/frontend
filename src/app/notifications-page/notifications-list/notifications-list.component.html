@@ -32,11 +32,7 @@
       class="notifications__list-item"
       [ngClass]="{
         'last-item': index === totalItems - 1,
-        'border-none': (!item.action && !expandNotifications) || filteredOutSet.hasOwnProperty(item.category),
-        invisible: filteredOutSet.hasOwnProperty(item.category)
-      }"
-      [ngStyle]="{
-        'max-height': filteredOutSet.hasOwnProperty(item.category) ? '0px' : 'unset'
+        'border-none': (!item.action && !expandNotifications)
       }"
     >
       <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
