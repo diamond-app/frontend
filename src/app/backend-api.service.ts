@@ -131,6 +131,7 @@ export class BackendRoutes {
   static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user";
   static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash";
   static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv";
+  static RoutePathAdminDownloadRefereeCSV = "/api/v0/admin/download-referee-csv";
   static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv";
 
   // Referral program non-admin routes
@@ -2090,6 +2091,12 @@ export class BackendApiService {
 
   AdminDownloadReferralCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadReferralCSV, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminDownloadRefereeCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadRefereeCSV, AdminPublicKey, {
       AdminPublicKey,
     });
   }

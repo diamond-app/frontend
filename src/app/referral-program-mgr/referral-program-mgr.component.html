@@ -286,4 +286,18 @@
       Uploading...
     </button>
   </div>
+
+  <!-- Download Referee CSV -->
+  <div class="p-15px font-weight-semibold">
+    <div>Download a CSV with info on all referees:</div>
+    <button (click)="_downloadRefereeCSV()"
+            *ngIf="!downloadingRefereeCSV"
+            class="btn btn-info btn-sm font-weight-bold fs-15px mt-5px">
+      <i class="fas fa-glasses"></i>&nbsp;Download Info
+    </button>
+    <button *ngIf="downloadingRefereeCSV"
+            class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
+      Downloading...
+    </button>
+  </div>
 </div>

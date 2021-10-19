@@ -19,6 +19,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   fetchingExistingLinks: boolean = false;
   downloadingReferralCSV: boolean = false;
   uploadingReferralCSV: boolean = false;
+  downloadingRefereeCSV: boolean = false;
   existingLinks = [];
   linkCopied = [];
   updatingLink = [];
@@ -189,6 +190,34 @@ export class ReferralProgramMgrComponent implements OnInit {
         (err) => {}
       )
       .add(() => (this.downloadingReferralCSV = false));
+  }
+
+  _downloadRefereeCSV() {
+    this.downloadingRefereeCSV = true;
+    this.backendApi
+      .AdminDownloadRefereeCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe(
+        (res) => {
+          // We construct the CSV on the client side so that we can use our standard JWT post
+          // request. Thanks to @isherwood and @Default for the code: https://bit.ly/3zoQRGY.
+          let csvContent = "data:text/csv;charset=utf-8,";
+
+          res.CSVRows.forEach(function (rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+          });
+
+          var encodedUri = encodeURI(csvContent);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", this._getDateString() + "_referee_info.csv");
+          document.body.appendChild(link);
+
+          link.click();
+        },
+        (err) => {}
+      )
+      .add(() => (this.downloadingRefereeCSV = false));
   }
 
   _handleCSVInput(files: FileList) {
