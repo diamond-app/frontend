@@ -1,10 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Subscription } from "rxjs";
+import { document } from "ngx-bootstrap/utils";
 
 @Component({
   selector: "app-notifications-list",
@@ -23,6 +25,7 @@ export class NotificationsListComponent implements OnInit {
     0: -1,
   };
 
+  subscriptions = new Subscription();
   lastPage = null;
   loadingFirstPage = true;
   loadingNextPage = false;
@@ -60,6 +63,15 @@ export class NotificationsListComponent implements OnInit {
     this.infiniteScroller.reset();
     this.datasource.adapter.reset().then(() => {
       this.datasource.adapter.check();
+      this.loadingFirstPage = false;
+    });
+  }
+
+  scrollerResetToIndex(idx) {
+    this.loadingFirstPage = true;
+    this.datasource.adapter.reload(idx).then(() => {
+      console.log('Reloaded');
+      this.correctDataPaddingBackwardElementHeight(document.getElementById("notification-scroller"));
       this.loadingFirstPage = false;
     });
   }
@@ -133,19 +145,21 @@ export class NotificationsListComponent implements OnInit {
         console.log("Is it finding the start index", findingStartIndex, this.totalFilteredItems);
         if (findingStartIndex && this.totalFilteredItems > 0) {
           console.log('Here they are');
-          this.infiniteScroller = new InfiniteScroller(
-            NotificationsListComponent.PAGE_SIZE,
-            this.getPage.bind(this),
-            NotificationsListComponent.WINDOW_VIEWPORT,
-            NotificationsListComponent.BUFFER_SIZE,
-            page
-          );
-          this.scrollerReset();
+          this.scrollerResetToIndex(50 * page);
         }
         // Set new start index and restart UIScroll
         this.loadingFirstPage = false;
         this.loadingNextPage = false;
       });
+  }
+
+  // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
+  // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
+  correctDataPaddingBackwardElementHeight(viewportElement: HTMLElement): void {
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-backward]`);
+    if (dataPaddingForwardElement) {
+      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+    }
   }
 
   // NOTE: the outputs of this function are inserted directly into the DOM

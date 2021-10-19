@@ -23,7 +23,7 @@
 <div *ngIf="(!totalItems || totalItems === 0) && !loadingFirstPage" class="d-flex justify-content-center mt-30px">
   <span>You don't have any notifications</span>
 </div>
-<div class="notifications__list-container">
+<div class="notifications__list-container" id="notification-scroller">
   <div
     #uiScroll
     *uiScroll="let item of datasource; let index = index"
