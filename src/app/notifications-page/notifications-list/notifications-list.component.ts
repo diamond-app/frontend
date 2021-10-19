@@ -114,7 +114,8 @@ export class NotificationsListComponent implements OnInit {
 
           console.log(_.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category)));
 
-          return chunk;
+          // return chunk;
+          return _.filter(chunk, (notification) => !this.filteredOutSet.hasOwnProperty(notification.category));
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
