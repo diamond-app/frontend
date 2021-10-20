@@ -233,6 +233,21 @@
               {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referee
             </div>
           </div>
+          <div *ngIf="linkInfo.ReferredUsers.length > 0"
+               (click)="linkInfo.ShowReferredUsers = !linkInfo.ShowReferredUsers"
+               class="font-weight-bold mt-10px cursor-pointer">
+            Referred Users (click here to hide):
+          </div>
+          <div *ngIf="linkInfo.ShowReferredUsers && linkInfo.ReferredUsers.length > 0">
+            <div *ngFor="let referredUser of linkInfo.ReferredUsers">
+              <simple-profile-card
+                [profile]="referredUser"
+                [singleColumn]="true"
+                [hideFollowLink]="true"
+                [isBold]="false"
+              ></simple-profile-card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

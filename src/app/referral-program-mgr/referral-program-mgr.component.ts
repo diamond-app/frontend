@@ -101,6 +101,7 @@ export class ReferralProgramMgrComponent implements OnInit {
               this.existingLinks[ii].Info["referrerAmountUSD"] =
                 this.existingLinks[ii].Info.ReferrerAmountUSDCents / 100;
               this.existingLinks[ii].Info["refereeAmountUSD"] = this.existingLinks[ii].Info.RefereeAmountUSDCents / 100;
+              this.existingLinks[ii]["ShowReferredUsers"] = true;
             }
             this.existingLinks = _.sortBy(this.existingLinks, [
               (o) => {
