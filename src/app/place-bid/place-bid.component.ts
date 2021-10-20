@@ -77,7 +77,10 @@ export class PlaceBidComponent implements OnInit {
             [this.sortByOrder]
           );
         } else {
+          console.log('Here are the filtered sns');
           this.filteredSerialNumbers = this.transferNFTEntryResponses;
+          console.log(this.transferNFTEntryResponses);
+          console.log(this.filteredSerialNumbers);
         }
       })
       .add(() => (this.loading = false));
