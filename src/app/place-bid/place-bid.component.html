@@ -152,7 +152,7 @@
     </div>
 
 
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
       <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
       <div class="container fs-15px px-0px">
         <div class="row no-gutters py-15px create-nft-auction-row-border d-flex align-items-center" style="height: 56px">
@@ -183,7 +183,7 @@
         </div>
         <div class="place-bid-rows mb-30px">
           <div
-            *ngFor="let nft of biddableSerialNumbers"
+            *ngFor="let nft of filteredSerialNumbers"
             class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
             (click)="selectSerialNumber(nft.SerialNumber)"
           >
@@ -212,7 +212,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
+    <div *ngIf="!filteredSerialNumbers.length" class="fs-15px">
       There are no serial numbers available for you to bid on.
     </div>
   </div>
