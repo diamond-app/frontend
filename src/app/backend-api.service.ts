@@ -326,6 +326,7 @@ export class NFTEntryResponse {
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   IsForSale: boolean;
+  IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 

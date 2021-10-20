@@ -4,7 +4,7 @@
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
       <div *ngIf="!transfer" class="fs-15px text-grey5">
         You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username }}.
       </div>

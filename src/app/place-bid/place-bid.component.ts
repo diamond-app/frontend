@@ -21,6 +21,7 @@ export class PlaceBidComponent implements OnInit {
 
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
+  @Input() transferNFTEntryResponses: NFTEntryResponse[];
   @Input() transfer: boolean = false;
   @Output() closeModal = new EventEmitter<any>();
   @Output() changeTitle = new EventEmitter<string>();
@@ -30,7 +31,7 @@ export class PlaceBidComponent implements OnInit {
   selectedSerialNumber: NFTEntryResponse = null;
   availableCount: number;
   availableSerialNumbers: NFTEntryResponse[];
-  biddableSerialNumbers: NFTEntryResponse[];
+  filteredSerialNumbers: NFTEntryResponse[];
   highBid: number = null;
   lowBid: number = null;
   loading = true;
@@ -66,14 +67,18 @@ export class PlaceBidComponent implements OnInit {
       .subscribe((res) => {
         this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
         this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
-        this.biddableSerialNumbers = _.orderBy(
-          this.availableSerialNumbers.filter(
-            (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
-          ),
-          [this.sortByField],
-          [this.sortByOrder]
-        );
+        if (!this.transfer) {
+          this.filteredSerialNumbers = _.orderBy(
+            this.availableSerialNumbers.filter(
+              (nftEntryResponse) =>
+                nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
+            ),
+            [this.sortByField],
+            [this.sortByOrder]
+          );
+        } else {
+          this.filteredSerialNumbers = this.transferNFTEntryResponses;
+        }
       })
       .add(() => (this.loading = false));
   }
@@ -241,7 +246,7 @@ export class PlaceBidComponent implements OnInit {
     const endIdx = (page + 1) * PlaceBidComponent.PAGE_SIZE;
 
     return new Promise((resolve, reject) => {
-      resolve(this.biddableSerialNumbers.slice(startIdx, Math.min(endIdx, this.biddableSerialNumbers.length)));
+      resolve(this.filteredSerialNumbers.slice(startIdx, Math.min(endIdx, this.filteredSerialNumbers.length)));
     });
   }
 
@@ -252,7 +257,7 @@ export class PlaceBidComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.biddableSerialNumbers = _.orderBy(this.biddableSerialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.filteredSerialNumbers = _.orderBy(this.filteredSerialNumbers, [this.sortByField], [this.sortByOrder]);
   }
 
   bidAmountUSDFormatted() {

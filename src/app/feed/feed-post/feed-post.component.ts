@@ -578,10 +578,20 @@ export class FeedPostComponent implements OnInit {
 
   acceptTransfer(event) {
     event.stopPropagation();
+    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.IsPending
+      );
+    });
     if (!this.globalVars.isMobile()) {
       this.modalService.show(PlaceBidModalComponent, {
         class: "modal-dialog-centered modal-lg",
-        initialState: { post: this.postContent, transfer: true },
+        initialState: {
+          post: this.postContent,
+          transfer: true,
+          transferNFTEntryResponses,
+        },
       });
     } else {
       this.router.navigate(["/" + RouteNames.BID_NFT + "/" + this.postContent.PostHashHex], {
@@ -590,6 +600,7 @@ export class FeedPostComponent implements OnInit {
           post: this.postContent,
           postHashHex: this.postContent.PostHashHex,
           transfer: true,
+          transferNFTEntryResponses,
         },
       });
     }
