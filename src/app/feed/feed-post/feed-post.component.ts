@@ -119,6 +119,10 @@ export class FeedPostComponent implements OnInit {
 
   @Input() inTutorial: boolean = false;
 
+  // If this is a pending NFT post that still needs to be accepted by the user
+  @Input() acceptNFT: boolean = false;
+  @Input() acceptNFTSN: number;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -568,6 +572,16 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  acceptTransfer() {
+    this.backendApi.AcceptNFTTransfer(
+      this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      this.postContent.PostHashHex,
+      this.acceptNFTSN,
+      this.globalVars.defaultFeeRateNanosPerKB
+    );
   }
 
   openPlaceBidModal(event: any) {

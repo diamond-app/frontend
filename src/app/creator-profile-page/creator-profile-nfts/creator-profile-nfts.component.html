@@ -104,19 +104,20 @@
         </div>
       </div>
     </div>
-    <i-feather
-      *ngIf="
-        !showProfileAsReserved &&
-        !isLoading &&
-        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||
-          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))
-      "
-      name="credit-card"
-      class="cursor-pointer position-relative"
-      style="right: 16px; transform: 'rotate(180deg)'"
-      (click)="cardView = !cardView"
-      [ngClass]="{ 'fc-blue': cardView }"
-    ></i-feather>
+<!--    This is the compact / expanded switcher. Unclear if it's providing value-->
+<!--    <i-feather-->
+<!--      *ngIf="-->
+<!--        !showProfileAsReserved &&-->
+<!--        !isLoading &&-->
+<!--        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||-->
+<!--          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))-->
+<!--      "-->
+<!--      name="credit-card"-->
+<!--      class="cursor-pointer position-relative"-->
+<!--      style="right: 16px; transform: 'rotate(180deg)'"-->
+<!--      (click)="cardView = !cardView"-->
+<!--      [ngClass]="{ 'fc-blue': cardView }"-->
+<!--    ></i-feather>-->
   </div>
 </div>
 <div
@@ -192,6 +193,8 @@
         [cardStyle]="true"
         [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
         [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
+        [acceptNFT]="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS"
+        [acceptNFTSN]="nftEntry.SerialNumber"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">

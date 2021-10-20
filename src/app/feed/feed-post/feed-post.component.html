@@ -532,6 +532,17 @@
               Place a bid
             </span>
           </button>
+          <button
+            style="height: 32px"
+            [ngClass]="{ 'mt-15px': isQuotedContent }"
+            (click)="acceptTransfer()"
+            *ngIf="acceptNFT"
+          >
+            <span class="d-flex align-items-center justify-content-center">
+              <i-feather name="thumbs-up" class="fs-0px mr-5px"></i-feather>
+              Transfer
+            </span>
+          </button>
         </div>
       </div>
     </div>

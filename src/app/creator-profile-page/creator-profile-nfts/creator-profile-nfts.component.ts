@@ -39,6 +39,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   static FOR_SALE = "For Sale";
   static MY_BIDS = "My Bids";
   static MY_GALLERY = "Gallery";
+  static MY_PENDING_TRANSFERS = "Pending Transfers";
   static ORDER_RECENT = "recent";
   static ORDER_POPULAR = "popular";
   static ORDER_PRICE = "price";
@@ -58,12 +59,14 @@ export class CreatorProfileNftsComponent implements OnInit {
     my_bids: CreatorProfileNftsComponent.MY_BIDS,
     for_sale: CreatorProfileNftsComponent.FOR_SALE,
     my_gallery: CreatorProfileNftsComponent.MY_GALLERY,
+    my_pending_transfers: CreatorProfileNftsComponent.MY_PENDING_TRANSFERS,
   };
 
   nftTabInverseMap = {
     [CreatorProfileNftsComponent.FOR_SALE]: "for_sale",
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
     [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
+    [CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]: "my_pending_transfers",
   };
   cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
@@ -82,11 +85,13 @@ export class CreatorProfileNftsComponent implements OnInit {
   ngOnInit(): void {
     if (this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check) {
       this.tabs.push(CreatorProfileNftsComponent.MY_BIDS);
+      this.tabs.push(CreatorProfileNftsComponent.MY_PENDING_TRANSFERS);
     }
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.nftTab && queryParams.nftTab in this.nftTabMap) {
         if (
-          queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] &&
+          (queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] ||
+            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]) &&
           this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.profile.PublicKeyBase58Check
         ) {
           this.updateNFTTabParam(CreatorProfileNftsComponent.MY_GALLERY);
@@ -150,7 +155,7 @@ export class CreatorProfileNftsComponent implements OnInit {
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         isForSale,
-        false
+        this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
       )
       .subscribe(
         (res: {
