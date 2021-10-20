@@ -81,6 +81,7 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
+  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -879,7 +880,7 @@ export class BackendApiService {
     SerialNumber: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNFTBid, {
+    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
       UpdaterPublicKeyBase58Check,
       NFTPostHashHex,
       SerialNumber,
