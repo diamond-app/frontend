@@ -291,6 +291,7 @@ $green-font-color: #19B028;
 .background-color-light-pink { background-color: lightpink; }
 .background-color-white { background-color: var(--tile-bg); }
 .background-color-main { background-color: var(--tile-bg); }
+.background-color-form { background-color: var(--formbg); }
 .background-color-secondary { background-color: var(--tile-secondary-bg); }
 .background-color-background { background-color: var(--background); }
 .background-color-lemon-chiffon { background-color: lemonchiffon; }
@@ -695,9 +696,6 @@ $green-font-color: #19B028;
   app-messages-page {
     .global__mobile-scrollable-section {
       padding-left: 0px;
-    }
-    #messagesContainer {
-      height: calc(100vh - 210px)
     }
     .messages-thread-view__message-builder {
       position: fixed;
@@ -3561,7 +3559,7 @@ creator-profile-nfts {
 .messages-inbox__threads {
   overflow-y: scroll;
   // Subtract the height of the search and header
-  height: calc(100% - 160px);
+  height: 100% !important;
 }
 
 .messages-inbox__header {
@@ -3724,9 +3722,10 @@ creator-profile-nfts {
 }
 
 .messages-thread-view__message-builder {
-  position: relative;
-  top: 0px;
+  position: fixed;
+  bottom: 0px;
   height: 120px;
+  width: 593px;
   background: var(--tile-bg);
   border-top: 1px solid var(--border);
   textarea {
@@ -3802,7 +3801,7 @@ creator-profile-nfts {
 }
 
 .messages-page__height-div,#messagesContainer {
-  height: calc(100vh - 164px);
+  height: calc(100vh - 180px);
 }
 
 .message__sender-bubble-color {

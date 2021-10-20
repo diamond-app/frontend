@@ -108,7 +108,7 @@
 
     <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': !globalVars.isMobile() ? '64px' : showThreadView ? '0px' : '60px' }">
       <!-- Scrollable Content -->
-      <div class="global__mobile-scrollable-section">
+      <div class="global__mobile-scrollable-section" style="overflow-y: hidden">
         <messages-inbox
           *ngIf="!showThreadView"
           class="global__mobile-scrollable-section"
