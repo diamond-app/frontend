@@ -16,6 +16,7 @@ import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "feed-post",
@@ -64,6 +65,7 @@ export class FeedPostComponent implements OnInit {
     private router: Router,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
+    private toastr: ToastrService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -576,12 +578,23 @@ export class FeedPostComponent implements OnInit {
 
   acceptTransfer() {
     this.backendApi.AcceptNFTTransfer(
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      this.postContent.PostHashHex,
-      this.acceptNFTSN,
-      this.globalVars.defaultFeeRateNanosPerKB
-    );
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.postContent.PostHashHex,
+        this.acceptNFTSN,
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(
+        (res) => {
+          this.toastr.show("Your transfer was completed", null, {
+            toastClass: "info-toast",
+            positionClass: "toast-bottom-center",
+          });
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   openPlaceBidModal(event: any) {
