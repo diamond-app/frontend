@@ -63,6 +63,20 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this._handleTabClick(this.activeTab);
       }
       if (params.username) {
+        this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe(
+          (response) => {
+            if (!response || !response.Profile) {
+              console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+              return;
+            }
+            let profile = response.Profile;
+            this._handleCreatorSelectedInSearch(profile);
+          },
+          (err) => {
+            console.error(err);
+            console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+          }
+        );
         this.startingSearchText = params.username;
       }
     });

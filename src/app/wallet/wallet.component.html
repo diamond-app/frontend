@@ -42,7 +42,7 @@
         </div>
         <!--Balance-->
         <div class="fs-17px">
-          {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}
+          {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}
           <span class="fc-secondary">&nbsp;Total Balance</span>
         </div>
       </div>
