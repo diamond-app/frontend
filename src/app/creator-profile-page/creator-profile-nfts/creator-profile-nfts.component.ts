@@ -165,7 +165,8 @@ export class CreatorProfileNftsComponent implements OnInit {
           for (const k in res.NFTsMap) {
             const responseElement = res.NFTsMap[k];
             if (
-              (this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
+              ((this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ||
+                this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS) &&
                 responseElement.PostEntryResponse.PosterPublicKeyBase58Check !== this.profile.PublicKeyBase58Check) ||
               this.activeTab === CreatorProfileNftsComponent.FOR_SALE
             ) {
