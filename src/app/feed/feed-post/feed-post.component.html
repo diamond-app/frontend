@@ -535,7 +535,7 @@
           <button
             style="height: 32px"
             [ngClass]="{ 'mt-15px': isQuotedContent }"
-            (click)="acceptTransfer()"
+            (click)="acceptTransfer($event)"
             *ngIf="acceptNFT"
           >
             <span class="d-flex align-items-center justify-content-center">

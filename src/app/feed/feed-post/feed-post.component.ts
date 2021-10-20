@@ -576,8 +576,10 @@ export class FeedPostComponent implements OnInit {
     return imgURL;
   }
 
-  acceptTransfer() {
-    this.backendApi.AcceptNFTTransfer(
+  acceptTransfer(event) {
+    event.stopPropagation();
+    this.backendApi
+      .AcceptNFTTransfer(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.postContent.PostHashHex,
