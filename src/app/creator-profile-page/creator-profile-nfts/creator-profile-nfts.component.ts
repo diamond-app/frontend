@@ -319,6 +319,9 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getIsForSaleValue(): boolean | null {
-    return this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ? null : true;
+    return this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ||
+      this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
+      ? null
+      : true;
   }
 }
