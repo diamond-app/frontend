@@ -12,6 +12,7 @@ export class PlaceBidModalComponent {
   title: string = null;
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
+  @Input() transfer: boolean = false;
 
   constructor(private bsModalRef: BsModalRef, private modalService: BsModalService) {}
 

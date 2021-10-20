@@ -578,25 +578,21 @@ export class FeedPostComponent implements OnInit {
 
   acceptTransfer(event) {
     event.stopPropagation();
-    this.backendApi
-      .AcceptNFTTransfer(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostHashHex,
-        this.acceptNFTSN,
-        this.globalVars.defaultFeeRateNanosPerKB
-      )
-      .subscribe(
-        (res) => {
-          this.toastr.show("Your transfer was completed", null, {
-            toastClass: "info-toast",
-            positionClass: "toast-bottom-center",
-          });
+    if (!this.globalVars.isMobile()) {
+      this.modalService.show(PlaceBidModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: { post: this.postContent, transfer: true },
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.BID_NFT + "/" + this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: this.postContent,
+          postHashHex: this.postContent.PostHashHex,
+          transfer: true,
         },
-        (err) => {
-          console.error(err);
-        }
-      );
+      });
+    }
   }
 
   openPlaceBidModal(event: any) {

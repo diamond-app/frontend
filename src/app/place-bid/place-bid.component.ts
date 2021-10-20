@@ -21,6 +21,7 @@ export class PlaceBidComponent implements OnInit {
 
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
+  @Input() transfer: boolean = false;
   @Output() closeModal = new EventEmitter<any>();
   @Output() changeTitle = new EventEmitter<string>();
 
@@ -132,6 +133,39 @@ export class PlaceBidComponent implements OnInit {
         (err) => {
           console.error(err);
           this.globalVars._alertError(this.backendApi.parseMessageError(err));
+        }
+      )
+      .add(() => {
+        this.placingBids = false;
+        this.saveSelectionDisabled = false;
+      });
+  }
+  acceptTransfer() {
+    this.saveSelectionDisabled = true;
+    this.placingBids = true;
+    this.backendApi
+      .AcceptNFTTransfer(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.post.PostHashHex,
+        this.selectedSerialNumber.SerialNumber,
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(
+        (res) => {
+          if (!this.globalVars.isMobile()) {
+            // Hide this modal and open the next one.
+            this.closeModal.emit("transfer accepted");
+          } else {
+            this.location.back();
+          }
+          this.toastr.show("Your transfer was completed", null, {
+            toastClass: "info-toast",
+            positionClass: "toast-bottom-center",
+          });
+        },
+        (err) => {
+          console.error(err);
         }
       )
       .add(() => {

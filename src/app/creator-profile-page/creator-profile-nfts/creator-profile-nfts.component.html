@@ -201,7 +201,7 @@
         [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
         [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
         [acceptNFT]="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS"
-        [acceptNFTSN]="nftEntry.SerialNumber"
+        [acceptNFTSN]="nftEntry"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
