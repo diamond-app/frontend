@@ -44,50 +44,45 @@
         <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
           <i class="fas fa-ellipsis-h"></i>
         </a>
-        <div class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey fs-15px" *dropdownMenu>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="messageUser()"
-            *ngIf="!profileBelongsToLoggedInUser()"
-          >
-            <i class="fas fa-envelope"></i>
-            Message User
-          </a>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
-            *ngIf="!profileBelongsToLoggedInUser()"
-          >
-            <i class="fas fa-ban"></i>
-            {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
-          </a>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="reportUser()"
-            *ngIf="!profileBelongsToLoggedInUser()"
-          >
-            <i class="fas fa-flag"></i>
-            Report User
-          </a>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="updateWellKnownCreatorsList()"
-            *ngIf="!profile.IsFeaturedTutorialUpAndComingCreator && globalVars.showSuperAdminTools()"
-          >
-            <i class="fas" [ngClass]="profile.IsFeaturedTutorialWellKnownCreator ? 'fa-user-minus' : 'fa-user-plus'"></i>
-            {{ profile.IsFeaturedTutorialWellKnownCreator ? "Remove" : "Add" }} User As Well Known Creator
-          </a>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="updateUpAndComingCreatorsList()"
-            *ngIf="!profile.IsFeaturedTutorialWellKnownCreator && globalVars.showSuperAdminTools()"
-          >
-            <i
-              class="fas"
-              [ngClass]="profile.IsFeaturedTutorialUpAndComingCreator ? 'fa-user-minus' : 'fa-user-plus'"
-            ></i>
-            {{ profile.IsFeaturedTutorialUpAndComingCreator ? "Remove" : "Add" }} User As Up And Coming Creator
-          </a>
+        <div class="dropdown-menu dropdown-menu-right bc-dropdown-menu p-0 border fs-15px" *dropdownMenu>
+          <div>
+
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="messageUser()"
+              *ngIf="!profileBelongsToLoggedInUser()"
+            >
+              Message User
+            </a>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
+              *ngIf="!profileBelongsToLoggedInUser()"
+            >
+              {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
+            </a>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="reportUser()"
+              *ngIf="!profileBelongsToLoggedInUser()"
+            >
+              Report User
+            </a>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="updateWellKnownCreatorsList()"
+              *ngIf="!profile.IsFeaturedTutorialUpAndComingCreator && globalVars.showSuperAdminTools()"
+            >
+              {{ profile.IsFeaturedTutorialWellKnownCreator ? "Remove" : "Add" }} User As Well Known Creator
+            </a>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="updateUpAndComingCreatorsList()"
+              *ngIf="!profile.IsFeaturedTutorialWellKnownCreator && globalVars.showSuperAdminTools()"
+            >
+              {{ profile.IsFeaturedTutorialUpAndComingCreator ? "Remove" : "Add" }} User As Up And Coming Creator
+            </a>
+          </div>
         </div>
       </div>
 
