@@ -39,6 +39,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   static FOR_SALE = "For Sale";
   static MY_BIDS = "My Bids";
   static MY_GALLERY = "Gallery";
+  static TRANSFERABLE = "Transferable";
   static ORDER_RECENT = "recent";
   static ORDER_POPULAR = "popular";
   static ORDER_PRICE = "price";
@@ -58,12 +59,14 @@ export class CreatorProfileNftsComponent implements OnInit {
     my_bids: CreatorProfileNftsComponent.MY_BIDS,
     for_sale: CreatorProfileNftsComponent.FOR_SALE,
     my_gallery: CreatorProfileNftsComponent.MY_GALLERY,
+    transferable: CreatorProfileNftsComponent.TRANSFERABLE,
   };
 
   nftTabInverseMap = {
     [CreatorProfileNftsComponent.FOR_SALE]: "for_sale",
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
     [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
+    [CreatorProfileNftsComponent.TRANSFERABLE]: "transferable",
   };
   cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
@@ -80,13 +83,14 @@ export class CreatorProfileNftsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check) {
-      this.tabs.push(CreatorProfileNftsComponent.MY_BIDS);
+    if (this.profileBelongsToLoggedInUser()) {
+      this.tabs.push(CreatorProfileNftsComponent.MY_BIDS, CreatorProfileNftsComponent.TRANSFERABLE);
     }
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.nftTab && queryParams.nftTab in this.nftTabMap) {
         if (
-          queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] &&
+          (queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] ||
+            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.TRANSFERABLE]) &&
           this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.profile.PublicKeyBase58Check
         ) {
           this.updateNFTTabParam(CreatorProfileNftsComponent.MY_GALLERY);
@@ -143,14 +147,14 @@ export class CreatorProfileNftsComponent implements OnInit {
       );
   }
 
-  getNFTs(isForSale: boolean | null = null): Subscription {
+  getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null): Subscription {
     return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         isForSale,
-        false
+        isPending
       )
       .subscribe(
         (res: {
@@ -159,13 +163,21 @@ export class CreatorProfileNftsComponent implements OnInit {
           this.nftResponse = [];
           for (const k in res.NFTsMap) {
             const responseElement = res.NFTsMap[k];
+            // Exclude NFTs created by profile from Gallery
             if (
-              (this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
-                responseElement.PostEntryResponse.PosterPublicKeyBase58Check !== this.profile.PublicKeyBase58Check) ||
-              this.activeTab === CreatorProfileNftsComponent.FOR_SALE
+              this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
+              responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.ProfilePic
             ) {
-              this.nftResponse.push(responseElement);
+              continue;
             }
+            // Exclude NFTs for which all copies are pending or are for sale from Transferable view.
+            if (
+              this.activeTab === CreatorProfileNftsComponent.TRANSFERABLE &&
+              responseElement.NFTEntryResponses.filter((nftEntryResponse) => !nftEntryResponse.IsPending && !nftEntryResponse.IsForSale).length === 0
+            ) {
+              continue;
+            }
+            this.nftResponse.push(responseElement);
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
           const sortDetails = this.sortFields[this.orderNFTsBy];
@@ -314,6 +326,6 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getIsForSaleValue(): boolean | null {
-    return this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ? null : true;
+    return this.activeTab === CreatorProfileNftsComponent.FOR_SALE ? true : null;
   }
 }
