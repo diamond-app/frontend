@@ -9,7 +9,7 @@
         You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username }}.
       </div>
       <div *ngIf="transfer" class="fs-15px text-grey5">
-        You are about to accept a bid transferred by @{{ post.ProfileEntryResponse.Username }}.
+        You are about to accept a bid transferred by @{{ this.transferringUser }}.
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">

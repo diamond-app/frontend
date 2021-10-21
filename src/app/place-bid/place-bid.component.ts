@@ -47,6 +47,7 @@ export class PlaceBidComponent implements OnInit {
   sortByOrder: "desc" | "asc" = "asc";
   minBidCurrency: string = "USD";
   minBidInput: number = 0;
+  transferringUser: string;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -77,10 +78,7 @@ export class PlaceBidComponent implements OnInit {
             [this.sortByOrder]
           );
         } else {
-          console.log('Here are the filtered sns');
           this.filteredSerialNumbers = this.transferNFTEntryResponses;
-          console.log(this.transferNFTEntryResponses);
-          console.log(this.filteredSerialNumbers);
         }
       })
       .add(() => (this.loading = false));
@@ -224,7 +222,17 @@ export class PlaceBidComponent implements OnInit {
   }
 
   selectSerialNumber(idx: number) {
-    this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+    const serialNumbers = this.transfer ? this.filteredSerialNumbers : this.availableSerialNumbers;
+    this.selectedSerialNumber = serialNumbers.find((sn) => sn.SerialNumber === idx);
+    if (this.transfer) {
+      this.backendApi
+        .GetSingleProfile(this.globalVars.localNode, this.selectedSerialNumber.LastOwnerPublicKeyBase58Check, "")
+        .subscribe((res) => {
+          if (res && !res.IsBlacklisted) {
+            this.transferringUser = res.Profile?.Username;
+          }
+        });
+    }
     this.saveSelection();
   }
 
