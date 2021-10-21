@@ -1634,6 +1634,52 @@ feed-create-post {
     }
   }
 
+  // Start of weird autofill stuff
+  body {
+    margin: 0;
+    padding: 2rem 0;
+  }
+
+  textarea {
+    font: inherit;
+    height: 7rem;
+    width: 100%;
+    padding: .8rem 1rem
+  }
+
+  .menu {
+    background-color: var(--tile-bg);
+    position: absolute;
+    z-index: 3;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px rgb(0 0 0 / 10%);
+    :first-child {
+      border-radius: 10px 10px 0px 0px;
+    }
+    :last-child {
+      border-radius: 0px 0px 10px 10px;
+    }
+    :first-child:last-child {
+      border-radius: 10px !important;
+    }
+  }
+
+  .menu-item {
+    cursor: default;
+    padding: 1rem;
+    color: var(--text-muted);
+  }
+
+  .menu-item.selected {
+    background-color: var(--tile-secondary-bg);
+    color: var(--text);
+  }
+
+  .menu-item:hover:not(.selected) {
+    background-color: var(--tile-bg);
+  }
+// End weird hoverfill stuff
+
 }
 
 feed-create-post-modal {
