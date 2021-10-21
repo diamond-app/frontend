@@ -37,6 +37,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loggedInUserProfile: ProfileEntryResponse;
   investInYourself: boolean = false;
 
+  // Show instructions to user
+  showInstructions: boolean = false;
+
   // Count steps in tutorial
   stepCounter = 0;
 
@@ -96,7 +99,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/6</span>';
     this.introJS.setOptions({
       tooltipClass,
-      hideNext: true,
+      hideNext: false,
       exitOnEsc: false,
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
@@ -108,30 +111,26 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         {
           title,
           intro: `Many creators on ${environment.node.name} have a coin that you can buy and sell.`,
-          element: document.querySelector("#creator-coins-holder"),
           position: "bottom",
         },
         {
           title,
           intro:
             "Prices go up when people buy, or when cashflows go to the coin. Prices go down when people sell. <br /><br />Coins can also give you access to exclusive content, events, and much more...",
-          element: document.querySelector("#creator-coins-holder"),
           position: "bottom",
         },
         {
           title,
           intro:
-            'Let\'s choose a creator to invest in! <br /><br /><b>Click the "Buy" button above</b> next to the creator you want to invest in.',
-          element: document.querySelector("#creator-coins-holder"),
+            'Let\'s choose a creator to invest in! <br /><br /><b>Click the "Buy" button</b> next to the creator you want to invest in.',
           position: "bottom",
         },
       ],
     });
-    this.introJS.onchange((targetElement) => {
-      this.stepCounter += 1;
-      if (this.stepCounter >= 3) {
-        this.tutorialWiggle = true;
-      }
+    this.introJS.oncomplete(() => {
+      this.skipTutorialExitPrompt = true;
+      this.showInstructions = true;
+      this.tutorialWiggle = true;
     });
     this.introJS.onbeforeexit(() => {
       if (!this.skipTutorialExitPrompt) {
