@@ -123,7 +123,6 @@ export class FeedPostComponent implements OnInit {
 
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
-  @Input() acceptNFTSN: number;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
