@@ -1,4 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  Input,
+  EventEmitter,
+  Output,
+  ViewChild,
+  ElementRef, AfterViewInit
+} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
@@ -16,7 +25,7 @@ import * as _ from "lodash";
   templateUrl: "./feed-create-post.component.html",
   styleUrls: ["./feed-create-post.component.sass"],
 })
-export class FeedCreatePostComponent implements OnInit {
+export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 515; // show warning at 515 characters
 
   EmbedUrlParserService = EmbedUrlParserService;
@@ -30,6 +39,8 @@ export class FeedCreatePostComponent implements OnInit {
   isComment: boolean;
 
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
+  @ViewChild("textarea") textAreaEl: ElementRef;
+  @ViewChild("menu") menuEl: ElementRef;
 
   randomMovieQuote = "";
   randomMovieQuotes = [
@@ -106,19 +117,51 @@ export class FeedCreatePostComponent implements OnInit {
     return profiles.ProfilesFound;
   }
 
+  // Create and format the item in the dropdown
+  menuItemFn = (user, setItem, selected) => {
+    const div = document.createElement("div");
+    div.setAttribute("role", "option");
+    div.className = "menu-item";
+    if (selected) {
+      div.classList.add("selected");
+      div.setAttribute("aria-selected", "");
+    }
+    // The fallback route is the route to the pic we use if we can't find an avatar for the user.
+    let fallbackRoute = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
+
+    // Although it would be hard for an attacker to inject a malformed public key into the app,
+    // we do a basic _.escape anyways just to be extra safe.
+    const profPicURL = _.escape(
+      this.backendApi.GetSingleProfilePictureURL(this.globalVars.localNode, user.PublicKeyBase58Check, fallbackRoute)
+    );
+    div.innerHTML = `
+      <div class="d-flex align-items-center">
+        <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
+        <p>${_.escape(user.Username)}</p>
+        ${user.IsVerified ? `<i class="fas fa-check-circle fa-md ml-5px fc-blue"></i>` : ""}
+      </div>`;
+    div.onclick = setItem;
+    return div;
+  };
+
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
     if (this.inTutorial) {
       this.postInput = "It's Diamond time!";
     }
-    new Mentionify(
-      document.getElementById("textarea"),
-      document.getElementById("menu"),
-      this.resolveFn,
-      replaceFn,
-      menuItemFn
-    );
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      new Mentionify(
+        this.textAreaEl.nativeElement,
+        this.menuEl.nativeElement,
+        this.resolveFn,
+        replaceFn,
+        this.menuItemFn
+      );
+    }, 50);
   }
 
   onPaste(event: any): void {
@@ -473,7 +516,7 @@ function getCaretCoordinates(element, position) {
     height: span.offsetHeight,
   };
 
-  div.remove();
+  // div.remove();
 
   return coordinates;
 }
@@ -563,11 +606,19 @@ class Mentionify {
 
     const coords = getCaretCoordinates(this.ref, positionIndex);
     const { top, left } = this.ref.getBoundingClientRect();
+    let modalTop = 0;
+    let modalLeft = 0;
+    const modal = document.querySelector(".modal-content");
+    if (modal) {
+      const modalBoundingClientRect = modal.getBoundingClientRect();
+      modalLeft = modalBoundingClientRect.left;
+      modalTop = modalBoundingClientRect.top;
+    }
 
     setTimeout(() => {
       this.active = 0;
-      this.left = window.scrollX + coords.left + left + this.ref.scrollLeft;
-      this.top = window.scrollY + coords.top + top + coords.height - this.ref.scrollTop;
+      this.left = window.scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
+      this.top = window.scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
       this.triggerIdx = triggerIdx;
       this.renderMenu();
     }, 0);
@@ -619,16 +670,3 @@ class Mentionify {
 }
 
 const replaceFn = (user, trigger) => `${trigger}${user.Username} `;
-
-const menuItemFn = (user, setItem, selected) => {
-  const div = document.createElement("div");
-  div.setAttribute("role", "option");
-  div.className = "menu-item";
-  if (selected) {
-    div.classList.add("selected");
-    div.setAttribute("aria-selected", "");
-  }
-  div.textContent = user.Username;
-  div.onclick = setItem;
-  return div;
-};

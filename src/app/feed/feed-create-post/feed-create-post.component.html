@@ -30,16 +30,17 @@
             'lh-18px': parentPost,
             'background-color-white': !parentPost
           }"
-          class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
+          class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative"
           id="textarea"
           [placeholder]="getPlaceholderText()"
           (paste)="onPaste($event)"
           dropUpload
           (onFileDropped)="uploadFile($event)"
           cdkTextareaAutosize
+          #textarea
           #autosize="cdkTextareaAutosize"
         ></textarea>
-        <div id="menu" class="menu" role="listbox"></div>
+        <div id="menu" #menu class="menu" role="listbox"></div>
       </div>
 
      </div>
