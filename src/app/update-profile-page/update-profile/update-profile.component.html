@@ -9,11 +9,14 @@
       <div class="fc-secondary fs-15px">Step 3/6</div>
     </div>
   </div>
+  <div class="p-16px" *ngIf="showTutorialInstructions">
+    Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.
+  </div>
 </div>
 
 <div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
   <div class="d-flex flex-column">
-    <div style="flex-grow: 1" id="update-profile-tutorial-holder" [ngStyle]="{ 'min-height': inTutorial ? '1500px': 'auto' }">
+    <div style="flex-grow: 1" id="update-profile-tutorial-holder">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
 
       <!-- Create Profile Fee Warning -->

@@ -36,6 +36,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   introJS = introJs();
   skipTutorialExitPrompt = false;
+  showTutorialInstructions: boolean = false;
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -394,7 +395,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     const title = 'Update Your Profile <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
-      hideNext: true,
+      hideNext: false,
       exitOnEsc: false,
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
@@ -406,10 +407,13 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         {
           title,
           intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
-          element: document.querySelector("#update-profile-tutorial-holder"),
           position: "bottom",
         },
       ],
+    });
+    this.introJS.oncomplete(() => {
+      this.skipTutorialExitPrompt = true;
+      this.showTutorialInstructions = true;
     });
     this.introJS.onexit(() => {
       if (!this.skipTutorialExitPrompt) {

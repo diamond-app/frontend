@@ -1,5 +1,5 @@
 <div>
-  <div class="flex-grow-1 br-10px border" id="creator-coins-holder" [ngStyle]="{ 'min-height': globalVars.isMobile() ? '2050px': '2050px' }">
+  <div class="flex-grow-1 br-10px border" id="creator-coins-holder">
     <div class="tutorial-header">
       <div *ngIf="!investInYourself" class="d-flex justify-content-between">
         <div class="tutorial-title">Invest in a Creator</div>
@@ -9,6 +9,9 @@
         <div class="tutorial-title">Invest in Yourself</div>
         <div class="fc-secondary fs-15px">Step 4/6</div>
       </div>
+    </div>
+    <div class="p-16px" *ngIf="showInstructions">
+      <b>Click the "Buy" button below</b> next to the creator you want to invest in.
     </div>
 
     <simple-center-loader *ngIf="loading"></simple-center-loader>
