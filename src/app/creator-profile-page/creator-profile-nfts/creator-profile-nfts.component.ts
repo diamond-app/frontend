@@ -40,6 +40,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   static MY_BIDS = "My Bids";
   static MY_GALLERY = "Gallery";
   static TRANSFERABLE = "Transferable";
+  static MY_PENDING_TRANSFERS = "Pending Transfers";
   static ORDER_RECENT = "recent";
   static ORDER_POPULAR = "popular";
   static ORDER_PRICE = "price";
@@ -60,6 +61,7 @@ export class CreatorProfileNftsComponent implements OnInit {
     for_sale: CreatorProfileNftsComponent.FOR_SALE,
     my_gallery: CreatorProfileNftsComponent.MY_GALLERY,
     transferable: CreatorProfileNftsComponent.TRANSFERABLE,
+    my_pending_transfers: CreatorProfileNftsComponent.MY_PENDING_TRANSFERS,
   };
 
   nftTabInverseMap = {
@@ -67,6 +69,7 @@ export class CreatorProfileNftsComponent implements OnInit {
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
     [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
     [CreatorProfileNftsComponent.TRANSFERABLE]: "transferable",
+    [CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]: "my_pending_transfers",
   };
   cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
@@ -84,13 +87,18 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.profileBelongsToLoggedInUser()) {
-      this.tabs.push(CreatorProfileNftsComponent.MY_BIDS, CreatorProfileNftsComponent.TRANSFERABLE);
+      this.tabs.push(
+        CreatorProfileNftsComponent.MY_BIDS,
+        CreatorProfileNftsComponent.MY_PENDING_TRANSFERS,
+        CreatorProfileNftsComponent.TRANSFERABLE
+      );
     }
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.nftTab && queryParams.nftTab in this.nftTabMap) {
         if (
           (queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] ||
-            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.TRANSFERABLE]) &&
+            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.TRANSFERABLE] ||
+            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]) &&
           this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.profile.PublicKeyBase58Check
         ) {
           this.updateNFTTabParam(CreatorProfileNftsComponent.MY_GALLERY);
@@ -166,14 +174,16 @@ export class CreatorProfileNftsComponent implements OnInit {
             // Exclude NFTs created by profile from Gallery
             if (
               this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
-              responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.ProfilePic
+              responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.PublicKeyBase58Check
             ) {
               continue;
             }
             // Exclude NFTs for which all copies are pending or are for sale from Transferable view.
             if (
               this.activeTab === CreatorProfileNftsComponent.TRANSFERABLE &&
-              responseElement.NFTEntryResponses.filter((nftEntryResponse) => !nftEntryResponse.IsPending && !nftEntryResponse.IsForSale).length === 0
+              responseElement.NFTEntryResponses.filter(
+                (nftEntryResponse) => !nftEntryResponse.IsPending && !nftEntryResponse.IsForSale
+              ).length === 0
             ) {
               continue;
             }
@@ -254,7 +264,7 @@ export class CreatorProfileNftsComponent implements OnInit {
           this.resetDatasource(event);
         });
       } else {
-        return this.getNFTs(this.getIsForSaleValue()).add(() => {
+        return this.getNFTs(this.getIsForSaleValue(), this.getIsPendingValue()).add(() => {
           this.resetDatasource(event);
         });
       }
@@ -327,5 +337,9 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   getIsForSaleValue(): boolean | null {
     return this.activeTab === CreatorProfileNftsComponent.FOR_SALE ? true : null;
+  }
+
+  getIsPendingValue(): boolean | null {
+    return this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS ? true : null;
   }
 }

@@ -82,6 +82,7 @@ export class BackendRoutes {
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
   static RoutePathTransferNFT = "/api/v0/transfer-nft";
+  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -326,7 +327,7 @@ export class NFTEntryResponse {
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   IsForSale: boolean;
-  IsPending: boolean;
+  IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
@@ -869,6 +870,22 @@ export class BackendApiService {
       NFTPostHashHex,
       SerialNumber,
       BidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  AcceptNFTTransfer(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);

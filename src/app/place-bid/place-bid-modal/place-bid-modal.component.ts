@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
-import {PostEntryResponse} from "../../backend-api.service";
+import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 
 @Component({
   selector: "place-bid-modal",
@@ -12,6 +12,8 @@ export class PlaceBidModalComponent {
   title: string = null;
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
+  @Input() transfer: boolean = false;
+  @Input() transferNFTEntryResponses: NFTEntryResponse[];
 
   constructor(private bsModalRef: BsModalRef, private modalService: BsModalService) {}
 
