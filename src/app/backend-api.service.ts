@@ -2155,12 +2155,14 @@ export class BackendApiService {
     endpoint: string,
     PublicKeyBase58Check: string,
     TutorialStatus: string,
-    CreatorPurchasedInTutorialPublicKey?: string
+    CreatorPurchasedInTutorialPublicKey?: string,
+    ClearCreatorCoinPurchasedInTutorial?: boolean,
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, {
       PublicKeyBase58Check,
       TutorialStatus,
       CreatorPurchasedInTutorialPublicKey,
+      ClearCreatorCoinPurchasedInTutorial,
     });
   }
 

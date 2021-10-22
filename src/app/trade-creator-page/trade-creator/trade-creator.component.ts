@@ -417,7 +417,8 @@ export class TradeCreatorComponent implements OnInit {
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             TutorialStatus.INVEST_OTHERS_BUY,
-            this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
+            this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
+            true
           )
           .subscribe(() => {
             this.globalVars.updateEverything().add(() => {
