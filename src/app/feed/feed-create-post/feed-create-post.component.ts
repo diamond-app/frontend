@@ -516,7 +516,7 @@ function getCaretCoordinates(element, position) {
     height: span.offsetHeight,
   };
 
-  // div.remove();
+  div.remove();
 
   return coordinates;
 }
