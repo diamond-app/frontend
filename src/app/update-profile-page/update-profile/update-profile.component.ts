@@ -7,6 +7,7 @@ import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../../theme/theme.service";
 import * as introJs from "intro.js/intro.js";
+import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { environment } from "src/environments/environment";
@@ -362,9 +363,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     if (username !== this.globalVars.loggedInUser?.ProfileEntryResponse?.Username) {
-      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username).subscribe(
-        () => {
-          this.usernameValidationError = `${username} is already in use`;
+      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username, true).subscribe(
+        (res) => {
+          if (!isNil(res)) {
+            this.usernameValidationError = `${username} is already in use`;
+          }
         },
         (err) => {
           console.log(err);

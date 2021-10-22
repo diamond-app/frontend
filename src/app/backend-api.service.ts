@@ -1126,10 +1126,17 @@ export class BackendApiService {
       AddGlobalFeedBool,
     });
   }
-  GetSingleProfile(endpoint: string, PublicKeyBase58Check: string, Username: string): Observable<any> {
+
+  GetSingleProfile(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    Username: string,
+    NoErrorOnMissing: boolean = false
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
       PublicKeyBase58Check,
       Username,
+      NoErrorOnMissing,
     });
   }
 

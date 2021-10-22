@@ -106,7 +106,7 @@
           <div *ngIf="usernameValidationError" class="fc-error fs-13px ml-5px mt-5px">
             {{ usernameValidationError }}
           </div>
-          <div *ngIf="inTutorial && !usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
+          <div *ngIf="!usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
             {{ usernameInput }} is available
           </div>
 
