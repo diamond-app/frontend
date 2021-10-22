@@ -106,7 +106,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
         "" /*Description*/,
-        "" /*Order by*/,
+        "influencer_coin_price" /*Order by*/,
         5 /*NumToFetch*/,
         this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
         "" /*ModerationType*/,
@@ -594,7 +594,7 @@ class Mentionify {
     const lastToken = tokens[tokens.length - 1];
     const triggerIdx = textBeforeCaret.endsWith(lastToken) ? textBeforeCaret.length - lastToken.length : -1;
     const maybeTrigger = textBeforeCaret[triggerIdx];
-    const keystrokeTriggered = maybeTrigger === "@";
+    const keystrokeTriggered = maybeTrigger === "@" && lastToken.length >= 2;
 
     if (!keystrokeTriggered) {
       this.closeMenu();
