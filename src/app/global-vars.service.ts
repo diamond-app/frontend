@@ -871,6 +871,7 @@ export class GlobalVarsService {
       .launch("/log-in", {
         accessLevelRequest: "4",
         referralCode: this.referralCode(),
+        hideJumio: true,
       })
       .subscribe((res) => {
         this.logEvent(`account : ${event} : success`);
@@ -1227,7 +1228,6 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
-              localStorage.setItem("referralCode", undefined);
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
                 this.startTutorialAlert();
