@@ -42,7 +42,14 @@ export class IdentityService {
 
   launch(
     path?: string,
-    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string, accessLevelRequest?: string, hideJumio?: boolean }
+    params?: {
+      publicKey?: string;
+      tx?: string;
+      referralCode?: string;
+      public_key?: string;
+      accessLevelRequest?: string;
+      hideJumio?: boolean;
+    }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
