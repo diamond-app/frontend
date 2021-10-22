@@ -421,6 +421,7 @@ export class TradeCreatorComponent implements OnInit {
             true
           )
           .subscribe(() => {
+            this.globalVars.logEvent("skip");
             this.globalVars.updateEverything().add(() => {
               this.router.navigate([
                 RouteNames.TUTORIAL,
@@ -472,13 +473,20 @@ export class TradeCreatorComponent implements OnInit {
         },
         {
           title,
-          intro: `${this.simulatedTutorialSell ? 'Here is where you can see the amount you would be selling the' : 'Let\'s sell a small amount of the' } $${this.creatorCoinTrade.creatorProfile?.Username} coin you just bought.`,
+          intro: `${
+            this.simulatedTutorialSell
+              ? "Here is where you can see the amount you would be selling the"
+              : "Let's sell a small amount of the"
+          } $${this.creatorCoinTrade.creatorProfile?.Username} coin you just bought.`,
           element: document.querySelector("#tutorial-amount-selling"),
         },
         {
           title,
-          intro: `${this.simulatedTutorialSell ? `The confirm sell button would complete the transaction to sell the $${this.creatorCoinTrade.creatorProfile?.Username} coin`
-            : `<b>Click "Confirm Sell"</b> to sell some of your $${this.creatorCoinTrade.creatorProfile?.Username} coin.` }<br/><br/><b>Click "Skip" below to continue.</b>`,
+          intro: `${
+            this.simulatedTutorialSell
+              ? `The confirm sell button would complete the transaction to sell the $${this.creatorCoinTrade.creatorProfile?.Username} coin`
+              : `<b>Click "Confirm Sell"</b> to sell some of your $${this.creatorCoinTrade.creatorProfile?.Username} coin.`
+          }<br/><br/><b>Click "Skip" below to continue.</b>`,
           element: document.querySelector("#tutorial-confirm-buy"),
         },
       ],
@@ -500,6 +508,7 @@ export class TradeCreatorComponent implements OnInit {
             TutorialStatus.INVEST_OTHERS_SELL
           )
           .subscribe(() => {
+            this.globalVars.logEvent("skip");
             this.globalVars.updateEverything().add(() => {
               this.router.navigate([
                 RouteNames.TUTORIAL,
