@@ -1,11 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../../global-vars.service";
 import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { AppRoutingModule } from "../../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import * as introJs from "intro.js/intro.js";
 import { LocationStrategy } from "@angular/common";
 import { environment } from "src/environments/environment";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -28,7 +29,8 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private locationStrategy: LocationStrategy
+    private locationStrategy: LocationStrategy,
+    private router: Router
   ) {}
 
   topCreatorsToHighlight: ProfileEntryResponse[];
@@ -40,6 +42,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   // Show instructions to user
   showInstructions: boolean = false;
 
+  followCreators: boolean = false;
   // Count steps in tutorial
   stepCounter = 0;
 
@@ -48,15 +51,21 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     this.globalVars.preventBackButton();
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
     // If the user just completed their profile, we instruct them to buy their own coin.
-    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
+    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
       this.investInYourself = true;
       this.loading = false;
       this.initiateIntro();
       return;
+    } else if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.INVEST_SELF) {
+      this.followCreators = true;
     }
     this.backendApi
-      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 3)
+      .GetTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.followCreators ? 9 : 3
+      )
       .subscribe(
         (res: {
           WellKnownProfileEntryResponses: ProfileEntryResponse[];
@@ -85,7 +94,10 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   initiateIntro() {
     setTimeout(() => {
-      if (!this.investInYourself) {
+      if (this.followCreators) {
+        this.followCreatorsIntro();
+      }
+      else if (!this.investInYourself) {
         this.investInOthersIntro();
       } else {
         this.investInYourselfIntro();
@@ -93,10 +105,22 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     }, 100);
   }
 
+  tutorialEndFollowStep() {
+    this.backendApi
+      .UpdateTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        TutorialStatus.FOLLOW_CREATORS
+      )
+      .subscribe((res) => {
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+      });
+  }
+
   investInOthersIntro() {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/6</span>';
+    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,
@@ -104,10 +128,6 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
       steps: [
-        {
-          title,
-          intro: `Welcome to ${environment.node.name}!<br /><br />Let's start by learning how to invest in creators.`,
-        },
         {
           title,
           intro: `Many creators on ${environment.node.name} have a coin that you can buy and sell.`,
@@ -122,7 +142,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         {
           title,
           intro:
-            'Let\'s choose a creator to invest in! <br /><br /><b>Click the "Buy" button</b> next to the creator you want to invest in.',
+            'Let\'s walk through what an investment would look like. <br /><br /><b>Click the "View" button</b> next to the creator you want to preview investing in.',
           position: "bottom",
         },
       ],
@@ -146,7 +166,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
     };
-    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -174,6 +194,41 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     this.introJS.start();
     window.scrollTo(0, 0);
   }
+
+  followCreatorsIntro() {
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    if (this.globalVars.isMobile()) {
+      tooltipClass = tooltipClass + " tutorial-tooltip-right";
+    };
+    const title = 'Follow Creators <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: false,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          title,
+          intro: `There are lots of fantastic creators to follow on ${environment.node.name}! Choose some to follow.<br/><br/>When you're done <b>click next below</b>`,
+        },
+      ],
+    });
+    this.introJS.oncomplete(() => {
+      this.skipTutorialExitPrompt = true;
+      this.showInstructions = true;
+      this.tutorialWiggle = true;
+    });
+    this.introJS.onbeforeexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+    window.scrollTo(0, 0);
+  }
+
 
   exitTutorial() {
     this.skipTutorialExitPrompt = true;

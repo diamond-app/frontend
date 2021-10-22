@@ -15,9 +15,11 @@
       </div>
       <div class="d-flex">
         <div class="text-truncate holdings__name fs-15px">
-          <div class="d-flex">
-            <div class="fc-default text-truncate holdings__name link--unstyled"i
-                 [ngClass]="{'font-weight-bold': isBold }">
+          <div class="d-flex align-items-center">
+            <div
+              class="fc-default text-truncate holdings__name link--unstyled d-flex align-items-center"
+              [ngClass]="{ 'font-weight-bold': isBold }"
+            >
               {{ profile.Username || profile.PublicKeyBase58Check }}</div>
             <span
               *ngIf="profile.IsVerified"
@@ -27,8 +29,17 @@
               [matTooltip]="'This account is verified'"
               #tooltip="matTooltip"
             >
-            <i class="fas fa-check-circle fa-md align-middle"></i>
-          </span>
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
+            <i-feather
+              *ngIf="showTutorialFollow"
+              name="info"
+              class="fs-0px feather-small fc-secondary ml-5px"
+              (click)="tooltip.toggle()"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="profile.Description"
+              #tooltip="matTooltip"
+            ></i-feather>
           </div>
           <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
             {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
@@ -58,8 +69,15 @@
       </div>
       <div *ngIf="showTutorialBuy" (click)="openBuyCreatorCoinModal($event)">
         <button class="primary-button fs-18px" style="width: 78px; height: 48px" [ngClass]="{ wiggle: tutorialWiggle && inTutorial }">
-          Buy
+          {{ tutorialBuySelf ? "Buy" : "View" }}
         </button>
+      </div>
+      <div *ngIf="showTutorialFollow" (click)="openBuyCreatorCoinModal($event)" [ngClass]="{ wiggle: tutorialWiggle && inTutorial }">
+        <follow-button
+          [displayAsLink]="true"
+          [followLinkClass]="'link--unstyled'"
+          [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
+        ></follow-button>
       </div>
       <follow-button
         *ngIf="followButtonOppositeSide"

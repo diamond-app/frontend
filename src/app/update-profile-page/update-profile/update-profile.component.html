@@ -6,7 +6,7 @@
   <div class="tutorial-header">
     <div class="d-flex justify-content-between">
       <div class="tutorial-title">Update Your Profile</div>
-      <div class="fc-secondary fs-15px">Step 3/6</div>
+      <div class="fc-secondary fs-15px">Step 1/6</div>
     </div>
   </div>
   <div class="p-16px" *ngIf="showTutorialInstructions">
@@ -75,7 +75,7 @@
               <div
                 *ngIf="profilePicInput == null || profilePicInput.length == 0"
                 [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
-                class="fs-13px text-grey5 mt-5px"
+                class="fs-13px text-grey5 mt-5px d-flex justify-content-center"
               >
                 No image selected
               </div>
@@ -91,6 +91,7 @@
           <div>
             <input
               [(ngModel)]="usernameInput"
+              (ngModelChange)="_validateUsername($event)"
               class="form-control fs-15px lh-18px p-10px"
               placeholder="Enter username"
             />
@@ -101,6 +102,12 @@
             >
               Please set a username
             </div>
+          </div>
+          <div *ngIf="usernameValidationError" class="fc-error fs-13px ml-5px mt-5px">
+            {{ usernameValidationError }}
+          </div>
+          <div *ngIf="inTutorial && !usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
+            {{ usernameInput }} is available
           </div>
 
           <div class="update-profile__title">Description</div>

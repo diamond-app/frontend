@@ -56,6 +56,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
 
   nextButtonText: string;
   tutorialInitiated = false;
+  tutorialSkippedBuy = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -77,14 +78,11 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   tutorialHeaderText: string = "";
   tutorialStepNumber: number;
 
-  ngOnInit() {
+  initializePage() {
     if (this.inTutorial) {
       this.globalVars.preventBackButton();
       this.tabs = [WalletComponent.coinsPurchasedTab];
       this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
-      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
-        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
-      });
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Sell a Creator";
@@ -123,6 +121,45 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
     this.titleService.setTitle(`Wallet - ${environment.node.name}`);
+  }
+
+  ngOnInit() {
+    if (this.inTutorial) {
+      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
+        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
+      });
+      if (!this.balanceEntryToHighlight) {
+        this.backendApi
+          .GetSingleProfile(
+            this.globalVars.localNode,
+            "",
+            this.globalVars.loggedInUser.CreatorPurchasedInTutorialUsername
+          )
+          .subscribe((res) => {
+            let balance = this.appData.loggedInUser?.BalanceNanos;
+            const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+            balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
+            const percentToBuy = 0.1;
+            const nanosSimulatedBought = balance * percentToBuy;
+            this.balanceEntryToHighlight = {
+              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+              CreatorPublicKeyBase58Check: res.Profile.PublicKeyBase58Check,
+              HasPurchased: true,
+              BalanceNanos: nanosSimulatedBought,
+              NetBalanceInMempool: 0,
+              ProfileEntryResponse: res.Profile,
+            };
+            this.usersYouPurchased.push(this.balanceEntryToHighlight);
+            this.tutorialSkippedBuy = true;
+            this.initializePage();
+            this.scrollerReset();
+          });
+      } else {
+        this.initializePage();
+      }
+    } else {
+      this.initializePage();
+    }
   }
 
   ngAfterViewInit() {
@@ -329,14 +366,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       this.globalVars.logEvent("invest : others : sell : next");
       this.exitTutorial();
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
       this.globalVars.logEvent("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Allow others to invest in your coin`,
-        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
+        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase. You should only do this once you've invested as much as you want into your own coin.`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,
@@ -345,7 +382,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
           cancelButton: "btn btn-light no",
         },
         confirmButtonText: "Ok",
-        cancelButtonText: "No thank you",
+        cancelButtonText: "Not Yet",
         reverseButtons: true,
         allowEscapeKey: false,
         allowOutsideClick: false,
@@ -379,7 +416,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             this.globalVars.logEvent("set : founder-reward : skip");
           }
         })
-        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));
+        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR]));
     }
   }
 
@@ -475,7 +512,9 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       steps: [
         {
           title,
-          intro: `Great! You now have ${this.globalVars.nanosToDeSo(this.balanceEntryToHighlight.BalanceNanos, 4)} $${
+          intro: `${
+            this.tutorialSkippedBuy ? "If you had made the purchase, you would now have " : "Great! You now have "
+          }${this.globalVars.nanosToDeSo(this.balanceEntryToHighlight.BalanceNanos, 4)} $${
             this.balanceEntryToHighlight.ProfileEntryResponse.Username
           } coins.`,
         },
@@ -486,7 +525,11 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         {
           title,
-          intro: `Let's sell a small amount of the $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin you just purchased. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
+          intro: `Let's ${this.tutorialSkippedBuy ? "simulate what selling " : "sell "}a small amount of the $${
+            this.balanceEntryToHighlight.ProfileEntryResponse.Username
+          } coin you just purchased${
+            this.tutorialSkippedBuy ? " would look like" : ""
+          }. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
           element: document.querySelector(".wallet__dropdown-parent > div"),
         },
       ],

@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { AfterViewInit, Component, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { Router } from "@angular/router";
 import { FeedComponent } from "../../feed/feed.component";
@@ -10,7 +10,7 @@ import * as introJs from "intro.js/intro";
   templateUrl: "./create-post-form.component.html",
   styleUrls: ["./create-post-form.component.scss"],
 })
-export class CreatePostFormComponent {
+export class CreatePostFormComponent implements AfterViewInit {
   @Input() inTutorial: boolean = false;
   introJS = introJs();
   skipTutorialExitPrompt = false;
@@ -36,8 +36,15 @@ export class CreatePostFormComponent {
 
   ngAfterViewInit() {
     if (this.inTutorial) {
-      this.globalVars.preventBackButton();
-      this.initiateIntro();
+      // Prevent users from getting trapped at the post step
+      if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.COMPLETE) {
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+          queryParams: { feedTab: FeedComponent.HOT_TAB },
+        });
+      } else {
+        this.globalVars.preventBackButton();
+        this.initiateIntro();
+      }
     }
   }
 

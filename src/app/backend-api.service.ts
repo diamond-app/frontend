@@ -64,6 +64,7 @@ export class BackendRoutes {
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
   static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
+  static RoutePathUpdateTutorialStatus = "/api/v0/update-tutorial-status";
 
   // Media
   static RoutePathUploadVideo = "/api/v0/upload-video";
@@ -187,6 +188,7 @@ export enum TutorialStatus {
   INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
   INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
   INVEST_SELF = "InvestInYourselfComplete",
+  FOLLOW_CREATORS = "FollowCreatorsComplete",
   DIAMOND = "GiveADiamondComplete",
   COMPLETE = "TutorialComplete",
 }
@@ -2146,6 +2148,19 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
       ResponseLimit,
       PublicKeyBase58Check,
+    });
+  }
+
+  UpdateTutorialStatus(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    TutorialStatus: string,
+    CreatorPurchasedInTutorialPublicKey?: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, {
+      PublicKeyBase58Check,
+      TutorialStatus,
+      CreatorPurchasedInTutorialPublicKey,
     });
   }
 

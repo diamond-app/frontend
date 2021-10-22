@@ -1,18 +1,27 @@
 <div>
   <div class="flex-grow-1 br-10px border" id="creator-coins-holder">
     <div class="tutorial-header">
-      <div *ngIf="!investInYourself" class="d-flex justify-content-between">
+      <div *ngIf="!investInYourself && !followCreators" class="d-flex justify-content-between">
         <div class="tutorial-title">Invest in a Creator</div>
-        <div class="fc-secondary fs-15px">Step 1/6</div>
+        <div class="fc-secondary fs-15px">Step 2/6</div>
       </div>
-      <div *ngIf="investInYourself" class="d-flex justify-content-between">
+      <div *ngIf="investInYourself && !followCreators" class="d-flex justify-content-between">
         <div class="tutorial-title">Invest in Yourself</div>
+        <div class="fc-secondary fs-15px">Step 3/6</div>
+      </div>
+      <div *ngIf="followCreators" class="d-flex justify-content-between">
+        <div class="tutorial-title">Follow Creators</div>
         <div class="fc-secondary fs-15px">Step 4/6</div>
       </div>
     </div>
-    <div class="p-16px" *ngIf="showInstructions">
-      <b>Click the "Buy" button below</b> next to the creator you want to invest in.
+    <div class="p-16px" *ngIf="showInstructions && !followCreators">
+      <b>Click the "View" button below</b> next to the creator you want to preview investing in.
     </div>
+    <div class="p-16px" *ngIf="showInstructions && followCreators">
+      Click the "follow" button next to the creators you want to follow. <br/><br/>
+      <b>Click "Next" at the bottom when you are finished</b>
+    </div>
+
 
     <simple-center-loader *ngIf="loading"></simple-center-loader>
 
@@ -28,7 +37,8 @@
                 <simple-profile-card
                   (exitTutorial)="exitTutorial()"
                   [profile]="profile"
-                  [showTutorialBuy]="true"
+                  [showTutorialBuy]="!followCreators"
+                  [showTutorialFollow]="followCreators"
                   [inTutorial]="true"
                   [hideFollowLink]="true"
                   [singleColumn]="true"
@@ -54,7 +64,8 @@
                 <simple-profile-card
                   (exitTutorial)="exitTutorial()"
                   [profile]="profile"
-                  [showTutorialBuy]="true"
+                  [showTutorialBuy]="!followCreators"
+                  [showTutorialFollow]="followCreators"
                   [inTutorial]="true"
                   [hideFollowLink]="true"
                   [singleColumn]="true"
@@ -76,10 +87,13 @@
             [inTutorial]="true"
             [hideFollowLink]="true"
             [singleColumn]="true"
+            [tutorialBuySelf]="true"
           ></simple-profile-card>
         </div>
       </div>
     </div>
   </div>
-
+  <div class="d-flex justify-content-end mt-16px" *ngIf="followCreators">
+    <button class="plain-button" (click)="tutorialEndFollowStep()">Next</button>
+  </div>
 </div>
