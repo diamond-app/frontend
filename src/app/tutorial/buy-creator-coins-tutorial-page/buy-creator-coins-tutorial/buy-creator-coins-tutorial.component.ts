@@ -142,7 +142,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         {
           title,
           intro:
-            'Let\'s walk through what an investment would look like. <br /><br /><b>Click the "View" button</b> next to the creator you want to preview investing in.',
+            'Let\'s walk through what an investment would look like. <br /><br />Click "Done" below.<br /><br />Then, <b>click the "View" button</b> next to the creator you want to preview investing in.',
           position: "bottom",
         },
       ],
@@ -211,7 +211,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       steps: [
         {
           title,
-          intro: `There are lots of fantastic creators to follow on ${environment.node.name}! Choose some to follow.<br/><br/>When you're done <b>click next below</b>`,
+          intro: `There are lots of fantastic creators to follow on ${environment.node.name}!<br/><br/> Click "Done", then choose some to follow on the next screen.<br/><br/>When you're done choosing who to follow <b>click the "Next" button on the following screen</b>`,
         },
       ],
     });

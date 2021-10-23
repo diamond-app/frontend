@@ -20,6 +20,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
   @Input() inTutorial: boolean = false;
+  @Input() buyButtonDisabled: boolean = false;
 
   @Output() slippageError = new EventEmitter();
   @Output() tradeExecuted = new EventEmitter();

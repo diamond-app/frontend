@@ -17,6 +17,7 @@ import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-f
 import * as introJs from "intro.js/intro.js";
 import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "trade-creator",
@@ -67,6 +68,7 @@ export class TradeCreatorComponent implements OnInit {
   nextTutorialStepOnExit = false;
   tutorialLoaded = false;
   simulatedTutorialSell = false;
+  buyButtonDisabled = false;
 
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
@@ -110,11 +112,11 @@ export class TradeCreatorComponent implements OnInit {
 
   readyForDisplay() {
     return (
-      (this.creatorProfile &&
-        // USD calculations don't work correctly until we have the exchange rate
-        this.appData.nanosPerUSDExchangeRate &&
-        // Need to make sure the USD exchange rate is actually loaded, not a random default
-        this.appData.nanosPerUSDExchangeRate != GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE) &&
+      this.creatorProfile &&
+      // USD calculations don't work correctly until we have the exchange rate
+      this.appData.nanosPerUSDExchangeRate &&
+      // Need to make sure the USD exchange rate is actually loaded, not a random default
+      this.appData.nanosPerUSDExchangeRate != GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE &&
       (!this.inTutorial || this.tutorialLoaded)
     );
   }
@@ -217,6 +219,7 @@ export class TradeCreatorComponent implements OnInit {
         this._setStateFromActivatedRoute(this.route);
       });
     } else {
+      this.buyButtonDisabled = true;
       this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
       this.creatorCoinTrade.isBuyingCreatorCoin = !!this.tutorialBuy;
       this.creatorCoinTrade.tradeType = !!this.tutorialBuy ? CreatorCoinTrade.BUY_VERB : CreatorCoinTrade.SELL_VERB;
@@ -262,7 +265,6 @@ export class TradeCreatorComponent implements OnInit {
     // Sell 5% of coins purchased in buy step.
     this.creatorCoinTrade.creatorCoinToSell = (creatorCoinsPurchasedInTutorial * 0.05) / 1e9;
     if (!creatorCoinsPurchasedInTutorial) {
-
       creatorCoinsPurchasedInTutorial = 10000000;
       this.creatorCoinTrade.creatorCoinToSell = creatorCoinsPurchasedInTutorial / 1e9;
       this.simulatedTutorialSell = true;
@@ -312,60 +314,94 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   buySelfIntro() {
-    this.introJS = introJs();
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Invest in a Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: true,
-      exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: "Even you have a creator coin!",
-          element: document.querySelector(".buy-deso__container"),
-        },
-        {
-          title,
-          intro: `Let's invest in yourself by purchasing $${this.creatorCoinTrade
-            .assetToSellAmountInUsd()
-            .toFixed(2)} ${this.creatorCoinTrade.creatorProfile?.Username} coins`,
-          element: document.querySelector("#tutorial-amount-purchasing"),
-        },
-        {
-          title,
-          intro: '<b>Click "Confirm Buy" to make the investment.</b>',
-          element: document.querySelector("#tutorial-confirm-buy"),
-        },
-      ],
-    });
-    this.introJS.onexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
+    // Set up the amounts we allow the user to choose from to buy
+    let balance = this.appData.loggedInUser?.BalanceNanos;
+    const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+    balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
+    const maxAmt = this.globalVars.usdToNanosNumber(5);
+    const largeOption = balance > maxAmt ? maxAmt : balance * 0.3;
+    const smallOption = Math.max(largeOption * 0.1, balance * 0.05);
+    const largeOptionUsd = this.globalVars.nanosToUSD(largeOption, 2);
+    const smallOptionUsd = this.globalVars.nanosToUSD(smallOption, 2);
+
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: `Buy your own coin`,
+      html: `Even you have a creator coin! Choose the amount you want to invest in yourself below:`,
+      showCancelButton: false,
+      showDenyButton: true,
+      showConfirmButton: true,
+      focusConfirm: true,
+      customClass: {
+        confirmButton: "btn primary-button narrow-button d-flex justify-content-center align-items-center",
+        denyButton: "btn light-primary-button narrow-button d-flex justify-content-center align-items-center",
+      },
+      confirmButtonText: largeOptionUsd,
+      denyButtonText: smallOptionUsd,
+      reverseButtons: true,
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+    }).then((res: any) => {
+      console.log(res);
+      if (res.isConfirmed) {
+        this.creatorCoinTrade.desoToSell = largeOption / 1e9;
+      } else if (res.isDenied) {
+        this.creatorCoinTrade.desoToSell = smallOption / 1e9;
       }
-    });
-    // The "Confirm Buy" element we are targetting is a child of the modal element. We can't update the child component
-    // to appear above the "content window" created by intro.js because it is in a different stack context (due to being
-    // the child of an element with an already set z-index). There is no way around this, so the alternative I've
-    // implemented here is to overwrite clicking on the intro.js window itself to trigger the same "Confirm Buy" response.
-    // Please forgive me.
-    this.introJS.onchange((targetElement) => {
-      if (targetElement?.id === "tutorial-confirm-buy") {
-        const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
-        element.addEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
-        // @ts-ignore
-        element.style.cssText += "cursor:pointer;";
-      } else {
-        const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
-        if (element) {
-          element.removeEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
+      this.introJS = introJs();
+      const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+      const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+      const title = 'Invest in a Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+      this.introJS.setOptions({
+        tooltipClass,
+        hideNext: true,
+        exitOnEsc: false,
+        exitOnOverlayClick: userCanExit,
+        overlayOpacity: 0.8,
+        steps: [
+          {
+            title,
+            intro: `Let's invest in yourself by purchasing $${this.creatorCoinTrade
+              .assetToSellAmountInUsd()
+              .toFixed(2)} ${this.creatorCoinTrade.creatorProfile?.Username} coins`,
+            element: document.querySelector("#tutorial-amount-purchasing"),
+          },
+          {
+            title,
+            intro: '<b>Click "Confirm Buy" to make the investment.</b>',
+            element: document.querySelector("#tutorial-confirm-buy"),
+          },
+        ],
+      });
+      this.introJS.onexit(() => {
+        if (!this.skipTutorialExitPrompt) {
+          this.globalVars.skipTutorial(this);
         }
-      }
+      });
+      // The "Confirm Buy" element we are targetting is a child of the modal element. We can't update the child component
+      // to appear above the "content window" created by intro.js because it is in a different stack context (due to being
+      // the child of an element with an already set z-index). There is no way around this, so the alternative I've
+      // implemented here is to overwrite clicking on the intro.js window itself to trigger the same "Confirm Buy" response.
+      // Please forgive me.
+      this.introJS.onchange((targetElement) => {
+        if (targetElement?.id === "tutorial-confirm-buy" && this.creatorCoinTrade.desoToSell !== 0) {
+          this.buyButtonDisabled = false;
+          const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
+          element.addEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
+          // @ts-ignore
+          element.style.cssText += "cursor:pointer;";
+        } else {
+          this.buyButtonDisabled = true;
+          const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
+          if (element) {
+            element.removeEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
+          }
+        }
+      });
+      setTimeout(() => {
+        this.introJS.start();
+      }, 50);
     });
-    this.introJS.start();
   }
 
   buyCreatorIntro() {
@@ -388,7 +424,7 @@ export class TradeCreatorComponent implements OnInit {
         },
         {
           title,
-          intro: `This buy would purchase $${this.creatorCoinTrade
+          intro: `This investment would be for $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
             .toFixed(2)} in ${this.globalVars.addOwnershipApostrophe(
             this.creatorCoinTrade.creatorProfile?.Username
@@ -397,7 +433,7 @@ export class TradeCreatorComponent implements OnInit {
         },
         {
           title,
-          intro: `<b>Click "Confirm Buy"</b> to make this investment.<br/><br/><b>Click "Skip" below</b> to go to the next step without buying.`,
+          intro: `<b>Click "Confirm Buy"</b> if you are interested in making this investment.<br/><br/><b>Click "Skip" below</b> to go to the next step without investing.`,
           element: document.querySelector("#tutorial-confirm-buy"),
         },
       ],
@@ -421,7 +457,7 @@ export class TradeCreatorComponent implements OnInit {
             true
           )
           .subscribe(() => {
-            this.globalVars.logEvent("skip");
+            this.globalVars.logEvent("invest : others : buy : skip");
             this.globalVars.updateEverything().add(() => {
               this.router.navigate([
                 RouteNames.TUTORIAL,
@@ -439,11 +475,13 @@ export class TradeCreatorComponent implements OnInit {
     // Please forgive me.
     this.introJS.onchange((targetElement) => {
       if (targetElement?.id === "tutorial-confirm-buy") {
+        this.buyButtonDisabled = false;
         const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
         element.addEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
         // @ts-ignore
         element.style.cssText += "cursor:pointer;";
       } else {
+        this.buyButtonDisabled = true;
         const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
         if (element) {
           element.removeEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
@@ -475,7 +513,7 @@ export class TradeCreatorComponent implements OnInit {
           title,
           intro: `${
             this.simulatedTutorialSell
-              ? "Here is where you can see the amount you would be selling the"
+              ? "Let's simulate selling some of the"
               : "Let's sell a small amount of the"
           } $${this.creatorCoinTrade.creatorProfile?.Username} coin you just bought.`,
           element: document.querySelector("#tutorial-amount-selling"),
@@ -508,7 +546,7 @@ export class TradeCreatorComponent implements OnInit {
             TutorialStatus.INVEST_OTHERS_SELL
           )
           .subscribe(() => {
-            this.globalVars.logEvent("skip");
+            this.globalVars.logEvent("invest : others : sell : skip");
             this.globalVars.updateEverything().add(() => {
               this.router.navigate([
                 RouteNames.TUTORIAL,
@@ -526,13 +564,15 @@ export class TradeCreatorComponent implements OnInit {
     // implemented here is to overwrite clicking on the intro.js window itself to trigger the same "Confirm Buy" response.
     // Please forgive me.
     this.introJS.onchange((targetElement) => {
-      if (!this.simulatedTutorialSell){
+      if (!this.simulatedTutorialSell) {
+        this.buyButtonDisabled = false;
         if (targetElement?.id === "tutorial-confirm-buy") {
           const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
           element.addEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());
           // @ts-ignore
           element.style.cssText += "cursor:pointer;";
         } else {
+          this.buyButtonDisabled = true;
           const element = document.getElementsByClassName("introjs-fixedTooltip")[0];
           if (element) {
             element.removeEventListener("click", () => this.childTradeCreatorPreviewComponent._tradeCreatorCoin());

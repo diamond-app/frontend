@@ -19,7 +19,7 @@
     <button
       id="tutorial-confirm-buy"
       class="primary-button"
-      [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled }"
+      [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled, 'disabled-button': buyButtonDisabled }"
       (click)="_tradeCreatorCoin()"
     >
       Confirm

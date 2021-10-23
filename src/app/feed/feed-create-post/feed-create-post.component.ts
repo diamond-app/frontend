@@ -209,11 +209,15 @@ export class FeedCreatePostComponent implements OnInit {
           this.changeRef.detectChanges();
 
           // Refresh the post page.
-          if (this.postRefreshFunc) {
+          if (this.postRefreshFunc && !this.inTutorial) {
             this.postRefreshFunc(response.PostEntryResponse);
           }
 
-          this.postCreated.emit(response.PostEntryResponse);
+          if (this.inTutorial) {
+            this.globalVars.updateEverything().add(() => {
+              this.postCreated.emit(response.PostEntryResponse);
+            });
+          }
         },
         (err) => {
           const parsedError = this.backendApi.parsePostError(err);

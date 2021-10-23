@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { FeedComponent } from "../../feed/feed.component";
 import { TutorialStatus } from "../../backend-api.service";
 import * as introJs from "intro.js/intro";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "create-post-form",
@@ -18,20 +19,23 @@ export class CreatePostFormComponent implements AfterViewInit {
 
   onPostCreated(postEntryResponse) {
     if (this.inTutorial) {
-      this.exitTutorial();
-      this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: FeedComponent.HOT_TAB },
+      this.globalVars.updateEverything().add(() => {
+        this.exitTutorial();
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+          queryParams: { feedTab: FeedComponent.GLOBAL_TAB },
+        });
+        window.location.reload();
+        return;
       });
-      return;
+    } else {
+      // Twitter takes you to the main feed with your post at the top. That's more work so I'm just
+      // taking the user to his profile for now. Hopefully the new post appears near the top.
+      // TODO: Twitter's behavior is prob better, do that instead
+      this.router.navigate(
+        ["/" + this.globalVars.RouteNames.USER_PREFIX, postEntryResponse.ProfileEntryResponse.Username],
+        { queryParamsHandling: "merge" }
+      );
     }
-    // Twitter takes you to the main feed with your post at the top. That's more work so I'm just
-    // taking the user to his profile for now. Hopefully the new post appears near the top.
-    // TODO: Twitter's behavior is prob better, do that instead
-    this.router.navigate(
-      ["/" + this.globalVars.RouteNames.USER_PREFIX, postEntryResponse.ProfileEntryResponse.Username],
-      { queryParamsHandling: "merge" }
-    );
   }
 
   ngAfterViewInit() {

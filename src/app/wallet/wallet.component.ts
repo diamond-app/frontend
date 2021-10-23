@@ -128,6 +128,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
         return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
       });
+      // If the user skipped the purchase, we simulate that purchase here so that there's something to show them
       if (!this.balanceEntryToHighlight) {
         this.backendApi
           .GetSingleProfile(
@@ -372,8 +373,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `Allow others to invest in your coin`,
-        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase. You should only do this once you've invested as much as you want into your own coin.`,
+        title: `Allow others to invest in your coin?`,
+        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase. You should only do this once you've invested the full amount you intend to into your own coin.`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,
@@ -520,12 +521,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         {
           title,
-          intro: "Here in your wallet you can see which coins you own, and how much they are currently worth.",
+          intro: "In your wallet you can see which coins you own, and how much they are currently worth.",
           element: document.querySelector(".global__center__inner"),
         },
         {
           title,
-          intro: `Let's ${this.tutorialSkippedBuy ? "simulate what selling " : "sell "}a small amount of the $${
+          intro: `Let's ${this.tutorialSkippedBuy ? "simulate what selling some " : "sell a small amount "}of the $${
             this.balanceEntryToHighlight.ProfileEntryResponse.Username
           } coin you just purchased${
             this.tutorialSkippedBuy ? " would look like" : ""

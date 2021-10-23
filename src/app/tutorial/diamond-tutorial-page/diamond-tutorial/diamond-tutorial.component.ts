@@ -76,7 +76,7 @@ export class DiamondTutorialComponent implements OnInit {
       steps: [
         {
           title,
-          intro: `Diamonds are tips that send money directly to the poster.`,
+          intro: `Diamonds are a way to tip the author of a post and send money directly to them.`,
           element: document.querySelector(".feed-post-container"),
         },
         {
