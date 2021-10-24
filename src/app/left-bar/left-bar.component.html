@@ -57,8 +57,8 @@
             class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
             style="height: 56px"
             (click)="startTutorial()"
+            *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"
           >
-<!--            *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"-->
             <i-feather name="monitor" class="feather-medium fs-0px"></i-feather>
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
