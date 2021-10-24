@@ -311,7 +311,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
     if (comp.inTutorial) {
-      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
+      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR], {
         queryParamsHandling: "merge",
       });
       return;
@@ -441,12 +441,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       steps: [
         {
           title,
-          intro: `Welcome to ${environment.node.name}!<br /><br />Everyone on Diamond has a profile, let's get yours in tip-top shape.`,
-        },
-        {
-          title,
-          intro: `First click "Done" below.<br/><br/>Then select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
-          position: "bottom",
+          intro: `Welcome to ${environment.node.name}!<br /><br />Let's set up your profile!`,
         },
       ],
     });

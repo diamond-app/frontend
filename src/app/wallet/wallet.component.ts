@@ -374,7 +374,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Allow others to invest in your coin?`,
-        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase. You should only do this once you've invested the full amount you intend to into your own coin.`,
+        html: `Click "ok" to allow others to purchase your coin. You should only do this once you've invested the full amount you intend to into your own coin.`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,
@@ -382,14 +382,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
           confirmButton: "btn btn-light",
           cancelButton: "btn btn-light no",
         },
-        confirmButtonText: "Ok",
-        cancelButtonText: "Not Yet",
+        confirmButtonText: "Not Yet",
+        cancelButtonText: "Ok",
         reverseButtons: true,
         allowEscapeKey: false,
         allowOutsideClick: false,
       })
         .then((res: any) => {
-          if (res.isConfirmed) {
+          if (res.isDismissed) {
             return this.backendApi
               .UpdateProfile(
                 this.globalVars.localNode,
@@ -417,7 +417,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             this.globalVars.logEvent("set : founder-reward : skip");
           }
         })
-        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR]));
+        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));
     }
   }
 
@@ -511,14 +511,6 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
       steps: [
-        {
-          title,
-          intro: `${
-            this.tutorialSkippedBuy ? "If you had made the purchase, you would now have " : "Great! You now have "
-          }${this.globalVars.nanosToDeSo(this.balanceEntryToHighlight.BalanceNanos, 4)} $${
-            this.balanceEntryToHighlight.ProfileEntryResponse.Username
-          } coins.`,
-        },
         {
           title,
           intro: "In your wallet you can see which coins you own, and how much they are currently worth.",

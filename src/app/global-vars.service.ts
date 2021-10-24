@@ -384,6 +384,14 @@ export class GlobalVarsService {
           route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
           break;
         }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR];
+          break;
+        }
+        case TutorialStatus.FOLLOW_CREATORS: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
         case TutorialStatus.INVEST_OTHERS_BUY: {
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
@@ -392,15 +400,7 @@ export class GlobalVarsService {
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
         }
-        case TutorialStatus.CREATE_PROFILE: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
-          break;
-        }
         case TutorialStatus.INVEST_SELF: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
-          break;
-        }
-        case TutorialStatus.FOLLOW_CREATORS: {
           route = [RouteNames.TUTORIAL + "/" + RouteNames.DIAMONDS];
           break;
         }

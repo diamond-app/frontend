@@ -4,9 +4,11 @@ import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../.
 import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import * as introJs from "intro.js/intro.js";
+import { includes, shuffle } from "lodash";
 import { LocationStrategy } from "@angular/common";
 import { environment } from "src/environments/environment";
 import { Router } from "@angular/router";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -33,8 +35,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     private router: Router
   ) {}
 
-  topCreatorsToHighlight: ProfileEntryResponse[];
-  upAndComingCreatorsToHighlight: ProfileEntryResponse[];
+  hotNewCreatorsToHighlight: ProfileEntryResponse[];
 
   loggedInUserProfile: ProfileEntryResponse;
   investInYourself: boolean = false;
@@ -57,39 +58,68 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       this.loading = false;
       this.initiateIntro();
       return;
-    } else if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.INVEST_SELF) {
+    } else if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.followCreators = true;
     }
-    this.backendApi
-      .GetTutorialCreators(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.followCreators ? 9 : 3
-      )
-      .subscribe(
-        (res: {
-          WellKnownProfileEntryResponses: ProfileEntryResponse[];
-          UpAndComingProfileEntryResponses: ProfileEntryResponse[];
-        }) => {
-          // Do not let users select themselves in the "Invest In Others" step.
-          if (res.WellKnownProfileEntryResponses?.length) {
-            this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses.filter(
-              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-            );
+    if (this.followCreators) {
+      this.backendApi
+        .GetTutorialCreators(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.followCreators ? 30 : 3
+        )
+        .subscribe(
+          (res: {
+            WellKnownProfileEntryResponses: ProfileEntryResponse[];
+            UpAndComingProfileEntryResponses: ProfileEntryResponse[];
+          }) => {
+            // Do not let users select themselves in the "Invest In Others" step.
+            if (res.WellKnownProfileEntryResponses?.length) {
+              this.hotNewCreatorsToHighlight = shuffle(
+                res.WellKnownProfileEntryResponses.concat(res.UpAndComingProfileEntryResponses).filter(
+                  (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+                )
+              );
+            }
+            this.loading = false;
+            this.initiateIntro();
+          },
+          (err) => {
+            console.error(err);
           }
-
-          if (res.UpAndComingProfileEntryResponses?.length) {
-            this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses.filter(
-              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-            );
+        );
+    } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.FOLLOW_CREATORS) {
+      this.backendApi
+        .GetFollows(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          "" /* PublicKeyBase58Check */,
+          false /* get following */,
+          "" /* GetEntriesFollowingUsername */,
+          1 /* NumToFetch */
+        )
+        .subscribe((res) => {
+          // If the user is following someone, show a random one here for them to simulate the buy step with
+          if (res.NumFollowers >= 1) {
+            this.hotNewCreatorsToHighlight = [res.PublicKeyToProfileEntry[Object.keys(res.PublicKeyToProfileEntry)[0]]];
+            this.loading = false;
+            this.initiateIntro();
+          } else {
+            // If the user isn't following someone, show a default one to them for them to simulate the buy/sell steps
+            // Testnet creator
+            const defaultCreatorPublicKeyBase58Check = "tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV";
+            // Creator for prod
+            // const defaultCreatorPublicKeyBase58Check = "BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB";
+            this.backendApi
+              .GetSingleProfile(this.globalVars.localNode, defaultCreatorPublicKeyBase58Check, "")
+              .subscribe((res) => {
+                this.hotNewCreatorsToHighlight = [res.Profile];
+                this.loading = false;
+                this.initiateIntro();
+              });
           }
-          this.loading = false;
-          this.initiateIntro();
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
+        });
+    }
   }
 
   initiateIntro() {
@@ -113,7 +143,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         TutorialStatus.FOLLOW_CREATORS
       )
       .subscribe((res) => {
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+        this.globalVars.updateEverything().add(() => {
+          this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+        });
       });
   }
 
@@ -123,7 +155,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
-      hideNext: false,
+      hideNext: true,
       exitOnEsc: false,
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
@@ -132,25 +164,34 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           title,
           intro: `Many creators on ${environment.node.name} have a coin that you can buy and sell.`,
           position: "bottom",
+          element: document.querySelector("#creator-coins-holder"),
         },
         {
           title,
-          intro:
-            "Prices go up when people buy, or when cashflows go to the coin. Prices go down when people sell. <br /><br />Coins can also give you access to exclusive content, events, and much more...",
+          intro: "Prices go up when people buy, or when cashflows go to the coin. Prices go down when people sell.",
           position: "bottom",
+          element: document.querySelector("#creator-coins-holder"),
         },
         {
           title,
-          intro:
-            'Let\'s walk through what an investment would look like. <br /><br />Click "Done" below.<br /><br />Then, <b>click the "View" button</b> next to the creator you want to preview investing in.',
+          intro: "Coins can also give you access to exclusive content, events, and much more...",
           position: "bottom",
+          element: document.querySelector("#creator-coins-holder"),
+        },
+        {
+          title,
+          intro: `Click "View" to take a look at at ${this.globalVars.addOwnershipApostrophe(
+            this.hotNewCreatorsToHighlight[0].Username
+          )} coin.`,
+          position: "bottom",
+          element: document.querySelector(".primary-button"),
         },
       ],
     });
-    this.introJS.oncomplete(() => {
-      this.skipTutorialExitPrompt = true;
-      this.showInstructions = true;
-      this.tutorialWiggle = true;
+    this.introJS.onchange((targetElement) => {
+      if (includes(targetElement.classList, "primary-button")) {
+        this.tutorialWiggle = true;
+      }
     });
     this.introJS.onbeforeexit(() => {
       if (!this.skipTutorialExitPrompt) {
@@ -176,7 +217,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       steps: [
         {
           title,
-          intro: `You can have a coin too!<br /><br />Now that you have a profile, we can set up your coin.`,
+          intro: `You can have a coin too!`,
           element: document.querySelector("#tutorial-invest-in-self-holder"),
         },
         {

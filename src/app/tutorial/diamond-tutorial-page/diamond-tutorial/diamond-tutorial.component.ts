@@ -24,8 +24,8 @@ export class DiamondTutorialComponent implements OnInit {
   skipTutorialExitPrompt = false;
   post: PostEntryResponse;
   // Use this posthash in testnet.
-  // postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
-  postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
+  postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
+  // postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
   loading: boolean = true;
 
   ngOnInit() {
@@ -67,6 +67,8 @@ export class DiamondTutorialComponent implements OnInit {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 5/6</span>';
+    let diamondValue = this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2);
+    diamondValue = diamondValue === "0.00" ? "0.01" : diamondValue;
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -81,7 +83,7 @@ export class DiamondTutorialComponent implements OnInit {
         },
         {
           title,
-          intro: `<b>Click the diamond</b> to send $${this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2)}.`,
+          intro: `<b>Click the diamond</b> to send $${diamondValue}.`,
           element: document.querySelector("#diamond-button"),
         },
       ],

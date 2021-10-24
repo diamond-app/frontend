@@ -291,6 +291,7 @@ export class BuyDeSoComponent implements OnInit {
                 this.globalVars.logEvent("bitpop : buy : error");
                 this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
                 this.buyDeSoFields.error = Messages.UNKOWN_PROBLEM;
+                this.showCloseButton.emit(true);
                 return null;
               }
               this.globalVars.logEvent("bitpop : buy", this.buyDeSoFields);
@@ -310,7 +311,6 @@ export class BuyDeSoComponent implements OnInit {
                 this._clickBuyDeSoSuccessButTimeout,
                 this
               );
-
               return res;
             },
             (err) => {
