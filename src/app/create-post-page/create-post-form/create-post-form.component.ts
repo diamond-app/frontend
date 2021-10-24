@@ -22,7 +22,7 @@ export class CreatePostFormComponent implements AfterViewInit {
       this.globalVars.updateEverything().add(() => {
         this.exitTutorial();
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-          queryParams: { feedTab: FeedComponent.GLOBAL_TAB },
+          queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
         });
         window.location.reload();
         return;
@@ -81,6 +81,15 @@ export class CreatePostFormComponent implements AfterViewInit {
       }
     });
     this.introJS.start();
+  }
+
+  skipPostStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.COMPLETE, "tutorial : post : create : skip");
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+      queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+    });
+    window.location.reload();
   }
 
   tutorialCleanUp() {}

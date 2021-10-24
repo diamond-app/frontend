@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
@@ -11,7 +11,6 @@ import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { environment } from "src/environments/environment";
-import { catchError } from "rxjs/operators";
 import { Observable } from "rxjs";
 
 export type ProfileUpdates = {
@@ -455,6 +454,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       }
     });
     this.introJS.start();
+  }
+
+  skipToNextTutorialStep() {
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.CREATE_PROFILE, "profile : update : skip");
   }
 
   tutorialCleanUp() {}

@@ -2050,6 +2050,23 @@ feed-create-post {
   color:var(--hover);
 }
 
+.tutorial-skip-button {
+  height: 30px;
+  width: 60px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--tile-bg);
+  color: var(--text-secondary);
+  &:hover {
+    color: var(--text-secondary);
+  }
+  &.disabled-button {
+    background: var(--tile-bg)
+  }
+  margin-top: 0px;
+  margin-left: 10px;
+}
+
 .tutorial-header {
   padding: 16px;
   background: var(--background-secondary);
@@ -5032,20 +5049,6 @@ sell-nft-modal {
   }
   &.disabled-button {
     background: var(--highlight-secondary)
-  }
-}
-
-.light-primary-button {
-  width: 137px;
-  height: 48px;
-  background: var(--success) !important;
-  border-radius: 16px;
-  color: var(--tile-bg) !important;
-  &:hover {
-    color: var(--tile-bg);
-  }
-  &.disabled-button {
-    background: var(--success) !important;
   }
 }
 

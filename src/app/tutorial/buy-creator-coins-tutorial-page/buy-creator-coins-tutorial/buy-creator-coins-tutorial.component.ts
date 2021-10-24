@@ -107,9 +107,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           } else {
             // If the user isn't following someone, show a default one to them for them to simulate the buy/sell steps
             // Testnet creator
-            const defaultCreatorPublicKeyBase58Check = "tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV";
+            // const defaultCreatorPublicKeyBase58Check = "tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV";
             // Creator for prod
-            // const defaultCreatorPublicKeyBase58Check = "BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB";
+            const defaultCreatorPublicKeyBase58Check = "BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB";
             this.backendApi
               .GetSingleProfile(this.globalVars.localNode, defaultCreatorPublicKeyBase58Check, "")
               .subscribe((res) => {
@@ -152,7 +152,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   investInOthersIntro() {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
+    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -207,7 +207,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
     };
-    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -218,7 +218,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         {
           title,
           intro: `You can have a coin too!`,
-          element: document.querySelector("#tutorial-invest-in-self-holder"),
+          element: document.querySelector("#creator-coins-holder"),
         },
         {
           title,
@@ -242,7 +242,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
     };
-    const title = 'Follow Creators <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const title = 'Follow Creators <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,
@@ -270,6 +270,20 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     window.scrollTo(0, 0);
   }
 
+  skipFollowStep() {
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.FOLLOW_CREATORS, "follow : creators : skip");
+  }
+
+  skipBuyCreatorsStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip");
+    window.location.reload();
+  }
+
+  skipBuySelfStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_SELF, "invest : self : buy : skip");
+  }
 
   exitTutorial() {
     this.skipTutorialExitPrompt = true;

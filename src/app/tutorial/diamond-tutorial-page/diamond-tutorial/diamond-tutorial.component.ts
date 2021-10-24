@@ -24,8 +24,8 @@ export class DiamondTutorialComponent implements OnInit {
   skipTutorialExitPrompt = false;
   post: PostEntryResponse;
   // Use this posthash in testnet.
-  postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
-  // postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
+  // postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
+  postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
   loading: boolean = true;
 
   ngOnInit() {
@@ -62,6 +62,11 @@ export class DiamondTutorialComponent implements OnInit {
     setTimeout(() => this.diamondIntro(), 50);
   }
 
+  skipDiamondsStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.DIAMOND, "tutorial : diamond : send : skip");
+  }
+
   diamondIntro() {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
@@ -79,7 +84,7 @@ export class DiamondTutorialComponent implements OnInit {
         {
           title,
           intro: `Diamonds are a way to tip the author of a post and send money directly to them.`,
-          element: document.querySelector(".feed-post-container"),
+          element: document.querySelector("#diamond-tutorial-container"),
         },
         {
           title,

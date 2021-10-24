@@ -381,7 +381,7 @@ export class TradeCreatorComponent implements OnInit {
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("invest : others : buy : skip");
+        this.globalVars.logEvent("buy : creator : select");
         this.globalVars.updateEverything().add(() => {
           this.exitTutorial();
           this.bsModalRef.hide();
@@ -404,7 +404,7 @@ export class TradeCreatorComponent implements OnInit {
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("invest : others : sell : skip");
+        this.globalVars.logEvent("invest : others : sell : next");
         this.globalVars.updateEverything().add(() => {
           this.exitTutorial();
           this.bsModalRef.hide();
@@ -422,7 +422,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/6</span>';
+    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -483,7 +483,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,

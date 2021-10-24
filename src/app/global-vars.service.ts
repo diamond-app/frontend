@@ -375,6 +375,17 @@ export class GlobalVarsService {
     });
   }
 
+  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string) {
+    this.backendApi
+      .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
+      .subscribe(() => {
+        this.logEvent(ampEvent);
+        this.updateEverything().add(() => {
+          this.navigateToCurrentStepInTutorial(this.loggedInUser);
+        });
+      });
+  }
+
   navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
     if (this.userInTutorial(user)) {
       // drop user at correct point in tutorial.
@@ -397,7 +408,7 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
         case TutorialStatus.INVEST_SELF: {

@@ -77,7 +77,7 @@
           {{ tutorialBuySelf ? "Buy" : "View" }}
         </button>
       </div>
-      <div *ngIf="showTutorialFollow" (click)="openBuyCreatorCoinModal($event)" [ngClass]="{ wiggle: tutorialWiggle && inTutorial }">
+      <div *ngIf="showTutorialFollow" (click)="openBuyCreatorCoinModal($event)">
         <follow-button
           [displayAsLink]="true"
           [followLinkClass]="'link--unstyled'"
