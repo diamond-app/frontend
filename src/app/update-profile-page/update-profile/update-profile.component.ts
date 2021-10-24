@@ -430,7 +430,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Update Your Profile <span class="ml-5px tutorial-header-step">Step 1/6</span>';
+    const title = 'Create Your Profile <span class="ml-5px tutorial-header-step">Step 1/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,

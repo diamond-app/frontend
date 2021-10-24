@@ -151,7 +151,10 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   investInOthersIntro() {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    if (this.globalVars.isMobile()) {
+      tooltipClass = tooltipClass + " tutorial-tooltip-right";
+    }
     const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
@@ -206,7 +209,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
-    };
+    }
     const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
     this.introJS.setOptions({
       tooltipClass,
@@ -239,9 +242,6 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   followCreatorsIntro() {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    if (this.globalVars.isMobile()) {
-      tooltipClass = tooltipClass + " tutorial-tooltip-right";
-    };
     const title = 'Follow Creators <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,

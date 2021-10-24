@@ -332,7 +332,7 @@ export class TradeCreatorComponent implements OnInit {
           intro: `Let's invest in yourself by purchasing $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
             .toFixed(2)} ${this.creatorCoinTrade.creatorProfile?.Username} coins`,
-          element: document.querySelector("#tutorial-amount-purchasing"),
+          element: document.querySelector(".buy-deso__container"),
         },
         {
           title,

@@ -57,6 +57,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   nextButtonText: string;
   tutorialInitiated = false;
   tutorialSkippedBuy = false;
+  tutorialSkippable = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -86,13 +87,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 2;
+          this.tutorialStepNumber = 3;
+          this.tutorialSkippable = true;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 2;
+          this.tutorialStepNumber = 3;
           this.nextButtonText = "Setup your profile";
           break;
         }
@@ -470,6 +472,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const walletContainerClass = this.globalVars.isMobile() ? ".global__content__inner" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,
@@ -483,7 +486,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             this.balanceEntryToHighlight.BalanceNanos,
             this.balanceEntryToHighlight.ProfileEntryResponse.CoinEntry
           )} of your very own $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
-          element: document.querySelector(".global__center__inner"),
+          element: document.querySelector(walletContainerClass),
         },
       ],
     });
@@ -503,7 +506,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const walletContainerClass = this.globalVars.isMobile() ? ".global__content__inner" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -514,7 +518,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           title,
           intro: "In your wallet you can see which coins you own, and how much they are currently worth.",
-          element: document.querySelector(".global__center__inner"),
+          element: document.querySelector(walletContainerClass),
         },
         {
           title,
@@ -569,6 +573,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.introJS.start();
+  }
+
+  skipTutorialStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip");
+    window.location.reload();
   }
 
   tutorialCleanUp() {}
