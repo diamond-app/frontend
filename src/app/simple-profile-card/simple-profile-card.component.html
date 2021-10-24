@@ -41,7 +41,7 @@
             style="white-space: break-spaces"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
           >
-            {{ profile.Description.substring(0, 45) }}{{ profile.Description.length > 45 ? "..." : "" }}
+            {{ truncateProfileDescription(profile.Description) }}
           </div>
         </div>
         <div class="d-flex">

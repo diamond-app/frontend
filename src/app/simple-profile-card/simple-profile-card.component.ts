@@ -79,6 +79,11 @@ export class SimpleProfileCardComponent implements OnInit {
     });
   }
 
+  // Replace newlines with spaces, limit to 40 chars
+  truncateProfileDescription(profileDescription: string): string {
+    return profileDescription.replace(/(?:\r\n|\r|\n)/g, " ").substring(0, 40) + (profileDescription.length > 40 ? "..." : "");
+  }
+
   openBuyCreatorCoinModal(event) {
     this.exitTutorial.emit();
     this.globalVars.logEvent("buy : creator : select");
