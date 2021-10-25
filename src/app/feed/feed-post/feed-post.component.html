@@ -173,7 +173,7 @@
             class="feed-post__coin-price-holder"
             (click)="openBuyCreatorCoinModal($event, postContent.ProfileEntryResponse.Username)"
           >
-            <span class="fc-secondary pl-5px" *ngIf="globalVars.showPriceOnFeed">
+            <span class="fc-secondary pl-5px" *ngIf="globalVars.showPriceOnFeed && postContent.ProfileEntryResponse.CoinPriceDeSoNanos > 0">
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </span>
             <!-- Buy link -->
