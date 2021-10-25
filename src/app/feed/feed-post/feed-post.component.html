@@ -199,7 +199,14 @@
               <a
                 class="feed-post__avatar"
                 [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-                [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
+                [routerLink]="
+                  inTutorial
+                    ? []
+                    : getRouterLink([
+                        '/' + globalVars.RouteNames.USER_PREFIX,
+                        postContent.ProfileEntryResponse.Username
+                      ])
+                "
                 queryParamsHandling="merge"
               ></a>
             </div>
@@ -209,7 +216,11 @@
                 <!-- Username-->
                 <a
                   class="feed-post__username fc-default font-weight-bold"
-                  [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+                  [routerLink]="
+                    inTutorial
+                      ? []
+                      : ['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]
+                  "
                   queryParamsHandling="merge"
                 >
                   {{ postContent.ProfileEntryResponse.Username }}

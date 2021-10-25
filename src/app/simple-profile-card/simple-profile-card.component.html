@@ -39,9 +39,9 @@
             *ngIf="inTutorial"
             [matTooltip]="profile.Description"
             style="white-space: break-spaces"
+            class="limit-3-lines"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-          >
-            {{ truncateProfileDescription(profile.Description) }}
+          >{{ truncateProfileDescription(profile.Description) }}
           </div>
         </div>
         <div class="d-flex">
@@ -75,10 +75,10 @@
             'disabled-button': !tutorialWiggle && inTutorial && !tutorialBuySelf
           }"
         >
-          {{ tutorialBuySelf ? "Buy" : "View" }}
+          Buy
         </button>
       </div>
-      <div *ngIf="showTutorialFollow" (click)="openBuyCreatorCoinModal($event)">
+      <div *ngIf="showTutorialFollow">
         <follow-button
           [displayAsLink]="true"
           [followLinkClass]="'link--unstyled'"

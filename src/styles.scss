@@ -530,6 +530,14 @@ $green-font-color: #19B028;
   width: 90px !important;
 }
 
+.limit-3-lines {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
 .global__container {
   min-height: 100vh;
   display: flex;
@@ -2651,7 +2659,7 @@ bs-dropdown-container {
   font-size: 16px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  margin: 16px 0px 10px 0px;
+  margin-top: 5px;
   padding: 10px;
   color: var(--highlight);
   display: flex;
@@ -2670,6 +2678,8 @@ feed {
     border-radius: 10px;
     padding: 10px;
     position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
   jumio-status {
     @media (max-width: 992px) {

@@ -171,13 +171,13 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         },
         {
           title,
-          intro: "Prices go up when people buy, or when cashflows go to the coin. Prices go down when people sell.",
+          intro: "Prices go up when people buy, and down when people sell.",
           position: "bottom",
           element: document.querySelector("#creator-coins-holder"),
         },
         {
           title,
-          intro: "Coins can also give you access to exclusive content, events, and much more...",
+          intro: "Coins can also give you cashflows, access to exclusive content, events, and much more.",
           position: "bottom",
           element: document.querySelector("#creator-coins-holder"),
         },
@@ -252,7 +252,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       steps: [
         {
           title,
-          intro: `There are lots of fantastic creators to follow on ${environment.node.name}!<br/><br/> Click "Done", then choose some to follow on the next screen.<br/><br/>When you're done choosing who to follow <b>click the "Next" button on the following screen</b>`,
+          intro: `You can follow creators just like on Twitter and Instagram. <br/><br/>Let's follow some creators now!`,
         },
       ],
     });
