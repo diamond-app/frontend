@@ -217,6 +217,8 @@ export class FeedCreatePostComponent implements OnInit {
             this.globalVars.updateEverything().add(() => {
               this.postCreated.emit(response.PostEntryResponse);
             });
+          } else {
+            this.postCreated.emit(response.PostEntryResponse);
           }
         },
         (err) => {
