@@ -183,9 +183,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
         },
         {
           title,
-          intro: `Click "View" to take a look at at ${this.globalVars.addOwnershipApostrophe(
+          intro: `Click "Buy" to take a look at at ${this.globalVars.addOwnershipApostrophe(
             this.hotNewCreatorsToHighlight[0].Username
-          )} coin.`,
+          )} coin. This won't use real money.`,
           position: "bottom",
           element: document.querySelector(".primary-button"),
         },
