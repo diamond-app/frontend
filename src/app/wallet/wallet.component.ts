@@ -58,6 +58,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   tutorialInitiated = false;
   tutorialSkippedBuy = false;
   tutorialSkippable = false;
+  addMobileFooter = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -127,6 +128,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     if (this.inTutorial) {
+      this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 550;
       this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
         return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
       });
@@ -507,7 +509,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
-    const walletContainerClass = this.globalVars.isMobile() ? ".global__content__inner" : ".global__center__inner";
+    const walletContainerClass = this.globalVars.isMobile() ? "#wallet-container" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,

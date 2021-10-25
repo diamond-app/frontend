@@ -94,8 +94,12 @@ export class SimpleProfileCardComponent implements OnInit {
       inTutorial: this.inTutorial,
       tutorialBuy: this.showTutorialBuy,
     };
+    const dialogClass =
+      this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
+        ? ""
+        : "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal";
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal",
+      class: dialogClass,
       initialState,
     });
   }

@@ -2165,7 +2165,7 @@ export class BackendApiService {
     CreatorPurchasedInTutorialPublicKey?: string,
     ClearCreatorCoinPurchasedInTutorial?: boolean,
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, PublicKeyBase58Check, {
       PublicKeyBase58Check,
       TutorialStatus,
       CreatorPurchasedInTutorialPublicKey,

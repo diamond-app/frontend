@@ -8,6 +8,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
+import { FeedComponent } from "../../feed/feed.component";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -121,6 +122,16 @@ export class BuyDeSoComponent implements OnInit {
       "the Bitcoin blockchain. For this reason, we must add a network fee to " +
       "incentivize miners to process the transaction."
     );
+  }
+
+  cancelButtonClicked() {
+    if (this.isModal) {
+      this.closeModal.emit();
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { feedTab: FeedComponent.HOT_TAB },
+      });
+    }
   }
 
   _copyPublicKey() {

@@ -40,8 +40,14 @@ export class WalletActionsDropdownComponent implements OnInit {
     event.stopPropagation();
     this.isSelling.emit();
     const initialState = { username: this.hodlingUser.Username, tradeType, inTutorial: this.inTutorial };
+    // In cases in the mobile tutorial where the window height is small, we want the dialog box to go to the top to prevent
+    // it from blocking content.
+    const dialogClass =
+      this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
+        ? ""
+        : "modal-dialog-centered buy-deso-modal";
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
+      class: dialogClass,
       initialState,
     });
     this.showIcons = false;

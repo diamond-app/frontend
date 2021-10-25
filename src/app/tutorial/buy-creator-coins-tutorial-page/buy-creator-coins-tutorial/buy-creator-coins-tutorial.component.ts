@@ -46,8 +46,11 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   followCreators: boolean = false;
   // Count steps in tutorial
   stepCounter = 0;
+  // Add a footer on mobile to keep content visible
+  addMobileFooter: boolean = false;
 
   ngOnInit() {
+    this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 575;
     // this.isLoadingProfilesForFirstTime = true;
     this.globalVars.preventBackButton();
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
@@ -185,7 +188,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           title,
           intro: `Click "Buy" to take a look at at ${this.globalVars.addOwnershipApostrophe(
             this.hotNewCreatorsToHighlight[0].Username
-          )} coin. This won't use real money.`,
+          )} coin. <b>This won't use real money.</b>`,
           position: "bottom",
           element: document.querySelector(".primary-button"),
         },

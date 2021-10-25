@@ -101,7 +101,7 @@
 
   <!-- Founder's Reward Warning -->
   <div
-    *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0 && !creatorCoinTrade.isBuyingOwnCoin()"
+    *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0 && !creatorCoinTrade.isBuyingOwnCoin() && !inTutorial"
     class="py-3 text-muted d-flex ml-5px"
   >
     <div class="mr-10px">
