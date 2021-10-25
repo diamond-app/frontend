@@ -287,8 +287,6 @@ export class BuyDeSoComponent implements OnInit {
           .toPromise()
           .then(
             (res) => {
-              console.log("Just completed the transaction");
-              console.log(res);
               if (res == null || res.FeeSatoshis == null) {
                 this.globalVars.logEvent("bitpop : buy : error");
                 this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
@@ -326,7 +324,6 @@ export class BuyDeSoComponent implements OnInit {
   }
 
   _clickBuyDeSoSuccess(comp: BuyDeSoComponent) {
-    console.log("Successful transaction");
     comp.waitingOnTxnConfirmation = false;
     comp.showCloseButton.emit(true);
     comp.appData.celebrate();
@@ -335,7 +332,6 @@ export class BuyDeSoComponent implements OnInit {
   }
 
   _clickBuyDeSoSuccessButTimeout(comp: BuyDeSoComponent) {
-    console.log("Successful but timeout");
     this.appData.logEvent("bitpop : buy : read-timeout");
     comp.waitingOnTxnConfirmation = false;
     comp.showCloseButton.emit(true);
@@ -347,7 +343,6 @@ export class BuyDeSoComponent implements OnInit {
   }
 
   _clickBuyDeSoFailure(comp: BuyDeSoComponent, errString: string) {
-    console.log("Failed transaction");
     comp.waitingOnTxnConfirmation = false;
     comp.showCloseButton.emit(true);
     // The error about "replace by fee" has a link in it, and we want that link

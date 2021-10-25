@@ -214,7 +214,6 @@ export class AppComponent implements OnInit {
       let timeoutMillis = 750;
       // Set an interval to repeat
       let interval = setInterval(() => {
-        console.log("In the interval");
         if (attempts >= numTries) {
           errorCallback(comp);
           clearInterval(interval);
@@ -223,13 +222,9 @@ export class AppComponent implements OnInit {
           .GetTxn(this.globalVars.localNode, waitTxn)
           .subscribe(
             (res: any) => {
-              console.log("We're in the interval, here is the res:");
-              console.log(res);
               if (!res.TxnFound) {
                 return;
               }
-              console.log("Success in interval");
-              console.log(res);
               this._updateDeSoExchangeRate();
               this._updateAppState();
 
@@ -240,8 +235,6 @@ export class AppComponent implements OnInit {
               });
             },
             (error) => {
-              console.log("Had an error");
-              console.log(error);
               clearInterval(interval);
               errorCallback(comp);
             }
