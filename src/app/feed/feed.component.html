@@ -54,8 +54,6 @@
     </div>
   </a>
 
-  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>
-
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
     [fontWeight]="500"
@@ -66,7 +64,15 @@
     *ngIf="isMobile && !(globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0)"
     style="margin-top: 60px"
   ></div>
-
+  <jumio-status
+    [ngStyle]="{
+      'margin-top':
+        globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0 && isMobile
+          ? 'auto'
+          : '-8px'
+    }"
+    *ngIf="globalVars.loggedInUser && isMobile"
+  ></jumio-status>
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
     <nft-showcase></nft-showcase>
   </div>
