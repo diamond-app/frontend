@@ -2646,6 +2646,39 @@ bs-dropdown-container {
   border: 1px solid var(--border);
 }
 
+.feed-desktop-center-banner {
+  background-color: var(--tile-bg);
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin: 16px 0px 10px 0px;
+  padding: 10px;
+  color: var(--highlight);
+  display: flex;
+  align-items: center;
+  countdown-timer {
+    div {
+      background: var(--tile-bg);
+      border: none !important;
+      font-size: 16px;
+    }
+  }
+}
+
+feed {
+  .jumio-status {
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+  }
+  jumio-status {
+    @media (max-width: 992px) {
+      margin-right: 8px;
+      margin-left: 8px;
+    }
+  }
+}
+
 .feed-post__container {
   background: var(--tile-bg);
   border-radius: 10px;

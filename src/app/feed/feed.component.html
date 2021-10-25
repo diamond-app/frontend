@@ -23,13 +23,14 @@
     [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
   >
     <div
-      class="background-color-white fs-16px mt-5px br-10px p-10px border fc-blue feed-referral-header d-flex align-items-center"
+      class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
       <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in</span>
       <countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer>
     </div>
   </a>
+  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>
 
   <!-- Tab Selector -->
   <tab-selector
@@ -46,12 +47,14 @@
     class="mt-40px mx-8px"
   >
     <div
-      class="background-color-white fs-16px br-10px p-10px border mt-16px mb-10px fc-blue feed-referral-header d-flex align-items-center"
+      class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
       <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in<br><countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer></span>
     </div>
   </a>
+
+  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
