@@ -324,7 +324,7 @@ export class TradeCreatorComponent implements OnInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -427,7 +427,7 @@ export class TradeCreatorComponent implements OnInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -488,7 +488,7 @@ export class TradeCreatorComponent implements OnInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {

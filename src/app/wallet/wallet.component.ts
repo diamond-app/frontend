@@ -477,7 +477,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -512,7 +512,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -553,7 +553,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {

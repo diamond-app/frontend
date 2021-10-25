@@ -132,7 +132,7 @@ export class SignUpComponent {
   buyDeSoSkipped(): void {
     this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
+      queryParams: { stepNum: null, feedTab: FeedComponent.HOT_TAB },
       queryParamsHandling: "merge",
     });
   }

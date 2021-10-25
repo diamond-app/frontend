@@ -160,7 +160,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -215,7 +215,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -247,7 +247,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {

@@ -435,7 +435,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
