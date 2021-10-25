@@ -126,7 +126,7 @@
                 >
                   Go to the next step
                 </button>
-                <a class="fc-muted ml-25px" (click)="closeModal.emit()">Cancel</a>
+                <a *ngIf="isModal" class="fc-muted ml-25px" (click)="closeModal.emit()">Cancel</a>
               </div>
             </div>
             <div *ngIf="buyWithBTCStep === 2">

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { sprintf } from "sprintf-js";
@@ -27,6 +27,7 @@ class Messages {
 })
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
+  @Input() isModal: boolean = false;
   @Output() closeModal = new EventEmitter();
   @Output() showCloseButton = new EventEmitter<boolean>();
 
