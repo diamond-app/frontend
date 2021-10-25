@@ -390,13 +390,16 @@ export class GlobalVarsService {
     });
   }
 
-  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string) {
+  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false) {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
         this.logEvent(ampEvent);
         this.updateEverything().add(() => {
           this.navigateToCurrentStepInTutorial(this.loggedInUser);
+          if (reload) {
+            window.location.reload();
+          }
         });
       });
   }

@@ -279,8 +279,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   skipBuyCreatorsStep() {
     this.exitTutorial();
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip");
-    window.location.reload();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip", true);
   }
 
   skipBuySelfStep() {
