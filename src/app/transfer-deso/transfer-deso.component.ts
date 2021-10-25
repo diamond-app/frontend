@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
@@ -30,6 +30,8 @@ class Messages {
 })
 export class TransferDeSoComponent implements OnInit {
   @Input() creatorToPayInput: ProfileEntryResponse;
+  @Input() isModal: boolean = false;
+  @Output() closeModal = new EventEmitter<any>();
   globalVars: GlobalVarsService;
   transferDeSoError = "";
   startingSearchText = "";
@@ -48,7 +50,6 @@ export class TransferDeSoComponent implements OnInit {
     private backendApi: BackendApiService,
     private globalVarsService: GlobalVarsService,
     private titleService: Title,
-    public bsModalRef: BsModalRef,
     private route: ActivatedRoute
   ) {
     this.globalVars = globalVarsService;

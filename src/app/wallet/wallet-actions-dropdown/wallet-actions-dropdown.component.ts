@@ -5,6 +5,7 @@ import { ProfileEntryResponse, TutorialStatus } from "../../backend-api.service"
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDeSoComponent } from "../../transfer-deso/transfer-deso.component";
+import { TransferDesoModalComponent } from "../../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
 
 @Component({
   selector: "wallet-actions-dropdown",
@@ -49,7 +50,7 @@ export class WalletActionsDropdownComponent implements OnInit {
   openSendCloutModal(event) {
     event.stopPropagation();
     const initialState = { creatorToPayInput: this.hodlingUser };
-    this.modalService.show(TransferDeSoComponent, {
+    this.modalService.show(TransferDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
