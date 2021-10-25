@@ -328,7 +328,7 @@ export class BuyDeSoComponent implements OnInit {
   _clickBuyDeSoSuccess(comp: BuyDeSoComponent) {
     console.log("Successful transaction");
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     comp.appData.celebrate();
     comp.showBuyComplete = true;
     comp.ref.detectChanges();
@@ -338,7 +338,7 @@ export class BuyDeSoComponent implements OnInit {
     console.log("Successful but timeout");
     this.appData.logEvent("bitpop : buy : read-timeout");
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     let errString =
       "Your DeSo purchase was successfully broadcast. Due to high load" +
       " your balance may take up to half an hour to show up in your wallet. Please " +
@@ -349,7 +349,7 @@ export class BuyDeSoComponent implements OnInit {
   _clickBuyDeSoFailure(comp: BuyDeSoComponent, errString: string) {
     console.log("Failed transaction");
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     // The error about "replace by fee" has a link in it, and we want that link
     // to render. There is no risk of injection here.
     if (errString && errString.indexOf("replace by fee") >= 0) {
