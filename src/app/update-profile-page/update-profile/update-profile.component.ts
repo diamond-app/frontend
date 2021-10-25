@@ -375,6 +375,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
   }
 
+  updateShowPriceInFeed() {
+    this.globalVars.setShowPriceOnFeed(!this.globalVars.showPriceOnFeed);
+    this.globalVars.updateEverything();
+  }
+
   private handleError() {
     return (err: any) => {
       return Observable;

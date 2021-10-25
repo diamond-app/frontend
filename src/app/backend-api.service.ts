@@ -405,7 +405,7 @@ export class BackendApiService {
   LegacySeedListKey = "seedList";
 
   SetStorage(key: string, value: any) {
-    localStorage.setItem(key, value ? JSON.stringify(value) : "");
+    localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
   }
 
   RemoveStorage(key: string) {

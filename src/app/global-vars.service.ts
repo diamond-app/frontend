@@ -22,7 +22,7 @@ import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-s
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
-import { filter } from "lodash";
+import { filter, isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
@@ -226,6 +226,9 @@ export class GlobalVarsService {
 
   buyETHAddress: string = "";
 
+  // Whether the user will see prices on the feed "buy" component.
+  showPriceOnFeed: boolean = true;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -310,6 +313,18 @@ export class GlobalVarsService {
       result.isSameUserAsBefore = isSameUserAsBefore;
       observer.next(result);
     });
+  }
+
+  initializeShowPriceSetting() {
+    const showPriceOnFeed = this.backendApi.GetStorage("showPriceOnFeed");
+    if (!isNil(showPriceOnFeed)) {
+      this.showPriceOnFeed = showPriceOnFeed;
+    }
+  }
+
+  setShowPriceOnFeed(showPriceOnFeed: boolean) {
+    this.backendApi.SetStorage("showPriceOnFeed", showPriceOnFeed);
+    this.showPriceOnFeed = showPriceOnFeed;
   }
 
   userInTutorial(user: User): boolean {
@@ -1002,6 +1017,7 @@ export class GlobalVarsService {
       }
     });
 
+    this.initializeShowPriceSetting();
     this.getReferralUSDCents();
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);

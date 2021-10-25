@@ -189,6 +189,16 @@
                 [value]="theme.key"
                 [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
             </select>
+            <div class="d-flex align-items-center">
+              <div class="update-profile__title mr-16px">Show prices in feed</div>
+              <button
+                class="checkbox-circle mt-12px"
+                [ngClass]="{ checked: globalVars.showPriceOnFeed }"
+                (click)="updateShowPriceInFeed()"
+              >
+                <i-feather name="check"></i-feather>
+              </button>
+            </div>
           </div>
 
           <div class="w-100 my-30px">
