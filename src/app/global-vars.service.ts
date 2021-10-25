@@ -390,13 +390,18 @@ export class GlobalVarsService {
     });
   }
 
-  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false) {
+  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false, finalStep: boolean = false) {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
         this.logEvent(ampEvent);
         this.updateEverything().add(() => {
           this.navigateToCurrentStepInTutorial(this.loggedInUser);
+          if (finalStep) {
+            this.router.navigate(["/" + this.RouteNames.BROWSE], {
+              queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+            });
+          }
           if (reload) {
             window.location.reload();
           }

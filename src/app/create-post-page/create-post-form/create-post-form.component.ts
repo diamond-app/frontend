@@ -85,11 +85,7 @@ export class CreatePostFormComponent implements AfterViewInit {
 
   skipPostStep() {
     this.exitTutorial();
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.COMPLETE, "tutorial : post : create : skip");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
-    });
-    window.location.reload();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.COMPLETE, "tutorial : post : create : skip", true, true);
   }
 
   tutorialCleanUp() {}
