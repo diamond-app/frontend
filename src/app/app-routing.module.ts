@@ -67,6 +67,7 @@ class RouteNames {
   public static TRANSFER_CREATOR = "transfer";
   public static PICK_A_COIN = "select-creator-coin";
   public static BUY_CREATOR = "buy";
+  public static FOLLOW_CREATOR = "follow";
   public static SELL_CREATOR = "sell";
   public static UPDATE_PROFILE = "update-profile";
   public static MINT_NFT = "mint-nft";
@@ -167,6 +168,11 @@ const routes: Routes = [
   },
   {
     path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.BUY_CREATOR,
+    component: BuyCreatorCoinsTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.FOLLOW_CREATOR,
     component: BuyCreatorCoinsTutorialPageComponent,
     pathMatch: "full",
   },

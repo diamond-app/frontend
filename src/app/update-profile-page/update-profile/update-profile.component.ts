@@ -1,15 +1,17 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../../theme/theme.service";
 import * as introJs from "intro.js/intro.js";
+import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { environment } from "src/environments/environment";
+import { Observable } from "rxjs";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -58,6 +60,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   emailAddress = "";
   initialEmailAddress = "";
   invalidEmailEntered = false;
+  usernameValidationError: string = null;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -74,6 +77,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
     if (this.inTutorial) {
       this.globalVars.preventBackButton();
+      // Set default profile pic in tutorial if user doesn't already have one.
+      if (!this.profilePicInput) {
+        this.profilePicInput =
+          "data:image/png;base64,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";
+      }
     }
   }
 
@@ -302,7 +310,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
     if (comp.inTutorial) {
-      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
+      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR], {
         queryParamsHandling: "merge",
       });
       return;
@@ -342,6 +350,41 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.updateProfileBeingCalled = false;
   }
 
+  _validateUsername(username) {
+    if (username === "") {
+      return
+    }
+    this.usernameValidationError = null;
+    // Make sure username matches acceptable pattern
+    const regex = new RegExp("^[a-zA-Z0-9_]*$", "g");
+    if (!regex.test(username)) {
+      this.usernameValidationError = "Username must only use letters, numbers, or underscores";
+      return;
+    }
+    if (username !== this.globalVars.loggedInUser?.ProfileEntryResponse?.Username) {
+      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username, true).subscribe(
+        (res) => {
+          if (!isNil(res)) {
+            this.usernameValidationError = `${username} is already in use`;
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
+  }
+
+  updateShowPriceInFeed() {
+    this.globalVars.setShowPriceOnFeed(!this.globalVars.showPriceOnFeed);
+    this.globalVars.updateEverything();
+  }
+
+  private handleError() {
+    return (err: any) => {
+      return Observable;
+    };
+  }
   _handleFileInput(files: FileList) {
     let fileToUpload = files.item(0);
     if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
@@ -392,22 +435,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Update Your Profile <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const title = 'Create Your Profile <span class="ml-5px tutorial-header-step">Step 1/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
           title,
-          intro: `Everyone needs a profile! Let's update yours.`,
-        },
-        {
-          title,
-          intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
-          position: "bottom",
+          intro: `Welcome to ${environment.node.name}!<br /><br />Let's set up your profile!`,
         },
       ],
     });
@@ -421,6 +459,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       }
     });
     this.introJS.start();
+  }
+
+  skipToNextTutorialStep() {
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.CREATE_PROFILE, "profile : update : skip");
   }
 
   tutorialCleanUp() {}

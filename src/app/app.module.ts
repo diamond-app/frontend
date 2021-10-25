@@ -64,6 +64,7 @@ import { BottomBarMobileComponent } from "./bottom-bar-mobile/bottom-bar-mobile.
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
 import { TransferDeSoComponent } from "./transfer-deso/transfer-deso.component";
+import { TransferDesoModalComponent } from "./transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
 import { BuyDeSoLoggedOutComponent } from "./buy-deso-page/buy-deso-logged-out/buy-deso-logged-out.component";
 import { BuyDeSoCompleteComponent } from "./buy-deso-page/buy-deso-complete/buy-deso-complete.component";
 import { MessagesInboxComponent } from "./messages-page/messages-inbox/messages-inbox.component";
@@ -248,6 +249,7 @@ export function playerFactory() {
     LeftBarMobileComponent,
     TransferDeSoPageComponent,
     TransferDeSoComponent,
+    TransferDesoModalComponent,
     BuyDeSoLoggedOutComponent,
     BuyDeSoCompleteComponent,
     MessagesInboxComponent,

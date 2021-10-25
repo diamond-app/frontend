@@ -64,6 +64,7 @@ export class BackendRoutes {
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
   static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
+  static RoutePathUpdateTutorialStatus = "/api/v0/update-tutorial-status";
 
   // Media
   static RoutePathUploadVideo = "/api/v0/upload-video";
@@ -187,6 +188,7 @@ export enum TutorialStatus {
   INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
   INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
   INVEST_SELF = "InvestInYourselfComplete",
+  FOLLOW_CREATORS = "FollowCreatorsComplete",
   DIAMOND = "GiveADiamondComplete",
   COMPLETE = "TutorialComplete",
 }
@@ -403,7 +405,7 @@ export class BackendApiService {
   LegacySeedListKey = "seedList";
 
   SetStorage(key: string, value: any) {
-    localStorage.setItem(key, value ? JSON.stringify(value) : "");
+    localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
   }
 
   RemoveStorage(key: string) {
@@ -1124,10 +1126,17 @@ export class BackendApiService {
       AddGlobalFeedBool,
     });
   }
-  GetSingleProfile(endpoint: string, PublicKeyBase58Check: string, Username: string): Observable<any> {
+
+  GetSingleProfile(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    Username: string,
+    NoErrorOnMissing: boolean = false
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
       PublicKeyBase58Check,
       Username,
+      NoErrorOnMissing,
     });
   }
 
@@ -2146,6 +2155,21 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
       ResponseLimit,
       PublicKeyBase58Check,
+    });
+  }
+
+  UpdateTutorialStatus(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    TutorialStatus: string,
+    CreatorPurchasedInTutorialPublicKey?: string,
+    ClearCreatorCoinPurchasedInTutorial?: boolean,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+      TutorialStatus,
+      CreatorPurchasedInTutorialPublicKey,
+      ClearCreatorCoinPurchasedInTutorial,
     });
   }
 

@@ -9,12 +9,12 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TransferDeSoComponent } from "../transfer-deso/transfer-deso.component";
 import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
 import { document } from "ngx-bootstrap/utils";
 import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
 
 @Component({
   selector: "wallet",
@@ -56,6 +56,9 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
 
   nextButtonText: string;
   tutorialInitiated = false;
+  tutorialSkippedBuy = false;
+  tutorialSkippable = false;
+  addMobileFooter = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -77,24 +80,22 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   tutorialHeaderText: string = "";
   tutorialStepNumber: number;
 
-  ngOnInit() {
+  initializePage() {
     if (this.inTutorial) {
       this.globalVars.preventBackButton();
       this.tabs = [WalletComponent.coinsPurchasedTab];
       this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
-      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
-        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
-      });
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 2;
+          this.tutorialStepNumber = 3;
+          this.tutorialSkippable = true;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 2;
+          this.tutorialStepNumber = 3;
           this.nextButtonText = "Setup your profile";
           break;
         }
@@ -125,6 +126,47 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.titleService.setTitle(`Wallet - ${environment.node.name}`);
   }
 
+  ngOnInit() {
+    if (this.inTutorial) {
+      this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 550;
+      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
+        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
+      });
+      // If the user skipped the purchase, we simulate that purchase here so that there's something to show them
+      if (!this.balanceEntryToHighlight) {
+        this.backendApi
+          .GetSingleProfile(
+            this.globalVars.localNode,
+            "",
+            this.globalVars.loggedInUser.CreatorPurchasedInTutorialUsername
+          )
+          .subscribe((res) => {
+            let balance = this.appData.loggedInUser?.BalanceNanos;
+            const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+            balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
+            const percentToBuy = 0.1;
+            const nanosSimulatedBought = balance * percentToBuy;
+            this.balanceEntryToHighlight = {
+              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+              CreatorPublicKeyBase58Check: res.Profile.PublicKeyBase58Check,
+              HasPurchased: true,
+              BalanceNanos: nanosSimulatedBought,
+              NetBalanceInMempool: 0,
+              ProfileEntryResponse: res.Profile,
+            };
+            this.usersYouPurchased.push(this.balanceEntryToHighlight);
+            this.tutorialSkippedBuy = true;
+            this.initializePage();
+            this.scrollerReset();
+          });
+      } else {
+        this.initializePage();
+      }
+    } else {
+      this.initializePage();
+    }
+  }
+
   ngAfterViewInit() {
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
@@ -152,7 +194,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openSendDeSoModal() {
-    this.modalService.show(TransferDeSoComponent, {
+    this.modalService.show(TransferDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }
@@ -329,14 +371,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       this.globalVars.logEvent("invest : others : sell : next");
       this.exitTutorial();
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
       this.globalVars.logEvent("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `Allow others to invest in your coin`,
-        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
+        title: `Allow others to invest in your coin?`,
+        html: `Click "ok" to allow others to purchase your coin. You should only do this once you've invested the full amount you intend to into your own coin.`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,
@@ -344,14 +386,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
           confirmButton: "btn btn-light",
           cancelButton: "btn btn-light no",
         },
-        confirmButtonText: "Ok",
-        cancelButtonText: "No thank you",
+        confirmButtonText: "Not Yet",
+        cancelButtonText: "Ok",
         reverseButtons: true,
         allowEscapeKey: false,
         allowOutsideClick: false,
       })
         .then((res: any) => {
-          if (res.isConfirmed) {
+          if (res.isDismissed) {
             return this.backendApi
               .UpdateProfile(
                 this.globalVars.localNode,
@@ -432,11 +474,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const walletContainerClass = this.globalVars.isMobile() ? ".global__content__inner" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -445,7 +488,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             this.balanceEntryToHighlight.BalanceNanos,
             this.balanceEntryToHighlight.ProfileEntryResponse.CoinEntry
           )} of your very own $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
-          element: document.querySelector(".global__center__inner"),
+          element: document.querySelector(walletContainerClass),
         },
       ],
     });
@@ -465,28 +508,27 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const walletContainerClass = this.globalVars.isMobile() ? "#wallet-container" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
           title,
-          intro: `Great! You now have ${this.globalVars.nanosToDeSo(this.balanceEntryToHighlight.BalanceNanos, 4)} $${
+          intro: "In your wallet you can see which coins you own, and how much they are currently worth.",
+          element: document.querySelector(walletContainerClass),
+        },
+        {
+          title,
+          intro: `Let's ${this.tutorialSkippedBuy ? "simulate what selling some " : "sell a small amount "}of the $${
             this.balanceEntryToHighlight.ProfileEntryResponse.Username
-          } coins.`,
-        },
-        {
-          title,
-          intro: "Here in your wallet you can see which coins you own, and how much they are currently worth.",
-          element: document.querySelector(".global__center__inner"),
-        },
-        {
-          title,
-          intro: `Let's sell a small amount of the $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin you just purchased. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
+          } coin you just purchased${
+            this.tutorialSkippedBuy ? " would look like" : ""
+          }. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
           element: document.querySelector(".wallet__dropdown-parent > div"),
         },
       ],
@@ -513,7 +555,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       tooltipClass,
       hideNext: false,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
@@ -533,6 +575,11 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.introJS.start();
+  }
+
+  skipTutorialStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip", true);
   }
 
   tutorialCleanUp() {}

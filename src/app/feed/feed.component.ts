@@ -39,6 +39,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   hotFeedPostHashes = [];
 
   followedPublicKeyToProfileEntry = {};
+  followedCount = 0;
+  followBannerThreshold = 10;
 
   // We load the first batch of follow feed posts on page load and whenever the user follows someone
   loadingFirstBatchOfFollowFeedPosts = false;
@@ -394,6 +396,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         (response) => {
           this.followedPublicKeyToProfileEntry = response.PublicKeyToProfileEntry;
+          this.followedCount = this.followedPublicKeyToProfileEntry ? Object.keys(this.followedPublicKeyToProfileEntry)?.length : 0;
         },
         (error) => {}
       )

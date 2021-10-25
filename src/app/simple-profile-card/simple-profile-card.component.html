@@ -5,7 +5,7 @@
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
-    <div class="d-flex flex-grow-1 align-items-center mb-0">
+    <div class="d-flex flex-grow-1 mb-0" [ngClass]="{ 'align-items-center': !inTutorial }">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
         <div
@@ -15,9 +15,11 @@
       </div>
       <div class="d-flex">
         <div class="text-truncate holdings__name fs-15px">
-          <div class="d-flex">
-            <div class="fc-default text-truncate holdings__name link--unstyled"i
-                 [ngClass]="{'font-weight-bold': isBold }">
+          <div class="d-flex align-items-center">
+            <div
+              class="fc-default text-truncate holdings__name link--unstyled d-flex align-items-center"
+              [ngClass]="{ 'font-weight-bold': isBold }"
+            >
               {{ profile.Username || profile.PublicKeyBase58Check }}</div>
             <span
               *ngIf="profile.IsVerified"
@@ -27,11 +29,19 @@
               [matTooltip]="'This account is verified'"
               #tooltip="matTooltip"
             >
-            <i class="fas fa-check-circle fa-md align-middle"></i>
-          </span>
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
           </div>
           <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
             {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
+          </div>
+          <div
+            *ngIf="inTutorial"
+            [matTooltip]="profile.Description"
+            style="white-space: break-spaces"
+            class="limit-3-lines"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          >{{ truncateProfileDescription(profile.Description) }}
           </div>
         </div>
         <div class="d-flex">
@@ -57,9 +67,23 @@
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
       <div *ngIf="showTutorialBuy" (click)="openBuyCreatorCoinModal($event)">
-        <button class="primary-button fs-18px" style="width: 78px; height: 48px" [ngClass]="{ wiggle: tutorialWiggle && inTutorial }">
+        <button
+          class="primary-button fs-18px"
+          style="width: 78px; height: 48px"
+          [ngClass]="{
+            wiggle: tutorialWiggle && inTutorial,
+            'disabled-button': !tutorialWiggle && inTutorial && !tutorialBuySelf
+          }"
+        >
           Buy
         </button>
+      </div>
+      <div *ngIf="showTutorialFollow">
+        <follow-button
+          [displayAsLink]="true"
+          [followLinkClass]="'link--unstyled'"
+          [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
+        ></follow-button>
       </div>
       <follow-button
         *ngIf="followButtonOppositeSide"

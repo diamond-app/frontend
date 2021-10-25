@@ -22,7 +22,7 @@ import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-s
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
-import { filter } from "lodash";
+import { filter, isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
@@ -226,6 +226,9 @@ export class GlobalVarsService {
 
   buyETHAddress: string = "";
 
+  // Whether the user will see prices on the feed "buy" component.
+  showPriceOnFeed: boolean = true;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -312,6 +315,18 @@ export class GlobalVarsService {
     });
   }
 
+  initializeShowPriceSetting() {
+    const showPriceOnFeed = this.backendApi.GetStorage("showPriceOnFeed");
+    if (!isNil(showPriceOnFeed)) {
+      this.showPriceOnFeed = showPriceOnFeed;
+    }
+  }
+
+  setShowPriceOnFeed(showPriceOnFeed: boolean) {
+    this.backendApi.SetStorage("showPriceOnFeed", showPriceOnFeed);
+    this.showPriceOnFeed = showPriceOnFeed;
+  }
+
   userInTutorial(user: User): boolean {
     return (
       user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
@@ -375,12 +390,39 @@ export class GlobalVarsService {
     });
   }
 
+  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false, finalStep: boolean = false) {
+    this.backendApi
+      .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
+      .subscribe(() => {
+        this.logEvent(ampEvent);
+        this.updateEverything().add(() => {
+          this.navigateToCurrentStepInTutorial(this.loggedInUser);
+          if (finalStep) {
+            this.router.navigate(["/" + this.RouteNames.BROWSE], {
+              queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+            });
+          }
+          if (reload) {
+            window.location.reload();
+          }
+        });
+      });
+  }
+
   navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
     if (this.userInTutorial(user)) {
       // drop user at correct point in tutorial.
       let route = [];
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
+          route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
+          break;
+        }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR];
+          break;
+        }
+        case TutorialStatus.FOLLOW_CREATORS: {
           route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
@@ -389,15 +431,11 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
-          break;
-        }
-        case TutorialStatus.CREATE_PROFILE: {
           route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
         case TutorialStatus.INVEST_SELF: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          route = [RouteNames.TUTORIAL + "/" + RouteNames.DIAMONDS];
           break;
         }
         case TutorialStatus.DIAMOND: {
@@ -987,6 +1025,7 @@ export class GlobalVarsService {
       }
     });
 
+    this.initializeShowPriceSetting();
     this.getReferralUSDCents();
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
@@ -1155,7 +1194,7 @@ export class GlobalVarsService {
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
           }
         });
     });

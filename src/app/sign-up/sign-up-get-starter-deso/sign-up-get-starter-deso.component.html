@@ -88,7 +88,7 @@ can refactor.
   </div>
 </div>
 
-<div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN">
+<div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.SUBMIT_PHONE_NUMBER_VERIFICATION_SCREEN" class="pb-15px">
   <div *ngIf="displayForSignupFlow">
     <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
     <div class="mt-15px mb-15px fs-24px font-weight-bold">Verify your phone number</div>
@@ -110,7 +110,7 @@ can refactor.
 
   <form #f="ngForm" [formGroup]="verificationCodeForm" class="form-group pt-10px">
     <input
-      class="form-control"
+      class="form-control br-12px"
       name="verificationCode"
       formControlName="verificationCode"
       (ngModelChange)="onVerificationCodeInputChanged()"
@@ -128,29 +128,30 @@ can refactor.
 
   <div class="d-flex mt-15px justify-content-between">
     <div>
-      <a
+      <button
         *ngIf="displayForSignupFlow"
         (click)="backButtonClickedOnSubmitVerificationScreen()"
-        class="btn btn-outline-primary font-weight-bold fs-15px"
+        class="plain-button" style="width: 80px"
       >
         Back
-      </a>
+      </button>
     </div>
     <div>
-      <a
+      <button
         *ngIf="displayForSignupFlow"
         (click)="onSkipButtonClicked()"
-        class="btn btn-outline-primary font-weight-bold fs-15px"
+        class="plain-button" style="width: 80px"
       >
         Skip
-      </a>
-      <a
+      </button>
+      <button
         (click)="submitVerificationCode()"
         [ngClass]="{ disabled: !verificationCodeForm.valid, 'btn-loading': submittingPhoneNumberVerificationCode }"
-        class="btn btn-primary font-weight-bold fs-15px ml-10px"
+        class="primary-button ml-10px"
+        style="width: 80px"
       >
         Verify
-      </a>
+      </button>
     </div>
   </div>
 </div>

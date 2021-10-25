@@ -39,6 +39,7 @@ export class SwalHelper {
     // Feel free to add more classes here as needed
     let escapedCustomClass = {
       confirmButton: _.escape(options?.customClass?.confirmButton),
+      denyButton: _.escape(options?.customClass?.denyButton),
       cancelButton: _.escape(options?.customClass?.cancelButton),
     };
 

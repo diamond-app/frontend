@@ -530,6 +530,14 @@ $green-font-color: #19B028;
   width: 90px !important;
 }
 
+.limit-3-lines {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
 .global__container {
   min-height: 100vh;
   display: flex;
@@ -2050,6 +2058,23 @@ feed-create-post {
   color:var(--hover);
 }
 
+.tutorial-skip-button {
+  height: 30px;
+  width: 60px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--tile-bg);
+  color: var(--text-secondary);
+  &:hover {
+    color: var(--text-secondary);
+  }
+  &.disabled-button {
+    background: var(--tile-bg)
+  }
+  margin-top: 0px;
+  margin-left: 10px;
+}
+
 .tutorial-header {
   padding: 16px;
   background: var(--background-secondary);
@@ -2627,6 +2652,45 @@ bs-dropdown-container {
   background: var(--tile-bg);
   border-radius: 10px;
   border: 1px solid var(--border);
+}
+
+.feed-desktop-center-banner {
+  background-color: var(--tile-bg);
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-top: 5px;
+  padding: 10px;
+  color: var(--highlight);
+  display: flex;
+  align-items: center;
+  countdown-timer {
+    div {
+      background: var(--tile-bg);
+      border: none !important;
+      font-size: 16px;
+    }
+  }
+  @media (max-width: 992px) {
+    margin-top: 15px;
+  }
+}
+
+feed {
+  .jumio-status {
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  jumio-status {
+    @media (max-width: 992px) {
+      margin-top: -8px;
+      margin-right: 8px;
+      margin-left: 8px;
+    }
+  }
 }
 
 .feed-post__container {
@@ -5033,6 +5097,10 @@ sell-nft-modal {
   &.disabled-button {
     background: var(--highlight-secondary)
   }
+}
+
+.narrow-button {
+  width: 75px !important;
 }
 
 .plain-button {
