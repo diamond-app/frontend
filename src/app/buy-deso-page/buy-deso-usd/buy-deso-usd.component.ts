@@ -55,7 +55,10 @@ export class BuyDeSoUSDComponent implements OnInit {
       this.supportedCountries = res;
     });
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
+    console.log("Constructor");
     this.route.queryParams.subscribe((queryParams) => {
+      console.log("constructor params");
+      console.log(queryParams);
       if (queryParams.destAmount) {
         this.globalVars.logEvent("wyre : buy : success", queryParams);
         const btcPurchased = queryParams.destAmount;
@@ -91,6 +94,11 @@ export class BuyDeSoUSDComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("Here are the params");
+    this.route.queryParams.subscribe((queryParams) => {
+      console.log('Inside param subscribe');
+      console.log(queryParams);
+    });
     this._refreshQuotation();
   }
 
