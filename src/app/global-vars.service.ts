@@ -890,7 +890,34 @@ export class GlobalVarsService {
   }
 
   // Helper to launch the get free deso flow in identity.
-  launchGetFreeDESOFlow() {
+  launchGetFreeDESOFlow(showPrompt: boolean) {
+    if (showPrompt) {
+      this.logEvent("identity : jumio : prompt");
+      SwalHelper.fire({
+        target: this.getTargetComponentSelector(),
+        title: "",
+        html: `In order to verify that you're a real human, we are required to do a KYC check, which requires a valid ID. It sucks, we know.`,
+        showConfirmButton: true,
+        showCancelButton: true,
+        icon: "info",
+        reverseButtons: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Continue",
+        cancelButtonText: "Cancel",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          this.launchJumioVerification();
+        }
+      });
+    } else {
+      this.launchJumioVerification();
+    }
+  }
+
+  launchJumioVerification() {
     this.logEvent("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
