@@ -532,6 +532,7 @@ class Mentionify {
   private top: any;
   private triggerIdx: any;
   private active: number;
+  private currentToken: string;
 
   constructor(ref, menuRef, resolveFn, replaceFn, menuItemFn) {
     this.ref = ref;
@@ -540,6 +541,7 @@ class Mentionify {
     this.replaceFn = replaceFn;
     this.menuItemFn = menuItemFn;
     this.options = [];
+    this.currentToken = "";
 
     this.makeOptions = this.makeOptions.bind(this);
     this.closeMenu = this.closeMenu.bind(this);
@@ -556,9 +558,21 @@ class Mentionify {
     const options = await this.resolveFn(query);
     if (options.lenght !== 0) {
       this.options = options;
-      this.renderMenu();
+      // Only render the menu if the resolved query and the current token are substrings of each other
+      if (this.isStringSubstring(this.currentToken, query)) {
+        this.renderMenu();
+      }
     } else {
       this.closeMenu();
+    }
+  }
+
+  // Returns true if one of the inputted strings is a substring of the other
+  isStringSubstring(str1: string, str2: string) {
+    if (str1.length >= str2.length) {
+      return str1.substr(0, str2.length) === str2;
+    } else {
+      return str2.substr(0, str1.length) === str1;
     }
   }
 
@@ -602,6 +616,7 @@ class Mentionify {
     }
 
     const query = textBeforeCaret.slice(triggerIdx + 1);
+    this.currentToken = query;
     this.makeOptions(query);
 
     const coords = getCaretCoordinates(this.ref, positionIndex);
