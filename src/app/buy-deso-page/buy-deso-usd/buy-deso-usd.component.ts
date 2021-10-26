@@ -57,7 +57,7 @@ export class BuyDeSoUSDComponent implements OnInit {
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
-        this.globalVars.logEvent("wyre : buy : success", queryParams);
+        this.globalVars.logEvent("wyre : buy : success", { ...queryParams });
         const btcPurchased = queryParams.destAmount;
         this.globalVars.celebrate();
         SwalHelper.fire({
