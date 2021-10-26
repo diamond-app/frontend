@@ -177,12 +177,15 @@ import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-pro
 import { ReferralsComponent } from "./referrals/referrals.component";
 import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
+import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
+import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
+import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
+import { PostMultiplierComponent } from "./feed/feed-post-dropdown/post-multiplier/post-multiplier.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -343,6 +346,9 @@ export function playerFactory() {
     BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
     PostMultiplierComponent,
+    TransferNftModalComponent,
+    TransferNftPageComponent,
+    TransferNftComponent,
   ],
   imports: [
     BrowserModule,
