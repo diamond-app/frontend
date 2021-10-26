@@ -8,7 +8,7 @@
     </div>
   </div>
   <!-- User hasn't tried jumio flow -->
-  <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="globalVars.launchGetFreeDESOFlow()"
+  <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="globalVars.launchGetFreeDESOFlow(true)"
        class="d-flex align-items-center font-weight-normal justify-content-between">
     <div class="cursor-pointer">
       <i-feather name="gift" class="position-relative" style="top: -2px"></i-feather>
@@ -17,7 +17,7 @@
     </div>
   </div>
   <!-- User tried Jumio but verification failed-->
-  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned" (click)="globalVars.launchGetFreeDESOFlow()"
+  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned" (click)="globalVars.launchGetFreeDESOFlow(false)"
        class="d-flex align-items-center font-weight-normal justify-content-between">
     <div class="cursor-pointer">
       <i-feather name="gift"></i-feather>
