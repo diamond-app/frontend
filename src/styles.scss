@@ -1634,19 +1634,6 @@ feed-create-post {
     }
   }
 
-  // Start of weird autofill stuff
-  body {
-    margin: 0;
-    padding: 2rem 0;
-  }
-
-  textarea {
-    font: inherit;
-    height: 7rem;
-    width: 100%;
-    padding: .8rem 1rem
-  }
-
   .menu {
     background-color: var(--tile-bg);
     position: absolute;

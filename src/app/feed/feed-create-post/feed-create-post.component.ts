@@ -86,7 +86,6 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   globalVars: GlobalVarsService;
   GlobalVarsService = GlobalVarsService;
 
-  users = [{ username: "john_doe" }, { username: "jane_doe" }];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
