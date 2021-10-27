@@ -178,7 +178,7 @@ export class Mentionify<Type> {
   selectItem(active: number): () => void {
     return () => {
       const preMention = this.ref.value.substr(0, this.triggerIdx);
-      const option = this.options[active];
+      const option = this.options.items[active];
       const mention = this.replaceFn(option, this.ref.value[this.triggerIdx]);
       const postMention = this.ref.value.substr(this.ref.selectionStart);
       this.ref.value = `${preMention}${mention}${postMention}`;
@@ -211,16 +211,20 @@ export class Mentionify<Type> {
       let modalTop = 0;
       let modalLeft = 0;
       const modal = document.querySelector(".modal-content");
+      let scrollX = window.scrollX;
+      let scrollY = window.scrollY;
       if (modal) {
         const modalBoundingClientRect = modal.getBoundingClientRect();
         modalLeft = modalBoundingClientRect.left;
         modalTop = modalBoundingClientRect.top;
+        scrollX = 0;
+        scrollY = 0;
       }
 
       setTimeout(() => {
         this.active = 0;
-        this.left = window.scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
-        this.top = window.scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
+        this.left = scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
+        this.top = scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
         this.triggerIdx = triggerIdx;
         this.renderMenu();
       }, 0);
