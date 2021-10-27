@@ -44,7 +44,10 @@ const isFirefox = typeof window !== "undefined" && window["mozInnerScreenX"] != 
  * @param {HTMLTextAreaElement} element
  * @param {number} position
  */
-function getCaretCoordinates(element, position) {
+function getCaretCoordinates(
+  element: HTMLTextAreaElement,
+  position: number
+): { top: number; left: number; height: number } {
   const div = document.createElement("div");
   document.body.appendChild(div);
 
@@ -75,7 +78,6 @@ function getCaretCoordinates(element, position) {
   const coordinates = {
     top: span.offsetTop + parseInt(computed["borderTopWidth"]),
     left: span.offsetLeft + parseInt(computed["borderLeftWidth"]),
-    // height: parseInt(computed['lineHeight'])
     height: span.offsetHeight,
   };
 
@@ -84,26 +86,32 @@ function getCaretCoordinates(element, position) {
   return coordinates;
 }
 
-export class Mentionify {
-  private ref: any;
-  private menuRef: any;
-  private resolveFn: any;
-  private replaceFn: any;
-  private menuItemFn: any;
-  private options: any;
-  private left: any;
-  private top: any;
-  private triggerIdx: any;
+export class Mentionify<Type> {
+  private readonly ref: HTMLTextAreaElement;
+  private menuRef: HTMLElement;
+  private readonly resolveFn: (string) => Promise<Type[]>;
+  private readonly replaceFn: (item: Type, value: string) => string;
+  private readonly menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement;
+  private options: { query: string; items: Type[] };
+  private left: number | undefined;
+  private top: number | undefined;
+  private triggerIdx: number | undefined;
   private active: number;
   private currentToken: string;
 
-  constructor(ref, menuRef, resolveFn, replaceFn, menuItemFn) {
+  constructor(
+    ref: HTMLTextAreaElement,
+    menuRef: HTMLElement,
+    resolveFn: (string) => Promise<Type[]>,
+    replaceFn: (item: Type, value: string) => string,
+    menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement
+  ) {
     this.ref = ref;
     this.menuRef = menuRef;
     this.resolveFn = resolveFn;
     this.replaceFn = replaceFn;
     this.menuItemFn = menuItemFn;
-    this.options = [];
+    this.options = { query: "", items: [] };
     this.currentToken = "";
 
     this.makeOptions = this.makeOptions.bind(this);
@@ -117,46 +125,63 @@ export class Mentionify {
     this.ref.addEventListener("keydown", this.onKeyDown);
   }
 
-  async makeOptions(query) {
-    const options = await this.resolveFn(query);
-    if (options.lenght !== 0) {
-      this.options = options;
-      // Only render the menu if the resolved query and the current token are substrings of each other
-      if (this.isStringSubstring(this.currentToken, query)) {
-        this.renderMenu();
+  async makeOptions(query: string): Promise<void> {
+    const items = await this.resolveFn(query);
+    if (items.length !== 0 && this.currentToken) {
+      // Only render the menu if the this query starts with the current token or the current token starts with this query.
+      if (this.isZeroBasedSubstring(query, this.currentToken)) {
+        // Now we need to determine if the query in options is closer to the current token than the query we have here.
+        // We can simply compare the length of the strings.
+        // There are three conditions in which we'll want to update the menu.
+        // 1. If the length of this new query is closer to the length of currentToken than the length of query stored in options.
+        // 2. The difference between the length of the current token and lengths of both the new query and the query
+        //  stored in options are the same length AND the length of the new query is less than the length of the query stored in options.
+        // 3. The query in options is not a zero-based substring of current token.
+        const currentTokenLength = this.currentToken.length;
+        const currentQueryLength = this.options.query.length;
+        const currentLengthDiff = Math.abs(currentQueryLength - currentTokenLength);
+        const newQueryLength = query.length;
+        const newLengthDiff = Math.abs(newQueryLength - currentTokenLength);
+        if (
+          newLengthDiff < currentLengthDiff ||
+          (newLengthDiff === currentLengthDiff && newQueryLength < currentTokenLength) ||
+          !this.isZeroBasedSubstring(this.options.query, this.currentToken)
+        ) {
+          this.options = { query: query, items: items };
+          this.renderMenu();
+        }
       }
     } else {
       this.closeMenu();
     }
   }
 
-  // Returns true if one of the inputted strings is a substring of the other
-  isStringSubstring(str1: string, str2: string) {
-    if (str1.length >= str2.length) {
-      return str1.substr(0, str2.length) === str2;
-    } else {
-      return str2.substr(0, str1.length) === str1;
-    }
+  // Returns true if either str1 starts with str2 or str2 starts with str1
+  isZeroBasedSubstring(str1: string, str2: string): boolean {
+    return str1.length > str2.length ? str1.startsWith(str2) : str2.startsWith(str1);
   }
 
-  closeMenu() {
+  // Deletes all options from menu and resets state so that no options appear.
+  closeMenu(): void {
     setTimeout(() => {
-      this.options = [];
+      this.options = { query: "", items: [] };
       this.left = undefined;
       this.top = undefined;
       this.triggerIdx = undefined;
+      this.currentToken = "";
       this.renderMenu();
     }, 0);
   }
 
-  selectItem(active) {
+  // Handles the click action on an item in the mention. When a user name is clicked, it closes the menu and fills in
+  // the username mention.
+  selectItem(active: number): () => void {
     return () => {
       const preMention = this.ref.value.substr(0, this.triggerIdx);
       const option = this.options[active];
       const mention = this.replaceFn(option, this.ref.value[this.triggerIdx]);
       const postMention = this.ref.value.substr(this.ref.selectionStart);
-      const newValue = `${preMention}${mention}${postMention}`;
-      this.ref.value = newValue;
+      this.ref.value = `${preMention}${mention}${postMention}`;
       const caretPosition = this.ref.value.length - postMention.length;
       this.ref.setSelectionRange(caretPosition, caretPosition);
       this.closeMenu();
@@ -164,7 +189,7 @@ export class Mentionify {
     };
   }
 
-  onInput(ev) {
+  onInput(ev: KeyboardEvent): void {
     const positionIndex = this.ref.selectionStart;
     const textBeforeCaret = this.ref.value.slice(0, positionIndex);
     const tokens = textBeforeCaret.split(/\s/);
@@ -180,34 +205,34 @@ export class Mentionify {
 
     const query = textBeforeCaret.slice(triggerIdx + 1);
     this.currentToken = query;
-    this.makeOptions(query);
+    this.makeOptions(query).then(() => {
+      const coords = getCaretCoordinates(this.ref, positionIndex);
+      const { top, left } = this.ref.getBoundingClientRect();
+      let modalTop = 0;
+      let modalLeft = 0;
+      const modal = document.querySelector(".modal-content");
+      if (modal) {
+        const modalBoundingClientRect = modal.getBoundingClientRect();
+        modalLeft = modalBoundingClientRect.left;
+        modalTop = modalBoundingClientRect.top;
+      }
 
-    const coords = getCaretCoordinates(this.ref, positionIndex);
-    const { top, left } = this.ref.getBoundingClientRect();
-    let modalTop = 0;
-    let modalLeft = 0;
-    const modal = document.querySelector(".modal-content");
-    if (modal) {
-      const modalBoundingClientRect = modal.getBoundingClientRect();
-      modalLeft = modalBoundingClientRect.left;
-      modalTop = modalBoundingClientRect.top;
-    }
-
-    setTimeout(() => {
-      this.active = 0;
-      this.left = window.scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
-      this.top = window.scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
-      this.triggerIdx = triggerIdx;
-      this.renderMenu();
-    }, 0);
+      setTimeout(() => {
+        this.active = 0;
+        this.left = window.scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
+        this.top = window.scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
+        this.triggerIdx = triggerIdx;
+        this.renderMenu();
+      }, 0);
+    });
   }
 
-  onKeyDown(ev) {
+  onKeyDown(ev: KeyboardEvent): void {
     let keyCaught = false;
     if (this.triggerIdx !== undefined) {
       switch (ev.key) {
         case "ArrowDown":
-          this.active = Math.min(this.active + 1, this.options.length - 1);
+          this.active = Math.min(this.active + 1, this.options.items.length - 1);
           this.renderMenu();
           keyCaught = true;
           break;
@@ -229,7 +254,7 @@ export class Mentionify {
     }
   }
 
-  renderMenu() {
+  renderMenu(): void {
     if (this.top === undefined) {
       this.menuRef.hidden = true;
       return;
@@ -239,7 +264,7 @@ export class Mentionify {
     this.menuRef.style.top = this.top + "px";
     this.menuRef.innerHTML = "";
 
-    this.options.forEach((option, idx) => {
+    this.options.items.forEach((option, idx) => {
       this.menuRef.appendChild(this.menuItemFn(option, this.selectItem(idx), this.active === idx));
     });
 
