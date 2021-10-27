@@ -146,10 +146,12 @@ export class Mentionify<Type> {
     }
   }
 
+  // Returns true if either str1 starts with str2 or str2 starts with str1
   isZeroBasedSubstring(str1: string, str2: string): boolean {
     return str1.length > str2.length ? str1.startsWith(str2) : str2.startsWith(str1);
   }
 
+  // Deletes all options from menu and resets state so that no options appear.
   closeMenu(): void {
     setTimeout(() => {
       this.options = { query: "", items: [] };
@@ -161,6 +163,8 @@ export class Mentionify<Type> {
     }, 0);
   }
 
+  // Handles the click action on an item in the mention. When a user name is clicked, it closes the menu and fills in
+  // the username mention.
   selectItem(active: number): () => void {
     return () => {
       const preMention = this.ref.value.substr(0, this.triggerIdx);
