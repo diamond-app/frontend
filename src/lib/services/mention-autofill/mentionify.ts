@@ -131,12 +131,22 @@ export class Mentionify<Type> {
       // Only render the menu if the this query starts with the current token or the current token starts with this query.
       if (this.isZeroBasedSubstring(query, this.currentToken)) {
         // Now we need to determine if the query in options is closer to the current token than the query we have here.
-        // We can simply compare the length of the strings. If the length of this query is closer to the length of currentToken
-        // than the query stored in options OR the query in options is not a zero-based substring of current token,
-        // then we can replace options and render the menu.
-        const currentLengthDiff = Math.abs(this.options.query.length - this.currentToken.length);
-        const newLengthDiff = Math.abs(query.length - this.currentToken.length);
-        if (newLengthDiff < currentLengthDiff || !this.isZeroBasedSubstring(this.options.query, this.currentToken)) {
+        // We can simply compare the length of the strings.
+        // There are three conditions in which we'll want to update the menu.
+        // 1. If the length of this new query is closer to the length of currentToken than the length of query stored in options.
+        // 2. The difference between the length of the current token and lengths of both the new query and the query
+        //  stored in options are the same length AND the length of the new query is less than the length of the query stored in options.
+        // 3. The query in options is not a zero-based substring of current token.
+        const currentTokenLength = this.currentToken.length;
+        const currentQueryLength = this.options.query.length;
+        const currentLengthDiff = Math.abs(currentQueryLength - currentTokenLength);
+        const newQueryLength = query.length;
+        const newLengthDiff = Math.abs(newQueryLength - currentTokenLength);
+        if (
+          newLengthDiff < currentLengthDiff ||
+          (newLengthDiff === currentLengthDiff && newQueryLength < currentTokenLength) ||
+          !this.isZeroBasedSubstring(this.options.query, this.currentToken)
+        ) {
           this.options = { query: query, items: items };
           this.renderMenu();
         }
