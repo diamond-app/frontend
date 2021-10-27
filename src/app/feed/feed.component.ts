@@ -139,7 +139,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         (res: any) => {
           const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
           if (filteredReferrals.length > 0) {
-            this.userReferral = _.sortBy(filteredReferrals, "Info.ReferreeAmountUSDCents")[0];
+            this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
           }
         },
         (err: any) => {
