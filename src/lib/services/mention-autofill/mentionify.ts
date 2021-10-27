@@ -92,7 +92,7 @@ export class Mentionify<Type> {
   private readonly resolveFn: (string) => Promise<Type[]>;
   private readonly replaceFn: (item: Type, value: string) => string;
   private readonly menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement;
-  private options: Type[];
+  private options: { query: string; items: Type[] };
   private left: number | undefined;
   private top: number | undefined;
   private triggerIdx: number | undefined;
@@ -111,7 +111,7 @@ export class Mentionify<Type> {
     this.resolveFn = resolveFn;
     this.replaceFn = replaceFn;
     this.menuItemFn = menuItemFn;
-    this.options = [];
+    this.options = { query: "", items: [] };
     this.currentToken = "";
 
     this.makeOptions = this.makeOptions.bind(this);
@@ -125,25 +125,38 @@ export class Mentionify<Type> {
     this.ref.addEventListener("keydown", this.onKeyDown);
   }
 
-  async makeOptions(query): Promise<void> {
-    const options = await this.resolveFn(query);
-    if (options.length !== 0) {
-      // Only render the menu if the resolved query starts with the current token.
-      if (query.startsWith(this.currentToken)) {
-        this.options = options;
-        this.renderMenu();
+  async makeOptions(query: string): Promise<void> {
+    const items = await this.resolveFn(query);
+    if (items.length !== 0 && this.currentToken) {
+      // Only render the menu if the this query starts with the current token or the current token starts with this query.
+      if (this.isZeroBasedSubstring(query, this.currentToken)) {
+        // Now we need to determine if the query in options is closer to the current token than the query we have here.
+        // We can simply compare the length of the strings. If the length of this query is closer to the length of currentToken
+        // than the query stored in options OR the query in options is not a zero-based substring of current token,
+        // then we can replace options and render the menu.
+        const currentLengthDiff = Math.abs(this.options.query.length - this.currentToken.length);
+        const newLengthDiff = Math.abs(query.length - this.currentToken.length);
+        if (newLengthDiff < currentLengthDiff || !this.isZeroBasedSubstring(this.options.query, this.currentToken)) {
+          this.options = { query: query, items: items };
+          this.renderMenu();
+        }
       }
     } else {
       this.closeMenu();
     }
   }
 
+  isZeroBasedSubstring(str1: string, str2: string): boolean {
+    return str1.length > str2.length ? str1.startsWith(str2) : str2.startsWith(str1);
+  }
+
   closeMenu(): void {
     setTimeout(() => {
-      this.options = [];
+      this.options = { query: "", items: [] };
       this.left = undefined;
       this.top = undefined;
       this.triggerIdx = undefined;
+      this.currentToken = "";
       this.renderMenu();
     }, 0);
   }
@@ -205,7 +218,7 @@ export class Mentionify<Type> {
     if (this.triggerIdx !== undefined) {
       switch (ev.key) {
         case "ArrowDown":
-          this.active = Math.min(this.active + 1, this.options.length - 1);
+          this.active = Math.min(this.active + 1, this.options.items.length - 1);
           this.renderMenu();
           keyCaught = true;
           break;
@@ -237,7 +250,7 @@ export class Mentionify<Type> {
     this.menuRef.style.top = this.top + "px";
     this.menuRef.innerHTML = "";
 
-    this.options.forEach((option, idx) => {
+    this.options.items.forEach((option, idx) => {
       this.menuRef.appendChild(this.menuItemFn(option, this.selectItem(idx), this.active === idx));
     });
 
