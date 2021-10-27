@@ -64,6 +64,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   pullToRefreshHandler;
 
+  userReferral = null;
+
   referralExpiration = new Date("2021-10-25T22:00:00.000Z");
 
   // This is [Following, Global, Market] if the user is following anybody. Otherwise,
@@ -110,6 +112,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Set activeTab to null so that a sensible default tab is selected
         this.activeTab = null;
         this._initializeFeeds();
+        this.fetchUserReferrals();
       }
     });
 
@@ -126,6 +129,23 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnInit() {
     this._initializeFeeds();
     this.titleService.setTitle(`Feed - ${environment.node.name}`);
+    this.fetchUserReferrals();
+  }
+
+  fetchUserReferrals() {
+    this.backendApi
+      .GetReferralInfoForUser(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe(
+        (res: any) => {
+          const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
+          if (filteredReferrals.length > 0) {
+            this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
+          }
+        },
+        (err: any) => {
+          console.log(err);
+        }
+      );
   }
 
   ngAfterViewChecked() {
