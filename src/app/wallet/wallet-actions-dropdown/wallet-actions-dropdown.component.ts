@@ -5,6 +5,7 @@ import { ProfileEntryResponse, TutorialStatus } from "../../backend-api.service"
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDeSoComponent } from "../../transfer-deso/transfer-deso.component";
+import { TransferDesoModalComponent } from "../../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
 
 @Component({
   selector: "wallet-actions-dropdown",
@@ -39,8 +40,14 @@ export class WalletActionsDropdownComponent implements OnInit {
     event.stopPropagation();
     this.isSelling.emit();
     const initialState = { username: this.hodlingUser.Username, tradeType, inTutorial: this.inTutorial };
+    // In cases in the mobile tutorial where the window height is small, we want the dialog box to go to the top to prevent
+    // it from blocking content.
+    const dialogClass =
+      this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
+        ? ""
+        : "modal-dialog-centered buy-deso-modal";
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
+      class: dialogClass,
       initialState,
     });
     this.showIcons = false;
@@ -49,7 +56,7 @@ export class WalletActionsDropdownComponent implements OnInit {
   openSendCloutModal(event) {
     event.stopPropagation();
     const initialState = { creatorToPayInput: this.hodlingUser };
-    this.modalService.show(TransferDeSoComponent, {
+    this.modalService.show(TransferDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });

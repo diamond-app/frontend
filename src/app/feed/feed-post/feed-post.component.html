@@ -173,8 +173,11 @@
             class="feed-post__coin-price-holder"
             (click)="openBuyCreatorCoinModal($event, postContent.ProfileEntryResponse.Username)"
           >
+            <span class="fc-secondary pl-5px" *ngIf="globalVars.showPriceOnFeed && postContent.ProfileEntryResponse.CoinPriceDeSoNanos > 0">
+              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+            </span>
             <!-- Buy link -->
-            <span class="p-10px">Buy</span>
+            <span class="p-5px">Buy</span>
           </a>
         </ng-template>
 
@@ -196,7 +199,14 @@
               <a
                 class="feed-post__avatar"
                 [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-                [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
+                [routerLink]="
+                  inTutorial
+                    ? []
+                    : getRouterLink([
+                        '/' + globalVars.RouteNames.USER_PREFIX,
+                        postContent.ProfileEntryResponse.Username
+                      ])
+                "
                 queryParamsHandling="merge"
               ></a>
             </div>
@@ -206,7 +216,11 @@
                 <!-- Username-->
                 <a
                   class="feed-post__username fc-default font-weight-bold"
-                  [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+                  [routerLink]="
+                    inTutorial
+                      ? []
+                      : ['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]
+                  "
                   queryParamsHandling="merge"
                 >
                   {{ postContent.ProfileEntryResponse.Username }}

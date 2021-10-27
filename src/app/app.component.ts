@@ -225,7 +225,6 @@ export class AppComponent implements OnInit {
               if (!res.TxnFound) {
                 return;
               }
-
               this._updateDeSoExchangeRate();
               this._updateAppState();
 

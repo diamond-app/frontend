@@ -39,6 +39,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   hotFeedPostHashes = [];
 
   followedPublicKeyToProfileEntry = {};
+  followedCount = 0;
+  followBannerThreshold = 10;
 
   // We load the first batch of follow feed posts on page load and whenever the user follows someone
   loadingFirstBatchOfFollowFeedPosts = false;
@@ -62,7 +64,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   pullToRefreshHandler;
 
-  referralExpiration = new Date("2021-10-22T22:00:00.000Z");
+  referralExpiration = new Date("2021-10-25T22:00:00.000Z");
 
   // This is [Following, Global, Market] if the user is following anybody. Otherwise,
   // it's [Global, Following, Market].
@@ -394,6 +396,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         (response) => {
           this.followedPublicKeyToProfileEntry = response.PublicKeyToProfileEntry;
+          this.followedCount = this.followedPublicKeyToProfileEntry ? Object.keys(this.followedPublicKeyToProfileEntry)?.length : 0;
         },
         (error) => {}
       )

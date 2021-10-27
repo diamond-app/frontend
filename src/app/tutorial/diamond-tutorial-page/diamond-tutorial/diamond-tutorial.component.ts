@@ -62,26 +62,33 @@ export class DiamondTutorialComponent implements OnInit {
     setTimeout(() => this.diamondIntro(), 50);
   }
 
+  skipDiamondsStep() {
+    this.exitTutorial();
+    this.globalVars.skipToNextTutorialStep(TutorialStatus.DIAMOND, "tutorial : diamond : send : skip");
+  }
+
   diamondIntro() {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
     const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 5/6</span>';
+    let diamondValue = this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2);
+    diamondValue = diamondValue === "0.00" ? "0.01" : diamondValue;
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
       exitOnEsc: false,
-      exitOnOverlayClick: userCanExit,
+      exitOnOverlayClick: false,
       overlayOpacity: 0.8,
       steps: [
         {
           title,
-          intro: `Diamonds are tips that send money directly to the poster.`,
-          element: document.querySelector(".feed-post-container"),
+          intro: `Diamonds are a way to tip the author of a post and send money directly to them.`,
+          element: document.querySelector("#diamond-tutorial-container"),
         },
         {
           title,
-          intro: `<b>Click the diamond</b> to send $${this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2)}.`,
+          intro: `<b>Click the diamond</b> to send $${diamondValue}.`,
           element: document.querySelector("#diamond-button"),
         },
       ],

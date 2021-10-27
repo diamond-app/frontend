@@ -21,6 +21,8 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   @Input() followButtonOppositeSide: boolean = false;
   @Input() showTutorialBuy: boolean = false;
+  @Input() showTutorialFollow: boolean = false;
+  @Input() tutorialBuySelf: boolean = false;
   // Whether the "buy" button should wiggle to prompt the user to click it
   @Input() tutorialWiggle = false;
   @Output() exitTutorial = new EventEmitter<any>();
@@ -61,7 +63,7 @@ export class SimpleProfileCardComponent implements OnInit {
     );
   }
 
-  openBuyCreatorCoinModal(event) {
+  followCreator(event) {
     this.exitTutorial.emit();
     this.globalVars.logEvent("buy : creator : select");
     event.stopPropagation();
@@ -73,6 +75,31 @@ export class SimpleProfileCardComponent implements OnInit {
     };
     this.modalService.show(TradeCreatorComponent, {
       class: "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal",
+      initialState,
+    });
+  }
+
+  // Replace newlines with spaces
+  truncateProfileDescription(profileDescription: string): string {
+    return profileDescription.replace(/(?:\r\n|\r|\n)/g, " ");
+  }
+
+  openBuyCreatorCoinModal(event) {
+    this.exitTutorial.emit();
+    this.globalVars.logEvent("buy : creator : select");
+    event.stopPropagation();
+    const initialState = {
+      username: this.profile.Username,
+      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
+      inTutorial: this.inTutorial,
+      tutorialBuy: this.showTutorialBuy,
+    };
+    const dialogClass =
+      this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
+        ? ""
+        : "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal";
+    this.modalService.show(TradeCreatorComponent, {
+      class: dialogClass,
       initialState,
     });
   }

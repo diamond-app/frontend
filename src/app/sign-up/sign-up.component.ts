@@ -38,6 +38,7 @@ export class SignUpComponent {
         this.stepNum = parseInt(queryParams.stepNum);
       }
     });
+    this.globalVars.isLeftBarMobileOpen = false;
   }
 
   ////// NOTIFICATIONS STEP BUTTONS ///////
@@ -132,7 +133,7 @@ export class SignUpComponent {
   buyDeSoSkipped(): void {
     this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
+      queryParams: { stepNum: null, feedTab: FeedComponent.HOT_TAB },
       queryParamsHandling: "merge",
     });
   }
@@ -141,13 +142,6 @@ export class SignUpComponent {
     const modal = this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       backdrop: "static",
-    });
-    const onHideEvent = modal.onHide;
-    onHideEvent.subscribe((response) => {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
-        queryParamsHandling: "merge",
-      });
     });
   }
 }

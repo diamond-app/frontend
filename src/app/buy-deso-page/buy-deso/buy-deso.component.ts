@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { sprintf } from "sprintf-js";
@@ -8,6 +8,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
+import { FeedComponent } from "../../feed/feed.component";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -27,6 +28,7 @@ class Messages {
 })
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
+  @Input() isModal: boolean = false;
   @Output() closeModal = new EventEmitter();
   @Output() showCloseButton = new EventEmitter<boolean>();
 
@@ -120,6 +122,16 @@ export class BuyDeSoComponent implements OnInit {
       "the Bitcoin blockchain. For this reason, we must add a network fee to " +
       "incentivize miners to process the transaction."
     );
+  }
+
+  cancelButtonClicked() {
+    if (this.isModal) {
+      this.closeModal.emit();
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { feedTab: FeedComponent.HOT_TAB },
+      });
+    }
   }
 
   _copyPublicKey() {
@@ -291,6 +303,7 @@ export class BuyDeSoComponent implements OnInit {
                 this.globalVars.logEvent("bitpop : buy : error");
                 this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis = "0";
                 this.buyDeSoFields.error = Messages.UNKOWN_PROBLEM;
+                this.showCloseButton.emit(true);
                 return null;
               }
               this.globalVars.logEvent("bitpop : buy", this.buyDeSoFields);
@@ -310,7 +323,6 @@ export class BuyDeSoComponent implements OnInit {
                 this._clickBuyDeSoSuccessButTimeout,
                 this
               );
-
               return res;
             },
             (err) => {
@@ -325,7 +337,7 @@ export class BuyDeSoComponent implements OnInit {
 
   _clickBuyDeSoSuccess(comp: BuyDeSoComponent) {
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     comp.appData.celebrate();
     comp.showBuyComplete = true;
     comp.ref.detectChanges();
@@ -334,7 +346,7 @@ export class BuyDeSoComponent implements OnInit {
   _clickBuyDeSoSuccessButTimeout(comp: BuyDeSoComponent) {
     this.appData.logEvent("bitpop : buy : read-timeout");
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     let errString =
       "Your DeSo purchase was successfully broadcast. Due to high load" +
       " your balance may take up to half an hour to show up in your wallet. Please " +
@@ -344,7 +356,7 @@ export class BuyDeSoComponent implements OnInit {
 
   _clickBuyDeSoFailure(comp: BuyDeSoComponent, errString: string) {
     comp.waitingOnTxnConfirmation = false;
-    this.showCloseButton.emit(true);
+    comp.showCloseButton.emit(true);
     // The error about "replace by fee" has a link in it, and we want that link
     // to render. There is no risk of injection here.
     if (errString && errString.indexOf("replace by fee") >= 0) {

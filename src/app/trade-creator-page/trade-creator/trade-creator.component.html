@@ -1,4 +1,4 @@
-<div class="modal-header">
+<div class="modal-header" *ngIf="!inTutorial">
   <div class="modal-header-x" (click)="bsModalRef.hide()">
     <i-feather name="x"></i-feather>
   </div>
@@ -62,6 +62,7 @@
         <trade-creator-preview
           [inTutorial]="inTutorial"
           [creatorCoinTrade]="creatorCoinTrade"
+          [buyButtonDisabled]="buyButtonDisabled"
           (slippageError)="_onSlippageError()"
           (backButtonClicked)="_onBackButtonClicked()"
           (tradeExecuted)="_onTradeExecuted()"

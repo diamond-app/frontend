@@ -23,13 +23,13 @@
     [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
   >
     <div
-      class="background-color-white fs-16px mt-5px br-10px p-10px border fc-blue feed-referral-header d-flex align-items-center"
+      class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in</span>
-      <countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer>
+      <span class="mr-5px">You have an unlimited <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.RefereeAmountUSDCents / 100, 0)}}</b> referral link</span>
     </div>
   </a>
+  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>
 
   <!-- Tab Selector -->
   <tab-selector
@@ -46,10 +46,10 @@
     class="mt-40px mx-8px"
   >
     <div
-      class="background-color-white fs-16px br-10px p-10px border mt-16px mb-10px fc-blue feed-referral-header d-flex align-items-center"
+      class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have a <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link expiring in<br><countdown-timer [justifyLeft]="true" [timerEnd]="referralExpiration" [padding]="false" [confetti]="false"></countdown-timer></span>
+      <span class="mr-5px">You have an unlimited <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.RefereeAmountUSDCents / 100, 0)}}</b> referral link</span>
     </div>
   </a>
 
@@ -63,7 +63,32 @@
     *ngIf="isMobile && !(globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0)"
     style="margin-top: 60px"
   ></div>
-
+  <jumio-status
+    [ngStyle]="{
+      'margin-top':
+        globalVars.loggedInUser && globalVars.loggedInUser?.ReferralInfoResponses?.length > 0 && isMobile
+          ? 'auto'
+          : '-8px'
+    }"
+    *ngIf="globalVars.loggedInUser && isMobile"
+  ></jumio-status>
+  <a
+    *ngIf="
+      globalVars.loggedInUser && activeTab === FeedComponent.FOLLOWING_TAB && followedCount < followBannerThreshold
+    "
+    [routerLink]="['/' + globalVars.RouteNames.BROWSE]"
+    [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
+    queryParamsHandling="merge"
+    class="mb-5px"
+  >
+    <div
+      class="feed-desktop-center-banner"
+      [ngStyle]="{ 'margin': isMobile ? '0px 8px' : 'auto'}"
+    >
+      <i class="fas fa fa-fire mr-10px"></i>
+      <span class="mr-5px">Find more people to follow in the <b>Hot</b> feed</span>
+    </div>
+  </a>
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
     <nft-showcase></nft-showcase>
   </div>
@@ -121,10 +146,10 @@
       <a
         class=""
         [routerLink]="['/' + globalVars.RouteNames.BROWSE]"
-        [queryParams]="{ feedTab: FeedComponent.GLOBAL_TAB }"
+        [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
         queryParamsHandling="merge"
       >
-        View the global feed
+        Check out the HOT feed
       </a>
       to find more people to follow
     </div>
