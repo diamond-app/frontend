@@ -20,7 +20,7 @@ import * as tus from "tus-js-client";
 import Timer = NodeJS.Timer;
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import * as _ from "lodash";
-import { Mentionify } from "../../mention-autofill/mentionify";
+import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 
 @Component({
   selector: "feed-create-post",
@@ -41,8 +41,8 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   isComment: boolean;
 
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
-  @ViewChild("textarea") textAreaEl: ElementRef;
-  @ViewChild("menu") menuEl: ElementRef;
+  @ViewChild("textarea") textAreaEl: ElementRef<HTMLTextAreaElement>;
+  @ViewChild("menu") menuEl: ElementRef<HTMLDivElement>;
 
   randomMovieQuote = "";
   randomMovieQuotes = [
@@ -86,6 +86,8 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   globalVars: GlobalVarsService;
   GlobalVarsService = GlobalVarsService;
 
+  fallbackProfilePicURL: string;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -98,9 +100,9 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   }
 
   // Functions for the mention autofill component
-  resolveFn = (prefix) => this.getUsersFromPrefix(prefix);
+  resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
 
-  async getUsersFromPrefix(prefix) {
+  async getUsersFromPrefix(prefix): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
         this.globalVars.localNode,
@@ -116,11 +118,11 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
         false /*AddGlobalFeedBool*/
       )
       .toPromise();
-    return profiles.ProfilesFound;
+    return profiles.ProfilesFound as ProfileEntryResponse[];
   }
 
   // Create and format the item in the dropdown
-  menuItemFn = (user, setItem, selected) => {
+  menuItemFn = (user: ProfileEntryResponse, setItem: () => void, selected: boolean) => {
     const div = document.createElement("div");
     div.setAttribute("role", "option");
     div.className = "menu-item";
@@ -128,13 +130,15 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
       div.classList.add("selected");
       div.setAttribute("aria-selected", "");
     }
-    // The fallback route is the route to the pic we use if we can't find an avatar for the user.
-    let fallbackRoute = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
     // we do a basic _.escape anyways just to be extra safe.
     const profPicURL = _.escape(
-      this.backendApi.GetSingleProfilePictureURL(this.globalVars.localNode, user.PublicKeyBase58Check, fallbackRoute)
+      this.backendApi.GetSingleProfilePictureURL(
+        this.globalVars.localNode,
+        user.PublicKeyBase58Check,
+        this.fallbackProfilePicURL
+      )
     );
     div.innerHTML = `
       <div class="d-flex align-items-center">
@@ -146,11 +150,13 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     return div;
   };
 
-  replaceFn = (user, trigger) => `${trigger}${user.Username} `;
+  replaceFn = (user: ProfileEntryResponse, trigger: string) => `${trigger}${user.Username} `;
 
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
+    // The fallback route is the route to the pic we use if we can't find an avatar for the user.
+    this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
       this.postInput = "It's Diamond time!";
     }
@@ -158,7 +164,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => {
-      new Mentionify(
+      new Mentionify<ProfileEntryResponse>(
         this.textAreaEl.nativeElement,
         this.menuEl.nativeElement,
         this.resolveFn,
