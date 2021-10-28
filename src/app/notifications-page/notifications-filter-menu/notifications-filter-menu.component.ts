@@ -22,6 +22,32 @@ export class NotificationsFilterMenuComponent implements OnInit {
     this.expandNotifications = this.expandNotificationsInput;
   }
 
+  selectAll() {
+    this.filteredOutSet = {};
+  }
+
+  selectNone() {
+    this.filteredOutSet = {
+      like: true,
+      diamond: true,
+      transfer: true,
+      follow: true,
+      post: true,
+      nft: true,
+    };
+  }
+
+  allSelected(): boolean {
+    return Object.keys(this.filteredOutSet).length === 0;
+  }
+  selectAllOrNone() {
+    if (this.allSelected()) {
+      this.selectNone();
+    } else {
+      this.selectAll();
+    }
+  }
+
   updateFilters(filter) {
     if (filter in this.filteredOutSet) {
       delete this.filteredOutSet[filter];

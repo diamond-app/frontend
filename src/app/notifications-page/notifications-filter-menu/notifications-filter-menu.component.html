@@ -7,7 +7,7 @@
   <div class="w-100 border-color-grey border-bottom"></div>
 
   <div class="p-15px">
-    <span class="messages-filter-menu__title" style="margin-left: 0px">Only show</span>
+    <span class="messages-filter-menu__title" style="margin-left: 0px">Only show <a (click)="selectAllOrNone()" class="ml-5px fs-12px">(Select {{ allSelected() ? "None" : "All" }})</a></span>
     <div class="mt-10px d-flex flex-row align-items-center">
       <button
         class="checkbox-circle mr-10px"
