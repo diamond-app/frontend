@@ -16,7 +16,7 @@
           ></div>
         </div>
       </div>
-      <div class="flex-fill">
+      <div class="flex-fill autofill-container">
         <textarea
           [(ngModel)]="postInput"
           rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
@@ -30,15 +30,18 @@
             'lh-18px': parentPost,
             'background-color-white': !parentPost
           }"
-         class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
-         [placeholder]="getPlaceholderText()"
-         (paste)="onPaste($event)"
-         dropUpload
-         (onFileDropped)="uploadFile($event)"
-         cdkTextareaAutosize
-         #autosize="cdkTextareaAutosize"
-       ></textarea>
-     </div>
+          class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative"
+          id="textarea"
+          [placeholder]="getPlaceholderText()"
+          (paste)="onPaste($event)"
+          dropUpload
+          (onFileDropped)="uploadFile($event)"
+          cdkTextareaAutosize
+          #textarea
+          #autosize="cdkTextareaAutosize"
+        ></textarea>
+        <div id="menu" #menu class="menu" role="listbox"></div>
+      </div>
 
      </div>
     <div>
