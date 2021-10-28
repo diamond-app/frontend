@@ -83,6 +83,7 @@ export class BackendRoutes {
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
   static RoutePathTransferNFT = "/api/v0/transfer-nft";
   static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
+  static RoutePathBurnNFT = "/api/v0/burn-nft";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -870,6 +871,22 @@ export class BackendApiService {
       NFTPostHashHex,
       SerialNumber,
       BidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  BurnNFT(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathBurnNFT, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);

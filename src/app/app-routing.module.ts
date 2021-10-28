@@ -45,6 +45,7 @@ import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
+import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -98,6 +99,7 @@ class RouteNames {
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
   public static TRANSFER_NFT = "transfer-nft";
+  public static BURN_NFT = "burn-nft";
 }
 
 const routes: Routes = [
@@ -118,6 +120,7 @@ const routes: Routes = [
   { path: RouteNames.BID_NFT + "/:postHashHex", component: PlaceBidPageComponent, pathMatch: "full" },
   { path: RouteNames.TRANSFER_NFT_ACCEPT + "/:postHashHex", component: TransferNftAcceptPageComponent, pathMatch: "full" },
   { path: RouteNames.TRANSFER_NFT + "/:postHashHex", component: TransferNftPageComponent, pathMatch: "full" },
+  { path: RouteNames.BURN_NFT + "/:postHashHex", component: NftBurnPageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts

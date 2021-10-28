@@ -190,6 +190,9 @@ import { PostMultiplierComponent } from "./feed/feed-post-dropdown/post-multipli
 import { TransferNftAcceptComponent } from "./transfer-nft-accept/transfer-nft-accept.component";
 import { TransferNftAcceptModalComponent } from "./transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
+import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
+import { NftBurnComponent } from "./nft-burn/nft-burn.component";
+import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -318,6 +321,9 @@ export function playerFactory() {
     TransferNftAcceptComponent,
     TransferNftAcceptModalComponent,
     TransferNftAcceptPageComponent,
+    NftBurnPageComponent,
+    NftBurnComponent,
+    NftBurnModalComponent,
     MintNftPageComponent,
     CreateNftAuctionModalComponent,
     BidPlacedModalComponent,
