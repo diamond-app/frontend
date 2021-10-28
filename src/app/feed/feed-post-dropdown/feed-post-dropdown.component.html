@@ -36,6 +36,20 @@
         Put On Sale
       </a>
       <a
+        *ngIf="showTransferNFT()"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        (click)="openTransferNFTModal($event)"
+      >
+        Transfer NFT
+      </a>
+      <a
+        *ngIf="showBurnNFT()"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        (click)="openBurnNFTModal($event)"
+      >
+        Burn NFT
+      </a>
+      <a
         *ngIf="post.IsNFT && globalVars.showAdminTools()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="dropNFT()"

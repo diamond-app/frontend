@@ -54,7 +54,7 @@ export class BackendRoutes {
   static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
-  static RoutePathGetHotFeed = "/api/v0/get-hot-feed"
+  static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -82,6 +82,9 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
+  static RoutePathTransferNFT = "/api/v0/transfer-nft";
+  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
+  static RoutePathBurnNFT = "/api/v0/burn-nft";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -327,6 +330,7 @@ export class NFTEntryResponse {
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   IsForSale: boolean;
+  IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
@@ -874,6 +878,38 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
+  BurnNFT(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathBurnNFT, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  AcceptNFTTransfer(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
   AcceptNFTBid(
     endpoint: string,
     UpdaterPublicKeyBase58Check: string,
@@ -952,7 +988,7 @@ export class BackendApiService {
     UserPublicKeyBase58Check: string,
     ReaderPublicKeyBase58Check: string,
     IsForSale: boolean | null = null,
-    IsPending: boolean | null = null,
+    IsPending: boolean | null = null
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTsForUser, {
       UserPublicKeyBase58Check,
@@ -1002,6 +1038,27 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       PostHashHex,
     });
+  }
+
+  TransferNFT(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    ReceiverPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    EncryptedUnlockableText: string,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    let request = this.post(endpoint, BackendRoutes.RoutePathTransferNFT, {
+      SenderPublicKeyBase58Check,
+      ReceiverPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      EncryptedUnlockableText,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
   SubmitPost(
@@ -1068,12 +1125,7 @@ export class BackendApiService {
     });
   }
 
-  GetHotFeed(
-    endpoint: string,
-    ReaderPublicKeyBase58Check: string,
-    SeenPosts,
-    ResponseLimit,
-  ): Observable<any> {
+  GetHotFeed(endpoint: string, ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
       ReaderPublicKeyBase58Check,
       SeenPosts,
@@ -1975,7 +2027,7 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     ResponseLimit: number,
-    SeenPosts: Array<string>,
+    SeenPosts: Array<string>
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUnfilteredHotFeed, AdminPublicKey, {
       AdminPublicKey,
@@ -1984,10 +2036,7 @@ export class BackendApiService {
     });
   }
 
-  AdminGetHotFeedAlgorithm(
-    endpoint: string,
-    AdminPublicKey: string,
-  ): Observable<any> {
+  AdminGetHotFeedAlgorithm(endpoint: string, AdminPublicKey: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedAlgorithm, AdminPublicKey, {
       AdminPublicKey,
     });
@@ -1997,7 +2046,7 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     InteractionCap: number,
-    TimeDecayBlocks: number,
+    TimeDecayBlocks: number
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
       AdminPublicKey,
@@ -2010,7 +2059,7 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     PostHashHex: string,
-    Multiplier: number,
+    Multiplier: number
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedPostMultiplier, AdminPublicKey, {
       AdminPublicKey,
@@ -2024,7 +2073,7 @@ export class BackendApiService {
     AdminPublicKey: string,
     Username: string,
     InteractionMultiplier: number,
-    PostsMultiplier: number,
+    PostsMultiplier: number
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedUserMultiplier, AdminPublicKey, {
       AdminPublicKey,
@@ -2034,11 +2083,7 @@ export class BackendApiService {
     });
   }
 
-  AdminGetHotFeedUserMultiplier(
-    endpoint: string,
-    AdminPublicKey: string,
-    Username: string,
-  ): Observable<any> {
+  AdminGetHotFeedUserMultiplier(endpoint: string, AdminPublicKey: string, Username: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedUserMultiplier, AdminPublicKey, {
       AdminPublicKey,
       Username,

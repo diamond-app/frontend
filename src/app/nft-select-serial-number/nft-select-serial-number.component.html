@@ -1,0 +1,55 @@
+<div class="row no-gutters py-15px create-nft-auction-row-border d-flex align-items-center" style="height: 56px">
+  <div class="col-3 mb-0px cursor-pointer" (click)="updateBidSort(SN_FIELD)">
+    Number
+    <i-feather
+      *ngIf="sortByField === SN_FIELD"
+      class="feather-small"
+      name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
+    ></i-feather>
+  </div>
+  <div class="col-4 mb-0px cursor-pointer" (click)="updateBidSort(HIGH_BID_FIELD)">
+    Highest Bid
+    <i-feather
+      *ngIf="sortByField === HIGH_BID_FIELD"
+      class="feather-small"
+      name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
+    ></i-feather>
+  </div>
+  <div class="col-5 mb-0px cursor-pointer" (click)="updateBidSort(MIN_BID_FIELD)">
+    Min Bid Amount
+    <i-feather
+      *ngIf="sortByField === MIN_BID_FIELD"
+      class="feather-small fc-secondary"
+      name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
+    ></i-feather>
+  </div>
+</div>
+<div class="place-bid-rows mb-30px">
+  <div
+    *ngFor="let nft of sortedSerialNumbers"
+    class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
+    (click)="selectSerialNumber(nft.SerialNumber)"
+  >
+    <div class="col-3 mb-0px d-flex align-items-center">
+      <button
+        class="checkbox-circle radio mr-10px"
+        [ngClass]="{ checked: selectedSerialNumber?.SerialNumber === nft.SerialNumber }"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span class="lh-15px">#{{ nft.SerialNumber }}</span>
+    </div>
+    <div class="col-4 mb-0px d-flex align-items-center">
+      <div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.HighestBidAmountNanos) }} DESO </div>
+        <div class="text-grey7 d-lg-inline-block d-block">( ~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2) }})</div>
+      </div>
+    </div>
+    <div class="col-5 mb-0px d-flex align-items-center">
+      <div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
+        <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }})</div>
+      </div>
+    </div>
+  </div>
+</div>

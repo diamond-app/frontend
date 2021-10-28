@@ -16,6 +16,8 @@ import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
+import { ToastrService } from "ngx-toastr";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -64,6 +66,7 @@ export class FeedPostComponent implements OnInit {
     private router: Router,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
+    private toastr: ToastrService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -118,6 +121,9 @@ export class FeedPostComponent implements OnInit {
   @Input() containerModalRef: any = null;
 
   @Input() inTutorial: boolean = false;
+
+  // If this is a pending NFT post that still needs to be accepted by the user
+  @Input() acceptNFT: boolean = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
@@ -568,6 +574,35 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  acceptTransfer(event) {
+    event.stopPropagation();
+    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.IsPending
+      );
+    });
+    console.log(transferNFTEntryResponses);
+    if (!this.globalVars.isMobile()) {
+      this.modalService.show(TransferNftAcceptModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: {
+          post: this.postContent,
+          transferNFTEntryResponses,
+        },
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.TRANSFER_NFT_ACCEPT + "/" + this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: this.postContent,
+          postHashHex: this.postContent.PostHashHex,
+          transferNFTEntryResponses,
+        },
+      });
+    }
   }
 
   openPlaceBidModal(event: any) {

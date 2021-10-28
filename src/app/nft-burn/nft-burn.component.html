@@ -1,12 +1,12 @@
 <div app-theme class="nft-modal-container p-15px">
   <div class="w-100 d-flex justify-content-between nft-modal__header">
-    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Place a bid" }}</div>
+    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Confirm burn" }}</div>
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
       <div class="fs-15px text-grey5">
-        You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
+        You are about to permanently burn your NFT. <b>This NFT will no longer exist - this action cannot be undone.</b>
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
@@ -43,18 +43,10 @@
             <span class="font-weight-bold">Min Bid Amount</span>
             <span>
               {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{
-              globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
+                globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
               }})
             </span>
           </div>
-        </div>
-      </div>
-
-      <!-- Availability metadata -->
-      <div class="fs-15px" *ngIf="!loading">
-        <div class="d-flex">
-          <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
-          <span class="d-lg-inline-block d-block ml-30px">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
       </div>
 
@@ -63,53 +55,14 @@
         <div class="flex-grow-1 nft-modal-separator-2"></div>
       </div>
 
-      <!-- The bid -->
-      <div class="pb-10px">
-        <span class="fs-17px font-weight-bold">Your Bid</span>
-        <div class="d-flex mt-10px">
-          <div
-            class="d-flex"
-            dropdown
-            (click)="$event.stopPropagation()"
-            container="body"
-            style="align-items: center"
-          >
-            <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
-              {{ minBidCurrency }}
-              <i-feather name="chevron-down" class="feather-small"></i-feather>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu place-bid-dropdown" *dropdownMenu>
-              <div>
-                <a
-                  class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                  (click)="minBidCurrency='USD'"
-                >
-                  USD
-                </a>
-                <a
-                  class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                  (click)="minBidCurrency='DESO'"
-                >
-                  DESO
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="position-relative w-100">
-            <input
-              [(ngModel)]="minBidInput"
-              (ngModelChange)="updateBidAmount($event)"
-              style="border-radius: 0px 16px 16px 0px"
-              aria-describedby="usd-label"
-              class="mint-nft__input"
-              type="number"
-              min="0"
-              placeholder="0"
-            />
-            <span class="mint-nft__floating-span">{{ bidAmountOtherCurrencyFormatted() }}</span>
-          </div>
-        </div>
-      </div>
+      <feed-post
+        [post]="post"
+        [includePaddingOnPost]="true"
+        [isParentPostInThread]="true"
+        [showLeftSelectedBorder]="false"
+        [showInteractionDetails]="false"
+        [contentShouldLinkToThread]="false"
+      ></feed-post>
 
       <div *ngFor="let error of errors" class="error-container" style="white-space: pre-line;">
         <i-feather name="alert-circle" class="feather-large"></i-feather>
@@ -126,28 +79,27 @@
         <button
           class="primary-button font-weight-bold fs-15px br-12px"
           style="height: 48px; width: 140px; line-height: 15px"
-          (click)="placeBid()"
-          [disabled]="placingBids || errors.length > 0 || !bidAmountDeSo"
-          [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountDeSo }"
+          (click)="burnNft()"
+          [disabled]="burningNft"
+          [class]="{ 'disabled-button': burningNft }"
         >
-          {{ placingBids ? "Placing Bid" : "Place a Bid" }}
+          {{ burningNft ? "Burning NFT" : "Burn NFT" }}
         </button>
-        <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">Buy DESO</div>
       </div>
 
     </div>
 
 
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
+    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+      <div class="nft-modal__subtitle">Choose the serial number you wish to burn.</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
-          [serialNumbers]="biddableSerialNumbers"
+          [serialNumbers]="filteredSerialNumbers"
           (serialNumberSelected)="selectSerialNumber($event)"
         ></nft-select-serial-number>
       </div>
     </div>
-    <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
+    <div *ngIf="!filteredSerialNumbers.length" class="fs-15px">
       There are no serial numbers available for you to bid on.
     </div>
   </div>

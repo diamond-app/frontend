@@ -3,16 +3,15 @@ import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 
 @Component({
-  selector: "place-bid-modal",
-  templateUrl: "./place-bid-modal.component.html",
-  styleUrls: ["./place-bid-modal.component.scss"],
+  selector: "transfer-nft-accept-modal",
+  templateUrl: "./transfer-nft-accept-modal.component.html",
+  styleUrls: ["./transfer-nft-accept-modal.component.scss"],
 })
-export class PlaceBidModalComponent {
+export class TransferNftAcceptModalComponent {
   isLeftBarMobileOpen: boolean = false;
   title: string = null;
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
-  @Input() transfer: boolean = false;
   @Input() transferNFTEntryResponses: NFTEntryResponse[];
 
   constructor(private bsModalRef: BsModalRef, private modalService: BsModalService) {}

@@ -41,6 +41,20 @@
             >
               For Sale
             </a>
+            <a
+              *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
+              class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.TRANSFERABLE)"
+            >
+              Transferable
+            </a>
+            <a
+              *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
+              class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_PENDING_TRANSFERS)"
+            >
+              Pending Transfers
+            </a>
           </div>
         </div>
       </div>
@@ -104,19 +118,20 @@
         </div>
       </div>
     </div>
-    <i-feather
-      *ngIf="
-        !showProfileAsReserved &&
-        !isLoading &&
-        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||
-          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))
-      "
-      name="credit-card"
-      class="cursor-pointer position-relative"
-      style="right: 16px; transform: 'rotate(180deg)'"
-      (click)="cardView = !cardView"
-      [ngClass]="{ 'fc-blue': cardView }"
-    ></i-feather>
+<!--    This is the compact / expanded switcher. Unclear if it's providing value-->
+<!--    <i-feather-->
+<!--      *ngIf="-->
+<!--        !showProfileAsReserved &&-->
+<!--        !isLoading &&-->
+<!--        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||-->
+<!--          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))-->
+<!--      "-->
+<!--      name="credit-card"-->
+<!--      class="cursor-pointer position-relative"-->
+<!--      style="right: 16px; transform: 'rotate(180deg)'"-->
+<!--      (click)="cardView = !cardView"-->
+<!--      [ngClass]="{ 'fc-blue': cardView }"-->
+<!--    ></i-feather>-->
   </div>
 </div>
 <div
@@ -149,6 +164,38 @@
   <div class="d-flex justify-content-center w-100">
     <span *ngIf="profileBelongsToLoggedInUser()">No NFTs purchased yet.</span>
     <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} has not acquired any NFTs yet.</span>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.TRANSFERABLE
+  "
+  class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
+>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div">
+      <i-feather name="frame" class="feather-xlarge"></i-feather>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span *ngIf="profileBelongsToLoggedInUser()">No transferable NFTs right now.</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} has no transferable NFTs yet.</span>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
+  "
+  class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
+>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div">
+      <i-feather name="frame" class="feather-xlarge"></i-feather>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span *ngIf="profileBelongsToLoggedInUser()">No pending NFTs right now.</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} has no pending NFTs yet.</span>
   </div>
 </div>
 <div
@@ -192,6 +239,7 @@
         [cardStyle]="true"
         [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
         [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
+        [acceptNFT]="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">

@@ -8,11 +8,15 @@ import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import RouteNamesService from "src/app/route-names.service";
-import { PostMultiplierComponent } from "../feed-post-dropdown/post-multiplier/post-multiplier.component";
+import { PostMultiplierComponent } from "./post-multiplier/post-multiplier.component";
 
 // RPH Modals
 import { MintNftComponent } from "../../mint-nft/mint-nft.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
+import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
+import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import * as _ from "lodash";
 
 const RouteNames = RouteNamesService;
 @Component({
@@ -30,7 +34,7 @@ export class FeedPostDropdownComponent {
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
 
-  @ViewChild(BsDropdownDirective) dropdown:BsDropdownDirective;
+  @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
   showSharePost: boolean = false;
 
@@ -41,7 +45,7 @@ export class FeedPostDropdownComponent {
     private router: Router,
     private modalService: BsModalService,
     private platformLocation: PlatformLocation,
-    public ref: ChangeDetectorRef,
+    public ref: ChangeDetectorRef
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
@@ -181,6 +185,29 @@ export class FeedPostDropdownComponent {
     );
   }
 
+  showTransferNFT(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsPending &&
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
+  showBurnNFT(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
   hidePost() {
     this.postHidden.emit();
   }
@@ -244,7 +271,9 @@ export class FeedPostDropdownComponent {
 
   openMintNftPage(event, component): void {
     event.stopPropagation();
-    this.router.navigate(["/" + RouteNames.MINT_NFT + "/" + this.postContent.PostHashHex], { queryParamsHandling: "merge" });
+    this.router.navigate(["/" + RouteNames.MINT_NFT + "/" + this.postContent.PostHashHex], {
+      queryParamsHandling: "merge",
+    });
   }
 
   openCreateNFTAuctionModal(event): void {
@@ -252,5 +281,59 @@ export class FeedPostDropdownComponent {
       class: "modal-dialog-centered",
       initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
     });
+  }
+
+  openTransferNFTModal(event): void {
+    if (!this.globalVars.isMobile()) {
+      const modalDetails = this.modalService.show(TransferNftModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: { post: this.post, postHashHex: this.post.PostHashHex },
+      });
+      const onHideEvent = modalDetails.onHide;
+      onHideEvent.subscribe((response) => {
+        if (response === "nft transferred") {
+          // emit something to feed-post component to refresh.
+        }
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.TRANSFER_NFT + "/" + this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: this.postContent,
+          postHashHex: this.postContent.PostHashHex,
+        },
+      });
+    }
+  }
+
+  openBurnNFTModal(event): void {
+    const burnNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        !nftEntryResponse.IsForSale &&
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      );
+    });
+    if (!this.globalVars.isMobile()) {
+      const modalDetails = this.modalService.show(NftBurnModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: { post: this.post, postHashHex: this.post.PostHashHex, burnNFTEntryResponses },
+      });
+      const onHideEvent = modalDetails.onHide;
+      onHideEvent.subscribe((response) => {
+        if (response === "nft burned") {
+          // emit something to feed-post component to refresh.
+        }
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.BURN_NFT + "/" + this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: this.postContent,
+          postHashHex: this.postContent.PostHashHex,
+          burnNFTEntryResponses,
+        },
+      });
+    }
+
   }
 }

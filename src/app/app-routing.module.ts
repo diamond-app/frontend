@@ -4,7 +4,6 @@ import { Routes, RouterModule, Router, Scroll } from "@angular/router";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { NotFoundPageComponent } from "./not-found-page/not-found-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
-import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
@@ -44,6 +43,9 @@ import { LikesPageComponent } from "./likes-details/likes-page/likes-page.compon
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
+import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
+import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
+import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -73,6 +75,7 @@ class RouteNames {
   public static MINT_NFT = "mint-nft";
   public static SELL_NFT = "sell-nft";
   public static BID_NFT = "bid-nft";
+  public static TRANSFER_NFT_ACCEPT = "accept-nft-transfer";
   public static NOTIFICATIONS = "notifications";
   public static SIGN_UP = "sign-up";
   public static NOT_FOUND = "404";
@@ -96,6 +99,8 @@ class RouteNames {
   public static TUTORIAL = "tutorial";
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
+  public static TRANSFER_NFT = "transfer-nft";
+  public static BURN_NFT = "burn-nft";
 }
 
 const routes: Routes = [
@@ -114,13 +119,20 @@ const routes: Routes = [
   { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftPageComponent, pathMatch: "full" },
   { path: RouteNames.SELL_NFT + "/:postHashHex", component: SellNftPageComponent, pathMatch: "full" },
   { path: RouteNames.BID_NFT + "/:postHashHex", component: PlaceBidPageComponent, pathMatch: "full" },
+  { path: RouteNames.TRANSFER_NFT_ACCEPT + "/:postHashHex", component: TransferNftAcceptPageComponent, pathMatch: "full" },
+  { path: RouteNames.TRANSFER_NFT + "/:postHashHex", component: TransferNftPageComponent, pathMatch: "full" },
+  { path: RouteNames.BURN_NFT + "/:postHashHex", component: NftBurnPageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
-  { path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS, component: RepostsPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS,
+    component: RepostsPageComponent,
+    pathMatch: "full",
+  },
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.QUOTE_REPOSTS,
     component: QuoteRepostsPageComponent,
