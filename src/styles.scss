@@ -3375,6 +3375,10 @@ modal-container {
   }
 }
 
+.buy-creator-scroll-container {
+ height: calc(100vh - 235px) !important;
+}
+
 update-profile {
   .update-profile__holder {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);

@@ -29,7 +29,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
   isLoadingProfilesForFirstTime = false;
   isLoadingMore: boolean = false;
   profilesToShow = [];
-  showReserved = false;
 
   // FIME: Replace with real value
   fakeNumHodlers = Math.ceil(Math.random() * 1000) + 1000;
@@ -137,7 +136,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     this.getPage.bind(this),
     CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
     CreatorsLeaderboardComponent.BUFFER_SIZE,
-    1
+    0.5
   );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

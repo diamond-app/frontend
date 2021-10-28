@@ -11,9 +11,9 @@ export const environment = {
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
-    jsPath: "https://bitclout.com/tags.js",
-    ajaxListenerPath: "bitclout.com/api",
-    endpoint: "https://bitclout.com/js/",
+    jsPath: "https://diamondapp.com/tags.js",
+    ajaxListenerPath: "diamondapp.com/api",
+    endpoint: "https://diamondapp.com/js/",
   },
   amplitude: {
     key: "",

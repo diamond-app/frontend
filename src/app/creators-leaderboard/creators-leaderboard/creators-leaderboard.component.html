@@ -4,16 +4,6 @@
       <div class="mint-nft__title">Buy Creator Coin</div>
       <div class="mint-nft__sub-text">All creators have a coin. Buy your favorites and get on their team!</div>
     </div>
-    <div class="d-flex align-items-center px-16px">
-      <button
-        class="checkbox-circle mr-8px"
-        [ngClass]="{ checked: showReserved }"
-        (click)="showReserved = !showReserved; refreshData()"
-      >
-        <i-feather name="check"></i-feather>
-      </button>
-      <span class="mint-nft__sub-text">Show Reserved Profiles</span>
-    </div>
     <div>
       <!-- Headers -->
       <div class="fs-15px">
@@ -28,80 +18,74 @@
 
       <simple-center-loader *ngIf="isLoadingProfilesForFirstTime"></simple-center-loader>
 
-      <div class="viewport" [ngClass]="{ 'h-100': !isModal }">
+      <div class="viewport disable-scrollbars" [ngClass]="{ 'buy-creator-scroll-container': !isModal }">
         <!-- Creator rows -->
-        <div
-          #uiScroll
-          *uiScroll="let item of datasource"
-          [ngClass]="{ 'row no-gutters px-15px border-bottom fs-15px': showReserved || !item.IsReserved }"
-        >
-          <ng-container *ngIf="showReserved || !item.IsReserved">
+        <div #uiScroll *uiScroll="let item of datasource" class="row no-gutters px-15px border-bottom fs-15px">
+          <a
+            class="col-lg-6 col-8 mb-0 py-15px link--unstyled d-flex align-items-center"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
+            queryParamsHandling="merge"
+          >
+            <div
+              class="creators-leaderboard__avatar d-inline-block align-top rounded"
+              [avatar]="item.PublicKeyBase58Check"
+            ></div>
+            <a class="d-inline-block ml-3 fc-default">{{ item.Username }}</a>
+
+            <span
+              *ngIf="item.IsReserved && !item.IsVerified"
+              class="d-inline-block ml-10px cursor-pointer fs-18px lh-12px fc-muted"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+            >
+              <i class="far fa-clock fa-md align-middle"></i>
+            </span>
+
+            <span
+              *ngIf="item.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-10px cursor-pointer fs-20px lh-12px text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
+              <i-feather name="check-circle" class="fs-0px feather-medium"></i-feather>
+            </span>
+          </a>
+          <div class="col-lg-6 col-4 d-flex align-items-center mb-0px">
             <a
-              class="col-lg-6 col-8 mb-0 py-15px link--unstyled d-flex align-items-center"
+              class="col-1 mb-0 py-15px link--unstyled text-left"
+              [ngClass]="{ 'mr-30px': globalVars.isMobile() }"
+              [ngStyle]="{ 'min-width': globalVars.isMobile() ? '0px' : '100px' }"
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
               queryParamsHandling="merge"
             >
-              <div
-                class="creators-leaderboard__avatar d-inline-block align-top rounded"
-                [avatar]="item.PublicKeyBase58Check"
-              ></div>
-              <a class="d-inline-block ml-3 fc-default">{{ item.Username }}</a>
-
-              <span
-                *ngIf="item.IsReserved && !item.IsVerified"
-                class="d-inline-block ml-10px cursor-pointer fs-18px lh-12px fc-muted"
-                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
-              >
-                <i class="far fa-clock fa-md align-middle"></i>
-              </span>
-
-              <span
-                *ngIf="item.IsVerified"
-                (click)="tooltip.toggle()"
-                class="ml-10px cursor-pointer fs-20px lh-12px text-primary"
-                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                [matTooltip]="'This account is verified'"
-                #tooltip="matTooltip"
-              >
-                <i-feather name="check-circle" class="fs-0px feather-medium"></i-feather>
-              </span>
+              <div>~{{ globalVars.nanosToUSD(item.CoinPriceDeSoNanos, globalVars.isMobile() ? 0 : 2) }}</div>
             </a>
-            <div class="col-lg-6 col-4 d-flex align-items-center mb-0px">
-              <a
-                class="col-1 mb-0 py-15px link--unstyled text-left"
-                [ngClass]="{ 'mr-30px': globalVars.isMobile() }"
-                [ngStyle]="{ 'min-width': globalVars.isMobile() ? '0px' : '100px' }"
-                [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
-                queryParamsHandling="merge"
-              >
-                <div>~{{ globalVars.nanosToUSD(item.CoinPriceDeSoNanos, globalVars.isMobile() ? 0 : 2) }}</div>
-              </a>
 
-              <!--Hide on mobile-->
-              <div class="py-15px d-lg-block mb-0 d-flex">
-                <div class="pl-15px d-flex align-items-center">
-                  <button
-                    class="primary-button"
-                    (click)="openBuyCreatorCoinModal($event, item.Username)"
-                    [ngStyle]="{ width: globalVars.isMobile() ? '60px' : '78px' }"
-                  >
-                    Buy
-                  </button>
-                  <div *ngIf="appData.loggedInUser && !globalVars.isMobile()" class="d-inline-block text-right">
-                    <div class="ml-3 align-top">
-                      <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
-                        <follow-button
-                          [displayAsLink]="true"
-                          [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
-                        ></follow-button>
-                      </div>
+            <!--Hide on mobile-->
+            <div class="py-15px d-lg-block mb-0 d-flex">
+              <div class="pl-15px d-flex align-items-center">
+                <button
+                  class="primary-button"
+                  (click)="openBuyCreatorCoinModal($event, item.Username)"
+                  [ngStyle]="{ width: globalVars.isMobile() ? '60px' : '78px' }"
+                >
+                  Buy
+                </button>
+                <div *ngIf="appData.loggedInUser && !globalVars.isMobile()" class="d-inline-block text-right">
+                  <div class="ml-3 align-top">
+                    <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
+                      <follow-button
+                        [displayAsLink]="true"
+                        [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
+                      ></follow-button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </ng-container>
+          </div>
         </div>
       </div>
       <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
