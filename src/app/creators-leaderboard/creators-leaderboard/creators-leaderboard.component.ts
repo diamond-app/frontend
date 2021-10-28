@@ -16,9 +16,9 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./creators-leaderboard.component.scss"],
 })
 export class CreatorsLeaderboardComponent implements OnInit {
-  static PAGE_SIZE = 50;
+  static PAGE_SIZE = 200;
   static WINDOW_VIEWPORT = false;
-  static BUFFER_SIZE = 5;
+  static BUFFER_SIZE = 25;
   @Output() closeModal = new EventEmitter();
   @Input() isModal = false;
 
