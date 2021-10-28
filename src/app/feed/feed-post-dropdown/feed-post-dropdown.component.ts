@@ -270,25 +270,15 @@ export class FeedPostDropdownComponent {
   }
 
   openTransferNFTModal(event): void {
-    if (!this.globalVars.isMobile()) {
-      const modalDetails = this.modalService.show(TransferNftModalComponent, {
-        class: "modal-dialog-centered modal-lg",
-        initialState: { post: this.post, postHashHex: this.post.PostHashHex },
-      });
-      const onHideEvent = modalDetails.onHide;
-      onHideEvent.subscribe((response) => {
-        if (response === "nft transferred") {
-          // emit something to feed-post component to refresh.
-        }
-      });
-    } else {
-      this.router.navigate(["/" + RouteNames.TRANSFER_NFT + "/" + this.post.PostHashHex], {
-        queryParamsHandling: "merge",
-        state: {
-          post: this.post,
-          postHashHex: this.post.PostHashHex,
-        },
-      });
-    }
+    const modalDetails = this.modalService.show(TransferNftModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this.post, postHashHex: this.post.PostHashHex },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "nft transferred") {
+        // emit something to feed-post component to refresh.
+      }
+    });
   }
 }

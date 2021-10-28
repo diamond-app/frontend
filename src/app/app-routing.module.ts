@@ -44,6 +44,7 @@ import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
+import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -72,6 +73,7 @@ class RouteNames {
   public static MINT_NFT = "mint-nft";
   public static SELL_NFT = "sell-nft";
   public static BID_NFT = "bid-nft";
+  public static TRANSFER_NFT_ACCEPT = "accept-nft-transfer";
   public static NOTIFICATIONS = "notifications";
   public static SIGN_UP = "sign-up";
   public static NOT_FOUND = "404";
@@ -114,6 +116,7 @@ const routes: Routes = [
   { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftPageComponent, pathMatch: "full" },
   { path: RouteNames.SELL_NFT + "/:postHashHex", component: SellNftPageComponent, pathMatch: "full" },
   { path: RouteNames.BID_NFT + "/:postHashHex", component: PlaceBidPageComponent, pathMatch: "full" },
+  { path: RouteNames.TRANSFER_NFT_ACCEPT + "/:postHashHex", component: TransferNftAcceptPageComponent, pathMatch: "full" },
   { path: RouteNames.TRANSFER_NFT + "/:postHashHex", component: TransferNftPageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },

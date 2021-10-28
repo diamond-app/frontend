@@ -136,6 +136,7 @@ import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { MintNftComponent } from "./mint-nft/mint-nft.component";
+import { NftSelectSerialNumberComponent } from "./nft-select-serial-number/nft-select-serial-number.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
 import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
@@ -186,6 +187,9 @@ import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { PostMultiplierComponent } from "./feed/feed-post-dropdown/post-multiplier/post-multiplier.component";
+import { TransferNftAcceptComponent } from "./transfer-nft-accept/transfer-nft-accept.component";
+import { TransferNftAcceptModalComponent } from "./transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -310,6 +314,10 @@ export function playerFactory() {
     TrendsComponent,
     SanitizeQRCodePipe,
     MintNftComponent,
+    NftSelectSerialNumberComponent,
+    TransferNftAcceptComponent,
+    TransferNftAcceptModalComponent,
+    TransferNftAcceptPageComponent,
     MintNftPageComponent,
     CreateNftAuctionModalComponent,
     BidPlacedModalComponent,

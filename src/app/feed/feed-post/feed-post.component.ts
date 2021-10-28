@@ -17,6 +17,7 @@ import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/di
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { ToastrService } from "ngx-toastr";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -584,21 +585,19 @@ export class FeedPostComponent implements OnInit {
       );
     });
     if (!this.globalVars.isMobile()) {
-      this.modalService.show(PlaceBidModalComponent, {
+      this.modalService.show(TransferNftAcceptModalComponent, {
         class: "modal-dialog-centered modal-lg",
         initialState: {
           post: this.postContent,
-          transfer: true,
           transferNFTEntryResponses,
         },
       });
     } else {
-      this.router.navigate(["/" + RouteNames.BID_NFT + "/" + this.postContent.PostHashHex], {
+      this.router.navigate(["/" + RouteNames.TRANSFER_NFT_ACCEPT + "/" + this.postContent.PostHashHex], {
         queryParamsHandling: "merge",
         state: {
           post: this.postContent,
           postHashHex: this.postContent.PostHashHex,
-          transfer: true,
           transferNFTEntryResponses,
         },
       });
