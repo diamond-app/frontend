@@ -1,6 +1,16 @@
-import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  Input,
+  EventEmitter,
+  Output,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, BackendRoutes, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
@@ -9,13 +19,15 @@ import { environment } from "../../../environments/environment";
 import * as tus from "tus-js-client";
 import Timer = NodeJS.Timer;
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
+import * as _ from "lodash";
+import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 
 @Component({
   selector: "feed-create-post",
   templateUrl: "./feed-create-post.component.html",
   styleUrls: ["./feed-create-post.component.sass"],
 })
-export class FeedCreatePostComponent implements OnInit {
+export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 515; // show warning at 515 characters
 
   EmbedUrlParserService = EmbedUrlParserService;
@@ -29,6 +41,8 @@ export class FeedCreatePostComponent implements OnInit {
   isComment: boolean;
 
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
+  @ViewChild("textarea") textAreaEl: ElementRef<HTMLTextAreaElement>;
+  @ViewChild("menu") menuEl: ElementRef<HTMLDivElement>;
 
   randomMovieQuote = "";
   randomMovieQuotes = [
@@ -49,7 +63,7 @@ export class FeedCreatePostComponent implements OnInit {
     "E.T. phone home",
     "Elementary, my dear Watson",
     "I'm going to make him an offer he can't refuse.",
-    "Big things have small beginnings."
+    "Big things have small beginnings.",
   ];
 
   submittingPost = false;
@@ -72,6 +86,8 @@ export class FeedCreatePostComponent implements OnInit {
   globalVars: GlobalVarsService;
   GlobalVarsService = GlobalVarsService;
 
+  fallbackProfilePicURL: string;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -83,12 +99,79 @@ export class FeedCreatePostComponent implements OnInit {
     this.globalVars = appData;
   }
 
+  // Functions for the mention autofill component
+  resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
+
+  async getUsersFromPrefix(prefix): Promise<ProfileEntryResponse[]> {
+    const profiles = await this.backendApi
+      .GetProfiles(
+        this.globalVars.localNode,
+        "" /*PublicKeyBase58Check*/,
+        "" /*Username*/,
+        prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
+        "" /*Description*/,
+        "influencer_coin_price" /*Order by*/,
+        5 /*NumToFetch*/,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
+        "" /*ModerationType*/,
+        false /*FetchUsersThatHODL*/,
+        false /*AddGlobalFeedBool*/
+      )
+      .toPromise();
+    return profiles.ProfilesFound as ProfileEntryResponse[];
+  }
+
+  // Create and format the item in the dropdown
+  menuItemFn = (user: ProfileEntryResponse, setItem: () => void, selected: boolean) => {
+    const div = document.createElement("div");
+    div.setAttribute("role", "option");
+    div.className = "menu-item";
+    if (selected) {
+      div.classList.add("selected");
+      div.setAttribute("aria-selected", "");
+    }
+
+    // Although it would be hard for an attacker to inject a malformed public key into the app,
+    // we do a basic _.escape anyways just to be extra safe.
+    const profPicURL = _.escape(
+      this.backendApi.GetSingleProfilePictureURL(
+        this.globalVars.localNode,
+        user.PublicKeyBase58Check,
+        this.fallbackProfilePicURL
+      )
+    );
+    div.innerHTML = `
+      <div class="d-flex align-items-center">
+        <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
+        <p>${_.escape(user.Username)}</p>
+        ${user.IsVerified ? `<i class="fas fa-check-circle fa-md ml-5px fc-blue"></i>` : ""}
+      </div>`;
+    div.onclick = setItem;
+    return div;
+  };
+
+  replaceFn = (user: ProfileEntryResponse, trigger: string) => `${trigger}${user.Username} `;
+
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
+    // The fallback route is the route to the pic we use if we can't find an avatar for the user.
+    this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
       this.postInput = "It's Diamond time!";
     }
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      new Mentionify<ProfileEntryResponse>(
+        this.textAreaEl.nativeElement,
+        this.menuEl.nativeElement,
+        this.resolveFn,
+        this.replaceFn,
+        this.menuItemFn
+      );
+    }, 50);
   }
 
   onPaste(event: any): void {
