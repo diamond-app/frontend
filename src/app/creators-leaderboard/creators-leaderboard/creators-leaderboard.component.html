@@ -18,7 +18,7 @@
 
       <simple-center-loader *ngIf="isLoadingProfilesForFirstTime"></simple-center-loader>
 
-      <div class="viewport" [ngClass]="{ 'buy-creator-scroll-container': !isModal }">
+      <div class="viewport disable-scrollbars" [ngClass]="{ 'buy-creator-scroll-container': !isModal }">
         <!-- Creator rows -->
         <div #uiScroll *uiScroll="let item of datasource" class="row no-gutters px-15px border-bottom fs-15px">
           <a
