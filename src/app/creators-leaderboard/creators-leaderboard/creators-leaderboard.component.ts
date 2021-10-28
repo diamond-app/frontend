@@ -29,7 +29,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
   isLoadingProfilesForFirstTime = false;
   isLoadingMore: boolean = false;
   profilesToShow = [];
-  showReserved = false;
 
   // FIME: Replace with real value
   fakeNumHodlers = Math.ceil(Math.random() * 1000) + 1000;

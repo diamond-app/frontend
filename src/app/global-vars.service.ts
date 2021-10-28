@@ -1110,14 +1110,14 @@ export class GlobalVarsService {
         )
         .subscribe(
           (response) => {
-            // @ts-ignore
-            this.topCreatorsAllTimeLeaderboard = filter(response.ProfilesFound, { IsReserved: false })
-              .slice(0, RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES)
-              .map((profile) => {
-                return {
-                  Profile: profile,
-                };
-              });
+            this.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+              0,
+              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
+            ).map((profile) => {
+              return {
+                Profile: profile,
+              };
+            });
           },
           (err) => {
             console.error(err);
