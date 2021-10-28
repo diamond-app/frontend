@@ -1,0 +1,103 @@
+<div class="fs-16px messages-filter-menu__container border">
+  <div class="mr-15px ml-15px pt-15px pb-15px font-weight-bold d-flex align-items-center justify-content-between">
+    <span>Notifications Settings</span>
+    <i-feather name="x" class="fs-0px feather-medium cursor-pointer" (click)="closeFilter.emit()"></i-feather>
+  </div>
+
+  <div class="w-100 border-color-grey border-bottom"></div>
+
+  <div class="p-15px">
+    <span class="messages-filter-menu__title" style="margin-left: 0px">Only show <a (click)="selectAllOrNone()" class="ml-5px fs-12px">(Select {{ allSelected() ? "None" : "All" }})</a></span>
+    <div class="mt-10px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('like') }"
+        (click)="updateFilters('like')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="heart" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>Likes</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('diamond') }"
+        (click)="updateFilters('diamond')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="diamond" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>Diamonds</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('transfer') }"
+        (click)="updateFilters('transfer')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="coin" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>Creator Coin / $DESO</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('follow') }"
+        (click)="updateFilters('follow')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="user" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>Follows</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('post') }"
+        (click)="updateFilters('post')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="message-square" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>Mentions / Replies / Reposts</span>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: !filteredOutSet.hasOwnProperty('nft') }"
+        (click)="updateFilters('nft')"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <i-feather name="award" class="feather-medium fs-0px mr-5px"></i-feather>
+      <span>NFT</span>
+    </div>
+  </div>
+  <div class="w-100 border-color-grey border-bottom"></div>
+  <div class="p-15px">
+    <span class="messages-filter-menu__title" style="margin-left: 0px">View</span>
+    <div class="mt-10px d-flex flex-row align-items-center">
+      <button
+        class="checkbox-circle mr-10px"
+        [ngClass]="{ checked: expandNotifications }"
+        (click)="updateCompactView()"
+      >
+        <i-feather name="check"></i-feather>
+      </button>
+      <span>Expanded</span>
+    </div>
+  </div>
+  <div class="d-flex flex-center w-100 pb-15px">
+    <div class="w-100 messages-filter-menu__buttons">
+      <button class="btn" (click)="updateSettings()">Update</button>
+      <a class="cursor-pointer fc-muted" (click)="closeFilter.emit()">Cancel</a>
+    </div>
+  </div>
+</div>

@@ -1,17 +1,19 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Subscription } from "rxjs";
+import { document } from "ngx-bootstrap/utils";
 
 @Component({
   selector: "app-notifications-list",
   templateUrl: "./notifications-list.component.html",
   styleUrls: ["./notifications-list.component.scss"],
 })
-export class NotificationsListComponent {
+export class NotificationsListComponent implements OnInit {
   static BUFFER_SIZE = 10;
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
@@ -23,6 +25,7 @@ export class NotificationsListComponent {
     0: -1,
   };
 
+  subscriptions = new Subscription();
   lastPage = null;
   loadingFirstPage = true;
   loadingNextPage = false;
@@ -34,13 +37,44 @@ export class NotificationsListComponent {
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
+  totalFilteredItems = null;
   expandNotifications = true;
 
-  getPage(page: number) {
+  showFilters = false;
+  filteredOutSet = {};
+
+  ngOnInit() {
+    const savedNotificationFilterPreferences = this.backendApi.GetStorage("notificationFilterPreferences");
+    const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
+    this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
+    this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
+  }
+
+  updateSettings(settings) {
+    this.filteredOutSet = settings.filteredOutSet;
+    this.expandNotifications = settings.expandNotifications;
+    this.backendApi.SetStorage("notificationFilterPreferences", this.filteredOutSet);
+    this.backendApi.SetStorage("notificationViewPreference", this.expandNotifications);
+    this.scrollerReset();
+  }
+
+  scrollerReset() {
+    this.loadingFirstPage = true;
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset().then(() => {
+      this.datasource.adapter.check();
+      this.loadingFirstPage = false;
+    });
+  }
+
+  closeFilterMenu() {
+    this.showFilters = false;
+  }
+
+  getPage(page: number, findingStartIndex: boolean = false) {
     if (this.lastPage && page > this.lastPage) {
       return [];
     }
-
     this.loadingNextPage = true;
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
@@ -48,7 +82,8 @@ export class NotificationsListComponent {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
-        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/
+        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
+        this.filteredOutSet
       )
       .toPromise()
       .then(
@@ -118,6 +153,7 @@ export class NotificationsListComponent {
     const result = {
       actor, // who created the notification
       icon: null,
+      category: null, // category used for filtering
       iconClass: null,
       action: null, // the action they took
       actionDetails: null, // Summarized details of the action for compact mode
@@ -135,6 +171,7 @@ export class NotificationsListComponent {
       }
       if (basicTransferMeta.DiamondLevel) {
         result.icon = "icon-diamond fc-blue";
+        result.category = "diamond";
         let postText = "";
         if (basicTransferMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(basicTransferMeta.PostHashHex);
@@ -151,13 +188,13 @@ export class NotificationsListComponent {
             txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
           }
         }
-        result.icon = "fas fa-money-bill-wave-alt fc-green";
+        result.icon = "coin";
+        result.iconClass = "fc-blue";
+        result.category = "creator coin";
         result.action =
           `${actorName} sent you ${this.globalVars.nanosToDeSo(txnAmountNanos)} ` +
           `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       }
-      result.icon = "coin";
-      result.iconClass = "fc-blue";
 
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
@@ -168,6 +205,7 @@ export class NotificationsListComponent {
       }
 
       result.icon = "coin";
+      result.category = "creator coin";
       result.iconClass = "fc-blue";
 
       if (ccMeta.OperationType === "buy") {
@@ -194,6 +232,7 @@ export class NotificationsListComponent {
       if (cctMeta.DiamondLevel) {
         result.icon = "diamond";
         result.iconClass = "fc-blue";
+        result.category = "diamond";
         let postText = "";
         if (cctMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
@@ -205,6 +244,7 @@ export class NotificationsListComponent {
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
         result.icon = "send";
+        result.category = "creator coin";
         result.iconClass = "fc-blue";
         result.action = `${actorName} sent you <b>${this.globalVars.nanosToDeSo(
           cctMeta.CreatorCoinToTransferNanos,
@@ -232,13 +272,14 @@ export class NotificationsListComponent {
         // In this case, we are dealing with a reply to a post we made.
         if (currentPkObj.Metadata === "ParentPosterPublicKeyBase58Check") {
           result.icon = "message-square";
+          result.category = "comment";
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
           const truncatedComment = this.truncatePost(postHash);
           const commentContent = `<i class="fc-muted">"${truncatedComment}"</i>`;
           const actionDetails = `${commentContent} ${postContent}`;
-          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.action = `${actorName} replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = actionDetails;
           result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
@@ -250,11 +291,12 @@ export class NotificationsListComponent {
           return result;
         } else if (currentPkObj.Metadata === "MentionedPublicKeyBase58Check") {
           result.icon = "message-square";
+          result.category = "comment";
           result.iconClass = "fc-blue";
           const truncatedPost = this.truncatePost(postHash);
           const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
 
-          result.action = `${actorName} Mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
+          result.action = `${actorName} mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = postContent;
           result.post = this.postMap[postHash];
           if (result.post === null) {
@@ -265,6 +307,7 @@ export class NotificationsListComponent {
         } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           const post = this.postMap[postHash];
           result.icon = "repeat";
+          result.category = "repost";
           result.iconClass = "fc-blue";
           const repostAction = post.Body === "" ? "Reposting" : "Quote reposting";
           const repostedPost = post.RepostedPostEntryResponse;
@@ -294,15 +337,10 @@ export class NotificationsListComponent {
         return null;
       }
 
-      if (followMeta.IsUnfollow) {
-        result.icon = "user";
-        result.iconClass = "fc-blue";
-        result.action = `${actorName} unfollowed you`;
-      } else {
-        result.icon = "user";
-        result.iconClass = "fc-blue";
-        result.action = `${actorName} followed you`;
-      }
+      result.icon = "user";
+      result.category = "follow";
+      result.iconClass = "fc-blue";
+      result.action = `${actorName} ${followMeta.IsUnfollow ? "un" : ""}followed you`;
 
       return result;
     } else if (txnMeta.TxnType === "LIKE") {
@@ -320,6 +358,7 @@ export class NotificationsListComponent {
       const action = likeMeta.IsUnlike ? "unliked" : "liked";
 
       result.icon = likeMeta.IsUnlike ? "heart" : "heart";
+      result.category = "like";
       result.iconClass = likeMeta.IsUnlike ? "fc-red" : "fc-red";
       result.action = `${actorName} ${action} <i class="text-grey7">${postText}</i>`;
       result.link = AppRoutingModule.postPath(postHash);
@@ -345,6 +384,7 @@ export class NotificationsListComponent {
           } ${postText}`
         : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
       result.icon = "coin";
+      result.category = "nft";
       result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
       return result;
@@ -362,6 +402,7 @@ export class NotificationsListComponent {
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
       result.icon = "award";
+      result.category = "nft";
       result.iconClass = "fc-blue";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;

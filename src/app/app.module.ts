@@ -51,6 +51,7 @@ import { TradeCreatorCompleteComponent } from "./trade-creator-page/trade-creato
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { UpdateProfileModalComponent } from "./update-profile-page/update-profile-modal/update-profile-modal.component";
 import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
+import { NotificationsFilterMenuComponent } from "./notifications-page/notifications-filter-menu/notifications-filter-menu.component";
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { ChangeAccountSelectorComponent } from "./change-account-selector/change-account-selector.component";
@@ -236,6 +237,7 @@ export function playerFactory() {
     UpdateProfilePageComponent,
     UpdateProfileModalComponent,
     NotificationsPageComponent,
+    NotificationsFilterMenuComponent,
     SearchBarComponent,
     SimpleCenterLoaderComponent,
     ChangeAccountSelectorComponent,
