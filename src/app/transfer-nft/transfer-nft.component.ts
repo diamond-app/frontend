@@ -148,8 +148,8 @@ export class TransferNftComponent implements OnInit {
     this.selectedSerialNumber = null;
   }
 
-  selectSerialNumber(idx: number) {
-    this.selectedSerialNumber = this.transferableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+  selectSerialNumber(serialNumber: NFTEntryResponse) {
+    this.selectedSerialNumber = serialNumber;
     this.saveSelection();
   }
 
