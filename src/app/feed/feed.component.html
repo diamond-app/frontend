@@ -44,6 +44,13 @@
     *ngIf="globalVars.loggedInUser && userReferral && isMobile"
     [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
     class="mt-40px mx-8px"
+    [ngClass]="{
+      'mb-5px': !(
+        globalVars.loggedInUser &&
+        !globalVars.loggedInUser.JumioVerified &&
+        this.globalVars.showFreeMoneyBanner
+      )
+    }"
   >
     <div
       class="feed-desktop-center-banner"

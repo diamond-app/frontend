@@ -229,6 +229,9 @@ export class GlobalVarsService {
   // Whether the user will see prices on the feed "buy" component.
   showPriceOnFeed: boolean = true;
 
+  // Whether the user will see the jumio prompt on the top of the feed.
+  showFreeMoneyBanner: boolean = true;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -325,6 +328,23 @@ export class GlobalVarsService {
   setShowPriceOnFeed(showPriceOnFeed: boolean) {
     this.backendApi.SetStorage("showPriceOnFeed", showPriceOnFeed);
     this.showPriceOnFeed = showPriceOnFeed;
+  }
+
+  initializeShowFreeMoneyBanner() {
+    const showFreeMoneyBanner = this.backendApi.GetStorage("showFreeMoneyBanner");
+    if (!isNil(showFreeMoneyBanner)) {
+      this.showFreeMoneyBanner = showFreeMoneyBanner;
+    }
+  }
+
+  setShowFreeMoneyBanner(showFreeMoneyBanner: boolean) {
+    this.backendApi.SetStorage("showFreeMoneyBanner", showFreeMoneyBanner);
+    this.showFreeMoneyBanner = showFreeMoneyBanner;
+  }
+
+  initializeLocalStorageGlobalVars() {
+    this.initializeShowFreeMoneyBanner();
+    this.initializeShowPriceSetting();
   }
 
   userInTutorial(user: User): boolean {
@@ -1052,7 +1072,7 @@ export class GlobalVarsService {
       }
     });
 
-    this.initializeShowPriceSetting();
+    this.initializeLocalStorageGlobalVars();
     this.getReferralUSDCents();
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
