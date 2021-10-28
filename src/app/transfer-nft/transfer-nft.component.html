@@ -77,47 +77,10 @@
     <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
       <div class="nft-modal__subtitle">These are the serial numbers that are transferable</div>
       <div class="container fs-15px px-0px">
-        <div class="row no-gutters py-15px create-nft-auction-row-border d-flex align-items-center" style="height: 56px">
-          <div class="col-6 mb-0px cursor-pointer" (click)="updateSort(SN_FIELD)">
-            Number
-            <i-feather
-              *ngIf="sortByField === SN_FIELD"
-              class="feather-small"
-              name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
-            ></i-feather>
-          </div>
-          <div class="col-6 mb-0px cursor-pointer" (click)="updateSort(HIGH_BID_FIELD)">
-            Last Price
-            <i-feather
-              *ngIf="sortByField === LAST_PRICE"
-              class="feather-small"
-              name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
-            ></i-feather>
-          </div>
-        </div>
-        <div class="place-bid-rows mb-30px">
-          <div
-            *ngFor="let nft of transferableSerialNumbers"
-            class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
-            (click)="selectSerialNumber(nft.SerialNumber)"
-          >
-            <div class="col-6 mb-0px d-flex align-items-center">
-              <button
-                class="checkbox-circle radio mr-10px"
-                [ngClass]="{ checked: selectedSerialNumber?.SerialNumber === nft.SerialNumber }"
-              >
-                <i-feather name="check"></i-feather>
-              </button>
-              <span class="lh-15px">#{{nft.SerialNumber}}</span>
-            </div>
-            <div class="col-6 mb-0px d-flex align-items-center">
-              <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDeSo(nft.LastAcceptBidAmountNanos || 0)}} DESO </div>
-                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.LastAcceptBidAmountNanos || 0, 2)}})</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <nft-select-serial-number
+          [serialNumbers]="transferableSerialNumbers"
+          (serialNumberSelected)="selectSerialNumber($event)"
+        ></nft-select-serial-number>
       </div>
     </div>
     <div *ngIf="!transferableSerialNumbers.length" class="fs-15px">
