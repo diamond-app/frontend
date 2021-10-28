@@ -170,7 +170,8 @@ export class NotificationsListComponent implements OnInit {
         return null;
       }
       if (basicTransferMeta.DiamondLevel) {
-        result.icon = "icon-diamond fc-blue";
+        result.icon = "diamond";
+        result.iconClass = "fc-blue";
         result.category = "diamond";
         let postText = "";
         if (basicTransferMeta.PostHashHex) {
