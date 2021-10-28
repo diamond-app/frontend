@@ -16,9 +16,9 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./creators-leaderboard.component.scss"],
 })
 export class CreatorsLeaderboardComponent implements OnInit {
-  static PAGE_SIZE = 100;
+  static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = false;
-  static BUFFER_SIZE = 25;
+  static BUFFER_SIZE = 5;
   @Output() closeModal = new EventEmitter();
   @Input() isModal = false;
 
@@ -136,7 +136,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     this.getPage.bind(this),
     CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
     CreatorsLeaderboardComponent.BUFFER_SIZE,
-    1
+    0.5
   );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
