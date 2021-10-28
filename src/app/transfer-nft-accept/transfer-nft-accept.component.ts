@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
@@ -13,7 +13,7 @@ import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-
   selector: "transfer-nft-accept",
   templateUrl: "./transfer-nft-accept.component.html",
 })
-export class TransferNftAcceptComponent implements OnInit {
+export class TransferNftAcceptComponent {
   static PAGE_SIZE = 50;
   static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = false;
@@ -28,16 +28,13 @@ export class TransferNftAcceptComponent implements OnInit {
   bidAmountDeSo: number;
   bidAmountUSD: number;
   selectedSerialNumber: NFTEntryResponse = null;
-  availableCount: number;
-  availableSerialNumbers: NFTEntryResponse[];
-  filteredSerialNumbers: NFTEntryResponse[];
   highBid: number = null;
   lowBid: number = null;
-  loading = true;
+  loading = false;
   isSelectingSerialNumber = true;
   saveSelectionDisabled = false;
   showSelectedSerialNumbers = false;
-  placingBids: boolean = false;
+  acceptingTransfer: boolean = false;
   errors: string[] = [];
   minBidCurrency: string = "USD";
   minBidInput: number = 0;
@@ -52,24 +49,9 @@ export class TransferNftAcceptComponent implements OnInit {
     private location: Location
   ) {}
 
-  ngOnInit(): void {
-    this.backendApi
-      .GetNFTCollectionSummary(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.post.PostHashHex
-      )
-      .subscribe((res) => {
-        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
-        this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
-        this.filteredSerialNumbers = this.transferNFTEntryResponses;
-      })
-      .add(() => (this.loading = false));
-  }
-
   acceptTransfer() {
     this.saveSelectionDisabled = true;
-    this.placingBids = true;
+    this.acceptingTransfer = true;
     this.backendApi
       .AcceptNFTTransfer(
         this.globalVars.localNode,
@@ -96,7 +78,7 @@ export class TransferNftAcceptComponent implements OnInit {
         }
       )
       .add(() => {
-        this.placingBids = false;
+        this.acceptingTransfer = false;
         this.saveSelectionDisabled = false;
       });
   }

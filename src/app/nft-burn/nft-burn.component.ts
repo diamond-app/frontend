@@ -7,6 +7,7 @@ import { isNumber } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Location } from "@angular/common";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "nft-burn",
@@ -36,7 +37,7 @@ export class NftBurnComponent implements OnInit {
   isSelectingSerialNumber = true;
   saveSelectionDisabled = false;
   showSelectedSerialNumbers = false;
-  placingBids: boolean = false;
+  burningNft: boolean = false;
   errors: string[] = [];
   minBidCurrency: string = "USD";
   minBidInput: number = 0;
@@ -68,36 +69,56 @@ export class NftBurnComponent implements OnInit {
 
   burnNft() {
     this.saveSelectionDisabled = true;
-    this.placingBids = true;
-    this.backendApi
-      .BurnNFT(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.post.PostHashHex,
-        this.selectedSerialNumber.SerialNumber,
-        this.globalVars.defaultFeeRateNanosPerKB
-      )
-      .subscribe(
-        (res) => {
-          if (!this.globalVars.isMobile()) {
-            // Hide this modal and open the next one.
-            this.closeModal.emit("nft burned");
-          } else {
-            this.location.back();
-          }
-          this.toastr.show("Your nft was burned", null, {
-            toastClass: "info-toast",
-            positionClass: "toast-bottom-center",
+    this.burningNft = true;
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Burn NFT",
+      html: `You are about to burn this NFT - this cannot be undone. Are you sure?`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      reverseButtons: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Ok",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi
+          .BurnNFT(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.post.PostHashHex,
+            this.selectedSerialNumber.SerialNumber,
+            this.globalVars.defaultFeeRateNanosPerKB
+          )
+          .subscribe(
+            (res) => {
+              if (!this.globalVars.isMobile()) {
+                // Hide this modal and open the next one.
+                this.closeModal.emit("nft burned");
+              } else {
+                this.location.back();
+              }
+              this.toastr.show("Your nft was burned", null, {
+                toastClass: "info-toast",
+                positionClass: "toast-bottom-center",
+              });
+            },
+            (err) => {
+              console.error(err);
+            }
+          )
+          .add(() => {
+            this.burningNft = false;
+            this.saveSelectionDisabled = false;
           });
-        },
-        (err) => {
-          console.error(err);
-        }
-      )
-      .add(() => {
-        this.placingBids = false;
+      } else {
+        this.burningNft = false;
         this.saveSelectionDisabled = false;
-      });
+      }
+    });
   }
 
   saveSelection(): void {

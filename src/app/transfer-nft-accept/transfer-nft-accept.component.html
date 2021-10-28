@@ -4,7 +4,7 @@
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
+    <div *ngIf="transferNFTEntryResponses?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
       <div class="fs-15px text-grey5">
         You are about to accept an NFT transferred by @{{ this.transferringUser }}.
       </div>
@@ -80,27 +80,27 @@
           class="primary-button font-weight-bold fs-15px br-12px"
           style="height: 48px; width: 140px; line-height: 15px"
           (click)="acceptTransfer()"
-          [disabled]="placingBids"
-          [class]="{ 'disabled-button': placingBids }"
+          [disabled]="acceptingTransfer"
+          [class]="{ 'disabled-button': acceptingTransfer }"
         >
-          {{ placingBids ? "Accepting Transfer" : "Accept Transfer" }}
+          {{ acceptingTransfer ? "Accepting Transfer" : "Accept Transfer" }}
         </button>
       </div>
 
     </div>
 
 
-    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+    <div *ngIf="transferNFTEntryResponses?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
       <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
-          [serialNumbers]="filteredSerialNumbers"
+          [serialNumbers]="transferNFTEntryResponses"
           (serialNumberSelected)="selectSerialNumber($event)"
         ></nft-select-serial-number>
       </div>
     </div>
-    <div *ngIf="!filteredSerialNumbers.length" class="fs-15px">
-      There are no serial numbers available for you to bid on.
+    <div *ngIf="!transferNFTEntryResponses.length" class="fs-15px">
+      There are no serial numbers available for you to accept.
     </div>
   </div>
 </div>

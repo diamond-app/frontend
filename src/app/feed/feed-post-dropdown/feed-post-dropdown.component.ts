@@ -185,12 +185,23 @@ export class FeedPostDropdownComponent {
     );
   }
 
-  showBurnTransferNFT(): boolean {
+  showTransferNFT(): boolean {
     return (
       this.post.IsNFT &&
       !!this.nftEntryResponses?.filter(
         (nftEntryResponse) =>
           !nftEntryResponse.IsPending &&
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
+  showBurnNFT(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
           !nftEntryResponse.IsForSale &&
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
       )?.length
@@ -298,7 +309,6 @@ export class FeedPostDropdownComponent {
   openBurnNFTModal(event): void {
     const burnNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
-        !nftEntryResponse.IsPending &&
         !nftEntryResponse.IsForSale &&
         nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
       );
