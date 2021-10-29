@@ -285,6 +285,7 @@ export class NotificationsListComponent implements OnInit {
           result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
           result.parentPost = this.postMap[spMeta.ParentPostHashHex];
+          result.link = AppRoutingModule.postPath(postHash);
           if (result.post === null || result.parentPost === null) {
             return;
           }
@@ -300,6 +301,7 @@ export class NotificationsListComponent implements OnInit {
           result.action = `${actorName} mentioned <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
           result.actionDetails = postContent;
           result.post = this.postMap[postHash];
+          result.link = AppRoutingModule.postPath(postHash);
           if (result.post === null) {
             return;
           }
@@ -315,6 +317,7 @@ export class NotificationsListComponent implements OnInit {
           const truncatedPost = _.truncate(_.escape(`${repostedPost.Body} ${repostedPost.ImageURLs?.[0] || ""}`));
           const repostedPostContent = `<i class="fc-muted">${truncatedPost}</i>`;
           // Repost
+          result.link = AppRoutingModule.postPath(postHash);
           if (post.Body === "") {
             result.action = `${actorName} ${repostAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>`;
             result.actionDetails = repostedPostContent;
@@ -388,6 +391,7 @@ export class NotificationsListComponent implements OnInit {
       result.category = "nft";
       result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
+      result.link = AppRoutingModule.nftPath(postHash);
       return result;
     } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
       const acceptNFTBidMeta = txnMeta.AcceptNFTBidTxindexMetadata;
@@ -406,6 +410,7 @@ export class NotificationsListComponent implements OnInit {
       result.category = "nft";
       result.iconClass = "fc-blue";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
+      result.link = AppRoutingModule.nftPath(postHash);
       return result;
     }
 

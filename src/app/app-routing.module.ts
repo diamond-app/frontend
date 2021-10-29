@@ -267,6 +267,10 @@ class AppRoutingModule {
   static postPath(postHashHex: string): string {
     return ["", RouteNames.POSTS, postHashHex].join("/");
   }
+
+  static nftPath(postHashHex: string): string {
+    return ["", RouteNames.NFT, postHashHex].join("/");
+  }
 }
 
 export { RouteNames, AppRoutingModule };
