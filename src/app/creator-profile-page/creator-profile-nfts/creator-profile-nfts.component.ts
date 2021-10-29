@@ -178,15 +178,6 @@ export class CreatorProfileNftsComponent implements OnInit {
             ) {
               continue;
             }
-            // Exclude NFTs for which all copies are pending or are for sale from Transferable view.
-            if (
-              this.activeTab === CreatorProfileNftsComponent.TRANSFERABLE &&
-              responseElement.NFTEntryResponses.filter(
-                (nftEntryResponse) => !nftEntryResponse.IsPending && !nftEntryResponse.IsForSale
-              ).length === 0
-            ) {
-              continue;
-            }
             this.nftResponse.push(responseElement);
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
@@ -336,10 +327,25 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getIsForSaleValue(): boolean | null {
-    return this.activeTab === CreatorProfileNftsComponent.FOR_SALE ? true : null;
+    if (this.activeTab === CreatorProfileNftsComponent.FOR_SALE) {
+      return true;
+    } else if (this.activeTab === CreatorProfileNftsComponent.TRANSFERABLE) {
+      return false;
+    } else {
+      return null;
+    }
   }
 
   getIsPendingValue(): boolean | null {
-    return this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS ? true : null;
+    if (this.activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS) {
+      return true;
+    } else if (
+      this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ||
+      this.activeTab === CreatorProfileNftsComponent.TRANSFERABLE
+    ) {
+      return false;
+    } else {
+      return null;
+    }
   }
 }
