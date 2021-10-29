@@ -484,6 +484,8 @@
             class="cursor-pointer"
             (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            (mouseenter)="tooltipDetectChanges()"
+            (mouseleave)="tooltipDetectChanges()"
             [matTooltip]="mOfNNFTTooltip"
             #NFTMOfNTooltip="matTooltip"
           >
