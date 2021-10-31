@@ -230,7 +230,7 @@
               <span class="font-weight-bold">Stats:</span>
               {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}},
               {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referrals,
-              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referee
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalRefereeDeSoNanos, 2)}} paid to referee
             </div>
           </div>
           <div *ngIf="linkInfo.ReferredUsers.length > 0"
