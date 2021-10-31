@@ -110,7 +110,7 @@
             post.parentPost is set in appendCommentAfterParentPost
           -->
         <feed-post
-          *ngIf="!post.IsHidden"
+          *ngIf="!post.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
           [post]="post"
           [includePaddingOnPost]="true"
           [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
