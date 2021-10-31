@@ -65,8 +65,8 @@
 >
   <div class="w-100">
     <div
-      *ngIf="post.IsHidden || (post.IsNFT && nftEntryResponses.length === 0)"
-      class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
+      *ngIf="post.IsHidden || (post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
+      class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px br-10px"
     >
       <a
         (click)="onPostClicked($event)"
@@ -94,7 +94,12 @@
     </div>
 
     <div
-      *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
+      *ngIf="
+        !post.IsHidden &&
+        !hidingPost &&
+        !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check) &&
+        !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)
+      "
       class="d-flex flex-column js-feed-post"
       [ngStyle]="{ 'border-radius': setBorder ? '12px 12px 0 0' : '' }"
     >
@@ -149,7 +154,7 @@
         </div>
 
         <div
-          *ngIf="postContent.IsHidden"
+          *ngIf="postContent.IsHidden || (post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
           class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
@@ -191,7 +196,7 @@
           [ngStyle]="{
             'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
           }"
-          *ngIf="!postContent.IsHidden"
+          *ngIf="!postContent.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
         >
           <!-- Avatar and top 2 header rows -->
           <div class="d-flex position-relative">
@@ -469,7 +474,7 @@
   </div>
 
   <div
-    *ngIf="showNFTDetails && postContent.IsNFT"
+    *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
     class="fs-15px w-100 feed-post__nft-footer"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
     (click)="onPostClicked($event)"

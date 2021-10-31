@@ -273,6 +273,7 @@ export class PostEntryResponse {
   DiamondsFromSender?: number;
   NumNFTCopies: number;
   NumNFTCopiesForSale: number;
+  NumNFTCopiesBurned?: number;
   HasUnlockable: boolean;
   IsNFT: boolean;
   NFTRoyaltyToCoinBasisPoints: number;

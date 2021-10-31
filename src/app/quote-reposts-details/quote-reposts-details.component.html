@@ -8,7 +8,7 @@
   <div class="flex-grow-1">
     <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
       <feed-post
-        *ngIf="!post.IsHidden"
+        *ngIf="!post.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
         [post]="post"
         [includePaddingOnPost]="true"
         [parentPost]="post.parentPost"
