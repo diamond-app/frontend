@@ -65,7 +65,7 @@
 >
   <div class="w-100">
     <div
-      *ngIf="post.IsHidden"
+      *ngIf="post.IsHidden || (post.IsNFT && nftEntryResponses.length === 0)"
       class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
     >
       <a
