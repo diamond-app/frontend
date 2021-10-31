@@ -94,7 +94,7 @@
     </div>
 
     <div
-      *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
+      *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check) && !(post.IsNFT && nftEntryResponses.length === 0)"
       class="d-flex flex-column js-feed-post"
       [ngStyle]="{ 'border-radius': setBorder ? '12px 12px 0 0' : '' }"
     >
@@ -149,7 +149,7 @@
         </div>
 
         <div
-          *ngIf="postContent.IsHidden"
+          *ngIf="postContent.IsHidden || (post.IsNFT && nftEntryResponses.length === 0)"
           class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
@@ -191,7 +191,7 @@
           [ngStyle]="{
             'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
           }"
-          *ngIf="!postContent.IsHidden"
+          *ngIf="!postContent.IsHidden && !(post.IsNFT && nftEntryResponses.length === 0)"
         >
           <!-- Avatar and top 2 header rows -->
           <div class="d-flex position-relative">
