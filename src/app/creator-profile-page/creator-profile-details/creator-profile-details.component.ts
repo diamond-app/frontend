@@ -215,7 +215,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   tweetToClaimLink() {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `Just setting up my ${environment.node.name} 💎🙌\n\n${environment.node.url}/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+      `Claiming my account on ${environment.node.url.replace("https://", "")} 💎🙌\n\n${environment.node.url}/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}\n\n@desoprotocol #deso`
     )}`;
   }
 

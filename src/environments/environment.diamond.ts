@@ -17,7 +17,7 @@ export const environment = {
   },
   node: {
     name: 'Diamond',
-    url: 'https://bitclout.com',
+    url: 'https://diamondapp.com',
     logoAssetDir: '/assets/diamond/'
   }
 };

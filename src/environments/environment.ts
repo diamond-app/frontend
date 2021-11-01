@@ -21,7 +21,7 @@ export const environment = {
   },
   node: {
     name: 'Diamond',
-    url: 'https://diamond.co',
+    url: 'https://diamondapp.com',
     logoAssetDir: '/assets/diamond/'
   }
 };
