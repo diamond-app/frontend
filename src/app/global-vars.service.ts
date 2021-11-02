@@ -232,6 +232,9 @@ export class GlobalVarsService {
   // Whether the user will see the jumio prompt on the top of the feed.
   showFreeMoneyBanner: boolean = true;
 
+  // How many unread notifications the user has
+  unreadNotifications: number = 0;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -253,6 +256,25 @@ export class GlobalVarsService {
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
     this.LoadInitialMessages();
+  }
+
+  GetUnreadNotifications() {
+    if (this.loggedInUser) {
+      this.backendApi
+        .GetUnreadNotificationsCount(
+          this.localNode,
+          this.loggedInUser.PublicKeyBase58Check
+        )
+        .toPromise()
+        .then(
+          (res) => {
+            this.unreadNotifications = res.NotificationsCount;
+          },
+          (err) => {
+            console.error(this.backendApi.stringifyError(err));
+          }
+        );
+    }
   }
 
   SetMessagesFilter(tabName: any) {

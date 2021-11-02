@@ -39,6 +39,7 @@ export class BackendRoutes {
   static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
   static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
   static RoutePathGetNotifications = "/api/v0/get-notifications";
+  static RoutePathGetUnreadNotificationsCount = "/api/v0/get-unread-notifications-count";
   static RoutePathGetAppState = "/api/v0/get-app-state";
   static RoutePathGetSinglePost = "/api/v0/get-single-post";
   static RoutePathSendPhoneNumberVerificationText = "/api/v0/send-phone-number-verification-text";
@@ -1644,6 +1645,24 @@ export class BackendApiService {
       FetchStartIndex,
       NumToFetch,
       FilteredOutNotificationCategories
+    });
+  }
+
+  GetUnreadNotificationsCount(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
+      PublicKeyBase58Check
+    });
+  }
+
+  ResetUnreadNotificationsCount(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, "/api/v0/reset-unread-notifications-count", {
+      PublicKeyBase58Check
     });
   }
 

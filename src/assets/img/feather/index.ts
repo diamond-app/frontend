@@ -13,6 +13,7 @@ export { LandingBullet2 } from "./landingBullet2";
 export { LandingBullet3 } from "./landingBullet3";
 export { Lock } from "./lock";
 export { Lock2 } from "./lock2";
+export { MessageNotification } from "./messsageNotification";
 export { MultipleNfts } from "./MultipleNFTs";
 export { Quote } from "./quote";
 export { SingleNft } from "./SingleNFT";
