@@ -1657,15 +1657,6 @@ export class BackendApiService {
     });
   }
 
-  ResetUnreadNotificationsCount(
-    endpoint: string,
-    PublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.post(endpoint, "/api/v0/reset-unread-notifications-count", {
-      PublicKeyBase58Check
-    });
-  }
-
   GetAppState(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetAppState, {
       PublicKeyBase58Check,

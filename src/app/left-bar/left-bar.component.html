@@ -33,7 +33,7 @@
             [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
             [buttonLabel]="'Notifications'"
             [isUnread]="globalVars.unreadNotifications > 0"
-            [iconName]="'bell-notification'"
+            [iconName]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           ></left-bar-button>
           <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Buy Creators'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
@@ -46,7 +46,11 @@
             [notificationType]="'messages'"
             [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
             [buttonLabel]="'Messages'"
-            [iconName]="'message-square'"
+            [iconName]="
+              globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads >= 0
+                ? 'message-notification'
+                : 'message-square'
+            "
           ></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"

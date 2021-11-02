@@ -48,6 +48,8 @@ export class NotificationsListComponent implements OnInit {
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
     this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
+    // Set this here, rather than calling a whole updateEverything call
+    this.globalVars.unreadNotifications = 0;
   }
 
   updateSettings(settings) {
