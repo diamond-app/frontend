@@ -47,7 +47,7 @@
             [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
             [buttonLabel]="'Messages'"
             [iconName]="
-              globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads >= 0
+              globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads > 0
                 ? 'message-notification'
                 : 'message-square'
             "
