@@ -184,7 +184,6 @@ export class Mentionify<Type> {
       const option = this.options.items[active];
       const mention = this.replaceFn(option, this.ref.value[this.triggerIdx]);
       const postMention = this.ref.value.substr(this.ref.selectionStart);
-      // this.ref.value = `${preMention}${mention}${postMention}`;
       this.setInputValueFn(`${preMention}${mention}${postMention}`);
       const caretPosition = this.ref.value.length - postMention.length;
       this.ref.setSelectionRange(caretPosition, caretPosition);
