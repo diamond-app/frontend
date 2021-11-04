@@ -16,7 +16,7 @@ export class SimpleCenterLoaderComponent implements OnInit {
   @Input() height = 400;
   environment = environment;
 
-  isLight: boolean = false;
+  isDark: boolean = false;
 
   options: AnimationOptions = {
     path: "./assets/img/cloutLoader.json",
@@ -24,7 +24,7 @@ export class SimpleCenterLoaderComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.isLight = localStorage.getItem("theme") === "light";
+    this.isDark = localStorage.getItem("theme") === "dark";
   }
 
   doesFileExist(urlToFile) {

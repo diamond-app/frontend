@@ -3,14 +3,14 @@
   [ngStyle]="{ height: getHeight() }"
 >
   <img
-    *ngIf="isLight"
+    *ngIf="!isDark"
     class="fc-secondary spinner-color"
     src="../../assets/diamond/spinner-light.svg"
     height="100px"
     width="100px"
   />
   <img
-    *ngIf="!isLight"
+    *ngIf="isDark"
     class="fc-secondary spinner-color"
     src="../../assets/diamond/spinner-dark.svg"
     height="100px"
