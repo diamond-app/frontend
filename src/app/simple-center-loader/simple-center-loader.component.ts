@@ -1,13 +1,14 @@
 import { ApplicationRef, ChangeDetectorRef, Component, OnInit, Input, ViewEncapsulation } from "@angular/core";
 import { AnimationOptions } from "ngx-lottie";
 import { environment } from "src/environments/environment";
+import { BackendApiService } from "../backend-api.service";
 
 @Component({
   selector: "simple-center-loader",
   templateUrl: "./simple-center-loader.component.html",
   styleUrls: ["./simple-center-loader.component.scss"],
 })
-export class SimpleCenterLoaderComponent {
+export class SimpleCenterLoaderComponent implements OnInit {
   @Input() titleLoadingText: string = "Loading";
   @Input() subtitleLoadingText: string = "";
   @Input() spinnerColor: string = "gray";
@@ -15,10 +16,16 @@ export class SimpleCenterLoaderComponent {
   @Input() height = 400;
   environment = environment;
 
+  isLight: boolean = false;
+
   options: AnimationOptions = {
     path: "./assets/img/cloutLoader.json",
   };
   constructor() {}
+
+  ngOnInit() {
+    this.isLight = localStorage.getItem("theme") === "light";
+  }
 
   doesFileExist(urlToFile) {
     const xhr = new XMLHttpRequest();
