@@ -92,6 +92,7 @@ export class Mentionify<Type> {
   private readonly resolveFn: (string) => Promise<Type[]>;
   private readonly replaceFn: (item: Type, value: string) => string;
   private readonly menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement;
+  private readonly setInputValueFn: (mention: string) => void;
   private options: { query: string; items: Type[] };
   private left: number | undefined;
   private top: number | undefined;
@@ -104,13 +105,15 @@ export class Mentionify<Type> {
     menuRef: HTMLElement,
     resolveFn: (string) => Promise<Type[]>,
     replaceFn: (item: Type, value: string) => string,
-    menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement
+    menuItemFn: (item: Type, setItem: () => void, selected: boolean) => HTMLElement,
+    setInputValueFn: (mention: string) => void
   ) {
     this.ref = ref;
     this.menuRef = menuRef;
     this.resolveFn = resolveFn;
     this.replaceFn = replaceFn;
     this.menuItemFn = menuItemFn;
+    this.setInputValueFn = setInputValueFn;
     this.options = { query: "", items: [] };
     this.currentToken = "";
 
@@ -181,7 +184,7 @@ export class Mentionify<Type> {
       const option = this.options.items[active];
       const mention = this.replaceFn(option, this.ref.value[this.triggerIdx]);
       const postMention = this.ref.value.substr(this.ref.selectionStart);
-      this.ref.value = `${preMention}${mention}${postMention}`;
+      this.setInputValueFn(`${preMention}${mention}${postMention}`);
       const caretPosition = this.ref.value.length - postMention.length;
       this.ref.setSelectionRange(caretPosition, caretPosition);
       this.closeMenu();

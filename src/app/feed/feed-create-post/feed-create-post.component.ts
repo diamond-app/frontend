@@ -152,6 +152,10 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
 
   replaceFn = (user: ProfileEntryResponse, trigger: string) => `${trigger}${user.Username} `;
 
+  setInputElementValue = (mention: string): void => {
+    this.postInput = `${mention}`;
+  };
+
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
@@ -169,7 +173,8 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
         this.menuEl.nativeElement,
         this.resolveFn,
         this.replaceFn,
-        this.menuItemFn
+        this.menuItemFn,
+        this.setInputElementValue,
       );
     }, 50);
   }
