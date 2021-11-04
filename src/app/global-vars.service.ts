@@ -269,6 +269,17 @@ export class GlobalVarsService {
         .then(
           (res) => {
             this.unreadNotifications = res.NotificationsCount;
+            if (res.UpdateMetadata) {
+              this.backendApi
+                .SetNotificationsMetadata(
+                  this.localNode,
+                  this.loggedInUser.PublicKeyBase58Check,
+                  -1,
+                  res.LastUnreadNotificationIndex,
+                  res.NotificationsCount
+                )
+                .toPromise();
+            }
           },
           (err) => {
             console.error(this.backendApi.stringifyError(err));
