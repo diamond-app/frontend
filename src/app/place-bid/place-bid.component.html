@@ -143,7 +143,10 @@
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="biddableSerialNumbers"
+          [showBuyNowButton]="true"
+          [postHashHex]="post.PostHashHex"
           (serialNumberSelected)="selectSerialNumber($event)"
+          (closeModal)="closeModal.emit($event)"
         ></nft-select-serial-number>
       </div>
     </div>

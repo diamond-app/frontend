@@ -332,6 +332,7 @@ export class NFTEntryResponse {
   SerialNumber: number;
   IsForSale: boolean;
   IsPending?: boolean;
+  IsBuyNow: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
@@ -822,6 +823,7 @@ export class BackendApiService {
     NFTRoyaltyToCoinBasisPoints: number,
     HasUnlockable: boolean,
     IsForSale: boolean,
+    IsBuyNow: boolean,
     MinBidAmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
@@ -833,6 +835,7 @@ export class BackendApiService {
       NFTRoyaltyToCoinBasisPoints,
       HasUnlockable,
       IsForSale,
+      IsBuyNow,
       MinBidAmountNanos,
       MinFeeRateNanosPerKB,
     });
@@ -846,6 +849,7 @@ export class BackendApiService {
     NFTPostHashHex: string,
     SerialNumber: number,
     IsForSale: boolean,
+    IsBuyNow: boolean,
     MinBidAmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
@@ -854,6 +858,7 @@ export class BackendApiService {
       NFTPostHashHex,
       SerialNumber,
       IsForSale,
+      IsBuyNow,
       MinBidAmountNanos,
       MinFeeRateNanosPerKB,
     });

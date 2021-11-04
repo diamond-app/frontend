@@ -24,7 +24,7 @@
     ></i-feather>
   </div>
 </div>
-<div class="place-bid-rows mb-30px">
+<div class="place-bid-rows mb-30px" *ngIf="!buyingNow">
   <div
     *ngFor="let nft of sortedSerialNumbers"
     class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
@@ -40,9 +40,20 @@
       <span class="lh-15px">#{{ nft.SerialNumber }}</span>
     </div>
     <div class="col-4 mb-0px d-flex align-items-center">
-      <div>
+      <div *ngIf="!showBuyNowButton || !nft.IsBuyNow">
         <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.HighestBidAmountNanos) }} DESO </div>
         <div class="text-grey7 d-lg-inline-block d-block">( ~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2) }})</div>
+      </div>
+      <div *ngIf="showBuyNowButton && nft.IsBuyNow">
+        <button
+          class="primary-button font-weight-bold fs-15px br-12px"
+          style="height: 48px; width: 140px; line-height: 15px"
+          (click)="buyNow(nft, $event)"
+          [disabled]="buyingNow"
+          [class]="{ 'disabled-button': buyingNow }"
+        >
+          {{ buyingNow ? "Processing" : "Buy Now! for " + globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }}
+        </button>
       </div>
     </div>
     <div class="col-5 mb-0px d-flex align-items-center">
@@ -52,4 +63,6 @@
       </div>
     </div>
   </div>
+  <simple-center-loader *ngIf="buyingNow" [titleLoadingText]="Processing"></simple-center-loader>
 </div>
+

@@ -20,6 +20,7 @@ export class CreateNftAuctionModalComponent {
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
+  isBuyNow: boolean = false;
 
   constructor(
     private backendApi: BackendApiService,
@@ -52,6 +53,7 @@ export class CreateNftAuctionModalComponent {
                 this.post.PostHashHex,
                 val,
                 true,
+                this.isBuyNow,
                 Math.trunc(this.minBidAmountDESO * 1e9),
                 this.globalVars.defaultFeeRateNanosPerKB
               )

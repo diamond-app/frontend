@@ -60,7 +60,7 @@
         />
       </div>
       <div [ngClass]="{ 'mint-nft__price-half': copiesRadioValue === IS_MULTIPLE_COPIES, 'mint-nft__price-full': copiesRadioValue === IS_SINGLE_COPY }">
-        <div class="mint-nft__sub-title">Minimum bid</div>
+        <div class="mint-nft__sub-title">{{ isBuyNow ? "Purchase Price" : "Minimum bid" }}</div>
         <div class="d-flex">
           <div
             class="d-flex"
@@ -118,6 +118,13 @@
       </div>
       <div>Put it on sale</div>
     </div>
+    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input [(ngModel)]="isBuyNow" type="checkbox" class="custom-control-input" id="buyNowCheckbox" [disabled]="includeUnlockable" />
+        <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
+      </div>
+      <div>Make "Buy Now"</div>
+    </div>
 
   </div>
   <div class="mint-nft__section">
@@ -173,6 +180,7 @@
       <div class="custom-control custom-switch custom-switch-lg">
         <input
           [(ngModel)]="includeUnlockable"
+          (ngModelChange)="isBuyNow = isBuyNow && !includeUnlockable"
           type="checkbox"
           class="custom-control-input"
           id="unlockableContentCheckbox"

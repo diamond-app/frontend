@@ -31,6 +31,7 @@ export class MintNftComponent {
   maxCopiesPerNFT: number;
   // Whether the user is using USD or DESO to define the minimum bid
   minBidCurrency: string = "USD";
+  isBuyNow: boolean;
 
   // Errors.
   unreasonableRoyaltiesSet: boolean = false;
@@ -131,6 +132,7 @@ export class MintNftComponent {
         coinRoyaltyBasisPoints,
         this.includeUnlockable,
         this.putOnSale,
+        this.isBuyNow,
         Math.trunc(this.minBidAmountDESO * 1e9),
         this.globalVars.defaultFeeRateNanosPerKB
       )

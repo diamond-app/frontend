@@ -37,6 +37,7 @@ export class CloseNftAuctionModalComponent {
               this.post.PostHashHex,
               nftEntry.SerialNumber,
               false,
+              false,
               nftEntry.MinBidAmountNanos,
               this.globalVars.defaultFeeRateNanosPerKB
             )
