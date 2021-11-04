@@ -9,8 +9,13 @@
   <div
     *ngIf="message.V2 && message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
-    style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >{{ message.DecryptedText }}</div>
+  >
+    <div
+      class="disable-scrollbars"
+      style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
+      [innerHTML]="message.DecryptedText | sanitizeAndAutoLink"
+    ></div>
+  </div>
   <div
     *ngIf="!message.V2 && message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
@@ -69,8 +74,12 @@
   <!-- Messages that the user receives can be returned from the backend unencrypted. -->
   <div
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey disable-scrollbars"
-    style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >{{ message.DecryptedText }}
+  >
+    <div
+      class="disable-scrollbars"
+      style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
+      [innerHTML]="message.DecryptedText | sanitizeAndAutoLink"
+    ></div>
   </div>
 </div>
 <!-- Consider whether or not to show the timestamp. -->
