@@ -19,7 +19,7 @@
   <!-- Type of NFT -->
   <div class="mint-nft__section">
     <div class="mint-nft__title">Type of NFT</div>
-    <div class="mint-nft__text">
+    <div class="mint-nft__text mb-16px">
       An NFT can have multiple editions, each with its own unique serial number.
     </div>
     <div class="d-flex justify-content-between align-items-center">
@@ -43,6 +43,25 @@
           <div class="mint-nft__type-selector-title">Multiple</div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="mint-nft__section">
+    <div class="mint-nft__title">Auction Type</div>
+    <div class="mint-nft__text">
+      NFTs can be sold in an auction format, or as a "Buy Now" NFT for a set price.
+    </div>
+    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input
+          [(ngModel)]="isBuyNow"
+          (ngModelChange)="includeUnlockable = !isBuyNow && includeUnlockable"
+          type="checkbox"
+          class="custom-control-input"
+          id="buyNowCheckbox"
+        />
+        <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
+      </div>
+      <div>Sell as "Buy Now" NFT</div>
     </div>
   </div>
   <div class="mint-nft__section">
@@ -118,14 +137,6 @@
       </div>
       <div>Put it on sale</div>
     </div>
-    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
-      <div class="custom-control custom-switch custom-switch-lg">
-        <input [(ngModel)]="isBuyNow" type="checkbox" class="custom-control-input" id="buyNowCheckbox" [disabled]="includeUnlockable" />
-        <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
-      </div>
-      <div>Make "Buy Now"</div>
-    </div>
-
   </div>
   <div class="mint-nft__section">
     <div class="mint-nft__title">Royalties</div>
@@ -180,7 +191,7 @@
       <div class="custom-control custom-switch custom-switch-lg">
         <input
           [(ngModel)]="includeUnlockable"
-          (ngModelChange)="isBuyNow = isBuyNow && !includeUnlockable"
+          [disabled]="isBuyNow"
           type="checkbox"
           class="custom-control-input"
           id="unlockableContentCheckbox"
@@ -189,13 +200,14 @@
       </div>
       <div>Enable Unlockable Content</div>
     </div>
+    <span *ngIf="isBuyNow" class="fc-error fs-14px mt-16px">Unlockable content not available for "Buy Now" NFTs</span>
   </div>
 </div>
 <button
   [disabled]="
     hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting
   "
-  (click)="mintNft()"
+  (click)="validateNFTMint()"
   class="mint-nft__create-btn"
 >
   {{ minting ? "Creating NFT" : "Create NFT" }}

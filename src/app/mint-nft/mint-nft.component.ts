@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { isNumber } from "lodash";
 import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { RouteNames } from "../app-routing.module";
 
 @Component({
   selector: "app-mint-nft-modal",
@@ -75,6 +77,10 @@ export class MintNftComponent {
     return this.minBidAmountUSD < 0 || this.minBidAmountDESO < 0;
   }
 
+  hasUnreasonableAuctionType() {
+    return this.includeUnlockable && this.isBuyNow;
+  }
+
   updateMinBidAmountUSD(desoAmount) {
     this.minBidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2));
   }
@@ -101,12 +107,43 @@ export class MintNftComponent {
     return this.copiesRadioValue === this.IS_SINGLE_COPY ? "Price" : "Number of copies and price";
   }
 
-  mintNft() {
-    if (this.hasUnreasonableRoyalties() || this.hasUnreasonableNumCopies() || this.hasUnreasonableMinBidAmount()) {
+  validateNFTMint() {
+    if (
+      this.hasUnreasonableRoyalties() ||
+      this.hasUnreasonableNumCopies() ||
+      this.hasUnreasonableMinBidAmount() ||
+      this.hasUnreasonableAuctionType()
+    ) {
       // It should not be possible to trigger this since the button is disabled w/these conditions.
       return;
     }
+    if (this.includeUnlockable) {
+      SwalHelper.fire({
+        target: GlobalVarsService.getTargetComponentSelectorFromRouter(this.router),
+        icon: "warning",
+        title: `Unlockable Content`,
+        html: `Selling an NFT with Unlockable Content will prevent future NFT owners from selling this NFT as "Buy Now"`,
+        showCancelButton: true,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Ok",
+        cancelButtonText: "Nevermind",
+        reverseButtons: true,
+      }).then((res: any) => {
+        if (res.isConfirmed) {
+          this.mintNft();
+        }
+      });
+    } else {
+      this.mintNft();
+    }
+  }
 
+  mintNft() {
     let numCopiesToMint = this.numCopies;
     if (this.copiesRadioValue === this.IS_SINGLE_COPY) {
       numCopiesToMint = 1;
