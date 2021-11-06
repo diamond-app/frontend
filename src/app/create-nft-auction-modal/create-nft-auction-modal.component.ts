@@ -5,6 +5,7 @@ import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backe
 import { concatMap, last, map } from "rxjs/operators";
 import { of } from "rxjs";
 import { Router } from "@angular/router";
+import { isNumber } from "lodash";
 
 @Component({
   selector: "create-nft-auction",
@@ -15,12 +16,14 @@ export class CreateNftAuctionModalComponent {
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
-  minBidAmountUSD: string;
+  minBidAmountUSD: number;
   minBidAmountDESO: number;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
   isBuyNow: boolean = false;
+  minBidCurrency: string = "USD";
+  minBidInput: number = 0;
 
   constructor(
     private backendApi: BackendApiService,
@@ -30,11 +33,25 @@ export class CreateNftAuctionModalComponent {
   ) {}
 
   updateMinBidAmountUSD(desoAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9);
   }
 
   updateMinBidAmountDESO(usdAmount) {
     this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  minBidAmountUSDFormatted() {
+    return isNumber(this.minBidAmountUSD) ? `~${this.globalVars.formatUSD(this.minBidAmountUSD, 0)}` : "";
+  }
+
+  updateMinBidAmount(amount: number) {
+    if (this.minBidCurrency === "DESO") {
+      this.minBidAmountDESO = amount;
+      this.updateMinBidAmountUSD(amount);
+    } else {
+      this.minBidAmountUSD = amount;
+      this.updateMinBidAmountDESO(amount);
+    }
   }
 
   auctionTotal: number;
@@ -90,9 +107,10 @@ export class CreateNftAuctionModalComponent {
     );
   }
 
-  toggleSelectAll(val: boolean) {
+  toggleSelectAll() {
+    this.selectAll = !this.selectAll;
     this.mySerialNumbersNotForSale().forEach(
-      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = val)
+      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = this.selectAll)
     );
   }
 

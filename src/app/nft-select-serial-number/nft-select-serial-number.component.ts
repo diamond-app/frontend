@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, NFTEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
@@ -9,14 +9,15 @@ import { ToastrService } from "ngx-toastr";
   selector: "nft-select-serial-number",
   templateUrl: "./nft-select-serial-number.component.html",
 })
-export class NftSelectSerialNumberComponent implements OnInit {
+export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   static PAGE_SIZE = 50;
   static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = false;
   static PADDING = 0.5;
 
   @Input() serialNumbers: NFTEntryResponse[];
-  @Input() showBuyNowButton: boolean = false;
+  // Which columns should be included. The string value determines what the column should be labeled
+  @Input() columns: { high?: string; min?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
   @Input() postHashHex: string;
   @Output() serialNumberSelected = new EventEmitter<NFTEntryResponse>();
   @Output() closeModal = new EventEmitter<any>();
@@ -41,6 +42,20 @@ export class NftSelectSerialNumberComponent implements OnInit {
     this.updateBidSort(this.SN_FIELD);
   }
 
+  // Update data when serialNumbers input changes
+  ngOnChanges() {
+    this.sortByOrder = this.sortByOrder === "desc" ? "asc" : "desc";
+    this.updateBidSort(this.SN_FIELD);
+  }
+
+  includeColumn(columnKey: string) {
+    return columnKey in this.columns;
+  }
+
+  columnCount() {
+    return Object.keys(this.columns).length;
+  }
+
   selectSerialNumber(idx: number) {
     if (this.buyingNow) {
       return;
@@ -57,42 +72,6 @@ export class NftSelectSerialNumberComponent implements OnInit {
     }
     this.sortByField = sortField;
     this.sortedSerialNumbers = _.orderBy(this.serialNumbers, [this.sortByField], [this.sortByOrder]);
-  }
-
-  buyNow(nft: NFTEntryResponse, event: Event) {
-    if (!nft.IsBuyNow || this.buyingNow) {
-      return;
-    }
-    debugger;
-    event.stopPropagation();
-    this.buyingNow = true;
-    this.backendApi
-      .CreateNFTBid(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.postHashHex,
-        nft.SerialNumber,
-        nft.MinBidAmountNanos,
-        this.globalVars.defaultFeeRateNanosPerKB
-      )
-      .subscribe(
-        (res) => {
-          if (!this.globalVars.isMobile()) {
-            // Hide this modal and open the next one.
-            this.closeModal.emit("nft purchased");
-          } else {
-            this.location.back();
-          }
-          this.showToast(nft.SerialNumber);
-        },
-        (err) => {
-          console.error(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
-        }
-      )
-      .add(() => {
-        this.buyingNow = false;
-      });
   }
 
   showToast(serialNumber: number): void {

@@ -548,17 +548,11 @@
         </span>
         <div class="nft-bid-btn">
           <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid && !acceptNFT">
-            <span class="d-flex align-items-center">
+            <span class="d-flex align-items-center justify-content-center">
               <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              Place a bid
+              Purchase
             </span>
           </button>
-<!--          <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="buyNow($event)" *ngIf="showBuyNow && !acceptNFT">-->
-<!--            <span class="d-flex align-items-center">-->
-<!--              <i-feather name="dollar-sign" class="fs-0px"></i-feather>-->
-<!--              Buy Now-->
-<!--            </span>-->
-<!--          </button>-->
           <button
             style="height: 32px"
             [ngClass]="{ 'mt-15px': isQuotedContent }"

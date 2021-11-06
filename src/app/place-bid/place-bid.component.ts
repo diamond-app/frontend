@@ -30,12 +30,14 @@ export class PlaceBidComponent implements OnInit {
   availableCount: number;
   availableSerialNumbers: NFTEntryResponse[];
   biddableSerialNumbers: NFTEntryResponse[];
+  serialNumbersForTab: NFTEntryResponse[];
   highBid: number = null;
   lowBid: number = null;
   loading = true;
   isSelectingSerialNumber = true;
   saveSelectionDisabled = false;
   showSelectedSerialNumbers = false;
+  showBuyNowConfirmation = false;
   placingBids: boolean = false;
   errors: string[] = [];
   SN_FIELD = "SerialNumber";
@@ -45,6 +47,12 @@ export class PlaceBidComponent implements OnInit {
   sortByOrder: "desc" | "asc" = "asc";
   minBidCurrency: string = "USD";
   minBidInput: number = 0;
+  BID_TAB = "Bid";
+  BUY_TAB = "Buy Now";
+  tabs = [this.BID_TAB, this.BUY_TAB];
+  activeTab = this.BID_TAB;
+  showTabs = false;
+  serialNumberSelectColumns: { high?: string; min?: string };
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -73,8 +81,22 @@ export class PlaceBidComponent implements OnInit {
           [this.sortByField],
           [this.sortByOrder]
         );
+        const hasAuctionNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: false }).length > 0;
+        const hasBuyNowNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
+        // Only show tabs if there are both buy now and auction SNs
+        this.showTabs = hasAuctionNFTs && hasBuyNowNFTs;
+        // If there are only Buy Now SNs available for purchase, set the tab to buy now, otherwise default to auctions
+        this.activeTab = hasBuyNowNFTs && !hasAuctionNFTs ? this.BUY_TAB : this.BID_TAB;
+        this.tabClicked(this.activeTab);
       })
       .add(() => (this.loading = false));
+  }
+
+  tabClicked(tabName: string) {
+    this.activeTab = tabName;
+    this.serialNumberSelectColumns =
+      this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount" } : { min: "Buy Now Price" };
+    this.serialNumbersForTab = _.filter(this.biddableSerialNumbers, { IsBuyNow: tabName === this.BUY_TAB });
   }
 
   updateBidAmountUSD(deSoAmount) {
@@ -164,17 +186,24 @@ export class PlaceBidComponent implements OnInit {
   saveSelection(): void {
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
-      this.showSelectedSerialNumbers = true;
-      this.changeTitle.emit("Set your bid");
       this.highBid = this.selectedSerialNumber.HighestBidAmountNanos;
       this.lowBid = this.selectedSerialNumber.LowestBidAmountNanos;
-      this.setErrors();
+      if (this.activeTab === this.BID_TAB) {
+        this.showSelectedSerialNumbers = true;
+        this.changeTitle.emit("Set your bid");
+        this.setErrors();
+      } else {
+        this.showBuyNowConfirmation = true;
+        this.changeTitle.emit("Confirm your purchase");
+        this.setErrors();
+      }
     }
   }
 
   goBackToSerialSelection(): void {
     this.isSelectingSerialNumber = true;
     this.showSelectedSerialNumbers = false;
+    this.showBuyNowConfirmation = false;
     this.changeTitle.emit("Choose an edition");
     this.highBid = null;
     this.lowBid = null;

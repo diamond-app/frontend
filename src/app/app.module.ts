@@ -195,6 +195,7 @@ import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-n
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/buy-now-confirmation.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 
@@ -334,6 +335,7 @@ export function playerFactory() {
     PlaceBidComponent,
     PlaceBidModalComponent,
     PlaceBidPageComponent,
+    BuyNowConfirmationComponent,
     NftSoldModalComponent,
     NftModalHeaderComponent,
     CloseNftAuctionModalComponent,
