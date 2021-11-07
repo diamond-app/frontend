@@ -10,6 +10,7 @@ export class LeftBarButtonComponent {
   @Input() link: string;
   @Input() buttonLabel: string;
   @Input() hasNotifications = false;
+  @Input() notificationType: "messages" | "notifications";
   @Input() isUnread = false;
   @Input() queryParams = null;
   @Input() iconName: string;
