@@ -201,7 +201,7 @@ export class BuyDeSoEthComponent implements OnInit {
       return;
     }
 
-    let confirmBuyDESOString = sprintf(Messages.CONFIRM_BUY_DESO, this.ethToExchange, this.desoToBuy);
+    let confirmBuyDESOString = sprintf(Messages.CONFIRM_BUY_DESO, fromWei(this.weiToExchange), this.desoToBuy);
 
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
