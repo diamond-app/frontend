@@ -2,7 +2,20 @@
   class="d-flex flex-column align-items-center justify-content-center loading-container"
   [ngStyle]="{ height: getHeight() }"
 >
-  <img class="fc-secondary spinner-color" src="../../assets/diamond/spinner3.svg" height="100px" width="100px"/>
+  <img
+    *ngIf="!isDark"
+    class="fc-secondary spinner-color"
+    src="../../assets/diamond/spinner-light.svg"
+    height="100px"
+    width="100px"
+  />
+  <img
+    *ngIf="isDark"
+    class="fc-secondary spinner-color"
+    src="../../assets/diamond/spinner-dark.svg"
+    height="100px"
+    width="100px"
+  />
   <div class="mt-12px fc-secondary">
     <div class="fc-secondary fs-24px text-align-center">{{ titleLoadingText }}</div>
     <div *ngIf="subtitleLoadingText">
