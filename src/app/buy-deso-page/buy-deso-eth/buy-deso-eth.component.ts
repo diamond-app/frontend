@@ -186,12 +186,12 @@ export class BuyDeSoEthComponent implements OnInit {
       return;
     }
 
-    if (this.ethToExchange > this.ethBalance) {
+    if (this.weiToExchange.gt(this.weiBalance)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_BALANCE);
       return;
     }
 
-    if (this.ethToExchange < this.ethFeeEstimate) {
+    if (this.weiToExchange.lt(this.weiFeeEstimate)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_FEES);
       return;
     }
@@ -295,56 +295,6 @@ export class BuyDeSoEthComponent implements OnInit {
   constructLegacyTransactionOld(): Promise<SignedTransaction<TransactionType>> {
     return this.generateSignedTransaction<Transaction>(Transaction);
   }
-
-  // constructFeeMarketTransaction(): Promise<{ signedTx: FeeMarketEIP1559TxData; toSign: string[] }> {
-  //   return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
-  //     ([transactionCount, fees]) => {
-  //       const nonce = toHex(transactionCount);
-  //       // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
-  //       let value = Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18);
-  //       let remainder =
-  //         fees.maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer + value - this.ethBalance * 1e18;
-  //       if (remainder > 0) {
-  //         value = value - remainder;
-  //       }
-  //       let txData: FeeMarketEIP1559TxData = {
-  //         nonce: nonce,
-  //         to: this.globalVars.buyETHAddress,
-  //         gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-  //         maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
-  //         maxFeePerGas: fees.maxFeePerGas,
-  //         // need to truncate to 18 decimal places.
-  //         value: toHex(value),
-  //         chainId: toHex(this.getChain()),
-  //         accessList: [],
-  //       };
-  //       const options = { common: this.common };
-  //       // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
-  //       let tx = feeMarketTransaction.fromTxData(txData, options);
-  //       const toSign = [tx.getMessageToSign(true).toString("hex")];
-  //       // Have identity generate a signature for this transaction.
-  //       return this.identityService
-  //         .signETH({
-  //           ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
-  //           unsignedHashes: toSign,
-  //         })
-  //         .toPromise()
-  //         .then((res) => {
-  //           // Get the signature and merge it into the TxData defined above.
-  //           const signature: { s: any; r: any; v: number | null } = res.signatures[0];
-  //           const signedTxData: FeeMarketEIP1559TxData = {
-  //             ...txData,
-  //             ...signature,
-  //           };
-  //           // Construct and serialize the transaction.
-  //           return {
-  //             signedTx: FeeMarketEIP1559Transaction.fromTxData(signedTxData, options),
-  //             toSign,
-  //           };
-  //         });
-  //     }
-  //   );
-  // }
 
   // generateSignedTransaction is a generic function that given any type of Transaction will construct an unsigned
   // transaction with the appropriate transaction data and sign it using identity.
