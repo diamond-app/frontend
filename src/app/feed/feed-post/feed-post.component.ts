@@ -618,7 +618,7 @@ export class FeedPostComponent implements OnInit {
       });
       const onHideEvent = modalDetails.onHide;
       onHideEvent.subscribe((response) => {
-        if (response === "bid placed") {
+        if (response === "bid placed" || response === "nft purchased") {
           this.getNFTEntries();
           this.nftBidPlaced.emit();
         }

@@ -230,7 +230,9 @@ export class NotificationsListComponent implements OnInit {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
           ccMeta.DeSoToSellNanos,
           2
-        )}</b> worth of <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>!`;
+        )}</b> worth of <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${
+          userProfile.Username
+        }</a>!`;
         return result;
       } else if (ccMeta.OperationType === "sell") {
         // TODO: We cannot compute the USD value of the sale without saving the amount of DeSo
@@ -396,14 +398,20 @@ export class NotificationsListComponent implements OnInit {
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       const truncatedPost = this.truncatePost(postHash);
       const postText = `<i class="fc-muted">${truncatedPost}</i>`;
-      result.action = nftBidMeta.BidAmountNanos
-        ? `${actorName} bid ${this.globalVars.nanosToDeSo(
-            nftBidMeta.BidAmountNanos,
-            2
-          )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
-            nftBidMeta.SerialNumber
-          } ${postText}`
-        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
+      if (nftBidMeta.IsBuyNowBid) {
+        result.action = `${actorName} purchased serial number ${
+          nftBidMeta.SerialNumber
+        } for ${this.globalVars.nanosToDeSo(nftBidMeta.BidAmountNanos)} DESO ${postText}`;
+      } else {
+        result.action = nftBidMeta.BidAmountNanos
+          ? `${actorName} bid ${this.globalVars.nanosToDeSo(
+              nftBidMeta.BidAmountNanos,
+              2
+            )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+              nftBidMeta.SerialNumber
+            } ${postText}`
+          : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
+      }
       result.icon = "coin";
       result.category = "nft";
       result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";

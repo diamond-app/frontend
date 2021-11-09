@@ -77,6 +77,10 @@ export class MintNftComponent {
     return this.minBidAmountUSD < 0 || this.minBidAmountDESO < 0;
   }
 
+  hasUnreasonablePurchasePrice(): boolean {
+    return this.isBuyNow && (this.minBidAmountDESO === 0 || this.minBidAmountUSD === 0);
+  }
+
   hasUnreasonableAuctionType() {
     return this.includeUnlockable && this.isBuyNow;
   }
@@ -112,6 +116,7 @@ export class MintNftComponent {
       this.hasUnreasonableRoyalties() ||
       this.hasUnreasonableNumCopies() ||
       this.hasUnreasonableMinBidAmount() ||
+      this.hasUnreasonablePurchasePrice() ||
       this.hasUnreasonableAuctionType()
     ) {
       // It should not be possible to trigger this since the button is disabled w/these conditions.

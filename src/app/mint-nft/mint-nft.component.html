@@ -205,7 +205,7 @@
 </div>
 <button
   [disabled]="
-    hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting
+    hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || hasUnreasonablePurchasePrice() || minting
   "
   (click)="validateNFTMint()"
   class="mint-nft__create-btn"
