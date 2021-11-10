@@ -21,11 +21,19 @@
       [queryParams]="_queryParamsForLink(link)"
       queryParamsHandling="merge"
     >
-      <i-feather *ngIf="iconName" name="{{ iconName }}"></i-feather>
+      <span>
+        <i-feather *ngIf="iconName" name="{{ iconName }}"></i-feather>
+        <span *ngIf="isUnread"></span>
+      </span>
       {{ buttonLabel }}
     </a>
     <div
-      *ngIf="hasNotifications && globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
+      *ngIf="
+        hasNotifications &&
+        globalVars.messageResponse &&
+        globalVars.messageResponse.NumberOfUnreadThreads != 0 &&
+        notificationType === 'messages'
+      "
       class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
       style="top: 2px; padding: 0px"
     >
@@ -34,6 +42,13 @@
           ? "(999+)"
           : "( " + globalVars.messageResponse.NumberOfUnreadThreads + " )"
       }}
+    </div>
+    <div
+      *ngIf="hasNotifications && globalVars.unreadNotifications != 0 && notificationType === 'notifications'"
+      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      style="top: 2px; padding: 0px"
+    >
+      {{ globalVars.unreadNotifications > 99 ? "(99+)" : "( " + globalVars.unreadNotifications + " )" }}
     </div>
   </div>
 </div>

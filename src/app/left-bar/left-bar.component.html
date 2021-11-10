@@ -28,10 +28,12 @@
         <div class="left-desktop-selector" *ngIf="!inTutorial">
           <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
           <left-bar-button
+            [hasNotifications]="true"
+            [notificationType]="'notifications'"
             [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
             [buttonLabel]="'Notifications'"
-            [isUnread]="globalVars.hasUnreadNotifications"
-            [iconName]="'bell'"
+            [isUnread]="globalVars.unreadNotifications > 0"
+            [iconName]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           ></left-bar-button>
           <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Buy Creators'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
@@ -41,9 +43,14 @@
           ></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"
+            [notificationType]="'messages'"
             [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
             [buttonLabel]="'Messages'"
-            [iconName]="'message-square'"
+            [iconName]="
+              globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads > 0
+                ? 'message-notification'
+                : 'message-square'
+            "
           ></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"

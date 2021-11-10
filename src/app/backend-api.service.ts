@@ -39,6 +39,8 @@ export class BackendRoutes {
   static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
   static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
   static RoutePathGetNotifications = "/api/v0/get-notifications";
+  static RoutePathGetUnreadNotificationsCount = "/api/v0/get-unread-notifications-count";
+  static RoutePathSetNotificationMetadata = "/api/v0/set-notification-metadata";
   static RoutePathGetAppState = "/api/v0/get-app-state";
   static RoutePathGetSinglePost = "/api/v0/get-single-post";
   static RoutePathSendPhoneNumberVerificationText = "/api/v0/send-phone-number-verification-text";
@@ -1644,6 +1646,27 @@ export class BackendApiService {
       FetchStartIndex,
       NumToFetch,
       FilteredOutNotificationCategories
+    });
+  }
+
+  SetNotificationsMetadata(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    LastSeenIndex: number,
+    LastUnreadNotificationIndex: number,
+    UnreadNotifications: number,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetNotificationMetadata, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+      LastSeenIndex,
+      LastUnreadNotificationIndex,
+      UnreadNotifications,
+    });
+  }
+
+  GetUnreadNotificationsCount(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
+      PublicKeyBase58Check
     });
   }
 

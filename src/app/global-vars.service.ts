@@ -19,6 +19,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
@@ -232,6 +233,9 @@ export class GlobalVarsService {
   // Whether the user will see the jumio prompt on the top of the feed.
   showFreeMoneyBanner: boolean = true;
 
+  // How many unread notifications the user has
+  unreadNotifications: number = 0;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -253,6 +257,36 @@ export class GlobalVarsService {
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
     this.LoadInitialMessages();
+  }
+
+  GetUnreadNotifications() {
+    if (this.loggedInUser) {
+      this.backendApi
+        .GetUnreadNotificationsCount(
+          this.localNode,
+          this.loggedInUser.PublicKeyBase58Check
+        )
+        .toPromise()
+        .then(
+          (res) => {
+            this.unreadNotifications = res.NotificationsCount;
+            if (res.UpdateMetadata) {
+              this.backendApi
+                .SetNotificationsMetadata(
+                  this.localNode,
+                  this.loggedInUser.PublicKeyBase58Check,
+                  -1,
+                  res.LastUnreadNotificationIndex,
+                  res.NotificationsCount
+                )
+                .toPromise();
+            }
+          },
+          (err) => {
+            console.error(this.backendApi.stringifyError(err));
+          }
+        );
+    }
   }
 
   SetMessagesFilter(tabName: any) {
@@ -1101,7 +1135,8 @@ export class GlobalVarsService {
       pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+      const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
+      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
