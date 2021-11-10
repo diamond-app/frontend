@@ -32,6 +32,7 @@ header @html Content-Security-Policy "
     api.bitclout.com
     bithunt.bitclout.com
     pulse.bitclout.com
+    https://altumbase.com
     api.bitpop.dev
     localhost:*
     explorer.bitclout.com:*
