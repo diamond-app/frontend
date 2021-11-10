@@ -48,6 +48,8 @@ export class NotificationsListComponent implements OnInit {
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
     this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
+    // Set this here, rather than calling a whole updateEverything call
+    this.globalVars.unreadNotifications = 0;
   }
 
   updateSettings(settings) {
@@ -88,6 +90,21 @@ export class NotificationsListComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
+          // Only update the notifications metadata if loading the first page
+          // If we're reading the notifications, we set unread notifications to 0,
+          // and set the last unread notification index equal to the last read notification index
+          if (fetchStartIndex === -1) {
+            this.backendApi
+              .SetNotificationsMetadata(
+                this.globalVars.localNode,
+                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                res.LastSeenIndex,
+                res.LastSeenIndex,
+                0
+              )
+              .toPromise();
+          }
+
           // add all profiles and posts to our cache maps
           Object.assign(this.profileMap, res.ProfilesByPublicKey);
           Object.assign(this.postMap, res.PostsByHash);

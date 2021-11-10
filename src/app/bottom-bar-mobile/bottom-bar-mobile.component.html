@@ -16,8 +16,16 @@
       [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
-        <i-feather name="bell" class="feather-medium"></i-feather>
-        <div class="mt-5px">Notifications</div>
+        <i-feather
+          [name]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
+          class="feather-medium"
+        ></i-feather>
+        <div class="mt-5px">
+          Notifications
+          <span *ngIf="globalVars.unreadNotifications > 0">
+            ({{ globalVars.unreadNotifications > 99 ? "99+" : globalVars.unreadNotifications }})
+          </span>
+        </div>
       </div>
     </bottom-bar-mobile-tab>
 
@@ -27,12 +35,14 @@
       [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
-        <i-feather name="message-square" class="feather-medium">
-        </i-feather>
-        <div
-          *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
-          class="bottom-bar__message-notifications-bubble roboto-mono"
-        ></div>
+        <i-feather
+          [name]="
+            globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0
+              ? 'message-notification'
+              : 'message-square'
+          "
+          class="feather-medium"
+        ></i-feather>
         <div class="mt-5px">
           Messages
           <span *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0">
