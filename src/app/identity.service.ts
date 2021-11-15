@@ -158,6 +158,12 @@ export class IdentityService {
     return this.send("info", {});
   }
 
+  launchPhoneNumberVerification(public_key: string): Observable<{ phoneNumberSuccess: boolean }> {
+    return this.launch("/verify-phone-number", {
+      public_key,
+    });
+  }
+
   // Helpers
 
   identityServiceParamsForKey(publicKey: string) {

@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
+<div *ngIf="loggedInUser.CanCreateProfile; else elseBlock">
   <div class="d-flex flex-column">
     <div style="flex-grow: 1" id="update-profile-tutorial-holder">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
@@ -153,7 +153,7 @@
               >
               <span class="update-profile__cc-percent-symbol"><i-feather name="percent"></i-feather></span>
               <div
-                *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
+                *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
                 * You must purchase your own coin before lowering your founder reward.

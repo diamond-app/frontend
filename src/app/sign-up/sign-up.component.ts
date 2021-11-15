@@ -1,9 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
-import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
+import { BackendApiService } from "../backend-api.service";
 import { FeedComponent } from "../feed/feed.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
@@ -16,12 +14,8 @@ import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-
 export class SignUpComponent {
   stepNum: number;
   loading: boolean = false;
-  countryISO = CountryISO;
   emailAddress = "";
   invalidEmailEntered = false;
-  phoneForm = new FormGroup({
-    phone: new FormControl(undefined, [Validators.required]),
-  });
   storingEmailAndPhone = false;
   showPhoneNumberVerifiedContent = false;
 
