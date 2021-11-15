@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Component, OnInit, Input, OnChanges, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
@@ -25,7 +25,7 @@ export type ProfileUpdateErrors = {
   templateUrl: "./feed-create-post-modal.component.html",
   styleUrls: ["./feed-create-post-modal.component.scss"],
 })
-export class FeedCreatePostModalComponent {
+export class FeedCreatePostModalComponent implements AfterViewInit {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
 
@@ -57,5 +57,13 @@ export class FeedCreatePostModalComponent {
       ["/" + this.globalVars.RouteNames.USER_PREFIX, postEntryResponse.ProfileEntryResponse.Username],
       { queryParamsHandling: "merge" }
     );
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const searchElement = document.querySelector("feed-create-post-modal .feed-create-post__textarea");
+      // @ts-ignore
+      searchElement.focus();
+    }, 0);
   }
 }
