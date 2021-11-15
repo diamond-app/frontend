@@ -1,28 +1,28 @@
 {
-  "name": "deso",
-  "short_name": "deso",
+  "name": "Diamond",
+  "short_name": "Diamond",
   "description": "The crypto social network",
   "icons": [
     {
-      "src": "/assets/bitclout/logo-192.png",
+      "src": "/assets/diamond/logo-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "/assets/bitclout/logo-512.png",
+      "src": "/assets/diamond/logo-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
     },
     {
-      "src": "/assets/bitclout/logo-192.png",
+      "src": "/assets/diamond/logo-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "/assets/bitclout/logo-512.png",
+      "src": "/assets/diamond/logo-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
