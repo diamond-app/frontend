@@ -1,12 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
-import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
-import { FeedComponent } from "../feed/feed.component";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { shuffle, isNil } from "lodash";
+import { AppComponent } from "../app.component";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "sign-up",
@@ -16,132 +14,225 @@ import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-
 export class SignUpComponent {
   stepNum: number;
   loading: boolean = false;
-  countryISO = CountryISO;
-  emailAddress = "";
-  invalidEmailEntered = false;
-  phoneForm = new FormGroup({
-    phone: new FormControl(undefined, [Validators.required]),
-  });
-  storingEmailAndPhone = false;
-  showPhoneNumberVerifiedContent = false;
+  followCreatorsToDisplay = 100;
+  creatorsToFollow = [];
+  followCreatorThreshold = 5;
+  creatorsFollowedCount = 0;
+  creatorsFollowed: string[] = [];
+  followTransactionIndex: number = 0;
+  hoveredSection = 0;
+  processingTransactions = false;
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
+    private appComponent: AppComponent,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService,
-    private modalService: BsModalService
+    private backendApi: BackendApiService
   ) {
-    this.route.queryParams.subscribe((queryParams) => {
-      this.stepNum = 1;
-      if (queryParams.stepNum) {
-        this.stepNum = parseInt(queryParams.stepNum);
-      }
-    });
     this.globalVars.isLeftBarMobileOpen = false;
-  }
-
-  ////// NOTIFICATIONS STEP BUTTONS ///////
-
-  notificationsStepSkipped(): void {
-    this.globalVars.logEvent("account : create : notifications-step : skip");
-    this.nextPage();
-  }
-
-  notificationsStepNext() {
-    this.validateEmail();
-
-    if (this.invalidEmailEntered || this.emailAddress.length <= 0) {
-      return;
+    this.globalVars.initializeOnboardingSettings();
+    this.setStep();
+    if (this.stepNum === 2) {
+      this.setupFollowsPage();
     }
-
-    this.globalVars.logEvent("account : create : notifications-step");
-    this.storeEmail();
+    this.creatorsFollowed = Object.keys(this.globalVars.onboardingCreatorsToFollow);
+    this.creatorsFollowedCount = Object.keys(this.globalVars.onboardingCreatorsToFollow).length;
   }
 
-  ////// OTHER ///////
-
-  nextPage() {
-    this.stepNum += 1;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { stepNum: this.stepNum },
-      queryParamsHandling: "merge",
-    });
-  }
-
-  prevPage() {
-    this.stepNum -= 1;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { stepNum: this.stepNum },
-      queryParamsHandling: "merge",
-    });
-  }
-
-  validateEmail() {
-    if (this.emailAddress.length > 0 && this.globalVars.emailRegExp.test(this.emailAddress)) {
-      this.invalidEmailEntered = false;
+  setStep() {
+    // If user has completed onboarding, redirect to follow feed
+    if (!isNil(this.globalVars.loggedInUser?.ProfileEntryResponse?.Username)) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { feedTab: "Following" },
+        queryParamsHandling: "merge",
+      });
+    } else if (isNil(this.globalVars.newProfile)) {
+      this.stepNum = 1;
+    } else if (this.globalVars.onboardingCreatorsToFollow === {}) {
+      this.stepNum = 2;
     } else {
-      this.invalidEmailEntered = true;
+      this.stepNum = 3;
     }
   }
 
-  backToPreviousSignupStepClicked() {
-    this.globalVars.logEvent("account : create : create-phone-number-verification : back");
-    this.prevPage();
+  completeUpdateProfile() {
+    this.stepNum = 2;
+    this.globalVars.setOnboardingProfile(this.globalVars.newProfile);
+    this.globalVars.logEvent("onboarding : profile : update");
+    this.setupFollowsPage();
   }
 
-  phoneNumberVerified() {
-    this.showPhoneNumberVerifiedContent = true;
-    this.nextPage();
+  completeFollowCreators() {
+    this.globalVars.logEvent("onboarding : creators : follow");
+    this.globalVars.setOnboardingCreatorsToFollow(this.globalVars.onboardingCreatorsToFollow);
+    this.stepNum = 3;
   }
 
-  skipButtonClickedOnStarterDeSoStep() {
-    this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
-    this.nextPage();
+  processTransactions() {
+    this.processingTransactions = true;
+    this.globalVars.logEvent("onboarding : complete");
+    this.updateProfileTransaction();
   }
 
-  storeEmail() {
-    this.storingEmailAndPhone = true;
+  updateProfileTransaction() {
     this.backendApi
-      .UpdateUserGlobalMetadata(
+      .UpdateProfile(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-        this.emailAddress /*EmailAddress*/,
-        null /*MessageReadStateUpdatesByContact*/
+        "" /*ProfilePublicKeyBase58Check*/,
+        // Start params
+        this.globalVars.newProfile.username /*NewUsername*/,
+        this.globalVars.newProfile.profileDescription /*NewDescription*/,
+        this.globalVars.newProfile.profilePicInput /*NewProfilePic*/,
+        100 * 100 /*NewCreatorBasisPoints*/,
+        1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
+        false /*IsHidden*/,
+        // End params
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
       )
       .subscribe(
-        (res) => {},
-        (err) => {
-          // TODO: shouldn't we ask the user to try again?
-          // TODO: rollbar
-          console.log(err);
-        }
+        (res) => {
+          this.globalVars.waitForTransaction(
+            res.TxnHashHex,
+            this.updateProfileSuccess,
+            this.updateProfileFailure,
+            this
+          );
+        },
+        (error) => {
+          console.log("error");
+          console.log(error);
+          this.updateProfileFailure(this, error?.error?.error);
+        });
+  }
+
+  followCreatorTransaction() {
+    const followedPubKeyBase58Check = this.creatorsFollowed[this.followTransactionIndex];
+    this.backendApi
+      .CreateFollowTxn(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        followedPubKeyBase58Check,
+        false /*isUnfollow*/,
+        this.globalVars.feeRateDeSoPerKB * 1e9
       )
-      .add(() => {
-        this.storingEmailAndPhone = false;
-        this.nextPage();
+      .subscribe(
+        (res) => {
+          this.globalVars.waitForTransaction(res.TxnHashHex, this.followCreatorNext, this.followCreatorNext, this);
+        },
+        (error) => {
+          this.followCreatorNext(this);
+        }
+      );
+  }
+
+  followCreatorNext(comp) {
+    // If there are still creators that haven't been followed yet, follow them
+    if (comp.followTransactionIndex + 1 < comp.creatorsFollowed.length) {
+      comp.followTransactionIndex += 1;
+      // Skip users the profile already follows
+      if (
+        !isNil(comp.globalVars.loggedInUser) &&
+        !comp.globalVars.loggedInUser?.PublicKeysBase58CheckFollowedByUser.includes(
+          comp.creatorsFollowed[comp.followTransactionIndex]
+        )
+      ) {
+        comp.followCreatorTransaction();
+      } else {
+        comp.followCreatorNext(comp);
+      }
+    } else {
+      comp.finishOnboarding();
+    }
+  }
+
+  updateProfileSuccess(comp) {
+    if (comp.creatorsFollowed.length > 0) {
+      comp.followTransactionIndex = 0;
+      comp.followCreatorTransaction();
+    }
+  }
+
+  updateProfileFailure(comp, error: string = null) {
+    let message =
+      "Uh oh! We encountered an error saving your profile. Please input your information again and continue.";
+    if (!isNil(error)) {
+      message = message + " Error details: " + error;
+    }
+    comp.backendApi.RemoveStorage("newOnboardingProfile");
+    comp.globalVars.newProfile = null;
+    comp.stepNum = 1;
+    Swal.fire({
+      target: comp.globalVars.getTargetComponentSelector(),
+      title: "Profile Update Failed",
+      html: message,
+      showConfirmButton: true,
+      showCancelButton: false,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Ok",
+      cancelButtonText: "Skip",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  }
+
+  finishOnboarding() {
+    this.processingTransactions = false;
+    this.globalVars.removeOnboardingSettings();
+    this.globalVars.updateEverything().add(() => {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { feedTab: "Following" },
+        queryParamsHandling: "merge",
       });
-  }
-
-  buyDeSoClicked(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout");
-    this.openBuyDeSoModal();
-  }
-
-  buyDeSoSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-deso : skip");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParams: { stepNum: null, feedTab: FeedComponent.HOT_TAB },
-      queryParamsHandling: "merge",
     });
   }
 
-  openBuyDeSoModal() {
-    const modal = this.modalService.show(BuyDesoModalComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
-      backdrop: "static",
-    });
+  setupFollowsPage() {
+    this.loading = true;
+    this.getCreatorsToFollow();
+  }
+
+  getCreatorsToFollow() {
+    this.backendApi
+      .GetTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.followCreatorsToDisplay
+      )
+      .subscribe(
+        (res: {
+          WellKnownProfileEntryResponses: ProfileEntryResponse[];
+          UpAndComingProfileEntryResponses: ProfileEntryResponse[];
+        }) => {
+          // Do not let users select themselves in the "Invest In Others" step.
+          if (res.WellKnownProfileEntryResponses?.length || res.WellKnownProfileEntryResponses?.length) {
+            this.creatorsToFollow = shuffle(
+              res.WellKnownProfileEntryResponses.concat(res.UpAndComingProfileEntryResponses).filter(
+                (profile) =>
+                  !isNil(profile) && profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+              )
+            );
+          }
+          this.loading = false;
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  followCreator(isFollow: boolean, publicKeyBase58Check: string) {
+    if (isFollow && !(publicKeyBase58Check in this.globalVars.onboardingCreatorsToFollow)) {
+      this.globalVars.onboardingCreatorsToFollow[publicKeyBase58Check] = true;
+      this.creatorsFollowedCount += 1;
+    } else {
+      delete this.globalVars.onboardingCreatorsToFollow[publicKeyBase58Check];
+      this.creatorsFollowedCount -= 1;
+    }
   }
 }

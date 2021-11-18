@@ -26,11 +26,21 @@ export class SimpleProfileCardComponent implements OnInit {
   // Whether the "buy" button should wiggle to prompt the user to click it
   @Input() tutorialWiggle = false;
   @Output() exitTutorial = new EventEmitter<any>();
+  @Output() onboardingFollowCreator = new EventEmitter<boolean>();
+  tutorialFollowing = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.inTutorial) {
+      this.tutorialFollowing = this.profile.PublicKeyBase58Check in this.globalVars.onboardingCreatorsToFollow
+    }
+  }
 
+  onboardingFollow() {
+    this.tutorialFollowing = !this.tutorialFollowing;
+    this.onboardingFollowCreator.emit(this.tutorialFollowing);
+  }
   counter(num: number) {
     return Array(num);
   }

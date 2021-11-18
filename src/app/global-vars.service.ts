@@ -236,6 +236,15 @@ export class GlobalVarsService {
   // How many unread notifications the user has
   unreadNotifications: number = 0;
 
+  // Variables that are stored while a user is in between setting up their profile and waiting for the jumio verification callback
+  newProfile: {
+    username: string;
+    profilePicInput: string;
+    profileEmail: string;
+    profileDescription: string;
+  };
+  onboardingCreatorsToFollow: { [key: string]: boolean } = {};
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -350,6 +359,32 @@ export class GlobalVarsService {
       result.isSameUserAsBefore = isSameUserAsBefore;
       observer.next(result);
     });
+  }
+
+  initializeOnboardingSettings() {
+    const newProfile = this.backendApi.GetStorage("newOnboardingProfile");
+    const newOnboardingCreatorsToFollow = this.backendApi.GetStorage("newOnboardingCreatorsToFollow");
+    if (!isNil(newProfile)) {
+      this.newProfile = newProfile;
+    }
+    if (!isNil(newOnboardingCreatorsToFollow)) {
+      this.onboardingCreatorsToFollow = newOnboardingCreatorsToFollow;
+    }
+  }
+
+  removeOnboardingSettings() {
+    this.backendApi.RemoveStorage("newOnboardingProfile");
+    this.backendApi.RemoveStorage("newOnboardingCreatorsToFollow");
+  }
+
+  setOnboardingProfile(newOnboardingProfile) {
+    this.backendApi.SetStorage("newOnboardingProfile", newOnboardingProfile);
+    this.newProfile = newOnboardingProfile;
+  }
+
+  setOnboardingCreatorsToFollow(onboardingCreatorsToFollow) {
+    this.backendApi.SetStorage("newOnboardingCreatorsToFollow", onboardingCreatorsToFollow);
+    this.onboardingCreatorsToFollow = onboardingCreatorsToFollow;
   }
 
   initializeShowPriceSetting() {
@@ -1063,11 +1098,7 @@ export class GlobalVarsService {
 
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
-      // If this node supports phone number verification, go to step 3, else proceed to step 4.
-      const stepNum = this.showPhoneNumberVerification ? 3 : 4;
-      this.router.navigate(["/" + this.RouteNames.SIGN_UP], {
-        queryParams: { stepNum },
-      });
+      this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
     } else {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
@@ -1136,7 +1167,7 @@ export class GlobalVarsService {
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
-      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));    
+      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
@@ -1282,6 +1313,33 @@ export class GlobalVarsService {
     });
   }
 
+  jumioFailedAlert(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      title: "Identity Validation Failed",
+      html: "We're sorry, your validation failed. Would you like to validate with a phone number instead?",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Skip",
+      // User must skip or start tutorial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        // TODO: Add in identity phone number verification here
+      } else {
+        this.router.navigate(["/" + this.RouteNames.BROWSE]);
+      }
+    });
+  }
+
   skipTutorial(tutorialComponent): void {
     Swal.fire({
       target: this.getTargetComponentSelector(),
@@ -1349,15 +1407,12 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
-              this.celebrate();
-              if (user.TutorialStatus === TutorialStatus.EMPTY) {
-                this.startTutorialAlert();
-              }
               clearInterval(this.jumioInterval);
               return;
             }
             // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
             if (res.JumioReturned) {
+
               clearInterval(this.jumioInterval);
             }
           },
@@ -1398,6 +1453,48 @@ export class GlobalVarsService {
           this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
         }
       });
+    }
+  }
+
+  waitForTransaction(
+    waitTxn: string = "",
+    successCallback: (comp: any) => void = () => {},
+    errorCallback: (comp: any) => void = () => {},
+    comp: any = ""
+  ) {
+    // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
+    // There is a success and error callback so that the caller gets feedback on the polling.
+    if (waitTxn !== "") {
+      let attempts = 0;
+      let numTries = 160;
+      let timeoutMillis = 750;
+      // Set an interval to repeat
+      let interval = setInterval(() => {
+        if (attempts >= numTries) {
+          errorCallback(comp);
+          clearInterval(interval);
+        }
+        this.backendApi
+          .GetTxn(this.localNode, waitTxn)
+          .subscribe(
+            (res: any) => {
+              if (!res.TxnFound) {
+                return;
+              }
+              clearInterval(interval);
+              successCallback(comp);
+            },
+            (error) => {
+              clearInterval(interval);
+              errorCallback(comp);
+            }
+          )
+          .add(() => attempts++);
+      }, timeoutMillis) as any;
+    } else {
+      if (this.pausePolling) {
+        return;
+      }
     }
   }
 }
