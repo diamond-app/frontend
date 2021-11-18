@@ -504,11 +504,11 @@ export class GlobalVarsService {
       let route = [];
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
-          route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
         case TutorialStatus.CREATE_PROFILE: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
         case TutorialStatus.FOLLOW_CREATORS: {
@@ -1307,7 +1307,7 @@ export class GlobalVarsService {
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.BUY_CREATOR]);
           }
         });
     });
@@ -1326,7 +1326,7 @@ export class GlobalVarsService {
         cancelButton: "btn btn-light no",
       },
       reverseButtons: true,
-      confirmButtonText: "Start Tutorial",
+      confirmButtonText: "Validate Via Phone Number",
       cancelButtonText: "Skip",
       // User must skip or start tutorial
       allowOutsideClick: false,

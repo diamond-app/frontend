@@ -122,6 +122,7 @@ export class SignUpComponent {
           this.globalVars.waitForTransaction(res.TxnHashHex, this.followCreatorNext, this.followCreatorNext, this);
         },
         (error) => {
+          // If the follow transaction fails, rather than disrupting the flow and making the user do something else, just ignore it and move on
           this.followCreatorNext(this);
         }
       );
