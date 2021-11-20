@@ -1412,7 +1412,7 @@ export class GlobalVarsService {
             }
             // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
             if (res.JumioReturned) {
-
+              this.jumioFailedAlert();
               clearInterval(this.jumioInterval);
             }
           },

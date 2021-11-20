@@ -47,6 +47,12 @@ export class SignUpComponent {
         queryParams: { feedTab: "Following" },
         queryParamsHandling: "merge",
       });
+    } else if (
+      // If user hasn't started Jumio or completed sms verification yet
+      this.globalVars?.loggedInUser?.BalanceNanos === 0 &&
+      !(this.globalVars.loggedInUser.JumioFinishedTime && !this.globalVars.loggedInUser.JumioReturned)
+    ) {
+      this.stepNum = 0;
     } else if (isNil(this.globalVars.newProfile)) {
       this.stepNum = 1;
     } else if (this.globalVars.onboardingCreatorsToFollow === {}) {
@@ -54,6 +60,14 @@ export class SignUpComponent {
     } else {
       this.stepNum = 3;
     }
+  }
+
+  launchJumioVerification() {
+    this.globalVars.launchJumioVerification();
+  }
+
+  launchSMSVerification() {
+    //TODO: add identity sms verification step here
   }
 
   completeUpdateProfile() {

@@ -1,6 +1,34 @@
 <app-page [inTutorial]="true">
   <div class="nft-modal-container w-100 px-15px pb-15px">
-    <div class="d-flex w-100 justify-content-between">
+    <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
+      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond!</div>
+      <div class="w-100 text-center mt-20px fs-20px fc-secondary font-weight-bold">
+        Validate your account to earn starter $DESO
+      </div>
+      <div class="w-100 text-center fs-18px mt-5px mb-30px">
+        This is the cryptocurrency that fuels the engagement on our site and allows you to invest in creators.
+      </div>
+      <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold">Choose from either option</div>
+      <div class="w-100 d-flex align-items-center flex-column">
+        <button
+          (click)="launchJumioVerification()"
+          [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
+          class="primary-button"
+        >
+          Validate with your ID
+        </button>
+        <div class="fs-16px fc-muted">To earn {{ globalVars.getFreeDESOMessage() }}</div>
+        <button
+          (click)="launchSMSVerification()"
+          [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
+          class="secondary-button mt-30px"
+        >
+          Validate via SMS
+        </button>
+        <div class="fs-16px fc-muted">To earn under $1</div>
+      </div>
+    </div>
+    <div *ngIf="stepNum !== 0" class="d-flex w-100 justify-content-between">
       <div
         [ngClass]="{ 'fc-blue': stepNum === 1, 'fc-muted': stepNum !== 1 }"
         class="d-flex align-items-center flex-column p-16px"
@@ -38,7 +66,7 @@
         <div class="text-center">Learn about Diamond</div>
       </div>
     </div>
-    <div class="w-100 border-bottom"></div>
+    <div *ngIf="stepNum !== 0" class="w-100 border-bottom"></div>
     <div *ngIf="stepNum === 1" class="mt-20px">
       <update-profile
         [loggedInUser]="globalVars.loggedInUser"
@@ -49,7 +77,7 @@
     <div *ngIf="stepNum === 2" class="mt-20px onboarding-follow-selection">
       <div *ngFor="let profile of creatorsToFollow" class="background-color-white">
         <simple-center-loader *ngIf="loading"></simple-center-loader>
-        <div *ngIf="!loading" class="p-2" style="border-bottom: 1px solid #e5e5e5;">
+        <div *ngIf="!loading" class="p-2" style="border-bottom: 1px solid #e5e5e5">
           <simple-profile-card
             [profile]="profile"
             [showTutorialBuy]="false"
@@ -120,7 +148,10 @@
         <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column">
           <div class="fc-secondary font-weight-bold fs-25px mb-10px">Invest with Creator Coins</div>
           <span class="mb-5px">Every creator has a coin associated with their profile</span>
-          <span>If you find a creator you enjoy, you can buy some shares of their creator coin and participate in their upside as they provide more value - and vice versa!</span>
+          <span>
+            If you find a creator you enjoy, you can buy some shares of their creator coin and participate in their
+            upside as they provide more value - and vice versa!
+          </span>
         </div>
       </div>
       <div
@@ -175,7 +206,8 @@
   <div *ngIf="stepNum === 3" class="w-100 flex-column align-items-center d-flex justify-content-center mt-10px">
     <div style="height: 30px" class="fs-18px fc-default mb-10px">
       <span *ngIf="globalVars.loggedInUser.BalanceNanos === 0">
-        Validating your identity <i class="fas fa-spinner fa-spin ml-5px"></i>
+        Validating your identity
+        <i class="fas fa-spinner fa-spin ml-5px"></i>
       </span>
     </div>
     <button

@@ -5180,6 +5180,21 @@ sell-nft-modal {
   }
 }
 
+.secondary-button {
+  width: 137px;
+  height: 48px;
+  background: none;
+  border-radius: 16px;
+  color: var(--highlight);
+  border: 1px solid var(--highlight);
+  &:hover {
+    color: var(--highlight);
+  }
+  &.disabled-button {
+    background: var(--highlight-secondary)
+  }
+}
+
 .narrow-button {
   width: 75px !important;
 }
