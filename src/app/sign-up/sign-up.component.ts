@@ -5,9 +5,7 @@ import { BackendApiService, ProfileEntryResponse } from "../backend-api.service"
 import { shuffle, isNil } from "lodash";
 import { AppComponent } from "../app.component";
 import Swal from "sweetalert2";
-import { FeedComponent } from "../feed/feed.component";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "sign-up",
@@ -31,7 +29,8 @@ export class SignUpComponent {
     private appComponent: AppComponent,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private identityService: IdentityService
   ) {
     this.globalVars.isLeftBarMobileOpen = false;
     this.globalVars.initializeOnboardingSettings();
@@ -66,11 +65,30 @@ export class SignUpComponent {
   }
 
   launchJumioVerification() {
-    this.globalVars.launchJumioVerification();
+    this.globalVars.logEvent("identity : jumio : launch");
+    this.identityService
+      .launch("/get-free-deso", {
+        public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        referralCode: this.globalVars.referralCode(),
+      })
+      .subscribe(() => {
+        this.globalVars.logEvent("identity : jumio : success");
+        this.globalVars.updateEverything().add(() => {
+          this.stepNum = 1;
+        });
+      });
   }
 
-  launchSMSVerification() {
-    //TODO: add identity sms verification step here
+  launchSMSVerification(): void {
+    this.identityService
+      .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
+      .subscribe((res) => {
+        if (res.phoneNumberSuccess) {
+          this.globalVars.updateEverything().add(() => {
+            this.stepNum = 1;
+          });
+        }
+      });
   }
 
   completeUpdateProfile() {

@@ -1337,9 +1337,17 @@ export class GlobalVarsService {
       allowEscapeKey: false,
     }).then((res) => {
       if (res.isConfirmed) {
-        // TODO: Add in identity phone number verification here
+        this.launchSMSValidation();
       } else {
         this.router.navigate(["/" + this.RouteNames.BROWSE]);
+      }
+    });
+  }
+
+  launchSMSValidation(): void {
+    this.identityService.launchPhoneNumberVerification(this.loggedInUser?.PublicKeyBase58Check).subscribe((res) => {
+      if (res.phoneNumberSuccess) {
+        this.updateEverything();
       }
     });
   }
