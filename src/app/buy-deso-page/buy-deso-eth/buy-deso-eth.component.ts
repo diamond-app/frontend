@@ -472,7 +472,7 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   computeWeiToBurnGivenDESONanos(amountNanos: number): BN {
-    const weiMinusFees = new BN(amountNanos).div(this.getExchangeRateAfterFee());
+    const weiMinusFees = new BN(amountNanos).mul(this.getWeiPerNanoExchangeRate());
     return weiMinusFees.add(this.weiFeeEstimate);
   }
 
@@ -481,11 +481,16 @@ export class BuyDeSoEthComponent implements OnInit {
     if (weiMinusFees.ltn(0)) {
       return new BN(0);
     }
-    return Number(fromWei(weiMinusFees)) * this.getExchangeRateAfterFee().toNumber();
+    return weiMinusFees.div(this.getWeiPerNanoExchangeRate()).toNumber();
   }
 
+  // Note this returns nanos per ETH.
   getExchangeRateAfterFee(): BN {
     return new BN(this.globalVars.nanosPerETHExchangeRate).mul(new BN(this.nodeFee()));
+  }
+
+  getWeiPerNanoExchangeRate(): BN {
+    return toWei(new BN(1)).div(this.getExchangeRateAfterFee());
   }
 
   updateDESOToBuy(newVal) {
