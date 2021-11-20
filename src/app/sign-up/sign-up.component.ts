@@ -5,6 +5,9 @@ import { BackendApiService, ProfileEntryResponse } from "../backend-api.service"
 import { shuffle, isNil } from "lodash";
 import { AppComponent } from "../app.component";
 import Swal from "sweetalert2";
+import { FeedComponent } from "../feed/feed.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 
 @Component({
   selector: "sign-up",

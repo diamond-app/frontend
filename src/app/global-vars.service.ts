@@ -122,7 +122,7 @@ export class GlobalVarsService {
   TutorialStatus: TutorialStatus;
 
   // map[pubkey]->bool of globomods
-  globoMods: any;
+  paramUpdaters: { [k: string]: boolean };
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
@@ -271,10 +271,7 @@ export class GlobalVarsService {
   GetUnreadNotifications() {
     if (this.loggedInUser) {
       this.backendApi
-        .GetUnreadNotificationsCount(
-          this.localNode,
-          this.loggedInUser.PublicKeyBase58Check
-        )
+        .GetUnreadNotificationsCount(this.localNode, this.loggedInUser.PublicKeyBase58Check)
         .toPromise()
         .then(
           (res) => {
@@ -431,14 +428,16 @@ export class GlobalVarsService {
 
     if (this.loggedInUser) {
       // Fetch referralLinks for the userList before completing the load.
-      this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
-        (res: any) => {
-          this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+      this.backendApi
+        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+        .subscribe(
+          (res: any) => {
+            this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+          },
+          (err: any) => {
+            console.log(err);
+          }
+        );
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
@@ -479,7 +478,12 @@ export class GlobalVarsService {
     });
   }
 
-  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false, finalStep: boolean = false) {
+  skipToNextTutorialStep(
+    status: TutorialStatus,
+    ampEvent: string,
+    reload: boolean = false,
+    finalStep: boolean = false
+  ) {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
@@ -1389,7 +1393,7 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1444,15 +1448,17 @@ export class GlobalVarsService {
   getReferralUSDCents(): void {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
-      this.backendApi.GetReferralInfoForReferralHash(this.localNode, referralHash).subscribe((res) => {
-        const referralInfo = res.ReferralInfoResponse.Info;
-        if (
-          res.ReferralInfoResponse.IsActive &&
-          (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
-        ) {
-          this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
-        }
-      });
+      this.backendApi
+        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
+        .subscribe((res) => {
+          const referralInfo = res.ReferralInfoResponse.Info;
+          if (
+            res.ReferralInfoResponse.IsActive &&
+            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
+          ) {
+            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          }
+        });
     }
   }
 
