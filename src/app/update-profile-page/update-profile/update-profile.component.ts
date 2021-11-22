@@ -104,6 +104,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   founderRewardTooltip() {
     return (
+      "{{ 'update_profile.enter_emailaddress' | transloco }}" +
       "When someone purchases your coin, a percentage of that " +
       "gets allocated to you as a founder reward.\n\n" +
       "A value of 0% means you get no money when someone buys, " +

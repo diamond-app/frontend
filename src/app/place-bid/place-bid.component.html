@@ -1,32 +1,32 @@
 <div app-theme class="nft-modal-container p-15px">
   <div class="w-100 d-flex justify-content-between nft-modal__header">
-    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Place a bid" }}</div>
+    <div class="d-flex align-items-center">{{ (isSelectingSerialNumber ? 'place_bid.select_an_edition' : 'place_bid.place_a_bid') | transloco }}</div>
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
       <div class="fs-15px text-grey5">
-        You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
+        {{ 'place_bid.place_bid' | transloco }} @{{ post.ProfileEntryResponse.Username}}.
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
         <div class="col-2 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
-          <span>Number</span>
+          <span>{{ 'place_bid.number' | transloco }}</span>
           <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
         </div>
         <div class="col-5 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
-          <span>Highest Bid</span>
+          <span>{{ 'place_bid.highest_bid' | transloco }}</span>
           <span class="mt-5px">{{ globalVars.nanosToDeSo(highBid) }} DESO (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
         </div>
         <div class="col-5 d-flex flex-column m-16px">
-          <span>Min Bid Amount</span>
+          <span>{{ 'place_bid.min_bid_amount' | transloco }}</span>
           <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
         </div>
       </div>
 
       <div *ngIf="globalVars.isMobile()">
         <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
-          <span class="font-weight-bold">Number</span>
+          <span class="font-weight-bold">{{ 'place_bid.number' | transloco }}</span>
           <div>
             <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
             <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
@@ -34,13 +34,13 @@
         </div>
         <div class="nft-modal-bid-details d-flex flex-column justify-content-center p-16px">
           <div class="border-bottom pb-10px d-flex justify-content-between">
-            <span class="font-weight-bold">Highest Bid</span>
+            <span class="font-weight-bold">{{ 'place_bid.highest_bid' | transloco }}</span>
             <span>
               {{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
             </span>
           </div>
           <div class="pt-10px d-flex justify-content-between">
-            <span class="font-weight-bold">Min Bid Amount</span>
+            <span class="font-weight-bold">{{ 'place_bid.min_bid_amount' | transloco }}</span>
             <span>
               {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{
               globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
@@ -53,8 +53,8 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div class="d-flex">
-          <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
-          <span class="d-lg-inline-block d-block ml-30px">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-block">{{ 'place_bid.creator_royalty' | transloco }} {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-block ml-30px">{{ 'place_bid.coinholder_royalty' | transloco }} {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
       </div>
 
@@ -65,7 +65,7 @@
 
       <!-- The bid -->
       <div class="pb-10px">
-        <span class="fs-17px font-weight-bold">Your Bid</span>
+        <span class="fs-17px font-weight-bold">{{ 'place_bid.your_bid' | transloco }}</span>
         <div class="d-flex mt-10px">
           <div
             class="d-flex"
@@ -130,16 +130,16 @@
           [disabled]="placingBids || errors.length > 0 || !bidAmountDeSo"
           [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountDeSo }"
         >
-          {{ placingBids ? "Placing Bid" : "Place a Bid" }}
+          {{ placingBids ? 'place_bid.placing_bid' : 'place_bid.place_a_bid' | transloco }}
         </button>
-        <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">Buy DESO</div>
+        <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">{{ 'place_bid.buy_deso' | transloco }}</div>
       </div>
 
     </div>
 
 
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
+      <div class="nft-modal__subtitle">{{ 'place_bid.multiple_editions' | transloco }}</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="biddableSerialNumbers"
@@ -148,7 +148,7 @@
       </div>
     </div>
     <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
-      There are no serial numbers available for you to bid on.
+      {{ 'place_bid.no_serial_available' | transloco }}
     </div>
   </div>
 </div>

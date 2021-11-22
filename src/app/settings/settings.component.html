@@ -3,7 +3,7 @@
   class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
 >
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-  Settings
+  {{ 'settings.settings' | transloco }}
 </div>
 
 <div class="global__top-bar__height"></div>
@@ -14,16 +14,16 @@
 
     <!-- Form Inputs -->
     <div *ngIf="globalVars.loggedInUser && !loading" class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars">
-      <div class="fs-15px pt-30px">E-mail</div>
+      <div class="fs-15px pt-30px">{{ 'settings.email' | transloco }}</div>
       <div class="form-group pt-10px">
         <input
           type="email"
           class="form-control fs-15px"
-          placeholder="Enter an email address."
+          placeholder="{{ 'settings.enter_email' | transloco }}"
           [(ngModel)]="emailAddress"
           (ngModelChange)="_validateEmail($event)"
         />
-        <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+        <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">{{ 'settings.enter_valid_email' | transloco }}</div>
       </div>
 
       <div class="w-100 my-30px d-flex align-items-center">
@@ -34,7 +34,7 @@
           (click)="_updateSettings()"
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
         >
-          Update Email
+        {{ 'settings.update_email' | transloco }}
         </button>
         <button
           *ngIf="
@@ -44,15 +44,15 @@
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
           disabled
         >
-          Update Email
+        {{ 'settings.update_email' | transloco }}
         </button>
         <button *ngIf="updatingSettings" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
-          Updating...
+          {{ 'settings.updating' | transloco }}
         </button>
-        <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
+        <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">{{ 'settings.success' | transloco }}</div>
       </div>
 
-      <div class="fs-15px pt-30px">DeSo Theme</div>
+      <div class="fs-15px pt-30px">{{ 'settings.deso_theme' | transloco }}</div>
       <br />
       <select
         name="theme"

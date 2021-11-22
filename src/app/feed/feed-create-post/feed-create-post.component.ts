@@ -46,24 +46,24 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
 
   randomMovieQuote = "";
   randomMovieQuotes = [
-    "Go ahead, make my day.",
-    "The stuff that dreams are made of.",
-    "Made it, Ma! Top of the world!",
-    "I'll be back.",
-    "Open the pod bay doors, HAL.",
-    "Who's on first.",
-    "What's on second.",
-    "I feel the need - the need for speed!",
-    "I'm king of the world!",
-    "If you build it, they will come.",
-    "Roads? Where we're going we don't need roads",
-    "To infinity and beyond!",
-    "May the Force be with you",
-    "I've got a feeling we're not in Kansas anymore",
-    "E.T. phone home",
-    "Elementary, my dear Watson",
-    "I'm going to make him an offer he can't refuse.",
-    "Big things have small beginnings.",
+    "feed_create_post.quotes.quote1",
+    "feed_create_post.quotes.quote2",
+    "feed_create_post.quotes.quote3",
+    "feed_create_post.quotes.quote4",
+    "feed_create_post.quotes.quote5",
+    "feed_create_post.quotes.quote6",
+    "feed_create_post.quotes.quote7",
+    "feed_create_post.quotes.quote8",
+    "feed_create_post.quotes.quote9",
+    "feed_create_post.quotes.quote10",
+    "feed_create_post.quotes.quote11",
+    "feed_create_post.quotes.quote12",
+    "feed_create_post.quotes.quote13",
+    "feed_create_post.quotes.quote14",
+    "feed_create_post.quotes.quote15",
+    "feed_create_post.quotes.quote16",
+    "feed_create_post.quotes.quote17",
+    "feed_create_post.quotes.quote18"
   ];
 
   submittingPost = false;
@@ -294,7 +294,6 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
           this.postVideoSrc = null;
           this.embedURL = "";
           this.constructedEmbedURL = "";
-          this.showEmbedURL = false;
           this.changeRef.detectChanges();
 
           // Refresh the post page.

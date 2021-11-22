@@ -1,5 +1,5 @@
 <script src="../../environments/environment.prod.ts"></script>
-<div class="position-relative">
+<div class="position-relative"  *transloco="let t">
   <div class="position-relative landing-page-container-1">
     <div class="position-relative d-flex justify-content-between mt-30px landing-page-top-bar">
       <div class="fc-landing-page d-flex align-items-center">
@@ -8,12 +8,12 @@
       <div class="fc-landing-page d-flex align-items-center">
         <a class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
           <i-feather *ngIf="!globalVars.isMobile()" name="lock-2" class="feather-small mr-5px position-relative" style="top: -2px"></i-feather>
-          Login
+          {{t('landing.login')}}
         </a>
         <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchSignupFlow()">
-          Sign Up
+          {{t('landing.signup')}}
         </a>
-        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
+        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">{{t("landing.signuptoday")}}</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -21,9 +21,9 @@
     <div class="landing-page-content-container d-flex flex-column justify-content-center">
       <div class="d-flex align-items-center justify-content-between w-100 h-100" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
         <div data-aos="fade-right" data-aos-duration="500" data-aos-offset="-1000" style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
-          <h1 class="landing-page-header-main"><span>Don't settle<br> for a </span><span [ngStyle]="{ 'line-height':  globalVars.isMobile() ? '60px' : '110px' }"><img class="landing-page-thumbs-up" src="assets/img/landing-page-thumbs-up.svg" width="89px" height="86px" /></span></h1>
+          <h1 class="landing-page-header-main"><span>{{t('landing.settle')}}<br> {{t('landing.fora')}} </span><span [ngStyle]="{ 'line-height':  globalVars.isMobile() ? '60px' : '110px' }"><img class="landing-page-thumbs-up" src="assets/img/landing-page-thumbs-up.svg" width="89px" height="86px" /></span></h1>
           <h3 class="landing-page-subtext" style="margin-top: 18px">
-            Get diamonds and invest in creators like never before. Your next post could be worth millions!
+            {{t("landing.diamonds")}}
           </h3>
           <div
             class="d-flex justify-content-between"

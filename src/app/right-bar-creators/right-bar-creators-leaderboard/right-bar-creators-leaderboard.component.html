@@ -1,4 +1,4 @@
-<div class="trend-entry">
+<div class="trend-entry" *transloco="let t">
   <a
     *ngFor="
       let profileEntryResponse of activeTab === RightBarCreatorsComponent.GAINERS.name
@@ -28,7 +28,7 @@
               *ngIf="profileEntryResponse.Profile.IsReserved && !profileEntryResponse.Profile.IsVerified"
               class="d-inline-block ml-1 cursor-pointer lh-12px"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+              [matTooltip]="t('right_bar.creators.leaderboard.reserved_profile')"
             >
               <i class="far fa-clock fa-md"></i>
             </span>
@@ -37,7 +37,7 @@
               (click)="tooltip.toggle()"
               class="ml-1 cursor-pointer text-primary"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This account is verified'"
+              [matTooltip]="t('right_bar.creators.leaderboard.verified_profile')"
               #tooltip="matTooltip"
             >
               <i-feather name="check-circle"></i-feather>
@@ -60,7 +60,7 @@
         </div>
         <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
           {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}
-          <i class="icon-diamond" style="margin-left: -5px"></i>
+          <i class="icon-diamond" style="margin-left: -10px"></i>
         </div>
         <div
           [ngClass]="{

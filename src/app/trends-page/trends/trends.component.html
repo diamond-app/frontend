@@ -6,7 +6,7 @@
     <div class="d-flex align-items-center pt-15px">
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
-      <div>Trends</div>
+      <div>{{ 'trends.trends' | transloco }}</div>
       <div class="pl-15px fs-15px">
         <select
           id="right-bar-chart-select"
@@ -28,7 +28,7 @@
     <div *ngIf="activeRightTabOption.poweredBy" class="pb-10px text-grey5">
       <a class="link--unstyled fs-14px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
         <i class="fas fa-external-link-alt"></i>
-        Powered by {{ activeRightTabOption.poweredBy.name }}
+        {{ 'trends.powered_by' | transloco }} {{ activeRightTabOption.poweredBy.name }}
       </a>
     </div>
   </div>

@@ -6,14 +6,14 @@
       *ngIf="!showSellOnly"
     >
       <i class="fas fa-plus fs-12px"></i>
-      Buy
+      {{ 'wallet.buy' | transloco }}
     </a>
     <a
       class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
       (click)="openBuyCreatorCoinModal($event, sellTradeType)"
     >
       <i class="fas fa-minus fs-12px"></i>
-      Sell
+      {{ 'wallet.sell' | transloco }}
     </a>
     <a
       class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
@@ -21,7 +21,7 @@
       *ngIf="!showSellOnly"
     >
       <i class="fas fa-paper-plane fs-12px"></i>
-      Send
+      {{ 'wallet.send' | transloco }}
     </a>
     <a
       class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"

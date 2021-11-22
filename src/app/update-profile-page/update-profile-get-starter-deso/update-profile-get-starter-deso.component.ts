@@ -21,8 +21,7 @@ export class UpdateProfileGetStarterDeSoComponent {
 
   getCreateProfileMessage(): string {
     return this.globalVars.showPhoneNumberVerification
-      ? `You need to verify a phone number or purchase DeSo with Bitcoin in order to create a profile.
-  This helps prevent spam.`
-      : `You need to buy DeSo with Bitcoin in order to create a profile.  This helps prevent spam.`;
+      ? `update_profile.create_profile_message.verify_phone_number`
+      : `update_profile.create_profile_message.buy_deso`;
   }
 }

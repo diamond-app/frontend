@@ -8,15 +8,15 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
   styleUrls: ["./jumio-status.component.scss"],
 })
 export class JumioStatusComponent {
-  @Input() message: string = "Click here to get";
+  @Input() message: string = "jumio_status.click_here_to_get";
   constructor(public globalVars: GlobalVarsService) {}
 
   hideFreeMoneyBanner(event) {
     event.stopPropagation();
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Hide banner",
-      html: "Do you want to hide the free money banner?",
+      title: "jumio_status.hide_banner",
+      html: "jumio_status.hide_banner_message",
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
@@ -24,8 +24,8 @@ export class JumioStatusComponent {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
+      confirmButtonText: "jumio_status.yes",
+      cancelButtonText: "t(jumio_status.no)",
       reverseButtons: true,
     }).then(async (alertRes: any) => {
       if (alertRes.isConfirmed) {

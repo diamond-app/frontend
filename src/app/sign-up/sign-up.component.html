@@ -15,27 +15,26 @@
     <div *ngIf="stepNum == 4">
       <div *ngIf="showPhoneNumberVerifiedContent" class="border-color-grey border-bottom py-15px">
         <div class="p-15px br-12px background-color-grey fs-15px">
-          Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow
-          people.
+          {{ 'signup.phone_verified' | transloco }}
         </div>
       </div>
 
-      <div class="mint-nft__title mt-20px">Stay in the loop</div>
-      <div class="mint-nft__sub-title">STEP 4 of 4</div>
-      <div class="mint-nft__text mt-16px">Get notified when someone buys your coin.</div>
-      <div class="fs-15px pt-30px">E-mail</div>
+      <div class="mint-nft__title mt-20px">{{ 'signup.stay_in_the_loop' | transloco }}</div>
+      <div class="mint-nft__sub-title">{{ 'signup.step' | transloco }} 4 of 4</div>
+      <div class="mint-nft__text mt-16px">{{ 'signup.get_notified' | transloco }}</div>
+      <div class="fs-15px pt-30px">{{ 'signup.email' | transloco }}</div>
       <div class="form-group pt-10px">
         <input
           type="email"
           class="form-control fs-15px"
-          placeholder="Enter an email address."
+          placeholder="{{ 'signup.enter_emailaddress' | transloco }}"
           [(ngModel)]="emailAddress"
           style="border-radius: 16px"
         />
-        <div class="fc-red fs-15px mt-10px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+        <div class="fc-red fs-15px mt-10px" *ngIf="invalidEmailEntered">{{ 'signup.enter_valid_email' | transloco }}</div>
       </div>
       <div class="d-flex justify-content-end mb-20px">
-        <button (click)="notificationsStepSkipped()" class="plain-button" style="width: 80px">Skip</button>
+        <button (click)="notificationsStepSkipped()" class="plain-button" style="width: 80px">{{ 'signup.skip' | transloco }}</button>
         <button
           *ngIf="!storingEmailAndPhone"
           (click)="notificationsStepNext()"
@@ -45,7 +44,7 @@
           }"
           style="width: 80px"
         >
-          Next
+        {{ 'signup.next' | transloco }}
         </button>
       </div>
     </div>
@@ -53,25 +52,21 @@
     <!-- Finished -->
     <div *ngIf="stepNum == 5">
       <div class="mint-nft__title mt-20px">
-        Buy $DESO
+        {{ 'signup.buy_deso' | transloco }}
       </div>
       <div class="fs-18px pt-15px">
         <span>
-          $DESO is a
-          <b>cryptocurrency</b>
-          like Bitcoin, only it powers the first
-          <b>decentralized social network</b>
-          .
+          {{ 'signup.deso_is_a_cryptocurrency' | transloco }}
         </span>
       </div>
       <div class="fs-18px pt-30px mb-10px">
-        You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and much more.
+        {{ 'signup.use_deso' | transloco }}
       </div>
 
       <div class="d-flex justify-content-end mt-15px pt-10px mb-20px">
-        <button (click)="buyDeSoSkipped()" class="plain-button" style="width: 80px">Skip</button>
+        <button (click)="buyDeSoSkipped()" class="plain-button" style="width: 80px">{{ 'signup.skip' | transloco }}</button>
         <button (click)="buyDeSoClicked()" class="primary-button ml-10px" style="width: 120px">
-          Buy $DESO
+          {{ 'signup.buy_deso' | transloco }}
         </button>
       </div>
     </div>

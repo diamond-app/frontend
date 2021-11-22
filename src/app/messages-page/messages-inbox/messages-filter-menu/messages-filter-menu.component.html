@@ -1,12 +1,12 @@
 <div class="fs-16px messages-filter-menu__container">
   <div class="mr-15px ml-15px pt-15px pb-5px font-weight-bold">
-    Custom Inbox Settings
+    {{ 'messages.custom_inbox_settings' | transloco }}
   </div>
 
   <div class="w-100 border-color-grey border-bottom"></div>
 
   <div class="pt-15px pb-15px">
-    <span class="messages-filter-menu__title">Only show</span>
+    <span class="messages-filter-menu__title">{{ 'messages.only_show' | transloco }}</span>
 
     <div class="w-100 d-flex pl-5px mt-15px flex-column messages-filter-menu__checkboxes">
       <div class="mt-5px d-flex flex-row align-items-center">
@@ -17,7 +17,7 @@
         >
           <i-feather name="check"></i-feather>
         </button>
-        <span>Holders</span>
+        <span>{{ 'messages.holders' | transloco }}</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
@@ -28,7 +28,7 @@
         >
           <i-feather name="check"></i-feather>
         </button>
-        <span>Holdings</span>
+        <span>{{ 'messages.holdings' | transloco }}</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
@@ -39,7 +39,7 @@
         >
           <i-feather name="check"></i-feather>
         </button>
-        <span>Followers</span>
+        <span>{{ 'messages.followers' | transloco }}</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
@@ -50,13 +50,13 @@
         >
           <i-feather name="check"></i-feather>
         </button>
-        <span>Following</span>
+        <span>{{ 'messages.following' | transloco }}</span>
       </div>
     </div>
   </div>
   <div class="w-100 border-color-grey border-bottom"></div>
   <div class="mt-15px">
-    <span class="messages-filter-menu__title">Order by</span>
+    <span class="messages-filter-menu__title">{{ 'messages.order_by' | transloco }}</span>
     <div class="w-100 mt-15px">
       <div class="btn-group w-90" dropdown>
         <button
@@ -70,13 +70,13 @@
           <i-feather name="chevron-down" class="feather-small position-absolute" style="right: 12px;"></i-feather>
         </button>
         <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('time')">Most recent</a></li>
-          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('deso')">Most deso</a></li>
+          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('time')">{{ 'messages.most_recent' | transloco }}</a></li>
+          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('deso')">{{ 'messages.most_deso' | transloco }}</a></li>
           <li role="menuitem">
-            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('followers')">Most followed</a>
+            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('followers')">{{ 'messages.most_followed' | transloco }}</a>
           </li>
           <li role="menuitem">
-            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('holders')">Largest Holder</a>
+            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('holders')">{{ 'messages.largest_holder' | transloco }}</a>
           </li>
         </ul>
       </div>
@@ -89,9 +89,9 @@
         (click)="updateGlobalMessagesPreferences()"
         class="btn"
       >
-        Update
+      {{ 'messages.update' | transloco }}
       </button>
-      <a (click)="closePopUp()">Cancel</a>
+      <a (click)="closePopUp()">{{ 'messages.cancel' | transloco }}</a>
     </div>
   </div>
 </div>

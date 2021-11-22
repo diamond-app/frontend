@@ -52,11 +52,11 @@ export class NftPostComponent {
 
   activeTab = NftPostComponent.THREAD;
 
-  static ALL_BIDS = "All Bids";
-  static MY_BIDS = "My Bids";
-  static MY_AUCTIONS = "My Auction";
-  static OWNERS = "Owners";
-  static THREAD = "Thread";
+  static ALL_BIDS = "tab_selector.all_bids";
+  static MY_BIDS = "tab_selector.my_bids";
+  static MY_AUCTIONS = "tab_selector.my_auction";
+  static OWNERS = "tab_selector.owners";
+  static THREAD = "tab_selector.thread";
 
   tabs = [
     NftPostComponent.THREAD,
