@@ -20,20 +20,24 @@ class AltumbaseLeaderboardResponse {
   };
 }
 
+const DeSoLocked = "deso_locked_24h";
 const Diamonds = "diamonds_received_24h";
 
 export enum AltumbaseLeaderboardType {
+  DeSoLocked = "deso_locked_24h",
   Diamonds = "diamonds_received_24h",
 }
 
 export class AltumbaseResponse {
   Profile: ProfileEntryResponse;
+  DeSoLockedGained: number;
   DiamondsReceived: number;
   DiamondsReceivedValue: number;
   User: User;
 }
 
 export const LeaderboardToDataAttribute = {
+  [AltumbaseLeaderboardType.DeSoLocked]: "deso_locked_24h",
   [AltumbaseLeaderboardType.Diamonds]: "diamonds_received_24h",
 };
 
@@ -70,6 +74,22 @@ export class AltumbaseService {
     return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
       switchMap((res: AltumbaseLeaderboardResponse) => {
         return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
+      })
+    );
+  }
+
+  getDeSoLockedLeaderboard(): Observable<any> {
+    return this.getDeSoLockedPage(0);
+  }
+
+  getDeSoLockedPage(
+    pageNumber: number,
+    pageSize: number = AltumbaseService.altumbasePageSize,
+    skipFilters = false
+  ): Observable<any> {
+    return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize)).pipe(
+      switchMap((res: AltumbaseLeaderboardResponse) => {
+        return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
       })
     );
   }
@@ -112,6 +132,10 @@ export class AltumbaseService {
               DiamondsReceivedValue:
                 leaderboardType === AltumbaseLeaderboardType.Diamonds
                   ? results[index]["diamonds_received_value_24h"]
+                  : null,
+              DeSoLockedGained:
+                leaderboardType === AltumbaseLeaderboardType.DeSoLocked
+                  ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
             };
           });
