@@ -1130,12 +1130,13 @@ export class GlobalVarsService {
 
   updateLeaderboard(forceRefresh: boolean = false): void {
     const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
+
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
       altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));    
     }
 

@@ -74,8 +74,8 @@ export class TrendsComponent implements OnInit {
   getPage(page: number) {
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
       this.loadingNextPage = page !== 0;
-      return this.pulseService
-        .getDeSoLockedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
+      return this.altumbaseService
+        .getDeSoLockedPage(page + 1, TrendsComponent.PAGE_SIZE, false)
         .toPromise()
         .then(
           (res) => {
