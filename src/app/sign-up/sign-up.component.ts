@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../backend-api.service";
 import { shuffle, isNil } from "lodash";
 import { AppComponent } from "../app.component";
 import Swal from "sweetalert2";
 import { IdentityService } from "../identity.service";
+import { RouteNames } from "../app-routing.module";
 
 @Component({
   selector: "sign-up",
@@ -218,14 +219,24 @@ export class SignUpComponent {
   }
 
   finishOnboarding() {
-    this.processingTransactions = false;
-    this.globalVars.removeOnboardingSettings();
-    this.globalVars.updateEverything().add(() => {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: "Following" },
-        queryParamsHandling: "merge",
-      });
-    });
+    this.backendApi
+      .UpdateTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        TutorialStatus.COMPLETE,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        true
+      )
+      .subscribe(() => {
+        this.processingTransactions = false;
+        this.globalVars.removeOnboardingSettings();
+        this.globalVars.updateEverything().add(() => {
+          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+            queryParams: { feedTab: "Following" },
+            queryParamsHandling: "merge",
+          });
+        });
+      })
   }
 
   setupFollowsPage() {
