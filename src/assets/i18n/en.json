@@ -65,18 +65,26 @@
     "buy": "Buy"
   },
   "signup": {
-    "phone_verified" : "Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow people.",
-    "stay_in_the_loop":"Stay in the loop",
+    "phone_verified": "Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow people.",
+    "stay_in_the_loop": "Stay in the loop",
     "step": "STEP",
-    "get_notified":"Get notified when someone buys your coin.",
-    "email":"E-mail",
-    "enter_valid_email":"Please enter a valid email address.",
-    "skip":"Skip",
-    "next":"Next",
-    "deso_is_a_cryptocurrency":"$DESO is a <b>cryptocurrency</b> like Bitcoin, only it powers the first <b>decentralized social network</b>.",
-    "use_deso":"You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and much more.",
-    "buy_deso":"Buy $DESO",
-    "enter_emailaddress":"Enter an email address."
+    "get_notified": "Get notified when someone buys your coin.",
+    "email": "E-mail",
+    "enter_valid_email": "Please enter a valid email address.",
+    "skip": "Skip",
+    "next": "Next",
+    "deso_is_a_cryptocurrency": "$DESO is a <b>cryptocurrency</b> like Bitcoin, only it powers the first <b>decentralized social network</b>.",
+    "use_deso": "You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and much more.",
+    "buy_deso": "Buy $DESO",
+    "enter_emailaddress": "Enter an email address."
+  },
+  "add_unlockable_modal": {
+    "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
+    "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
+    "btn_selling_NFT": "Selling NFTs",
+    "btn_add": "Add",
+    "soldcounter_of": "of",
+    "soldcounter_sold": "sold"
   },
   "buy_deso":{
     "buy_deso" : "Buy $DESO",
