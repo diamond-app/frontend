@@ -463,10 +463,6 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
-      this.startTutorialAlert();
-    }
-
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
     this.navigateToCurrentStepInTutorial(user);
   }
