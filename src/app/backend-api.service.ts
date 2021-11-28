@@ -57,6 +57,7 @@ export class BackendRoutes {
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
   static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
+  static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -377,6 +378,23 @@ export class NFTBidData {
   NFTEntryResponses: NFTEntryResponse[];
   BidEntryResponses: NFTBidEntryResponse[];
 }
+
+type GetUserMetadataResponse = {
+  HasPhoneNumber: boolean;
+  CanCreateProfile: boolean;
+  BlockedPubKeys: { [k: string]: any };
+  HasEmail: boolean;
+  EmailVerified: boolean;
+  JumioFinishedTime: number;
+  JumioVerified: boolean;
+  JumioReturned: boolean;
+};
+
+type GetUsersStatelessResponse = {
+  UserList: User[];
+  DefaultFeeRateNanosPerKB: number;
+  ParamUpdaters: { [k: string]: boolean };
+};
 
 @Injectable({
   providedIn: "root",
@@ -703,9 +721,13 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
+  GetUsersStateless(
+    endpoint: string,
+    PublicKeysBase58Check: string[],
+    SkipForLeaderboard: boolean = false
+  ): Observable<GetUsersStatelessResponse> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
-      PublicKeysBase58Check: publicKeys,
+      PublicKeysBase58Check,
       SkipForLeaderboard,
     });
   }
@@ -1645,7 +1667,7 @@ export class BackendApiService {
       PublicKeyBase58Check,
       FetchStartIndex,
       NumToFetch,
-      FilteredOutNotificationCategories
+      FilteredOutNotificationCategories,
     });
   }
 
@@ -1654,7 +1676,7 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     LastSeenIndex: number,
     LastUnreadNotificationIndex: number,
-    UnreadNotifications: number,
+    UnreadNotifications: number
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathSetNotificationMetadata, PublicKeyBase58Check, {
       PublicKeyBase58Check,
@@ -1666,7 +1688,7 @@ export class BackendApiService {
 
   GetUnreadNotificationsCount(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
-      PublicKeyBase58Check
+      PublicKeyBase58Check,
     });
   }
 
@@ -1711,6 +1733,10 @@ export class BackendApiService {
       PublicKey,
       EmailHash,
     });
+  }
+
+  GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
   }
 
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
@@ -2234,7 +2260,7 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     TutorialStatus: string,
     CreatorPurchasedInTutorialPublicKey?: string,
-    ClearCreatorCoinPurchasedInTutorial?: boolean,
+    ClearCreatorCoinPurchasedInTutorial?: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, PublicKeyBase58Check, {
       PublicKeyBase58Check,

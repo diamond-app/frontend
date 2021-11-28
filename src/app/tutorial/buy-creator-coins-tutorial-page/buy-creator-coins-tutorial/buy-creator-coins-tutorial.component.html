@@ -1,74 +1,45 @@
 <div>
-  <div class="flex-grow-1 br-10px border" id="creator-coins-holder">
-    <div class="tutorial-header">
-      <div *ngIf="!investInYourself && !followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Invest in a Creator</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 3/6</div>
-          <button class="tutorial-skip-button" (click)="skipBuyCreatorsStep()">Skip</button>
+  <div class="flex-grow-1 br-10px border background-color-white p-16px">
+    <div class="d-flex w-100 justify-content-center">
+      <div class="col-6 fc-muted d-flex align-items-center flex-column p-16px mb-16px">
+        <div
+          style="border-color: var(--border)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          1
         </div>
+        <div class="text-center">How to buy DESO</div>
       </div>
-      <div *ngIf="investInYourself && !followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Invest in Yourself</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 4/6</div>
-          <button class="tutorial-skip-button" (click)="skipBuySelfStep()">Skip</button>
+      <div class="col-6 fc-blue d-flex align-items-center flex-column p-16px">
+        <div
+          style="border-color: var(--highlight)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          2
         </div>
-      </div>
-      <div *ngIf="followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Follow Creators</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 2/6</div>
-          <button class="tutorial-skip-button wiggle" (click)="skipFollowStep()">Next</button>
-        </div>
+        <div class="text-center">How to invest in creators</div>
       </div>
     </div>
-    <div class="p-16px" *ngIf="showInstructions && !followCreators">
-      <b>Click the "View" button below</b> next to the creator you want to preview investing in.
+    <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">$DESO is Diamond's Social Currency</div>
+    <div class="fc-default fs-16px text-center mb-16px">It allows you to take and record transactions (posts, likes, follows, etc) on the app.<br/><br/>
+      Every transaction costs less than $0.000000001 to make. This is incredibly cheap compared to many of the leading decentralized solutions available today.<br/><br/>
+      DESO is also used to give tips on the platform via diamonds, purchase creator coins, and purchase NFTs.
     </div>
-    <div class="p-16px" *ngIf="showInstructions && followCreators">
-      Click the "follow" button next to the creators you want to follow. <br/><br/>
-      <b>Click "Next" in the top-right when you are finished</b>
+    <div class="fc-error fs-18px text-center mb-25px">Choose which option you would like to explore:</div>
+    <div class="d-flex justify-content-around mb-25px">
+      <div class="col-6 d-flex align-items-center flex-column">
+        <div class="fs-18px font-weight-semibold mb-16px">Buying DESO with fiat</div>
+        <button class="primary-button mb-16px">Show me how</button>
+        <div class="fs-14px fc-muted text-center">We support 20 fiat currencies including USD and more.</div>
+      </div>
+      <div class="col-6 d-flex align-items-center flex-column">
+        <div class="fs-18px font-weight-semibold mb-16px">Buying DESO with BTC / ETH</div>
+        <button class="primary-button mb-16px">Show me how</button>
+        <div class="fs-14px fc-muted text-center">You can buy on Diamond or on an exchange. All transactions are secure.</div>
+      </div>
     </div>
-    <div>
-      <div *ngIf="!investInYourself">
-        <div id="tutorial-creators-to-invest-in">
-          <div>
-            <div class="background-color-secondary p-16px">
-              <span class="fs-17px fc-secondary font-weight-bold">Hot New Creators</span>
-            </div>
-            <div *ngFor="let profile of hotNewCreatorsToHighlight" class="background-color-white">
-              <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
-                <simple-profile-card
-                  (exitTutorial)="exitTutorial()"
-                  [profile]="profile"
-                  [showTutorialBuy]="!followCreators"
-                  [showTutorialFollow]="followCreators"
-                  [inTutorial]="true"
-                  [hideFollowLink]="true"
-                  [singleColumn]="true"
-                  [tutorialWiggle]="tutorialWiggle"
-                ></simple-profile-card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <simple-center-loader *ngIf="loading"></simple-center-loader>
-      <div *ngIf="investInYourself">
-        <div class="border-bottom"></div>
-        <div class="p-16px border-bottom" id="tutorial-invest-in-self-holder">
-          <simple-profile-card
-            (exitTutorial)="exitTutorial()"
-            [profile]="loggedInUserProfile"
-            [showTutorialBuy]="true"
-            [inTutorial]="true"
-            [hideFollowLink]="true"
-            [singleColumn]="true"
-            [tutorialBuySelf]="true"
-          ></simple-profile-card>
-        </div>
-      </div>
+    <div class="w-100 d-flex justify-content-center">
+      <button style="width: 180px" class="plain-button">Skip to creator coins</button>
     </div>
   </div>
   <div *ngIf="addMobileFooter" style="height: 300px"></div>

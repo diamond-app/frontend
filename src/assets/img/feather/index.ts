@@ -1,8 +1,8 @@
 export { BellNotification } from "./bellNotification";
 export { Bitclout } from "./bitclout";
-export { CreatorCoin } from "./creatorCoin";
 export { Card } from "./card";
 export { Coin } from "./coin";
+export { CreatorCoin } from "./creatorCoin";
 export { Deso } from "./deso";
 export { Diamond } from "./diamond";
 export { Frame } from "./frame";

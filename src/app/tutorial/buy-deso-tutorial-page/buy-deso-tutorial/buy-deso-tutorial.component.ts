@@ -9,9 +9,12 @@ import { LocationStrategy } from "@angular/common";
 import { environment } from "src/environments/environment";
 import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
+import { BuyDesoModalComponent } from "../../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
 
 @Component({
-  selector: "buy-creator-coins-tutorial",
+  selector: "buy-deso-tutorial",
   templateUrl: "./buy-deso-tutorial.component.html",
   styleUrls: ["./buy-deso-tutorial.component.scss"],
 })
@@ -32,7 +35,8 @@ export class BuyDesoTutorialComponent implements OnInit {
     private backendApi: BackendApiService,
     private titleService: Title,
     private locationStrategy: LocationStrategy,
-    private router: Router
+    private router: Router,
+    private modalService: BsModalService
   ) {}
 
   hotNewCreatorsToHighlight: ProfileEntryResponse[];
@@ -49,80 +53,19 @@ export class BuyDesoTutorialComponent implements OnInit {
   // Add a footer on mobile to keep content visible
   addMobileFooter: boolean = false;
 
-  ngOnInit() {
-    this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 575;
-    // this.isLoadingProfilesForFirstTime = true;
-    this.globalVars.preventBackButton();
-    this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
-    // If the user just completed their profile, we instruct them to buy their own coin.
-    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-      this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
-      this.investInYourself = true;
-      this.loading = false;
-      this.initiateIntro();
-      return;
-    } else if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
-      this.followCreators = true;
-    }
-    if (this.followCreators) {
-      this.backendApi
-        .GetTutorialCreators(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-          this.followCreators ? 30 : 3
-        )
-        .subscribe(
-          (res: {
-            WellKnownProfileEntryResponses: ProfileEntryResponse[];
-            UpAndComingProfileEntryResponses: ProfileEntryResponse[];
-          }) => {
-            // Do not let users select themselves in the "Invest In Others" step.
-            if (res.WellKnownProfileEntryResponses?.length) {
-              this.hotNewCreatorsToHighlight = shuffle(
-                res.WellKnownProfileEntryResponses.concat(res.UpAndComingProfileEntryResponses).filter(
-                  (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-                )
-              );
-            }
-            this.loading = false;
-            this.initiateIntro();
-          },
-          (err) => {
-            console.error(err);
-          }
-        );
-    } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.FOLLOW_CREATORS) {
-      this.backendApi
-        .GetFollows(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-          "" /* PublicKeyBase58Check */,
-          false /* get following */,
-          "" /* GetEntriesFollowingUsername */,
-          1 /* NumToFetch */
-        )
-        .subscribe((res) => {
-          // If the user is following someone, show a random one here for them to simulate the buy step with
-          if (res.NumFollowers >= 1) {
-            this.hotNewCreatorsToHighlight = [res.PublicKeyToProfileEntry[Object.keys(res.PublicKeyToProfileEntry)[0]]];
-            this.loading = false;
-            this.initiateIntro();
-          } else {
-            // If the user isn't following someone, show a default one to them for them to simulate the buy/sell steps
-            // Testnet creator
-            // const defaultCreatorPublicKeyBase58Check = "tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV";
-            // Creator for prod
-            const defaultCreatorPublicKeyBase58Check = "BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB";
-            this.backendApi
-              .GetSingleProfile(this.globalVars.localNode, defaultCreatorPublicKeyBase58Check, "")
-              .subscribe((res) => {
-                this.hotNewCreatorsToHighlight = [res.Profile];
-                this.loading = false;
-                this.initiateIntro();
-              });
-          }
-        });
-    }
+  BuyDeSoComponent = BuyDeSoComponent;
+
+  ngOnInit() {}
+
+  openBuyDeSoModal(isFiat: boolean) {
+    const initialState = {
+      activeTabInput: isFiat ? this.BuyDeSoComponent.BUY_WITH_USD : this.BuyDeSoComponent.BUY_WITH_BTC,
+    };
+    this.modalService.show(BuyDesoModalComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
+      initialState,
+    });
   }
 
   initiateIntro() {
