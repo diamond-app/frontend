@@ -1,4 +1,4 @@
-<div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
+<div *ngIf="this.loggedInUser.CanCreateProfile || this.inTutorial; else elseBlock">
   <div class="d-flex flex-column">
     <div style="flex-grow: 1" id="update-profile-tutorial-holder">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
