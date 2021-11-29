@@ -67,7 +67,7 @@ export class BackendRoutes {
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
   static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
-  static RoutePathUpdateTutorialStatus = "/api/v0/tutorial-status";
+  static RoutePathUpdateTutorialStatus = "/api/v0/update-tutorial-status";
 
   // Media
   static RoutePathUploadVideo = "/api/v0/upload-video";
