@@ -29,6 +29,11 @@
               <div class="mint-nft__sub-text ml-10px">Copied</div>
             </div>
           </div>
+          <img
+            [src]="globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58) | sanitizeQRCode"
+            *ngIf="referral.IsActive"
+            class="mt-15px"
+          />
           <div *ngIf="!referral.IsActive" class="fc-red">This link is no longer active.</div>
 
           <div class="font-weight-bold mt-15px">
