@@ -7,6 +7,7 @@ import { AppComponent } from "../app.component";
 import Swal from "sweetalert2";
 import { IdentityService } from "../identity.service";
 import { RouteNames } from "../app-routing.module";
+import { environment } from "../../environments/environment";
 
 @Component({
   selector: "sign-up",
@@ -114,7 +115,7 @@ export class SignUpComponent {
   updateProfileTransaction() {
     this.backendApi
       .UpdateProfile(
-        this.globalVars.localNode,
+        environment.verificationEndpointHostname,
         this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         "" /*ProfilePublicKeyBase58Check*/,
         // Start params
