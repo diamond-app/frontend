@@ -200,6 +200,7 @@ export class SignUpComponent {
     }
     comp.backendApi.RemoveStorage("newOnboardingProfile");
     comp.globalVars.newProfile = null;
+    this.processingTransactions = false;
     comp.stepNum = 1;
     Swal.fire({
       target: comp.globalVars.getTargetComponentSelector(),
