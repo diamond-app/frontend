@@ -378,6 +378,12 @@ export class NFTBidData {
   BidEntryResponses: NFTBidEntryResponse[];
 }
 
+export class DeSoNode {
+  Name: string;
+  URL: string;
+  Owner: string;
+}
+
 @Injectable({
   providedIn: "root",
 })

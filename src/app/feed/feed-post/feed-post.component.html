@@ -234,13 +234,25 @@
                 <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
                   <i-feather class="feather-small" name="check-circle"></i-feather>
                 </span>
+
                 <div class="desktop-creator-coin-info">
                   <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
                 </div>
-
+                <div class="ml-auto posted-on">
+                  <div *ngIf="getNode()" class="d-inline-block mr-25px">
+                    <a
+                      class="text-grey9"
+                      target="_blank"
+                      href="{{ getNode().URL }}"
+                    >
+                      <!--<i class="fas fa-external-link-square-alt"></i>-->
+                      Posted on {{ getNode().Name }}
+                    </a>
+                  </div> 
+                </div>
                 <feed-post-dropdown
                   *ngIf="showDropdown && !reposterProfile"
-                  class="ml-auto"
+                  class="ml-auto posted-on"
                   [post]="post"
                   [postContent]="postContent"
                   [nftEntryResponses]="nftEntryResponses"
