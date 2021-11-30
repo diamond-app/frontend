@@ -1310,7 +1310,7 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
+    return this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
       UpdaterPublicKeyBase58Check,
       ProfilePublicKeyBase58Check,
       NewUsername,
@@ -1320,9 +1320,11 @@ export class BackendApiService {
       NewStakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    }).pipe(
+      map((request) => {
+        return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+      })
+    );
   }
 
   GetFollows(

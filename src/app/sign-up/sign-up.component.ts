@@ -107,9 +107,11 @@ export class SignUpComponent {
   }
 
   processTransactions() {
-    this.processingTransactions = true;
-    this.globalVars.logEvent("onboarding : complete");
-    this.updateProfileTransaction();
+    if (!this.processingTransactions) {
+      this.processingTransactions = true;
+      this.globalVars.logEvent("onboarding : complete");
+      this.updateProfileTransaction();
+    }
   }
 
   updateProfileTransaction() {
