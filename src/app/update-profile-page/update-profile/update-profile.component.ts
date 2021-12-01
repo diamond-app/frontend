@@ -237,6 +237,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
       environment.verificationEndpointHostname,
+      this.globalVars.localNode,
       this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
       // Start params

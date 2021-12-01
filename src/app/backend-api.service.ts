@@ -3,8 +3,8 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
-import { Observable, of, throwError } from "rxjs";
-import { map, mergeMap, switchMap, catchError, mapTo } from "rxjs/operators";
+import { interval, Observable, of, throwError, zip } from "rxjs";
+import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
@@ -1293,7 +1293,8 @@ export class BackendApiService {
     });
   }
   UpdateProfile(
-    endpoint: string,
+    verificationNodeEndpoint: string,
+    localNodeEndpoint: string,
     // Specific fields
     UpdaterPublicKeyBase58Check: string,
     // Optional: Only needed when updater public key != profile public key
@@ -1310,7 +1311,7 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
+    const request = this.post(verificationNodeEndpoint, BackendRoutes.RoutePathUpdateProfile, {
       UpdaterPublicKeyBase58Check,
       ProfilePublicKeyBase58Check,
       NewUsername,
@@ -1320,9 +1321,25 @@ export class BackendApiService {
       NewStakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    }).pipe(
+      switchMap((res) => {
+        // We need to wait until the profile creation has been comped.
+        if (res.CompProfileCreationTxnHashHex) {
+          return interval(500)
+            .pipe(
+              concatMap((iteration) =>
+                zip(this.GetTxn(localNodeEndpoint, res.CompProfileCreationTxnHashHex), of(iteration))
+              )
+            )
+            .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
+            .pipe(take(1))
+            .pipe(switchMap(() => of(res)));
+        } else {
+          return of(res);
+        }
+      })
+    );
+    return this.signAndSubmitTransaction(verificationNodeEndpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   GetFollows(

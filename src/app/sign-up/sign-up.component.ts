@@ -1,11 +1,14 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus, User } from "../backend-api.service";
 import { shuffle, isNil } from "lodash";
 import { AppComponent } from "../app.component";
 import Swal from "sweetalert2";
 import { IdentityService } from "../identity.service";
+import { RouteNames } from "../app-routing.module";
+import { environment } from "../../environments/environment";
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: "sign-up",
@@ -23,6 +26,7 @@ export class SignUpComponent {
   followTransactionIndex: number = 0;
   hoveredSection = 0;
   processingTransactions = false;
+  verifiedInterval: Timer = null;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -40,6 +44,34 @@ export class SignUpComponent {
     }
     this.creatorsFollowed = Object.keys(this.globalVars.onboardingCreatorsToFollow);
     this.creatorsFollowedCount = Object.keys(this.globalVars.onboardingCreatorsToFollow).length;
+  }
+
+  // If the user isn't validated yet, keep polling until they have money in their account
+  pollForUserValidated() {
+    if (this.verifiedInterval) {
+      clearInterval(this.verifiedInterval);
+    }
+    if (this.globalVars.loggedInUser.BalanceNanos > 0) {
+      return;
+    }
+    let attempts = 0;
+    let numTries = 120;
+    let timeoutMillis = 5000;
+    this.verifiedInterval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(this.verifiedInterval);
+        return;
+      }
+      this.globalVars
+        .updateEverything()
+        .add(() => {
+          if (this.globalVars.loggedInUser.BalanceNanos > 0) {
+            clearInterval(this.verifiedInterval);
+            return;
+          }
+        })
+        .add(() => attempts++);
+    }, timeoutMillis);
   }
 
   setStep() {
@@ -102,17 +134,21 @@ export class SignUpComponent {
     this.globalVars.logEvent("onboarding : creators : follow");
     this.globalVars.setOnboardingCreatorsToFollow(this.globalVars.onboardingCreatorsToFollow);
     this.stepNum = 3;
+    this.pollForUserValidated();
   }
 
   processTransactions() {
-    this.processingTransactions = true;
-    this.globalVars.logEvent("onboarding : complete");
-    this.updateProfileTransaction();
+    if (!this.processingTransactions) {
+      this.processingTransactions = true;
+      this.globalVars.logEvent("onboarding : complete");
+      this.updateProfileTransaction();
+    }
   }
 
   updateProfileTransaction() {
     this.backendApi
       .UpdateProfile(
+        environment.verificationEndpointHostname,
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         "" /*ProfilePublicKeyBase58Check*/,
@@ -191,6 +227,7 @@ export class SignUpComponent {
   }
 
   updateProfileFailure(comp, error: string = null) {
+    this.globalVars.logEvent("onboarding : profile : failure");
     let message =
       "Uh oh! We encountered an error saving your profile. Please input your information again and continue.";
     if (!isNil(error)) {
@@ -198,6 +235,7 @@ export class SignUpComponent {
     }
     comp.backendApi.RemoveStorage("newOnboardingProfile");
     comp.globalVars.newProfile = null;
+    this.processingTransactions = false;
     comp.stepNum = 1;
     Swal.fire({
       target: comp.globalVars.getTargetComponentSelector(),
@@ -218,14 +256,24 @@ export class SignUpComponent {
   }
 
   finishOnboarding() {
-    this.processingTransactions = false;
-    this.globalVars.removeOnboardingSettings();
-    this.globalVars.updateEverything().add(() => {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: "Following" },
-        queryParamsHandling: "merge",
-      });
-    });
+    this.backendApi
+      .UpdateTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        TutorialStatus.COMPLETE,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        true
+      )
+      .subscribe(() => {
+        this.processingTransactions = false;
+        this.globalVars.removeOnboardingSettings();
+        this.globalVars.updateEverything().add(() => {
+          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+            queryParams: { feedTab: "Following" },
+            queryParamsHandling: "merge",
+          });
+        });
+      })
   }
 
   setupFollowsPage() {

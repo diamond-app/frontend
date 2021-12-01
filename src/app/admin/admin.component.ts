@@ -1364,6 +1364,7 @@ export class AdminComponent implements OnInit {
         return this.backendApi
           .UpdateProfile(
             environment.verificationEndpointHostname,
+            this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,
             // Start params

@@ -27,7 +27,6 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._setScreenToShow();
   }
 
   _setScreenToShow() {

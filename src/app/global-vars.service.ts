@@ -463,10 +463,6 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
-      this.startTutorialAlert();
-    }
-
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
@@ -1163,13 +1159,16 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
+<<<<<<< HEAD
       const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
+=======
+>>>>>>> main
       altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
