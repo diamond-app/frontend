@@ -4,22 +4,15 @@
       <div *ngIf="!investInYourself && !followCreators" class="d-flex justify-content-between">
         <div class="tutorial-title">Invest in a Creator</div>
         <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 3/6</div>
+          <div class="fc-secondary fs-15px">Step 1/4</div>
           <button class="tutorial-skip-button" (click)="skipBuyCreatorsStep()">Skip</button>
         </div>
       </div>
       <div *ngIf="investInYourself && !followCreators" class="d-flex justify-content-between">
         <div class="tutorial-title">Invest in Yourself</div>
         <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 4/6</div>
+          <div class="fc-secondary fs-15px">Step 2/4</div>
           <button class="tutorial-skip-button" (click)="skipBuySelfStep()">Skip</button>
-        </div>
-      </div>
-      <div *ngIf="followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Follow Creators</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 2/6</div>
-          <button class="tutorial-skip-button wiggle" (click)="skipFollowStep()">Next</button>
         </div>
       </div>
     </div>

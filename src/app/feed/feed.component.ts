@@ -134,7 +134,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   fetchUserReferrals() {
     this.backendApi
-      .GetReferralInfoForUser(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetReferralInfoForUser(environment.verificationEndpointHostname, this.globalVars.loggedInUser.PublicKeyBase58Check)
       .subscribe(
         (res: any) => {
           const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });

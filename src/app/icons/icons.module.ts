@@ -106,6 +106,7 @@ const icons = {
   Coin,
   Copy,
   CreditCard,
+  CreatorCoin,
   Deso,
   DollarSign,
   Diamond,
