@@ -569,7 +569,7 @@ export class FeedPostComponent implements OnInit {
     console.log('Here we are');
     const nodeId = this.postContent.PostExtraData["Node"];
     console.log(nodeId);
-    if (nodeId && nodeId != 1) {
+    if (nodeId && nodeId != environment.node.id) {
       const node = this.globalVars.nodes[nodeId];
       if (node) {
         return node;
