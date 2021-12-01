@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
@@ -34,7 +34,8 @@ export type ProfileUpdateErrors = {
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
-  environment =  environment;
+  @Output() profileSaved = new EventEmitter();
+  environment = environment;
 
   introJS = introJs();
   skipTutorialExitPrompt = false;
@@ -57,7 +58,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     founderRewardError: false,
   };
   profileUpdated = false;
-  emailAddress = "";
+  emailAddress: string = "";
   initialEmailAddress = "";
   invalidEmailEntered = false;
   usernameValidationError: string = null;
@@ -235,6 +236,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
+      environment.verificationEndpointHostname,
       this.globalVars.localNode,
       this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
@@ -251,6 +253,37 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfile() {
+    if (!this.inTutorial) {
+      this._saveProfileUpdates();
+    } else {
+      this._cacheProfileUpdates();
+    }
+  }
+
+  _cacheProfileUpdates() {
+    // Trim the username input in case the user added a space at the end. Some mobile
+    // browsers may do this.
+    this.usernameInput = this.usernameInput.trim();
+    if (this.emailAddress === "") {
+      this.invalidEmailEntered = true;
+    } else {
+      this._validateEmail(this.emailAddress);
+    }
+    const hasErrors = this._setProfileErrors();
+    if (hasErrors || this.invalidEmailEntered) {
+      this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
+      return;
+    }
+    this.globalVars.newProfile = {
+      username: this.usernameInput,
+      profileEmail: this.emailAddress,
+      profileDescription: this.descriptionInput,
+      profilePicInput: this.profilePicInput
+    };
+    this.profileSaved.emit();
+  }
+
+  _saveProfileUpdates() {
     // Trim the username input in case the user added a space at the end. Some mobile
     // browsers may do this.
     this.usernameInput = this.usernameInput.trim();
@@ -273,9 +306,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
-        if (this.inTutorial) {
-          this.exitTutorial();
-        }
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
@@ -419,59 +449,5 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   selectChangeHandler(event: any) {
     const newTheme = event.target.value;
     this.themeService.setTheme(newTheme);
-  }
-
-  ngAfterViewInit() {
-    if (this.inTutorial) {
-      this.initiateIntro();
-    }
-  }
-
-  initiateIntro() {
-    this.updateProfileIntro();
-  }
-
-  updateProfileIntro() {
-    this.introJS = introJs();
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Create Your Profile <span class="ml-5px tutorial-header-step">Step 1/6</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: false,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `Welcome to ${environment.node.name}!<br /><br />Let's set up your profile!`,
-        },
-      ],
-    });
-    this.introJS.oncomplete(() => {
-      this.skipTutorialExitPrompt = true;
-      this.showTutorialInstructions = true;
-    });
-    this.introJS.onexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
-  }
-
-  skipToNextTutorialStep() {
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.CREATE_PROFILE, "profile : update : skip");
-  }
-
-  tutorialCleanUp() {}
-
-  exitTutorial() {
-    if (this.inTutorial) {
-      this.skipTutorialExitPrompt = true;
-      this.introJS.exit(true);
-      this.skipTutorialExitPrompt = false;
-    }
   }
 }

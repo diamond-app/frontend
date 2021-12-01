@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
+import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
@@ -9,7 +9,7 @@ import * as introJs from "intro.js/intro.js";
 import * as AOS from "aos";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
-import { Subscription } from "rxjs";
+import { of, Subscription, zip } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -114,12 +114,17 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
-      (res: any) => {
+    return zip(
+      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      environment.verificationEndpointHostname
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+        : of(null)
+    ).subscribe(
+      ([res, userMetadata]) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        const loggedInUser: User = res.UserList[0];
+        let loggedInUser: User = res.UserList[0];
         let loggedInUserFound: boolean = false;
         // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
         this.globalVars.userList.forEach((user, index) => {
@@ -130,6 +135,18 @@ export class AppComponent implements OnInit {
             return false;
           }
         });
+
+        // If we got user metadata from some external global state, let's overwrite certain attributes of the logged in user.
+        if (userMetadata) {
+          loggedInUser.HasPhoneNumber = userMetadata.HasPhoneNumber;
+          loggedInUser.CanCreateProfile = userMetadata.CanCreateProfile;
+          loggedInUser.JumioVerified = userMetadata.JumioVerified;
+          loggedInUser.JumioFinishedTime = userMetadata.JumioFinishedTime;
+          loggedInUser.JumioReturned = userMetadata.JumioReturned;
+          // We can merge the blocked public key maps, which means we effectively block the union of public keys from both endpoints.
+          loggedInUser.BlockedPubKeys = { ...loggedInUser.BlockedPubKeys, ...userMetadata.BlockedPubKeys };
+          // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
+        }
         // If the logged-in user wasn't in the list, add it to the list.
         if (!loggedInUserFound && loggedInUserPublicKey) {
           this.globalVars.userList.push(loggedInUser);
@@ -156,7 +173,7 @@ export class AppComponent implements OnInit {
         if (res.DefaultFeeRateNanosPerKB > 0) {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
-        this.globalVars.globoMods = res.GloboMods;
+        this.globalVars.paramUpdaters = res.ParamUpdaters;
 
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
@@ -290,7 +307,7 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
-    this.installAmplitude()
+    this.installAmplitude();
 
     introJs().start();
   }

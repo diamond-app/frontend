@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  uploadImageHostname: "bitclout.com",
-  jumioEndpointHostname: "bitclout.com",
-  uploadVideoHostname: "bitclout.com",
+  uploadImageHostname: "node.deso.org",
+  verificationEndpointHostname: "https://node.deso.org",
+  uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "help@diamondapp.com",
   dd: {
@@ -16,8 +16,8 @@ export const environment = {
     domain: "amp.diamondapp.com",
   },
   node: {
-    name: 'Diamond',
-    url: 'https://diamondapp.com',
-    logoAssetDir: '/assets/diamond/'
-  }
+    name: "Diamond",
+    url: "https://diamondapp.com",
+    logoAssetDir: "/assets/diamond/",
+  },
 };

@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  uploadImageHostname: "bitclout.com",
-  jumioEndpointHostname: "bitclout.com",
-  uploadVideoHostname: "bitclout.com",
+  uploadImageHostname: "node.deso.org",
+  verificationEndpointHostname: "https://node.deso.org",
+  uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
   dd: {
@@ -16,8 +16,8 @@ export const environment = {
     domain: "",
   },
   node: {
-    name: 'DeSo',
-    url: 'https://deso.org',
-    logoAssetDir: '/assets/deso/'
-  }
+    name: "DeSo",
+    url: "https://deso.org",
+    logoAssetDir: "/assets/deso/",
+  },
 };

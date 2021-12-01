@@ -2019,6 +2019,39 @@ feed-create-post {
   font-size: 15px !important;
 }
 
+.onboarding-info-bar-circle {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--border);
+  border-radius: 100%
+}
+
+.onboarding-follow-selection {
+  max-height: calc(100vh - 400px);
+  overflow-y: scroll;
+}
+
+.onboarding-selected-section {
+  background: var(--background-secondary);
+  opacity: 1;
+  transition: all 1s ease;
+}
+
+.onboarding-unselected-section {
+  background: var(--tile-bg);
+  transition: all 1s ease;
+  opacity: 0.5;
+}
+
+sign-up {
+  .global__center__inner {
+    width: 800px;
+  }
+  .global__sidebar__inner {
+    display: none;
+  }
+}
+
 .feed-create-post__avatar.change-account-selector__account-image {
 	width: 24px;
 	height: 24px;
@@ -5142,6 +5175,21 @@ sell-nft-modal {
   border: none;
   &:hover {
     color: var(--tile-bg);
+  }
+  &.disabled-button {
+    background: var(--highlight-secondary)
+  }
+}
+
+.secondary-button {
+  width: 137px;
+  height: 48px;
+  background: none;
+  border-radius: 16px;
+  color: var(--highlight);
+  border: 1px solid var(--highlight);
+  &:hover {
+    color: var(--highlight);
   }
   &.disabled-button {
     background: var(--highlight-secondary)

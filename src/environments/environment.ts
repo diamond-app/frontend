@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  uploadImageHostname: "bitclout.com",
-  jumioEndpointHostname: "bitclout.com",
-  uploadVideoHostname: "bitclout.com",
+  uploadImageHostname: "node.deso.org",
+  verificationEndpointHostname: "https://node.deso.org",
+  uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
   dd: {
@@ -20,8 +20,8 @@ export const environment = {
     domain: "",
   },
   node: {
-    name: 'Diamond',
-    url: 'https://diamondapp.com',
-    logoAssetDir: '/assets/diamond/'
-  }
+    name: "Diamond",
+    url: "https://diamondapp.com",
+    logoAssetDir: "/assets/diamond/",
+  },
 };

@@ -91,7 +91,11 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
             console.error(err);
           }
         );
-    } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.FOLLOW_CREATORS) {
+    } else if (
+      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.FOLLOW_CREATORS ||
+      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.STARTED ||
+      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.SKIPPED
+    ) {
       this.backendApi
         .GetFollows(
           this.globalVars.localNode,
@@ -158,7 +162,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
     }
-    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/4</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -213,7 +217,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.isMobile()) {
       tooltipClass = tooltipClass + " tutorial-tooltip-right";
     }
-    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 2/4</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,

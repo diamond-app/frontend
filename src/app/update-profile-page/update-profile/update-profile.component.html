@@ -1,22 +1,4 @@
-<div
-  *ngIf="inTutorial"
-  class="flex-grow-1 border"
-  style="border-radius: 10px 10px 0px 0px"
->
-  <div class="tutorial-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="tutorial-title">Create Your Profile</div>
-      <div class="d-flex align-items-center">
-        <div class="fc-secondary fs-15px">Step 1/6</div>
-      </div>
-    </div>
-  </div>
-  <div class="p-16px" *ngIf="showTutorialInstructions">
-    Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.
-  </div>
-</div>
-
-<div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
+<div *ngIf="this.loggedInUser.CanCreateProfile || this.inTutorial; else elseBlock">
   <div class="d-flex flex-column">
     <div style="flex-grow: 1" id="update-profile-tutorial-holder">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
@@ -89,7 +71,7 @@
           *ngIf="globalVars.loggedInUser"
           class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars update-profile__text"
         >
-          <div class="update-profile__title update-profile__username">Username</div>
+          <div class="update-profile__title update-profile__username">Username<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
           <div>
             <input
               [(ngModel)]="usernameInput"
@@ -111,7 +93,19 @@
           <div *ngIf="!usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
             {{ usernameInput }} is available
           </div>
-
+          <div *ngIf="inTutorial">
+            <div class="update-profile__title">Email<span class="ml-5px fs-18px">*</span></div>
+            <div class="form-group">
+              <input
+                type="email"
+                class="form-control fs-15px"
+                placeholder="Enter an email address."
+                [(ngModel)]="emailAddress"
+                (ngModelChange)="_validateEmail($event)"
+              />
+              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+            </div>
+          </div>
           <div class="update-profile__title">Description</div>
 
           <div>
@@ -153,7 +147,7 @@
               >
               <span class="update-profile__cc-percent-symbol"><i-feather name="percent"></i-feather></span>
               <div
-                *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
+                *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
                 * You must purchase your own coin before lowering your founder reward.

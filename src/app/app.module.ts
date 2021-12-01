@@ -89,7 +89,6 @@ import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
 import { SanitizeEmbedPipe } from "../lib/pipes/sanitize-embed-pipe";
-import { NgxIntlTelInputModule } from "ngx-intl-tel-input";
 import { SettingsComponent } from "./settings/settings.component";
 import { NotificationsListComponent } from "./notifications-page/notifications-list/notifications-list.component";
 import { UiScrollModule } from "ngx-ui-scroll";
@@ -121,7 +120,7 @@ import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-pag
 import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
 import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component"
+import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
@@ -382,7 +381,6 @@ export function playerFactory() {
     BrowserAnimationsModule,
     MatTooltipModule,
     TextFieldModule,
-    NgxIntlTelInputModule,
     UiScrollModule,
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),
@@ -396,7 +394,7 @@ export function playerFactory() {
       themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light")
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
     }),
     IconsModule,
     LottieModule,
