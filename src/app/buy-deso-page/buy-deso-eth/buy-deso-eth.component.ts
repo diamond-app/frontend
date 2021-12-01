@@ -61,6 +61,9 @@ type FeeDetails = {
 export class BuyDeSoEthComponent implements OnInit {
   @Input() parentComponent: BuyDeSoComponent;
 
+  buyWithEthStep = 1;
+  keyIsCopied = false;
+
   // Current balance in ETH
   // Eth balance is only for display purposes.
   ethBalance = 0;
@@ -100,6 +103,14 @@ export class BuyDeSoEthComponent implements OnInit {
     private backendApi: BackendApiService,
     private identityService: IdentityService
   ) {}
+
+  _copyPublicKey() {
+    this.globalVars._copyText(this.ethDepositAddress());
+    this.keyIsCopied = true;
+    setInterval(() => {
+      this.keyIsCopied = false;
+    }, 1000);
+  }
 
   ethDepositAddress(): string {
     const pubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
