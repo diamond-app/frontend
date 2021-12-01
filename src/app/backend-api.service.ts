@@ -3,8 +3,8 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
-import { Observable, of, throwError } from "rxjs";
-import { map, mergeMap, switchMap, catchError, mapTo } from "rxjs/operators";
+import { interval, Observable, of, throwError, zip } from "rxjs";
+import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
@@ -1310,7 +1310,7 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    return this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
+    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
       UpdaterPublicKeyBase58Check,
       ProfilePublicKeyBase58Check,
       NewUsername,
@@ -1321,39 +1321,22 @@ export class BackendApiService {
       IsHidden,
       MinFeeRateNanosPerKB,
     }).pipe(
-      map((request) => {
+      switchMap((res) => {
         // We need to wait until the profile creation has been comped.
-        if (request.CompProfileCreationTxnHashHex) {
-          let attempts = 0;
-          let numTries = 160;
-          let timeoutMillis = 750;
-          // Set an interval to repeat
-          let interval = setInterval(() => {
-            if (attempts >= numTries) {
-              clearInterval(interval);
-            }
-            this.GetTxn(endpoint, request.CompProfileCreationTxnHashHex)
-              .subscribe(
-                (res: any) => {
-                  if (!res.TxnFound) {
-                    return;
-                  }
-                  // clear the interval
-                  clearInterval(interval);
-                  return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
-                },
-                (error) => {
-                  console.error(error);
-                  clearInterval(interval);
-                  throwError(error);
-                }
-              )
-              .add(() => attempts++);
-          }, timeoutMillis) as any;
+        if (res.CompProfileCreationTxnHashHex) {
+          return interval(500)
+            .pipe(
+              concatMap((iteration) => zip(this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex), of(iteration)))
+            )
+            .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
+            .pipe(take(1))
+            .pipe(switchMap(() => of(res)));
+        } else {
+          return of(res);
         }
-        return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
       })
     );
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   GetFollows(
