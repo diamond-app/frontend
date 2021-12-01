@@ -1322,6 +1322,35 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     }).pipe(
       map((request) => {
+        // We need to wait until the profile creation has been comped.
+        if (request.CompProfileCreationTxnHashHex) {
+          let attempts = 0;
+          let numTries = 160;
+          let timeoutMillis = 750;
+          // Set an interval to repeat
+          let interval = setInterval(() => {
+            if (attempts >= numTries) {
+              clearInterval(interval);
+            }
+            this.GetTxn(endpoint, request.CompProfileCreationTxnHashHex)
+              .subscribe(
+                (res: any) => {
+                  if (!res.TxnFound) {
+                    return;
+                  }
+                  // clear the interval
+                  clearInterval(interval);
+                  return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+                },
+                (error) => {
+                  console.error(error);
+                  clearInterval(interval);
+                  throwError(error);
+                }
+              )
+              .add(() => attempts++);
+          }, timeoutMillis) as any;
+        }
         return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
       })
     );
