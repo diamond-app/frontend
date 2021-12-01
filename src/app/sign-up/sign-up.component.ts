@@ -118,6 +118,7 @@ export class SignUpComponent {
     this.backendApi
       .UpdateProfile(
         environment.verificationEndpointHostname,
+        this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         "" /*ProfilePublicKeyBase58Check*/,
         // Start params

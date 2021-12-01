@@ -1293,7 +1293,8 @@ export class BackendApiService {
     });
   }
   UpdateProfile(
-    endpoint: string,
+    verificationNodeEndpoint: string,
+    localNodeEndpoint: string,
     // Specific fields
     UpdaterPublicKeyBase58Check: string,
     // Optional: Only needed when updater public key != profile public key
@@ -1310,7 +1311,7 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
+    const request = this.post(verificationNodeEndpoint, BackendRoutes.RoutePathUpdateProfile, {
       UpdaterPublicKeyBase58Check,
       ProfilePublicKeyBase58Check,
       NewUsername,
@@ -1326,7 +1327,9 @@ export class BackendApiService {
         if (res.CompProfileCreationTxnHashHex) {
           return interval(500)
             .pipe(
-              concatMap((iteration) => zip(this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex), of(iteration)))
+              concatMap((iteration) =>
+                zip(this.GetTxn(localNodeEndpoint, res.CompProfileCreationTxnHashHex), of(iteration))
+              )
             )
             .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
             .pipe(take(1))
@@ -1336,7 +1339,7 @@ export class BackendApiService {
         }
       })
     );
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(verificationNodeEndpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   GetFollows(
