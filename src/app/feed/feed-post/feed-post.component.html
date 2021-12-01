@@ -139,7 +139,20 @@
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
             <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
           </a>
-
+          <div *ngIf="getNode()" class="feed-post__node-indicator">
+            <a
+              class="fc-muted"
+              target="_blank"
+              href="{{ getNode().URL }}"
+              mat-raised-button
+              (mouseenter)="tooltipDetectChanges()"
+              (mouseleave)="tooltipDetectChanges()"
+              #tooltip="matTooltip"
+              [matTooltip]="'Posted on ' + getNode().Name"
+            >
+              <i-feather name="external-link" class="feather-small fs-0px"></i-feather>
+            </a>
+          </div>
           <feed-post-dropdown
             *ngIf="showDropdown"
             class="ml-auto"
@@ -237,7 +250,20 @@
                 <div class="desktop-creator-coin-info">
                   <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
                 </div>
-
+                <div *ngIf="getNode()" class="feed-post__node-indicator">
+                  <a
+                    class="fc-muted fs-0px"
+                    target="_blank"
+                    href="{{ getNode().URL }}"
+                    mat-raised-button
+                    (mouseenter)="tooltipDetectChanges()"
+                    (mouseleave)="tooltipDetectChanges()"
+                    #tooltip="matTooltip"
+                    [matTooltip]="'Posted on ' + getNode().Name"
+                  >
+                    <i-feather name="external-link" class="feather-small fs-0px"></i-feather>
+                  </a>
+                </div>
                 <feed-post-dropdown
                   *ngIf="showDropdown && !reposterProfile"
                   class="ml-auto"

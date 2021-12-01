@@ -20,6 +20,7 @@ export const environment = {
     domain: "",
   },
   node: {
+    id: 3,
     name: "Diamond",
     url: "https://diamondapp.com",
     logoAssetDir: "/assets/diamond/",

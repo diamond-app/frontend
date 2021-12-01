@@ -2443,6 +2443,16 @@ sign-up {
   box-shadow: none;
 }
 
+.feed-post__node-indicator {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 20px;
+  @media (max-width: 992px) {
+    right: 45px;
+  }
+}
+
 .feed-post-container {
   margin-bottom: 12px;
   border-radius: 10px;

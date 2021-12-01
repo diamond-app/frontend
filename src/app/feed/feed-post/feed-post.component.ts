@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, DeSoNode, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -18,6 +18,7 @@ import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-re
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "feed-post",
@@ -562,6 +563,18 @@ export class FeedPostComponent implements OnInit {
 
   getEmbedWidth(): string {
     return EmbedUrlParserService.getEmbedWidth(this.postContent.PostExtraData["EmbedVideoURL"]);
+  }
+
+  getNode(): DeSoNode {
+    console.log('Here we are');
+    const nodeId = this.postContent.PostExtraData["Node"];
+    console.log(nodeId);
+    if (nodeId && nodeId != 1) {
+      const node = this.globalVars.nodes[nodeId];
+      if (node) {
+        return node;
+      }
+    }
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
