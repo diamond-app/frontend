@@ -461,6 +461,27 @@ export class BackendApiService {
     this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
   }
 
+  // Launch Approve window in identity if necessary
+  launchApproveWindow(signed, res): Observable<any> {
+    if (signed.approvalRequired) {
+      return this.identityService
+        .launch("/approve", {
+          tx: res.TransactionHex,
+          btcTx: res.btcTx,
+          ethTx: res.ethTx,
+          publicKey: res.publicKey,
+        })
+        .pipe(
+          map((approved) => {
+            this.setIdentityServiceUsers(approved.users);
+            return { ...res, ...approved };
+          })
+        );
+    } else {
+      return of({ ...res, ...signed });
+    }
+  }
+
   signAndSubmitTransaction(endpoint: string, request: Observable<any>, PublicKeyBase58Check: string): Observable<any> {
     return request
       .pipe(
@@ -470,24 +491,7 @@ export class BackendApiService {
               transactionHex: res.TransactionHex,
               ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
             })
-            .pipe(
-              switchMap((signed) => {
-                if (signed.approvalRequired) {
-                  return this.identityService
-                    .launch("/approve", {
-                      tx: res.TransactionHex,
-                    })
-                    .pipe(
-                      map((approved) => {
-                        this.setIdentityServiceUsers(approved.users);
-                        return { ...res, ...approved };
-                      })
-                    );
-                } else {
-                  return of({ ...res, ...signed });
-                }
-              })
-            )
+            .pipe(switchMap((signed) => this.launchApproveWindow(signed, res)))
         )
       )
       .pipe(
@@ -607,7 +611,11 @@ export class BackendApiService {
               ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
               unsignedHashes: res.UnsignedHashes,
             })
-            .pipe(map((signed) => ({ ...res, ...signed })))
+            .pipe(
+              map((signed) =>
+                this.launchApproveWindow(signed, { btcTx: res.UnsignedHashes[0], publicKey: PublicKeyBase58Check })
+              )
+            )
         )
       );
 
@@ -1645,7 +1653,7 @@ export class BackendApiService {
       PublicKeyBase58Check,
       FetchStartIndex,
       NumToFetch,
-      FilteredOutNotificationCategories
+      FilteredOutNotificationCategories,
     });
   }
 
@@ -1654,7 +1662,7 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     LastSeenIndex: number,
     LastUnreadNotificationIndex: number,
-    UnreadNotifications: number,
+    UnreadNotifications: number
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathSetNotificationMetadata, PublicKeyBase58Check, {
       PublicKeyBase58Check,
@@ -1666,7 +1674,7 @@ export class BackendApiService {
 
   GetUnreadNotificationsCount(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
-      PublicKeyBase58Check
+      PublicKeyBase58Check,
     });
   }
 
@@ -2234,7 +2242,7 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     TutorialStatus: string,
     CreatorPurchasedInTutorialPublicKey?: string,
-    ClearCreatorCoinPurchasedInTutorial?: boolean,
+    ClearCreatorCoinPurchasedInTutorial?: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateTutorialStatus, PublicKeyBase58Check, {
       PublicKeyBase58Check,

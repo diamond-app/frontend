@@ -49,6 +49,8 @@ export class IdentityService {
       public_key?: string;
       accessLevelRequest?: string;
       hideJumio?: boolean;
+      btcTx?: string;
+      ethTx?: string;
     }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
@@ -83,6 +85,14 @@ export class IdentityService {
 
     if (params?.hideJumio) {
       httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
+    }
+
+    if (params?.btcTx) {
+      httpParams = httpParams.append("btcTx", params.btcTx);
+    }
+
+    if (params?.ethTx) {
+      httpParams = httpParams.append("ethTx", params.ethTx);
     }
 
     const paramsStr = httpParams.toString();
