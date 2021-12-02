@@ -1165,10 +1165,6 @@ export class GlobalVarsService {
       altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-<<<<<<< HEAD
-      const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
-=======
->>>>>>> main
       altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 

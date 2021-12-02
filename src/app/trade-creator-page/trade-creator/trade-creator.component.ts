@@ -5,7 +5,7 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -31,6 +31,7 @@ export class TradeCreatorComponent implements OnInit {
   @Input() tutorialBuy: boolean;
   @Input() username: string;
   @Input() tradeType: string;
+  @Output() hideModal = new EventEmitter<any>();
   introJS = introJs();
   TRADE_CREATOR_FORM_SCREEN = "trade_creator_form_screen";
   TRADE_CREATOR_PREVIEW_SCREEN = "trade_creator_preview_screen";
@@ -90,7 +91,7 @@ export class TradeCreatorComponent implements OnInit {
       this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
     } else {
       this.exitTutorial();
-      this.bsModalRef.hide();
+      this.hideModal.emit();
       if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
         this.buyCreatorTutorialComplete();
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
@@ -191,7 +192,6 @@ export class TradeCreatorComponent implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
-    public bsModalRef: BsModalRef,
     private modalService: BsModalService
   ) {
     this.appData = globalVars;
@@ -200,7 +200,7 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   openBuyCloutModal() {
-    this.bsModalRef.hide();
+    this.hideModal.emit();
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       backdrop: "static",
@@ -384,7 +384,7 @@ export class TradeCreatorComponent implements OnInit {
         this.globalVars.logEvent("buy : creator : select");
         this.globalVars.updateEverything().add(() => {
           this.exitTutorial();
-          this.bsModalRef.hide();
+          this.hideModal.emit();
           this.router.navigate([
             RouteNames.TUTORIAL,
             RouteNames.WALLET,
@@ -407,7 +407,7 @@ export class TradeCreatorComponent implements OnInit {
         this.globalVars.logEvent("invest : others : sell : next");
         this.globalVars.updateEverything().add(() => {
           this.exitTutorial();
-          this.bsModalRef.hide();
+          this.hideModal.emit();
           this.router.navigate([
             RouteNames.TUTORIAL,
             RouteNames.WALLET,
@@ -517,7 +517,7 @@ export class TradeCreatorComponent implements OnInit {
         this.globalVars.skipTutorial(this);
       }
       if (this.nextTutorialStepOnExit) {
-        this.bsModalRef.hide();
+        this.hideModal.emit();
         this.backendApi
           .UpdateTutorialStatus(
             this.globalVars.localNode,
@@ -560,7 +560,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS.start();
   }
   tutorialCleanUp() {
-    this.bsModalRef.hide();
+    this.hideModal.emit();
   }
   exitTutorial() {
     if (this.inTutorial) {

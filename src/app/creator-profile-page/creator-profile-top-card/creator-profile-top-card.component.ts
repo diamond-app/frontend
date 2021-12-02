@@ -10,7 +10,7 @@ import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { UpdateProfileModalComponent } from "../../update-profile-page/update-profile-modal/update-profile-modal.component";
 import {CreatorsLeaderboardComponent} from "../../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
-import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+import {TradeCreatorModalComponent} from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "creator-profile-top-card",
@@ -172,7 +172,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   openBuyCreatorCoinModal(event) {
     event.stopPropagation();
     const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });

@@ -43,6 +43,7 @@ import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-p
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
 import { TradeCreatorComponent } from "./trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "./trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
 import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-form/trade-creator-form.component";
@@ -241,6 +242,7 @@ export function playerFactory() {
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
+    TradeCreatorModalComponent,
     BuyDeSoComponent,
     BuyDeSoUSDComponent,
     TradeCreatorFormComponent,

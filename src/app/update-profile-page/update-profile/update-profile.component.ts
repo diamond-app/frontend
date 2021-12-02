@@ -9,7 +9,7 @@ import { ThemeService } from "../../theme/theme.service";
 import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { environment } from "src/environments/environment";
 import { Observable } from "rxjs";
 
@@ -369,7 +369,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       username: this.globalVars.loggedInUser.ProfileEntryResponse.Username,
       tradeType: this.globalVars.RouteNames.BUY_CREATOR,
     };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
