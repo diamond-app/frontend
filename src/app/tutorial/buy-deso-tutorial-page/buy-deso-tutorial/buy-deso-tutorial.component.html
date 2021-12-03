@@ -21,11 +21,11 @@
       </div>
     </div>
     <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">$DESO is Diamond's Social Currency</div>
-    <div class="fc-default fs-16px text-center mb-16px">It allows you to take and record transactions (posts, likes, follows, etc) on the app.<br/><br/>
-    Every transaction costs less than $0.000000001 to make. This is incredibly cheap compared to many of the leading decentralized solutions available today.<br/><br/>
+    <div class="fc-default fs-16px text-center mb-16px">It allows you to create transactions (posts, likes, follows, etc) that are stored on the blockchain that powers Diamond, as well as other DeSo apps.<br/><br/>
+    Every transaction costs less than $0.000000001 to make. This is incredibly cheap compared to many of the leading decentralized blockchain solutions available today.<br/><br/>
       DESO is also used to give tips on the platform via diamonds, purchase creator coins, and purchase NFTs.
     </div>
-    <div class="fc-error fs-18px text-center mb-25px">Choose which option you would like to explore:</div>
+    <div class="fc-error fs-18px text-center mb-25px font-weight-bold">Choose which option you would like to explore:</div>
     <div class="d-flex justify-content-around mb-25px">
       <div class="col-6 d-flex align-items-center flex-column">
         <div class="fs-18px font-weight-semibold mb-16px">Buying DESO with fiat</div>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="w-100 d-flex justify-content-center">
-      <button style="width: 180px" class="plain-button">Skip to creator coins</button>
+      <button (click)="skipToNextStep()" style="width: 180px" class="plain-button">Skip to creator coins</button>
     </div>
   </div>
   <div *ngIf="addMobileFooter" style="height: 300px"></div>

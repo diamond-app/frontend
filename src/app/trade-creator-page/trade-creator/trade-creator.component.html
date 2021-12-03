@@ -45,10 +45,11 @@
       <!-- Content -->
       <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
         <trade-creator-form
+          [inTutorial]="inTutorial"
           [creatorCoinTrade]="creatorCoinTrade"
           [hideWarning]="hideWarning"
           (previewClicked)="_onPreviewClicked()"
-          (buyDesoClicked)="openBuyCloutModal()"
+          (buyDesoClicked)="openBuyDeSoModal()"
           (closeModal)="hideModal.emit()"
         ></trade-creator-form>
       </div>

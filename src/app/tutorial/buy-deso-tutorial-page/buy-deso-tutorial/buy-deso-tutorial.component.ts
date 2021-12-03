@@ -68,6 +68,12 @@ export class BuyDesoTutorialComponent implements OnInit {
     });
   }
 
+  skipToNextStep() {
+    this.router.navigate([
+      `/${this.globalVars.RouteNames.TUTORIAL}/${this.globalVars.RouteNames.INVEST}/${this.globalVars.RouteNames.BUY_CREATOR}`,
+    ]);
+  }
+
   initiateIntro() {
     setTimeout(() => {
       if (this.followCreators) {
