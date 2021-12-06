@@ -146,7 +146,7 @@ export class SignUpComponent {
       this.currentTransactionStep = 0;
       // Total number of transactions that need to be created. # of follows + update profile + tutorial status
       this.totalTransactions = this.creatorsFollowed.length + 2;
-      this.transactionProgress = Math.round(this.currentTransactionStep / this.totalTransactions) * 100;
+      this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
       this.globalVars.logEvent("onboarding : complete");
       this.updateProfileTransaction();
     }
@@ -209,7 +209,7 @@ export class SignUpComponent {
   followCreatorNext(comp) {
     console.log("Follow creator callback");
     comp.currentTransactionStep += 1;
-    comp.transactionProgress = Math.round(comp.currentTransactionStep / comp.totalTransactions) * 100;
+    comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
     // If there are still creators that haven't been followed yet, follow them
     if (comp.followTransactionIndex + 1 < comp.creatorsFollowed.length) {
       comp.followTransactionIndex += 1;
@@ -232,7 +232,7 @@ export class SignUpComponent {
   updateProfileSuccess(comp) {
     console.log("Update profile callback");
     comp.currentTransactionStep += 1;
-    comp.transactionProgress = Math.round(comp.currentTransactionStep / comp.totalTransactions) * 100;
+    comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
     if (comp.creatorsFollowed.length > 0) {
       comp.followTransactionIndex = 0;
       comp.followCreatorTransaction();
@@ -279,7 +279,7 @@ export class SignUpComponent {
       )
       .subscribe(() => {
         this.currentTransactionStep += 1;
-        this.transactionProgress = Math.round(this.currentTransactionStep / this.totalTransactions) * 100;
+        this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
         this.processingTransactions = false;
         this.globalVars.removeOnboardingSettings();
         this.globalVars.updateEverything().add(() => {
