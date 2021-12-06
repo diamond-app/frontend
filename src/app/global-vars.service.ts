@@ -1491,6 +1491,7 @@ export class GlobalVarsService {
                 return;
               }
               clearInterval(interval);
+              console.log("Found txn");
               successCallback(comp);
             },
             (error) => {
