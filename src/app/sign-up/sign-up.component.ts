@@ -27,6 +27,9 @@ export class SignUpComponent {
   hoveredSection = 0;
   processingTransactions = false;
   verifiedInterval: Timer = null;
+  currentTransactionStep: number = 0;
+  totalTransactions: number = 0;
+  transactionProgress: number = 0;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -140,6 +143,10 @@ export class SignUpComponent {
   processTransactions() {
     if (!this.processingTransactions) {
       this.processingTransactions = true;
+      this.currentTransactionStep = 0;
+      // Total number of transactions that need to be created. # of follows + update profile + tutorial status
+      this.totalTransactions = this.creatorsFollowed.length + 2;
+      this.transactionProgress = Math.round(this.currentTransactionStep / this.totalTransactions) * 100;
       this.globalVars.logEvent("onboarding : complete");
       this.updateProfileTransaction();
     }
@@ -200,6 +207,8 @@ export class SignUpComponent {
   }
 
   followCreatorNext(comp) {
+    comp.currentTransactionStep += 1;
+    comp.transactionProgress = Math.round(comp.currentTransactionStep / comp.totalTransactions) * 100;
     // If there are still creators that haven't been followed yet, follow them
     if (comp.followTransactionIndex + 1 < comp.creatorsFollowed.length) {
       comp.followTransactionIndex += 1;
@@ -220,6 +229,8 @@ export class SignUpComponent {
   }
 
   updateProfileSuccess(comp) {
+    comp.currentTransactionStep += 1;
+    comp.transactionProgress = Math.round(comp.currentTransactionStep / comp.totalTransactions) * 100;
     if (comp.creatorsFollowed.length > 0) {
       comp.followTransactionIndex = 0;
       comp.followCreatorTransaction();
@@ -265,6 +276,8 @@ export class SignUpComponent {
         true
       )
       .subscribe(() => {
+        this.currentTransactionStep += 1;
+        this.transactionProgress = Math.round(this.currentTransactionStep / this.totalTransactions) * 100;
         this.processingTransactions = false;
         this.globalVars.removeOnboardingSettings();
         this.globalVars.updateEverything().add(() => {
