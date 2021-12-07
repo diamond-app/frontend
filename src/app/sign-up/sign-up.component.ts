@@ -181,7 +181,6 @@ export class SignUpComponent {
           );
         },
         (error) => {
-          console.log("error");
           console.log(error);
           this.updateProfileFailure(this, error?.error?.error);
         });
@@ -209,7 +208,6 @@ export class SignUpComponent {
   }
 
   followCreatorNext(comp) {
-    console.log("Follow creator callback");
     comp.currentTransactionStep += 1;
     comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
     // If there are still creators that haven't been followed yet, follow them
@@ -232,7 +230,6 @@ export class SignUpComponent {
   }
 
   updateProfileSuccess(comp) {
-    console.log("Update profile callback");
     comp.currentTransactionStep += 1;
     comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
     if (comp.creatorsFollowed.length > 0) {
