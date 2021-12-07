@@ -135,6 +135,8 @@ export class SignUpComponent {
 
   completeFollowCreators() {
     this.globalVars.logEvent("onboarding : creators : follow");
+    this.creatorsFollowed = Object.keys(this.globalVars.onboardingCreatorsToFollow);
+    this.creatorsFollowedCount = Object.keys(this.globalVars.onboardingCreatorsToFollow).length;
     this.globalVars.setOnboardingCreatorsToFollow(this.globalVars.onboardingCreatorsToFollow);
     this.stepNum = 3;
     this.pollForUserValidated();
