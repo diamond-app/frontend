@@ -427,7 +427,7 @@ export class GlobalVarsService {
     if (user) {
       // Fetch referralLinks for the userList before completing the load.
       this.backendApi
-        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+        .GetReferralInfoForUser(environment.verificationEndpointHostname, user.PublicKeyBase58Check)
         .subscribe(
           (res: any) => {
             this.loggedInUser = user;
