@@ -31,7 +31,7 @@
             [hasNotifications]="true"
             [notificationType]="'notifications'"
             [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-            [buttonLabel]="t('left_bar.notifications')"
+            [buttonLabel]="t('left_bar.notifications')!!"
             [isUnread]="globalVars.unreadNotifications > 0"
             [iconName]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           ></left-bar-button>

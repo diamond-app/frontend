@@ -1,4 +1,159 @@
 {
+  "add_unlockable_modal": {
+    "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
+    "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
+    "btn_selling_NFT": "Selling NFTs",
+    "btn_add": "Add",
+    "soldcounter_of": "of",
+    "soldcounter_sold": "sold"
+  },
+  "bid_placed_modal": {
+    "bid_successful" : "Your bid was successful. We will notify you when the auction closes.",
+    "explore_showcase": "Explore the Showcase"
+  },
+  "bottom_bar_mobile": {
+    "home" : "Home",
+    "notifications":"Notifications",
+    "messages":"Messages",
+    "wallet":"Wallet"
+  },
+  "buy_deso":{
+    "buy_deso" : "Buy $DESO",
+    "step" : "Step",
+    "send_bitcoin": "Send Bitcoin to this address",
+    "send_eth":"Send ETH to this address",
+    "amount_desposited":"Amount deposited",
+    "loading":"Loading",
+    "minimum_deposit":"Minimum deposit is currently",
+    "goto_next_step":"Go to the next step",
+    "cancel":"Cancel",
+    "bitcoin_balance":"Bitcoin Balance",
+    "eth_balance":"Ethereum Balance",
+    "deso_to_buy":"$DESO to Buy",
+    "max":"Max",
+    "bitcoin_to_swap":"Bitcoin to Swap",
+    "eth_to_swap":"Ethereum to Swap",
+    "bitcoin_network_fee":"Bitcoin network fee",
+    "eth_network_fee":"Ethereum network fee",
+    "total_bitcoin_to_swap":"Total Bitcoin to swap",
+    "total_eth_to_swap":"Total ETH to swap",
+    "back":"Back",
+    "refresh":"Refresh",
+    "copy":"Copy",
+    "buy_complete":"Buy Complete",
+    "new_balance":"New balance",
+    "buy_more_deso":"Buy more DESO",
+    "deso_explanation": "$DESO is a cryptocurrency like Bitcoin, only it powers the first decentralized social network.",
+    "how_to_get": "How do I get $DESO?",
+    "create_anon_account": "Create an anonymous account",
+    "to_buy_deso_fast": "to buy $DESO in under a minute.",
+    "what_is_deso_for": "What is $DESO useful for?",
+    "use_to_buysell_creatorcoins_0": "You can use it to buy and sell",
+    "use_to_buysell_creatorcoins_1": " ",
+    "creatorcoins": "creator coins",
+    "use_to_send_messages": "You can use it to send messages to people",
+    "use_to_post_0": "You can use it to",
+    "use_to_post_1": "of your own",
+    "submit_posts": "submit posts",
+    "buy_with_bc_anon": "You can buy it anonymously with Bitcoin in under a minute",
+    "blockchains_iphone_moment": "It's blockchain's \"iPhone moment.\"",
+    "exchange_amount": "Amount to exchange",
+    "receive_amount": "Amount you receive",
+    "country": "Country"
+  },
+  "change_account": {
+    "login":"Log In",
+    "signup":"Sign Up",
+    "add_account":"Add account",
+    "logout":"Logout"
+  },
+  "feed_create_post": {
+    "video_processing":"Video Processing In Progress",
+    "uploading":"Uploading:",
+    "complete":"Complete",
+    "post": "Post",
+    "embed_image": "Link to Arweave image",
+    "embed_video": "Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud",
+    "quotes": {
+      "quote1": "Go ahead, make my day.",
+      "quote2": "The stuff that dreams are made of.",
+      "quote3": "Made it, Ma! Top of the world!",
+      "quote4": "I'll be back.",
+      "quote5": "Open the pod bay doors, HAL.",
+      "quote6": "Who's on first.",
+      "quote7": "What's on second.",
+      "quote8": "I feel the need - the need for speed!",
+      "quote9": "I'm king of the world!",
+      "quote10": "If you build it, they will come.",
+      "quote11": "Roads? Where we're going we don't need roads",
+      "quote12": "To infinity and beyond!",
+      "quote13": "May the Force be with you",
+      "quote14": "I've got a feeling we're not in Kansas anymore",
+      "quote15": "E.T. phone home",
+      "quote16": "Elementary, my dear Watson",
+      "quote17": "I'm going to make him an offer he can't refuse.",
+      "quote18": "Big things have small beginnings."
+    }
+  },
+  "feed_post": {
+    "of":"of",
+    "from":"from",
+    "for_sale":"for sale",
+    "unlockable_content":"Unlockable content",
+    "last_price":"Last price",
+    "removed_by_author":"This post was removed by the author.",
+    "this_post_from":"This is a post from",
+    "who_you_have_blocked":"who you have blocked. Click here to visit their profile to unblock them.",
+    "reposted":"reposted",
+    "original_removed":"The original post was removed by its author.",
+    "buy":"Buy",
+    "replying_to":"replying to",
+    "whitelist":"Whitelist",
+    "whitelisted":"Whitelisted",
+    "in_hot_feed":"in Hot Feed",
+    "adding":"Adding...",
+    "removing":"Removing...",
+    "view":"View",
+    "multiplier":"Multiplier",
+    "repost":"Repost",
+    "quote_repost":"Quote Repost",
+    "like":"Like",
+    "diamond":"Diamond",
+    "place_a_bid":"Place a bit",
+    "accept_transfer":"Accept Tranfer",
+    "hide_unlockable":"Hide Unlockable",
+    "show_unlockable":"Show Unlockable"
+
+  },
+  "landing":{
+    "login":"Login",
+    "signup":"Sign Up",
+    "signuptoday":"Sign Up Today",
+    "settle":"Don´t settle",
+    "fora":"for a",
+    "diamonds":"Get diamonds and invest in creators like never before. Your next post could be worth millions!"
+  },
+  "left_bar": {
+    "home":"Home",
+    "buy_creators":"Buy Creators",
+    "buy_deso":"Buy DESO",
+    "buy_deso2":"Buy $DESO",
+    "notifications":"Notifications",
+    "messages":"Messages",
+    "my_profile":"My Profile",
+    "update_profile":"Update Profile",
+    "my_wallet":"My Wallet",
+    "tutorial":"Tutorial",
+    "referrals":"Referrals",
+    "help":"Help",
+    "post":"Post",
+    "admin":"Admin",
+    "buy":"Buy",
+    "logout":"Logout"
+  },
+  "loader":{
+    "loading":"Loading Now"
+  },
   "messages": {
     "select_creator": "Select Creator",
     "custom_inbox_settings":"Custom Inbox Settings",
@@ -35,6 +190,35 @@
     "buy_deso":"Buy DESO",
     "multiple_editions":"An NFT can have multiple editions, each with its own unique serial number.",
     "no_serial_available":"There are no serial numbers available for you to bid on."
+  },
+  "right_bar": {
+    "creators":{
+      "sent":"Send",
+      "buy_deso":"Buy $DESO",
+      "deso_price":"$DESO Price",
+      "your_deso":"Your $DESO",
+      "update_your_email":"Update your email",
+      "top_daily_gainers":"Top Daily Gainers",
+      "top_daily_diamond_creators":"Top Daily Diamonded Creators",
+      "top_community_projects":"Top Community Projects",
+      "top_creators_alltime":"Top Creators All Time",
+      "powered_by":"Powered by",      
+      "leaderboard": {
+        "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
+        "verified_account": "This account is verified"
+      }
+    },
+    "signup":{
+      "welcome_to_deso":"Welcome to DeSo!",
+      "login":"Log In",
+      "signup":"Sign Up"
+    }
+  },
+  "search_bar": {
+    "loading":"Loading...",
+    "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
+    "search": "Search...",
+    "search_on_cloutavista": "Search on Cloutavista"
   },
   "sell_nft":{
     "back_to_nft":"Back to NFT",
@@ -78,168 +262,11 @@
     "buy_deso": "Buy $DESO",
     "enter_emailaddress": "Enter an email address."
   },
-  "add_unlockable_modal": {
-    "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
-    "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
-    "btn_selling_NFT": "Selling NFTs",
-    "btn_add": "Add",
-    "soldcounter_of": "of",
-    "soldcounter_sold": "sold"
-  },
-  "buy_deso":{
-    "buy_deso" : "Buy $DESO",
-    "step" : "Step",
-    "send_bitcoin": "Send Bitcoin to this address",
-    "send_eth":"Send ETH to this address",
-    "amount_desposited":"Amount deposited",
-    "loading":"Loading",
-    "minimum_deposit":"Minimum deposit is currently",
-    "goto_next_step":"Go to the next step",
-    "cancel":"Cancel",
-    "bitcoin_balance":"Bitcoin Balance",
-    "eth_balance":"Ethereum Balance",
-    "deso_to_buy":"$DESO to Buy",
-    "max":"Max",
-    "bitcoin_to_swap":"Bitcoin to Swap",
-    "eth_to_swap":"Ethereum to Swap",
-    "bitcoin_network_fee":"Bitcoin network fee",
-    "eth_network_fee":"Ethereum network fee",
-    "total_bitcoin_to_swap":"Total Bitcoin to swap",
-    "total_eth_to_swap":"Total ETH to swap",
-    "back":"Back",
-    "refresh":"Refresh",
-    "copy":"Copy",
-    "buy_complete":"Buy Complete",
-    "new_balance":"New balance",
-    "buy_more_deso":"Buy more DESO"
-  },
-  "loader":{
-    "loading":"Loading Now"
-  },
-  "landing":{
-    "login":"Login",
-    "signup":"Sign Up",
-    "signuptoday":"Sign Up Today",
-    "settle":"Don´t settle",
-    "fora":"for a",
-    "diamonds":"Get diamonds and invest in creators like never before. Your next post could be worth millions!"
-  },
-  "left_bar": {
-    "home":"Home",
-    "buy_creators":"Buy Creators",
-    "buy_deso":"Buy DESO",
-    "buy_deso2":"Buy $DESO",
-    "notifications":"Notifications",
-    "messages":"Messages",
-    "my_profile":"My Profile",
-    "update_profile":"Update Profile",
-    "my_wallet":"My Wallet",
-    "tutorial":"Tutorial",
-    "referrals":"Referrals",
-    "help":"Help",
-    "post":"Post",
-    "admin":"Admin",
-    "buy":"Buy",
-    "logout":"Logout"
-  },
-  "right_bar": {
-    "creators":{
-      "sent":"Send",
-      "buy_deso":"Buy $DESO",
-      "deso_price":"$DESO Price",
-      "your_deso":"Your $DESO",
-      "update_your_email":"Update your email",
-      "top_daily_gainers":"Top Daily Gainers",
-      "top_daily_diamond_creators":"Top Daily Diamonded Creators",
-      "top_community_projects":"Top Community Projects",
-      "top_creators_alltime":"Top Creators All Time",
-      "powered_by":"Powered by",      
-      "leaderboard": {
-        "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
-        "verified_account": "This account is verified"
-      }
-    },
-    "signup":{
-      "welcome_to_deso":"Welcome to DeSo!",
-      "login":"Log In",
-      "signup":"Sign Up"
-    }
-  },
   "top_bar" : {
     "mobile": {
       "login" : "Log in",
       "signup" : "Sign Up"
     }
-  },
-  "search_bar": {
-    "loading":"Loading...",
-    "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
-    "search": "Search...",
-    "search_on_cloutavista": "Search on Cloutavista"
-  },
-  "feed_post": {
-    "of":"of",
-    "from":"from",
-    "for_sale":"for sale",
-    "unlockable_content":"Unlockable content",
-    "last_price":"Last price",
-    "removed_by_author":"This post was removed by the author.",
-    "this_post_from":"This is a post from",
-    "who_you_have_blocked":"who you have blocked. Click here to visit their profile to unblock them.",
-    "reposted":"reposted",
-    "original_removed":"The original post was removed by its author.",
-    "buy":"Buy",
-    "replying_to":"replying to",
-    "whitelist":"Whitelist",
-    "whitelisted":"Whitelisted",
-    "in_hot_feed":"in Hot Feed",
-    "adding":"Adding...",
-    "removing":"Removing...",
-    "view":"View",
-    "multiplier":"Multiplier",
-    "repost":"Repost",
-    "quote_repost":"Quote Repost",
-    "like":"Like",
-    "diamond":"Diamond",
-    "place_a_bid":"Place a bit",
-    "accept_transfer":"Accept Tranfer",
-    "hide_unlockable":"Hide Unlockable",
-    "show_unlockable":"Show Unlockable"
-
-  },
-  "feed_create_post": {
-    "video_processing":"Video Processing In Progress",
-    "uploading":"Uploading:",
-    "complete":"Complete",
-    "post": "Post",
-    "embed_image": "Link to Arweave image",
-    "embed_video": "Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud",
-    "quotes": {
-      "quote1": "Go ahead, make my day.",
-      "quote2": "The stuff that dreams are made of.",
-      "quote3": "Made it, Ma! Top of the world!",
-      "quote4": "I'll be back.",
-      "quote5": "Open the pod bay doors, HAL.",
-      "quote6": "Who's on first.",
-      "quote7": "What's on second.",
-      "quote8": "I feel the need - the need for speed!",
-      "quote9": "I'm king of the world!",
-      "quote10": "If you build it, they will come.",
-      "quote11": "Roads? Where we're going we don't need roads",
-      "quote12": "To infinity and beyond!",
-      "quote13": "May the Force be with you",
-      "quote14": "I've got a feeling we're not in Kansas anymore",
-      "quote15": "E.T. phone home",
-      "quote16": "Elementary, my dear Watson",
-      "quote17": "I'm going to make him an offer he can't refuse.",
-      "quote18": "Big things have small beginnings."
-    }
-  },
-  "change_account": {
-    "login":"Log In",
-    "signup":"Sign Up",
-    "add_account":"Add account",
-    "logout":"Logout"
   },
   "wallet_widget": {
     "wallet_of": "Wallet of",

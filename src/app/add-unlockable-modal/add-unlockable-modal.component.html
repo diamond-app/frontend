@@ -21,7 +21,7 @@
             [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
             (click)="sellNFT()"
             [disabled]="addDisabled">
-      {{ sellingNFT ? 'add_unlockable_modal.btn_selling_NFT' | transloco : 'add_unlockable_modal.btn_add' | transloco }}
+      {{ sellingNFT ? 'add_unlockable_modal.btn_selling_NFT' : 'add_unlockable_modal.btn_add' | transloco }}
     </button>
     <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} {{ 'add_unlockable_modal.soldcounter_of' | transloco }} {{ sellNFTTotal }} {{ 'add_unlockable_modal.soldcounter_sold' | transloco }}</div>
 

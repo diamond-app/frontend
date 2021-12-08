@@ -1,82 +1,4 @@
 {
-  "messages": {
-    "select_creator": "Selecteer Creator",
-    "custom_inbox_settings": "Aangepaste inbox instellingen",
-    "only_show": "Alleen weergeven",
-    "holders": "Houders",
-    "holdings": "Bezit",
-    "followers": "Volgers",
-    "following": "Volgend",
-    "order_by": "Sorteer op",
-    "most_recent": "Meest recent",
-    "most_deso": "Meeste deso",
-    "most_followed": "Meest gevolgd",
-    "largest_holder": "Grootste houder",
-    "update": "Bijwerken",
-    "cancel": "Annuleer",
-    "loading": "Laden",
-    "load_more": "Laad Meer",
-    "send": "Versturen",
-    "sending": "Verzenden",
-    "new_message": "Nieuw Bericht"
-  },
-  "place_bid": {
-    "select_an_edition": "Selecteer een editie",
-    "place_a_bid": "Plaats een bod",
-    "number": "Nummer",
-    "place_bid": "Je gaat een bod plaatsen voor een NFT geveild door",
-    "highest_bid": "Hoogste Bod",
-    "min_bid_amount": "Minimaal bod",
-    "creator_royalty": "Creator Royalty",
-    "coinholder_royalty": "Coin-holder Royalty",
-    "your_bid": "Je bod",
-    "placing_bid": "Bod plaatsen",
-    "buy_deso": "Koop DESO",
-    "multiple_editions": "Een NFT kan meerdere edities hebben, ieder met zijn eigen unieke serienummer.",
-    "no_serial_available": "Er zijn geen serienummers beschikbaar om op te bieden."
-  },
-  "sell_nft": {
-    "back_to_nft": "Terug naar NFT",
-    "sell_an_nft": "Verkoop een NFT",
-    "about_to_sell": "Je staat op het punt een NFT te verkopen aan",
-    "and": "en",
-    "are_you_sure": "Weet je het zeker?",
-    "selling_price": "Verkoop prijs",
-    "number": "Nummer",
-    "ernings": "Inkomsten",
-    "creator_royalty": "Creator Royalty",
-    "coinholder_royalty": "Coin-holder Royalty",
-    "select_one_bid": "Je dient minimaal 1 bieding te selecteren om deze NFT te verkopen.",
-    "sellling_ntfs": "Verkopen NFTs",
-    "sell_nfts": "Verkoop NFTs"
-  },
-  "settings": {
-    "settings": "Instellingen",
-    "email": "E-mail",
-    "enter_valid_email": "Vul een geldig e-mail adres in.",
-    "enter_email": "Vul een email adres in.",
-    "update_email": "Update E-mail adres",
-    "deso_theme": "DeSo Thema",
-    "success": "Gelukt!",
-    "updating": "Bijwerken..."
-  },
-  "simple_profile": {
-    "buy": "Koop"
-  },
-  "signup": {
-    "phone_verified": "Je telefoonnummer is geverifieerd. We sturen je een klein beetje DeSo, wat genoeg is om een bericht te plaatsen en anderen te volgen.",
-    "stay_in_the_loop": "Blijf op de hoogte",
-    "step": "STAP",
-    "get_notified": "Ontvang een bericht wanneer iemand je munt koopt.",
-    "email": "E-mail",
-    "enter_valid_email": "Vul een geldig e-mail adres in.",
-    "skip": "Overslaan",
-    "next": "Volgende",
-    "deso_is_a_cryptocurrency": "$DESO is een <b>cryptocurrency</b> zoals Bitcoin, only it powers the first <b>decentralized social network</b>.",
-    "use_deso": "Je kunt $DESO gebruiken om te handelen in creator munten, diamanten geven, NFTs kopen, en nog veel meer.",
-    "buy_deso": "Koop $DESO",
-    "enter_emailaddress": "Vul een e-mailadres in."
-  },
   "add_unlockable_modal": {
     "mft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
@@ -84,6 +6,16 @@
     "btn_add": "Toevoegen",
     "soldcounter_of": "van",
     "soldcounter_sold": "verkocht"
+  },
+  "bid_placed_modal": {
+    "bid_successful" : "Je bieding is gelukt. Als de veiling sluit, laten we het je weten.",
+    "explore_showcase": "Showcase verkennen"
+  },
+  "bottom_bar_mobile": {
+    "home" : "Home",
+    "notifications":"Meldingen",
+    "messages":"Berichten",
+    "wallet":"Wallet"
   },
   "buy_deso": {
     "buy_deso": "Koop $DESO",
@@ -101,80 +33,39 @@
     "max": "Maximaal",
     "bitcoin_to_swap": "Bitcoin in te wisselen",
     "eth_to_swap": "Ethereum in te wisselen",
-    "bitcoin_network_fee": "Bitcoin netwerk kosten",
-    "eth_network_fee": "Ethereum netwerk kosten",
+    "bitcoin_network_fee": "Bitcoin netwerkkosten",
+    "eth_network_fee": "Ethereum netwerkkosten",
     "total_bitcoin_to_swap": "Totaal aantal Bitcoin om in te wisselen",
     "total_eth_to_swap": "Total aantal ETH om in te wisselen",
     "back": "Terug",
     "refresh": "Vernieuwen",
-    "copy": "Kopieëren",
+    "copy": "Kopiëren",
     "buy_complete": "Aankoop voltooid",
     "new_balance": "Nieuw balans",
-    "buy_more_deso": "Koop meer DESO"
+    "buy_more_deso":"Koop meer $DESO",
+    "deso_explanation": "$DESO is een cryptomunt zoals bijvoorbeeld Bitcoin, alleen wordt $DESO gebruikt om het het eerste gedecentraliseerde sociale netwerk aan te drijven.",
+    "how_to_get": "Hoe kom ik aan $DESO?",
+    "create_anon_account": "Maak een anoniem account aan",
+    "to_buy_deso_fast": "om in minder dan een minuut $DESO te kopen.",
+    "what_is_deso_for": "Wat kan ik met $DESO?",
+    "use_to_buysell_creatorcoins_0": "Je kunt het gebruiken om",
+    "use_to_buysell_creatorcoins_1": "te kopen of verkopen",
+    "creatorcoins": "creator coins",
+    "use_to_send_messages": "Je kunt het gebruiken om berichten te sturen",
+    "use_to_post_0": "Je kunt het gebruiken om",
+    "use_to_post_1": " ",
+    "submit_posts": "je eigen posts te maken",
+    "buy_with_bc_anon": "Je kunt het in minder dan een minuut anoniem kopen met Bitcoin",
+    "blockchains_iphone_moment": "Dit is het \"iPhone moment\" van blockchain", 
+    "exchange_amount": "In te wisselen",
+    "receive_amount": "Te ontvangen",
+    "country": "Land"
   },
-  "loader": {
-    "loading": "Laden"
-  },
-  "landing": {
+  "change_account": {
     "login": "Inloggen",
     "signup": "Aanmelden",
-    "signuptoday": "Meld vandaag nog aan",
-    "settle": "Don´t settle",
-    "fora": "voor een",
-    "diamonds": "Krijg diamanten en investeer in makers zoals nooit te voren. Je volgende post kan miljoenen waard zijn!"
-  },
-  "left_bar": {
-    "home": "Home",
-    "buy_creators": "Koop creators",
-    "buy_deso": "Koop Deso",
-    "buy_deso2": "Koop $DESO",
-    "notifications": "Meldingen",
-    "messages": "Berichten",
-    "my_profile": "Profiel",
-    "update_profile": "Profiel bewerken",
-    "my_wallet": "Mijn Wallet",
-    "tutorial": "Zelfstudie",
-    "referrals": "Referrals",
-    "help": "Help",
-    "post": "Plaats",
-    "admin": "Beheer",
-    "buy": "Koop",
+    "add_account": "Account toevoegen",
     "logout": "Uitloggen"
-  },
-  "right_bar": {
-    "creators": {
-      "sent": "Versturen",
-      "buy_deso": "Koop $DESO",
-      "deso_price": "$DESO Prijs",
-      "your_deso": "Uw $DESO",
-      "update_your_email": "Pas je email aan",
-      "top_daily_gainers": "Beste Dagelijkse Gainers",
-      "top_daily_diamond_creators": "Beste Dagelijkse Diamonded Creators",
-      "top_community_projects": "Beste Communitie Projecten",
-      "top_creators_alltime": "Beste Creators Allertijde",
-      "powered_by": "Aangeboden door",
-      "leaderboard": {
-        "reserved_profile": "Dit profiel is gereserveerd. Klik hier om te lezen hoe je dit profiel kunt claimen.",
-        "verified_account": "Dit profiel is gecontroleerd"
-      }
-    },
-    "signup": {
-      "welcome_to_deso": "Welkom bij DeSo!",
-      "login": "Inloggen",
-      "signup": "Aanmelden"
-    }
-  },
-  "top_bar": {
-    "mobile": {
-      "login": "Inloggen",
-      "signup": "Aanmelden"
-    }
-  },
-  "search_bar": {
-    "loading": "Laden...",
-    "reserved_profile": "Dit profiel is gereserveerd. Klik hier om te lezen hoe je dit profiel kunt claimen.",
-    "search": "Zoeken...",
-    "search_on_cloutavista": "Zoeken op Cloutavista"
   },
   "feed_post": {
     "of": "van",
@@ -233,11 +124,147 @@
       "quote18": "Grote dingen beginnen klein."
     }
   },
-  "change_account": {
+  "landing": {
     "login": "Inloggen",
     "signup": "Aanmelden",
-    "add_account": "Account toevoegen",
+    "signuptoday": "Meld vandaag nog aan",
+    "settle": "Don´t settle",
+    "fora": "voor een",
+    "diamonds": "Krijg diamanten en investeer in makers zoals nooit te voren. Je volgende post kan miljoenen waard zijn!"
+  },
+  "left_bar": {
+    "home": "Home",
+    "buy_creators": "Koop creators",
+    "buy_deso": "Koop Deso",
+    "buy_deso2": "Koop $DESO",
+    "notifications": "Meldingen",
+    "messages": "Berichten",
+    "my_profile": "Profiel",
+    "update_profile": "Profiel bewerken",
+    "my_wallet": "Mijn Wallet",
+    "tutorial": "Zelfstudie",
+    "referrals": "Referrals",
+    "help": "Help",
+    "post": "Plaats",
+    "admin": "Beheer",
+    "buy": "Koop",
     "logout": "Uitloggen"
+  },
+  "loader": {
+    "loading": "Laden"
+  },
+  "messages": {
+    "select_creator": "Selecteer Creator",
+    "custom_inbox_settings": "Aangepaste inbox instellingen",
+    "only_show": "Alleen weergeven",
+    "holders": "Houders",
+    "holdings": "Bezit",
+    "followers": "Volgers",
+    "following": "Volgend",
+    "order_by": "Sorteer op",
+    "most_recent": "Meest recent",
+    "most_deso": "Meeste deso",
+    "most_followed": "Meest gevolgd",
+    "largest_holder": "Grootste houder",
+    "update": "Bijwerken",
+    "cancel": "Annuleer",
+    "loading": "Laden",
+    "load_more": "Laad Meer",
+    "send": "Versturen",
+    "sending": "Verzenden",
+    "new_message": "Nieuw Bericht"
+  },
+  "place_bid": {
+    "select_an_edition": "Selecteer een editie",
+    "place_a_bid": "Plaats een bod",
+    "number": "Nummer",
+    "place_bid": "Je gaat een bod plaatsen voor een NFT geveild door",
+    "highest_bid": "Hoogste Bod",
+    "min_bid_amount": "Minimaal bod",
+    "creator_royalty": "Creator Royalty",
+    "coinholder_royalty": "Coin-holder Royalty",
+    "your_bid": "Je bod",
+    "placing_bid": "Bod plaatsen",
+    "buy_deso": "Koop DESO",
+    "multiple_editions": "Een NFT kan meerdere edities hebben, ieder met zijn eigen unieke serienummer.",
+    "no_serial_available": "Er zijn geen serienummers beschikbaar om op te bieden."
+  },
+  "right_bar": {
+    "creators": {
+      "sent": "Versturen",
+      "buy_deso": "Koop $DESO",
+      "deso_price": "$DESO Prijs",
+      "your_deso": "Uw $DESO",
+      "update_your_email": "Pas je email aan",
+      "top_daily_gainers": "Beste Dagelijkse Gainers",
+      "top_daily_diamond_creators": "Beste Dagelijkse Diamonded Creators",
+      "top_community_projects": "Beste Communitie Projecten",
+      "top_creators_alltime": "Beste Creators Allertijde",
+      "powered_by": "Aangeboden door",
+      "leaderboard": {
+        "reserved_profile": "Dit profiel is gereserveerd. Klik hier om te lezen hoe je dit profiel kunt claimen.",
+        "verified_account": "Dit profiel is gecontroleerd"
+      }
+    },
+    "signup": {
+      "welcome_to_deso": "Welkom bij DeSo!",
+      "login": "Inloggen",
+      "signup": "Aanmelden"
+    }
+  },
+  "search_bar": {
+    "loading": "Laden...",
+    "reserved_profile": "Dit profiel is gereserveerd. Klik hier om te lezen hoe je dit profiel kunt claimen.",
+    "search": "Zoeken...",
+    "search_on_cloutavista": "Zoeken op Cloutavista"
+  },
+  "sell_nft": {
+    "back_to_nft": "Terug naar NFT",
+    "sell_an_nft": "Verkoop een NFT",
+    "about_to_sell": "Je staat op het punt een NFT te verkopen aan",
+    "and": "en",
+    "are_you_sure": "Weet je het zeker?",
+    "selling_price": "Verkoop prijs",
+    "number": "Nummer",
+    "ernings": "Inkomsten",
+    "creator_royalty": "Creator Royalty",
+    "coinholder_royalty": "Coin-holder Royalty",
+    "select_one_bid": "Je dient minimaal 1 bieding te selecteren om deze NFT te verkopen.",
+    "sellling_ntfs": "Verkopen NFTs",
+    "sell_nfts": "Verkoop NFTs"
+  },
+  "settings": {
+    "settings": "Instellingen",
+    "email": "E-mail",
+    "enter_valid_email": "Vul een geldig e-mail adres in.",
+    "enter_email": "Vul een email adres in.",
+    "update_email": "Update E-mail adres",
+    "deso_theme": "DeSo Thema",
+    "success": "Gelukt!",
+    "updating": "Bijwerken..."
+  },
+  "simple_profile": {
+    "buy": "Koop"
+  },
+  "signup": {
+    "phone_verified": "Je telefoonnummer is geverifieerd. We sturen je een klein beetje DeSo, wat genoeg is om een bericht te plaatsen en anderen te volgen.",
+    "stay_in_the_loop": "Blijf op de hoogte",
+    "step": "STAP",
+    "get_notified": "Ontvang een bericht wanneer iemand je munt koopt.",
+    "email": "E-mail",
+    "enter_valid_email": "Vul een geldig e-mail adres in.",
+    "skip": "Overslaan",
+    "next": "Volgende",
+    "deso_is_a_cryptocurrency": "$DESO is een <b>cryptocurrency</b> zoals Bitcoin, only it powers the first <b>decentralized social network</b>.",
+    "use_deso": "Je kunt $DESO gebruiken om te handelen in creator munten, diamanten geven, NFTs kopen, en nog veel meer.",
+    "buy_deso": "Koop $DESO",
+    "enter_emailaddress": "Vul een e-mailadres in."
+  },
+  "top_bar": {
+    "mobile": {
+      "login": "Inloggen",
+      "signup": "Aanmelden"
+    }
   },
   "wallet_widget": {
     "wallet_of": "Wallet van",
