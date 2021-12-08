@@ -424,6 +424,10 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
+    if (isSameUserAsBefore) {
+      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
+    }
+
     this.loggedInUser = user;
 
     if (this.loggedInUser) {

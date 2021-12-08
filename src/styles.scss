@@ -30,7 +30,8 @@ $feed-border-radius: 12px;
 .main {
   background: var(--background);
   color: var(--text);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
 }
 
 html {
@@ -42,7 +43,8 @@ html {
 }
 
 html, body {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   min-height: 100%; // allows for scrolling
 }
 
@@ -62,7 +64,8 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-weight: normal;
 }
 
@@ -153,7 +156,7 @@ pre, code{
 
 $global__top-bar__height: 60px;
 $global__top-bar__desktop-height: 20px;
-$global__nav__width: 263px;
+$global__nav__width: 270px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
 $global__content__width: $global__center__width + $global__sidebar__width;
@@ -216,6 +219,7 @@ $green-font-color: #19B028;
 // font weights
 // font-weight-light: 300
 // font-weight-normal: 400
+.font-weight-bold { font-weight: 600 !important; }
 .font-weight-semibold { font-weight: 500 }
 .font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
@@ -913,7 +917,8 @@ input.bs-timepicker-field {
 }
 
 .loading-container {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-size: 17px;
   font-weight: 500;
 }
@@ -2788,7 +2793,8 @@ feed {
   padding: 2px 8px;
   border-radius: 10px;
   background-color: var(--tile-secondary-bg);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -4859,7 +4865,8 @@ input {
 }
 
 .modal-content {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   background: none;
   border: none;
   position: relative;
@@ -5269,7 +5276,8 @@ sell-nft-modal {
   color: var(--tile-bg);
   font-size: 17px;
   border-radius: 4px;
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   right: 50vw;
   .toast-link {
@@ -5467,7 +5475,8 @@ sell-nft-modal {
 
 .cloutavista-button {
   border-radius: 0px 0px 16px 16px;
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   position: sticky;
   bottom: 0px;
   a {
