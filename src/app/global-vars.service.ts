@@ -438,6 +438,8 @@ export class GlobalVarsService {
             console.log(err);
           }
         );
+    } else {
+      this.loggedInUser = user;
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
