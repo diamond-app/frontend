@@ -424,17 +424,17 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
-    this.loggedInUser = user;
-
-    if (this.loggedInUser) {
+    if (user) {
       // Fetch referralLinks for the userList before completing the load.
       this.backendApi
         .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
         .subscribe(
           (res: any) => {
+            this.loggedInUser = user;
             this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
           },
           (err: any) => {
+            this.loggedInUser = user;
             console.log(err);
           }
         );
