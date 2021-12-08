@@ -424,22 +424,24 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
-    if (user) {
+    if (isSameUserAsBefore) {
+      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
+    }
+
+    this.loggedInUser = user;
+
+    if (this.loggedInUser) {
       // Fetch referralLinks for the userList before completing the load.
       this.backendApi
-        .GetReferralInfoForUser(environment.verificationEndpointHostname, user.PublicKeyBase58Check)
+        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
         .subscribe(
           (res: any) => {
-            this.loggedInUser = user;
             this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
           },
           (err: any) => {
-            this.loggedInUser = user;
             console.log(err);
           }
         );
-    } else {
-      this.loggedInUser = user;
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
