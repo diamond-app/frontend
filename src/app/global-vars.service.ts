@@ -855,6 +855,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err === "Your balance is insufficient.") {
+      showBuyDeSo = true;
+    }
+
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
