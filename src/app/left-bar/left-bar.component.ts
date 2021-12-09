@@ -57,6 +57,7 @@ export class LeftBarComponent {
   openCreatePostModal() {
     this.modalService.show(FeedCreatePostModalComponent, {
       class: "modal-dialog-centered",
+      ignoreBackdropClick: true,
     });
   }
 

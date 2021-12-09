@@ -30,6 +30,7 @@ import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
+import { NetworkConstants } from "./network-info/network-info.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -855,6 +856,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err === NetworkConstants.INSUFFICIENT_BALANCE) {
+      showBuyDeSo = true;
+    }
+
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",

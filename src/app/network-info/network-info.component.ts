@@ -4,7 +4,7 @@ import { BackendApiService } from "../backend-api.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 
-class NetworkConstants {
+export class NetworkConstants {
   static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;

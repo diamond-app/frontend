@@ -378,6 +378,7 @@ export class FeedPostIconRowComponent {
       this.modalService.show(CommentModalComponent, {
         class: "modal-dialog-centered",
         initialState,
+        ignoreBackdropClick: true,
       });
     }
   }
