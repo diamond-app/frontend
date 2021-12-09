@@ -856,7 +856,7 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
-    if (err === NetworkConstants.INSUFFICIENT_BALANCE) {
+    if (err === "Your balance is insufficient.") {
       showBuyDeSo = true;
     }
 
