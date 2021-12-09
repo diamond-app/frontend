@@ -30,7 +30,6 @@ import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
-import { NetworkConstants } from "./network-info/network-info.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
