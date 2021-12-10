@@ -67,6 +67,106 @@
     "add_account":"Add account",
     "logout":"Logout"
   },
+  "comment_modal": {
+    "quoting": "Quoting ",
+    "replying_to": "Replying to "
+  },
+  "create_nft_auction_modal": {
+    "create_an_auction": "Create an Auction",
+    "min_price": "Minimum price",
+    "optional": "(Optional)",
+    "select_all": "Select All",
+    "last_price": "Last price",
+    "create_auction": "Create auction",
+    "creating_auction": "Creating auction",
+    "counter_of": "of",
+    "counter_auctions": "auctions created"
+  },
+  "create_post": {
+    "create_post": "Create post",
+    "create_a_post": "Create a Post",
+    "step": "Step",
+    "skip": "Skip"
+  },
+  "creator_diamonds": {
+    "given": "Given",
+    "received": "Received",
+    "username": "Username", 
+    "no_diamonds_0": "has not",
+    "no_diamonds_1": "any diamonds yet",
+    "anonymous": "Anonymous"
+  },
+  "creator_profile_details": {
+    "profile_reserved": "This profile is reserved",
+    "not_joined_yet": "has not joined DeSo yet.",
+    "are_you_on_twitter_0": "Are you",
+    "are_you_on_twitter_1": "on Twitter? To claim this profile:",
+    "create_new_key": "Create a brand new DeSo public key.",
+    "tweet_key": "Tweet your DeSo public key and tag #deso.",
+    "public_key_note": "Note: The public key you tweet will be swapped with the public key currently associated with this profile. This will also swap all creator coin holdings. Please make sure that the public key you tweet does not have any creator coins, if you do not want them to be lost.",
+    "username_transferred": "Your username will be transferred within 48 hours.",
+    "you_blocked_0": "You have blocked",
+    "you_blocked_1": ".",
+    "unblock_0": "Unblock",
+    "unblock_1": "to see their posts.",
+    "coins_in_circulation": "Coins in circulation",
+    "total_usd_locked": "Total USD locked",
+    "usd_market_cap": "USD Market cap"
+  },
+  "creator_profile_holders": {
+    "noone_owns_0": "No one owns",
+    "noone_owns_1": "coin yet.",
+    "holders_of_0": "Holders of",
+    "holders_of_1": "coin",
+    "username": "Username",
+    "coins_held": "Coins Held",
+    "market_value": "Market Value",
+    "received": "Received",
+    "reserved": "Reserved",
+    "purchased" : "Purchased"
+  },
+  "creator_profile_nfts": {
+    "gallery": "Gallery",
+    "my_bids": "My Bids",
+    "for_sale": "For Sale",
+    "transferable": "Transferable",
+    "pending": "Pending Transfers",
+    "order_by": "Order by",
+    "no_nfts_for_sale": "No NFTs for sale right now.",
+    "on_platform_no_nfts": "is on the platform but doesn't have any NFTs for sale.",
+    "no_nfts_purchased": "No NFTs purchased yet.",
+    "no_nfts_acquired": "has not acquired any NFTs yet.",
+    "no_nfts_transferable": "No transferable NFTs right now.",
+    "no_nfts_transferable_yet": "has no transferable NFTs yet.",
+    "no_nfts_pending": "No pending NFTs right now.",
+    "no_nfts_pending_yet": "has no pending NFTs yet.",
+    "no_bids": "No bids yet.",
+    "no_bids_yet": "is on the platform but hasn't bid on NFTs yet.",
+    "highest": "Highest!",
+    "serial": "Serial",
+    "bid": "Bid",
+    "cancel": "Cancel"
+  },
+  "creator_profile_posts": {
+    "create_fipo": "Create your first post.",
+    "on_platform_no_posts": "is on the platform but hasn't posted yet."
+  },
+  "creator_profile_top_card": {
+    "coin_price": "Coin Price",
+    "message_user": "Message User",
+    "block": "Block",
+    "unblock": "Unblock",
+    "user": "User",
+    "report_user": "Report User",
+    "remove": "Remove",
+    "add": "Add",
+    "wellknown_creator": "User As Well Known Creator",
+    "upcoming_creator": "User As Up And Coming Creator",
+    "edit": "Edit",
+    "buy": "Buy",
+    "followers": "Followers",
+    "following": "Following"
+  },
   "feed_create_post": {
     "video_processing":"Video Processing In Progress",
     "uploading":"Uploading:",

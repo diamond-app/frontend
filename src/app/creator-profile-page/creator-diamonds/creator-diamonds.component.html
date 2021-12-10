@@ -13,7 +13,7 @@
         class="row no-gutters border-bottom border-color-grey creator-diamonds__header"
         *ngIf="!isLoading && diamondSummaryList.length > 0"
       >
-        <div class="col-5 d-flex align-items-center py-15px mb-0">Username</div>
+        <div class="col-5 d-flex align-items-center py-15px mb-0">{{ 'creator_diamonds.username' | transloco }}</div>
         <div class="col-4 text-left d-flex align-items-center py-15px mb-0" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }">Most Diamonds</div>
         <div class="col-3 text-center d-flex align-items-center py-15px mb-0" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }">Total Diamonds</div>
       </div>
@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-center w-100">
-          <span>{{ profile.Username }} has not {{ activeTab.toLowerCase() }} any diamonds yet</span>
+          <span>{{ profile.Username }} {{ 'creator_diamonds.no_diamonds_0' | transloco }} {{ activeTab.toLowerCase() }} {{ 'creator_diamonds.no_diamonds_1' | transloco }}</span>
         </div>
       </div>
       <simple-center-loader *ngIf="isLoading"></simple-center-loader>
@@ -122,7 +122,7 @@
                       style="font-size: 14px"
                       [ngStyle]="{ 'max-width': globalVars.isMobile() ? '100px' : '200px' }"
                     >
-                      <span>Anonymous</span>
+                      <span>{{ 'creator_diamonds.anonymous' | transloco }}</span>
                     </div>
                   </div>
                 </div>

@@ -67,6 +67,134 @@
     "add_account": "Account toevoegen",
     "logout": "Uitloggen"
   },
+  "comment_modal": {
+    "quoting": "Quote ",
+    "replying_to": "Antwoorden op "
+  },
+  "create_nft_auction_modal": {
+    "create_an_auction": "Maak een veiling aan",
+    "min_price": "Minimumprijs",
+    "optional": "(Optioneel)",
+    "select_all": "Alles selecteren",
+    "last_price": "Laatste prijs",
+    "create_auction": "Veiling aanmaken",
+    "creating_auction": "Veiling wordt aangemaakt",
+    "counter_of": "van",
+    "counter_auctions": "veilingen aangemaakt"
+  },
+  "create_post": {
+    "create_post": "Create post",
+    "create_a_post": "Create a Post",
+    "step": "Step",
+    "skip": "Skip"
+  },
+  "creator_diamonds": {
+    "given": "Uitgedeeld",
+    "received": "Ontvangen",
+    "username": "Gebruikersnaam", 
+    "no_diamonds_0": "heeft nog geen diamanten",
+    "no_diamonds_1": " ",
+    "anonymous": "Anonymous"
+  },
+  "creator_profile_details": {
+    "profile_reserved": "Dit profiel is gereserveerd",
+    "not_joined_yet": "is nog geen lid van DeSo.",
+    "are_you_on_twitter_0": "Ben je",
+    "are_you_on_twitter_1": "op Twitter? Om dit profiel te claimen:",
+    "create_new_key": "Maak een nieuwe DeSo public key aan.",
+    "tweet_key": "Tweet je DeSo public key en voeg tag #deso toe aan je tweet.",
+    "public_key_note": "De public key die je tweet, wordt verwisseld met de public key die momenteel aan dit profiel is gekoppeld. Hiermee worden ook alle Creator Coins omgezet. Zorg ervoor dat de public key die je tweet geen Creator Coins heeft, als je niet wilt dat ze verloren gaan.",
+    "username_transferred": "Je gebruikersnaam wordt binnen 48 uur omgezet.",
+    "you_blocked_0": "Je hebt",
+    "you_blocked_1": " geblokkeerd.",
+    "unblock_0": "Deblokkeer",
+    "unblock_1": "om posts van deze gebruiker te zien.",
+    "coins_in_circulation": "Coins in omloop",
+    "total_usd_locked": "Totaal USD vastgezet",
+    "usd_market_cap": "USD Marktkapitalisatie"
+  },
+  "creator_profile_holders": {
+    "noone_owns_0": "Niemand bezit nog",
+    "noone_owns_1": "coin.",
+    "holders_of_0": "Bezitters van",
+    "holders_of_1": "coin",
+    "username": "Gebruiker",
+    "coins_held": "Coins in bezit",
+    "market_value": "Marktwaarde",
+    "received": "Ontvangen",
+    "reserved": "Gereserveerd",
+    "purchased" : "Aangeschaft"
+  },
+  "creator_profile_nfts": {
+    "gallery": "Galerij",
+    "my_bids": "Mijn biedingen",
+    "for_sale": "Te koop",
+    "transferable": "Overdraagbaar",
+    "pending": "Lopende transfers",
+    "order_by": "Sorteer op",
+    "no_nfts_for_sale": "Momenteel geen NFTs te koop.",
+    "on_platform_no_nfts": "zit op het  platform maar heeft geen NFTs te koop.",
+    "no_nfts_purchased": "Nog geen NFTs gekocht.",
+    "no_nfts_acquired": "heeft nog geen NFTs aangeschaft.",
+    "no_nfts_transferable": "Momenteel geen overdraagbare NFTs.",
+    "no_nfts_transferable_yet": "heeft nog geen overdraagbare NFTs.",
+    "no_nfts_pending": "Momenteel geen NFTs in afwachting.",
+    "no_nfts_pending_yet": "heeft nog geen NFTs onderweg.",
+    "no_bids": "Nog geen biedingen.",
+    "no_bids_yet": "zit op het platform maar heeft nog geen biedingen op NFTs gedaan.",
+    "highest": "Hoogste!",
+    "serial": "Serial",
+    "bid": "Bod",
+    "cancel": "Annuleren"
+  },
+  "creator_profile_posts": {
+    "create_fipo": "Maak je eerste post.",
+    "on_platform_no_posts": "heeft nog niets gepost."
+  },
+  "creator_profile_top_card": {
+    "coin_price": "Coinwaarde",
+    "message_user": "Stuur privébericht",
+    "block": "Blokkeer",
+    "unblock": "Deblokkeer",
+    "user": "gebruiker",
+    "report_user": "Rapporteer gebruiker",
+    "remove": "Verwijder gebruiker",
+    "add": "Voeg gebruiker toe",
+    "wellknown_creator": "als bekende Creator",
+    "upcoming_creator": "als opkomend Creator",
+    "edit": "Wijzig",
+    "buy": "Koop",
+    "followers": "Volgers",
+    "following": "Volgend"
+  },  
+  "feed_create_post": {
+    "video_processing": "Videoverwerking bezig",
+    "uploading": "Versturen:",
+    "complete": "Voltooid",
+    "post": "Plaats",
+    "embed_image": "Voeg een link naar Arweave plaatje toe",
+    "embed_video": "Voeg je Youtube, Vimeo, TikTok, Giphy, Spotify of SoundCloud video toe",
+    "quotes": {
+      "quote1": "Het leven is wat je vandaag viert.",
+      "quote2": "Geef wat je ontvangt, Ontvang wat je krijgt, Waardeer wat je hebt.",
+      "quote3": "De kleinde dingen? De kleine momenten? Deze zijn niet klein.",
+      "quote4": "Geen enkele ervaring is voor niets.",
+      "quote5": "Omarm het onbekende.",
+      "quote6": "Wat je vandaag doet is belangrijk, want je geeft er een dag van jouw leven voor.",
+      "quote7": "Wacht niet op een goede dag, maar probeer er zelf een te maken.",
+      "quote8": "Niets was mogelijk, totdat iemand het deed.",
+      "quote9": "Je kunt alles bereiken maar niet alles tegelijk.",
+      "quote10": "Droom niet je leven, leef je dromen.",
+      "quote11": "Vergeet wie je dacht te zijn en accepteer wie je bent.",
+      "quote12": "In de stilte van het denken hoor je de antwoorden.",
+      "quote13": "De herinneringen die je later wilt hebben maar je nu.",
+      "quote14": "Zelfkennis is het begin van wijsheid.",
+      "quote15": "Soms is niets zeggen het beste antwoord.",
+      "quote16": "Visie zonder actie is een dagdroom. Actie zonder visie is een nachtmerrie.",
+      "quote17": "Alleen de allerwijsten en de allerdwaasten veranderen nooit van mening.",
+      "quote18": "Grote dingen beginnen klein."
+    }
+  },
   "feed_post": {
     "of": "van",
     "from": "van",
@@ -96,34 +224,6 @@
     "hide_unlockable": "Hide Unlockable",
     "show_unlockable": "Show Unlockable"
   },
-  "feed_create_post": {
-    "video_processing": "Videoverwerking bezig",
-    "uploading": "Versturen:",
-    "complete": "Voltooid",
-    "post": "Plaats",
-    "embed_image": "Voeg een link naar Arweave plaatje toe",
-    "embed_video": "Voeg je Youtube, Vimeo, TikTok, Giphy, Spotify of SoundCloud video toe",
-    "quotes": {
-      "quote1": "Het leven is wat je vandaag viert.",
-      "quote2": "Geef wat je ontvangt, Ontvang wat je krijgt, Waardeer wat je hebt.",
-      "quote3": "De kleinde dingen? De kleine momenten? Deze zijn niet klein.",
-      "quote4": "Geen enkele ervaring is voor niets.",
-      "quote5": "Omarm het onbekende.",
-      "quote6": "Wat je vandaag doet is belangrijk, want je geeft er een dag van jouw leven voor.",
-      "quote7": "Wacht niet op een goede dag, maar probeer er zelf een te maken.",
-      "quote8": "Niets was mogelijk, totdat iemand het deed.",
-      "quote9": "Je kunt alles bereiken maar niet alles tegelijk.",
-      "quote10": "Droom niet je leven, leef je dromen.",
-      "quote11": "Vergeet wie je dacht te zijn en accepteer wie je bent.",
-      "quote12": "In de stilte van het denken hoor je de antwoorden.",
-      "quote13": "De herinneringen die je later wilt hebben maar je nu.",
-      "quote14": "Zelfkennis is het begin van wijsheid.",
-      "quote15": "Soms is niets zeggen het beste antwoord.",
-      "quote16": "Visie zonder actie is een dagdroom. Actie zonder visie is een nachtmerrie.",
-      "quote17": "Alleen de allerwijsten en de allerdwaasten veranderen nooit van mening.",
-      "quote18": "Grote dingen beginnen klein."
-    }
-  },
   "landing": {
     "login": "Inloggen",
     "signup": "Aanmelden",
@@ -145,7 +245,7 @@
     "tutorial": "Zelfstudie",
     "referrals": "Referrals",
     "help": "Help",
-    "post": "Plaats",
+    "post": "Maak een post",
     "admin": "Beheer",
     "buy": "Koop",
     "logout": "Uitloggen"
@@ -268,8 +368,8 @@
   },
   "wallet_widget": {
     "wallet_of": "Wallet van",
-    "coins_in_circulation": "Munten in omloop",
-    "total_usd_locked": "Totaal USD Vast",
+    "coins_in_circulation": "Coins in omloop",
+    "total_usd_locked": "Totaal USD vastgezet",
     "usd_market_cap": "USD Marktkapitalisatie"
   },
   "jumio_status": {
