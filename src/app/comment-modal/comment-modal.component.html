@@ -1,6 +1,6 @@
 <div class="comment-modal">
   <div class="modal-header">
-    <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <div class="modal-header-x" (click)="closeModal()">
       <i-feather name="x"></i-feather>
     </div>
   </div>
@@ -27,6 +27,7 @@
     [parentPost]="parentPost"
     [isQuote]="isQuote"
     [postRefreshFunc]="afterCommentCreatedCallback"
+    (postUpdated)="postUpdated($event)"
     (postCreated)="bsModalRef.hide()"
   ></feed-create-post>
 </div>

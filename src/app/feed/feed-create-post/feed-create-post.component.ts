@@ -37,6 +37,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   @Input() parentPost: PostEntryResponse = null;
   @Input() isQuote: boolean = false;
   @Input() inTutorial: boolean = false;
+  @Output() postUpdated = new EventEmitter<boolean>();
 
   isComment: boolean;
 
@@ -321,6 +322,9 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
       );
   }
 
+  updatePost() {
+    this.postUpdated.emit(this.postInput !== "");
+  }
   _createPost() {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {

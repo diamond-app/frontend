@@ -18,6 +18,7 @@ export class BottomBarMobileComponent {
   openCreatePostModal() {
     this.modalService.show(FeedCreatePostModalComponent, {
       class: "modal-dialog-centered",
+      ignoreBackdropClick: true,
     });
   }
 }
