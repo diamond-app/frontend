@@ -167,6 +167,22 @@
     "followers": "Followers",
     "following": "Following"
   },
+  "creators_leaderboard": {
+    "buy_coin": "Buy Creator Coin",
+    "buy_coin_subtitle": "All creators have a coin. Buy your favorites and get on their team!",
+    "name": "Name",
+    "price": "Price"
+  },
+  "diamonds_pages": {
+    "diamonds_from": "Diamonds from",
+    "diamonds_given_by": "Diamonds Given By"
+  },
+  "direct_to_browser_modal": {
+    "tap_ellipsis": "1. Tap elipsis",
+    "select_safari": "2. Select <b>Open in Safari</b>",
+    "select_openwith": "2. Select <b>Open with</b>",
+    "select_browser": "3. Select browser"
+  },
   "feed_create_post": {
     "video_processing":"Video Processing In Progress",
     "uploading":"Uploading:",
@@ -223,7 +239,69 @@
     "accept_transfer":"Accept Tranfer",
     "hide_unlockable":"Hide Unlockable",
     "show_unlockable":"Show Unlockable"
-
+  },
+  "feed_post_dropdown": {
+    "new_post_multiplier": "New post multiplier:",
+    "update": "Update",
+    "updating": "Updating...",
+    "error_updating": "Error updating post multiplier.",
+    "updating_success": "Successfully updated post multiplier.",
+    "link_to": "Link to",
+    "share": "Share",
+    "create_nft": "Create NFT",
+    "put_on_sale": "Put On Sale",
+    "transfer_nft": "Transfer NFT",
+    "burn_nft": "Burn NFT",
+    "add_nft_to_drop": "Add NFT to drop",
+    "report_content": "Report Content",
+    "hide": "Hide",
+    "block_user": "Block User",
+    "add_multiplier": "Add Multiplier",
+    "add_to_feed": "Add To Feed",
+    "remove_from_feed": "Remove From Feed",
+    "pin_to_feed": "Pin To Feed",
+    "unpin_from_feed": "Unpin From Feed"
+  },
+  "feed_post_icon_row": {
+    "loading": "Loading...",
+    "hide": "Hide",
+    "repost": "Repost",
+    "quote": "Quote",
+    "give_diamond": "Give a diamond.",
+    "will_receive": "will receive the amount shown as a tip from you.",
+    "slide": "<- Slide ->",
+    "release_to_cancel": "Release To Cancel",
+    "slide_to_cancel": "Slide Down To Cancel - Release To Confirm"
+  },
+  "feed": {
+    "deso_price": "$DESO Price",
+    "usd_coin": "USD per coin",
+    "you_have_referral_0": "You have an unlimited ",
+    "you_have_referral_1": "referral link",
+    "find_people_in_hot": "Find more people to follow in the <b>Hot</b> feed",
+    "load_more": "Load More",
+    "loading": "Loading...",
+    "no_posts": "No posts yet",
+    "check_hot_0": "Check out the HOT feed",
+    "check_hot_1": "to find more people to follow"
+  },
+  "follow_button": {
+    "loading": "Loading...",
+    "follow": "Follow",
+    "unfollow": "Unfollow"
+  },
+  "get_starter_deso": {
+    "get_starter_deso": "Get Starter $DESO"
+  },
+  "jumio_status": {
+    "your_free":"Your free",
+    "will_arive_in_a_minute":"will arrive in about a minute.",
+    "robot_check_failed":"Your robot check failed. Click here to try again.",
+    "click_here_to_get":"Click here to get",
+    "hide_banner":"Hide banner",
+    "hide_banner_message":"Do you want to hide the free money banner?",
+    "yes": "Ja",
+    "no": "Nee"
   },
   "landing":{
     "login":"Login",
@@ -374,20 +452,6 @@
     "total_usd_locked":"Total USD Locked",
     "usd_market_cap":"USD Market Cap"
   },
-  "jumio_status": {
-    "your_free":"Your free",
-    "will_arive_in_a_minute":"will arrive in about a minute.",
-    "robot_check_failed":"Your robot check failed. Click here to try again.",
-    "click_here_to_get":"Click here to get",
-    "hide_banner":"Hide banner",
-    "hide_banner_message":"Do you want to hide the free money banner?",
-    "yes": "Ja",
-    "no": "Nee"
-  },
-  "follow_button": {
-    "follow":"Follow",
-    "unfollow":"Unfollow"
-  },
   "notifications": {
     "filter": {
       "select_none":"Select None",
@@ -456,7 +520,7 @@
     "enter_emailaddress" : "Enter an email address.",
     "tutorial_instructions" : "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue.",
     "avatar" : "Avatar",
-    "get_starter_deso" : "Get Starter DESO",
+    "get_starter_deso" : "Get Starter $DESO",
     "purchase" : "Purchase",
     "or": "Or",
     "usd_of_deso": "USD of DESO",

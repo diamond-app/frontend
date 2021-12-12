@@ -6,12 +6,12 @@
     <i-feather name="arrow-up" class="feather-large fs-0px"></i-feather>
   </div>
   <div *ngIf="deviceType === 'iOS'" class="d-flex flex-column">
-    <div class="d-flex align-items-center">1. Tap elipses <i-feather name="more-horizontal" class="ml-5px feather-large fs-0px"></i-feather></div>
-    <div>2. Select <b>Open in Safari</b></div>
+    <div class="d-flex align-items-center">{{ 'direct_to_browser_modal.tap_ellipsis' | transloco }} <i-feather name="more-horizontal" class="ml-5px feather-large fs-0px"></i-feather></div>
+    <div>{{ 'direct_to_browser_modal.select_safari' | transloco }}</div>
   </div>
   <div *ngIf="deviceType === 'Android'" class="d-flex flex-column">
-    <div class="d-flex align-items-center">1. Tap elipses <i-feather name="more-vertical" class="ml-5px feather-large fs-0px"></i-feather></div>
-    <div>2. Select <b>Open with</b></div>
-    <div>3. Select browser</div>
+    <div class="d-flex align-items-center">{{ 'direct_to_browser_modal.tap_ellipsis' | transloco }} <i-feather name="more-vertical" class="ml-5px feather-large fs-0px"></i-feather></div>
+    <div>{{ 'direct_to_browser_modal.select_openwith' | transloco }}</div>
+    <div>{{ 'direct_to_browser_modal.select_browser' | transloco }}</div>
   </div>
 </div>

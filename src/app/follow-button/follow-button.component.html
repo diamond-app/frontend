@@ -7,7 +7,7 @@
       <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
         <!-- Loading-->
         <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">{{'follow_button.loading' | transloco}}</span>
         </div>
       </div>
       <ng-template #beingCalledElseBlock>
