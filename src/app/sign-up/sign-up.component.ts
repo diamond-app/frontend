@@ -9,6 +9,7 @@ import { IdentityService } from "../identity.service";
 import { RouteNames } from "../app-routing.module";
 import { environment } from "../../environments/environment";
 import Timer = NodeJS.Timer;
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "sign-up",
@@ -20,7 +21,7 @@ export class SignUpComponent {
   loading: boolean = false;
   followCreatorsToDisplay = 100;
   creatorsToFollow = [];
-  followCreatorThreshold = 5;
+  followCreatorThreshold = 1;
   creatorsFollowedCount = 0;
   creatorsFollowed: string[] = [];
   followTransactionIndex: number = 0;
@@ -268,12 +269,51 @@ export class SignUpComponent {
         this.processingTransactions = false;
         this.globalVars.removeOnboardingSettings();
         this.globalVars.updateEverything().add(() => {
-          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-            queryParams: { feedTab: "Following" },
-            queryParamsHandling: "merge",
-          });
+          this.router
+            .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+              queryParams: { feedTab: "Following" },
+              queryParamsHandling: "merge",
+            })
+            .then(() => {
+              this.launchTutorial();
+            });
         });
-      })
+      });
+  }
+
+  launchTutorial() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Tutorial",
+      html: `Learn how ${environment.node.name} works!`,
+      showConfirmButton: true,
+      // Only show skip option to admins and users who do not need to complete tutorial
+      showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
+            ? TutorialStatus.STARTED
+            : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO]);
+          }
+        });
+    });
   }
 
   setupFollowsPage() {
