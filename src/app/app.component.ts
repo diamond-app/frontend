@@ -198,10 +198,8 @@ export class AppComponent implements OnInit {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
-        // this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-        // this.globalVars.showBuyWithETH = res.BuyWithETH;
-        this.globalVars.showBuyWithUSD = true;
-        this.globalVars.showBuyWithETH = true;
+        this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         this.globalVars.isTestnet = res.IsTestnet;
