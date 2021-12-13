@@ -429,6 +429,22 @@ export class NotificationsListComponent implements OnInit {
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       result.link = AppRoutingModule.nftPath(postHash);
       return result;
+    } else if (txnMeta.TxnType == "NFT_TRANSFER") {
+      const nftTransferMeta = txnMeta.NFTTransferTxindexMetadata;
+      if (!nftTransferMeta) {
+        return null;
+      }
+
+      const postHash = nftTransferMeta.NFTPostHashHex;
+
+      const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
+      result.post = this.postMap[postHash];
+      result.action = `${actorName} transferred you an NFT`;
+      result.icon = "send";
+      result.category = "nft";
+      result.iconClass = "fc-blue";
+      result.link = AppRoutingModule.nftPath(postHash);
+      return result;
     }
 
     // If we don't recognize the transaction type we return null

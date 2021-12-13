@@ -221,6 +221,7 @@
       (click)="processTransactions()"
     >
       {{ processingTransactions ? "Processing..." : "Continue" }}
+      <span *ngIf="processingTransactions" class="mr-10px">{{ transactionProgress }}%</span>
       <i *ngIf="processingTransactions" class="fas fa-spinner fa-spin mr-5px"></i>
     </button>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>

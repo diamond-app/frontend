@@ -424,6 +424,10 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
+    if (isSameUserAsBefore) {
+      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
+    }
+
     this.loggedInUser = user;
 
     if (this.loggedInUser) {
@@ -850,6 +854,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err === "Your balance is insufficient.") {
+      showBuyDeSo = true;
+    }
+
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
