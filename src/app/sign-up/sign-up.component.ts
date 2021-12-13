@@ -21,7 +21,7 @@ export class SignUpComponent {
   loading: boolean = false;
   followCreatorsToDisplay = 100;
   creatorsToFollow = [];
-  followCreatorThreshold = 1;
+  followCreatorThreshold = 5;
   creatorsFollowedCount = 0;
   creatorsFollowed: string[] = [];
   followTransactionIndex: number = 0;

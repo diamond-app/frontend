@@ -20,12 +20,15 @@
         <div class="text-center">How to invest in creators</div>
       </div>
     </div>
-    <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">A creator coin is your way to show your appreciation</div>
-    <div class="fc-default fs-16px text-center mb-16px">Creator coins allow you to participate in a creator's upside<br/><br/>
-      Find someone who is providing a lot of value to the community?<br/><br/>
-      Reward them by buying a share of their coin!
+    <div class="w-100 d-flex flex-column align-items-center">
+      <div [ngClass]="{ 'w-90': globalVars.isMobile(), 'w-70': !globalVars.isMobile() }">
+        <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">A creator coin is your way to show your appreciation</div>
+        <div class="fc-default fs-16px text-center mb-16px">Creator coins allow you to participate in a creator's upside as they grow their community.<br/><br/>
+          Find someone who is providing a lot of value? Reward them by buying a share of their coin!<br/><br/>
+        </div>
+      </div>
     </div>
-    <div class="fc-error fs-18px text-center mb-25px font-weight-bold">{{ userCanAffordCCBuy ? 'Try it out!' : 'You can see a sample creator coin purchase below' }}</div>
+    <div class="fs-16px text-center mb-25px font-weight-bold">{{ userCanAffordCCBuy ? 'Try it out by purchasing your own Creator coin!' : 'You can see a sample creator coin purchase below' }}</div>
     <div class="br-10px border mb-16px">
       <trade-creator
         [inTutorial]="true"
@@ -39,5 +42,5 @@
       <button *ngIf="!userCanAffordCCBuy" (click)="skipTutorialStep()" style="width: 215px" class="primary-button">Complete tutorial</button>
     </div>
   </div>
-  <div *ngIf="addMobileFooter" style="height: 300px"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>
