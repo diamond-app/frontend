@@ -161,7 +161,7 @@ export class LeftBarComponent {
             ? TutorialStatus.STARTED
             : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO]);
           }
         });
     });

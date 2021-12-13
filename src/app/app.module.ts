@@ -43,6 +43,7 @@ import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-p
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
 import { TradeCreatorComponent } from "./trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "./trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
 import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-form/trade-creator-form.component";
@@ -168,6 +169,8 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
+import { BuyDesoTutorialComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial/buy-deso-tutorial.component";
+import { BuyDesoTutorialPageComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
 import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
@@ -239,6 +242,7 @@ export function playerFactory() {
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
+    TradeCreatorModalComponent,
     BuyDeSoComponent,
     BuyDeSoUSDComponent,
     TradeCreatorFormComponent,
@@ -355,6 +359,8 @@ export function playerFactory() {
     BuyCreatorCoinsTutorialComponent,
     BuyCreatorCoinsConfirmTutorialComponent,
     BuyCreatorCoinsTutorialPageComponent,
+    BuyDesoTutorialPageComponent,
+    BuyDesoTutorialComponent,
     WalletPageComponent,
     WalletTutorialPageComponent,
     SellCreatorCoinsTutorialComponent,

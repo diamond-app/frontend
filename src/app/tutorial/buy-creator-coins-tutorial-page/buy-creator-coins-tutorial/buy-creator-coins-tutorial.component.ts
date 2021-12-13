@@ -9,6 +9,8 @@ import { LocationStrategy } from "@angular/common";
 import { environment } from "src/environments/environment";
 import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
+import { SwalHelper } from "../../../../lib/helpers/swal-helper";
+import { FeedComponent } from "../../../feed/feed.component";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -49,253 +51,31 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   // Add a footer on mobile to keep content visible
   addMobileFooter: boolean = false;
 
+  userCanAffordCCBuy: boolean = false;
+
   ngOnInit() {
     this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 575;
     // this.isLoadingProfilesForFirstTime = true;
-    this.globalVars.preventBackButton();
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
-    // If the user just completed their profile, we instruct them to buy their own coin.
-    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-      this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
-      this.investInYourself = true;
-      this.loading = false;
-      this.initiateIntro();
-      return;
-    } else if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
-      this.followCreators = true;
-    }
-    if (this.followCreators) {
-      this.backendApi
-        .GetTutorialCreators(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-          this.followCreators ? 30 : 3
-        )
-        .subscribe(
-          (res: {
-            WellKnownProfileEntryResponses: ProfileEntryResponse[];
-            UpAndComingProfileEntryResponses: ProfileEntryResponse[];
-          }) => {
-            // Do not let users select themselves in the "Invest In Others" step.
-            if (res.WellKnownProfileEntryResponses?.length) {
-              this.hotNewCreatorsToHighlight = shuffle(
-                res.WellKnownProfileEntryResponses.concat(res.UpAndComingProfileEntryResponses).filter(
-                  (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-                )
-              );
-            }
-            this.loading = false;
-            this.initiateIntro();
-          },
-          (err) => {
-            console.error(err);
-          }
-        );
-    } else if (
-      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.FOLLOW_CREATORS ||
-      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.STARTED ||
-      this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.SKIPPED
-    ) {
-      this.backendApi
-        .GetFollows(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-          "" /* PublicKeyBase58Check */,
-          false /* get following */,
-          "" /* GetEntriesFollowingUsername */,
-          1 /* NumToFetch */
-        )
-        .subscribe((res) => {
-          // If the user is following someone, show a random one here for them to simulate the buy step with
-          if (res.NumFollowers >= 1) {
-            this.hotNewCreatorsToHighlight = [res.PublicKeyToProfileEntry[Object.keys(res.PublicKeyToProfileEntry)[0]]];
-            this.loading = false;
-            this.initiateIntro();
-          } else {
-            // If the user isn't following someone, show a default one to them for them to simulate the buy/sell steps
-            // Testnet creator
-            // const defaultCreatorPublicKeyBase58Check = "tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV";
-            // Creator for prod
-            const defaultCreatorPublicKeyBase58Check = "BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB";
-            this.backendApi
-              .GetSingleProfile(this.globalVars.localNode, defaultCreatorPublicKeyBase58Check, "")
-              .subscribe((res) => {
-                this.hotNewCreatorsToHighlight = [res.Profile];
-                this.loading = false;
-                this.initiateIntro();
-              });
-          }
-        });
-    }
+    this.userCanAffordCCBuy = this.globalVars.loggedInUser.BalanceNanos > this.globalVars.usdToNanosNumber(0.1);
   }
 
-  initiateIntro() {
-    setTimeout(() => {
-      if (this.followCreators) {
-        this.followCreatorsIntro();
-      }
-      else if (!this.investInYourself) {
-        this.investInOthersIntro();
-      } else {
-        this.investInYourselfIntro();
-      }
-    }, 100);
-  }
-
-  tutorialEndFollowStep() {
-    this.backendApi
-      .UpdateTutorialStatus(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        TutorialStatus.FOLLOW_CREATORS
-      )
-      .subscribe((res) => {
-        this.globalVars.updateEverything().add(() => {
-          this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
-        });
+  skipTutorialStep() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Great work! You've completed the tutorial",
+      html: `Congratulations on completing the tutorial! Your final stop will be your feed.<br><br>Be sure to give diamonds to creators for posts you enjoy, follow new creators, and buy the creator coin of creators you want to support!`,
+      showCancelButton: false,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Go to Feed",
+      reverseButtons: true,
+    }, false).then((response: any) => {
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+        queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
       });
-  }
-
-  investInOthersIntro() {
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    if (this.globalVars.isMobile()) {
-      tooltipClass = tooltipClass + " tutorial-tooltip-right";
-    }
-    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/4</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: true,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `Many creators on ${environment.node.name} have a coin that you can buy and sell.`,
-          position: "bottom",
-          element: document.querySelector("#creator-coins-holder"),
-        },
-        {
-          title,
-          intro: "Prices go up when people buy, and down when people sell.",
-          position: "bottom",
-          element: document.querySelector("#creator-coins-holder"),
-        },
-        {
-          title,
-          intro: "Coins can also give you cashflows, access to exclusive content, events, and much more.",
-          position: "bottom",
-          element: document.querySelector("#creator-coins-holder"),
-        },
-        {
-          title,
-          intro: `Click "Buy" to take a look at at ${this.globalVars.addOwnershipApostrophe(
-            this.hotNewCreatorsToHighlight[0].Username
-          )} coin. <b>This won't use real money.</b>`,
-          position: "bottom",
-          element: document.querySelector(".primary-button"),
-        },
-      ],
     });
-    this.introJS.onchange((targetElement) => {
-      if (includes(targetElement.classList, "primary-button")) {
-        this.tutorialWiggle = true;
-      }
-    });
-    this.introJS.onbeforeexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
   }
-
-  investInYourselfIntro() {
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    if (this.globalVars.isMobile()) {
-      tooltipClass = tooltipClass + " tutorial-tooltip-right";
-    }
-    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 2/4</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: true,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `You can have a coin too!`,
-          element: document.querySelector("#creator-coins-holder"),
-        },
-        {
-          title,
-          intro: '<b>Click "Buy" to invest in yourself!</b>',
-          element: document.querySelector(".primary-button"),
-        },
-      ],
-    });
-    this.introJS.onbeforeexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
-    window.scrollTo(0, 0);
-  }
-
-  followCreatorsIntro() {
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    let tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Follow Creators <span class="ml-5px tutorial-header-step">Step 2/6</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: false,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `You can follow creators just like on Twitter and Instagram. <br/><br/>Let's follow some creators now!`,
-        },
-      ],
-    });
-    this.introJS.oncomplete(() => {
-      this.skipTutorialExitPrompt = true;
-      this.showInstructions = true;
-      this.tutorialWiggle = true;
-    });
-    this.introJS.onbeforeexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
-    window.scrollTo(0, 0);
-  }
-
-  skipFollowStep() {
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.FOLLOW_CREATORS, "follow : creators : skip");
-  }
-
-  skipBuyCreatorsStep() {
-    this.exitTutorial();
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_OTHERS_SELL, "buy : creator : skip", true);
-  }
-
-  skipBuySelfStep() {
-    this.exitTutorial();
-    this.globalVars.skipToNextTutorialStep(TutorialStatus.INVEST_SELF, "invest : self : buy : skip");
-  }
-
-  exitTutorial() {
-    this.skipTutorialExitPrompt = true;
-    this.introJS.exit(true);
-    this.skipTutorialExitPrompt = false;
-  }
-
-  tutorialCleanUp() {}
 }

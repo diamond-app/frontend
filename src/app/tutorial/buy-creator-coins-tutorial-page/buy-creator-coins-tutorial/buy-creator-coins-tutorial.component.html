@@ -1,68 +1,46 @@
 <div>
-  <div class="flex-grow-1 br-10px border" id="creator-coins-holder">
-    <div class="tutorial-header">
-      <div *ngIf="!investInYourself && !followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Invest in a Creator</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 1/4</div>
-          <button class="tutorial-skip-button" (click)="skipBuyCreatorsStep()">Skip</button>
+  <div class="flex-grow-1 br-10px border background-color-white p-16px">
+    <div class="d-flex w-100 justify-content-center">
+      <div class="col-6 fc-muted d-flex align-items-center flex-column p-16px mb-16px">
+        <div
+          style="border-color: var(--border)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          1
         </div>
+        <div class="text-center">How to buy DESO</div>
       </div>
-      <div *ngIf="investInYourself && !followCreators" class="d-flex justify-content-between">
-        <div class="tutorial-title">Invest in Yourself</div>
-        <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">Step 2/4</div>
-          <button class="tutorial-skip-button" (click)="skipBuySelfStep()">Skip</button>
+      <div class="col-6 fc-blue d-flex align-items-center flex-column p-16px">
+        <div
+          style="border-color: var(--highlight)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          2
+        </div>
+        <div class="text-center">How to invest in creators</div>
+      </div>
+    </div>
+    <div class="w-100 d-flex flex-column align-items-center">
+      <div [ngClass]="{ 'w-90': globalVars.isMobile(), 'w-70': !globalVars.isMobile() }">
+        <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">A creator coin is your way to show your appreciation</div>
+        <div class="fc-default fs-16px text-center mb-16px">Creator coins allow you to participate in a creator's upside as they grow their community.<br/><br/>
+          Find someone who is providing a lot of value? Reward them by buying a share of their coin!<br/><br/>
         </div>
       </div>
     </div>
-    <div class="p-16px" *ngIf="showInstructions && !followCreators">
-      <b>Click the "View" button below</b> next to the creator you want to preview investing in.
+    <div class="fs-16px text-center mb-25px font-weight-bold">{{ userCanAffordCCBuy ? 'Try it out by purchasing your own Creator coin!' : 'You can see a sample creator coin purchase below' }}</div>
+    <div class="br-10px border mb-16px">
+      <trade-creator
+        [inTutorial]="true"
+        [tutorialBuy]="true"
+        [username]="globalVars.loggedInUser.ProfileEntryResponse.Username"
+        [tradeType]="'Buy'"
+      ></trade-creator>
     </div>
-    <div class="p-16px" *ngIf="showInstructions && followCreators">
-      Click the "follow" button next to the creators you want to follow. <br/><br/>
-      <b>Click "Next" in the top-right when you are finished</b>
-    </div>
-    <div>
-      <div *ngIf="!investInYourself">
-        <div id="tutorial-creators-to-invest-in">
-          <div>
-            <div class="background-color-secondary p-16px">
-              <span class="fs-17px fc-secondary font-weight-bold">Hot New Creators</span>
-            </div>
-            <div *ngFor="let profile of hotNewCreatorsToHighlight" class="background-color-white">
-              <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
-                <simple-profile-card
-                  (exitTutorial)="exitTutorial()"
-                  [profile]="profile"
-                  [showTutorialBuy]="!followCreators"
-                  [showTutorialFollow]="followCreators"
-                  [inTutorial]="true"
-                  [hideFollowLink]="true"
-                  [singleColumn]="true"
-                  [tutorialWiggle]="tutorialWiggle"
-                ></simple-profile-card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <simple-center-loader *ngIf="loading"></simple-center-loader>
-      <div *ngIf="investInYourself">
-        <div class="border-bottom"></div>
-        <div class="p-16px border-bottom" id="tutorial-invest-in-self-holder">
-          <simple-profile-card
-            (exitTutorial)="exitTutorial()"
-            [profile]="loggedInUserProfile"
-            [showTutorialBuy]="true"
-            [inTutorial]="true"
-            [hideFollowLink]="true"
-            [singleColumn]="true"
-            [tutorialBuySelf]="true"
-          ></simple-profile-card>
-        </div>
-      </div>
+    <div class="w-100 d-flex justify-content-center">
+      <button *ngIf="userCanAffordCCBuy" (click)="skipTutorialStep()" style="width: 215px" class="plain-button">Skip and complete tutorial</button>
+      <button *ngIf="!userCanAffordCCBuy" (click)="skipTutorialStep()" style="width: 215px" class="primary-button">Complete tutorial</button>
     </div>
   </div>
-  <div *ngIf="addMobileFooter" style="height: 300px"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>

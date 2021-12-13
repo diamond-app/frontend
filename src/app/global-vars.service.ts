@@ -468,7 +468,6 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
-    this.navigateToCurrentStepInTutorial(user);
   }
 
   preventBackButton() {
@@ -508,15 +507,15 @@ export class GlobalVarsService {
       let route = [];
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.CREATE_PROFILE: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.FOLLOW_CREATORS: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {

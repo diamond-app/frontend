@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { ProfileEntryResponse } from "../backend-api.service";
-import { TradeCreatorComponent } from "../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
@@ -83,7 +83,7 @@ export class SimpleProfileCardComponent implements OnInit {
       inTutorial: this.inTutorial,
       tutorialBuy: this.showTutorialBuy,
     };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal",
       initialState,
     });
@@ -108,7 +108,7 @@ export class SimpleProfileCardComponent implements OnInit {
       this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
         ? ""
         : "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal";
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: dialogClass,
       initialState,
     });

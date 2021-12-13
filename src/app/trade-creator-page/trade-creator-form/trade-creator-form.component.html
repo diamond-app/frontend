@@ -8,7 +8,7 @@
       </span>
     </div>
     <button
-      *ngIf="creatorCoinTrade.tradeType === buyTab"
+      *ngIf="creatorCoinTrade.tradeType === buyTab && !inTutorial"
       class="plain-button fc-default font-weight-bold"
       (click)="_onBuyDeSoClicked()"
     >
@@ -112,11 +112,11 @@
       (to cover fees)
     </div>
 
-    <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px error-container">
-      <i-feather name="alert-circle" class="feather-large"></i-feather>
+    <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px error-container d-flex">
+      <i-feather name="alert-circle" class="feather-large mr-5px"></i-feather>
       <div *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock">
         Amount must be less than
-        {{ this._maxAmount() | number: "0.0-9" }}
+        {{ this._maxAmount() | number: "0.0-6" }}
         (your balance net of fees)
       </div>
       <ng-template #elseBlock>Amount must be less than your balance plus fees</ng-template>
@@ -147,7 +147,7 @@
   </ng-template>
 
   <!-- Review button -->
-  <div class="pb-3 pt-3">
+  <div class="pb-3 pt-3" *ngIf="_allowPreviewClick() || !inTutorial">
     <button
       class="primary-button"
       [ngClass]="{ 'disabled-button': !_allowPreviewClick() }"
@@ -156,6 +156,6 @@
     >
       Review
     </button>
-    <a class="fc-muted ml-25px" (click)="_closeModal()">Cancel</a>
+    <a *ngIf="!inTutorial" class="fc-muted ml-25px" (click)="_closeModal()">Cancel</a>
   </div>
 </div>
