@@ -592,4 +592,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       this.skipTutorialExitPrompt = false;
     }
   }
+
+  getBlockExplorerLink() {
+    return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
+  }
 }
