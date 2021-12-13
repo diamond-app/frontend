@@ -63,8 +63,8 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   skipTutorialStep() {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Tutorial Complete",
-      html: `Congratulations on completing the tutorial! Your final stop will be your feed. Be sure to give diamonds to creators for posts you enjoy, follow new creators, and buy the creator coin of creators you want to support!`,
+      title: "Great work! You've completed the tutorial",
+      html: `Congratulations on completing the tutorial! Your final stop will be your feed.<br><br>Be sure to give diamonds to creators for posts you enjoy, follow new creators, and buy the creator coin of creators you want to support!`,
       showCancelButton: false,
       customClass: {
         confirmButton: "btn btn-light",
@@ -72,7 +72,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       },
       confirmButtonText: "Go to Feed",
       reverseButtons: true,
-    }).then((response: any) => {
+    }, false).then((response: any) => {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
         queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
       });

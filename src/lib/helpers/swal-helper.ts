@@ -35,7 +35,10 @@ export class SwalHelper {
   // to escape them.
   //
   // We can add an htmlSafe option (i.e. do not sanitize) in the future if needed.
-  static fire<T = any>(options: SweetAlertOptions): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
+  static fire<T = any>(
+    options: SweetAlertOptions,
+    escapeFields = true
+  ): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
     // Feel free to add more classes here as needed
     let escapedCustomClass = {
       confirmButton: _.escape(options?.customClass?.confirmButton),
@@ -64,7 +67,11 @@ export class SwalHelper {
 
     for (let field of SwalHelper.ESCAPED_FIELDS) {
       if (options[field] !== undefined) {
-        escapedOptions[field] = _.escape(options[field]);
+        if (escapeFields) {
+          escapedOptions[field] = _.escape(options[field]);
+        } else {
+          escapedOptions[field] = options[field];
+        }
       }
     }
 
