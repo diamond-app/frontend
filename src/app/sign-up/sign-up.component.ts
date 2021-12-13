@@ -298,8 +298,8 @@ export class SignUpComponent {
   launchTutorial() {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Tutorial",
-      html: `Learn how ${environment.node.name} works!`,
+      title: "Introduction to Diamond",
+      html: `Learn how to buy $DESO, the social currency that powers Diamond and how to use it for investing in your favorite creators.`,
       showConfirmButton: true,
       // Only show skip option to admins and users who do not need to complete tutorial
       showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,
@@ -308,7 +308,7 @@ export class SignUpComponent {
         cancelButton: "btn btn-light no",
       },
       reverseButtons: true,
-      confirmButtonText: "Start Tutorial",
+      confirmButtonText: "Take the tutorial",
       cancelButtonText: "Cancel",
     }).then((res) => {
       this.backendApi
