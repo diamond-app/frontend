@@ -486,7 +486,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
   // Note this returns nanos per ETH.
   getExchangeRateAfterFee(): BN {
-    return new BN(this.globalVars.nanosPerETHExchangeRate).mul(new BN(this.nodeFee()));
+    return new BN(this.globalVars.nanosPerETHExchangeRate / this.nodeFee());
   }
 
   getWeiPerNanoExchangeRate(): BN {
