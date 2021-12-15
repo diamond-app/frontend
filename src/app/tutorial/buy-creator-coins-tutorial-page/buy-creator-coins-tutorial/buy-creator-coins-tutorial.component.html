@@ -28,18 +28,34 @@
         </div>
       </div>
     </div>
-    <div class="fs-16px text-center mb-25px font-weight-bold">{{ userCanAffordCCBuy ? 'Try it out by purchasing your own Creator coin!' : 'You can see a sample creator coin purchase below' }}</div>
-    <div class="br-10px border mb-16px">
+    <div
+      *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+      class="fs-16px text-center mb-25px font-weight-bold"
+    >
+      {{
+        userCanAffordCCBuy
+          ? "Try it out by purchasing your own Creator coin!"
+          : "You can see a sample creator coin purchase below"
+      }}
+    </div>
+    <div *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username" class="br-10px border mb-16px">
       <trade-creator
         [inTutorial]="true"
         [tutorialBuy]="true"
-        [username]="globalVars.loggedInUser.ProfileEntryResponse.Username"
+        [username]="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
         [tradeType]="'Buy'"
       ></trade-creator>
     </div>
     <div class="w-100 d-flex justify-content-center">
-      <button *ngIf="userCanAffordCCBuy" (click)="skipTutorialStep()" style="width: 215px" class="plain-button">Skip and complete tutorial</button>
-      <button *ngIf="!userCanAffordCCBuy" (click)="skipTutorialStep()" style="width: 215px" class="primary-button">Complete tutorial</button>
+      <button *ngIf="userCanAffordCCBuy && globalVars.loggedInUser?.ProfileEntryResponse?.Username" (click)="skipTutorialStep()" style="width: 215px" class="plain-button">Skip and complete tutorial</button>
+      <button
+        *ngIf="!userCanAffordCCBuy || !globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+        (click)="skipTutorialStep()"
+        style="width: 215px"
+        class="primary-button"
+      >
+        Complete tutorial
+      </button>
     </div>
   </div>
   <div class="global__bottom-bar-mobile-height"></div>
