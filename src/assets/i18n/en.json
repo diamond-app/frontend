@@ -559,5 +559,8 @@
     "thread":"Thread"
   },
   "Holders":"Holders",
-  "All":"All"
+  "All":"All",
+  "Following": "Following",
+  "New": "New",
+  "NFT Gallery": "NFT Gallery"
 }
