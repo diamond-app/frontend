@@ -105,13 +105,23 @@ export class TradeCreatorComponent implements OnInit {
         cancelButtonText: "View Wallet",
         reverseButtons: true,
       }).then((response: any) => {
-        if (response.isConfirmed) {
-          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-            queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+        this.backendApi
+          .UpdateTutorialStatus(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            TutorialStatus.COMPLETE,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            true
+          )
+          .subscribe(() => {
+            if (response.isConfirmed) {
+              this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+                queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+              });
+            } else {
+              this.router.navigate(["/" + this.globalVars.RouteNames.WALLET]);
+            }
           });
-        } else {
-          this.router.navigate(["/" + this.globalVars.RouteNames.WALLET]);
-        }
       });
     }
   }

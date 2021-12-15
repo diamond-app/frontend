@@ -61,21 +61,34 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   }
 
   skipTutorialStep() {
-    SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      title: "Great work! You've completed the tutorial",
-      html: `Congratulations on completing the tutorial! Your final stop will be your feed.<br><br>Be sure to give diamonds to creators for posts you enjoy, follow new creators, and buy the creator coin of creators you want to support!`,
-      showCancelButton: false,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+    SwalHelper.fire(
+      {
+        target: this.globalVars.getTargetComponentSelector(),
+        title: "Great work! You've completed the tutorial",
+        html: `Congratulations on completing the tutorial! Your final stop will be your feed.<br><br>Be sure to give diamonds to creators for posts you enjoy, follow new creators, and buy the creator coin of creators you want to support!`,
+        showCancelButton: false,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Go to Feed",
+        reverseButtons: true,
       },
-      confirmButtonText: "Go to Feed",
-      reverseButtons: true,
-    }, false).then((response: any) => {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
-      });
+      false
+    ).then((response: any) => {
+      this.backendApi
+        .UpdateTutorialStatus(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          TutorialStatus.COMPLETE,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          true
+        )
+        .subscribe(() => {
+          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+            queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+          });
+        });
     });
   }
 }
