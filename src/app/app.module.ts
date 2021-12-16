@@ -112,6 +112,7 @@ import { WalletComponent } from "./wallet/wallet.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
+import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-module/sign-up-transfer-deso.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondsDetailsComponent } from "./diamonds-details/diamonds-details.component";
@@ -295,6 +296,7 @@ export function playerFactory() {
     PageComponent,
     LandingPageComponent,
     SignUpComponent,
+    SignUpTransferDesoComponent,
     SignUpGetStarterDeSoComponent,
     UpdateProfileGetStarterDeSoComponent,
     GetStarterDeSoPageComponent,

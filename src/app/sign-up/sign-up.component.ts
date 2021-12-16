@@ -10,6 +10,8 @@ import { RouteNames } from "../app-routing.module";
 import { environment } from "../../environments/environment";
 import Timer = NodeJS.Timer;
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
 
 @Component({
   selector: "sign-up",
@@ -38,7 +40,8 @@ export class SignUpComponent {
     private router: Router,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
-    private identityService: IdentityService
+    private identityService: IdentityService,
+    private modalService: BsModalService
   ) {
     this.globalVars.isLeftBarMobileOpen = false;
     this.globalVars.initializeOnboardingSettings();
@@ -125,6 +128,22 @@ export class SignUpComponent {
           });
         }
       });
+  }
+
+  launchTransferDesoModal() {
+    const modalDetails = this.modalService.show(SignUpTransferDesoComponent, {
+      class: "modal-dialog-centered",
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe(() => {
+      this.refreshBalance();
+    });
+  }
+
+  refreshBalance() {
+    this.globalVars.updateEverything().add(() => {
+      this.setStep();
+    });
   }
 
   completeUpdateProfile() {
