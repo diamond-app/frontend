@@ -9,7 +9,7 @@
         <div style="max-width: 450px" class="w-100 text-center fs-18px mt-5px mb-30px fc-secondary">
           This is the cryptocurrency that fuels the engagement on our site and allows you to invest in creators.
         </div>
-        <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose from either option</div>
+        <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose an option</div>
         <button
           (click)="launchJumioVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
@@ -26,6 +26,14 @@
           Validate via SMS
         </button>
         <div class="fs-16px fc-muted">To earn under $1</div>
+        <button
+          (click)="launchTransferDesoModal()"
+          [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
+          class="secondary-button mt-30px"
+        >
+          Send $DESO from another wallet
+        </button>
+        <div class="fs-16px fc-muted">Transfer from an exchange or a DeSo account</div>
         <div style="max-width: 300px; margin-top: 60px" class="fs-16px text-center fc-muted">
           Validating your identity lets us ensure that you're a real person and not a bot
         </div>

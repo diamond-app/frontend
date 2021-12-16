@@ -1,0 +1,46 @@
+<div class="modal-header">
+  <div *ngIf="showCloseButton" class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+<div class="buy-deso__container p-16px">
+  <div class="mint-nft__title pb-10px">Transfer DESO to your new account</div>
+  <div class="mint-nft__text pb-10px">You will need at least 0.01 starter $DESO to create your new account. This could be transferred from an exchange like <a href="https://www.coinbase.com/price/decentralized-social" target="_blank">Coinbase</a>, or from another account on DeSo.</div>
+  <div class="d-flex justify-content-between mb-5px mt-10px">
+    <div class="fc-secondary fs-18px">Send $DESO to this address:</div>
+    <div class="d-flex">
+      <div (click)="_copyPublicKey()" class="d-flex cursor-pointer">
+        <i-feather name="key" class="feather-large mr-10px"></i-feather>
+        <span class="creator-profile__ellipsis-restriction mr-10px">
+          {{ globalVars.loggedInUser.PublicKeyBase58Check }}
+        </span>
+      </div>
+      <div class="d-flex">
+        <i-feather
+          *ngIf="publicKeyIsCopied"
+          class="feather-small check-indicator position-relative"
+          name="check-circle"
+        ></i-feather>
+        <i-feather
+          *ngIf="!publicKeyIsCopied"
+          (click)="_copyPublicKey()"
+          class="feather-small copy-button cursor-pointer position-relative"
+          name="copy"
+        ></i-feather>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex mb-25px">
+    <div class="fc-secondary fs-16px mr-5px">Current balance:</div>
+    <div class="fs-14px fc-secondary d-flex align-items-center">
+      <div>{{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }} $DESO</div>
+      <div (click)="refreshBalance()" class="ml-10px d-flex align-items-center cursor-pointer">
+        Refresh
+        <div class="d-flex"><i-feather class="feather-small fs-0px ml-5px" name="refresh-cw"></i-feather></div>
+      </div>
+    </div>
+  </div>
+  <div class="mint-nft__title">Buy DESO</div>
+  <div class="mint-nft__text mb-16px">In addition to buying $DESO on an exchange, you can purchase $DESO directly on Diamond.</div>
+  <button (click)="buyDesoModal()" class="primary-button">Buy $DESO</button>
+</div>
