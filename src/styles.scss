@@ -5528,164 +5528,195 @@ sell-nft-modal {
   }
 }
 
+.mobile-reaction-box {
+  @media(min-width: 600px) {
+    display: none !important;
+  }
+}
+
+.non-mobile-reaction-box {
+  @media(max-width: 600px) {
+    display: none !important;
+  }
+}
+
+// Contains the button which triggers diamond pop ups
+.diamond-btn {
+  @media (max-width: 991.98px) {
+    @media (max-width: 600px) {
+      bottom: 35px;
+    }
+    width: 100%;
+  }
+  width: 44px; height: 30px;
+  position: absolute;
+  left: -4px;
+  cursor: pointer;
+  &::before {
+    display: none
+  }
+  // Contains box which contains all of the selectable diamond levels
+  .reaction-box {
+    // This creates an invisible, hoverable space for our pointer to use without losing hover focus
+    // Basically, a bridge between the diamond button and the diamond row
+    &::after {
+      content: "."; opacity: 0;
+      display: block;
+      width: 340px;
+      // On desktop, move the diamond bar higher to prevent accidental clicking
+      @media (max-width: 991.98px) {
+        height: 10px;
+        top: 50px; left: 0px;
+      }
+      height: 30px;
+      position: absolute;
+      top: 50px; left: 0px;
+    }
+
+    filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+    // Need to position box above top bar when explainer is triggered
+    z-index: 30;
+    position: absolute;
+    width: 340px; height: 55px;
+    background: var(--tile-bg);
+    border-radius: 20px;
+    // On mobile, need to position this box further left so it doesn't leave the screen
+    @media (max-width: 991.98px) {
+      @media (min-width: 600px) {
+        left: -300px;
+        bottom: 35px;
+      }
+      @media (max-width: 600px) {
+        left: 0px;
+      }
+      bottom: 45px;
+    }
+    left: -125px; bottom: 50px;
+    display: none;
+
+    // Each selectable diamond level in the diamond pop-up
+    .reaction-icon {
+      // Enables "pop-up" animation
+      transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
+      opacity: 0;
+      transform: translate(0, 50px) scale(0);
+      width: 47px; height: 20px;
+      display: inline-block;
+      background: var(--background-secondary);
+      background-color: transparent;
+      content: '\f219';
+      border-radius: 15px;
+      margin: 8px 0 0 0;
+      text-align: center;
+
+      .diamond-reaction {
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
+        top: -30px;
+        left: -2px;
+        position: relative;
+        transition: color .3s;
+      }
+
+      .diamond-help {
+        color: var(--grey);
+      }
+
+        label {
+        padding: 3px 5px 3px 5px;
+        position: relative;
+        top: -24px;
+        border-radius: 10px;
+        font-size: 11px;
+        color: #FFF;
+        background: #333;
+        visibility: visible;
+      }
+
+      // Make selectable area smaller, to prevent accidental selections
+      .reaction-icon-display {
+        height: 14px;
+      }
+    }
+  }
+
+  // Don't show the diamond selector when it's the user's own post
+  &.hide-diamonds {
+    .reaction-box{
+      display: none !important;
+    }
+  }
+
+  // We want to disable phone-sized devices from showing the selector on hover.
+  @media(max-width: 600px) {
+    &.dragged-like {
+      .reaction-box-icons {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .reaction-box {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+  // Show the selector on hover for tablets and desktop machines
+  @media(min-width: 601px) {
+    &:hover {
+      .reaction-box {
+        display: block;
+      }
+    }
+  }
+
+  // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
+  &.dragged-like,&:hover {
+
+    .reaction-box {
+
+      .reaction-icon {
+
+        // Skip the "show" trigger on tablets, the on-hover property can be touchy
+        @media (min-width: 601px) and (pointer: coarse) {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+        // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
+        &.show {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+
+        // For those elements we want to grow, scale them up when they're hovered
+        &.transformable{
+          // Prevent hover effects on mobile, we use the drag interface for that
+          @media (pointer: fine) {
+            &.dragged-icon,&:hover {
+              transform: scale(1.3);
+              transform-origin: bottom;
+            }
+          }
+          // Scale up icons on mobile when they're dragged across
+          @media (pointer: coarse) {
+            &.dragged-icon {
+              transform: scale(1.3);
+              transform-origin: bottom;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 .feed-reaction {
   position: relative;
 
   i {
     position: relative;
     font-size: 22px;
-  }
-
-  // Contains the button which triggers diamond pop ups
-  .diamond-btn {
-    width: 44px; height: 30px;
-    position: absolute;
-    left: -4px;
-    cursor: pointer;
-    &::before {
-      display: none
-    }
-    // Contains box which contains all of the selectable diamond levels
-    .reaction-box {
-      // This creates an invisible, hoverable space for our pointer to use without losing hover focus
-      // Basically, a bridge between the diamond button and the diamond row
-      &::after {
-        content: "."; opacity: 0;
-        display: block;
-        width: 340px;
-        // On desktop, move the diamond bar higher to prevent accidental clicking
-        @media (max-width: 991.98px) {
-          height: 10px;
-          top: 50px; left: 0px;
-        }
-        height: 30px;
-        position: absolute;
-        top: 50px; left: 0px;
-      }
-
-      filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
-      // Need to position box above top bar when explainer is triggered
-      z-index: 30;
-      position: absolute;
-      width: 340px; height: 55px;
-      background: var(--tile-bg);
-      border-radius: 20px;
-      // On mobile, need to position this box further left so it doesn't leave the screen
-      @media (max-width: 991.98px) {
-        left: -300px; bottom: 35px;
-      }
-      left: -125px; bottom: 50px;
-      display: none;
-
-      // Each selectable diamond level in the diamond pop-up
-      .reaction-icon {
-        // Enables "pop-up" animation
-        transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
-        opacity: 0;
-        transform: translate(0, 50px) scale(0);
-        width: 47px; height: 20px;
-        display: inline-block;
-        background: var(--background-secondary);
-        background-color: transparent;
-        content: '\f219';
-        border-radius: 15px;
-        margin: 8px 0 0 0;
-        text-align: center;
-
-        .diamond-reaction {
-          width: 30px;
-          height: 30px;
-          font-size: 25px;
-          top: -30px;
-          left: -2px;
-          position: relative;
-          transition: color .3s;
-        }
-
-        .diamond-help {
-          color: var(--grey);
-        }
-
-          label {
-          padding: 3px 5px 3px 5px;
-          position: relative;
-          top: -24px;
-          border-radius: 10px;
-          font-size: 11px;
-          color: #FFF;
-          background: #333;
-          visibility: visible;
-        }
-
-        // Make selectable area smaller, to prevent accidental selections
-        .reaction-icon-display {
-          height: 14px;
-        }
-      }
-    }
-
-    // Don't show the diamond selector when it's the user's own post
-    &.hide-diamonds {
-      .reaction-box{
-        display: none !important;
-      }
-    }
-
-    // We want to disable phone-sized devices from showing the selector on hover.
-    @media(max-width: 600px) {
-      &.dragged-like {
-        .reaction-box {
-          display: block;
-        }
-      }
-    }
-    // Show the selector on hover for tablets and desktop machines
-    @media(min-width: 601px) {
-      &:hover {
-        .reaction-box {
-          display: block;
-        }
-      }
-    }
-
-    // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
-    &.dragged-like,&:hover {
-
-      .reaction-box {
-
-        .reaction-icon {
-
-          // Skip the "show" trigger on tablets, the on-hover property can be touchy
-          @media (min-width: 601px) and (pointer: coarse) {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
-          }
-          // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
-          &.show {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
-          }
-
-          // For those elements we want to grow, scale them up when they're hovered
-          &.transformable{
-            // Prevent hover effects on mobile, we use the drag interface for that
-            @media (pointer: fine) {
-              &.dragged-icon,&:hover {
-                transform: scale(1.3);
-                transform-origin: bottom;
-              }
-            }
-            // Scale up icons on mobile when they're dragged across
-            @media (pointer: coarse) {
-              &.dragged-icon {
-                transform: scale(1.3);
-                transform-origin: bottom;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -5727,6 +5758,7 @@ sell-nft-modal {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
+    border-radius: 10px;
 
     &.show {
       visibility: visible;
