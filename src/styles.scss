@@ -816,6 +816,12 @@ $green-font-color: #19B028;
   align-items: center;
 }
 
+.modal-wide {
+  @media (min-width: 992px) {
+    max-width: 775px !important;
+  }
+}
+
 .modal-dialog-high {
   .modal-content {
     position: fixed;
@@ -959,6 +965,24 @@ app-landing-page {
   @media (max-width: 992px) {
     top: -140px;
   }
+}
+
+@keyframes disappear {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes appear {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.disappear {
+  animation: .5s ease 0s 1 disappear forwards;
+}
+
+.appear {
+  animation: .5s ease 0s 1 appear forwards;
 }
 
 app-landing-page {
@@ -3200,6 +3224,13 @@ right-bar-creators {
 
 .creator-profile__ellipsis-restriction {
   max-width: 150px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.creator-profile__ellipsis-restriction-full {
   display: block;
   overflow: hidden;
   white-space: nowrap;
