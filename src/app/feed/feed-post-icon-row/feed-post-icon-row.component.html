@@ -131,6 +131,64 @@
           {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Slide Down To Cancel - Release To Confirm" }}
         </p>
       </div>
+      <div
+        [ngClass]="{
+          'dragged-like': diamondDragging,
+          'hide-diamonds':
+            !globalVars.loggedInUser?.PublicKeyBase58Check ||
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check ||
+            sendingDiamonds
+        }"
+        class="diamond-btn icon-diamond mobile-reaction-box"
+      >
+        <div
+          class="reaction-box"
+          [ngStyle]="{
+              height:
+                !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                  ? '121px'
+                  : '55px'
+            }"
+        >
+          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
+            <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+          </div>
+          <div class="reaction-box-icons">
+            <div
+              *ngFor="let diamondIndex of diamondIndexes"
+              [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
+              class="reaction-icon transformable"
+              (click)="onDiamondSelected($event, diamondIndex)"
+              (mouseover)="setDiamondHovered(diamondIndex)"
+              (mouseleave)="setDiamondHovered(-1)"
+            >
+              <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
+              <i-feather
+                name="diamond"
+                class="diamond-reaction"
+                [ngStyle]="{
+                    color:
+                      diamondIndex < getCurrentDiamondLevel() ||
+                      diamondIndex <= this.diamondHovered ||
+                      diamondIndex <= this.diamondIdxDraggedTo
+                        ? 'var(--cblue)'
+                        : 'var(--grey)'
+                  }"
+              ></i-feather>
+            </div>
+            <div
+              class="reaction-icon show"
+              (click)="toggleExplainer($event)"
+              (mouseover)="setCollapseDiamondInfo(false)"
+              (mouseleave)="setCollapseDiamondInfo(true)"
+              style="position: relative; top: 38px"
+            >
+              <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
     <div
       class="feed-reaction cursor-pointer d-flex align-items-center"
@@ -168,7 +226,7 @@
         id="diamond-button"
       >
         <div
-          class="reaction-box"
+          class="reaction-box non-mobile-reaction-box"
           [ngStyle]="{
             height:
               !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
