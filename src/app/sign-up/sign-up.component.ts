@@ -132,7 +132,7 @@ export class SignUpComponent {
 
   launchTransferDesoModal() {
     const modalDetails = this.modalService.show(SignUpTransferDesoComponent, {
-      class: "modal-dialog-centered",
+      class: "modal-dialog-centered modal-wide",
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe(() => {
