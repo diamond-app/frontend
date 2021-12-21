@@ -17,7 +17,7 @@
         >
           Validate with your ID
         </button>
-        <div class="fs-16px fc-muted">To earn {{ globalVars.getFreeDESOMessage() }}</div>
+        <div class="fs-16px fc-muted">To earn <free-deso-message></free-deso-message></div>
         <button
           (click)="launchSMSVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
