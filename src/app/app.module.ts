@@ -186,6 +186,7 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
+import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -375,6 +376,7 @@ export function playerFactory() {
     TransferNftModalComponent,
     TransferNftPageComponent,
     TransferNftComponent,
+    FreeDesoMessageComponent,
   ],
   imports: [
     BrowserModule,
