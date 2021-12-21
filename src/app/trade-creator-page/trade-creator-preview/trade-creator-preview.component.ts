@@ -100,7 +100,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
         this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
         true,
-        this.inTutorial
+        false
       )
       .subscribe(
         (response) => {

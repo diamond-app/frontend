@@ -31,8 +31,11 @@
             >
               <i class="fas fa-check-circle fa-md align-middle"></i>
             </span>
+            <div class="text-grey9 ml-5px" *ngIf="profile.CoinPriceDeSoNanos && inTutorial">
+              {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
+            </div>
           </div>
-          <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
+          <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos && !inTutorial">
             {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
           </div>
           <div
@@ -79,11 +82,9 @@
         </button>
       </div>
       <div *ngIf="showTutorialFollow">
-        <follow-button
-          [displayAsLink]="true"
-          [followLinkClass]="'link--unstyled'"
-          [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
-        ></follow-button>
+        <span (click)="onboardingFollow()" class="fc-default fs-15px cursor-pointer">
+          {{ tutorialFollowing ? "Unfollow" : "Follow" }}
+        </span>
       </div>
       <follow-button
         *ngIf="followButtonOppositeSide"

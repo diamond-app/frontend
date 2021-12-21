@@ -69,26 +69,25 @@
 
       <div
         class="d-flex"
-        dropdown
-        (click)="$event.stopPropagation()"
-        container="body"
         style="align-items: center"
       >
-        <button class="d-flex justify-content-between buy-deso__country-selector" role="button" dropdownToggle>
-          <span>{{ selectedCountry }}</span>
-          <i-feather name="chevron-down" class="feather-small"></i-feather>
-        </button>
-        <div
-          class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu buy-deso__country-dropdown" *dropdownMenu
-        >
-          <div>
-            <a
-              *ngFor="let country of supportedCountries"
-              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="onSelectCountry(country)"
-            >
-              {{ country }}
-            </a>
+        <div dropdown (click)="$event.stopPropagation()" container="body">
+          <button class="d-flex justify-content-between buy-deso__country-selector" role="button" dropdownToggle>
+            <span>{{ selectedCountry }}</span>
+            <i-feather name="chevron-down" class="feather-small"></i-feather>
+          </button>
+          <div
+            class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu buy-deso__country-dropdown" *dropdownMenu
+          >
+            <div>
+              <a
+                *ngFor="let country of supportedCountries"
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="onSelectCountry(country)"
+              >
+                {{ country }}
+              </a>
+            </div>
           </div>
         </div>
       </div>

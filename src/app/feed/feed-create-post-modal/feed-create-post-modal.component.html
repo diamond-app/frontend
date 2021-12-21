@@ -1,5 +1,5 @@
 <div class="modal-header" *ngIf="!inTutorial">
-  <div class="modal-header-x" (click)="bsModalRef.hide()">
+  <div class="modal-header-x" (click)="closeModal()">
     <i-feather name="x"></i-feather>
   </div>
 </div>
@@ -8,4 +8,5 @@
   numberOfRowsInTextArea="7"
   (postCreated)="onPostCreated($event)"
   (postCreated)="bsModalRef.hide()"
+  (postUpdated)="postUpdated($event)"
 ></feed-create-post>

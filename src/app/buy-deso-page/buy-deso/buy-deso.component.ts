@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
 import { FeedComponent } from "../../feed/feed.component";
+import { isNil } from "lodash";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -29,6 +30,7 @@ class Messages {
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
   @Input() isModal: boolean = false;
+  @Input() activeTabInput: string = null;
   @Output() closeModal = new EventEmitter();
   @Output() showCloseButton = new EventEmitter<boolean>();
 
@@ -524,6 +526,10 @@ export class BuyDeSoComponent implements OnInit {
 
     if (this.globalVars.showBuyWithETH) {
       this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
+    }
+
+    if (!isNil(this.activeTabInput)) {
+      this.activeTab = this.activeTabInput;
     }
 
     // Query the website to get the fees.

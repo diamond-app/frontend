@@ -1,22 +1,4 @@
-<div
-  *ngIf="inTutorial"
-  class="flex-grow-1 border"
-  style="border-radius: 10px 10px 0px 0px"
->
-  <div class="tutorial-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="tutorial-title">{{ 'update_profile.create_profile.create_your_profile' | transloco}}</div>
-      <div class="d-flex align-items-center">
-        <div class="fc-secondary fs-15px">{{ 'update_profile.create_profile.step' | transloco}} 1/6</div>
-      </div>
-    </div>
-  </div>
-  <div class="p-16px" *ngIf="showTutorialInstructions">
-    {{ 'update_profile.tutorial_instructions' | transloco}}
-  </div>
-</div>
-
-<div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
+<div *ngIf="this.loggedInUser.CanCreateProfile || this.inTutorial; else elseBlock">
   <div class="d-flex flex-column">
     <div style="flex-grow: 1" id="update-profile-tutorial-holder">
       <simple-center-loader *ngIf="!globalVars.loggedInUser"></simple-center-loader>
@@ -89,7 +71,7 @@
           *ngIf="globalVars.loggedInUser"
           class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars update-profile__text"
         >
-          <div class="update-profile__title update-profile__username">{{ 'update_profile.username' | transloco }}</div>
+          <div class="update-profile__title update-profile__username">{{ 'update_profile.username' | transloco }}<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
           <div>
             <input
               [(ngModel)]="usernameInput"
@@ -111,7 +93,19 @@
           <div *ngIf="!usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
             {{ usernameInput }} {{ 'update_profile.is_available' | transloco }}
           </div>
-
+          <div *ngIf="inTutorial">
+            <div class="update-profile__title">{{ 'update_profile.email' | transloco }}<span class="ml-5px fs-18px">*</span></div>
+            <div class="form-group">
+              <input
+                type="email"
+                class="form-control fs-15px"
+                placeholder="Enter an email address."
+                [(ngModel)]="emailAddress"
+                (ngModelChange)="_validateEmail($event)"
+              />
+              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">{{ 'update_profile.please_enter_valid_email' | transloco }}</div>
+            </div>
+          </div>
           <div class="update-profile__title">{{ 'update_profile.description' | transloco }}</div>
 
           <div>
@@ -153,7 +147,7 @@
               >
               <span class="update-profile__cc-percent-symbol"><i-feather name="percent"></i-feather></span>
               <div
-                *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
+                *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
                 * {{ 'update_profile.you_must_purchase_own_coin' | transloco }}

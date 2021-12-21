@@ -155,7 +155,8 @@ export class CreatorCoinTrade {
   }
 
   _returnedAssetRowLabelPresentTense() {
-    return this.isBuyingCreatorCoin ? "Buy" : "You receive";
+    return this.isBuyingCreatorCoin ? "Buy" : "" +
+      "You receive";
   }
 
   _soldAssetRowLabelPresentTense() {

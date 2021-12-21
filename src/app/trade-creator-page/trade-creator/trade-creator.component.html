@@ -1,8 +1,3 @@
-<div class="modal-header" *ngIf="!inTutorial">
-  <div class="modal-header-x" (click)="bsModalRef.hide()">
-    <i-feather name="x"></i-feather>
-  </div>
-</div>
 <div *ngIf="readyForDisplay(); else loadingElseBlock">
   <div *ngIf="this.appData.loggedInUser; else elseBlock">
     <div class="buy-deso__container fc-secondary">
@@ -50,11 +45,12 @@
       <!-- Content -->
       <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
         <trade-creator-form
+          [inTutorial]="inTutorial"
           [creatorCoinTrade]="creatorCoinTrade"
           [hideWarning]="hideWarning"
           (previewClicked)="_onPreviewClicked()"
-          (buyDesoClicked)="openBuyCloutModal()"
-          (closeModal)="bsModalRef.hide()"
+          (buyDesoClicked)="openBuyDeSoModal()"
+          (closeModal)="hideModal.emit()"
         ></trade-creator-form>
       </div>
 
@@ -73,7 +69,7 @@
         <trade-creator-complete
           [creatorCoinTrade]="creatorCoinTrade"
           (tradeAgainButtonClicked)="_onBackButtonClicked()"
-          (viewWalletClicked)="bsModalRef.hide()"
+          (viewWalletClicked)="hideModal.emit()"
         ></trade-creator-complete>
       </div>
     </div>

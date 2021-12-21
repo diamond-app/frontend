@@ -55,7 +55,7 @@ export class FeedPostDropdownComponent {
   reportPost(): void {
     this.globalVars.logEvent("post : report-content");
     window.open(
-      `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
+      `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
     );
   }
 
@@ -148,10 +148,10 @@ export class FeedPostDropdownComponent {
 
     const loggedInUserPostedThis =
       this.globalVars.loggedInUser.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
-    const loggedInUserIsGloboMod =
-      this.globalVars.globoMods && this.globalVars.globoMods[this.globalVars.loggedInUser.PublicKeyBase58Check];
+    const loggedInUserIsParamUpdater =
+      this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
 
-    return loggedInUserPostedThis || loggedInUserIsGloboMod;
+    return loggedInUserPostedThis || loggedInUserIsParamUpdater;
   }
 
   globalFeedEligible(): boolean {

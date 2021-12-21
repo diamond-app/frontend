@@ -71,7 +71,7 @@ export class DiamondTutorialComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 5/6</span>';
+    const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 3/4</span>';
     let diamondValue = this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2);
     diamondValue = diamondValue === "0.00" ? "0.01" : diamondValue;
     this.introJS.setOptions({
