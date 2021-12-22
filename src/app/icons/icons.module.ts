@@ -60,6 +60,7 @@ import {
   Users,
   UserX,
   X,
+  XSquare,
 } from "angular-feather/icons";
 import {
   BellNotification,
@@ -160,6 +161,7 @@ const icons = {
   UserPlus,
   UserX,
   X,
+  XSquare,
 };
 
 @NgModule({
