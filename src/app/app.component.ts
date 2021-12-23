@@ -10,6 +10,7 @@ import * as AOS from "aos";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
 import { of, Subscription, zip } from "rxjs";
+import { isNil } from "lodash";
 
 @Component({
   selector: "app-root",
@@ -116,7 +117,7 @@ export class AppComponent implements OnInit {
 
     return zip(
       this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
-      environment.verificationEndpointHostname
+      environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
         ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
         : of(null)
     ).subscribe(
