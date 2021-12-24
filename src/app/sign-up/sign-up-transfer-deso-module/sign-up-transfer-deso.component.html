@@ -4,7 +4,7 @@
   </div>
 </div>
 <div [ngClass]="{ disappear: !showModal, appear: modalReappear }" class="buy-deso__container p-16px">
-  <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-muted pb-10px mb-10px">Easily transfer $DESO or purchase some directly</div>
+  <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-muted pb-10px mb-10px">$DESO'yu kolayca aktarın veya doğrudan satın alın</div>
   <div class="border-bottom w-100 mb-30px"></div>
   <div class="d-flex mb-30px" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
     <div class="d-flex align-items-center flex-column fc-blue">
@@ -16,9 +16,9 @@
       </div>
     </div>
     <div [ngClass]="{ 'ml-20px': !globalVars.isMobile() }">
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">Transfer $DESO to your new account</div>
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">You will need at least 0.01 $DESO to create your new account. This could be transferred from an exchange like Coinbase, or from another account on a DeSo app like Diamond.</div>
-      <div class="fs-18px fc-default font-weight-semibold mb-10px">Send $DESO to this address</div>
+      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">$DESO'yu yeni hesabınıza aktarın</div>
+      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">Yeni hesabınızı oluşturmak için en az 0.01 $DESO'ya ihtiyacınız olacak. Bu, Coinbase gibi bir borsadan veya Elmas App gibi bir DeSo uygulamasındaki başka bir hesaptan aktarılabilir.</div>
+      <div class="fs-18px fc-default font-weight-semibold mb-10px">Bu adrese $DESO gönder</div>
       <div
         class="w-100 bg-light p-10px br-10px cursor-pointer mb-10px"
         [ngClass]="{ 'flex-column': globalVars.isMobile() }"
@@ -42,32 +42,32 @@
               class="feather-small copy-button cursor-pointer position-relative"
               name="copy"
             ></i-feather>
-            <span class="fs-16px fc-blue ml-5px">Click to Copy</span>
+            <span class="fs-16px fc-blue ml-5px">Kopyalamak için tıklayın</span>
           </span>
           <span *ngIf="!scanQRCode" (click)="scanQRCode = true">
             <i class="fas fa-qrcode"></i>
-            <span class="fs-16px fc-blue ml-5px">Send via QR Code</span>
+            <span class="fs-16px fc-blue ml-5px">QR Kodu ile Gönder</span>
           </span>
           <span class="d-flex align-items-center" *ngIf="scanQRCode" (click)="scanQRCode = false">
             <i-feather
               class="feather-small check-indicator position-relative fs-0px"
               name="x-square"
             ></i-feather>
-            <span class="fs-16px fc-blue ml-5px">Close QR Code</span>
+            <span class="fs-16px fc-blue ml-5px">QR Kodunu Kapat</span>
           </span>
         </div>
         <div *ngIf="scanQRCode" class="p-15px d-flex flex-column align-items-center">
-          <p class="mb-10px fc-default fs-16px font-weight-semibold">Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
+          <p class="mb-10px fc-default fs-16px font-weight-semibold">{{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO Göndermek için QR kodunu tarayın</p>
           <img style="border-radius: 15px" [src]="sendDeSoQRCode | sanitizeQRCode"/>
         </div>
       </div>
       <div class="d-flex mb-25px">
-        <div class="fc-default fs-16px mr-5px font-weight-semibold">Your current balance</div>
+        <div class="fc-default fs-16px mr-5px font-weight-semibold">Mevcut bakiyeniz</div>
         <div class="fs-16px fc-muted d-flex align-items-center">
           <div>{{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }} $DESO</div>
           <div (click)="refreshBalance()" class="ml-10px d-flex align-items-center cursor-pointer">
             <div class="d-flex"><i-feather class="fc-default feather-small fs-0px mr-5px" name="refresh-cw"></i-feather></div>
-            <span class="fc-blue">Refresh</span>
+            <span class="fc-blue">Yenile</span>
           </div>
         </div>
       </div>
@@ -84,20 +84,20 @@
       </div>
     </div>
     <div [ngClass]="{ 'ml-20px': !globalVars.isMobile() }">
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">Don't have any $DESO? We make it easy to buy.</div>
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">You can buy $DESO on an exchange like Coinbase, or directly on Diamond in a secure way.</div>
+      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">$DESO'nuz yok mu? Satın almayı kolaylaştırıyoruz.</div>
+      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">$DESO'yu Coinbase gibi bir borsadan veya doğrudan Elmas App'ten güvenli bir şekilde satın alabilirsiniz.</div>
       <div class="p-30px mb-20px bg-light br-10px d-flex flex-column align-items-center">
-        <div class="fc-default font-weight-bold fs-18px mb-20px">Choose which option you would like to explore</div>
+        <div class="fc-default font-weight-bold fs-18px mb-20px">Hangi seçeneği keşfetmek istediğinizi seçin</div>
         <div class="d-flex justify-content-around">
           <div class="col-6 d-flex align-items-center flex-column">
-            <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with fiat</div>
-            <button (click)="openBuyDeSoModal(true)" class="primary-button mb-16px">Show me how</button>
-            <div class="fs-12px fc-muted text-center">We support 20 fiat currencies including USD and more.</div>
+            <div class="fs-16px font-weight-semibold mb-16px">Fiat ile DESO satın al</div>
+            <button (click)="openBuyDeSoModal(true)" class="primary-button mb-16px">Bana nasıl olduğunu göster</button>
+            <div class="fs-12px fc-muted text-center">USD ve daha fazlası dahil olmak üzere 20 fiat para birimini destekliyoruz.</div>
           </div>
           <div class="col-6 d-flex align-items-center flex-column">
-            <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with BTC / ETH</div>
-            <button (click)="openBuyDeSoModal(false)" class="primary-button mb-16px">Show me how</button>
-            <div class="fs-12px fc-muted text-center">You can buy on Diamond or on an exchange. All transactions are secure.</div>
+            <div class="fs-16px font-weight-semibold mb-16px">DESO'yu BTC/ETH ile Satın Alma</div>
+            <button (click)="openBuyDeSoModal(false)" class="primary-button mb-16px">Bana nasıl olduğunu göster</button>
+            <div class="fs-12px fc-muted text-center">Elmas App veya borsada satın alabilirsiniz. Tüm işlemler güvenlidir.</div>
           </div>
         </div>
       </div>
