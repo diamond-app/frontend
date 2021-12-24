@@ -21,9 +21,9 @@
     <div class="landing-page-content-container d-flex flex-column justify-content-center">
       <div class="d-flex align-items-center justify-content-between w-100 h-100" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
         <div data-aos="fade-right" data-aos-duration="500" data-aos-offset="-1000" style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
-          <h1 class="landing-page-header-main"><span>Don't settle<br> for a </span><span [ngStyle]="{ 'line-height':  globalVars.isMobile() ? '60px' : '110px' }"><img class="landing-page-thumbs-up" src="assets/img/landing-page-thumbs-up.svg" width="89px" height="86px" /></span></h1>
+          <h1 class="landing-page-header-main"><span>Beğenilerle<br> Yetinmeyin </span><span [ngStyle]="{ 'line-height':  globalVars.isMobile() ? '60px' : '110px' }"><img class="landing-page-thumbs-up" src="assets/img/landing-page-thumbs-up.svg" width="89px" height="86px" /></span></h1>
           <h3 class="landing-page-subtext" style="margin-top: 18px">
-            Get diamonds and invest in creators like never before. Your next post could be worth millions!
+           Elmaslar kazanın ve daha önce hiç olmadığı kadar yaratıcılara yatırım yapın. Bir sonraki paylaşımınız milyonlarca lira değerinde olabilir!
           </h3>
           <div
             class="d-flex justify-content-between"
@@ -35,8 +35,8 @@
               (click)="globalVars.launchSignupFlow()"
               [ngClass]="{ 'w-100': globalVars.isMobile() }"
             >
-              <div>Sign up today</div>
-              <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
+              <div>Kaydol</div>
+              <div class="landing-page-button-subtext">Bedava <free-deso-message></free-deso-message> Kazan</div>
             </button>
             <button
               class="landing-page-btn landing-page-secondary-btn font-weight-bold"
@@ -44,7 +44,7 @@
               queryParamsHandling="merge"
               [ngClass]="{ 'w-100 mt-15px': globalVars.isMobile() }"
             >
-              Explore Creators
+              Yaratıcıları Keşfedin
             </button>
           </div>
         </div>
@@ -54,10 +54,10 @@
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
                 <div class="landing-page-nft-card-fs-large">Desomon #001</div>
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışda</div>
               </div>
               <div class="d-flex flex-column align-items-end">
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Min Bid</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Minimum Teklif</div>
                 <div class="d-flex justify-content-end landing-page-nft-card-fs-large" style="margin-top: 5px">
                   $87,290
                 </div>
@@ -69,10 +69,10 @@
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
                 <div class="landing-page-nft-card-fs-large">cloutpunk #147</div>
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışda</div>
               </div>
               <div class="d-flex flex-column align-items-end">
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Min Bid</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Minimum Teklif</div>
                 <div class="d-flex justify-content-end landing-page-nft-card-fs-large" style="margin-top: 5px">
                   <i-feather name="deso" class="feather-medium fc-none fs-0px mt-5px mr-16px"></i-feather>
                   0.9
@@ -112,29 +112,29 @@
         </div>
       </div>
       <div class="position-relative" data-aos="fade-left" data-aos-offset="-100" style="z-index: 1" [ngStyle]="{ 'top': globalVars.isMobile() ? 'auto' : '65px', 'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
-        <div class="landing-page-title">Get Diamonds, Not Likes</div>
-        <div class="fs-24px fc-landing-page-title mt-15px ml-5px">What if every like on your posts got you up to $1000?</div>
+        <div class="landing-page-title">Elmas Kazan, Beğeni Değil</div>
+        <div class="fs-24px fc-landing-page-title mt-15px ml-5px">💎</div>
       </div>
     </div>
     <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '-50px' : '75px' }" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div data-aos="fade-down" data-aos-offset="300" style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
-        <div class="landing-page-title">Your next post could be worth millions...</div>
+        <div class="landing-page-title">Bir sonraki paylaşımınız milyonlaca lira değerinde olabilir...</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Making an account on Diamond is as simple as creating an account on Instagram
+            Elmas App'te bir hesap oluşturmak, Twitter'da bir hesap oluşturmak kadar basittir
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Minting your first NFT is as easy as making a post - just a single click
+            İlk NFT'nizi basmak, bir gönderi paylaşmak kadar kolaydır - Yalnızca tek bir tıklama!
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Investing in NFTs is one-click, too!
+            NFT'lere yatırım yapmak da tek tıkla!
           </span>
         </div>
       </div>
@@ -158,7 +158,7 @@
             <div class="landing-page-row-3-box position-relative">
               <div class="landing-page-row-3-inner-box">
                 <img src="/assets/img/landing-page-nft-box.png" height="338px" width="338px" style="border-radius: 27px" />
-                <button class="landing-page-primary-btn landing-page-btn mt-16px" style="height: 72px; width: 338px; padding: 0px" (click)="globalVars.launchLoginFlow()">Mint NFT Now!</button>
+                <button class="landing-page-primary-btn landing-page-btn mt-16px" style="height: 72px; width: 338px; padding: 0px" (click)="globalVars.launchLoginFlow()">Hemen İlk NFT'ni Bas!</button>
               </div>
             </div>
           </div>
@@ -177,23 +177,23 @@
         </div>
       </div>
       <div data-aos="fade-right" data-aos-offset="100" style="z-index: 1" [ngClass]="{ 'p-25px': globalVars.isMobile(), 'ml-40px': !globalVars.isMobile() }" [ngStyle]="{ width: !globalVars.isMobile() ? '600px' : 'auto' }">
-        <div class="landing-page-title">Investing in art is now as easy as using Instagram</div>
+        <div class="landing-page-title">Sanata yatırım yapmak artık Instagram kullanmak kadar kolay</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            For the first time, NFTs can show up directly in your social feed like posts. Engage like never before - with comments, likes, and diamonds
+            NFT'ler akışınızda tıpkı gönderiler gibi görünür. Yorumlar, beğeniler ve elmaslarla daha önce hiç olmadığı kadar etkileşim kurun
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            NFTs are the future of social media and now, for the first time, they can be tied to your social profile
+            NFT'ler sosyal medyanın geleceğidir ve ilk kez olarak sosyal profilinize bağlanabiliyor.
           </span>
         </div>
         <div class="d-flex mt-15px mr-20px">
           <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
-            Show off your gallery on your profile, too!
+            NFT galerinizi profilinizde de gösterin!
           </span>
         </div>
       </div>
@@ -202,11 +202,11 @@
   <div class="landing-page-content-container">
     <div class="w-100 d-flex justify-content-center align-items-center flex-column">
       <div data-aos="zoom-in" data-aos-offset="300">
-        <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">Invest in creators like never before</div>
+        <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">İçerik oluşturuculara daha önce hiç olmadığı kadar yatırım yapın</div>
         <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
           <div class="d-flex">
             <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
-            <span class="pl-15px" style="line-height: 38px">All of the amounts presented below are real. <a href="https://cloutomy.com/rank" target="_blank" class="fc-landing-page"><u>Check them out here.</u></a></span>
+            <span class="pl-15px" style="line-height: 38px">Aşağıda sunulan miktarların tamamı gerçektir. <a href="https://cloutomy.com/rank" target="_blank" class="fc-landing-page"><u>Buradan kontrol edebilirsiniz.</u></a></span>
           </div>
         </div>
       </div>
@@ -221,9 +221,9 @@
         <div data-aos="slide-up" data-aos-offset="-50" class="landing-page-creator-coins-table position-relative fs-20px" style="z-index: 1" [ngClass]="{ 'pt-40px pl-40px': !globalVars.isMobile(), 'pt-10px': globalVars.isMobile() }">
           <div class="w-100 h-100 fc-landing-page" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
             <div class="d-flex align-items-center font-weight-bold pb-10px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
-              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">Rank</div>
-              <div class="col-6">Creator</div>
-              <div class="col-2">Earnings</div>
+              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">Sıralama</div>
+              <div class="col-6">Yaratıcı</div>
+              <div class="col-2">Kazanç</div>
             </div>
             <div *ngFor="let creator of featuredCreators; let idx = index" class="d-flex align-items-center landing-page-row">
               <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">#{{idx + 1}}</div>
@@ -239,7 +239,7 @@
       </div>
       <a href="https://cloutomy.com/rank" target="_blank" style="position: relative; z-index: 2">
         <button class="landing-page-btn landing-page-secondary-btn font-weight-bold" style="height: 88px; width: 368px; margin-top: 48px; z-index: 2">
-          Explore Creator Earnings
+          İçerik Oluşturucu Kazançlarını Keşfedin
         </button>
       </a>
     </div>
@@ -251,8 +251,8 @@
           <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Creators can have coins</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can have an optional coin associated with their profile, and earn fees on every buy.</div>
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Yaratıcılar kendi kripto paralarına sahip olabilirler</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">İçerik oluşturucular, istediklerinde profilleriyle ilişkilendirilmiş bir kripto paraya sahip olabilirler ve bu kripto paraların her satın alımında komisyon alabilirler.</div>
         </div>
       </div>
       <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
@@ -260,8 +260,8 @@
           <img class="position-relative" width="213.71px" height="154.35px" style="top: 82.63px" src="assets/img/landing-page-cash.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">2. Coins can have royalties</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can attribute an optional royalty on every NFT sale back to their coin-holders</div>
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">2. Kripto paraların telif hakkı olabilir</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">İçerik oluşturucular istediğinde her NFT satışı için kripto para yatırımcılarına bir telif hakkı verebilir</div>
         </div>
       </div>
       <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="500" class="position-relative landing-page-creator-coin-explainer-container">
@@ -269,8 +269,8 @@
           <img class="position-relative" width="160.19px" height="147.03px" style="top: 69px" src="assets/img/landing-page-hodl.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">3. HODL to the moon!</div>
-          <div class="fs-20px mt-16px text-align-center fc-landing-page">Hold your favorite creator's coin to grow with them</div>
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">3. HODL!</div>
+          <div class="fs-20px mt-16px text-align-center fc-landing-page">Onlarla birlikte büyümek için sevdiğiniz içerik oluşturucularının kripto parasını tutun</div>
         </div>
       </div>
     </div>
@@ -279,7 +279,7 @@
     <div class="d-flex justify-content-center position-relative" style="z-index: 1" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <button class="landing-page-btn landing-page-primary-btn mr-30px font-weight-bold" (click)="globalVars.launchSignupFlow()">
         <div>Sign up today</div>
-        <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
+        <div class="landing-page-button-subtext">Ücretsiz <free-deso-message></free-deso-message> Kazan</div>
       </button>
       <button
         class="landing-page-btn landing-page-secondary-btn font-weight-bold"
@@ -287,7 +287,7 @@
         [routerLink]="'/' + globalVars.RouteNames.CREATORS"
         queryParamsHandling="merge"
       >
-        Explore Creators
+        Yaratıcıları Keşfedin
       </button>
     </div>
   </div>
@@ -300,11 +300,11 @@
       </div>
       <div class="landing-page-build-on-deso-container d-flex flex-column align-items-center">
         <img src="assets/deso/camelcase_logo.svg" width="142px"/>
-        <div class="landing-page-title text-align-center mt-25px">Built on the Decentralized Social Blockchain</div>
-        <div class="fs-24px fc-landing-page text-align-center mt-20px">Diamonds are forever, and so are your followers because everything is stored on the blockchain. You'll never lose your content because it's all truly yours.</div>
+        <div class="landing-page-title text-align-center mt-25px">Decentralized Social (DESO) üzerine inşa edilmiştir.</div>
+        <div class="fs-24px fc-landing-page text-align-center mt-20px">Elmaslar sonsuza kadar size aittir ve takipçileriniz de öyle çünkü her şey blok zincirinde depolanıyor. İçeriklerinizi asla kaybetmeyeceksiniz çünkü hepsi gerçekten size ait.</div>
         <a href="https://deso.org" target="_blank">
           <button class="landing-page-btn landing-page-secondary-btn mt-25px" [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '466px', height: globalVars.isMobile() ? '74px' : '88px' }" style="padding: 0px">
-            Learn more about the DeSo Blockchain
+            DeSo Blokzinciri hakkında daha fazla bilgi edinin
           </button>
         </a>
       </div>
