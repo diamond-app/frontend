@@ -5,7 +5,7 @@
   <br />
   <br />
   <span *ngIf="globalVars.createProfileFeeNanos > 0">
-    Creating a profile currently costs
+    Şu anda bir profil oluşturma maliyeti:
     <b>{{ globalVars.createProfileFeeInDeSo() }} DESO (≈ {{ globalVars.createProfileFeeInUsd() }} USD)</b>
   </span>
 </div>
@@ -14,13 +14,13 @@
   class="mt-15px btn btn-primary br-12px"
   (click)="launchPhoneNumberVerification()"
 >
-  Get Starter DESO
+  DESO'ya Başla!
 </a>
 
 <div class="fs-15px mt-15px">Or</div>
 
 <div class="fs-15px mt-15px">
   <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_DESO" queryParamsHandling="merge">
-    Purchase {{ globalVars.createProfileFeeInUsd() }} USD of DESO
+    {{ globalVars.createProfileFeeInUsd() }} değerinde DESO satın alın
   </a>
 </div>
