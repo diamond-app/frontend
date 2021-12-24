@@ -31,7 +31,7 @@
         [ngStyle]="{
           'border-bottom-right-radius': resultsUnderBar && searchText != '' && (loading || creators.length > 0) ? '0px' : '16px'
         }"
-        placeholder="Search..."
+        placeholder="Ara..."
         id="searchbar"
         autocomplete="off"
         #searchbar
@@ -44,7 +44,7 @@
     class="w-100 search-bar__results-dropdown disable-scrollbars"
     *ngIf="searchText != '' && (creators.length > 0 || loading || showCloutavista)"
   >
-    <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Loading...</div>
+    <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Yükleniyor...</div>
     <div *ngIf="!loading && creators.length > 0" class="fs-15px">
       <div
         *ngFor="let creator of creators; let ii = index"
@@ -94,7 +94,7 @@
         <div class="search-bar__selected-color"></div>
         <p target="_blank" href="https://www.cloutavista.com/deso/posts?text={{ searchText }}">
           <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-          Search on Cloutavista
+          Cloutavista'da Ara
         </p>
       </a>
     </div>
