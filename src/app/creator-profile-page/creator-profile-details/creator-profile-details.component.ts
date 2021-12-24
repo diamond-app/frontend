@@ -17,12 +17,12 @@ export class CreatorProfileDetailsComponent implements OnInit {
   @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
 
   static TABS = {
-    posts: "Gönderiler",
+    posts: "Posts",
     // Leaving this one in so old links will direct to the Coin Purchasers tab.
     "creator-coin": "Creator Coin",
     "coin-purchasers": "Creator Coin",
-    diamonds: "Elmaslar",
-    nfts: "NFT'ler",
+    diamonds: "Diamonds",
+    nfts: "NFTs",
   };
   static TABS_LOOKUP = {
     Posts: "posts",
