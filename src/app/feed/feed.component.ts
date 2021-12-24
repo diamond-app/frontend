@@ -19,7 +19,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static HOT_TAB = "Popüler 🔥";
   static GLOBAL_TAB = "Keşfet";
   static FOLLOWING_TAB = "Takip Edilen";
-  static SHOWCASE_TAB = "NFT Galerisi";
+  static SHOWCASE_TAB = "Diamond App";
   static NEW_TABS = [];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
@@ -555,7 +555,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   _handleTabClick(tab: string) {
     if (tab === FeedComponent.SHOWCASE_TAB) {
-      window.open("https://polygram.cc", "_blank");
+      window.open("https://diamondapp.com?r=FMVp2Zc3", "_blank");
     } else {
       this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;
