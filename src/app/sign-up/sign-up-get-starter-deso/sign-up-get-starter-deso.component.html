@@ -9,14 +9,14 @@ can refactor.
 
 <div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN" class="pb-15px">
   <div *ngIf="displayForSignupFlow">
-    <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
-    <div class="mt-15px fs-24px font-weight-bold">Get Starter DeSo</div>
+    <div class="mt-15px fs-15px fc-muted">ADIM 3/4</div>
+    <div class="mt-15px fs-24px font-weight-bold">Başlangıç DESO'nuzu Alın</div>
 
-    <div class="fs-18px mt-15px mb-15px">DESO is a cryptocurrency that's required to use the site.</div>
+    <div class="fs-18px mt-15px mb-15px">DESO, siteyi kullanmak için gerekli olan bir kripto para birimidir.</div>
   </div>
 
   <div class="fs-18px">
-    Verify your phone number for free DESO. Your phone number will never be shared with anyone.
+    Ücretsiz DESO için telefon numaranızı doğrulayın. Telefon numaranız asla kimseyle paylaşılmayacaktır.
   </div>
 
   <div class="d-flex mt-15px justify-content-end">
@@ -26,14 +26,14 @@ can refactor.
         (click)="onSkipButtonClicked()"
         class="plain-button" style="width: 80px"
       >
-        Skip
+        Atla
       </button>
       <button
         (click)="openIdentityPhoneNumberVerification()"
         class="primary-button ml-10px"
         style="width: 80px"
       >
-        Verify
+        Doğrula
       </button>
     </div>
   </div>
@@ -41,12 +41,12 @@ can refactor.
 
 <div *ngIf="screenToShow == SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN">
   <div *ngIf="displayForSignupFlow">
-    <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
-    <div class="mt-15px mb-15px fs-24px font-weight-bold">Get Starter DESO</div>
+    <div class="mt-15px fs-15px fc-muted">ADIM 3/4</div>
+    <div class="mt-15px mb-15px fs-24px font-weight-bold">Başlangıç DESO'nuzu Alın</div>
   </div>
 
   <div class="fs-15px mb-15px">
-    Your phone number was verified. We sent you a small amount of DESO, which is enough to post and follow people.
+    Telefon numaranız doğrulandı. Size az miktarda DESO gönderdik, bu da paylaşım yapmanıza ve insanları takip etmeye yetiyor.
   </div>
 
   <div *ngIf="displayForSignupFlow; else elseBlock" class="d-flex my-15px justify-content-between">
@@ -59,7 +59,7 @@ can refactor.
       queryParamsHandling="merge"
       class="btn btn-primary font-weight-bold fs-15px mt-5px mb-5px mr-15px"
     >
-      Buy DESO
+      DESO Al
     </a>
 
     <a
@@ -68,7 +68,7 @@ can refactor.
       queryParamsHandling="merge"
       class="btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px"
     >
-      Update your profile
+      Profilinizi güncelleyin
     </a>
 
     <a
@@ -77,7 +77,7 @@ can refactor.
       queryParamsHandling="merge"
       class="btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px"
     >
-      Browse
+      Araştır
     </a>
   </ng-template>
 </div>
