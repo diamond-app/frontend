@@ -68,7 +68,7 @@ export class GlobalVarsService {
     private modalService: BsModalService
   ) {}
 
-  static MAX_POST_LENGTH = 560;
+  static MAX_POST_LENGTH = 1800;
 
   static FOUNDER_REWARD_BASIS_POINTS_WARNING_THRESHOLD = 50 * 100;
 
