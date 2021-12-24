@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  nodeApi: "api.bitclout.com",
+  nodeApi: "api.love4src.com,
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "node.deso.org",
