@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  nodeApi: "api.tijn.club",
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "node.deso.org",
