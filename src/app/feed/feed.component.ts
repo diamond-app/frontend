@@ -16,7 +16,7 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static HOT_TAB = "Hot 🔥";
+  static HOT_TAB = "Popüler 🔥";
   static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
