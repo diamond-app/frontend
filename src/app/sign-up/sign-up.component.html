@@ -1,21 +1,21 @@
 <app-page [inTutorial]="true">
   <div class="nft-modal-container w-100 px-15px pb-15px">
     <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
-      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond!</div>
+      <div class="w-100 text-center fs-32px font-weight-bold">Elmas App'e Hoşgeldiniz!</div>
       <div class="w-100 text-center mt-20px fs-20px fc-secondary font-weight-bold">
-        Validate your account to earn starter $DESO
+        Başlangıç $DESO'nuzu kazanmak için hesabınızı doğrulayın
       </div>
       <div class="w-100 d-flex align-items-center flex-column">
         <div style="max-width: 450px" class="w-100 text-center fs-18px mt-5px mb-30px fc-secondary">
-          This is the cryptocurrency that fuels the engagement on our site and allows you to invest in creators.
+          $DESO sitemizdeki etkileşimi körükleyen ve yaratıcılara yatırım yapmanızı sağlayan kripto para birimidir.
         </div>
-        <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose an option</div>
+        <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Bir seçenek belirleyin</div>
         <button
           (click)="launchJumioVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
           class="primary-button"
         >
-          Validate with your ID
+          Kimlik ile doğrulayın
         </button>
         <div class="fs-16px fc-muted">To earn <free-deso-message></free-deso-message></div>
         <button
@@ -23,7 +23,7 @@
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
           class="secondary-button mt-30px"
         >
-          Validate via SMS
+          SMS ile doğrulayın
         </button>
         <div class="fs-16px fc-muted">To earn under $1</div>
         <button
@@ -31,11 +31,11 @@
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
           class="secondary-button mt-30px"
         >
-          Buy or Send $DESO Anonymously
+          Anonim Olarak $DESO Satın Alın veya Cüzdanınıza $DESO Gönderin
         </button>
-        <div class="fs-16px fc-muted">Transfer from an exchange or a DeSo account</div>
+        <div class="fs-16px fc-muted">Bir borsadan veya DeSo hesabından transfer</div>
         <div style="max-width: 300px; margin-top: 60px" class="fs-16px text-center fc-muted">
-          Validating your identity lets us ensure that you're a real person and not a bot
+          Kimliğinizi doğrulamak, bot değil gerçek bir kişi olduğunuzdan emin olmamızı sağlar.
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@
         >
           2
         </div>
-        <div class="text-center">Find some creators to follow</div>
+        <div class="text-center">Takip edecek içerik oluşturucuları bulun</div>
       </div>
       <div
         [ngClass]="{ 'fc-blue': stepNum === 3, 'fc-muted': stepNum !== 3 }"
@@ -74,7 +74,7 @@
         >
           3
         </div>
-        <div class="text-center">Learn about Diamond</div>
+        <div class="text-center">Elmas App hakkında bilgi edinin</div>
       </div>
     </div>
     <div *ngIf="stepNum !== 0" class="w-100 border-bottom"></div>
@@ -127,10 +127,10 @@
           />
         </div>
         <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Earn or Give Diamonds</div>
-          <span class="mb-5px">Diamonds are tips users can give each other for posts</span>
-          <span class="mb-5px">Each Diamond you recieve is worth real money</span>
-          <span>Make sure to give Diamonds for posts you enjoy!</span>
+          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Elmas Kazan veya Ver</div>
+          <span class="mb-5px">Elmaslar, kullanıcıların gönderiler için birbirlerine verebileceği bahşişlerdir.</span>
+          <span class="mb-5px">Aldığınız her Elmas gerçek para değerinde</span>
+          <span>Beğendiğiniz gönderiler için Elmas vermeyi unutmayın!</span>
         </div>
       </div>
       <div
@@ -157,11 +157,10 @@
           />
         </div>
         <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Invest with Creator Coins</div>
-          <span class="mb-5px">Every creator has a coin associated with their profile</span>
+          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Creator Coinlere yatırım yapın</div>
+          <span class="mb-5px">Her içerik oluşturucunun profiliyle ilişkilendirilmiş bir kripto parası vardır</span>
           <span>
-            If you find a creator you enjoy, you can buy some shares of their creator coin and participate in their
-            upside as they provide more value - and vice versa!
+            Hoşunuza giden bir içerik oluşturucu bulursanız, içerik oluşturucunun kripto parasından bir miktar satın alabilirsiniz
           </span>
         </div>
       </div>
@@ -189,10 +188,10 @@
           />
         </div>
         <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column mb-20px">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Social NFTs Have Never Been Easier</div>
-          <span class="mb-5px">Diamond makes minting and buying NFTs a breeze</span>
-          <span class="mb-5px">Every post you make can be turned into an NFT in 3 clicks</span>
-          <span>NFTs you purchase are displayed on your profile for all of your followers to see</span>
+          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Sosyal NFT'ler Hiç Bu Kadar Kolay Olmamıştı</div>
+          <span class="mb-5px">Elmas App, NFT'leri basmayı ve satın almayı çok kolaylaştırır</span>
+          <span class="mb-5px">Yaptığınız her gönderi 3 tıklamayla bir NFT'ye dönüştürülebilir</span>
+          <span>Satın aldığınız NFT'ler, tüm takipçilerinizin görmesi için profilinizde görüntülenir.</span>
         </div>
       </div>
     </div>
@@ -217,7 +216,7 @@
   <div *ngIf="stepNum === 3" class="w-100 flex-column align-items-center d-flex justify-content-center mt-10px">
     <div style="height: 30px" class="fs-18px fc-default mb-10px">
       <span *ngIf="globalVars.loggedInUser.BalanceNanos === 0">
-        Validating your identity
+        Kimlik doğrulama
         <i class="fas fa-spinner fa-spin ml-5px"></i>
       </span>
     </div>
@@ -228,7 +227,7 @@
       class="primary-button"
       (click)="processTransactions()"
     >
-      {{ processingTransactions ? "Processing..." : "Continue" }}
+      {{ processingTransactions ? "İşleniyor..." : "Continue" }}
       <span *ngIf="processingTransactions" class="mr-10px">{{ transactionProgress }}%</span>
       <i *ngIf="processingTransactions" class="fas fa-spinner fa-spin mr-5px"></i>
     </button>
