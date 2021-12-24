@@ -112,7 +112,7 @@
             <textarea
               [(ngModel)]="descriptionInput"
               class="fs-15px p-10px w-100"
-              rows="4"
+              rows="20"
               maxlength="1000"
             ></textarea>
             <div
@@ -150,7 +150,7 @@
                 *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
-                * Kurucu komisyon yüzdesini düşürmeden önce kendi Creator Coininizi satın almalısınız.
+                * Kurucu komisyon yüzdesini düşürebilmek için kendi Creator Coininizi satın almalısınız.
               </div>
               <div
                 *ngIf="profileUpdateErrors.founderRewardError"
