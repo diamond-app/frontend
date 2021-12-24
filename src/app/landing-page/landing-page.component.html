@@ -13,7 +13,7 @@
         <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchSignupFlow()">
           Kaydol
         </a>
-        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Sign up today</button>
+        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">Bugün Kaydol</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -54,7 +54,7 @@
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
                 <div class="landing-page-nft-card-fs-large">Desomon #001</div>
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışda</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışta</div>
               </div>
               <div class="d-flex flex-column align-items-end">
                 <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Minimum Teklif</div>
@@ -69,7 +69,7 @@
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
                 <div class="landing-page-nft-card-fs-large">cloutpunk #147</div>
-                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışda</div>
+                <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">Satışta</div>
               </div>
               <div class="d-flex flex-column align-items-end">
                 <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Minimum Teklif</div>
@@ -112,13 +112,13 @@
         </div>
       </div>
       <div class="position-relative" data-aos="fade-left" data-aos-offset="-100" style="z-index: 1" [ngStyle]="{ 'top': globalVars.isMobile() ? 'auto' : '65px', 'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
-        <div class="landing-page-title">💎 Elmas Kazan,</div>
-        <div class="fs-24px fc-landing-page-title mt-15px ml-5px">Beğeni Değil!</div>
+        <div class="landing-page-title">Elmas Kazan,Beğeni Değil</div>
+        <div class="fs-24px fc-landing-page-title mt-15px ml-5px"></div>
       </div>
     </div>
     <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '-50px' : '75px' }" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div data-aos="fade-down" data-aos-offset="300" style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
-        <div class="landing-page-title">Bir sonraki paylaşımınız milyonlaca lira değerinde olabilir...</div>
+        <div class="landing-page-title">Bir sonraki paylaşımınız milyonlaca lira değerinde olabilir</div>
         <div class="d-flex mt-30px mr-20px">
           <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
           <span class="landing-page-content-text">
@@ -206,7 +206,7 @@
         <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
           <div class="d-flex">
             <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
-            <span class="pl-15px" style="line-height: 38px">Aşağıda sunulan miktarların tamamı gerçektir. <a href="https://cloutomy.com/rank" target="_blank" class="fc-landing-page"><u>Buradan kontrol edebilirsiniz.</u></a></span>
+            <span class="pl-15px" style="line-height: 38px">Aşağıda sunulan miktarların tamamı gerçektir. <a href="https://cloutomy.com/rank" target="_blank" class="fc-landing-page"><u>Kaynak</u></a></span>
           </div>
         </div>
       </div>
@@ -251,8 +251,8 @@
           <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Yaratıcılar kendi kripto paralarına sahip olabilirler</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">İçerik oluşturucular, istediklerinde profilleriyle ilişkilendirilmiş bir kripto paraya sahip olabilirler ve bu kripto paraların her satın alımında komisyon alabilirler.</div>
+          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Kendi kripto parana sahip ol</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Profilinizle ilişkilendirilmiş bir kripto paraya sahip olabilir ve her satın alımında komisyon kazanabilirsiniz</div>
         </div>
       </div>
       <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
@@ -261,7 +261,7 @@
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">2. Kripto paraların telif hakkı olabilir</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">İçerik oluşturucular istediğinde her NFT satışı için kripto para yatırımcılarına bir telif hakkı verebilir</div>
+          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Dilediğinizde her NFT satışı için kripto para yatırımcılarınıza  telif hakkı payı verebilirsiniz</div>
         </div>
       </div>
       <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="500" class="position-relative landing-page-creator-coin-explainer-container">
@@ -270,7 +270,7 @@
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">3. HODL!</div>
-          <div class="fs-20px mt-16px text-align-center fc-landing-page">Onlarla birlikte büyümek için sevdiğiniz içerik oluşturucularının kripto parasını tutun</div>
+          <div class="fs-20px mt-16px text-align-center fc-landing-page">Sevdiğiniz içerik oluşturucularıyla birlikte büyümek için kripto parasını satın alın ve tutun</div>
         </div>
       </div>
     </div>
