@@ -9,14 +9,14 @@
       <div class="d-flex">
         <div class="w-100 deso-metrics">
           <div class="d-flex justify-content-between">
-            <div>$DESO Price</div>
+            <div>$DESO Kuru</div>
             <div>
               <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
           <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-            <div class="d-flex" style="min-width: 130px">Your $DESO</div>
+            <div class="d-flex" style="min-width: 130px">$DESO Miktarım</div>
             <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
@@ -24,7 +24,7 @@
                 <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
               </div>
               <!-- Amount in USD-->
-              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
+              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Getiriliyor... USD</div>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
       <a (click)="openBuyCloutModal()">
         <div class="d-flex justify-content-center cursor-pointer">
           <div class="buy-deso">
-            <span>Buy $DESO</span>
+            <span>$DESO Al</span>
           </div>
         </div>
       </a>
@@ -46,7 +46,7 @@
         <div *ngIf="globalVars.loggedInUser.HasEmail">
           <a (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">
             <i-feather name="send"></i-feather>
-            <span>Resend Verification Email</span>
+            <span>Doğrulama e-postasını tekrar gönder</span>
             <i-feather name="chevron-right" class="right-20px"></i-feather>
           </a>
           <div *ngIf="globalVars.resentVerifyEmail">
@@ -56,7 +56,7 @@
         </div>
         <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">
           <i-feather name="mail"></i-feather>
-          <span>Update your email</span>
+          <span>E-postanızı güncelleyin</span>
           <i-feather name="chevron-right" class="right-20px"></i-feather>
         </a>
       </div>
