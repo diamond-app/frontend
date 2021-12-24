@@ -17,7 +17,7 @@
         Creating a profile costs {{ globalVars.createProfileFeeInDeSo() }} DeSo ≈
         {{ globalVars.createProfileFeeInUsd() }} USD.
         <br />
-        This helps prevent spam.
+        Bu, spam'i önlemeye yardımcı olur.
       </div>
       <!-- Form Inputs -->
       <div class="mt-30px font-weight-bold update-profile__avatar-title">Avatar</div>
@@ -52,7 +52,7 @@
               />
               <button type="file">
                 <i-feather name="refresh-cw"></i-feather>
-                Upload Image
+                Resim yükle
               </button>
             </div>
             <div>
@@ -61,7 +61,7 @@
                 [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
                 class="fs-13px text-grey5 mt-5px d-flex justify-content-center"
               >
-                No image selected
+                Resim seçilmedi
               </div>
             </div>
 
@@ -71,27 +71,27 @@
           *ngIf="globalVars.loggedInUser"
           class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars update-profile__text"
         >
-          <div class="update-profile__title update-profile__username">Username<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
+          <div class="update-profile__title update-profile__username">Kullanıcı Adı<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
           <div>
             <input
               [(ngModel)]="usernameInput"
               (ngModelChange)="_validateUsername($event)"
               class="form-control fs-15px lh-18px p-10px"
-              placeholder="Enter username"
+              placeholder="Kullanıcı adı girin"
             />
             <div
               *ngIf="profileUpdateErrors.usernameError"
               [ngClass]="{ 'fc-red': profileUpdateErrors.usernameError }"
               class="fs-13px font-italic mt-5px"
             >
-              Please set a username
+              Lütfen bir kullanıcı adı belirleyin
             </div>
           </div>
           <div *ngIf="usernameValidationError" class="fc-error fs-13px ml-5px mt-5px">
             {{ usernameValidationError }}
           </div>
           <div *ngIf="!usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
-            {{ usernameInput }} is available
+            {{ usernameInput }} kullanılabilir
           </div>
           <div *ngIf="inTutorial">
             <div class="update-profile__title">Email<span class="ml-5px fs-18px">*</span></div>
@@ -103,7 +103,7 @@
                 [(ngModel)]="emailAddress"
                 (ngModelChange)="_validateEmail($event)"
               />
-              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">Lütfen geçerli bir e-posta adresi giriniz</div>
             </div>
           </div>
           <div class="update-profile__title">Description</div>
@@ -113,20 +113,20 @@
               [(ngModel)]="descriptionInput"
               class="fs-15px p-10px w-100"
               rows="4"
-              maxlength="180"
+              maxlength="1000"
             ></textarea>
             <div
               *ngIf="profileUpdateErrors.descriptionError"
               [ngClass]="{ 'fc-red': profileUpdateErrors.descriptionError }"
               class="fs-13px font-italic"
             >
-              Description can only be 180 characters
+              Açıklama en fazla 1000 karakter olabilir
             </div>
           </div>
 
           <div *ngIf="!inTutorial">
             <div class="update-profile__title">
-              Founder Reward Percentage
+              Kurucu Ödül Yüzdesi
               <i-feather
                 name="info"
                 (click)="tooltip.toggle()"
@@ -150,14 +150,14 @@
                 *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
-                * You must purchase your own coin before lowering your founder reward.
+                * Kurucu komisyon yüzdesini düşürmeden önce kendi Creator Coininizi satın almalısınız.
               </div>
               <div
                 *ngIf="profileUpdateErrors.founderRewardError"
                 [ngClass]="{ 'fc-red': profileUpdateErrors.founderRewardError }"
                 class="fs-13px font-italic pt-5px"
               >
-                Please set a founder reward between 0-100.
+                Lütfen 0-100 arasında bir kurucu ödül yüzdesi belirleyin.
               </div>
             </div>
             <div class="update-profile__title">Email</div>
@@ -169,7 +169,7 @@
                 [(ngModel)]="emailAddress"
                 (ngModelChange)="_validateEmail($event)"
               />
-              <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+              <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Lütfen geçerli bir e-posta adresi giriniz</div>
             </div>
             <div class="update-profile__title">{{environment.node.name}} Theme</div>
             <select
@@ -201,7 +201,7 @@
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
               class="btn update-profile__update-btn"
             >
-              Update Profile
+              Profili Güncelle
             </a>
             <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
           </div>
