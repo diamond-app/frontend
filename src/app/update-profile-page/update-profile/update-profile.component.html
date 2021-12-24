@@ -112,15 +112,15 @@
             <textarea
               [(ngModel)]="descriptionInput"
               class="fs-15px p-10px w-100"
-              rows="20"
-              maxlength="1000"
+              rows="4"
+              maxlength="180"
             ></textarea>
             <div
               *ngIf="profileUpdateErrors.descriptionError"
               [ngClass]="{ 'fc-red': profileUpdateErrors.descriptionError }"
               class="fs-13px font-italic"
             >
-              Açıklama en fazla 1000 karakter olabilir
+              Açıklama en fazla 180 karakter olabilir
             </div>
           </div>
 
