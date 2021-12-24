@@ -17,9 +17,9 @@ import { environment } from "src/environments/environment";
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static HOT_TAB = "Popüler 🔥";
-  static GLOBAL_TAB = "New";
-  static FOLLOWING_TAB = "Following";
-  static SHOWCASE_TAB = "NFT Gallery";
+  static GLOBAL_TAB = "Keşfet";
+  static FOLLOWING_TAB = "Takip Edilen";
+  static SHOWCASE_TAB = "NFT Galerisi";
   static NEW_TABS = [];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
