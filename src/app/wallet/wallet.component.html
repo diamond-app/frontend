@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="mt-10px">
-          <a [href]="getBlockExplorerLink()" target="_blank" class="fc-blue fs-16px">View My Transactions</a>
+          <a [href]="getBlockExplorerLink()" target="_blank" class="fc-blue fs-16px">İşlemlerimi Görüntüle</a>
         </div>
       </div>
     </div>
@@ -85,17 +85,17 @@
             (click)="globalVars.launchGetFreeDESOFlow(true)"
             class="fc-blue"
           >
-            Claim your free {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰
+            Bedava {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} talep edin 💰
           </a>
         </div>
       </div>
       <!--Buy/send DESO-->
       <div class="d-flex" [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }">
         <a (click)="openSendDeSoModal()">
-          <button class="plain-button mr-20px font-weight-bold wallet__buy-button">Send $DESO</button>
+          <button class="plain-button mr-20px font-weight-bold wallet__buy-button">$DESO Gönder</button>
         </a>
         <a (click)="openBuyDeSoModal()">
-          <button class="primary-button font-weight-bold wallet__buy-button">Buy $DESO</button>
+          <button class="primary-button font-weight-bold wallet__buy-button">$DESO Satın Al</button>
         </a>
       </div>
     </div>
@@ -111,7 +111,7 @@
         <a (click)="openBuyCreatorCoinsModal()">
           <button style="width: 165px">
             <i-feather name="user-plus" class="feather-small mr-10px"></i-feather>
-            <span class="fs-13px">Buy Creator Coins</span>
+            <span class="fs-13px">Creator Coin Satın Al</span>
           </button>
         </a>
       </div>
@@ -134,7 +134,7 @@
                 name="{{ sortedUsernameFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
                 style="top: -2px"ac
               ></i-feather>
-              Username
+              Kullanıcı Adı
             </div>
             <div class="wallet-column col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end" (click)="sortWallet('price')">
               <i-feather
@@ -143,7 +143,7 @@
                 name="{{ sortedPriceFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
                 style="top: -2px"
               ></i-feather>
-              Price
+              Creator Coin Fiyatı
             </div>
             <div class="wallet-column col-3 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
               <span (click)="sortWallet('value')">
@@ -153,12 +153,12 @@
                   name="{{ sortedUSDValueFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
                   style="top: -2px"
                 ></i-feather>
-                Value
+                Değeri
               </span>
             </div>
             <div class="wallet-column col-lg-2 col-2 cursor-pointer fc-muted text-link_hover" style="text-align: end; margin-bottom: 0px">
               <span>
-                Actions
+                İşlem Yap
               </span>
             </div>
             <div class="col-lg-1 col-2 d-block mb-0"></div>
