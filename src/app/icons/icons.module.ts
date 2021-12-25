@@ -60,6 +60,7 @@ import {
   Users,
   UserX,
   X,
+  XSquare,
 } from "angular-feather/icons";
 import {
   BellNotification,
@@ -106,6 +107,7 @@ const icons = {
   Coin,
   Copy,
   CreditCard,
+  CreatorCoin,
   Deso,
   DollarSign,
   Diamond,
@@ -159,6 +161,7 @@ const icons = {
   UserPlus,
   UserX,
   X,
+  XSquare,
 };
 
 @NgModule({

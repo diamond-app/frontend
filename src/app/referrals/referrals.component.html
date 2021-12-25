@@ -37,7 +37,8 @@
           <div *ngIf="!referral.IsActive" class="fc-red">This link is no longer active.</div>
 
           <div class="font-weight-bold mt-15px">
-            You get ${{ referral.Info.ReferrerAmountUSDCents / 100 }} USD per referral
+            <span>You get ${{ referral.Info.ReferrerAmountUSDCents / 100 }} USD per referral</span>
+            <free-deso-message [hideMessage]="true"></free-deso-message>
           </div>
           <div>
             Total Collected:
@@ -46,7 +47,8 @@
           </div>
 
           <div class="font-weight-bold mt-15px">
-            Your referrals get ${{ referral.Info.RefereeAmountUSDCents / 100 }} USD
+            <span>Your referrals get ${{ referral.Info.RefereeAmountUSDCents / 100 }} USD</span>
+            <free-deso-message [hideMessage]="true"></free-deso-message>
           </div>
           <div>
             Total Given:

@@ -12,42 +12,42 @@
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="copyPostLinkToClipboard($event)"
       >
-        Link to {{ this.post.IsNFT ? "NFT" : "Post" }}
+        Bağlantı
       </a>
       <a
         *ngIf="showSharePost"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="sharePostUrl($event)"
       >
-        Share {{ this.post.IsNFT ? "NFT" : "Post" }}
+        Paylaş
       </a>
       <a
         *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openMintNftPage($event)"
       >
-        Create NFT
+        NFT oluştur
       </a>
       <a
         *ngIf="showCreateNFTAuction()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openCreateNFTAuctionModal($event)"
       >
-        Put On Sale
+        Satışa Koy
       </a>
       <a
         *ngIf="showTransferNFT()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openTransferNFTModal($event)"
       >
-        Transfer NFT
+        NFT'yi gönder
       </a>
       <a
         *ngIf="showBurnNFT()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openBurnNFTModal($event)"
       >
-        Burn NFT
+        NFT'yi yak
       </a>
       <a
         *ngIf="post.IsNFT && globalVars.showAdminTools()"
@@ -60,21 +60,21 @@
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="reportPost()"
       >
-        Report Content
+        Raporla
       </a>
       <a
         *ngIf="showHidePostDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="hidePost()"
       >
-        Hide
+        Gizle
       </a>
       <a
         *ngIf="showBlockUserDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="blockUser()"
       >
-        Block User
+        Engelle
       </a>
       <a
         *ngIf="globalVars.showSuperAdminTools()"

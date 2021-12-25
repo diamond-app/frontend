@@ -16,10 +16,10 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static HOT_TAB = "Hot 🔥";
-  static GLOBAL_TAB = "New";
-  static FOLLOWING_TAB = "Following";
-  static SHOWCASE_TAB = "NFT Gallery";
+  static HOT_TAB = "Popüler 🔥";
+  static GLOBAL_TAB = "Keşfet";
+  static FOLLOWING_TAB = "Takip Edilen";
+  static SHOWCASE_TAB = "Diamond App";
   static NEW_TABS = [];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
@@ -133,19 +133,24 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   fetchUserReferrals() {
-    this.backendApi
-      .GetReferralInfoForUser(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-      .subscribe(
-        (res: any) => {
-          const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
-          if (filteredReferrals.length > 0) {
-            this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
+    if (this.globalVars.loggedInUser) {
+      this.backendApi
+        .GetReferralInfoForUser(
+          environment.verificationEndpointHostname,
+          this.globalVars.loggedInUser.PublicKeyBase58Check
+        )
+        .subscribe(
+          (res: any) => {
+            const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
+            if (filteredReferrals.length > 0) {
+              this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
+            }
+          },
+          (err: any) => {
+            console.log(err);
           }
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+        );
+    }
   }
 
   ngAfterViewChecked() {
@@ -550,7 +555,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   _handleTabClick(tab: string) {
     if (tab === FeedComponent.SHOWCASE_TAB) {
-      window.open("https://polygram.cc", "_blank");
+      window.open("https://diamondapp.com?r=FMVp2Zc3", "_blank");
     } else {
       this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;

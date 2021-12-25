@@ -35,7 +35,7 @@
         notificationType === 'messages'
       "
       class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
-      style="top: 2px; padding: 0px"
+      style="padding: 0px"
     >
       {{
         globalVars.messageResponse.NumberOfUnreadThreads > 999
@@ -46,7 +46,7 @@
     <div
       *ngIf="hasNotifications && globalVars.unreadNotifications != 0 && notificationType === 'notifications'"
       class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
-      style="top: 2px; padding: 0px"
+      style="padding: 0px"
     >
       {{ globalVars.unreadNotifications > 99 ? "(99+)" : "( " + globalVars.unreadNotifications + " )" }}
     </div>

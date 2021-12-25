@@ -7,16 +7,16 @@
       <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
         <!-- Loading-->
         <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">Yükleniyor...</span>
         </div>
       </div>
       <ng-template #beingCalledElseBlock>
         <!-- Actual link-->
         <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="isFollowing; else isFollowingElseBlock">
-          <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">Unfollow</a>
+          <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">Takibi Bırak</a>
         </div>
         <ng-template #isFollowingElseBlock>
-          <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
+          <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Takip Et</a>
         </ng-template>
       </ng-template>
     </div>

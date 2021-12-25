@@ -3,8 +3,8 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
-import { Observable, of, throwError } from "rxjs";
-import { map, mergeMap, switchMap, catchError, mapTo } from "rxjs/operators";
+import { interval, Observable, of, throwError, zip } from "rxjs";
+import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
@@ -57,6 +57,7 @@ export class BackendRoutes {
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
   static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
+  static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -377,6 +378,30 @@ export class NFTBidData {
   NFTEntryResponses: NFTEntryResponse[];
   BidEntryResponses: NFTBidEntryResponse[];
 }
+
+type GetUserMetadataResponse = {
+  HasPhoneNumber: boolean;
+  CanCreateProfile: boolean;
+  BlockedPubKeys: { [k: string]: any };
+  HasEmail: boolean;
+  EmailVerified: boolean;
+  JumioFinishedTime: number;
+  JumioVerified: boolean;
+  JumioReturned: boolean;
+};
+
+type GetUsersStatelessResponse = {
+  UserList: User[];
+  DefaultFeeRateNanosPerKB: number;
+  ParamUpdaters: { [k: string]: boolean };
+};
+
+type CountryLevelSignUpBonus = {
+  AllowCustomReferralAmount: boolean;
+  ReferralAmountOverrideUSDCents: number;
+  AllowCustomKickbackAmount: boolean;
+  KickbackAmountOverrideUSDCents: number;
+};
 
 @Injectable({
   providedIn: "root",
@@ -711,9 +736,13 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
+  GetUsersStateless(
+    endpoint: string,
+    PublicKeysBase58Check: string[],
+    SkipForLeaderboard: boolean = false
+  ): Observable<GetUsersStatelessResponse> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
-      PublicKeysBase58Check: publicKeys,
+      PublicKeysBase58Check,
       SkipForLeaderboard,
     });
   }
@@ -1279,7 +1308,8 @@ export class BackendApiService {
     });
   }
   UpdateProfile(
-    endpoint: string,
+    verificationNodeEndpoint: string,
+    localNodeEndpoint: string,
     // Specific fields
     UpdaterPublicKeyBase58Check: string,
     // Optional: Only needed when updater public key != profile public key
@@ -1296,7 +1326,7 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateProfile, {
+    const request = this.post(verificationNodeEndpoint, BackendRoutes.RoutePathUpdateProfile, {
       UpdaterPublicKeyBase58Check,
       ProfilePublicKeyBase58Check,
       NewUsername,
@@ -1306,9 +1336,25 @@ export class BackendApiService {
       NewStakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    }).pipe(
+      switchMap((res) => {
+        // We need to wait until the profile creation has been comped.
+        if (res.CompProfileCreationTxnHashHex) {
+          return interval(500)
+            .pipe(
+              concatMap((iteration) =>
+                zip(this.GetTxn(localNodeEndpoint, res.CompProfileCreationTxnHashHex), of(iteration))
+              )
+            )
+            .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
+            .pipe(take(1))
+            .pipe(switchMap(() => of(res)));
+        } else {
+          return of(res);
+        }
+      })
+    );
+    return this.signAndSubmitTransaction(verificationNodeEndpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   GetFollows(
@@ -1719,6 +1765,10 @@ export class BackendApiService {
       PublicKey,
       EmailHash,
     });
+  }
+
+  GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
   }
 
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
@@ -2202,7 +2252,10 @@ export class BackendApiService {
     });
   }
 
-  GetReferralInfoForReferralHash(endpoint: string, ReferralHash: string): Observable<any> {
+  GetReferralInfoForReferralHash(
+    endpoint: string,
+    ReferralHash: string
+  ): Observable<{ ReferralInfoResponse: any; CountrySignUpBonus: CountryLevelSignUpBonus }> {
     return this.post(endpoint, BackendRoutes.RoutePathGetReferralInfoForReferralHash, {
       ReferralHash,
     });

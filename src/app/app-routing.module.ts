@@ -46,6 +46,7 @@ import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/crea
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
+import { BuyDesoTutorialPageComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -181,6 +182,11 @@ const routes: Routes = [
   {
     path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.BUY_CREATOR,
     component: BuyCreatorCoinsTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.BUY_DESO,
+    component: BuyDesoTutorialPageComponent,
     pathMatch: "full",
   },
   {

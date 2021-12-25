@@ -329,7 +329,7 @@ export class AdminComponent implements OnInit {
     // Fetch the hot feed.
     if(this.hotFeedPostHashes.length > 0) {
       this.loadingMoreHotFeed = true;
-    } 
+    }
     this.backendApi
       .AdminGetUnfilteredHotFeed(
         this.globalVars.localNode,
@@ -348,8 +348,8 @@ export class AdminComponent implements OnInit {
           this.globalVars._alertError(
             "Error loading hot feed: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { 
-        this.loadingHotFeed = false; 
+      ).add(() => {
+        this.loadingHotFeed = false;
         this.loadingMoreHotFeed = false;
       });
   }
@@ -1363,6 +1363,7 @@ export class AdminComponent implements OnInit {
           this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints || 1.25 * 100 * 100;
         return this.backendApi
           .UpdateProfile(
+            environment.verificationEndpointHostname,
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,

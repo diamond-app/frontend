@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  uploadImageHostname: "bitclout.com",
-  jumioEndpointHostname: "bitclout.com",
-  uploadVideoHostname: "bitclout.com",
+  uploadImageHostname: "node.deso.org",
+  verificationEndpointHostname: "https://node.deso.org",
+  uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.bitclout.com",
   supportEmail: "node.admin@bitclout.com",
   dd: {
@@ -16,8 +16,8 @@ export const environment = {
     domain: "amp.bitclout.com",
   },
   node: {
-    name: 'BitClout',
-    url: 'https://bitclout.com',
-    logoAssetDir: '/assets/bitclout/'
-  }
+    name: "BitClout",
+    url: "https://bitclout.com",
+    logoAssetDir: "/assets/bitclout/",
+  },
 };

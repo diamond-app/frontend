@@ -43,6 +43,7 @@ import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-p
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
 import { TradeCreatorComponent } from "./trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "./trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
 import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-form/trade-creator-form.component";
@@ -89,7 +90,6 @@ import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
 import { SanitizeEmbedPipe } from "../lib/pipes/sanitize-embed-pipe";
-import { NgxIntlTelInputModule } from "ngx-intl-tel-input";
 import { SettingsComponent } from "./settings/settings.component";
 import { NotificationsListComponent } from "./notifications-page/notifications-list/notifications-list.component";
 import { UiScrollModule } from "ngx-ui-scroll";
@@ -112,6 +112,7 @@ import { WalletComponent } from "./wallet/wallet.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
+import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-module/sign-up-transfer-deso.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondsDetailsComponent } from "./diamonds-details/diamonds-details.component";
@@ -121,7 +122,7 @@ import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-pag
 import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
 import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component"
+import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
@@ -169,6 +170,8 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
+import { BuyDesoTutorialComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial/buy-deso-tutorial.component";
+import { BuyDesoTutorialPageComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
 import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
@@ -183,6 +186,7 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
+import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -240,6 +244,7 @@ export function playerFactory() {
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
+    TradeCreatorModalComponent,
     BuyDeSoComponent,
     BuyDeSoUSDComponent,
     TradeCreatorFormComponent,
@@ -292,6 +297,7 @@ export function playerFactory() {
     PageComponent,
     LandingPageComponent,
     SignUpComponent,
+    SignUpTransferDesoComponent,
     SignUpGetStarterDeSoComponent,
     UpdateProfileGetStarterDeSoComponent,
     GetStarterDeSoPageComponent,
@@ -356,6 +362,8 @@ export function playerFactory() {
     BuyCreatorCoinsTutorialComponent,
     BuyCreatorCoinsConfirmTutorialComponent,
     BuyCreatorCoinsTutorialPageComponent,
+    BuyDesoTutorialPageComponent,
+    BuyDesoTutorialComponent,
     WalletPageComponent,
     WalletTutorialPageComponent,
     SellCreatorCoinsTutorialComponent,
@@ -368,6 +376,7 @@ export function playerFactory() {
     TransferNftModalComponent,
     TransferNftPageComponent,
     TransferNftComponent,
+    FreeDesoMessageComponent,
   ],
   imports: [
     BrowserModule,
@@ -382,7 +391,6 @@ export function playerFactory() {
     BrowserAnimationsModule,
     MatTooltipModule,
     TextFieldModule,
-    NgxIntlTelInputModule,
     UiScrollModule,
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),
@@ -396,7 +404,7 @@ export function playerFactory() {
       themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light")
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
     }),
     IconsModule,
     LottieModule,

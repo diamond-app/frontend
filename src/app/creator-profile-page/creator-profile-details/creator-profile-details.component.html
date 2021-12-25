@@ -24,14 +24,14 @@
     <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center">
       <i class="far fa-clock fs-1 fc-muted"></i>
       <div class="ml-25px fc-default">
-        <p class="roboto-mono fs-18px mb-5px font-weight-semibold">This profile is reserved</p>
-        <p class="roboto-mono fs-15px">@{{ profile.Username }} has not joined DeSo yet.</p>
+        <p class="roboto-mono fs-18px mb-5px font-weight-semibold">Bu profil rezerve edilmiştir</p>
+        <p class="roboto-mono fs-15px">@{{ profile.Username }} henüz DeSo'ya katılmadı.</p>
       </div>
     </div>
     <div class="d-flex justify-content-center mt-30px">
       <div>
         <p class="font-weight-semibold roboto-mono mb-10px">
-          Are you @{{ profile.Username }} on Twitter? To claim this profile:
+          Twitter'da @{{ profile.Username }} kullanıcı adına mı sahipsiniz? Bu profili talep etmek için:
         </p>
         <ol>
           <li class="font-weight-semibold">
@@ -40,13 +40,13 @@
               style="text-decoration: line-through"
               (click)="globalVars.launchSignupFlow()"
             >
-              Create a brand new DeSo public key.
+              Yepyeni bir DeSo genel anahtarı oluşturun.
             </p>
           </li>
           <li class="font-weight-semibold">
             <p class="roboto-mono mb-10px font-weight-semibold">
               <a target="_blank" href="{{ tweetToClaimLink() }}">
-                Tweet your DeSo public key and tag #deso.
+                DeSo genel anahtarınızı #deso etiketiyle tweetleyin.
               </a>
               <span class="d-block fs-12px font-weight-normal">
                 Note: The public key you tweet will be swapped with the public key currently associated with this
@@ -56,7 +56,7 @@
             </p>
           </li>
           <li class="font-weight-semibold">
-            <p class="roboto-mono mb-10px font-weight-semibold">Your username will be transferred within 48 hours.</p>
+            <p class="roboto-mono mb-10px font-weight-semibold">Kullanıcı adınız 48 saat içinde aktarılacaktır.</p>
           </li>
         </ol>
       </div>
@@ -72,9 +72,9 @@
     ></creator-profile-posts>
     <div *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)" class="w-100 d-flex p-15px">
       <span>
-        You have blocked {{ profile.Username }}.
-        <a (click)="unblock()">Unblock</a>
-        to see their posts.
+        {{ profile.Username }} hesabını engelledin.
+        Gönderilerini görmek için
+        <a (click)="unblock()">engeli kaldır</a>
       </span>
     </div>
   </div>
@@ -95,7 +95,7 @@
           [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
         >
           <span class="font-weight-bold">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}</span>
-          <span> Coins In Circulation</span>
+          <span> Dolaşımdaki Coin</span>
         </div>
         <div
           class="d-inline-block align-items-center"
@@ -103,7 +103,7 @@
           [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
         >
           <span class="font-weight-bold">≈ {{ totalUSDLocked() }}</span>
-          <span> Total USD Locked</span>
+          <span> Toplam Kilitli Varlık</span>
         </div>
         <div
           class="d-inline-block align-items-center mb-0"
@@ -111,7 +111,7 @@
           [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
         >
           <span class="font-weight-bold">≈ {{ usdMarketCap() }}</span>
-          <span> USD Market Cap</span>
+          <span> Piyasa Değeri</span>
         </div>
       </div>
     </div>

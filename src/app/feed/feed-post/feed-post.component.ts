@@ -11,7 +11,7 @@ import * as _ from "lodash";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
@@ -238,7 +238,7 @@ export class FeedPostComponent implements OnInit {
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
     const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });

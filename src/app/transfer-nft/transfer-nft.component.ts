@@ -36,6 +36,7 @@ export class TransferNftComponent implements OnInit {
   sortByField = this.SN_FIELD;
   sortByOrder: "desc" | "asc" = "asc";
   selectedCreator: ProfileEntryResponse;
+  unlockableText: string = "";
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -95,7 +96,7 @@ export class TransferNftComponent implements OnInit {
             this.selectedCreator?.PublicKeyBase58Check,
             this.post.PostHashHex,
             this.selectedSerialNumber?.SerialNumber,
-            "",
+            this.unlockableText,
             this.globalVars.defaultFeeRateNanosPerKB
           )
           .subscribe(

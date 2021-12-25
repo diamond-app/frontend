@@ -26,26 +26,26 @@
         <!-- Left Bar Buttons -->
         <div class="pt-20px"></div>
         <div class="left-desktop-selector" *ngIf="!inTutorial">
-          <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
+          <left-bar-button [link]="homeLink()" [buttonLabel]="'Anasayfa'" [iconName]="'home'"></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"
             [notificationType]="'notifications'"
             [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-            [buttonLabel]="'Notifications'"
+            [buttonLabel]="'Bildirimler'"
             [isUnread]="globalVars.unreadNotifications > 0"
             [iconName]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           ></left-bar-button>
-          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Buy Creators'" [iconName]="'users'"></left-bar-button>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creator Coin Al'" [iconName]="'users'"></left-bar-button>
           <left-bar-button
             [link]="'/' + globalVars.RouteNames.BUY_DESO"
-            [buttonLabel]="'Buy DESO'"
+            [buttonLabel]="'DESO Al'"
             [iconName]="'dollar-sign'"
           ></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"
             [notificationType]="'messages'"
             [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-            [buttonLabel]="'Messages'"
+            [buttonLabel]="'Mesajlar'"
             [iconName]="
               globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads > 0
                 ? 'message-notification'
@@ -56,13 +56,13 @@
             *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
             [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
             [queryParams]="{ 'tab':'posts' }"
-            [buttonLabel]="'My Profile'"
+            [buttonLabel]="'Profilim'"
             [iconName]="'user'"
           ></left-bar-button>
           <left-bar-button
             *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
             [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
-            [buttonLabel]="'Update Profile'"
+            [buttonLabel]="'Profil Yarat'"
             [iconName]="'user'"
           ></left-bar-button>
           <div
@@ -72,13 +72,13 @@
             *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"
           >
             <i-feather name="monitor" class="feather-medium fs-0px"></i-feather>
-            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Öğretici</a>
           </div>
-          <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Cüzdanım'" [iconName]="'diamond'"></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
             [link]="'/' + globalVars.RouteNames.REFERRALS"
-            [buttonLabel]="'Referrals'"
+            [buttonLabel]="'Davetiye'"
             [iconName]="'share-2'"
           ></left-bar-button>
           <a
@@ -90,7 +90,7 @@
             target="_blank"
           >
             <i-feather name="help-circle" class="feather-medium fs-0px"></i-feather>
-            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Help</a>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Yardım</a>
           </a>
           <left-bar-button
             *ngIf="globalVars.showAdminTools()"
@@ -98,7 +98,7 @@
             [buttonLabel]="'Admin'"
             [iconName]="'codesandbox'"
           ></left-bar-button>
-          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">Post</button>
+          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">Paylaş</button>
         </div>
       </div>
       <div *ngIf="isMobile">
@@ -118,7 +118,7 @@
         <div class="w-100 border-bottom"></div>
         <div class="fc-secondary cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
           <i-feather name="power" class="feather-medium"></i-feather>
-          <span class="fc-17px font-weight-bold ml-10px">Logout</span>
+          <span class="fc-17px font-weight-bold ml-10px">Çıkış Yap</span>
         </div>
       </div>
     </div>
@@ -147,11 +147,11 @@
       <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
       <div class="left-desktop-selector">
         <!-- Left Bar Buttons -->
-        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
-        <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
+        <left-bar-button [link]="homeLink()" [buttonLabel]="'Anasayfa'" [iconName]="'home'"></left-bar-button>
+        <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Yaratıcılar'" [iconName]="'users'"></left-bar-button>
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BUY_DESO"
-          [buttonLabel]="'Buy $DESO'"
+          [buttonLabel]="'$DESO Al'"
           [iconName]="'dollar-sign'"
         ></left-bar-button>
       </div>

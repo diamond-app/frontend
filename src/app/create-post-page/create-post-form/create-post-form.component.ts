@@ -60,7 +60,7 @@ export class CreatePostFormComponent implements AfterViewInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Create a Post <span class="ml-5px tutorial-header-step">Step 6/6</span>';
+    const title = 'Create a Post <span class="ml-5px tutorial-header-step">Step 4/4</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,

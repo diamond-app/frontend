@@ -21,6 +21,9 @@
       <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== activeTab">
         <span>New</span>
       </div>
+      <div *ngIf="isLink(tab) && !globalVars.isMobile()" class="d-flex align-items-center ml-5px">
+        <i-feather class="feather-small fs-0px" name="external-link"></i-feather>
+      </div>
     </div>
   </div>
 </div>
