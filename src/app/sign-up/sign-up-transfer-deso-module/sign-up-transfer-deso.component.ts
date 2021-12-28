@@ -1,22 +1,31 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
+import { RouteNames } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
 
 @Component({
   selector: "sign-up-transfer-deso",
   templateUrl: "./sign-up-transfer-deso.component.html",
   styleUrls: ["./sign-up-transfer-deso.component.scss"],
 })
-export class SignUpTransferDesoComponent {
+export class SignUpTransferDesoComponent implements OnInit {
   SignUpGetStarterDeSoComponent = SignUpTransferDesoComponent;
   publicKeyIsCopied = false;
   showModal = true;
   modalReappear = false;
   BuyDeSoComponent = BuyDeSoComponent;
+  scanQRCode: boolean = false;
+  sendDeSoQRCode: string;
 
-  constructor(public globalVars: GlobalVarsService, private modalService: BsModalService, public bsModalRef: BsModalRef) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private modalService: BsModalService,
+    public bsModalRef: BsModalRef,
+    private backendApi: BackendApiService
+  ) {}
 
   _copyPublicKey() {
     this.globalVars._copyText(this.globalVars.loggedInUser.PublicKeyBase58Check);
@@ -26,16 +35,10 @@ export class SignUpTransferDesoComponent {
     }, 1000);
   }
 
-  buyDesoModal() {
-    this.showModal = false;
-    const modalDetails = this.modalService.show(BuyDesoModalComponent, {
-      class: "modal-dialog-centered",
-    });
-    const onHideEvent = modalDetails.onHide;
-    onHideEvent.subscribe(() => {
-      this.showModal = true;
-      this.refreshBalance();
-    });
+  ngOnInit() {
+    this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
+      this.globalVars.loggedInUser.PublicKeyBase58Check
+    }`;
   }
 
   refreshBalance() {

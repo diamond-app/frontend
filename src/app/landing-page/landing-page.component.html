@@ -36,7 +36,7 @@
               [ngClass]="{ 'w-100': globalVars.isMobile() }"
             >
               <div>Sign up today</div>
-              <div class="landing-page-button-subtext">Get {{ globalVars.getFreeDESOMessage() }} free</div>
+              <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
             </button>
             <button
               class="landing-page-btn landing-page-secondary-btn font-weight-bold"
@@ -279,7 +279,7 @@
     <div class="d-flex justify-content-center position-relative" style="z-index: 1" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <button class="landing-page-btn landing-page-primary-btn mr-30px font-weight-bold" (click)="globalVars.launchSignupFlow()">
         <div>Sign up today</div>
-        <div class="landing-page-button-subtext">Get {{ globalVars.getFreeDESOMessage() }} free</div>
+        <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
       </button>
       <button
         class="landing-page-btn landing-page-secondary-btn font-weight-bold"

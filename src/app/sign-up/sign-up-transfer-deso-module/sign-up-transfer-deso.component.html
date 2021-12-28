@@ -20,28 +20,45 @@
       <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">You will need at least 0.01 $DESO to create your new account. This could be transferred from an exchange like Coinbase, or from another account on a DeSo app like Diamond.</div>
       <div class="fs-18px fc-default font-weight-semibold mb-10px">Send $DESO to this address</div>
       <div
-        (click)="_copyPublicKey()"
-        class="w-100 bg-light p-10px br-10px d-flex justify-content-between cursor-pointer mb-10px"
+        class="w-100 bg-light p-10px br-10px cursor-pointer mb-10px"
         [ngClass]="{ 'flex-column': globalVars.isMobile() }"
       >
-        <span
+        <div
           [ngClass]="{ 'creator-profile__ellipsis-restriction-full': globalVars.isMobile() }"
-          class="fs-16px font-weight-normal fc-default"
+          class="fs-16px font-weight-normal fc-default mb-10px mt-5px text-center"
         >
           {{ globalVars.loggedInUser.PublicKeyBase58Check }}
-        </span>
-        <div class="d-flex">
-          <i-feather
-            *ngIf="publicKeyIsCopied"
-            class="feather-small check-indicator position-relative"
-            name="check-circle"
-          ></i-feather>
-          <i-feather
-            *ngIf="!publicKeyIsCopied"
-            class="feather-small copy-button cursor-pointer position-relative"
-            name="copy"
-          ></i-feather>
-          <span class="fs-16px fc-blue ml-5px">Click to Copy</span>
+        </div>
+        <div class="w-100 border-bottom"></div>
+        <div class="d-flex justify-content-around mt-10px mb-5px" (click)="_copyPublicKey()">
+          <span>
+            <i-feather
+              *ngIf="publicKeyIsCopied"
+              class="feather-small check-indicator position-relative"
+              name="check-circle"
+            ></i-feather>
+            <i-feather
+              *ngIf="!publicKeyIsCopied"
+              class="feather-small copy-button cursor-pointer position-relative"
+              name="copy"
+            ></i-feather>
+            <span class="fs-16px fc-blue ml-5px">Click to Copy</span>
+          </span>
+          <span *ngIf="!scanQRCode" (click)="scanQRCode = true">
+            <i class="fas fa-qrcode"></i>
+            <span class="fs-16px fc-blue ml-5px">Send via QR Code</span>
+          </span>
+          <span class="d-flex align-items-center" *ngIf="scanQRCode" (click)="scanQRCode = false">
+            <i-feather
+              class="feather-small check-indicator position-relative fs-0px"
+              name="x-square"
+            ></i-feather>
+            <span class="fs-16px fc-blue ml-5px">Close QR Code</span>
+          </span>
+        </div>
+        <div *ngIf="scanQRCode" class="p-15px d-flex flex-column align-items-center">
+          <p class="mb-10px fc-default fs-16px font-weight-semibold">Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
+          <img style="border-radius: 15px" [src]="sendDeSoQRCode | sanitizeQRCode"/>
         </div>
       </div>
       <div class="d-flex mb-25px">

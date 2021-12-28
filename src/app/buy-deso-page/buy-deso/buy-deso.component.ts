@@ -46,9 +46,12 @@ export class BuyDeSoComponent implements OnInit {
   static BUY_WITH_USD = "Buy with fiat";
   static BUY_WITH_BTC = "Buy with Bitcoin";
   static BUY_WITH_ETH = "Buy with ETH";
+  static BUY_ON_CB = "Buy on Coinbase";
+  static CB_LINK = "https://www.coinbase.com/price/decentralized-social";
 
   buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
   activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+  linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK }
 
   constructor(
     public ref: ChangeDetectorRef,
@@ -527,6 +530,8 @@ export class BuyDeSoComponent implements OnInit {
     if (this.globalVars.showBuyWithETH) {
       this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
     }
+
+    this.buyTabs.push(BuyDeSoComponent.BUY_ON_CB);
 
     if (!isNil(this.activeTabInput)) {
       this.activeTab = this.activeTabInput;

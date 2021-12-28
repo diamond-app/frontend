@@ -187,6 +187,7 @@ import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/tra
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
 import { TranslocoRootModule } from './transloco-root.module';
+import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -376,6 +377,7 @@ export function playerFactory() {
     TransferNftModalComponent,
     TransferNftPageComponent,
     TransferNftComponent,
+    FreeDesoMessageComponent,
   ],
   imports: [
     BrowserModule,
