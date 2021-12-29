@@ -4812,6 +4812,10 @@ input {
   padding: 0px 5px;
 }
 
+.bg-tile {
+  background-color: var(--tile-bg) !important;
+}
+
 .bg-light {
   background-color: var(--background-secondary) !important;
 }

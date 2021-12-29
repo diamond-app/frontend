@@ -4,4 +4,4 @@
   </div>
 </div>
 
-<update-profile [loggedInUser]="globalVars.loggedInUser"></update-profile>
+<update-profile (profileSaved)="profileSaved()" [loggedInUser]="globalVars.loggedInUser"></update-profile>
