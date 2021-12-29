@@ -345,6 +345,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       });
       return;
     }
+    comp.profileSaved.emit();
     if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
       SwalHelper.fire({
         target: comp.globalVars.getTargetComponentSelector(),
