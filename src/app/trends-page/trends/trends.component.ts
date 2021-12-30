@@ -16,9 +16,9 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
 })
 export class TrendsComponent implements OnInit {
   static BUFFER_SIZE = 5;
-  static PADDING = 0.25;
-  static PAGE_SIZE = 20;
-  static WINDOW_VIEWPORT = true;
+  static PADDING = 0.5;
+  static PAGE_SIZE = 50;
+  static WINDOW_VIEWPORT = false;
 
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
