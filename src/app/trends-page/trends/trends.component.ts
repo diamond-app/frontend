@@ -79,6 +79,10 @@ export class TrendsComponent implements OnInit {
         .toPromise()
         .then(
           (res) => {
+            console.log('Here is the res');
+            console.log(TrendsComponent.PAGE_SIZE);
+            console.log(res.length);
+            console.log(res);
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;
@@ -98,6 +102,9 @@ export class TrendsComponent implements OnInit {
         .toPromise()
         .then(
           (res) => {
+            console.log('Here is the res');
+            console.log(res.length);
+            console.log(res);
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;

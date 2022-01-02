@@ -100,6 +100,8 @@ export class AltumbaseService {
     skipFilters: boolean = false
   ): Observable<AltumbaseLeaderboardResponse[]> {
     const results = res.data;
+    console.log('Here are the results');
+    console.log(results);
 
     if (results.length === 0) {
       return of([]);
@@ -117,9 +119,6 @@ export class AltumbaseService {
               res.UserList,
               (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
             );
-            if (res.UserList.length > 10) {
-              res.UserList = res.UserList.slice(0, 10);
-            }
           }
           return res.UserList.map((user: User, index: number) => {
             return  {
