@@ -93,6 +93,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.activeTab = FeedComponent.SHOWCASE_TAB;
         } else {
           this.activeTab = queryParams.feedTab;
+          if (this.activeTab === "Hot 🔥") {
+            this.activeTab = FeedComponent.HOT_TAB;
+          }
         }
       } else {
         // A default activeTab will be set after we load the follow feed (based on whether
@@ -557,6 +560,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.activeTab = defaultActiveTab;
       } else {
         this.activeTab = storedTab;
+        if (this.activeTab === "Hot 🔥") {
+          this.activeTab = FeedComponent.HOT_TAB;
+        }
       }
     }
     this._handleTabClick(this.activeTab);
