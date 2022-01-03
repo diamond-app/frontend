@@ -1,26 +1,48 @@
 <div class="flex-grow-1">
   <div class="buy-deso__container">
     <div class="px-16px pb-16px">
-      <div class="mint-nft__title">Trends</div>
-    </div>
-    <div>
-      <!-- Headers -->
-      <div class="fs-15px">
-        <div class="row px-15px no-gutters border-bottom py-15px fc-muted" style="margin-left: 0; margin-right: 0">
-          <div class="col-lg-6 col-8 mb-0">Name</div>
-
-          <div class="col-lg-6 col-4 mb-0 text-left" style="min-width: 100px">
-            <div class="pl-15px">Price</div>
+      <div class="d-flex w-100 justify-content-between">
+        <div class="mint-nft__title">Trends</div>
+        <div class="d-flex flex-column align-items-end">
+          <div
+            class="d-flex"
+            dropdown
+            (click)="$event.stopPropagation()"
+            container="body"
+            style="align-items: center"
+          >
+            <button class="trend-dropdown-button d-flex align-content-between" role="button" dropdownToggle>
+              <span>{{ activeTab }}</span>
+              <i-feather name="chevron-down" class="feather-small"></i-feather>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu place-bid-dropdown buy-deso__currency-dropdown" *dropdownMenu>
+              <div>
+                <a
+                  *ngFor="let tab of availableTabs"
+                  class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                  (click)="selectTab(tab)"
+                >
+                  {{ tab }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="activeRightTabOption.poweredBy" class="py-10px text-grey5">
+            <a class="link--unstyled fs-14px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+              <i class="fas fa-external-link-alt"></i>
+              Powered by {{ activeRightTabOption.poweredBy.name }}
+            </a>
           </div>
         </div>
       </div>
+    </div>
+    <div>
+      <simple-center-loader *ngIf="isLoadingProfilesForFirstTime"></simple-center-loader>
 
-      <simple-center-loader *ngIf="loading"></simple-center-loader>
-
-      <div class="viewport disable-scrollbars buy-creator-scroll-container">
+      <div class="viewport disable-scrollbars" [ngClass]="{ 'trends-scroll-container': !isModal }">
         <!-- Creator rows -->
         <div #uiScroll *uiScroll="let profileEntryResponse of datasource" class="row no-gutters px-15px border-bottom fs-15px">
-          <div class="row no-gutters px-15px border-bottom fs-15px"
+          <div class="row no-gutters px-15px border-bottom fs-15px w-100"
                *ngIf="profileEntryResponse.Profile && !profileEntryResponse.User.IsBlacklisted && !profileEntryResponse.User.IsGraylisted"
           >
             <a

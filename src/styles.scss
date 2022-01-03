@@ -2401,10 +2401,14 @@ sign-up {
   }
 }
 
-trends-2 {
+trends {
   .icon-diamond {
     margin-left: 0px !important;
   }
+}
+
+.trends-scroll-container {
+  height: calc(100vh - 210px) !important;
 }
 
 .trend-box {
