@@ -38,7 +38,6 @@ export class Trends2Component implements OnInit {
   activeRightTabOption: RightBarTabOption;
   selectedOptionWidth: string;
   availableTabs = [
-    RightBarCreatorsComponent.ALL_TIME.name,
     RightBarCreatorsComponent.GAINERS.name,
     RightBarCreatorsComponent.DIAMONDS.name,
     RightBarCreatorsComponent.COMMUNITY.name,
@@ -77,7 +76,6 @@ export class Trends2Component implements OnInit {
   }
 
   getPage(page: number) {
-    console.log('page ', page);
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
@@ -88,15 +86,12 @@ export class Trends2Component implements OnInit {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
     this.isLoadingMore = true;
-    console.log('Before altum base')
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
       return this.altumbaseService
         .getDeSoLockedPage(page + 1, Trends2Component.PAGE_SIZE, false)
         .toPromise()
         .then(
           (res) => {
-            console.log('Altum base return');
-            console.log(res);
             const chunk = res;
 
             // Index 0 means we're done. if the array is empty we're done.
@@ -111,7 +106,6 @@ export class Trends2Component implements OnInit {
             return chunk;
           },
           (err) => {
-            console.log("Errored out")
             console.error(this.backendApi.stringifyError(err));
           }
         )
@@ -126,8 +120,6 @@ export class Trends2Component implements OnInit {
         .toPromise()
         .then(
           (res) => {
-            console.log('Altum base return');
-            console.log(res);
             const chunk = res;
 
             // Index 0 means we're done. if the array is empty we're done.
@@ -142,7 +134,6 @@ export class Trends2Component implements OnInit {
             return chunk;
           },
           (err) => {
-            console.log("Errored out")
             console.error(this.backendApi.stringifyError(err));
           }
         )
@@ -151,6 +142,13 @@ export class Trends2Component implements OnInit {
           // We successfully loaded some profiles, so we're no longer loading for the first time
           this.isLoadingProfilesForFirstTime = false;
         });
+    } else if (this.activeTab === RightBarCreatorsComponent.COMMUNITY.name) {
+      const start = Trends2Component.PAGE_SIZE * page;
+      let end = start + Trends2Component.PAGE_SIZE;
+      if (end > this.globalVars.allCommunityProjectsLeaderboard.length) {
+        end = this.globalVars.allCommunityProjectsLeaderboard.length;
+      }
+      return this.globalVars.allCommunityProjectsLeaderboard.slice(Trends2Component.PAGE_SIZE * page, end);
     }
   }
 
