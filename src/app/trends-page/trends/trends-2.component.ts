@@ -9,6 +9,7 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { environment } from "src/environments/environment";
+import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
 import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
 import { HttpClient } from "@angular/common/http";
 
@@ -18,7 +19,7 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ["./trends-2.component.scss"],
 })
 export class Trends2Component implements OnInit {
-  static PAGE_SIZE = 100;
+  static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = false;
   static BUFFER_SIZE = 5;
   @Output() closeModal = new EventEmitter();
@@ -32,6 +33,16 @@ export class Trends2Component implements OnInit {
   isLoadingProfilesForFirstTime = false;
   isLoadingMore: boolean = false;
   profilesToShow = [];
+  RightBarCreatorsComponent = RightBarCreatorsComponent;
+  activeTab: string = RightBarCreatorsComponent.GAINERS.name;
+  activeRightTabOption: RightBarTabOption;
+  selectedOptionWidth: string;
+  availableTabs = [
+    RightBarCreatorsComponent.ALL_TIME.name,
+    RightBarCreatorsComponent.GAINERS.name,
+    RightBarCreatorsComponent.DIAMONDS.name,
+    RightBarCreatorsComponent.COMMUNITY.name,
+  ];
 
   // FIME: Replace with real value
   fakeNumHodlers = Math.ceil(Math.random() * 1000) + 1000;
@@ -53,6 +64,16 @@ export class Trends2Component implements OnInit {
   ) {
     this.appData = globalVars;
     this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
+    this.activeRightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab]
+  }
+
+  selectTab(tab: string) {
+    this.activeTab = tab;
+    const rightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab];
+    this.activeRightTabOption = rightTabOption;
+    this.selectedOptionWidth = rightTabOption.width + "px";
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset();
   }
 
   getPage(page: number) {
@@ -68,36 +89,69 @@ export class Trends2Component implements OnInit {
     }
     this.isLoadingMore = true;
     console.log('Before altum base')
-    return this.altumbaseService
-      .getDeSoLockedPage(page + 1, 100, false)
-      .toPromise()
-      .then(
-        (res) => {
-          console.log('Altum base return');
-          console.log(res);
-          const chunk = res;
+    if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
+      return this.altumbaseService
+        .getDeSoLockedPage(page + 1, Trends2Component.PAGE_SIZE, false)
+        .toPromise()
+        .then(
+          (res) => {
+            console.log('Altum base return');
+            console.log(res);
+            const chunk = res;
 
-          // Index 0 means we're done. if the array is empty we're done.
-          // subtract one so we don't fetch the last notification twice
-          this.pagedKeys[page + 1] = res.NextPublicKey;
+            // Index 0 means we're done. if the array is empty we're done.
+            // subtract one so we don't fetch the last notification twice
+            this.pagedKeys[page + 1] = res.NextPublicKey;
 
-          // if the chunk was incomplete or the Index was zero we're done
-          // if (chunk.length < Trends2Component.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
-          //   this.lastPage = page;
-          // }
+            // if the chunk was incomplete or the Index was zero we're done
+            // if (chunk.length < Trends2Component.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+            //   this.lastPage = page;
+            // }
 
-          return chunk;
-        },
-        (err) => {
-          console.log("Errored out")
-          console.error(this.backendApi.stringifyError(err));
-        }
-      )
-      .finally(() => {
-        this.isLoadingMore = false;
-        // We successfully loaded some profiles, so we're no longer loading for the first time
-        this.isLoadingProfilesForFirstTime = false;
-      });
+            return chunk;
+          },
+          (err) => {
+            console.log("Errored out")
+            console.error(this.backendApi.stringifyError(err));
+          }
+        )
+        .finally(() => {
+          this.isLoadingMore = false;
+          // We successfully loaded some profiles, so we're no longer loading for the first time
+          this.isLoadingProfilesForFirstTime = false;
+        });
+    } else if (this.activeTab === RightBarCreatorsComponent.DIAMONDS.name) {
+      return this.altumbaseService
+        .getDiamondsReceivedPage(page + 1, Trends2Component.PAGE_SIZE, false)
+        .toPromise()
+        .then(
+          (res) => {
+            console.log('Altum base return');
+            console.log(res);
+            const chunk = res;
+
+            // Index 0 means we're done. if the array is empty we're done.
+            // subtract one so we don't fetch the last notification twice
+            this.pagedKeys[page + 1] = res.NextPublicKey;
+
+            // if the chunk was incomplete or the Index was zero we're done
+            // if (chunk.length < Trends2Component.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+            //   this.lastPage = page;
+            // }
+
+            return chunk;
+          },
+          (err) => {
+            console.log("Errored out")
+            console.error(this.backendApi.stringifyError(err));
+          }
+        )
+        .finally(() => {
+          this.isLoadingMore = false;
+          // We successfully loaded some profiles, so we're no longer loading for the first time
+          this.isLoadingProfilesForFirstTime = false;
+        });
+    }
   }
 
   openBuyCreatorCoinModal(event, username: string) {
