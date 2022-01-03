@@ -106,6 +106,15 @@
               >
                 {{option.key}}
               </a>
+              <a
+                class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+                data-toggle="dropdown"
+                href=""
+                [routerLink]="'/' + globalVars.RouteNames.TRENDS"
+                queryParamsHandling="merge"
+              >
+                Trends Page
+              </a>
             </div>
           </div>
         </div>

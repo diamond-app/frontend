@@ -170,7 +170,7 @@ export class TrendsComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle(`Buy Creator Coins - ${environment.node.name}`);
+    this.titleService.setTitle(`Trends - ${environment.node.name}`);
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {
