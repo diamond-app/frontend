@@ -16,7 +16,7 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static HOT_TAB = "Hot 🔥";
+  static HOT_TAB = "Hot";
   static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
@@ -196,16 +196,16 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       // this._onTabSwitch()
     }
 
-    // Request the follow feed (so we have it ready for display if needed)
-    if (this.globalVars.followFeedPosts.length === 0) {
-      this.loadingFirstBatchOfFollowFeedPosts = true;
-      this._reloadFollowFeed();
-    }
-
     // Request the hot feed (so we have it ready for display if needed)
     if (this.globalVars.hotFeedPosts.length === 0) {
       this.loadingFirstBatchOfHotFeedPosts = true;
       this._loadHotFeedPosts();
+    }
+
+    // Request the follow feed (so we have it ready for display if needed)
+    if (this.globalVars.followFeedPosts.length === 0) {
+      this.loadingFirstBatchOfFollowFeedPosts = true;
+      this._reloadFollowFeed();
     }
 
     // The activeTab is set after we load the following based on whether the user is
@@ -467,6 +467,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
+              // Add first pinned post if relevant
+              if (this.globalVars.hotFeedPosts[0].IsPinned) {
+                this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+              }
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
               this.serverHasMoreFollowFeedPosts = false;
@@ -540,7 +544,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
 
-    this.feedTabs = [FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
+    this.feedTabs = [
+      FeedComponent.FOLLOWING_TAB,
+      FeedComponent.HOT_TAB,
+      FeedComponent.GLOBAL_TAB,
+      FeedComponent.SHOWCASE_TAB,
+    ];
 
     if (!this.activeTab) {
       const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");
