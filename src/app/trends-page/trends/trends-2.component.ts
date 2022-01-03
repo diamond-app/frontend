@@ -21,7 +21,7 @@ import { HttpClient } from "@angular/common/http";
 export class Trends2Component implements OnInit {
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = false;
-  static BUFFER_SIZE = 5;
+  static BUFFER_SIZE = 15;
   @Output() closeModal = new EventEmitter();
   @Input() isModal = false;
 
