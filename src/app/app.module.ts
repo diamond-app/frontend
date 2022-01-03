@@ -199,6 +199,7 @@ import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-n
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { Trends2Component } from "./trends-page/trends/trends-2.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -326,6 +327,7 @@ export function playerFactory() {
     AvatarDirective,
     TrendsPageComponent,
     TrendsComponent,
+    Trends2Component,
     SanitizeQRCodePipe,
     MintNftComponent,
     NftSelectSerialNumberComponent,

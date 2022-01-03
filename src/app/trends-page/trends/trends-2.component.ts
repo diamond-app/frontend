@@ -9,14 +9,16 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { environment } from "src/environments/environment";
+import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: "creators-leaderboard",
-  templateUrl: "./creators-leaderboard.component.html",
-  styleUrls: ["./creators-leaderboard.component.scss"],
+  selector: "trends-2",
+  templateUrl: "./trends-2.component.html",
+  styleUrls: ["./trends-2.component.scss"],
 })
-export class CreatorsLeaderboardComponent implements OnInit {
-  static PAGE_SIZE = 50;
+export class Trends2Component implements OnInit {
+  static PAGE_SIZE = 100;
   static WINDOW_VIEWPORT = false;
   static BUFFER_SIZE = 5;
   @Output() closeModal = new EventEmitter();
@@ -24,6 +26,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   AppRoutingModule = AppRoutingModule;
   appData: GlobalVarsService;
+  altumbaseService: AltumbaseService;
   profileEntryResponses = [];
   isLeftBarMobileOpen = false;
   isLoadingProfilesForFirstTime = false;
@@ -45,9 +48,11 @@ export class CreatorsLeaderboardComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private httpClient: HttpClient
   ) {
     this.appData = globalVars;
+    this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
   }
 
   getPage(page: number) {
@@ -62,38 +67,29 @@ export class CreatorsLeaderboardComponent implements OnInit {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
     this.isLoadingMore = true;
-
-    return this.backendApi
-      .GetProfiles(
-        this.appData.localNode,
-        fetchPubKey /*PublicKeyBase58Check*/,
-        null /*Username*/,
-        null /*UsernamePrefix*/,
-        null /*Description*/,
-        BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
-        CreatorsLeaderboardComponent.PAGE_SIZE /*NumToFetch*/,
-        readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "leaderboard" /*ModerationType*/,
-        false /*FetchUsersThatHODL*/,
-        false /*AddGlobalFeedBool*/
-      )
+    console.log('Before altum base')
+    return this.altumbaseService
+      .getDeSoLockedPage(page + 1, 100, false)
       .toPromise()
       .then(
         (res) => {
-          const chunk = res.ProfilesFound;
+          console.log('Altum base return');
+          console.log(res);
+          const chunk = res;
 
           // Index 0 means we're done. if the array is empty we're done.
           // subtract one so we don't fetch the last notification twice
           this.pagedKeys[page + 1] = res.NextPublicKey;
 
           // if the chunk was incomplete or the Index was zero we're done
-          if (chunk.length < CreatorsLeaderboardComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
-            this.lastPage = page;
-          }
+          // if (chunk.length < Trends2Component.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+          //   this.lastPage = page;
+          // }
 
           return chunk;
         },
         (err) => {
+          console.log("Errored out")
           console.error(this.backendApi.stringifyError(err));
         }
       )
@@ -133,10 +129,10 @@ export class CreatorsLeaderboardComponent implements OnInit {
   }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(
-    CreatorsLeaderboardComponent.PAGE_SIZE,
+    Trends2Component.PAGE_SIZE,
     this.getPage.bind(this),
-    CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
-    CreatorsLeaderboardComponent.BUFFER_SIZE,
+    Trends2Component.WINDOW_VIEWPORT,
+    Trends2Component.BUFFER_SIZE,
     0.5
   );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();

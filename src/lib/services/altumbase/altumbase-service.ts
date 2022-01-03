@@ -87,11 +87,14 @@ export class AltumbaseService {
     pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize)).pipe(
-      switchMap((res: AltumbaseLeaderboardResponse) => {
-        return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
-      })
-    );
+    console.log(pageSize);
+    return this.httpClient
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize))
+      .pipe(
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
+        })
+      );
   }
 
   getProfilesForAltumbaseLeaderboard(
@@ -100,7 +103,7 @@ export class AltumbaseService {
     skipFilters: boolean = false
   ): Observable<AltumbaseLeaderboardResponse[]> {
     const results = res.data;
-    console.log('Here are the results');
+    console.log('Altum results');
     console.log(results);
 
     if (results.length === 0) {
@@ -120,8 +123,9 @@ export class AltumbaseService {
               (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
             );
           }
+
           return res.UserList.map((user: User, index: number) => {
-            return  {
+            return {
               User: user,
               Profile: user.ProfileEntryResponse,
               DiamondsReceived:
@@ -139,7 +143,6 @@ export class AltumbaseService {
             };
           });
         })
-
       );
   }
 }

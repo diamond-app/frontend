@@ -18,7 +18,7 @@ export class TrendsComponent implements OnInit {
   static BUFFER_SIZE = 5;
   static PADDING = 0.5;
   static PAGE_SIZE = 50;
-  static WINDOW_VIEWPORT = false;
+  static WINDOW_VIEWPORT = true;
 
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
@@ -72,6 +72,7 @@ export class TrendsComponent implements OnInit {
   }
 
   getPage(page: number) {
+    console.log('Getting page');
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
       this.loadingNextPage = page !== 0;
       return this.altumbaseService
@@ -79,10 +80,6 @@ export class TrendsComponent implements OnInit {
         .toPromise()
         .then(
           (res) => {
-            console.log('Here is the res');
-            console.log(TrendsComponent.PAGE_SIZE);
-            console.log(res.length);
-            console.log(res);
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;
@@ -102,9 +99,6 @@ export class TrendsComponent implements OnInit {
         .toPromise()
         .then(
           (res) => {
-            console.log('Here is the res');
-            console.log(res.length);
-            console.log(res);
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;
