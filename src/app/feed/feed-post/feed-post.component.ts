@@ -584,7 +584,6 @@ export class FeedPostComponent implements OnInit {
         nftEntryResponse.IsPending
       );
     });
-    console.log(transferNFTEntryResponses);
     if (!this.globalVars.isMobile()) {
       this.modalService.show(TransferNftAcceptModalComponent, {
         class: "modal-dialog-centered modal-lg",

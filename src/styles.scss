@@ -2401,6 +2401,16 @@ sign-up {
   }
 }
 
+trends {
+  .icon-diamond {
+    margin-left: 0px !important;
+  }
+}
+
+.trends-scroll-container {
+  height: calc(100vh - 210px) !important;
+}
+
 .trend-box {
   background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
@@ -5273,6 +5283,17 @@ sell-nft-modal {
   &.disabled-button {
     background: var(--tile-bg)
   }
+}
+
+.trend-dropdown-button {
+  border-radius: 12px;
+  border: none;
+  border: 1px solid var(--border);
+  background: var(--tile-secondary-bg);
+  height: 48px;
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
 }
 
 .nft-modal-separator {

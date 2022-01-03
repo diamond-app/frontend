@@ -1,5 +1,8 @@
 <div class="w-100 h-100 d-flex">
-  <div class="w-100 d-flex justify-content-between align-items-center border-top border-color-grey">
+  <div
+    class="w-100 d-flex justify-content-between align-items-baseline border-top border-color-grey"
+    [ngClass]="{ 'mb-8px': globalVars.unreadNotifications > 0 }"
+  >
     <bottom-bar-mobile-tab
       class="w-100 h-100 text-center"
       [link]="'/' + globalVars.RouteNames.BROWSE"
@@ -53,6 +56,17 @@
             }})
           </span>
         </div>
+      </div>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.TRENDS"
+    >
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="trending-up" class="feather-medium"></i-feather>
+        <div class="mt-5px">Trends</div>
       </div>
     </bottom-bar-mobile-tab>
 
