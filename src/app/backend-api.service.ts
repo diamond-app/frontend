@@ -1078,17 +1078,33 @@ export class BackendApiService {
     ReceiverPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
-    EncryptedUnlockableText: string,
+    UnencryptedUnlockableText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    let request = this.post(endpoint, BackendRoutes.RoutePathTransferNFT, {
-      SenderPublicKeyBase58Check,
-      ReceiverPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      EncryptedUnlockableText,
-      MinFeeRateNanosPerKB,
-    });
+    let request = UnencryptedUnlockableText
+      ? this.identityService.encrypt({
+        ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+        recipientPublicKey: ReceiverPublicKeyBase58Check,
+        message: UnencryptedUnlockableText,
+      })
+      : of({ encryptedMessage: "" });
+    request = request.pipe(
+      switchMap((encrypted) => {
+        const EncryptedUnlockableText = encrypted.encryptedMessage;
+        return this.post(endpoint, BackendRoutes.RoutePathTransferNFT, {
+          SenderPublicKeyBase58Check,
+          ReceiverPublicKeyBase58Check,
+          NFTPostHashHex,
+          SerialNumber,
+          EncryptedUnlockableText,
+          MinFeeRateNanosPerKB,
+        }).pipe(
+          map((request) => {
+            return { ...request };
+          })
+        );
+      })
+    );
 
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
