@@ -71,11 +71,13 @@ export class AltumbaseService {
     pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
-      switchMap((res: AltumbaseLeaderboardResponse) => {
-        return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
-      })
-    );
+    return this.httpClient
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize))
+      .pipe(
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
+        })
+      );
   }
 
   getDeSoLockedLeaderboard(): Observable<any> {
@@ -87,7 +89,6 @@ export class AltumbaseService {
     pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    console.log(pageSize);
     return this.httpClient
       .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize))
       .pipe(
@@ -103,8 +104,6 @@ export class AltumbaseService {
     skipFilters: boolean = false
   ): Observable<AltumbaseLeaderboardResponse[]> {
     const results = res.data;
-    console.log('Altum results');
-    console.log(results);
 
     if (results.length === 0) {
       return of([]);

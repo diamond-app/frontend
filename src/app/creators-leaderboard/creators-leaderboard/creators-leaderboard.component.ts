@@ -51,7 +51,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
   }
 
   getPage(page: number) {
-    console.log('page ', page);
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
