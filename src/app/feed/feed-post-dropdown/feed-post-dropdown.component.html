@@ -70,6 +70,13 @@
         Hide
       </a>
       <a
+        *ngIf="showUnfollowUser"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        (click)="unfollowUser($event)"
+      >
+        Unfollow User
+      </a>
+      <a
         *ngIf="showBlockUserDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="blockUser()"

@@ -18,6 +18,7 @@ import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-re
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 @Component({
   selector: "feed-post",
@@ -66,7 +67,8 @@ export class FeedPostComponent implements OnInit {
     private router: Router,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private followService: FollowService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -158,6 +160,7 @@ export class FeedPostComponent implements OnInit {
   serialNumbersDisplay: string;
   nftEntryResponses: NFTEntryResponse[];
   decryptableNFTEntryResponses: NFTEntryResponse[];
+  isFollowing: boolean;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -233,6 +236,7 @@ export class FeedPostComponent implements OnInit {
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
+    this.isFollowing = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
   }
 
   openBuyCreatorCoinModal(event, username: string) {
