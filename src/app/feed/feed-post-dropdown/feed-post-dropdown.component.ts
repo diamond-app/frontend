@@ -17,6 +17,7 @@ import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal
 import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import * as _ from "lodash";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 const RouteNames = RouteNamesService;
 @Component({
@@ -24,7 +25,7 @@ const RouteNames = RouteNamesService;
   templateUrl: "./feed-post-dropdown.component.html",
   styleUrls: ["./feed-post-dropdown.component.sass"],
 })
-export class FeedPostDropdownComponent {
+export class FeedPostDropdownComponent implements OnInit{
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
@@ -37,6 +38,7 @@ export class FeedPostDropdownComponent {
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
   showSharePost: boolean = false;
+  showUnfollowUser: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -45,11 +47,16 @@ export class FeedPostDropdownComponent {
     private router: Router,
     private modalService: BsModalService,
     private platformLocation: PlatformLocation,
-    public ref: ChangeDetectorRef
+    public ref: ChangeDetectorRef,
+    private followService: FollowService
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
     }
+  }
+
+  ngOnInit() {
+    this.showUnfollowUser = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
   }
 
   reportPost(): void {
@@ -214,6 +221,11 @@ export class FeedPostDropdownComponent {
 
   blockUser() {
     this.userBlocked.emit();
+  }
+
+  unfollowUser(event) {
+    event.stopPropagation();
+    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check);
   }
 
   addMultiplier() {

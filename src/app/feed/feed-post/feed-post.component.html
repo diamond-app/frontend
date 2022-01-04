@@ -254,7 +254,7 @@
               <!-- Follow button-->
               <div class="feed-post__second-header-ln">
                 <follow-button
-                  *ngIf="!hideFollowLink"
+                  *ngIf="!hideFollowLink && !isFollowing"
                   class="fs-12px"
                   [displayAsLink]="true"
                   [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
