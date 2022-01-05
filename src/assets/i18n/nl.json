@@ -56,7 +56,7 @@
     "use_to_post_1": " ",
     "submit_posts": "je eigen posts te maken",
     "buy_with_bc_anon": "Je kunt het in minder dan een minuut anoniem kopen met Bitcoin",
-    "blockchains_iphone_moment": "Dit is het \"iPhone moment\" van blockchain", 
+    "blockchains_iphone_moment": "Dit is het \"iPhone moment\" van blockchain",
     "exchange_amount": "In te wisselen",
     "receive_amount": "Te ontvangen",
     "country": "Land"
@@ -91,7 +91,7 @@
   "creator_diamonds": {
     "given": "Uitgedeeld",
     "received": "Ontvangen",
-    "username": "Gebruikersnaam", 
+    "username": "Gebruikersnaam",
     "no_diamonds_0": "heeft nog geen diamanten",
     "no_diamonds_1": " ",
     "anonymous": "Anonymous"
@@ -182,7 +182,7 @@
     "select_safari": "2. Kies <b>Open in Safari</b>",
     "select_openwith": "2. Kies <b>Openen met</b>",
     "select_browser": "3. Selecteer je browser"
-  },  
+  },
   "feed_create_post": {
     "video_processing": "Video wordt verwerkt",
     "uploading": "Versturen:",
@@ -516,6 +516,7 @@
     "please_enter_valid_email": "Er is geen geldig e-mailadres ingevuld.",
     "theme": "Thema",
     "show_price_in_feed": "Geef prijs weer in de feed",
+    "language": "Taal",
     "update_profile": "Profiel bijwerken",
     "enter_username": "Vul gebruikersnaam in",
     "enter_emailaddress": "Vul een e-mailadres in.",

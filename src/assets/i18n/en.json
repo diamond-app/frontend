@@ -91,7 +91,7 @@
   "creator_diamonds": {
     "given": "Given",
     "received": "Received",
-    "username": "Username", 
+    "username": "Username",
     "no_diamonds_0": "has not",
     "no_diamonds_1": "any diamonds yet",
     "anonymous": "Anonymous"
@@ -330,7 +330,7 @@
     "logout":"Logout"
   },
   "loader":{
-    "loading":"Loading Now"
+    "loading":"Loading"
   },
   "messages": {
     "select_creator": "Select Creator",
@@ -380,7 +380,7 @@
       "top_daily_diamond_creators":"Top Daily Diamonded Creators",
       "top_community_projects":"Top Community Projects",
       "top_creators_alltime":"Top Creators All Time",
-      "powered_by":"Powered by",      
+      "powered_by":"Powered by",
       "leaderboard": {
         "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
         "verified_account": "This account is verified"
@@ -515,6 +515,7 @@
     "email" : "Email",
     "please_enter_valid_email" : "Please enter a valid email address.",
     "theme": "Theme",
+    "language": "Language",
     "show_price_in_feed" : "Show prices in feed",
     "update_profile" : "Update Profile",
     "enter_username" : "Enter username",
@@ -534,7 +535,7 @@
       "step" : "Step",
       "select_a_profile_picture" : "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue."
     }
-  },  
+  },
   "transfer_deso": {
     "send_deso": "Send $DESO",
     "enter_public_key":"Just enter a public key below and the protocol will handle the rest",

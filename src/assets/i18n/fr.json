@@ -7,7 +7,7 @@
       "soldcounter_of": "de",
       "soldcounter_sold": "Vendu"
     },
-   
+
    "bid_placed_modal": {
       "bid_successful" : "Votre enchère a bien été placée. Nous vous notifierons quand l’enchère sera terminée. ",
       "explore_showcase": "Explorer la vitrine"
@@ -68,7 +68,7 @@
       "add_account":"Ajouter un compte",
       "logout":"Déconnexion"
     },
-  
+
     "comment_modal": {
       "quoting": "Citant ",
       "replying_to": "En réponse à "
@@ -93,7 +93,7 @@
     "creator_diamonds": {
       "given": "Donnés",
       "received": "Reçus",
-      "username": "Nom utilisateur", 
+      "username": "Nom utilisateur",
       "no_diamonds_0": "n’a pas",
       "no_diamonds_1": "encore aucun diamant",
       "anonymous": "Anonyme"
@@ -169,7 +169,7 @@
       "followers": "Followers",
       "following": "Suivis"
   },
-  
+
    "creators_leaderboard": {
       "buy_coin": "Acheter jetons créateurs",
       "buy_coin_subtitle": "Tous les créateurs ont des pièces. Achetez vos favoris et faites partie de leur équipe!",
@@ -186,7 +186,7 @@
       "select_openwith": "2. Sélectionnez <b>Ouvrir avec</b>",
       "select_browser": "3. Sélectionnez navigateur"
     },
-  
+
     "feed_create_post": {
       "video_processing":"Traitement vidéo en cours",
       "uploading":"Téléchargement:",
@@ -244,7 +244,7 @@
       "hide_unlockable":"Cacher contenu masqué",
       "show_unlockable":"Montrer contenu masqué"
     },
-  
+
   "feed_post_dropdown": {
       "new_post_multiplier": "Nouveau post multiplicateur:",
       "update": "Rafraîchir",
@@ -294,10 +294,10 @@
       "follow":"Suivre",
       "unfollow":"Ne plus suivre"
     },
-  
+
     "get_starter_deso": {"get_starter_deso" : "Commencer avec DESO"
     },
-  
+
     "jumio_status": {
       "your_free":"Vous êtes libre",
       "will_arive_in_a_minute":"Arrive dans une minute.",
@@ -308,7 +308,7 @@
       "yes": "Oui",
       "no": "Non"
     },
-  
+
     "landing":{
       "login":"Connexion",
       "signup":"S’enregistrer",
@@ -353,7 +353,7 @@
       "largest_holder":"Plus important détenteur",
       "update":"Mettre à jour",
       "cancel":"Annuler",
-  
+
       "loading":"Chargement",
       "load_more":"Charger plus",
       "send":"Envoyer",
@@ -386,7 +386,7 @@
         "top_daily_diamond_creators":"Créateurs ayant reçu le plus de diamants",
         "top_community_projects":"Meilleurs projets communautaires",
         "top_creators_alltime":"Meilleurs créateurs de tous les temps",
-        "powered_by":"Propulsé par",      
+        "powered_by":"Propulsé par",
         "leaderboard": {
           "reserved_profile": "Ce profil est reservé. Cliquez pour savoir comment le réclamer.",
           "verified_account": "Ce compte est vérifié"
@@ -522,6 +522,7 @@
       "please_enter_valid_email" : "Veuillez entrer une adresse email valide.",
       "theme": "Thème",
       "show_price_in_feed" : "Afficher les prix dans le flux",
+      "language": "Langue",
       "update_profile" : "Mettre à jour le profil",
       "enter_username" : "Entrer le nom d’utilisateur",
       "enter_emailaddress" : "Entrer une adresse email.",
@@ -540,7 +541,7 @@
         "step" : "Étape",
         "select_a_profile_picture" : "Sélectionner une photo de profil, choisir un nom d’utilisateur, et écrire votre description de profil si vous vous sentez l’âme d’un poête.<br /><br />Quand vous avez terminé, <b>Cliquez sur\"Mettre à jour le profil\"</b> pour continuer."
       }
-    },  
+    },
     "transfer_deso": {
       "send_deso": "envoyer $DESO",
       "enter_public_key":"Entrez simplement une clé public ci-dessous et le protocole se charge du reste",
@@ -571,4 +572,3 @@
     "New": "New",
     "NFT Gallery": "NFT Gallery"
   }
-  

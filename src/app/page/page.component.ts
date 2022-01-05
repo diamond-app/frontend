@@ -1,6 +1,8 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { environment } from "src/environments/environment";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { SettingsComponent } from "../settings/settings.component";
 
 @Component({
   selector: "app-page",
@@ -22,10 +24,16 @@ export class PageComponent implements OnInit {
     this.setMobileBasedOnViewport();
   }
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
 
   ngOnInit() {
     this.setMobileBasedOnViewport();
+  }
+
+  openSettings() {
+    this.modalService.show(SettingsComponent, {
+      class: "modal-dialog-centered update-profile-modal",
+    });
   }
 
   // send logged out users to the landing page
