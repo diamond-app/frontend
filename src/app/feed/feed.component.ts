@@ -199,16 +199,31 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       // this._onTabSwitch()
     }
 
+    const feedPromises = [];
     // Request the hot feed (so we have it ready for display if needed)
     if (this.globalVars.hotFeedPosts.length === 0) {
       this.loadingFirstBatchOfHotFeedPosts = true;
-      this._loadHotFeedPosts();
+      feedPromises.push(this._loadHotFeedPosts());
     }
 
     // Request the follow feed (so we have it ready for display if needed)
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
-      this._reloadFollowFeed();
+      feedPromises.push(this._reloadFollowFeed());
+    }
+
+    if (feedPromises.length > 0) {
+      Promise.all(feedPromises).then(() => {
+        if (
+          this.globalVars.hotFeedPosts.length > 0 &&
+          this.globalVars.hotFeedPosts[0].IsPinned &&
+          this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex &&
+          ((this.globalVars.followFeedPosts.length > 0 && !this.globalVars.followFeedPosts[0].IsPinned) ||
+            this.globalVars.followFeedPosts.length === 0)
+        ) {
+          this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+        }
+      });
     }
 
     // The activeTab is set after we load the following based on whether the user is
@@ -470,7 +485,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
-              // Add first pinned post if it exists and isn't dismissed
               if (
                 this.globalVars.hotFeedPosts.length > 0 &&
                 this.globalVars.hotFeedPosts[0].IsPinned &&
@@ -524,12 +538,23 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
+            // Remove pinned post if it's been dismissed by the user
             if (
               this.globalVars.hotFeedPosts.length > 0 &&
               this.globalVars.hotFeedPosts[0].IsPinned &&
               this.backendApi.GetStorage("dismissedPinnedPostHashHex") === this.globalVars.hotFeedPosts[0].PostHashHex
             ) {
               this.globalVars.hotFeedPosts.shift();
+              // If the follow feed was loaded prior to the hot feed and is missing a pinned post, add it here
+            } else if (
+              this.globalVars.hotFeedPosts.length > 0 &&
+              this.globalVars.hotFeedPosts[0].IsPinned &&
+              this.backendApi.GetStorage("dismissedPinnedPostHashHex") !==
+                this.globalVars.hotFeedPosts[0].PostHashHex &&
+              this.globalVars.followFeedPosts.length > 0 &&
+              !this.globalVars.followFeedPosts[0].IsPinned
+            ) {
+              this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
             }
             for(let ii=0; ii < this.globalVars.hotFeedPosts.length; ii++) {
               this.hotFeedPostHashes = this.hotFeedPostHashes.concat(
