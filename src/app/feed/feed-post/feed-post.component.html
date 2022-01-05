@@ -253,7 +253,7 @@
               <!-- Follow button-->
               <div class="feed-post__second-header-ln">
                 <follow-button
-                  *ngIf="!hideFollowLink"
+                  *ngIf="!hideFollowLink && !isFollowing"
                   class="fs-12px"
                   [displayAsLink]="true"
                   [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
@@ -387,7 +387,7 @@
                   class="py-5px px-10px admin__remove-from-feed-button"
                 >
                   <i class="fas fa-check"></i>
-                  {{ 'feed_post.whitelisted' | transloco }}<span *ngIf="postContent.InHotFeed"> & {{ 'feed_post.in_hot_feed' | transloco }}🔥</span>
+                  {{ 'feed_post.whitelisted' | transloco }}<span *ngIf="postContent.InHotFeed"> & {{ 'feed_post.in_hot_feed' | transloco }</span>
                 </div>
                 <div
                   *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
@@ -558,7 +558,7 @@
             (click)="acceptTransfer($event)"
             *ngIf="acceptNFT"
           >
-            <span class="d-flex align-items-center justify-content-center">
+            <span class="d-flex align-items-center justify-content-center fs-12px">
               {{ 'feed_post.accept_transfer' | transloco }}
             </span>
           </button>

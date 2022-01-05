@@ -71,11 +71,13 @@ export class AltumbaseService {
     pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
-      switchMap((res: AltumbaseLeaderboardResponse) => {
-        return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
-      })
-    );
+    return this.httpClient
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize))
+      .pipe(
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
+        })
+      );
   }
 
   getDeSoLockedLeaderboard(): Observable<any> {
@@ -87,11 +89,13 @@ export class AltumbaseService {
     pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    return this.httpClient.get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize)).pipe(
-      switchMap((res: AltumbaseLeaderboardResponse) => {
-        return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
-      })
-    );
+    return this.httpClient
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize))
+      .pipe(
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
+        })
+      );
   }
 
   getProfilesForAltumbaseLeaderboard(
@@ -117,12 +121,10 @@ export class AltumbaseService {
               res.UserList,
               (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
             );
-            if (res.UserList.length > 10) {
-              res.UserList = res.UserList.slice(0, 10);
-            }
           }
+
           return res.UserList.map((user: User, index: number) => {
-            return  {
+            return {
               User: user,
               Profile: user.ProfileEntryResponse,
               DiamondsReceived:
@@ -140,7 +142,6 @@ export class AltumbaseService {
             };
           });
         })
-
       );
   }
 }

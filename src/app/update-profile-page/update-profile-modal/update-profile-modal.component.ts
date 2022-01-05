@@ -27,4 +27,8 @@ export class UpdateProfileModalComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
   }
+
+  profileSaved() {
+    this.bsModalRef.hide();
+  }
 }
