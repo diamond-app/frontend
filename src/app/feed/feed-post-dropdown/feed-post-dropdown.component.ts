@@ -249,6 +249,7 @@ export class FeedPostDropdownComponent implements OnInit{
     event.stopPropagation();
     this.backendApi.SetStorage("dismissedPinnedPostHashHex", this.post.PostHashHex);
     this.globalVars.followFeedPosts.shift();
+    this.globalVars.hotFeedPosts.shift();
   }
 
   copyPostLinkToClipboard(event) {
