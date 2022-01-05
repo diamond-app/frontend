@@ -485,7 +485,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
-              console.log(1, this.globalVars.hotFeedPosts.length > 0);
               if (
                 this.globalVars.hotFeedPosts.length > 0 &&
                 this.globalVars.hotFeedPosts[0].IsPinned &&
