@@ -245,6 +245,12 @@ export class FeedPostDropdownComponent implements OnInit{
     this.dropdown.hide();
   }
 
+  hidePinnedPost(event) {
+    event.stopPropagation();
+    this.backendApi.SetStorage("dismissedPinnedPostHashHex", this.post.PostHashHex);
+    this.globalVars.followFeedPosts.shift();
+  }
+
   copyPostLinkToClipboard(event) {
     this.globalVars.logEvent("post : share");
 

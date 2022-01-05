@@ -470,8 +470,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
-              // Add first pinned post if relevant
-              if (this.globalVars.hotFeedPosts[0].IsPinned) {
+              // Add first pinned post if it exists and isn't dismissed
+              if (
+                this.globalVars.hotFeedPosts.length > 0 &&
+                this.globalVars.hotFeedPosts[0].IsPinned &&
+                !this.backendApi.GetStorage("dismissedPinnedPostHashHex") === this.globalVars.hotFeedPosts[0].IsPinned
+              ) {
                 this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
               }
             }
