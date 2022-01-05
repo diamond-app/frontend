@@ -23,7 +23,7 @@ export class SignUpComponent {
   loading: boolean = false;
   followCreatorsToDisplay = 100;
   creatorsToFollow = [];
-  followCreatorThreshold = 5;
+  followCreatorThreshold = 1;
   creatorsFollowedCount = 0;
   creatorsFollowed: string[] = [];
   followTransactionIndex: number = 0;
@@ -289,29 +289,44 @@ export class SignUpComponent {
 
   finishOnboarding() {
     this.backendApi
-      .UpdateTutorialStatus(
+      .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        TutorialStatus.COMPLETE,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        true
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.globalVars.newProfile.profileEmail /*EmailAddress*/,
+        null /*MessageReadStateUpdatesByContact*/
       )
-      .subscribe(() => {
-        this.currentTransactionStep += 1;
-        this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
-        this.processingTransactions = false;
-        this.globalVars.removeOnboardingSettings();
-        this.globalVars.updateEverything().add(() => {
-          this.router
-            .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-              queryParams: { feedTab: "Following" },
-              queryParamsHandling: "merge",
-            })
-            .then(() => {
-              this.launchTutorial();
+      .subscribe(
+        (res) => {
+          this.backendApi
+            .UpdateTutorialStatus(
+              this.globalVars.localNode,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              TutorialStatus.COMPLETE,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              true
+            )
+            .subscribe(() => {
+              this.currentTransactionStep += 1;
+              this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
+              this.processingTransactions = false;
+              this.globalVars.removeOnboardingSettings();
+              this.globalVars.updateEverything().add(() => {
+                this.router
+                  .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+                    queryParams: { feedTab: "Following" },
+                    queryParamsHandling: "merge",
+                  })
+                  .then(() => {
+                    this.launchTutorial();
+                  });
+              });
             });
-        });
-      });
+        },
+        (err) => {
+          console.log(err);
+          this.globalVars.logEvent("profile : update : error", { err });
+        }
+      );
   }
 
   launchTutorial() {
