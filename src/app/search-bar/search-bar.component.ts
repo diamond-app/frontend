@@ -231,12 +231,12 @@ export class SearchBarComponent implements OnInit {
   _setUpClickOutListener() {
     this.renderer.listen("window", "click", (e: any) => {
       if (e.path == undefined) {
-        if (e.target.offsetParent === this.searchBarRoot.nativeElement) {
+        if (e.target.offsetParent === this.searchBarRoot?.nativeElement) {
           return;
         }
       } else {
         for (var ii = 0; ii < e.path.length; ii++) {
-          if (e.path[ii] === this.searchBarRoot.nativeElement) {
+          if (e.path[ii] === this.searchBarRoot?.nativeElement) {
             return;
           }
         }

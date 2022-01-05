@@ -1,4 +1,5 @@
 {
+    "Hot": "Tendance",
     "add_unlockable_modal": {
       "mft_contains_unlockable_content": "Ce NFT comporte du contenu déverouillable. Entrez le ci-dessous.",
       "unlockable_text_placeholder": "Entrer un URL, du code à utiliser, un lien, etc…",
@@ -57,7 +58,7 @@
       "use_to_post_1": "de votre propre",
       "submit_posts": "Soumettre des messages",
       "buy_with_bc_anon": "Vous pouvez l’acheter anonymement avec des Bitcoins en moins d’une minute",
-      "blockchains_iphone_moment": "C’est le \”moment Iphone\” de la Blockchain"",
+      "blockchains_iphone_moment": "C’est le moment Iphone de la Blockchain",
       "exchange_amount": "Montant à échanger",
       "receive_amount": "Montant que vous recevez",
       "country": "Pays"
@@ -283,7 +284,7 @@
       "usd_coin": "USD par pièce",
       "you_have_referral_0": "Vous avez une illimité ",
       "you_have_referral_1": "lien de parrainage",
-      "find_people_in_hot": "Trouvez plus de personnes à suivre dans le lien <b>Chaud</b>",
+      "find_people_in_hot": "Trouvez plus de personnes à suivre dans le lien Chaud",
       "load_more": "Charger plus",
       "loading": "Chargement...",
       "no_posts": "Pas encore de post",

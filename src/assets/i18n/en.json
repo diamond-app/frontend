@@ -1,4 +1,5 @@
 {
+  "Hot": "Hot",
   "add_unlockable_modal": {
     "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
     "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
@@ -278,7 +279,7 @@
     "usd_coin": "USD per coin",
     "you_have_referral_0": "You have an unlimited ",
     "you_have_referral_1": "referral link",
-    "find_people_in_hot": "Find more people to follow in the <b>Hot</b> feed",
+    "find_people_in_hot": "Find more people to follow in the Hot feed",
     "load_more": "Load More",
     "loading": "Loading...",
     "no_posts": "No posts yet",

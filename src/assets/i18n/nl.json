@@ -1,4 +1,5 @@
 {
+  "Hot": "Hot",
   "add_unlockable_modal": {
     "mft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
@@ -278,7 +279,7 @@
     "usd_coin": "USD per coin",
     "you_have_referral_0": "Je hebt een onbeperkt ",
     "you_have_referral_1": "aanbrenglink",
-    "find_people_in_hot": "Vind meer mensen om te volgen in de <b>Hot</b> feed",
+    "find_people_in_hot": "Vind meer mensen om te volgen in de Hot feed",
     "load_more": "Laad meer",
     "loading": "Bezig met laden...",
     "no_posts": "Nog geen posts",
