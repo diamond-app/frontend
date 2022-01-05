@@ -1,5 +1,11 @@
 {
   "Hot": "Hot",
+  "Posts": "Posts",
+  "Creator Coin": "Creator Coin",
+  "Diamonds": "Diamonds",
+  "NFTs": "NFTs",
+  "Given": "Given",
+  "Received": "Received",
   "add_unlockable_modal": {
     "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
     "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",

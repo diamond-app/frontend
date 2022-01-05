@@ -1,5 +1,11 @@
 {
   "Hot": "Hot",
+  "Posts": "Posts",
+  "Creator Coin": "Creator Coin",
+  "Diamonds": "Diamanten",
+  "NFTs": "NFTs",
+  "Given": "Gegeven",
+  "Received": "Hebben Ontvangen",
   "add_unlockable_modal": {
     "mft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
