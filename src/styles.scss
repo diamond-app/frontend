@@ -963,7 +963,9 @@ app-landing-page {
 }
 
 .landing-page-rotating-blur {
-  animation: 12s ease 0s infinite blurRotate alternate, 4s ease 0s infinite blurBreathe alternate;
+  @media (min-width: 992px) {
+    animation: 12s ease 0s infinite blurRotate alternate, 4s ease 0s infinite blurBreathe alternate;
+  }
   @media (max-width: 992px) {
     top: -140px;
   }
