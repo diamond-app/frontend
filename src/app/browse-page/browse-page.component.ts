@@ -21,12 +21,6 @@ export class BrowsePageComponent implements OnInit {
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
-  openSettings() {
-    this.modalService.show(SettingsComponent, {
-      class: "modal-dialog-centered update-profile-modal",
-    });
-  }
-
   setMobileBasedOnViewport() {
     this.mobile = this.globalVars.isMobile();
   }

@@ -30,12 +30,6 @@ export class PageComponent implements OnInit {
     this.setMobileBasedOnViewport();
   }
 
-  openSettings() {
-    this.modalService.show(SettingsComponent, {
-      class: "modal-dialog-centered update-profile-modal",
-    });
-  }
-
   // send logged out users to the landing page
   // send logged in users to browse
   homeLink(): string | string[] {

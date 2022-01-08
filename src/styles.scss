@@ -3013,15 +3013,20 @@ feed-post-dropdown {
   background: var(--highlight);
 }
 
-
 .left-bar-button {
   height: 56px;
   margin-left: 12px;
   font-weight: 600;
   font-size: 17px;
   color: var(--text-secondary);
+  &:hover {
+    color: var(--highlight);
+  }
   a {
     color: var(--text-secondary);
+    &:hover {
+      color: var(--highlight);
+    }
   }
   i-feather {
     margin-right: 20px;
@@ -3029,6 +3034,15 @@ feed-post-dropdown {
     height: 20px;
     position: relative;
     top: -1px;
+  }
+}
+
+.left-bar-link {
+  &:hover {
+    color: var(--highlight) !important;
+    a {
+      color: var(--highlight) !important;
+    }
   }
 }
 

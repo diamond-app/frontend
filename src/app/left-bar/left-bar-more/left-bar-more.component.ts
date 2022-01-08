@@ -19,20 +19,21 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { environment } from "src/environments/environment";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { SettingsComponent } from "../../settings/settings.component";
 
 @Component({
   selector: "left-bar-more",
   templateUrl: "./left-bar-more.component.html",
   styleUrls: ["./left-bar-more.component.sass"],
 })
-export class LeftBarMoreComponent {
+export class LeftBarMoreComponent implements AfterViewInit {
   environment = environment;
 
   TutorialStatus = TutorialStatus;
 
   @Input() inTutorial: boolean = false;
   @Output() closeMore = new EventEmitter();
-  @ViewChild("leftBarMore", { static: true }) leftBarMore: ElementRef;
+  @ViewChild("more") more;
   currentRoute: string;
 
   AppRoutingModule = AppRoutingModule;
@@ -44,37 +45,21 @@ export class LeftBarMoreComponent {
     private backendApi: BackendApiService,
     private renderer: Renderer2,
     private router: Router
-  ) {
-    // document.addEventListener("click", this.offClickHandler.bind(this)); // bind on doc
-  }
+  ) {}
 
   ngAfterViewInit() {
-    // this._setUpClickOutListener();
-  }
-
-  @HostListener("document:click", ["$event"]) onDocumentClick(event) {
-    console.log("Here");
-    console.log(event.path);
-    // this.offClickHandler(event);
-  }
-
-  offClickHandler(event: any) {
-    if (!this.leftBarMore.nativeElement.contains(event.target)) {
-      console.log("Outside");
-    }
+    this._setUpClickOutListener();
   }
 
   _setUpClickOutListener() {
-    console.log("Here we are");
     this.renderer.listen("window", "click", (e: any) => {
-      console.log("Clicked");
       if (e.path == undefined) {
-        if (e.target.offsetParent === this.leftBarMore?.nativeElement) {
+        if (e.target.offsetParent === this.more?.nativeElement) {
           return;
         }
       } else {
         for (var ii = 0; ii < e.path.length; ii++) {
-          if (e.path[ii] === this.leftBarMore?.nativeElement) {
+          if (e.path[ii] === this.more?.nativeElement) {
             return;
           }
         }
@@ -85,7 +70,13 @@ export class LeftBarMoreComponent {
   }
 
   _exitMore() {
-    console.log("Time to exit");
+    this.closeMore.emit();
+  }
+
+  openSettings() {
+    this.modalService.show(SettingsComponent, {
+      class: "modal-dialog-centered update-profile-modal",
+    });
   }
 
   getHelpMailToAttr(): string {

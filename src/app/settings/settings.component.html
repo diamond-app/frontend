@@ -17,16 +17,6 @@
       [value]="theme.key"
       [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
   </select>
-  <div class="d-flex align-items-center">
-    <div class="update-profile__title mr-16px">{{ 'update_profile.show_price_in_feed' | transloco }}</div>
-    <button
-      class="checkbox-circle mt-12px"
-      [ngClass]="{ checked: globalVars.showPriceOnFeed }"
-      (click)="updateShowPriceInFeed()"
-    >
-      <i-feather name="check"></i-feather>
-    </button>
-  </div>
   <div class="update-profile__title">{{ 'update_profile.language' | transloco }}</div>
   <select
     name="language"
@@ -39,4 +29,14 @@
     <option value="nl" [selected]="'nl' === selectedLanguage">Nederlandse</option>
     <option value="fr" [selected]="'fr' === selectedLanguage">Franse</option>
   </select>
+  <div class="d-flex align-items-center">
+    <div class="update-profile__title mr-16px">{{ 'update_profile.show_price_in_feed' | transloco }}</div>
+    <button
+      class="checkbox-circle mt-12px"
+      [ngClass]="{ checked: globalVars.showPriceOnFeed }"
+      (click)="updateShowPriceInFeed()"
+    >
+      <i-feather name="check"></i-feather>
+    </button>
+  </div>
 </div>

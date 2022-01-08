@@ -1,8 +1,18 @@
-<div class="position-relative" *transloco="let t" #leftBarMore id="leftBarMore">
-  <div class="w-100 position-absolute left-bar-more-container">
+<div class="position-relative" *transloco="let t">
+  <div class="w-100 position-absolute left-bar-more-container" #more id="more">
     <div class="d-flex justify-content-end align-items-center pt-16px pr-16px">
-      <i-feather (click)="closeComponent()" name="x" class="feather-small fs-0px cursor-pointer"></i-feather>
+      <i-feather (click)="_exitMore()" name="x" class="feather-small fs-0px cursor-pointer"></i-feather>
     </div>
+    <a
+      class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
+      style="height: 56px"
+      (click)="openSettings()"
+    >
+      <i-feather name="settings" class="feather-medium fs-0px"></i-feather>
+      <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">
+        {{ "left_bar.settings" | transloco }}
+      </a>
+    </a>
     <div
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
       style="height: 56px"
@@ -19,7 +29,8 @@
       [iconName]="'share-2'"
     ></left-bar-button>
     <a
-      class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+      *ngIf="environment.supportEmail"
+      class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
       style="height: 56px"
       (click)="logHelp()"
       [href]="getHelpMailToAttr()"
