@@ -340,7 +340,9 @@
       "post":"Post",
       "admin":"Admin",
       "buy":"Achat",
-      "logout":"Deconnexion"
+      "logout":"Deconnexion",
+      "settings":"Paramètres",
+      "more":"Suite"
     },
     "loader":{
       "loading":"En cours de chargement"

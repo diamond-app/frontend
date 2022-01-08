@@ -334,7 +334,9 @@
     "post": "Maak een post",
     "admin": "Beheer",
     "buy": "Koop",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "settings": "Instellingen",
+    "more": "Meer"
   },
   "loader": {
     "loading": "Laden"

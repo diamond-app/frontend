@@ -98,6 +98,19 @@
             [buttonLabel]="t('left_bar.admin')"
             [iconName]="'codesandbox'"
           ></left-bar-button>
+          <a
+            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+            style="height: 56px"
+            (click)="logHelp()"
+            [href]="getHelpMailToAttr()"
+            target="_blank"
+          >
+            <i-feather name="more-horizontal" class="feather-medium fs-0px"></i-feather>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">{{ 'left_bar.more' | transloco }}</a>
+          </a>
+          <div class="position-relative">
+            <left-bar-more></left-bar-more>
+          </div>
           <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">{{ 'left_bar.post' | transloco }}</button>
         </div>
       </div>

@@ -200,6 +200,7 @@ import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-n
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -220,6 +221,7 @@ export function playerFactory() {
     BrowsePageComponent,
     FeedComponent,
     LeftBarComponent,
+    LeftBarMoreComponent,
     RightBarCreatorsComponent,
     FeedCreatePostComponent,
     FeedPostComponent,

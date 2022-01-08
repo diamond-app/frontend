@@ -334,7 +334,9 @@
     "post":"Post",
     "admin":"Admin",
     "buy":"Buy",
-    "logout":"Logout"
+    "logout":"Logout",
+    "settings":"Settings",
+    "more":"More"
   },
   "loader":{
     "loading":"Loading"

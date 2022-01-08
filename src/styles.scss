@@ -1852,6 +1852,12 @@ tab-selector {
   }
 }
 
+.left-bar-more-container {
+  background: var(--tile-secondary-bg);
+  bottom: 0px;
+  border-radius: 10px;
+}
+
 .left-bar-mobile__translucent-background {
   z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
   position: fixed;
