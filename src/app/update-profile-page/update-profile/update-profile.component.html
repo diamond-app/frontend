@@ -171,28 +171,6 @@
               />
               <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">{{ 'update_profile.please_enter_valid_email' | transloco }}</div>
             </div>
-            <div class="update-profile__title">{{environment.node.name}} {{ 'update_profile.theme' | transloco }}</div>
-            <select
-              name="theme"
-              id="theme"
-              (change)="selectChangeHandler($event)"
-              style="padding: 6px 12px"
-              class="form-control selector">
-              <option
-                *ngFor="let theme of themeService.themes"
-                [value]="theme.key"
-                [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
-            </select>
-            <div class="d-flex align-items-center">
-              <div class="update-profile__title mr-16px">{{ 'update_profile.show_price_in_feed' | transloco }}</div>
-              <button
-                class="checkbox-circle mt-12px"
-                [ngClass]="{ checked: globalVars.showPriceOnFeed }"
-                (click)="updateShowPriceInFeed()"
-              >
-                <i-feather name="check"></i-feather>
-              </button>
-            </div>
           </div>
 
           <div class="w-100 my-30px">
