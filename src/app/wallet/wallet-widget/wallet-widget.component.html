@@ -4,20 +4,20 @@
 >
   <div>
     <div class="font-weight-bold fc-default">
-      Wallet of @{{ globalVars?.loggedInUser?.ProfileEntryResponse?.Username }}
+      {{ 'wallet_widget.wallet_of' | transloco }} @{{ globalVars?.loggedInUser?.ProfileEntryResponse?.Username }}
     </div>
     <div class="d-flex justify-content-between align-items-center mt-16px">
-      <span>Coins In Circulation</span>
+      <span>{{ 'wallet_widget.coins_in_circulation' | transloco }}</span>
       <span>
         ≈ {{ (globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}
       </span>
     </div>
     <div class="d-flex justify-content-between align-items-center mt-16px">
-      <span>Total USD Locked</span>
+      <span>{{ 'wallet_widget.total_usd_locked' | transloco }}</span>
       <span>≈ {{ totalUSDLocked() }}</span>
     </div>
     <div class="d-flex justify-content-between align-items-center mt-16px">
-      <span>USD Market Cap</span>
+      <span>{{ 'wallet_widget.usd_market_cap' | transloco }}</span>
       <span>≈ {{ usdMarketCap() }}</span>
     </div>
   </div>

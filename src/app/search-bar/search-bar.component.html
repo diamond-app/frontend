@@ -3,6 +3,7 @@
   [ngClass]="{ 'px-15px border-bottom border-color-grey': isSearchForUsersToMessage }"
   #searchBarRoot
   id="searchBarRoot"
+  *transloco="let t"
 >
   <!-- Input -->
   <div class="d-flex align-items-center w-100 fs-15px search-bar">
@@ -31,7 +32,7 @@
         [ngStyle]="{
           'border-bottom-right-radius': resultsUnderBar && searchText != '' && (loading || creators.length > 0) ? '0px' : '16px'
         }"
-        placeholder="Search..."
+        placeholder="{{ t('search_bar.search') }}"
         id="searchbar"
         autocomplete="off"
         #searchbar
@@ -44,7 +45,7 @@
     class="w-100 search-bar__results-dropdown disable-scrollbars"
     *ngIf="searchText != '' && (creators.length > 0 || loading || showCloutavista)"
   >
-    <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Loading...</div>
+    <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">{{ t('search_bar.loading') }}</div>
     <div *ngIf="!loading && creators.length > 0" class="fs-15px">
       <div
         *ngFor="let creator of creators; let ii = index"
@@ -60,7 +61,7 @@
             *ngIf="creator.IsReserved && !creator.IsVerified"
             class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+            [matTooltip]="t('search_bar.reserved_profile')"
           >
             <i class="far fa-clock fa-md align-middle"></i>
           </span>
@@ -94,7 +95,7 @@
         <div class="search-bar__selected-color"></div>
         <p target="_blank" href="https://www.cloutavista.com/deso/posts?text={{ searchText }}">
           <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-          Search on Cloutavista
+          {{ t('search_bar.search_on_cloutavista') }}
         </p>
       </a>
     </div>

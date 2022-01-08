@@ -1,13 +1,13 @@
 <div class="buy-deso__container">
   <div class="p-16px">
     <div class="mint-nft__title">
-      Send $DESO
+      {{ 'transfer_deso.send_deso' | transloco }}
     </div>
     <div class="mint-nft__sub-text">
-      Just enter a public key below and the protocol will handle the rest
+      {{ 'transfer_deso.enter_public_key' | transloco }}
     </div>
     <div class="mint-nft__sub-title">
-      Public key or username to pay
+      {{ 'transfer_deso.public_key' | transloco }}
     </div>
     <!-- Search Bar -->
     <search-bar
@@ -27,7 +27,7 @@
   </div>
   <div class="w-100 border-bottom" *ngIf="payToCreator"></div>
   <div class="p-16px">
-    <div class="mint-nft__sub-title" [ngStyle]="{ 'margin-top': payToCreator ? '16px' : '30px' }">Amount to Send</div>
+    <div class="mint-nft__sub-title" [ngStyle]="{ 'margin-top': payToCreator ? '16px' : '30px' }">{{ 'transfer_deso.amount_to_send' | transloco }}</div>
     <div class="d-flex">
       <div class="d-flex" container="body" style="align-items: center">
         <div class="mint-nft__dropdown-btn">
@@ -45,13 +45,13 @@
           placeholder="0"
         />
         <span class="mint-nft__floating-span">
-          <a class="fc-blue" (click)="_clickMaxDeSo()">Max</a>
+          <a class="fc-blue" (click)="_clickMaxDeSo()">{{ 'transfer_deso.max' | transloco }}</a>
         </span>
       </div>
     </div>
     <div class="mt-16px fc-muted">
       <i-feather name="info" class="feather-small position-relative mr-10px" style="top: -2px"></i-feather>
-      <span class="mint-nft__sub-text">DESO network fee</span>
+      <span class="mint-nft__sub-text">{{ 'transfer_deso.deso_network_fee' | transloco }}</span>
       <span class="mt-1 w-100 fs-15px ml-10px">
         <span>
           {{ globalVars.nanosToDeSo(networkFee * 1e9) }}
@@ -61,7 +61,7 @@
     </div>
     <div class="mt-16px fc-muted">
       <i-feather name="info" class="feather-small position-relative mr-10px" style="top: -2px"></i-feather>
-      <span class="mint-nft__sub-text">Total</span>
+      <span class="mint-nft__sub-text">{{ 'transfer_deso.total' | transloco }}</span>
       <span class="mt-1 w-100 fs-15px ml-10px">
         <span>
           {{ globalVars.nanosToDeSo((transferAmount + networkFee) * 1e9) }}
@@ -82,13 +82,13 @@
       [disabled]="sendingDeSo"
       [ngClass]="{ 'disabled-button': sendingDeSo }"
     >
-      {{ !sendingDeSo ? "Send $DESO" : "Working..." }}
+      {{ (!sendingDeSo ? 'transfer_deso.send_deso' : 'transfer_deso.working') | transloco }}
     </button>
-    <a *ngIf="isModal" class="fc-muted ml-25px" (click)="closeModal.emit()">Cancel</a>
+    <a *ngIf="isModal" class="fc-muted ml-25px" (click)="closeModal.emit()">{{ 'transfer_deso.cancel' | transloco }}</a>
   </div>
   <div class="w-100 border-bottom"></div>
   <div class="p-15px d-flex flex-column align-items-center">
-    <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
+    <p>{{ 'transfer_deso.scan_qr_code' | transloco }} {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
     <img [src]="sendDeSoQRCode | sanitizeQRCode"/>
   </div>
 </div>

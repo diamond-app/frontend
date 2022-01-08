@@ -15,12 +15,15 @@ import { document } from "ngx-bootstrap/utils";
 import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
+//import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
 })
 export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
+  //constructor(private translocoService: TranslocoService) {}
+
   static PAGE_SIZE = 20;
   static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
@@ -45,8 +48,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
 
-  static coinsPurchasedTab: string = "Coins Purchased";
-  static coinsReceivedTab: string = "Coins Received";
+  static coinsPurchasedTab: string = "wallet.coins_purchased";
+  static coinsReceivedTab: string = "wallet.coins_received";
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
   tutorialUsername: string;

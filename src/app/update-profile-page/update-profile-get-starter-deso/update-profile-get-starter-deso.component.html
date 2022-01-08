@@ -1,11 +1,11 @@
-<div class="fs-18px font-weight-bold">Create a Profile</div>
+<div class="fs-18px font-weight-bold">{{ 'update_profile.create_a_profile' | transloco }}</div>
 
 <div class="fs-15px mt-15px">
-  {{ getCreateProfileMessage() }}
+  {{ getCreateProfileMessage() | transloco }}
   <br />
   <br />
   <span *ngIf="globalVars.createProfileFeeNanos > 0">
-    Creating a profile currently costs
+    {{ 'update_profile.create_a_profile_cost' | transloco }}
     <b>{{ globalVars.createProfileFeeInDeSo() }} DESO (≈ {{ globalVars.createProfileFeeInUsd() }} USD)</b>
   </span>
 </div>
@@ -14,13 +14,13 @@
   class="mt-15px btn btn-primary br-12px"
   (click)="launchPhoneNumberVerification()"
 >
-  Get Starter DESO
+  {{ 'update_profile.get_starter_deso' | transloco }}
 </a>
 
-<div class="fs-15px mt-15px">Or</div>
+<div class="fs-15px mt-15px">{{ 'update_profile.or' | transloco }}</div>
 
 <div class="fs-15px mt-15px">
   <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_DESO" queryParamsHandling="merge">
-    Purchase {{ globalVars.createProfileFeeInUsd() }} USD of DESO
+    {{ 'update_profile.purchase' | transloco }} {{ globalVars.createProfileFeeInUsd() }} {{ 'update_profile.usd_of_deso' | transloco }}
   </a>
 </div>

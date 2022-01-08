@@ -29,6 +29,8 @@
     "@ethereumjs/common": "^2.5.0",
     "@ethereumjs/tx": "^3.3.2",
     "@ethereumjs/vm": "^5.5.3",
+    "@ngneat/transloco": "^2.23.5",
+    "@ngneat/transloco-persist-lang": "^1.0.4",
     "amplitude-js": "^7.4.3",
     "angular-feather": "^6.1.0",
     "aos": "^3.0.0-beta.6",

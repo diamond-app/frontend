@@ -2,7 +2,7 @@
   <div class="buy-deso__container">
     <div class="px-16px pb-16px">
       <div class="d-flex w-100 justify-content-between">
-        <div class="mint-nft__title">Trends</div>
+        <div class="mint-nft__title">{{ 'trends.trends' | transloco }}</div>
         <div class="d-flex flex-column align-items-end">
           <div
             class="d-flex"
@@ -30,7 +30,7 @@
           <div *ngIf="activeRightTabOption.poweredBy" class="py-10px text-grey5">
             <a class="link--unstyled fs-14px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
               <i class="fas fa-external-link-alt"></i>
-              Powered by {{ activeRightTabOption.poweredBy.name }}
+              {{ 'trends.powered_by' | transloco }} {{ activeRightTabOption.poweredBy.name }}
             </a>
           </div>
         </div>
@@ -38,7 +38,6 @@
     </div>
     <div>
       <simple-center-loader *ngIf="isLoadingProfilesForFirstTime"></simple-center-loader>
-
       <div class="viewport disable-scrollbars" [ngClass]="{ 'trends-scroll-container': !isModal }">
         <!-- Creator rows -->
         <div #uiScroll *uiScroll="let profileEntryResponse of datasource" class="row no-gutters px-15px border-bottom fs-15px">

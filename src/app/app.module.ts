@@ -186,6 +186,7 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
+import { TranslocoRootModule } from "./transloco-root.module";
 import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
@@ -199,6 +200,7 @@ import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-n
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -219,6 +221,7 @@ export function playerFactory() {
     BrowsePageComponent,
     FeedComponent,
     LeftBarComponent,
+    LeftBarMoreComponent,
     RightBarCreatorsComponent,
     FeedCreatePostComponent,
     FeedPostComponent,
@@ -410,6 +413,7 @@ export function playerFactory() {
     LottieModule,
     LottieModule.forRoot({ player: playerFactory }),
     ScrollingModule,
+    TranslocoRootModule,
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

@@ -1,37 +1,40 @@
-import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
-import { IdentityService } from "../identity.service";
-import { BackendApiService, TutorialStatus } from "../backend-api.service";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  Input,
+  Output,
+  Renderer2,
+  ViewChild,
+} from "@angular/core";
+import { GlobalVarsService } from "../../global-vars.service";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { IdentityService } from "../../identity.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { Router } from "@angular/router";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
-import { filter, get } from "lodash";
 import { environment } from "src/environments/environment";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { SettingsComponent } from "../../settings/settings.component";
 
 @Component({
-  selector: "left-bar",
-  templateUrl: "./left-bar.component.html",
-  styleUrls: ["./left-bar.component.sass"],
+  selector: "left-bar-more",
+  templateUrl: "./left-bar-more.component.html",
+  styleUrls: ["./left-bar-more.component.sass"],
 })
-export class LeftBarComponent {
-  MessagesInboxComponent = MessagesInboxComponent;
+export class LeftBarMoreComponent implements AfterViewInit {
   environment = environment;
 
   TutorialStatus = TutorialStatus;
 
-  @HostBinding("class") get classes() {
-    return !this.isMobile ? "global__nav__flex" : "";
-  }
-
-  @Input() isMobile = false;
   @Input() inTutorial: boolean = false;
-  @Output() closeMobile = new EventEmitter<boolean>();
+  @Output() closeMore = new EventEmitter();
+  @ViewChild("more") more;
   currentRoute: string;
-  showMore: boolean = false;
 
   AppRoutingModule = AppRoutingModule;
 
@@ -40,35 +43,40 @@ export class LeftBarComponent {
     private modalService: BsModalService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
+    private renderer: Renderer2,
     private router: Router
   ) {}
 
-  // send logged out users to the landing page
-  // send logged in users to browse
-  homeLink(): string | string[] {
-    if (this.inTutorial) {
-      return [];
-    }
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
+  ngAfterViewInit() {
+    this._setUpClickOutListener();
   }
 
-  openCreatePostModal() {
-    this.modalService.show(FeedCreatePostModalComponent, {
-      class: "modal-dialog-centered",
-      ignoreBackdropClick: true,
+  _setUpClickOutListener() {
+    this.renderer.listen("window", "click", (e: any) => {
+      if (e.path == undefined) {
+        if (e.target.offsetParent === this.more?.nativeElement) {
+          return;
+        }
+      } else {
+        for (var ii = 0; ii < e.path.length; ii++) {
+          if (e.path[ii] === this.more?.nativeElement) {
+            return;
+          }
+        }
+      }
+      // If we get here, the user did not click the selector.
+      this._exitMore();
     });
   }
 
-  displayMore(event: any) {
-    event.stopPropagation();
-    this.showMore = true;
+  _exitMore() {
+    this.closeMore.emit();
   }
 
-  hideMore() {
-    this.showMore = false
+  openSettings() {
+    this.modalService.show(SettingsComponent, {
+      class: "modal-dialog-centered update-profile-modal",
+    });
   }
 
   getHelpMailToAttr(): string {
@@ -84,27 +92,6 @@ export class LeftBarComponent {
 
   logHelp(): void {
     this.globalVars.logEvent("help : click");
-  }
-
-  launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
-      this.globalVars.userList = filter(this.globalVars.userList, (user) => {
-        return res?.users && user?.PublicKeyBase58Check in res?.users;
-      });
-      if (!res?.users) {
-        this.globalVars.userList = [];
-      }
-      let loggedInUser = get(Object.keys(res?.users),"[0]");
-      if (this.globalVars.userList.length === 0) {
-        loggedInUser = null;
-        this.globalVars.setLoggedInUser(null);
-      }
-      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
-      this.globalVars.updateEverything().add(() => {
-        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
-      });
-    });
   }
 
   openBuyDeSoModal() {
@@ -157,7 +144,7 @@ export class LeftBarComponent {
       confirmButtonText: "Start Tutorial",
       cancelButtonText: "Cancel",
     }).then((res) => {
-      this.closeMobile.emit();
+      this.closeMore.emit();
       this.backendApi
         .StartOrSkipTutorial(
           this.globalVars.localNode,

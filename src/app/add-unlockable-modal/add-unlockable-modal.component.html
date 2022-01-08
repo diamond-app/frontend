@@ -2,7 +2,7 @@
   <nft-modal-header [header]="'Add unlockable content'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
   <div class="fs-15px pt-15px pb-30px text-grey5">
-    This NFT includes unlockable content. Enter it below.
+    {{ 'add_unlockable_modal.mft_contains_unlockable_content' | transloco }}
   </div>
 
   <textarea
@@ -12,20 +12,18 @@
     cdkAutosizeMinRows="5"
     [(ngModel)]="unlockableText"
     #autosize="cdkTextareaAutosize"
-    placeholder="Enter URL, code to redeem, link, etc... "
+    placeholder="{{ 'add_unlockable_modal.unlockable_text_placeholder' | transloco }}"
   ></textarea>
 
   <div class="d-flex align-items-center mb-15px">
-    <button
-      class="btn btn-primary font-weight-bold fs-15px br-8px"
-      style="height: 36px; width: 100px; line-height: 15px"
-      [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
-      (click)="sellNFT()"
-      [disabled]="addDisabled"
-    >
-      {{ sellingNFT ? "Selling NFTs" : "Add" }}
+    <button class="btn btn-primary font-weight-bold fs-15px br-8px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
+            (click)="sellNFT()"
+            [disabled]="addDisabled">
+      {{ sellingNFT ? 'add_unlockable_modal.btn_selling_NFT' : 'add_unlockable_modal.btn_add' | transloco }}
     </button>
-    <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
+    <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} {{ 'add_unlockable_modal.soldcounter_of' | transloco }} {{ sellNFTTotal }} {{ 'add_unlockable_modal.soldcounter_sold' | transloco }}</div>
 
   </div>
 </div>

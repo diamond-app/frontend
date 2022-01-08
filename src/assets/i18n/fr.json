@@ -1,0 +1,583 @@
+{
+    "Hot": "Tendance",
+    "Posts": "Posts",
+    "Creator Coin": "Creator Coin",
+    "Diamonds": "Diamants",
+    "NFTs": "NFTs",
+    "Given": "Donné",
+    "Received": "A Reçu",
+    "add_unlockable_modal": {
+      "mft_contains_unlockable_content": "Ce NFT comporte du contenu déverouillable. Entrez le ci-dessous.",
+      "unlockable_text_placeholder": "Entrer un URL, du code à utiliser, un lien, etc…",
+      "btn_selling_NFT": "Vente de NFTs",
+      "btn_add": "Ajouter",
+      "soldcounter_of": "de",
+      "soldcounter_sold": "Vendu"
+    },
+
+   "bid_placed_modal": {
+      "bid_successful" : "Votre enchère a bien été placée. Nous vous notifierons quand l’enchère sera terminée. ",
+      "explore_showcase": "Explorer la vitrine"
+    },
+    "bottom_bar_mobile": {
+      "home" : "Accueil",
+      "notifications":"Notifications",
+      "messages":"Messages",
+      "wallet":"Portefeuille"
+    },
+    "buy_deso":{
+      "buy_deso" : "Acheter des $DESO",
+      "step" : "Étape",
+      "send_bitcoin": "Envoyer des Bitcoin à cette adresse",
+      "send_eth":"Envoyer ETH à cette adresse ",
+      "amount_desposited":"Montant déposé",
+      "loading":"Chargement",
+      "minimum_deposit":"Le dépôt minimum est actuellement ",
+      "goto_next_step":"Aller à la prochaine étape",
+      "cancel":"Annuler",
+      "bitcoin_balance":"Solde de Bitcoin",
+      "eth_balance":"Solde d’Ethereum",
+      "deso_to_buy":"$DESO à acheter",
+      "max":"Max",
+      "bitcoin_to_swap":"Bitcoin à échanger",
+      "eth_to_swap":"Ethereum à échanger",
+      "bitcoin_network_fee":"Frais de reseau Bitcoin ",
+      "eth_network_fee":"Frais de reseau Ethereum",
+      "total_bitcoin_to_swap":"Bitcoin totaux à échanger",
+      "total_eth_to_swap":"ETH totaux à échanger ",
+      "back":"retour",
+      "refresh":"Rafraîchir",
+      "copy":"Copier",
+      "buy_complete":"Achat réalisé",
+      "new_balance":"Nouveau solde",
+      "buy_more_deso":"Acheter plus de DESO",
+      "deso_explanation": "$DESO es tune cyptomonnaie comme Bitcoin, elle alimente le premier réseau social décentralisé.",
+      "how_to_get": "Comment j’obtiens des $DESO?",
+      "create_anon_account": "Créer un compte anonyme",
+      "to_buy_deso_fast": "pour acheter $DESO en moins d’une minute.",
+      "what_is_deso_for": "A quoi sert $DESO?",
+      "use_to_buysell_creatorcoins_0": "Vous pouvez l’utiliser pour acheter et vendre",
+      "use_to_buysell_creatorcoins_1": " ",
+      "creatorcoins": "Pièces de créateurs",
+      "use_to_send_messages": "Vous pouvez l’utiliser pour envoyer des messages aux personnes",
+      "use_to_post_0": "Vous pouvez l’utiliser pour",
+      "use_to_post_1": "de votre propre",
+      "submit_posts": "Soumettre des messages",
+      "buy_with_bc_anon": "Vous pouvez l’acheter anonymement avec des Bitcoins en moins d’une minute",
+      "blockchains_iphone_moment": "C’est le moment Iphone de la Blockchain",
+      "exchange_amount": "Montant à échanger",
+      "receive_amount": "Montant que vous recevez",
+      "country": "Pays"
+    },
+    "change_account": {
+      "login":"Connexion",
+      "signup":"S’inscrire",
+      "add_account":"Ajouter un compte",
+      "logout":"Déconnexion"
+    },
+
+    "comment_modal": {
+      "quoting": "Citant ",
+      "replying_to": "En réponse à "
+    },
+    "create_nft_auction_modal": {
+      "create_an_auction": "Créer une enchère",
+      "min_price": "Prix minimum",
+      "optional": "(Optionnel)",
+      "select_all": "Sélectionner tout",
+      "last_price": "Dernier prix",
+      "create_auction": "Créer enchère",
+      "creating_auction": "Création enchère",
+      "counter_of": "sur",
+      "counter_auctions": "enchères créées"
+    },
+    "create_post": {
+      "create_post": "Créer post",
+      "create_a_post": "Créer un Post",
+      "step": "Étape",
+      "skip": "Passer"
+    },
+    "creator_diamonds": {
+      "given": "Donnés",
+      "received": "Reçus",
+      "username": "Nom utilisateur",
+      "no_diamonds_0": "n’a pas",
+      "no_diamonds_1": "encore aucun diamant",
+      "anonymous": "Anonyme"
+    },
+    "creator_profile_details": {
+      "profile_reserved": "Ce  profil est réservé",
+      "not_joined_yet": "n’a pas encore rejoint DeSo.",
+      "are_you_on_twitter_0": "Êtes-vous",
+      "are_you_on_twitter_1": "sur Twitter? Pour réclamer ce profil:",
+      "create_new_key": "Créer un toute nouvelle clé publique DeSo.",
+      "tweet_key": "Tweeter votre clé publique DeSo et tagguer #deso.",
+      "public_key_note": "Note: La clé publique que vous tweetez sera échangée avec la clé publique actuellement associée à ce profil. Cela permettra également d’échanger tous les avoirs de pièces de créateur. S’il vous plaît assurez-vous que la clé publique que vous tweetez n’a pas de pièces de créateur, si vous ne voulez pas qu’ils soient perdus.",
+      "username_transferred": "Votre nom d’utilisateur sera transféré dans les 48 heures.",
+      "you_blocked_0": "Vous avez bloqué",
+      "you_blocked_1": ".",
+      "unblock_0": "Débloqué",
+      "unblock_1": "pour voir leurs posts.",
+      "coins_in_circulation": "Pièces en circulation",
+      "total_usd_locked": "USD totaux bloqués",
+      "usd_market_cap": "Capitalisation en USD"
+    },
+    "creator_profile_holders": {
+      "noone_owns_0": "Personne ne possède de pièces",
+      "noone_owns_1": "pour le moment.",
+      "holders_of_0": "Détenteurs de",
+      "holders_of_1": "pièce",
+      "username": "Nom d’utilisateur",
+      "coins_held": "pièces détenues",
+      "market_value": "valeur de marché",
+      "received": "Reçue",
+      "reserved": "Réservé",
+      "purchased" : "Acheté"
+    },
+    "creator_profile_nfts": {
+      "gallery": "Gallerie",
+      "my_bids": "Mes enchères",
+      "for_sale": "A vendre",
+      "transferable": "transférable",
+      "pending": "Transferts en attente",
+      "order_by": "Commande par",
+      "no_nfts_for_sale": "Aucun NFTs en vente pour le moment.",
+      "on_platform_no_nfts": "est sur la plateforme, mais n’a pas de NFT à vendre.",
+      "no_nfts_purchased": "Aucun NFT n’a encore été acheté.",
+      "no_nfts_acquired": "n’a pas encore acquis de NFT.",
+      "no_nfts_transferable": "Aucun NFT transférable pour le moment.",
+      "no_nfts_transferable_yet": "n’a pas encore de NFT transférables.",
+      "no_nfts_pending": "Aucun NFT en attente pour le moment.",
+      "no_nfts_pending_yet": "n’a pas encore de NFT en attente.",
+      "no_bids": "Aucune offre pour l’instant.",
+      "no_bids_yet": "est sur la plateforme, mais n’a pas encore enchéri sur les NFT.",
+      "highest": "Plus haute!",
+      "serial": "Série",
+      "bid": "Offre",
+      "cancel": "Annuler"
+    },
+    "creator_profile_posts": {
+      "create_fipo": "Créer votre premier post.",
+      "on_platform_no_posts": "est sur la plateforme mais n’a pas encore posté."
+    },
+    "creator_profile_top_card": {
+      "coin_price": "Prix pièce",
+      "message_user": "Écrire à l’utilisateur",
+      "block": "Bloquer",
+      "unblock": "Débloquer",
+      "user": "Utilisateur",
+      "report_user": "Signaler utilisateur",
+      "remove": "Retirer",
+      "add": "Ajouter",
+      "wellknown_creator": "Utilisateur comme créateur connu",
+      "upcoming_creator": "L’utilisateur comme créateur prometteur",
+      "edit": "Éditer",
+      "buy": "Acheter",
+      "followers": "Followers",
+      "following": "Suivis"
+  },
+
+   "creators_leaderboard": {
+      "buy_coin": "Acheter jetons créateurs",
+      "buy_coin_subtitle": "Tous les créateurs ont des pièces. Achetez vos favoris et faites partie de leur équipe!",
+      "name": "Nom",
+      "price": "prix"
+    },
+    "diamonds_pages": {
+      "diamonds_from": "Diamants de",
+      "diamonds_given_by": "Diamants donnés par"
+    },
+    "direct_to_browser_modal": {
+      "tap_ellipsis": "1. Cliquez sur \"...\"",
+      "select_safari": "2. Sélectionnez <b>Ouvrir dans Safari</b>",
+      "select_openwith": "2. Sélectionnez <b>Ouvrir avec</b>",
+      "select_browser": "3. Sélectionnez navigateur"
+    },
+
+    "feed_create_post": {
+      "video_processing":"Traitement vidéo en cours",
+      "uploading":"Téléchargement:",
+      "complete":"Terminé",
+      "post": "Message",
+      "embed_image": "Lien vers une image Arweave",
+      "embed_video": "Intégrer Youtube, Vimeo, TikTok, Giphy, Spotify ou SoundCloud",
+      "quotes": {
+        "quote1": "Vas-y, refait ma journée.",
+        "quote2": "Les choses dont les rêves sont fait.",
+        "quote3": "Fait le, Ma! Meilleur du monde!",
+        "quote4": "Je reviendrai.",
+        "quote5": "Ouvrez les portes de la baie, HAL.",
+        "quote6": "Qui est le premier.",
+        "quote7": "Qu’est ce qui es ten deuxième.",
+        "quote8": "Je ressens le besoin – Le besoin de vitesse",
+        "quote9": "Je suis le roi du monde!",
+        "quote10": "Si tu le construis, ils viendront.",
+        "quote11": "Les routes? Là où nous allons, nous n’avons pas besoin de routes ",
+        "quote12": "Vers l’infini et au-delà!",
+        "quote13": "Que la force soit avec toi",
+        "quote14": "J’ai l’impression que nous ne sommes plus au Kansas",
+        "quote15": "E.T. telephone maison",
+        "quote16": "Élémentaire, mon cher Watson",
+        "quote17": "Je vais lui faire une offer qu’il ne pourra pas refuser.",
+        "quote18": "Les grandes choses ont de petits commencements."
+      }
+    },
+    "feed_post": {
+      "of":"de",
+      "from":"de",
+      "for_sale":"à vendre",
+      "unlockable_content":"Contenu déverrouillable ",
+      "last_price":"Dernier prix",
+      "removed_by_author":" Ce message a été supprimé par l’auteur.",
+      "this_post_from":"C’est un message de",
+      "who_you_have_blocked":" ceux que vous avez bloqué. Cliquez ici pour visiter leur profil pour les débloquer.",
+      "reposted":"reposté",
+      "original_removed":" Le post original a été supprimé par son auteur.",
+      "buy":"Achat",
+      "replying_to":"en réponse à",
+      "whitelist":"Liste blanche",
+      "whitelisted":"Sur liste blanche",
+      "in_hot_feed":"dans le flux Chaud",
+      "adding":"ajout...",
+      "removing":"Suppression...",
+      "view":"Voir",
+      "multiplier":"Multiplier",
+      "repost":"Reposter",
+      "quote_repost":"Citer le post",
+      "like":"Aimer",
+      "diamond":"Diamant",
+      "place_a_bid":"Enchérir",
+      "accept_transfer":"Accepter le tranfert",
+      "hide_unlockable":"Cacher contenu masqué",
+      "show_unlockable":"Montrer contenu masqué"
+    },
+
+  "feed_post_dropdown": {
+      "new_post_multiplier": "Nouveau post multiplicateur:",
+      "update": "Rafraîchir",
+      "updating": "Mise à jour...",
+      "error_updating": "Erreur de mise à jour des posts.",
+      "updating_success": "Multiplicateur de post mis à jour avec succès.",
+      "link_to": "Lien vers",
+      "share": "Partager",
+      "create_nft": "Créer un NFT",
+      "put_on_sale": "Mettre en vente",
+      "transfer_nft": "Transférer NFT",
+      "burn_nft": "Brûler NFT",
+      "add_nft_to_drop": "Ajouter NFT à déposer",
+      "report_content": "Signaler le contenu",
+      "hide": "Masquer",
+      "block_user": "Bloquer Utilisateur",
+      "add_multiplier": "Add Multiplier",
+      "add_to_feed": "Ajouter au flux",
+      "remove_from_feed": "Retirer du flux",
+      "pin_to_feed": "Épingler au flux",
+      "unpin_from_feed": "Désépingler du flux"
+    },
+    "feed_post_icon_row": {
+      "loading": "Chargement...",
+      "hide": "Masquer",
+      "repost": "Reposter",
+      "quote": "Citer",
+      "give_diamond": "Donner un diamant.",
+      "will_receive": "recevra le montant indiqué comme un pourboire de votre part.",
+      "slide": "<- Glisser->",
+      "release_to_cancel": "Relâcher pour Annuler",
+      "slide_to_cancel": "Glisser vers le bas pour Annuler - Relâcher pour confirmer"
+    },
+    "feed": {
+      "deso_price": "prix $DESO",
+      "usd_coin": "USD par pièce",
+      "you_have_referral_0": "Vous avez une illimité ",
+      "you_have_referral_1": "lien de parrainage",
+      "find_people_in_hot": "Trouvez plus de personnes à suivre dans le lien Chaud",
+      "load_more": "Charger plus",
+      "loading": "Chargement...",
+      "no_posts": "Pas encore de post",
+      "check_hot_0": "Consultez le flux CHAUD",
+      "check_hot_1": "pour trouver plus de gens à suivre"
+   },
+    "follow_button": {
+      "follow":"Suivre",
+      "unfollow":"Ne plus suivre"
+    },
+
+    "get_starter_deso": {"get_starter_deso" : "Commencer avec DESO"
+    },
+
+    "jumio_status": {
+      "your_free":"Vous êtes libre",
+      "will_arive_in_a_minute":"Arrive dans une minute.",
+      "robot_check_failed":" Votre vérification du robot a échoué. Cliquez ici pour réessayer.",
+      "click_here_to_get":"cliquez ici pour obtenir ",
+      "hide_banner":"Cacher la bannière",
+      "hide_banner_message":"Voulez-vous cacher la bannière d’argent gratuit?",
+      "yes": "Oui",
+      "no": "Non"
+    },
+
+    "landing":{
+      "login":"Connexion",
+      "signup":"S’enregistrer",
+      "signuptoday":"Créer un compte aujourd’hui",
+      "settle":"Ne vous contenter pas",
+      "fora":"d’un",
+      "diamonds":"Obtenir des diamants et investir dans les créateurs comme jamais auparavant. Votre prochain post peut valoir des millions! "
+    },
+    "left_bar": {
+      "home":"Accueil",
+      "buy_creators":"Acheter Créateurs",
+      "buy_deso":"Acheter DESO",
+      "buy_deso2":"Acheter $DESO",
+      "notifications":"Notifications",
+      "messages":"Messages",
+      "my_profile":"Mon Profil",
+      "update_profile":"Mettre à jour mon profil",
+      "my_wallet":"Mon portefeuille",
+      "tutorial":"Tutoriel",
+      "referrals":"Parrainages",
+      "help":"Aide",
+      "post":"Post",
+      "admin":"Admin",
+      "buy":"Achat",
+      "logout":"Deconnexion",
+      "settings":"Paramètres",
+      "more":"Suite"
+    },
+    "loader":{
+      "loading":"En cours de chargement"
+    },
+    "messages": {
+      "select_creator": "Sélectionner créateur",
+      "custom_inbox_settings":" Paramètres de boîte de réception personnalisés",
+      "only_show":"Voir seulement",
+      "holders":"Détenteurs",
+      "holdings":"Détenus",
+      "followers":"Followers",
+      "following":"Suivis",
+      "order_by":"Commande par",
+      "most_recent":"Plus récent",
+      "most_deso":"Le plus de deso",
+      "most_followed":"Le plus suivi",
+      "largest_holder":"Plus important détenteur",
+      "update":"Mettre à jour",
+      "cancel":"Annuler",
+
+      "loading":"Chargement",
+      "load_more":"Charger plus",
+      "send":"Envoyer",
+      "sending":"Envoi",
+      "new_message":"Nouveau Message"
+    },
+    "place_bid":{
+      "select_an_edition":"Sélectionner une édition",
+      "place_a_bid":"Enchérir",
+      "number":"Nombre",
+      "place_bid":"Vous êtes sur le point d’enchérir pour un NFT mis aux enchères par ",
+      "highest_bid":"Enchères la plus haute",
+      "min_bid_amount":"Montant enchère min",
+      "creator_royalty":"Redevances créateurs ",
+      "coinholder_royalty":"Redevance détenteurs de pièce",
+      "your_bid":"Votre enchère",
+      "placing_bid":"Enchère en cours",
+      "buy_deso":"Acheter DESO",
+      "multiple_editions":"Un NFT peut avoir plusieurs éditions, chacune avec son numéro de série unique.",
+      "no_serial_available":"Il n’y a pas de numéros de série disponible pour vous aux enchères."
+    },
+    "right_bar": {
+      "creators":{
+        "sent":"Envoyer",
+        "buy_deso":"Acheter du $DESO",
+        "deso_price":"Prix du $DESO",
+        "your_deso":"Vos $DESO",
+        "update_your_email":"Mettre à jour votre email",
+        "top_daily_gainers":"Meilleurs profits quotidien",
+        "top_daily_diamond_creators":"Créateurs ayant reçu le plus de diamants",
+        "top_community_projects":"Meilleurs projets communautaires",
+        "top_creators_alltime":"Meilleurs créateurs de tous les temps",
+        "powered_by":"Propulsé par",
+        "leaderboard": {
+          "reserved_profile": "Ce profil est reservé. Cliquez pour savoir comment le réclamer.",
+          "verified_account": "Ce compte est vérifié"
+        }
+      },
+      "signup":{
+        "welcome_to_deso":"Bienvenu sur DeSo!",
+        "login":"Connexion",
+        "signup":"Créer un compte"
+      }
+    },
+    "search_bar": {
+      "loading":"Chargement...",
+      "reserved_profile": "Ce profil est reservé. Cliquez pour savoir comment le réclamer.",
+      "search": "Rechercher...",
+      "search_on_cloutavista": "Rechercher sur Cloutavista"
+    },
+    "sell_nft":{
+      "back_to_nft":"Retour au NFT",
+      "sell_an_nft":"Vendre un NFT",
+      "about_to_sell":"Vous êtes sur le point de vendre votre NFT à",
+      "and":"et",
+      "are_you_sure":"Êtes-vous sûr?",
+      "selling_price":"Prix de vente",
+      "number":"Nombre",
+      "ernings":"Gains",
+      "creator_royalty":" Redevances créateurs ",
+      "coinholder_royalty":" Redevance détenteurs de pièce",
+      "select_one_bid":"Vous devez sélectionner au moins une enchère pour vendre ce NFT.",
+      "sellling_ntfs":"Vente de NFTs",
+      "sell_nfts":"Vendre des NFTs"
+    },
+    "settings": {
+      "settings":"Paramètres",
+      "email":"E-mail",
+      "enter_valid_email":"Veuillez entrer une adresse e-mail valide.",
+      "enter_email":"Entrez une adresse e-mail valide.",
+      "update_email":"Mettre à jour l’Email",
+      "deso_theme":"Thème DeSo",
+      "success":"Succès!",
+      "updating":"Mise à jour..."
+    },
+    "simple_profile": {
+      "buy": "Acheter"
+    },
+    "signup": {
+      "phone_verified": "Votre numéro de telephone a été vérifié. Nous vous avons envoyé un petit montant de DeSo, qui est suffisant pour poster et suivre des personnes.",
+      "stay_in_the_loop": "Rester dans la boucle",
+      "step": "ETAPES",
+      "get_notified": "Être notifié lorsque quelqu’un achète votre pièce.",
+      "email": "E-mail",
+      "enter_valid_email": " Veuillez entrer une adresse e-mail valide.",
+      "skip": "Passer",
+      "next": "Suivant",
+      "deso_is_a_cryptocurrency": "$DESO est une <b>cryptomonnaie</b> comme Bitcoin, elle alimente le premier<b> réseau social décentralisé </b>.",
+      "use_deso": "Vous pouvez utiliser $DESO pour échanger des pieces de créateurs, donner des diamants, acheter des NFTs, and bien d’autres choses. ",
+      "buy_deso": "Acheter $DESO",
+      "enter_emailaddress": "Entrez une adresse e-mail."
+    },
+    "top_bar" : {
+      "mobile": {
+        "login" : "Connexion",
+        "signup" : "S’enregistrer"
+      }
+    },
+    "wallet_widget": {
+      "wallet_of": "Portefeuille de",
+      "coins_in_circulation":"Pièces en Circulation",
+      "total_usd_locked":"USD Totaux bloqués",
+      "usd_market_cap":"Capitalisation en USD"
+    },
+    "notifications": {
+      "filter": {
+        "select_none":"Selectionner Aucun",
+        "select_all": "Selectionner Tous",
+        "all": "Tous",
+        "notification_settings":"Paramètres Notifications",
+        "only_show":"Voir seulement",
+        "likes":"Likes",
+        "diamonds":"Diamants",
+        "creator_coin":"Pièce de créateur",
+        "follows":"Suivis",
+        "mentions_replies_reposts":"Mentions / Réponses / Reposts",
+        "nft":"NFT",
+        "view":"Vue",
+        "expanded":"Étendu",
+        "update":"Mis à jour",
+        "cancel":"Annuler"
+      },
+      "list": {
+        "notifications":"Notifications",
+        "no_notifications":"Vous n’avez pas de notifications"
+      }
+    },
+    "wallet": {
+      "coins_purchased": "Pièces achetées",
+      "coins_received": "Pièces reçues",
+      "total_balance": "Solde Total",
+      "claim_your_free": "Réclamez vos pièces gratuites",
+      "buy_deso": "Envoyer $DESO",
+      "send_deso": "Acheter $DESO",
+      "buy_creator_coins": "Acheter des Pièces Créateurs",
+      "buy":"Achat",
+      "sell":"Vente",
+      "send":"Envoi",
+      "tutorial_header_text": {
+        "step": "étape",
+        "skip": "Passer",
+        "sell_a_creator": "Vendre un créateur",
+        "invest_in_yourself": "Investir en vous-même"
+      }
+    },
+    "verify_email" : {
+      "failed_to_verify": "Vérification de votre email échouée: ",
+      "email_verified_successfully": "Email vérifié avec succès"
+    },
+    "update_profile": {
+      "create_a_profile": "Créer un profil",
+      "create_a_profile_cost": "Créer un profil coût actuellement",
+      "this_helps_prevent_spam" : "Cela aide à se prévenir des spams.",
+      "upload_image" : "Télécharger une Image",
+      "no_image_selected" : "Aucune image sélectionnée",
+      "username" : "Nom d’utilisateur",
+      "please_set_username" : "Veuillez définir un nom d’utilisateur",
+      "is_available" : "est disponible",
+      "description" : "Description",
+      "description_can_only_be" : "La description ne peut pas dépasser",
+      "characters" : "caractères",
+      "founder_reward_percentage" : "Pourcentage de redevance fondateur",
+      "you_must_purchase_own_coin" : "Vous devez acheter votre propre pièce avant de baisser votre redevance de créateur.",
+      "please_set_founder" : "Veuillez définir une redevance de créateur entre 0-100.",
+      "email" : "Email",
+      "please_enter_valid_email" : "Veuillez entrer une adresse email valide.",
+      "theme": "Thème",
+      "show_price_in_feed" : "Afficher les prix dans le flux",
+      "language": "Langue",
+      "update_profile" : "Mettre à jour le profil",
+      "enter_username" : "Entrer le nom d’utilisateur",
+      "enter_emailaddress" : "Entrer une adresse email.",
+      "tutorial_instructions" : "Sélectionner une photo de profil, choisir un nom d’utilisateur, et écrire votre description de profil si vous vous sentez l’âme d’un poête.<br /><br />Quand vous avez terminé, <b>Cliquez sur\"Mettre à jour le profil\"</b> pour continuer.",
+      "avatar" : "Avatar",
+      "get_starter_deso" : "Commencer avec DESO",
+      "purchase" : "Achater",
+      "or": "Ou",
+      "usd_of_deso": "USD de DESO",
+      "create_profile_message": {
+        "verify_phone_number":"Vous devez vérifier votre numéro de téléphone ou acheter des DeSo avec Bitcoin pour créer votre profil. Cela permet de prévenir les spams.",
+        "buy_deso" : "Vous devez acheter des DeSo avec Bitcoin pour créer votre profil. Cela permet de prévenir les spams."
+      },
+      "create_profile": {
+        "create_your_profile" : "Créez votre profil",
+        "step" : "Étape",
+        "select_a_profile_picture" : "Sélectionner une photo de profil, choisir un nom d’utilisateur, et écrire votre description de profil si vous vous sentez l’âme d’un poête.<br /><br />Quand vous avez terminé, <b>Cliquez sur\"Mettre à jour le profil\"</b> pour continuer."
+      }
+    },
+    "transfer_deso": {
+      "send_deso": "envoyer $DESO",
+      "enter_public_key":"Entrez simplement une clé public ci-dessous et le protocole se charge du reste",
+      "public_key":"Clé publique ou Nom d’utilisateur pour payer",
+      "amount_to_send":"Montant à envoyer",
+      "max":"Max",
+      "deso_network_fee":"Frais de réseau DESO",
+      "total": "Total",
+      "scan_qr_code":"Scanner le code QR pour envoyer",
+      "working": "Travaille...",
+      "cancel": "Annuler"
+    },
+    "trends" : {
+      "trends" : "Tendances",
+      "powered_by" : "Propulsé par"
+    },
+    "tab_selector": {
+      "new": "Nouveau",
+      "all_bids": "Toutes les enchères",
+      "my_Bids":"Mes enchères",
+      "my_Auction":"Mon enchère",
+      "owners":"Propriétaires",
+      "thread":"Fil"
+    },
+    "Holders": "Détenteurs",
+    "All": "Tous",
+    "Following": "Following",
+    "New": "New",
+    "NFT Gallery": "NFT Gallery"
+  }

@@ -19,7 +19,7 @@
 
 
   <div class="fs-12px text-muted feed-create-comment-form__reply-container">
-    {{ isQuote ? "Quoting " : "Replying to " }}
+    {{ isQuote ? 'comment_modal.quoting' : 'comment_modal.replying_to' | transloco }}
     <span>@{{ parentPost.ProfileEntryResponse.Username }}</span>
   </div>
 

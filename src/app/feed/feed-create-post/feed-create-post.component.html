@@ -1,6 +1,6 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
-<div class="create-post">
+<div class="create-post" *transloco="let t">
   <!-- Avatar + Input -->
   <div class="d-flex flex-column align-items-top pt-15px pr-15px pl-15px avatar-input-row">
      <div class="d-flex">
@@ -32,7 +32,7 @@
           }"
           class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative"
           id="textarea"
-          [placeholder]="getPlaceholderText()"
+          [placeholder]="t(getPlaceholderText())"
           (paste)="onPaste($event)"
           (ngModelChange)="updatePost()"
           dropUpload
@@ -53,7 +53,7 @@
       </div>
       <!-- Video is processing - please wait -->
       <div class="d-flex flex-column align-items-center" *ngIf="!isComment && postVideoSrc && !readyToStream">
-        <div>Video Processing In Progress</div>
+        <div>{{ 'feed_create_post.video_processing' | transloco }}</div>
         <simple-center-loader [height]="150"></simple-center-loader>
       </div>
       <!-- Video Player -->
@@ -90,19 +90,19 @@
     <div class="flex-fill">
       <!-- Video Upload Progress bar -->
       <div class="d-flex flex-column align-items-center" *ngIf="videoUploadPercentage !== null">
-        <div>Uploading: {{ videoUploadPercentage }}% Complete</div>
+        <div>{{ 'feed_create_post.uploading' | transloco }} {{ videoUploadPercentage }}% {{ 'feed_create_post.complete' | transloco }}</div>
         <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
       </div>
     </div>
   </div>
 </div>
-<div class="flex-fill px-15px br-10px create-post fs-13px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
+<div class="flex-fill px-15px br-10px create-post" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
   <input
     class="br-3px"
     type="url"
     [(ngModel)]="embedURL"
     (ngModelChange)="setEmbedURL()"
-    placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify, SoundCloud, or Twitch"
+    placeholder="{{ 'feed_create_post.embed_video' | transloco }}"
   />
 </div>
 <div class="flex-fill px-15px bg-tile" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showImageLink">
@@ -110,7 +110,7 @@
     class="br-3px"
     type="url"
     [(ngModel)]="postImageSrc"
-    placeholder="Link to Arweave image"
+    placeholder="{{ 'feed_create_post.embed_image' | transloco }}"
   />
 </div>
 <!-- Image Upload + Post Buttons -->
@@ -157,6 +157,6 @@
     }"
     (click)="_createPost()"
   >
-    Post
+  {{ 'feed_create_post.post' | transloco }}
   </button>
 </div>

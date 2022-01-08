@@ -10,7 +10,7 @@
   <div class="d-flex align-items-center">
     <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
-    Create post
+    {{ 'create_post.create_post' | transloco }}
   </div>
 </div>
 
@@ -23,10 +23,10 @@
     <div *ngIf="inTutorial">
       <div class="tutorial-header">
         <div class="d-flex justify-content-between">
-          <div class="tutorial-title">Create a Post</div>
+          <div class="tutorial-title">{{ 'create_post.create_a_post' | transloco }}</div>
           <div class="d-flex align-items-center">
-            <div class="fc-secondary fs-15px">Step 4/4</div>
-            <button class="tutorial-skip-button" (click)="skipPostStep()">Skip</button>
+            <div class="fc-secondary fs-15px">{{ 'create_post.step' | transloco }} 4/4</div>
+            <button class="tutorial-skip-button" (click)="skipPostStep()">{{ 'create_post.skip' | transloco }}</button>
           </div>
         </div>
       </div>

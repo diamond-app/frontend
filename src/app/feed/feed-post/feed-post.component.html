@@ -29,15 +29,15 @@
     <div class="creator-profile-nfts__list-body d-flex flex-column">
       <div>{{ postContent?.Body }}</div>
       <div>
-        {{ postContent?.NumNFTCopiesForSale }} of {{ postContent?.NumNFTCopies }} for sale
+        {{ postContent?.NumNFTCopiesForSale }} {{ 'feed_post.of' | transloco }} {{ postContent?.NumNFTCopies }} {{ 'feed_post.for_sale' | transloco }}
         <span *ngIf="postContent.HasUnlockable" class="feed-post__nft-list-view-unlockable">
           <i-feather name="lock"></i-feather>
-          <span>Unlockable content</span>
+          <span>{{ 'feed_post.unlockable_content' | transloco }}</span>
         </span>
       </div>
       <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
       <div *ngIf="postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-        Last price: ≈{{
+        {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
         }}
       </div>
@@ -74,7 +74,7 @@
         [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, post.PostHashHex])"
         queryParamsHandling="merge"
       >
-        This post was removed by the author.
+      {{ 'feed_post.removed_by_author' | transloco }}
       </a>
     </div>
 
@@ -88,8 +88,7 @@
         [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username])"
         queryParamsHandling="merge"
       >
-        This is a post from {{ post.ProfileEntryResponse.Username }} who you have blocked. Click here to visit their
-        profile to unblock them.
+      {{ 'feed_post.this_post_from' | transloco }} {{ post.ProfileEntryResponse.Username }} {{ 'feed_post.who_you_have_blocked' | transloco }}
       </a>
     </div>
 
@@ -137,7 +136,7 @@
             [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reposterProfile.Username])"
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
-            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
+            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} {{ 'feed_post.reposted' | transloco }}</span>
           </a>
 
           <feed-post-dropdown
@@ -168,7 +167,7 @@
             [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
             queryParamsHandling="merge"
           >
-            The original post was removed by its author.
+          {{ 'feed_post.original_removed' | transloco }}
           </a>
         </div>
 
@@ -182,7 +181,7 @@
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </span>
             <!-- Buy link -->
-            <span class="p-5px">Buy</span>
+            <span class="p-5px">{{ 'feed_post.buy' | transloco }}</span>
           </a>
         </ng-template>
 
@@ -269,7 +268,7 @@
           <!-- Main Content -->
           <div class="w-100">
             <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
-              replying to
+              {{ 'feed_post.replying_to' | transloco }}
               <a
                 [routerLink]="getRouterLink(['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username])"
                 queryParamsHandling="merge"
@@ -373,14 +372,14 @@
                   class="py-5px px-10px admin__add-to-feed-button"
                 >
                   <i class="fas fa-folder-plus"></i>
-                  &nbsp;Whitelist
+                  &nbsp;{{ 'feed_post.whitelist' | transloco }}
                 </div>
                 <div
                   *ngIf="!postContent.InGlobalFeed && addingPostToGlobalFeed"
                   class="py-5px px-10px admin__add-to-feed-button"
                 >
                   <i class="fas fa-folder-plus"></i>
-                  Adding...
+                  {{ 'feed_post.adding' | transloco }}
                 </div>
                 <div
                   *ngIf="postContent.InGlobalFeed && !addingPostToGlobalFeed"
@@ -388,14 +387,14 @@
                   class="py-5px px-10px admin__remove-from-feed-button"
                 >
                   <i class="fas fa-check"></i>
-                  Whitelisted<span *ngIf="postContent.InHotFeed"> & in Hot Feed</span>
+                  {{ 'feed_post.whitelisted' | transloco }}<span *ngIf="postContent.InHotFeed"> & {{ 'feed_post.in_hot_feed' | transloco }</span>
                 </div>
                 <div
                   *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
                   class="py-5px px-10px admin__remove-from-feed-button"
                 >
                   <i class="fas fa-check"></i>
-                  Removing...
+                  {{ 'feed_post.removing' | transloco }}
                 </div>
 
                 <div>
@@ -404,7 +403,7 @@
                     [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
                     queryParamsHandling="merge"
                   >
-                    View
+                  {{ 'feed_post.view' | transloco }}
                   </a>
                 </div>
 
@@ -415,7 +414,7 @@
 
                 <div *ngIf="post.PostMultiplier !== 0 && post.PostMultiplier !== 1">
                   &nbsp;&nbsp;&middot;
-                  ⭐ Multiplier: {{post.PostMultiplier}} ⭐
+                  ⭐ {{ 'feed_post.multiplier' | transloco }}: {{post.PostMultiplier}} ⭐
                 </div>
 
                 <div class="text-grey8A">
@@ -452,21 +451,21 @@
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openRepostsPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.RepostCount, 0) }}
-            Repost{{ post.RepostCount === 1 ? "" : "s" }}
+            {{ 'feed_post.repost' | transloco }}{{ post.RepostCount === 1 ? "" : "s" }}
           </span>
           <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.QuoteRepostCount, 0) }}
-            Quote Repost{{ post.QuoteRepostCount === 1 ? "" : "s" }}
+            {{ 'feed_post.quote_repost' | transloco }}{{ post.QuoteRepostCount === 1 ? "" : "s" }}
           </span>
         </div>
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openLikesPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.LikeCount, 0) }}
-            Like{{ post.LikeCount === 1 ? "" : "s" }}
+            {{ 'feed_post.like' | transloco }}{{ post.LikeCount === 1 ? "" : "s" }}
           </span>
           <span (click)="openDiamondsPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.DiamondCount, 0) }}
-            Diamond{{ post.DiamondCount === 1 ? "" : "s" }}
+            {{ 'feed_post.diamond' | transloco }}{{ post.DiamondCount === 1 ? "" : "s" }}
           </span>
         </div>
       </div>
@@ -494,7 +493,7 @@
             [matTooltip]="mOfNNFTTooltip"
             #NFTMOfNTooltip="matTooltip"
           >
-            {{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} for sale
+            {{ postContent.NumNFTCopiesForSale }} {{ 'feed_post.of' | transloco }} {{ postContent.NumNFTCopies }} {{ 'feed_post.for_sale' | transloco }}
           </div>
           <span
             *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
@@ -510,15 +509,15 @@
             {{
               decryptableNFTEntryResponses?.length
                 ? showUnlockableContent
-                  ? "Hide Unlockable"
-                  : "Show Unlockable"
-                : "Unlockable Content"
+                  ? "feed_post.hide_unlockable"
+                  : "feed_post.show_unlockable"
+                : "feed_post.unlockable_content" | transloco
             }}
           </span>
         </div>
-        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">{{ 'feed_post.from' | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
         <div *ngIf="nftLastAcceptedBidAmountNanos !== undefined && postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-          Last price: ≈{{
+          {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
           }}
         </div>
@@ -550,7 +549,7 @@
           <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid && !acceptNFT">
             <span class="d-flex align-items-center">
               <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              Place a bid
+              {{ 'feed_post.place_a_bid' | transloco }}
             </span>
           </button>
           <button
@@ -560,7 +559,7 @@
             *ngIf="acceptNFT"
           >
             <span class="d-flex align-items-center justify-content-center fs-12px">
-              Accept Transfer
+              {{ 'feed_post.accept_transfer' | transloco }}
             </span>
           </button>
         </div>

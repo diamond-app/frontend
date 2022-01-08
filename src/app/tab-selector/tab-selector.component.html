@@ -11,15 +11,15 @@
         *ngIf="tab !== activeTab || !buttonSelector"
         [ngClass]="{ 'active-tab': tab === activeTab, 'fc-secondary': tab !== activeTab }"
       >
-        {{ tab }}
+        {{ tab | transloco }}
       </div>
       <button
         *ngIf="tab === activeTab && buttonSelector"
       >
-        <span>{{ tab }}</span>
+        <span>{{ tab | transloco }}</span>
       </button>
       <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== activeTab">
-        <span>New</span>
+        <span>{{ 'tab_selector.new' | transloco }}</span>
       </div>
       <div *ngIf="isLink(tab) && !globalVars.isMobile()" class="d-flex align-items-center ml-5px">
         <i-feather class="feather-small fs-0px" name="external-link"></i-feather>

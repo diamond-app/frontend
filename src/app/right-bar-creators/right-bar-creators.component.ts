@@ -36,23 +36,23 @@ export class RightBarCreatorsComponent implements OnInit {
   static RightBarTabKey = "RightBarTab";
 
   static GAINERS: RightBarTabOption = {
-    name: "Top Daily Gainers",
+    name: "right_bar.creators.top_daily_gainers",
     width: 175,
     poweredBy: { name: "Altumbase", link: "https://altumbase.com/tools?ref=diamondapp" },
   };
   static DIAMONDS: RightBarTabOption = {
-    name: "Top Daily Diamonded Creators",
+    name: "right_bar.creators.top_daily_diamond_creators",
     width: 275,
-    poweredBy: { name: "Altumbase", link: "https://altumbase.com/tools?ref=diamondapp" },
+    poweredBy: { name: "Bitclout Pulse", link: "https://desopulse.com" },
   };
   static COMMUNITY: RightBarTabOption = {
-    name: "Top Community Projects",
+    name: "right_bar.creators.top_community_projects",
     width: 225,
     poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
   };
 
   static ALL_TIME: RightBarTabOption = {
-    name: "Top Creators All Time",
+    name: "right_bar.creators.top_creators_alltime",
     width: 210,
     poweredBy: null,
   };

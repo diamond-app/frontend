@@ -1852,6 +1852,12 @@ tab-selector {
   }
 }
 
+.left-bar-more-container {
+  background: var(--tile-secondary-bg);
+  bottom: 0px;
+  border-radius: 10px;
+}
+
 .left-bar-mobile__translucent-background {
   z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
   position: fixed;
@@ -2377,6 +2383,10 @@ sign-up {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.modal-open {
+  padding-right: 0px !important;
 }
 
 .modal-header .feed-create-comment-form__close {
@@ -3007,15 +3017,20 @@ feed-post-dropdown {
   background: var(--highlight);
 }
 
-
 .left-bar-button {
   height: 56px;
   margin-left: 12px;
   font-weight: 600;
   font-size: 17px;
   color: var(--text-secondary);
+  &:hover {
+    color: var(--highlight);
+  }
   a {
     color: var(--text-secondary);
+    &:hover {
+      color: var(--highlight);
+    }
   }
   i-feather {
     margin-right: 20px;
@@ -3023,6 +3038,15 @@ feed-post-dropdown {
     height: 20px;
     position: relative;
     top: -1px;
+  }
+}
+
+.left-bar-link {
+  &:hover {
+    color: var(--highlight) !important;
+    a {
+      color: var(--highlight) !important;
+    }
   }
 }
 

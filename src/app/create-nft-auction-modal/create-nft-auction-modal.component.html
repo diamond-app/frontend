@@ -5,7 +5,7 @@
   <div class="pt-15px pb-30px font-weight-500">
     <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
       <div>
-        Minimum price <span class="text-grey7">(Optional)</span>
+        {{ 'create_nft_auction_modal.min_price' | transloco }} <span class="text-grey7">{{ 'create_nft_auction_modal.optional' | transloco }}</span>
       </div>
         <div class="d-flex flex-wrap">
           <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
@@ -47,9 +47,9 @@
          style="opacity: 50%">
       <div class="col-5 mb-0px">
         <input type="checkbox" class="w-10" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
-        Select All
+        {{ 'create_nft_auction_modal.select_all' | transloco }}
       </div>
-      <div class="col-7 mb-0px">Last Price</div>
+      <div class="col-7 mb-0px">{{ 'create_nft_auction_modal.last_price' | transloco }}</div>
     </div>
     <div style="max-height: 250px; overflow-y: scroll">
       <div *ngFor="let nft of mySerialNumbersNotForSale()"
@@ -75,9 +75,9 @@
       (click)="createAuction()"
       [disabled]="creatingAuction || createAuctionDisabled()"
     >
-      {{ creatingAuction ? "Creating Auction" : "Create auction" }}
+      {{ creatingAuction ? 'create_nft_auction_modal.creating_auction' : 'create_nft_auction_modal.create_auction' | transloco }}
     </button>
-    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} of {{ auctionTotal }} auctions created</div>
+    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} {{ 'create_nft_auction_modal.counter_of' | transloco }} {{ auctionTotal }} {{ 'create_nft_auction_modal.counter_auctions' | transloco }}</div>
   </div>
 
 

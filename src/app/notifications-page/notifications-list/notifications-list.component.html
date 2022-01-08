@@ -3,7 +3,7 @@
   class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
   style="z-index: 1"
 >
-  <span>Notifications</span>
+  <span>{{ 'notifications.list.notifications' | transloco }}</span>
   <i-feather
     name="more-horizontal"
     class="feather-medium mr-10px cursor-pointer fs-0px"
@@ -22,7 +22,7 @@
   <simple-center-loader></simple-center-loader>
 </div>
 <div *ngIf="(!totalItems || totalItems === 0) && !loadingFirstPage" class="d-flex justify-content-center mt-30px">
-  <span>You don't have any notifications</span>
+  <span>{{ 'notifications.list.no_notifications' | transloco }}</span>
 </div>
 <div class="notifications__list-container" id="notification-scroller">
   <div

@@ -3,6 +3,8 @@ import { GlobalVarsService } from "../global-vars.service";
 import { FeedComponent } from "../feed/feed.component";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
+import { SettingsComponent } from "../settings/settings.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "browse-page",
@@ -17,7 +19,7 @@ export class BrowsePageComponent implements OnInit {
   isLeftBarMobileOpen = false;
   mobile = false;
 
-  constructor(public globalVars: GlobalVarsService, private router: Router) {}
+  constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
   setMobileBasedOnViewport() {
     this.mobile = this.globalVars.isMobile();
