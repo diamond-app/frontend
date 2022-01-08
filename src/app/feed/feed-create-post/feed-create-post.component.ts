@@ -21,6 +21,7 @@ import Timer = NodeJS.Timer;
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import * as _ from "lodash";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "feed-create-post",
@@ -95,7 +96,8 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: CloudflareStreamService
+    private streamService: CloudflareStreamService,
+    private translocoService: TranslocoService
   ) {
     this.globalVars = appData;
   }
@@ -255,6 +257,10 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
       if (EmbedUrlParserService.isValidEmbedURL(this.constructedEmbedURL)) {
         postExtraData["EmbedVideoURL"] = this.constructedEmbedURL;
       }
+    }
+
+    if (this.translocoService.getActiveLang()) {
+      postExtraData["Language"] = this.translocoService.getActiveLang();
     }
 
     const bodyObj = {
