@@ -19,8 +19,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   constructor(private http: HttpClient) {}
 
   getTranslation(lang: string) {
-    console.log("Getting translation");
-    return this.http.get<Translation>(`/assets/diamond/${lang}.json`);
+    return this.http.get<Translation>(`/assets/i18n/${lang}.json`);
   }
 }
 
@@ -43,7 +42,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
         // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: true,
         fallbackLang: "en",
-        prodMode: false,
+        prodMode: environment.production,
       }),
     },
     { provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader },
