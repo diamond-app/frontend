@@ -66,12 +66,6 @@
             [iconName]="'user'"
           ></left-bar-button>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="t('left_bar.my_wallet')" [iconName]="'diamond'"></left-bar-button>
-          <left-bar-button
-            *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
-            [link]="'/' + globalVars.RouteNames.REFERRALS"
-            [buttonLabel]="t('left_bar.referrals')"
-            [iconName]="'share-2'"
-          ></left-bar-button>
           <a
             class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
             style="height: 56px"
