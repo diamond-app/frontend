@@ -8,7 +8,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
   styleUrls: ["./jumio-status.component.scss"],
 })
 export class JumioStatusComponent {
-  @Input() message: string = "Click here to get";
+  @Input() message: string = "Earn";
   constructor(public globalVars: GlobalVarsService) {}
 
   hideFreeMoneyBanner(event) {

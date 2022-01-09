@@ -19,7 +19,7 @@
       <div class="flex-fill autofill-container">
         <textarea
           [(ngModel)]="postInput"
-          rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
+          rows="{{ parentPost ? 10 : numberOfRowsInTextArea }}"
           [ngClass]="{
             'border-0': !parentPost,
             'feed-create-post__textarea': !parentPost,
@@ -30,7 +30,7 @@
             'lh-18px': parentPost,
             'background-color-white': !parentPost
           }"
-          class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative"
+          class="form-control fs-16px m-5px p-20px border-0 feed-create-post__textarea position-relative"
           id="textarea"
           [placeholder]="getPlaceholderText()"
           (paste)="onPaste($event)"
@@ -98,7 +98,7 @@
 </div>
 <div class="flex-fill px-15px br-10px create-post fs-13px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
   <input
-    class="br-3px"
+    class="br-3px py-10px px-15px mb-15px"
     type="url"
     [(ngModel)]="embedURL"
     (ngModelChange)="setEmbedURL()"
@@ -116,7 +116,7 @@
 <!-- Image Upload + Post Buttons -->
 <div class="create-post-icon-bar align-items-center">
   <span
-    class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
+    class="mr-15px feed-create-post__character-counter fs-12px d-flex"
     [ngClass]="{
       'd-none': postInput.length == 0,
       'text-grey8A': showCharacterCountIsFine(),
@@ -124,20 +124,14 @@
       'fc-red': characterCountExceedsMaxLength()
     }"
   >
-    <div [ngStyle]="{ width: postInput.length >= 100 ? '28px' : '20px' }">{{ postInput.length }}</div>
+    <div>{{ postInput.length }}&nbsp;</div>
     <div>/ {{ GlobalVarsService.MAX_POST_LENGTH }}</div>
   </span>
-  <i-feather
-    name="code"
-    (click)="showEmbedURL = !showEmbedURL"
-  ></i-feather>
+  <i-feather name="code" (click)="showEmbedURL = !showEmbedURL"></i-feather>
   <ng-container *ngIf="!isComment">
-    <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
+    <i-feather name="external-link" (click)="showImageLink = !showImageLink"></i-feather>
     <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-    <i
-      class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
-      (click)="videoInput.click()"
-    ></i>
+    <i-feather name="diamond" (click)="videoInput.click()"></i-feather>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i-feather
       name="image"

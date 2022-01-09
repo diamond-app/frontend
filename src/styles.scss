@@ -3,7 +3,7 @@ $danger: #E63946;
 $secondary: #ecf0f1;
 $success: #32ED4B;
 $info: #689eff;
-$feed-border-radius: 12px;
+$feed-border-radius: 100px;
 
 @import 'variables.scss';
 @import 'app/theme/themes/index';
@@ -502,7 +502,7 @@ $green-font-color: #19B028;
 .br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
 .br-10px { border-radius: 10px; }
-.br-12px { border-radius: $feed-border-radius; }
+.br-12px { border-radius: 12px; }
 
 .vh-100 { height: 100vh !important; }
 
@@ -852,6 +852,11 @@ $green-font-color: #19B028;
     color: var(--text-muted);
   }
 }
+
+.tab-selector__container {
+  border-bottom: 1px solid var(--border);
+}
+
 
 .diamond-popover-container {
   max-width: 100% !important;
@@ -1558,6 +1563,7 @@ app-landing-page {
   width: $global__nav__width;
   overflow-y: auto;
   height: 100%;
+  border-right: 1px solid var(--border);
   @media (max-width: 992px) {
     height: calc(100vh - 42px);
     width: 75vw;
@@ -1571,7 +1577,6 @@ app-landing-page {
   @media (max-width: 992px) {
     margin-top: 5px;
   }
-  margin-top: 20px;
   flex-grow: 1;
   align-items: flex-start;
   flex-shrink: 1;
@@ -1605,6 +1610,7 @@ app-landing-page {
   height: calc(100% - 64px);
   position: fixed;
   overflow-y: scroll;
+  border-left: 1px solid var(--border);
 }
 
 .global__sidebar__inner {
@@ -1731,7 +1737,8 @@ feed-create-post-modal {
 }
 
 .feed-create-post__character-counter {
-  margin-top: 2px;
+  position: relative;
+  top: 4px;
 }
 
 .feed-create-post__image-icon {
@@ -1777,23 +1784,41 @@ tab-selector {
     border-bottom: 1px solid var(--border);
     .active-tab {
       color: var(--highlight);
-      border-bottom: 1.5px solid var(--highlight);
+      border-bottom: 3px solid var(--highlight);
       &.first-tab {
         padding-left: 0px;
       }
     }
   }
-  button {
-    background: var(--tile-bg);
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    color: var(--highlight);
-    font-weight: 600;
+  .tab-selector-item {
     position: relative;
-    span {
-      padding: 0px 9px;
-      position: relative;
+    &:hover {
+      &:after {
+        content: '';
+        border-bottom: 3px solid var(--text-muted);
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+        z-index: 999;
+        left: 0;
+      }
+    }
+  }  
+  button {
+    background: transparent;
+    border: none;
+    color: var(--highlight);
+    position: relative;
+    padding: 6px 0;
+    font-size: 15px;
+    &:after {
+      content: '';
+      border-bottom: 3px solid var(--highlight);
+      width: 100%;
+      position: absolute;
+      bottom: -7px;
+      z-index: 999;
+      left: 0;
     }
   }
   .new-tab-indicator {
@@ -1822,22 +1847,25 @@ tab-selector {
   margin: 16px 16px 32px 16px;
   i-feather {
     cursor: pointer;
-    height: 24px;
-    width: 24px;
+    height: 20px;
+    width: 20px;
     color: var(--text-muted);
     margin-right: 25px;
+    &:hover {
+      color: var(--black);
+    }
   }
   button {
     position: absolute;
     right: 0px;
     background: var(--highlight);
-    width: 82px;
-    height: 48px;
-    border-radius: 16px;
+    border-radius: 4px;
+    padding: 8px 16px;
     border: none;
     color: var(--tile-bg);
     &:hover {
       color: var(--tile-bg);
+      background: var(--black);
     }
   }
 }
@@ -1972,11 +2000,11 @@ feed-create-post {
 }
 
 .holdings__avatar {
-  height: 50px;
-  width: 50px;
+  height: 30px;
+  width: 30px;
   min-width: 28px;
   margin-right: 15px;
-  border-radius: 12px;
+  border-radius: 99px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -2098,7 +2126,7 @@ sign-up {
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
-  border-radius: 16px;
+  border-radius: 4px;
 	border: 1px solid var(--borderheavy);
   font-size: 15px;
 
@@ -2115,6 +2143,7 @@ sign-up {
 
 .change-account-selector__hover:hover {
 	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+  border-color: var(--highlight);
 }
 
 .change-account-selector_list {
@@ -2205,7 +2234,7 @@ sign-up {
 }
 
 .search-bar {
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--text-muted);
   i-feather {
     height: 16px;
@@ -2222,8 +2251,8 @@ sign-up {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
 }
 
@@ -2231,8 +2260,8 @@ sign-up {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
   background: var(--tile-secondary-bg);
   border: none;
 }
@@ -2240,7 +2269,7 @@ sign-up {
 .search-bar__results-dropdown {
   margin-top: 10px;
   box-shadow: rgba(101, 119, 134, 0.2) 0px 10px 15px, rgba(101, 119, 134, 0.15) 0px 10px 3px 1px;
-  border-radius: 0px 0px 16px 16px;
+  border-radius: 0px 0px 4px 4px;
   cursor: pointer;
   background: var(--background);
   position: relative;
@@ -2309,6 +2338,7 @@ sign-up {
 
 .pinned-post {
   border-left: 3px solid var(--highlight) !important;
+  border-radius: 0 !important;
   &.border {
     border-left: 3px solid var(--highlight) !important;
   }
@@ -2320,8 +2350,6 @@ sign-up {
 
 .post-thread__container {
   background: var(--tile-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
   .feed-post-container {
     margin-bottom: 0px;
   }
@@ -2390,8 +2418,8 @@ sign-up {
 .jumio-status {
   margin-bottom: 20px;
   padding: 16px 20px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   background: var(--tile-bg);
   color: var(--highlight);
   font-size: 15px;
@@ -2485,8 +2513,6 @@ trends {
 }
 
 .feed-post-container {
-  margin-bottom: 12px;
-  border-radius: 10px;
   background: var(--tile-bg);
 }
 
@@ -2514,18 +2540,20 @@ bs-dropdown-container {
 
 .bc-dropdown-menu {
   background: var(--tile-bg);
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  div {
-    margin: 6px;
-  }
+  border-radius: 4px;
+  border: 1px solid var(--highlight);
+  padding: 0 !important;
 }
 
 .feed-post__dropdown-menu-item {
   color: var(--text-muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  &:first-of-type { border-radius: 4px 4px 0 0 }
+  &:last-of-type { border: none; border-radius: 0 0 4px 4px }
   &:hover {
     color: var(--text);
+    background: var(--background-secondary);
   }
   i-feather {
     height: 14px;
@@ -2674,7 +2702,7 @@ bs-dropdown-container {
 .feed-post-icon-row__icon.repost-icon {
   &:hover {
     background-color: $repost-hover;
-    color: $repost-hover;
+    color: $repost-color;
     transition: background-color .5s;
   }
 }
@@ -2750,7 +2778,8 @@ bs-dropdown-container {
     position: relative;
     width: 343px;
     .search-bar,input {
-      height: 48px;
+      height: 42px;
+      margin-right: 6px;
       i-feather {
         margin: 0px 12px;
       }
@@ -2766,8 +2795,8 @@ bs-dropdown-container {
 
 .desktop-create-post{
   background: var(--tile-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: all .2s ease-in-out;
 }
 
 .feed-desktop-center-banner {
@@ -2794,10 +2823,11 @@ bs-dropdown-container {
 
 feed {
   .jumio-status {
-    border-radius: 10px;
     padding: 10px;
+    font-size: 14px;
+    border-top: none;
+    color: black;
     position: relative;
-    margin-top: 5px;
     margin-bottom: 5px;
   }
   jumio-status {
@@ -2811,7 +2841,17 @@ feed {
 
 .feed-post__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.feed-post__quoted-content {
+  border: 1px solid #e7e7e7;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px #efefef;
+  .feed-post__container {
+  border-radius: 4px;
+  }
 }
 
 .feed-post__container.feed-post__parent-post-font-size {
@@ -2850,7 +2890,7 @@ feed {
   display: block;
   height: 50px;
   width: 50px;
-  border-radius: 12px;
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -2999,8 +3039,8 @@ feed-post-dropdown {
 }
 
 .left-bar-active-indicator {
-  width: 4px;
-  border-radius: 10px;
+  // width: 4px;
+  // border-radius: 10px;
 }
 
 .left-bar-active-indicator-active {
@@ -3009,13 +3049,20 @@ feed-post-dropdown {
 
 
 .left-bar-button {
-  height: 56px;
-  margin-left: 12px;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 17px;
-  color: var(--text-secondary);
+  padding: 10px 16px;
+  border-radius: 6px;
+  transition: all .2s ease-in-out;
   a {
-    color: var(--text-secondary);
+    color: var(--text-muted);
+  }
+  &:hover {
+    transition: all .2s ease-in-out;
+    background: var(--tile-bg);
+    a {
+      color: var(--text-secondary);
+    }
   }
   i-feather {
     margin-right: 20px;
@@ -3027,10 +3074,9 @@ feed-post-dropdown {
 }
 
 .left-bar__post-button {
-  width: 100%;
-  height: 48px;
-  background: var(--highlight);
-  border-radius: 16px;
+  width: 90%;
+  background: var(--black);
+  border-radius: 4px;
   padding: 12px 24px;
   font-weight: 600;
   font-size: 17px;
@@ -3038,6 +3084,10 @@ feed-post-dropdown {
   border: none;
   margin-top: 10px;
   color: var(--tile-bg);
+  margin-left: 20px;
+  &:hover {
+    background: var(--black);
+  }
 }
 
 .left-bar-active {
@@ -3067,10 +3117,7 @@ feed-post-dropdown {
 }
 
 .left-desktop-selector {
-  background: var(--tile-bg);
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid var(--border);
+  // MOSSIFIED
 }
 
 right-bar-creators {
@@ -3083,9 +3130,9 @@ right-bar-creators {
   border: 1px solid var(--border);
   background: var(--background-secondary);
   padding: 16px;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-secondary);
-  border-radius: 10px;
+  border-radius: 4px;
   margin-bottom: 20px;
 }
 
@@ -3105,7 +3152,7 @@ right-bar-creators {
   color: var(--text-secondary);
   font-size: 15px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 4px;
   margin-bottom: 20px;
   .deso-metrics {
     margin: 16px;
@@ -3115,8 +3162,8 @@ right-bar-creators {
     border: 1px solid var(--border);
   }
   .buy-deso {
-    font-weight: 600;
-    font-size: 17px;
+    font-weight: 400;
+    font-size: 16px;
     color: var(--highlight);
     margin-top: 5px;
     margin: 12px 0px;
@@ -3176,7 +3223,7 @@ right-bar-creators {
   background: var(--highlight);
   color: var(--tile-bg);
   margin-left: 24px;
-  border-radius: 16px;
+  border-radius: 4px;
   padding-top: 12px;
   &:hover {
     color: var(--tile-bg);
@@ -3185,10 +3232,9 @@ right-bar-creators {
 
 .creator-profile__avatar {
   position: relative;
-  height: 72px;
-  width: 72px;
-  border-radius: 12px;
-
+  height: 60px;
+  width: 60px;
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -3196,12 +3242,11 @@ right-bar-creators {
 
 .creator-profile__username-price {
   margin-left: 20px;
-  margin-top: 8px;
 }
 
 .creator-profile__update-buy {
   position: absolute;
-  right: 16px;
+  right: 26px;
   i-feather {
     height: 16px;
     width: 16px;
@@ -3326,17 +3371,21 @@ wallet-page {
 
 .wallet__container {
   background: var(--tile-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
   @media (min-width: 992px) {
     margin-top: 4px;
+  }
+  .feed-post__nft-footer {
+    border-radius: 0;
   }
 }
 
 .wallet__table {
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-left: none;
+  border-radius: 0px;
   margin-top: 20px;
 }
 
@@ -3556,13 +3605,9 @@ creator-diamonds {
 
 .creator-profile-nfts__header {
   background: var(--tile-bg);
-  height: 80px;
-  border-radius: 10px 10px 0px 0px;
-  border: 1px solid var(--border);
-  &.card-view {
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
 }
 
 .creator-profile-nfts__no-nfts {
@@ -3598,7 +3643,7 @@ creator-profile-nfts {
 .creator-profile-nfts__dropdown {
   background: var(--tile-secondary-bg);
   color: var(--tile-secondary-bg);
-  border-radius: 16px;
+  border-radius: 4px;
   border: 1px solid var(--border);
   height: 48px;
   width: 193px;
@@ -3648,7 +3693,6 @@ creator-profile-nfts {
 
 .buy-deso__container {
   background: var(--tile-bg);
-  border-radius: 10px;
   padding-top: 16px;
 }
 
@@ -4075,9 +4119,9 @@ creator-profile-nfts {
 //
 
 .creators-leaderboard__avatar {
-  height: 2.5rem;
-  width: 2.5rem;
-
+  height: 40px;
+  width: 40px;
+  border-radius: 99px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -4137,7 +4181,7 @@ trade-creator-form {
 .notifications__avatar {
    height: 40px;
    width: 40px;
-   border-radius: 12px;
+   border-radius: 100px;
    background-size: cover;
    background-repeat: no-repeat;
    background-position: center center;
@@ -4150,17 +4194,16 @@ trade-creator-form {
 }
 
 .notifications__icon {
-  position: absolute;
+  position: relative;
   right: 0px;
   bottom: 0px;
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 30px;
   border-radius: 100%;
+  margin-right: 12px;
   background: var(--tile-bg);
   i-feather {
-    position: absolute;
-    right: 3px;
-    bottom: 3px;
+    width: 32px;
   }
 }
 
@@ -4183,20 +4226,12 @@ app-notifications-list {
     background: var(--tile-bg);
     @media (min-width: 992px) {
       height: 72px;
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
-      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
   }
   .notifications__list-item{
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     background: var(--tile-bg);
-    &.last-item {
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
-    }
   }
 }
 
@@ -4817,9 +4852,9 @@ input {
 }
 
 .notification {
-  text-align: center;
-  line-height: 18px;
-  padding: 0px 5px;
+  color: var(--cred);
+  display: inline-block;
+  margin-left: 6px;
 }
 
 .bg-tile {
@@ -4925,17 +4960,17 @@ input {
   outline: 0;
   comment-modal {
     .feed-post__container {
-      padding: 16px;
-      border-bottom-left-radius: 0px;
-      border-bottom-right-radius: 0px;
+      padding: 32px;
+      border-radius: 10px 10px 0 0;
     }
     .feed-post-container {
       margin-bottom: 0px;
+      border-radius: 10px 10px 0 0;
     }
     .feed-create-comment-form__reply-container {
-      background: var(--tile-bg);
+      background: var(--tile-secondary-bg);
       margin-left: 0px;
-      padding: 16px;
+      padding: 16px 0 0 34px;
       border-top: 1px solid var(--border);
       font-size: 15px !important;
       color: var(--text-muted);
@@ -4945,14 +4980,23 @@ input {
     }
     feed-create-post {
       border-radius: 0px 0px 10px 10px;
+      background: var(--tile-secondary-bg);
+      padding: 8px;
     }
     .create-post {
       border-radius: 0px;
+      background: var(--tile-secondary-bg);
+      padding: 8px;
+      padding-top: 4px;
       textarea {
         margin-top: 0px;
-        border: none;
-        background: var(--tile-secondary-bg) !important;
+        border-radius: 4px;
+        background: var(--tile-bg) !important;
         color: var(--text) !important;
+        &:focus {
+          border-color: var(--highlight);
+          box-shadow: none;
+        }
       }
       .feed-create-post__avatar {
         width: 55px;
@@ -4965,9 +5009,9 @@ input {
       border-top-right-radius: 0px;
       border-top-left-radius: 0px;
       height: 80px;
-      padding: 16px;
+      padding-left: 26px;
       button {
-        right: 16px;
+        right: 22px;
       }
     }
   }
@@ -4977,7 +5021,7 @@ input {
   padding: 0px;
   border: none;
   .modal-header-x {
-    background: var(--tile-bg);
+    background: var(--text);
     height: 56px;
     width: 56px;
     border-radius: 32px;
@@ -4988,30 +5032,32 @@ input {
     display: flex;
     align-items: center;
     justify-content: center;
+    right: -80px;
+    top: 80px;
     i-feather {
       font-size: 0px;
     }
   }
   i-feather {
-    color: var(--text);
+    color: var(--tile-bg);
     height: 24px;
     width: 24px;
     position: relative;
   }
 }
 
+.modal-backdrop {
+  opacity: 0.85 !important;
+}
+
 .creator-profile__container {
   background: var(--tile-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  padding: 24px;
   margin-bottom: 15px;
 }
 
 creator-profile-details {
-  .tab-selector__container{
-    margin-bottom: 15px;
-  }
   .creator-profile-details__coin-container {
     .font-weight-bold {
       font-weight: 600 !important;
@@ -5224,11 +5270,12 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: var(--highlight);
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--tile-bg);
+  font-weight: 600;
   border: none;
   &:hover {
-    color: var(--tile-bg);
+    background-color: var(--black);
   }
   &.disabled-button {
     background: var(--highlight-secondary)
@@ -5259,7 +5306,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--text-secondary);
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--text-secondary);
   &:hover {
     color: var(--text-secondary);

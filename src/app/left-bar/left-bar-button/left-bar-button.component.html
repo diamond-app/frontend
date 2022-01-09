@@ -12,7 +12,7 @@
     #rla="routerLinkActive"
     [ngClass]="{ 'left-bar-active': rla.isActive }"
     queryParamsHandling="merge"
-    class="d-flex justify-content-center align-items-center left-bar-button">
+    class="d-flex w-100 align-items-center left-bar-button">
     <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
     <a
       class="cursor-pointer fs-17px"
@@ -27,28 +27,28 @@
       </span>
       {{ buttonLabel }}
     </a>
-    <div
+    <sup
       *ngIf="
         hasNotifications &&
         globalVars.messageResponse &&
         globalVars.messageResponse.NumberOfUnreadThreads != 0 &&
         notificationType === 'messages'
       "
-      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      class="notification p-0px font-weight-bold position-relative"
       style="padding: 0px"
     >
       {{
         globalVars.messageResponse.NumberOfUnreadThreads > 999
-          ? "(999+)"
-          : "( " + globalVars.messageResponse.NumberOfUnreadThreads + " )"
+          ? "999+"
+          : " " + globalVars.messageResponse.NumberOfUnreadThreads + " "
       }}
-    </div>
-    <div
+    </sup>
+    <sup
       *ngIf="hasNotifications && globalVars.unreadNotifications != 0 && notificationType === 'notifications'"
-      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      class="notification p-0px font-weight-bold position-relative"
       style="padding: 0px"
     >
-      {{ globalVars.unreadNotifications > 99 ? "(99+)" : "( " + globalVars.unreadNotifications + " )" }}
-    </div>
+      {{ globalVars.unreadNotifications > 99 ? "99+" : " " + globalVars.unreadNotifications + " " }}
+    </sup>
   </div>
 </div>

@@ -9,15 +9,15 @@
       <div class="d-flex">
         <div class="w-100 deso-metrics">
           <div class="d-flex justify-content-between">
-            <div>$DESO Price</div>
-            <div>
+            <div class="text-muted fs-14px">$DESO Price</div>
+            <div class="fs-14px"> 
               <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
           <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-            <div class="d-flex" style="min-width: 130px">Your $DESO</div>
-            <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
+            <div class="d-flex fs-14px text-muted">Your $DESO</div>
+            <div class="d-flex fs-14px flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
                 {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }}
@@ -29,14 +29,6 @@
           </div>
         </div>
       </div>
-      <div class="divider"></div>
-      <a (click)="openBuyCloutModal()">
-        <div class="d-flex justify-content-center cursor-pointer">
-          <div class="buy-deso">
-            <span>Buy $DESO</span>
-          </div>
-        </div>
-      </a>
     </div>
   </div>
 
