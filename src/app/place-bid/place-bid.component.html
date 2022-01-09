@@ -130,7 +130,7 @@
           [disabled]="placingBids || errors.length > 0 || !bidAmountDeSo"
           [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountDeSo }"
         >
-          {{ placingBids ? 'place_bid.placing_bid' : 'place_bid.place_a_bid' | transloco }}
+          {{ getPlaceBidText() }}
         </button>
         <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">{{ 'place_bid.buy_deso' | transloco }}</div>
       </div>

@@ -7,7 +7,7 @@
   "Given": "Given",
   "Received": "Received",
   "add_unlockable_modal": {
-    "mft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
+    "nft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
     "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
     "btn_selling_NFT": "Selling NFTs",
     "btn_add": "Add",
@@ -242,7 +242,7 @@
     "quote_repost":"Quote Repost",
     "like":"Like",
     "diamond":"Diamond",
-    "place_a_bid":"Place a bit",
+    "place_a_bid":"Place a bid",
     "accept_transfer":"Accept Tranfer",
     "hide_unlockable":"Hide Unlockable",
     "show_unlockable":"Show Unlockable"
@@ -415,7 +415,7 @@
     "are_you_sure":"Are you sure?",
     "selling_price":"Selling Price",
     "number":"Number",
-    "ernings":"Earnings",
+    "earnings":"Earnings",
     "creator_royalty":"Creator Royalty",
     "coinholder_royalty":"Coin-holder Royalty",
     "select_one_bid":"You must select at least one bid in order to sell this NFT.",
@@ -564,8 +564,8 @@
   "tab_selector": {
     "new": "New",
     "all_bids": "All Bids",
-    "my_Bids":"My Bids",
-    "my_Auction":"My Auction",
+    "my_bids":"My Bids",
+    "my_auction":"My Auction",
     "owners":"Owners",
     "thread":"Thread"
   },

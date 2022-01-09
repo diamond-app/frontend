@@ -506,13 +506,7 @@
             #tooltip="matTooltip"
           >
             <i-feather name="Lock"></i-feather>
-            {{
-              decryptableNFTEntryResponses?.length
-                ? showUnlockableContent
-                  ? "feed_post.hide_unlockable"
-                  : "feed_post.show_unlockable"
-                : "feed_post.unlockable_content" | transloco
-            }}
+            {{ showUnlockableText() }}
           </span>
         </div>
         <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">{{ 'feed_post.from' | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>

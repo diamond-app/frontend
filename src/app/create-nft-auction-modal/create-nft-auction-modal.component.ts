@@ -5,6 +5,7 @@ import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backe
 import { concatMap, last, map } from "rxjs/operators";
 import { of } from "rxjs";
 import { Router } from "@angular/router";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "create-nft-auction",
@@ -25,7 +26,8 @@ export class CreateNftAuctionModalComponent {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     public bsModalRef: BsModalRef,
-    private router: Router
+    private router: Router,
+    private translocoService: TranslocoService
   ) {}
 
   updateMinBidAmountUSD(desoAmount) {
@@ -34,6 +36,13 @@ export class CreateNftAuctionModalComponent {
 
   updateMinBidAmountDESO(usdAmount) {
     this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  createAuctionText() {
+    const textKey = this.creatingAuction
+      ? "create_nft_auction_modal.creating_auction"
+      : "create_nft_auction_modal.create_auction";
+    return this.translocoService.translate(textKey);
   }
 
   auctionTotal: number;

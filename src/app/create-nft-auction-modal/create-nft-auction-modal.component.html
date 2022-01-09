@@ -75,7 +75,7 @@
       (click)="createAuction()"
       [disabled]="creatingAuction || createAuctionDisabled()"
     >
-      {{ creatingAuction ? 'create_nft_auction_modal.creating_auction' : 'create_nft_auction_modal.create_auction' | transloco }}
+      {{ createAuctionText() }}
     </button>
     <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} {{ 'create_nft_auction_modal.counter_of' | transloco }} {{ auctionTotal }} {{ 'create_nft_auction_modal.counter_auctions' | transloco }}</div>
   </div>

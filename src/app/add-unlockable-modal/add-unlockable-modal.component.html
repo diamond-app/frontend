@@ -2,7 +2,7 @@
   <nft-modal-header [header]="'Add unlockable content'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
   <div class="fs-15px pt-15px pb-30px text-grey5">
-    {{ 'add_unlockable_modal.mft_contains_unlockable_content' | transloco }}
+    {{ 'add_unlockable_modal.nft_contains_unlockable_content' | transloco }}
   </div>
 
   <textarea
@@ -21,7 +21,7 @@
             [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
             (click)="sellNFT()"
             [disabled]="addDisabled">
-      {{ sellingNFT ? 'add_unlockable_modal.btn_selling_NFT' : 'add_unlockable_modal.btn_add' | transloco }}
+      {{ sellNFTText() }}
     </button>
     <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} {{ 'add_unlockable_modal.soldcounter_of' | transloco }} {{ sellNFTTotal }} {{ 'add_unlockable_modal.soldcounter_sold' | transloco }}</div>
 
