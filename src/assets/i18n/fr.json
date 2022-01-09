@@ -421,7 +421,7 @@
       "are_you_sure":"Êtes-vous sûr?",
       "selling_price":"Prix de vente",
       "number":"Nombre",
-      "ernings":"Gains",
+      "earnings":"Gains",
       "creator_royalty":" Redevances créateurs ",
       "coinholder_royalty":" Redevance détenteurs de pièce",
       "select_one_bid":"Vous devez sélectionner au moins une enchère pour vendre ce NFT.",
@@ -570,8 +570,8 @@
     "tab_selector": {
       "new": "Nouveau",
       "all_bids": "Toutes les enchères",
-      "my_Bids":"Mes enchères",
-      "my_Auction":"Mon enchère",
+      "my_bids":"Mes enchères",
+      "my_auction":"Mon enchère",
       "owners":"Propriétaires",
       "thread":"Fil"
     },
