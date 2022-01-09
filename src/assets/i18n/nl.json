@@ -7,7 +7,7 @@
   "Given": "Gegeven",
   "Received": "Hebben Ontvangen",
   "add_unlockable_modal": {
-    "mft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
+    "nft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
     "btn_selling_NFT": "NFTs verkopen",
     "btn_add": "Toevoegen",
@@ -414,7 +414,7 @@
     "are_you_sure": "Weet je het zeker?",
     "selling_price": "Verkoop prijs",
     "number": "Nummer",
-    "ernings": "Inkomsten",
+    "earnings": "Inkomsten",
     "creator_royalty": "Creator Royalty",
     "coinholder_royalty": "Coin-holder Royalty",
     "select_one_bid": "Je dient minimaal 1 bieding te selecteren om deze NFT te verkopen.",
