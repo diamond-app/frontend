@@ -54,7 +54,7 @@
             <span>{{ t('right_bar.creators.sent') }}</span>
           </div>
         </div>
-        <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">
+        <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.UPDATE_PROFILE" class="font-weight-bold">
           <i-feather name="mail"></i-feather>
           <span>{{ t('right_bar.creators.update_your_email') }}</span>
           <i-feather name="chevron-right" class="right-20px"></i-feather>
