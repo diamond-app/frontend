@@ -126,7 +126,7 @@
         class="diamond-mobile-drag-instructions"
       >
         <p class="d-block">
-          {{ !diamondDragMoved ? 'feed_post_icon_row.slide' : diamondDragCancel ? 'feed_post_icon_row.release_to_cancel' : 'feed_post_icon_row.slide_to_cancel' | transloco }}
+          {{ diamondDraggedText() }}
         </p>
       </div>
       <div
