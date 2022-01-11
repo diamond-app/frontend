@@ -10,6 +10,7 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
 import { includes, round, set } from "lodash";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -80,8 +81,17 @@ export class FeedPostIconRowComponent {
     private platformLocation: PlatformLocation,
     private ref: ChangeDetectorRef,
     private modalService: BsModalService,
-    private themeService: ThemeService
+    private translocoService: TranslocoService
   ) {}
+
+  diamondDraggedText() {
+    const textKey = !this.diamondDragMoved
+      ? "feed_post_icon_row.slide"
+      : this.diamondDragCancel
+      ? "feed_post_icon_row.release_to_cancel"
+      : "feed_post_icon_row.slide_to_cancel";
+    return this.translocoService.translate(textKey);
+  }
 
   // Initiate mobile drag, have diamonds appear
   startDrag() {

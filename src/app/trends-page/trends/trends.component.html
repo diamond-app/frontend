@@ -12,7 +12,7 @@
             style="align-items: center"
           >
             <button class="trend-dropdown-button d-flex align-content-between" role="button" dropdownToggle>
-              <span>{{ activeTab }}</span>
+              <span>{{ activeTab | transloco }}</span>
               <i-feather name="chevron-down" class="feather-small"></i-feather>
             </button>
             <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu place-bid-dropdown buy-deso__currency-dropdown" *dropdownMenu>
@@ -22,7 +22,7 @@
                   class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                   (click)="selectTab(tab)"
                 >
-                  {{ tab }}
+                  {{ tab | transloco }}
                 </a>
               </div>
             </div>
