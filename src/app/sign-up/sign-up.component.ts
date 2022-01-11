@@ -23,7 +23,7 @@ export class SignUpComponent {
   loading: boolean = false;
   followCreatorsToDisplay = 100;
   creatorsToFollow = [];
-  followCreatorThreshold = 1;
+  followCreatorThreshold = 5;
   creatorsFollowedCount = 0;
   creatorsFollowed: string[] = [];
   followTransactionIndex: number = 0;
@@ -298,28 +298,32 @@ export class SignUpComponent {
       .subscribe(
         (res) => {
           this.backendApi
-            .UpdateTutorialStatus(
-              this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
-              TutorialStatus.COMPLETE,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
-              true
-            )
+            .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
             .subscribe(() => {
-              this.currentTransactionStep += 1;
-              this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
-              this.processingTransactions = false;
-              this.globalVars.removeOnboardingSettings();
-              this.globalVars.updateEverything().add(() => {
-                this.router
-                  .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-                    queryParams: { feedTab: "Following" },
-                    queryParamsHandling: "merge",
-                  })
-                  .then(() => {
-                    this.launchTutorial();
+              this.backendApi
+                .UpdateTutorialStatus(
+                  this.globalVars.localNode,
+                  this.globalVars.loggedInUser.PublicKeyBase58Check,
+                  TutorialStatus.COMPLETE,
+                  this.globalVars.loggedInUser.PublicKeyBase58Check,
+                  true
+                )
+                .subscribe(() => {
+                  this.currentTransactionStep += 1;
+                  this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
+                  this.processingTransactions = false;
+                  this.globalVars.removeOnboardingSettings();
+                  this.globalVars.updateEverything().add(() => {
+                    this.router
+                      .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+                        queryParams: { feedTab: "Following" },
+                        queryParamsHandling: "merge",
+                      })
+                      .then(() => {
+                        this.launchTutorial();
+                      });
                   });
-              });
+                });
             });
         },
         (err) => {
