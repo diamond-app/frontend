@@ -4,6 +4,7 @@ import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { environment } from "../../environments/environment";
 
 export class RightBarTabOption {
   name: string;
@@ -38,12 +39,12 @@ export class RightBarCreatorsComponent implements OnInit {
   static GAINERS: RightBarTabOption = {
     name: "right_bar.creators.top_daily_gainers",
     width: 175,
-    poweredBy: { name: "Altumbase", link: "https://altumbase.com/tools?ref=diamondapp" },
+    poweredBy: { name: "Altumbase", link: `https://altumbase.com/tools?${environment.node.name}` },
   };
   static DIAMONDS: RightBarTabOption = {
     name: "right_bar.creators.top_daily_diamond_creators",
     width: 275,
-    poweredBy: { name: "Bitclout Pulse", link: "https://desopulse.com" },
+    poweredBy: { name: "Altumbase", link: `https://altumbase.com/tools?${environment.node.name}` },
   };
   static COMMUNITY: RightBarTabOption = {
     name: "right_bar.creators.top_community_projects",
