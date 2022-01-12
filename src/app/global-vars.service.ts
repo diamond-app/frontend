@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import {
   BackendApiService,
   BalanceEntryResponse,
+  DeSoNode,
   PostEntryResponse,
   TutorialStatus,
   User,
@@ -226,6 +227,8 @@ export class GlobalVarsService {
   referralUSDCents: number = 0;
 
   buyETHAddress: string = "";
+
+  nodes: { [id: number]: DeSoNode };
 
   // Whether the user will see prices on the feed "buy" component.
   showPriceOnFeed: boolean = true;
