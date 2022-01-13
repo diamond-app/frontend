@@ -1,13 +1,6 @@
 {
-  "Hot": "Hot",
-  "Posts": "Posts",
-  "Creator Coin": "Creator Coin",
-  "Diamonds": "Diamanten",
-  "NFTs": "NFTs",
-  "Given": "Gegeven",
-  "Received": "Hebben Ontvangen",
   "add_unlockable_modal": {
-    "nft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
+    "mft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
     "btn_selling_NFT": "NFTs verkopen",
     "btn_add": "Toevoegen",
@@ -15,14 +8,14 @@
     "soldcounter_sold": "verkocht"
   },
   "bid_placed_modal": {
-    "bid_successful" : "Je bieding is gelukt. Als de veiling sluit, laten we het je weten.",
+    "bid_successful": "Je bieding is gelukt. Als de veiling sluit, laten we het je weten.",
     "explore_showcase": "Showcase verkennen"
   },
   "bottom_bar_mobile": {
-    "home" : "Home",
-    "notifications":"Meldingen",
-    "messages":"Berichten",
-    "wallet":"Wallet"
+    "home": "Home",
+    "notifications": "Meldingen",
+    "messages": "Berichten",
+    "wallet": "Wallet"
   },
   "buy_deso": {
     "buy_deso": "Koop $DESO",
@@ -49,7 +42,7 @@
     "copy": "Kopiëren",
     "buy_complete": "Aankoop voltooid",
     "new_balance": "Nieuw balans",
-    "buy_more_deso":"Koop meer $DESO",
+    "buy_more_deso": "Koop meer $DESO",
     "deso_explanation": "$DESO is een cryptomunt zoals bijvoorbeeld Bitcoin, alleen wordt $DESO gebruikt om het het eerste gedecentraliseerde sociale netwerk aan te drijven.",
     "how_to_get": "Hoe kom ik aan $DESO?",
     "create_anon_account": "Maak een anoniem account aan",
@@ -130,7 +123,7 @@
     "market_value": "Marktwaarde",
     "received": "Ontvangen",
     "reserved": "Gereserveerd",
-    "purchased" : "Aangeschaft"
+    "purchased": "Aangeschaft"
   },
   "creator_profile_nfts": {
     "gallery": "Galerij",
@@ -281,11 +274,20 @@
     "slide_to_cancel": "Schuif om te annuleren - Laat los om te bevestigen"
   },
   "feed": {
+    "tab": {
+      "hot": "Hot ??",
+      "global": "Recent",
+      "following": "Volgend",
+      "showcase": "NFT Galerij",
+      "language": "Taal",
+      "searchclout": "Hot",
+      "newbies": "Newbies"
+    },
     "deso_price": "$DESO-prijs",
     "usd_coin": "USD per coin",
     "you_have_referral_0": "Je hebt een onbeperkt ",
     "you_have_referral_1": "aanbrenglink",
-    "find_people_in_hot": "Vind meer mensen om te volgen in de Hot feed",
+    "find_people_in_hot": "Vind meer mensen om te volgen in de <b>Hot</b> feed",
     "load_more": "Laad meer",
     "loading": "Bezig met laden...",
     "no_posts": "Nog geen posts",
@@ -334,9 +336,7 @@
     "post": "Maak een post",
     "admin": "Beheer",
     "buy": "Koop",
-    "logout": "Uitloggen",
-    "settings": "Instellingen",
-    "more": "Meer"
+    "logout": "Uitloggen"
   },
   "loader": {
     "loading": "Laden"
@@ -362,6 +362,30 @@
     "sending": "Verzenden",
     "new_message": "Nieuw bericht"
   },
+  "notifications": {
+    "filter": {
+      "select_none": "Niets selecteren",
+      "select_all": "Alles selecteeren",
+      "all": "Alles",
+      "notification_settings": "Instellingen voor Meldingen",
+      "only_show": "Alleen weergeven",
+      "likes": "Vind ik leuks",
+      "diamonds": "Diamanten",
+      "creator_coin": "Creator Munten",
+      "follows": "Volgers",
+      "mentions_replies_reposts": "Vermoenen / Antwoorden / Herposts",
+      "nft": "NFT",
+      "view": "Weergeven",
+      "expanded": "Uitgebreid",
+      "update": "Bijwerken",
+      "cancel": "Annuleren"
+    },
+    "list": {
+      "notifications": "Meldingen",
+      "no_notifications": "Je hebt nog geen meldingen"
+    },
+    "mentioned": "Mentioned"
+  },
   "place_bid": {
     "select_an_edition": "Selecteer een editie",
     "place_a_bid": "Plaats een bod",
@@ -376,6 +400,61 @@
     "buy_deso": "Koop DESO",
     "multiple_editions": "Een NFT kan meerdere edities hebben, ieder met zijn eigen unieke serienummer.",
     "no_serial_available": "Er zijn geen serienummers beschikbaar om op te bieden."
+  },
+  "post_thread": {
+    "post": "Post"
+  },
+  "quote_reposts": {
+    "quote_reposts": "Reposts quoten"
+  },
+  "referral_program": {
+    "enter_user_to_modify": "Vul een gebruiker in om referral links aan te passen",
+    "pubkey_or_user": "Publieke sleutel of gebruikersnaam:",
+    "create_new_reflink": "Creëer nieuwe referral link:",
+    "referrer_amount": "Bedrag Referrer",
+    "referree_amount": "Bedrag Referree",
+    "max_referrals": "Maximum Referrals",
+    "requires_jumio": "Vereist Jumio",
+    "is_active": "Is Actief",
+    "create_link_btn": "Creëer nieuwe link",
+    "create_link_btn_loading": "Bezig...",
+    "existing_links": "Bestaande referral links:",
+    "no_existing_links": "Geen bestaande links gevonden.",
+    "update_link_btn": "Link aanpassen",
+    "update_link_btn_loading": "Bezig met aanpassen...",
+    "paid_to_referrals": "betaald aan referrals",
+    "paid_to_referee": "betaald aan referee",
+    "referred_users_click_to_hide": "Referred gebruikers (klik om te verbergen):",
+    "download_csv_explanation": "Download een gedetailleerd CSV-rapport van het referral-programma en pas desgewenst een of meerdere referrals aan.",
+    "download_csv_with_links": "Download CSV met alle referral links:",
+    "download_csv_btn": "Download CSV",
+    "download_csv_btn_loading": "Downloaden...",
+    "upload_csv_of_links": "Upload CSV met links om aan te passen of toe te voegen:",
+    "upload_csv_btn": "Upload CSV",
+    "upload_csv_btn_loading": "Uploaden...",
+    "download_csv_with_info": "Download CSV met informatie van alle referees:",
+    "download_info_btn": "Download Info",
+    "download_info_btn_loading": "Downloaden..."
+  },
+  "referrals": {
+    "my_referrals": "Mijn Referrals",
+    "link_singular": "De link",
+    "link_plural": "De links",
+    "referrals_explain": "hieronder geven jou en je referrals een bonus bij aanmelden. Alle bonussen worden getoond in USD, maar worden uitgekeerd in de overeenkomende DESO-waarde van het moment van aanmelden.",
+    "copied": "Gekopieerd",
+    "link_not_active": "Deze link is niet langer actief.",
+    "you_get_per_referral_0": "Je ontvangt",
+    "you_get_per_referral_1": "USD per referral",
+    "total_collected": "Totaal ontvangen:",
+    "deso": "DESO",
+    "your_referrals_get_0": "Je referrals ontvangen",
+    "your_referrals_get_1": "USD",
+    "total_given": "Totaal uitgekeerd:",
+    "refs_remaining": "Referrals resterend:",
+    "unlimited": "Onbeperkt"
+  },
+  "reposts": {
+    "reposts": "Reposts"
   },
   "right_bar": {
     "creators": {
@@ -414,7 +493,7 @@
     "are_you_sure": "Weet je het zeker?",
     "selling_price": "Verkoop prijs",
     "number": "Nummer",
-    "earnings": "Inkomsten",
+    "ernings": "Inkomsten",
     "creator_royalty": "Creator Royalty",
     "coinholder_royalty": "Coin-holder Royalty",
     "select_one_bid": "Je dient minimaal 1 bieding te selecteren om deze NFT te verkopen.",
@@ -432,7 +511,9 @@
     "updating": "Bijwerken..."
   },
   "simple_profile": {
-    "buy": "Koop"
+    "buy": "Koop",
+    "follow": "Volg",
+    "unfollow": "Ontvolg"
   },
   "signup": {
     "phone_verified": "Je telefoonnummer is geverifieerd. We sturen je een klein beetje DeSo, wat genoeg is om een bericht te plaatsen en anderen te volgen.",
@@ -448,41 +529,145 @@
     "buy_deso": "Koop $DESO",
     "enter_emailaddress": "Vul een e-mailadres in."
   },
+  "tab_selector": {
+    "new": "Nieuw",
+    "all_bids": "Alle biedingen",
+    "my_bids": "Mijn Biedingen",
+    "my_auction": "Mijn Veiling",
+    "owners": "Eigenaren",
+    "thread": "Thread"
+  },
   "top_bar": {
     "mobile": {
       "login": "Inloggen",
       "signup": "Aanmelden"
     }
   },
-  "wallet_widget": {
-    "wallet_of": "Wallet van",
-    "coins_in_circulation": "Coins in omloop",
-    "total_usd_locked": "Totaal USD vastgezet",
-    "usd_market_cap": "USD Marktkapitalisatie"
+  "trade-creator": {
+    "coin": "Coin",
+    "coin_price": "Coinwaarde",
+    "price_per_coin": "Waarde per coin",
+    "confirm_operation": "Bevestigen",
+    "confirm": "Bevestig",
+    "back": "Terug",
+    "view_wallet": "Bekijk wallet",
+    "available": "beschikbaar",
+    "usd": "USD",
+    "deso": "DESO",
+    "buy_DESO": "Koop DESO",
+    "recipient": "Ontvanger",
+    "user_not_found_0": "Gebruikersnaam",
+    "user_not_found_1": "niet gevonden.",
+    "enter_user_or_key": "Vul een geldige gebruikersnaam of publieke sleutel in.",
+    "enter_not_logged_in": "Vul een ontvanger in die niet de huidig ingelogde gebruiker is.",
+    "amount": "Aantal",
+    "max": "Maximum",
+    "price_changed_while_waiting": "De prijs is veranderd terwijl je wachtte om te kopen. Bevestig je aanschaf opnieuw.",
+    "amount_required": "Aantal is vereist",
+    "amount_must_be_greater_0": "Aantal moet hoger zijn dan",
+    "amount_must_be_greater_1": "(om vergoedingen te kunnen dekken)",
+    "amount_must_be_less_0": "Aantal moet minder zijn dan",
+    "amount_must_be_less_1": "(jouw balans, minus vergoedingen)",
+    "amount_less_than_balance": "Aantal moet minder zijn dan jouw balans plus vergoedingen",
+    "amount_must_be_number": "Alleen getallen en decimalen zijn toegestaan",
+    "loading": "Bezig...",
+    "review": "Controleer",
+    "cancel": "Annuleren",
+    "create_account": "Maak een account aan",
+    "or": "of",
+    "login": "log in",
+    "to": "om",
+    "youre_transferring": "Je draagt over",
+    "youre_exchanging": "Je wisselt",
+    "you_receive": "Je ontvangt",
+    "user_will_receive_reward_0": "ontvangt",
+    "user_will_receive_reward_1": "van jouw aankoop als",
+    "user_will_receive_reward_2": "founder reward",
+    "follow": "Volg",
+    "high_load_warning_0": "Door netwerkdrukte kan ",
+    "high_load_warning_1": "enkele minuten duren om te verwerken. Houd het browservenster open. Als je dit venster vernieuwd of opnieuw verzend, dan zal",
+    "high_load_warning_2": "mogelijk erg traag zijn en bestaat het risico dat er meermaals "
   },
-  "notifications": {
-    "filter": {
-      "select_none": "Niets selecteren",
-      "select_all": "Alles selecteeren",
-      "all": "Alles",
-      "notification_settings": "Instellingen voor Meldingen",
-      "only_show": "Alleen weergeven",
-      "likes": "Vind ik leuks",
-      "diamonds": "Diamanten",
-      "creator_coin": "Creator Munten",
-      "follows": "Volgers",
-      "mentions_replies_reposts": "Vermoenen / Antwoorden / Herposts",
-      "nft": "NFT",
-      "view": "Weergeven",
-      "expanded": "Uitgebreid",
-      "update": "Bijwerken",
-      "cancel": "Annuleren"
+  "transfer_deso": {
+    "send_deso": "Verstuur $DESO",
+    "enter_public_key": "Vul hieronder een publieke sleutel in en het protocol zal de rest doen",
+    "public_key": "Publieke sleutel of gebruikersnaam van de ontvanger",
+    "amount_to_send": "Hoeveelheid om te versturen",
+    "max": "Maximaal",
+    "deso_network_fee": "$DESO netwerkvergoeding",
+    "total": "Totaal",
+    "scan_qr_code": "Scan de QR-code om $DESO naar dit adres te sturen",
+    "working": "Verwerken...",
+    "cancel": "Annuleren"
+  },
+  "trends": {
+    "trends": "Trends",
+    "powered_by": "Mogelijk gemaakt door"
+  },
+  "transfer_nft": {
+    "select_edition": "Selecteer editie",
+    "transfer_nft": "NFT overdragen",
+    "transferring_nft": "NFT overdragen...",
+    "about_to_transfer_nft": "Je staat op het punt om onderstaande NFT over te dragen.",
+    "number": "Nummer",
+    "change": "Aanpassen",
+    "search_pubkey_user": "Zoek een publieke sleutel of gebruikersnaam aan wie je deze NFT wil overdragen",
+    "nft_includes_unlockables": "Deze NFT bevat ontgrendelbare inhoud. Vul deze hieronder in.",
+    "enter_url_code_link": "Vul een URL, inwisselcode, link... in.",
+    "serials_transferable": "Dit zijn de overdraagbare serienummers",
+    "no_serials_transferable": "Er zijn geen serienummers overdraagbaar voor je.",
+    "confirm_transfer": "Bevestig overdracht",
+    "about_to_accept_nft_0": "Je staat op het punt een NFT te ontvangen, overgedragen door",
+    "about_to_accept_nft_1": ".",
+    "highest_bid": "Hoogste bod",
+    "min_bid": "Minimum bod",
+    "deso": "DESO",
+    "accepting_tranfer": "Overdracht accepteren...",
+    "accept_tranfer": "Overdracht accepteren",
+    "nft_can_have_multiple_eds": "Een NFT kan meerdere edities hebben, ieder met zijn eigen unieke serienummer.",
+    "no_serials_to_accept": "Geen serienummers beschikbaar om te accepteren."
+  },
+  "update_profile": {
+    "create_a_profile": "Een profiel aanmaken",
+    "create_a_profile_cost": "Een profiel aanmaken kost momenteel",
+    "this_helps_prevent_spam": "Dit helpt tegen spam.",
+    "upload_image": "Foto uploaden",
+    "no_image_selected": "Geen foto geselecteerd",
+    "username": "Gebruikersnaam",
+    "please_set_username": "Gebruikersnaam niet ingevuld",
+    "is_available": "is beschikbaar",
+    "description": "Omschrijving",
+    "description_can_only_be": "De omschrijving mag maximaal",
+    "characters": "karakters bevatten",
+    "founder_reward_percentage": "Founder Reward Percentage",
+    "you_must_purchase_own_coin": "Je moet je eigen coin aanschaffen, voordat je de Founder Reward lager kunt zetten.",
+    "please_set_founder": "Zet de Founder Reward tussen 0 en 100.",
+    "email": "E-mail",
+    "please_enter_valid_email": "Er is geen geldig e-mailadres ingevuld.",
+    "theme": "Thema",
+    "show_price_in_feed": "Geef prijs weer in de feed",
+    "update_profile": "Profiel bijwerken",
+    "enter_username": "Vul gebruikersnaam in",
+    "enter_emailaddress": "Vul een e-mailadres in.",
+    "tutorial_instructions": "Selecteer een profielfoto, kies een gebruikersnaam en schrijf je profiel omschrijving als je jezelf poëtisch voelt.<br /><br />Als je klaar bent, <b>klik dan op \"Update Profiel\"</b> om verder te gaan.",
+    "avatar": "Avatar",
+    "get_starter_deso": "Ontvang starter-$DESO",
+    "purchase": "Koop",
+    "or": "Of",
+    "usd_of_deso": "USD waarde in $DESO",
+    "create_profile_message": {
+      "verify_phone_number": "Verifieer je telefoonnummer of koop DeSo met Bitcoin om een profiel aan te maken. Dit helpt om spam te voorkomen.",
+      "buy_deso": "Om spam te voorkomen, dien je DeSo te kopen met Bitcoin om een profiel aan te maken."
     },
-    "list": {
-      "notifications": "Meldingen",
-      "no_notifications": "Je hebt nog geen meldingen"
-    },
-    "mentioned": "Mentioned"
+    "create_profile": {
+      "create_your_profile": "Creëer je profiel",
+      "step": "Stap",
+      "select_a_profile_picture": "Selecteer een profielfoto, kies een gebruikersnaam en schrijf je profiel omschrijving als je jezelf poëtisch voelt.<br /><br />Als je klaar bent, <b>klik dan op \"Update Profiel\"</b> om verder te gaan."
+    }
+  },
+  "verify_email": {
+    "failed_to_verify": "E-mailadres kon niet gevalideerd worden: ",
+    "email_verified_successfully": "E-mailadres is gevalideerd"
   },
   "wallet": {
     "coins_purchased": "Munten Gekocht",
@@ -502,72 +687,11 @@
       "invest_in_yourself": "Investeer in jezelf"
     }
   },
-  "verify_email": {
-    "failed_to_verify": "E-mailadres kon niet gevalideerd worden: ",
-    "email_verified_successfully": "E-mailadres is gevalideerd"
-  },
-  "update_profile": {
-    "create_a_profile": "Een profiel aanmaken",
-    "create_a_profile_cost": "Een profiel aanmaken kost momenteel",
-    "this_helps_prevent_spam": "Dit helpt tegen spam.",
-    "upload_image": "Foto uploaden",
-    "no_image_selected": "Geen foto geselecteerd",
-    "username": "Gebruikersnaam",
-    "please_set_username": "Gebruikersnaam niet ingevuld",
-    "is_available": "is beschikbaar",
-    "description": "Omschrijving",
-    "description_can_only_be" : "De omschrijving mag maximaal",
-    "characters" : "karakters bevatten",
-    "founder_reward_percentage": "Founder Reward Percentage",
-    "you_must_purchase_own_coin": "Je moet je eigen coin aanschaffen, voordat je de Founder Reward lager kunt zetten.",
-    "please_set_founder": "Zet de Founder Reward tussen 0-100.",
-    "email": "E-mail",
-    "please_enter_valid_email": "Er is geen geldig e-mailadres ingevuld.",
-    "theme": "Thema",
-    "show_price_in_feed": "Geef prijs weer in de feed",
-    "language": "Taal",
-    "update_profile": "Profiel bijwerken",
-    "enter_username": "Vul gebruikersnaam in",
-    "enter_emailaddress": "Vul een e-mailadres in.",
-    "tutorial_instructions": "Selecteer een profiel foto, kies een gebruikersnaam en schrijf je profiel omschrijving als je jezelf poëtisch voelt.<br /><br />Als je klaar bent, <b>klik dan \"Update Profiel\"</b> om verder te gaan.",
-    "avatar": "Avatar",
-    "get_starter_deso": "Ontvang starter-$DESO",
-    "purchase": "Koop",
-    "or": "Of",
-    "usd_of_deso": "USD waarde in $DESO",
-    "create_profile_message": {
-      "verify_phone_number": "Je dient een telefoonnummer te verifieren, of DeSo aan te schaffen met Bitcoin. om een profiel aan te maken. Dit helpt om spam te voorkomen.",
-      "buy_deso": "Je dient DeSo te kopen met Bitcoin om een profiel aan te maken. Dit helpt om spam te voorkomen."
-    },
-    "create_profile": {
-      "create_your_profile": "Create Your Profile",
-      "step": "Step",
-      "select_a_profile_picture": "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue."
-    }
-  },
-  "transfer_deso": {
-    "send_deso": "Verstuur $DESO",
-    "enter_public_key": "Vul hieronder een publieke sleutel in en het protocol zal de rest doen",
-    "public_key": "Publieke sleutel of gebruikernaam van de ontvanger",
-    "amount_to_send": "Hoeveelheid om te versturen",
-    "max": "Maximaal",
-    "deso_network_fee": "$DESO netwerkvergoeding",
-    "total": "Totaal",
-    "scan_qr_code": "Scan de QR-code om $DESO naar dit adres te sturen",
-    "working": "Verwerken...",
-    "cancel": "Annuleren"
-  },
-  "trends": {
-    "trends": "Trends",
-    "powered_by": "Mogelijk gemaakt door"
-  },
-  "tab_selector": {
-    "new": "Nieuw",
-    "all_bids": "Alle biedingen",
-    "my_bids": "Mijn Biedingen",
-    "my_auction": "Mijn Veiling",
-    "owners": "Eigenaren",
-    "thread": "Thread"
+  "wallet_widget": {
+    "wallet_of": "Wallet van",
+    "coins_in_circulation": "Coins in omloop",
+    "total_usd_locked": "Totaal USD vastgezet",
+    "usd_market_cap": "USD Marktkapitalisatie"
   },
   "Holders": "Houders",
   "All": "Allen",
