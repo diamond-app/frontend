@@ -37,11 +37,11 @@ export class TranslocoHttpLoader implements TranslocoLoader {
     {
       provide: TRANSLOCO_CONFIG,
       useValue: translocoConfig({
-        availableLangs: ["en", "es", "nl", "fr"],
-        defaultLang: "en",
+        availableLangs: ["en-US", "es-ES", "nl-NL", "fr-FR"],
+        defaultLang: "en-US",
         // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: true,
-        fallbackLang: "en",
+        fallbackLang: "en-US",
         prodMode: environment.production,
       }),
     },
