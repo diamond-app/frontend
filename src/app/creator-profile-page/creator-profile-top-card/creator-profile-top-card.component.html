@@ -130,17 +130,7 @@
     <div class="fs-15px py-15px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
     <div class="creator-profile__divider-border"></div>
     <div class="fs-15px d-flex flex-column flex-wrap">
-      <div class="d-flex flex-column">
-        <div class="d-flex justify-content-center creator-profile__public-key">
-          <div class="d-flex">
-            <i-feather name="key"></i-feather>
-            <span class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
-              {{ profile.PublicKeyBase58Check }}
-            </span>
-            <i-feather *ngIf="publicKeyIsCopied" class="check-indicator" name="check-circle"></i-feather>
-            <i-feather *ngIf="!publicKeyIsCopied" (click)="_copyPublicKey()" class="copy-button cursor-pointer" name="copy"></i-feather>
-          </div>
-        </div>
+      <div class="d-flex justify-content-between">
         <div class="d-flex justify-content-center" [ngClass]="{ 'justify-content-between': globalVars.isMobile() }">
           <a
             class="link--unstyled"
@@ -165,6 +155,11 @@
             <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}% </span>
             <span class="fc-muted">FR</span>
           </div>
+        </div>
+        <div *ngIf="profile?.Username">
+          <a class="fc-blue" [href]="getUserDetailsLink()">
+            <u>View Activity</u>
+          </a>
         </div>
       </div>
       <button
