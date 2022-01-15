@@ -65,7 +65,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     "feed_create_post.quotes.quote15",
     "feed_create_post.quotes.quote16",
     "feed_create_post.quotes.quote17",
-    "feed_create_post.quotes.quote18"
+    "feed_create_post.quotes.quote18",
   ];
 
   submittingPost = false;
@@ -177,7 +177,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
         this.resolveFn,
         this.replaceFn,
         this.menuItemFn,
-        this.setInputElementValue,
+        this.setInputElementValue
       );
     }, 50);
   }
@@ -257,6 +257,10 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
       if (EmbedUrlParserService.isValidEmbedURL(this.constructedEmbedURL)) {
         postExtraData["EmbedVideoURL"] = this.constructedEmbedURL;
       }
+    }
+
+    if (environment.node.id) {
+      postExtraData["Node"] = environment.node.id.toString();
     }
 
     if (this.translocoService.getActiveLang()) {
