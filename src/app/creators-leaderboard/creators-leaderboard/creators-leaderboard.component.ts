@@ -7,7 +7,7 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { environment } from "src/environments/environment";
 
 @Component({
@@ -107,7 +107,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     event.stopPropagation();
     this.closeModal.emit();
     const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });

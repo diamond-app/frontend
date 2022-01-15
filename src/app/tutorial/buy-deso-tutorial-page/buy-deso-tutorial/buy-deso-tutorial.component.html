@@ -1,0 +1,56 @@
+<div>
+  <div class="flex-grow-1 br-10px border background-color-white p-16px d-flex flex-column align-items-center">
+    <div class="d-flex w-100 justify-content-center">
+      <div class="col-6 fc-blue d-flex align-items-center flex-column p-16px mb-16px">
+        <div
+          style="border-color: var(--highlight)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          1
+        </div>
+        <div class="text-center">How to buy $DESO</div>
+      </div>
+      <div class="col-6 fc-muted d-flex align-items-center flex-column p-16px">
+        <div
+          style="border-color: var(--border)"
+          class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
+        >
+          2
+        </div>
+        <div class="text-center">How to invest in creators</div>
+      </div>
+    </div>
+    <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-20px">$DESO is Diamond's Social Currency</div>
+    <div
+      class="fc-default fs-16px text-center mb-16px"
+      [ngClass]="{ 'w-90': globalVars.isMobile(), 'w-80': !globalVars.isMobile() }"
+    >
+      <strong class="d-block">What can I do with $DESO?</strong>
+      It allows you to create transactions (posts, likes, follows, etc) that are stored on the blockchain that powers Diamond, including all others apps built on DeSo.<br/><br/>
+      $DESO is also used to give tips on the platform via diamonds, purchase creator coins, and purchase NFTs.<br/><br/>
+      <strong class="d-block">What does each transaction cost?</strong>
+      Every transaction costs less than $0.00002 to make. This is incredibly cheap compared to many of the leading decentralized blockchain solutions available today.<br/><br/>
+    </div>
+    <div class="background-color-secondary p-20px mb-20px" style="border-radius: 14px">
+      <div class="fc-default fs-16px text-center mb-25px font-weight-bold">
+        Choose which option you would like to explore:
+      </div>
+      <div class="d-flex justify-content-around">
+        <div class="col-6 d-flex align-items-center flex-column">
+          <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with fiat</div>
+          <button (click)="openBuyDeSoModal(true)" class="primary-button mb-16px">Show me how</button>
+          <div class="fs-12px fc-muted text-center">We support 20 fiat currencies including USD and more.</div>
+        </div>
+        <div class="col-6 d-flex align-items-center flex-column">
+          <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with BTC / ETH</div>
+          <button (click)="openBuyDeSoModal(false)" class="primary-button mb-16px">Show me how</button>
+          <div class="fs-12px fc-muted text-center">You can buy on Diamond or on an exchange. All transactions are secure.</div>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 d-flex justify-content-center">
+      <button (click)="skipToNextStep()" style="width: 180px" class="plain-button">Skip to creator coins</button>
+    </div>
+  </div>
+  <div class="global__bottom-bar-mobile-height"></div>
+</div>

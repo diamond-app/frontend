@@ -1,12 +1,15 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
-import { AppRoutingModule } from "../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { Subscription } from "rxjs";
 import { document } from "ngx-bootstrap/utils";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "app-notifications-list",
@@ -18,7 +21,12 @@ export class NotificationsListComponent implements OnInit {
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private modalService: BsModalService,
+    private router: Router
+  ) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
@@ -48,6 +56,8 @@ export class NotificationsListComponent implements OnInit {
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
     this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
+    // Set this here, rather than calling a whole updateEverything call
+    this.globalVars.unreadNotifications = 0;
   }
 
   updateSettings(settings) {
@@ -88,6 +98,21 @@ export class NotificationsListComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
+          // Only update the notifications metadata if loading the first page
+          // If we're reading the notifications, we set unread notifications to 0,
+          // and set the last unread notification index equal to the last read notification index
+          if (fetchStartIndex === -1) {
+            this.backendApi
+              .SetNotificationsMetadata(
+                this.globalVars.localNode,
+                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                res.LastSeenIndex,
+                res.LastSeenIndex,
+                0
+              )
+              .toPromise();
+          }
+
           // add all profiles and posts to our cache maps
           Object.assign(this.profileMap, res.ProfilesByPublicKey);
           Object.assign(this.postMap, res.PostsByHash);
@@ -162,6 +187,7 @@ export class NotificationsListComponent implements OnInit {
       link: AppRoutingModule.profilePath(actor.Username),
       bidInfo: null,
       comment: null, // the text of the comment
+      nftEntryResponses: null, // NFT Entry Responses, for transfers
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
@@ -412,6 +438,38 @@ export class NotificationsListComponent implements OnInit {
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       result.link = AppRoutingModule.nftPath(postHash);
       return result;
+    } else if (txnMeta.TxnType == "NFT_TRANSFER") {
+      const nftTransferMeta = txnMeta.NFTTransferTxindexMetadata;
+      if (!nftTransferMeta) {
+        return null;
+      }
+
+      const postHash = nftTransferMeta.NFTPostHashHex;
+
+      const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
+      result.post = this.postMap[postHash];
+      result.action = `${actorName} transferred an NFT to you`;
+      result.icon = "send";
+      result.category = "nft";
+      result.iconClass = "fc-blue";
+      result.link = AppRoutingModule.nftPath(postHash);
+      this.backendApi
+        .GetNFTEntriesForNFTPost(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          result.post.PostHashHex
+        )
+        .subscribe((res) => {
+          const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+            return (
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+              nftEntryResponse.IsPending
+            );
+          });
+
+          result.nftEntryResponses = transferNFTEntryResponses;
+        });
+      return result;
     }
 
     // If we don't recognize the transaction type we return null
@@ -424,6 +482,28 @@ export class NotificationsListComponent implements OnInit {
       return null;
     }
     return _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
+  }
+
+  acceptTransfer(event, notification) {
+    event.stopPropagation();
+    if (!this.globalVars.isMobile()) {
+      this.modalService.show(TransferNftAcceptModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: {
+          post: notification.post,
+          transferNFTEntryResponses: notification.nftEntryResponses,
+        },
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.TRANSFER_NFT_ACCEPT + "/" + notification.post.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: notification.post,
+          postHashHex: notification.post.PostHashHex,
+          transferNFTEntryResponses: notification.nftEntryResponses,
+        },
+      });
+    }
   }
 
   async afterCommentCallback(uiParent, index, newComment) {

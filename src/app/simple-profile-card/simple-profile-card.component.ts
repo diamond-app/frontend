@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { ProfileEntryResponse } from "../backend-api.service";
-import { TradeCreatorComponent } from "../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
@@ -26,11 +26,21 @@ export class SimpleProfileCardComponent implements OnInit {
   // Whether the "buy" button should wiggle to prompt the user to click it
   @Input() tutorialWiggle = false;
   @Output() exitTutorial = new EventEmitter<any>();
+  @Output() onboardingFollowCreator = new EventEmitter<boolean>();
+  tutorialFollowing = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.inTutorial) {
+      this.tutorialFollowing = this.profile.PublicKeyBase58Check in this.globalVars.onboardingCreatorsToFollow
+    }
+  }
 
+  onboardingFollow() {
+    this.tutorialFollowing = !this.tutorialFollowing;
+    this.onboardingFollowCreator.emit(this.tutorialFollowing);
+  }
   counter(num: number) {
     return Array(num);
   }
@@ -73,7 +83,7 @@ export class SimpleProfileCardComponent implements OnInit {
       inTutorial: this.inTutorial,
       tutorialBuy: this.showTutorialBuy,
     };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal",
       initialState,
     });
@@ -98,7 +108,7 @@ export class SimpleProfileCardComponent implements OnInit {
       this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
         ? ""
         : "modal-dialog-centered buy-deso-modal buy-deso-tutorial-modal";
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: dialogClass,
       initialState,
     });

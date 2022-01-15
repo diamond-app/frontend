@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
-  selector: 'referrals',
-  templateUrl: './referrals.component.html',
+  selector: "referrals",
+  templateUrl: "./referrals.component.html",
 })
 export class ReferralsComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -13,13 +13,13 @@ export class ReferralsComponent implements OnInit {
     this.globalVars = _globalVars;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  _copyLink(linkNum: number) {
+  _copyLink(linkNum: number): void {
     this.globalVars._copyText(
       this.globalVars.getLinkForReferralHash(
-        this.globalVars.loggedInUser.ReferralInfoResponses[linkNum].Info.ReferralHashBase58)
+        this.globalVars.loggedInUser.ReferralInfoResponses[linkNum].Info.ReferralHashBase58
+      )
     );
 
     this.linkCopied[linkNum] = true;
@@ -27,5 +27,4 @@ export class ReferralsComponent implements OnInit {
       this.linkCopied[linkNum] = false;
     }, 2000);
   }
-
 }

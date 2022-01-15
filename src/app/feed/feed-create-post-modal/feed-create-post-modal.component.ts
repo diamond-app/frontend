@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Component, OnInit, Input, OnChanges, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
@@ -25,7 +25,7 @@ export type ProfileUpdateErrors = {
   templateUrl: "./feed-create-post-modal.component.html",
   styleUrls: ["./feed-create-post-modal.component.scss"],
 })
-export class FeedCreatePostModalComponent {
+export class FeedCreatePostModalComponent implements AfterViewInit {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
 
@@ -43,6 +43,7 @@ export class FeedCreatePostModalComponent {
     founderRewardError: false,
   };
   profileUpdated = false;
+  warnBeforeClose: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -57,5 +58,44 @@ export class FeedCreatePostModalComponent {
       ["/" + this.globalVars.RouteNames.USER_PREFIX, postEntryResponse.ProfileEntryResponse.Username],
       { queryParamsHandling: "merge" }
     );
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const searchElement = document.querySelector("feed-create-post-modal .feed-create-post__textarea");
+      // @ts-ignore
+      searchElement.focus();
+    }, 0);
+  }
+
+  postUpdated(postNotEmpty: boolean) {
+    console.log(postNotEmpty);
+    this.warnBeforeClose = postNotEmpty;
+  }
+
+  closeModal() {
+    if (this.warnBeforeClose) {
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        title: `Discard Changes?`,
+        html: `Are you sure you want to discard changes to your post and exit?`,
+        showCancelButton: true,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        reverseButtons: true,
+      }).then((res: any) => {
+        if (res.isConfirmed) {
+          this.bsModalRef.hide();
+        }
+      });
+    } else {
+      this.bsModalRef.hide();
+    }
   }
 }

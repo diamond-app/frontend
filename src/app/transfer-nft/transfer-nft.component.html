@@ -38,6 +38,22 @@
         *ngIf="selectedCreator"
       ></simple-profile-card>
 
+      <div *ngIf="this.post.HasUnlockable">
+        <div class="fs-15px pt-15px pb-30px text-grey5">
+          This NFT includes unlockable content. Enter it below.
+        </div>
+
+        <textarea
+          class="fs-15px lh-18px br-8px form-control mb-30px"
+          style="width: 100%; padding: 10px"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="5"
+          [(ngModel)]="unlockableText"
+          #autosize="cdkTextareaAutosize"
+          placeholder="Enter URL, code to redeem, link, etc... "
+        ></textarea>
+      </div>
+
       <div
         [ngClass]="{
           'floating-bottom-bar': globalVars.isMobile(),
@@ -50,8 +66,19 @@
           class="primary-button font-weight-bold fs-15px br-12px"
           style="height: 48px; width: 140px; line-height: 15px"
           (click)="transferNFT()"
-          [disabled]="transferringNFT || !selectedSerialNumber || !selectedCreator"
-          [class]="{ 'disabled-button': transferringNFT || !selectedSerialNumber || !selectedCreator }"
+          [disabled]="
+            transferringNFT ||
+            !selectedSerialNumber ||
+            !selectedCreator ||
+            (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
+          "
+          [class]="{
+            'disabled-button':
+              transferringNFT ||
+              !selectedSerialNumber ||
+              !selectedCreator ||
+              (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
+          }"
         >
           {{ transferringNFT ? "Transferring NFT" : "Transfer NFT" }}
         </button>

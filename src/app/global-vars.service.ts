@@ -19,6 +19,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
@@ -121,7 +122,7 @@ export class GlobalVarsService {
   TutorialStatus: TutorialStatus;
 
   // map[pubkey]->bool of globomods
-  globoMods: any;
+  paramUpdaters: { [k: string]: boolean };
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
@@ -232,6 +233,18 @@ export class GlobalVarsService {
   // Whether the user will see the jumio prompt on the top of the feed.
   showFreeMoneyBanner: boolean = true;
 
+  // How many unread notifications the user has
+  unreadNotifications: number = 0;
+
+  // Variables that are stored while a user is in between setting up their profile and waiting for the jumio verification callback
+  newProfile: {
+    username: string;
+    profilePicInput: string;
+    profileEmail: string;
+    profileDescription: string;
+  };
+  onboardingCreatorsToFollow: { [key: string]: boolean } = {};
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -253,6 +266,33 @@ export class GlobalVarsService {
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
     this.LoadInitialMessages();
+  }
+
+  GetUnreadNotifications() {
+    if (this.loggedInUser) {
+      this.backendApi
+        .GetUnreadNotificationsCount(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+        .toPromise()
+        .then(
+          (res) => {
+            this.unreadNotifications = res.NotificationsCount;
+            if (res.UpdateMetadata) {
+              this.backendApi
+                .SetNotificationsMetadata(
+                  this.localNode,
+                  this.loggedInUser.PublicKeyBase58Check,
+                  -1,
+                  res.LastUnreadNotificationIndex,
+                  res.NotificationsCount
+                )
+                .toPromise();
+            }
+          },
+          (err) => {
+            console.error(this.backendApi.stringifyError(err));
+          }
+        );
+    }
   }
 
   SetMessagesFilter(tabName: any) {
@@ -318,6 +358,32 @@ export class GlobalVarsService {
     });
   }
 
+  initializeOnboardingSettings() {
+    const newProfile = this.backendApi.GetStorage("newOnboardingProfile");
+    const newOnboardingCreatorsToFollow = this.backendApi.GetStorage("newOnboardingCreatorsToFollow");
+    if (!isNil(newProfile)) {
+      this.newProfile = newProfile;
+    }
+    if (!isNil(newOnboardingCreatorsToFollow)) {
+      this.onboardingCreatorsToFollow = newOnboardingCreatorsToFollow;
+    }
+  }
+
+  removeOnboardingSettings() {
+    this.backendApi.RemoveStorage("newOnboardingProfile");
+    this.backendApi.RemoveStorage("newOnboardingCreatorsToFollow");
+  }
+
+  setOnboardingProfile(newOnboardingProfile) {
+    this.backendApi.SetStorage("newOnboardingProfile", newOnboardingProfile);
+    this.newProfile = newOnboardingProfile;
+  }
+
+  setOnboardingCreatorsToFollow(onboardingCreatorsToFollow) {
+    this.backendApi.SetStorage("newOnboardingCreatorsToFollow", onboardingCreatorsToFollow);
+    this.onboardingCreatorsToFollow = onboardingCreatorsToFollow;
+  }
+
   initializeShowPriceSetting() {
     const showPriceOnFeed = this.backendApi.GetStorage("showPriceOnFeed");
     if (!isNil(showPriceOnFeed)) {
@@ -358,18 +424,24 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
+    if (isSameUserAsBefore) {
+      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
+    }
+
     this.loggedInUser = user;
 
     if (this.loggedInUser) {
       // Fetch referralLinks for the userList before completing the load.
-      this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
-        (res: any) => {
-          this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+      this.backendApi
+        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+        .subscribe(
+          (res: any) => {
+            this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+          },
+          (err: any) => {
+            console.log(err);
+          }
+        );
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
@@ -395,12 +467,7 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
-      this.startTutorialAlert();
-    }
-
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
-    this.navigateToCurrentStepInTutorial(user);
   }
 
   preventBackButton() {
@@ -410,7 +477,12 @@ export class GlobalVarsService {
     });
   }
 
-  skipToNextTutorialStep(status: TutorialStatus, ampEvent: string, reload: boolean = false, finalStep: boolean = false) {
+  skipToNextTutorialStep(
+    status: TutorialStatus,
+    ampEvent: string,
+    reload: boolean = false,
+    finalStep: boolean = false
+  ) {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
@@ -435,15 +507,15 @@ export class GlobalVarsService {
       let route = [];
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
-          route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.CREATE_PROFILE: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.FOLLOW_CREATORS: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {
@@ -782,6 +854,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err === "Your balance is insufficient.") {
+      showBuyDeSo = true;
+    }
+
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
@@ -1029,11 +1105,7 @@ export class GlobalVarsService {
 
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
-      // If this node supports phone number verification, go to step 3, else proceed to step 4.
-      const stepNum = this.showPhoneNumberVerification ? 3 : 4;
-      this.router.navigate(["/" + this.RouteNames.SIGN_UP], {
-        queryParams: { stepNum },
-      });
+      this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
     } else {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
@@ -1095,13 +1167,13 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
@@ -1241,9 +1313,44 @@ export class GlobalVarsService {
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.BUY_CREATOR]);
           }
         });
+    });
+  }
+
+  jumioFailedAlert(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      title: "Identity Validation Failed",
+      html: "We're sorry, your validation failed. Would you like to validate with a phone number instead?",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Validate Via Phone Number",
+      cancelButtonText: "Skip",
+      // User must skip or start tutorial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.launchSMSValidation();
+      } else {
+        this.router.navigate(["/" + this.RouteNames.BROWSE]);
+      }
+    });
+  }
+
+  launchSMSValidation(): void {
+    this.identityService.launchPhoneNumberVerification(this.loggedInUser?.PublicKeyBase58Check).subscribe((res) => {
+      if (res.phoneNumberSuccess) {
+        this.updateEverything();
+      }
     });
   }
 
@@ -1296,7 +1403,7 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1314,15 +1421,12 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
-              this.celebrate();
-              if (user.TutorialStatus === TutorialStatus.EMPTY) {
-                this.startTutorialAlert();
-              }
               clearInterval(this.jumioInterval);
               return;
             }
             // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
             if (res.JumioReturned) {
+              this.jumioFailedAlert();
               clearInterval(this.jumioInterval);
             }
           },
@@ -1354,15 +1458,64 @@ export class GlobalVarsService {
   getReferralUSDCents(): void {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
-      this.backendApi.GetReferralInfoForReferralHash(this.localNode, referralHash).subscribe((res) => {
-        const referralInfo = res.ReferralInfoResponse.Info;
-        if (
-          res.ReferralInfoResponse.IsActive &&
-          (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
-        ) {
-          this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+      this.backendApi
+        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
+        .subscribe((res) => {
+          const referralInfo = res.ReferralInfoResponse.Info;
+          const countrySignUpBonus = res.CountrySignUpBonus;
+          if (!countrySignUpBonus.AllowCustomReferralAmount) {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+          } else if (
+            res.ReferralInfoResponse.IsActive &&
+            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
+          ) {
+            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          } else {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+          }
+        });
+    }
+  }
+
+  waitForTransaction(
+    waitTxn: string = "",
+    successCallback: (comp: any) => void = () => {},
+    errorCallback: (comp: any) => void = () => {},
+    comp: any = ""
+  ) {
+    // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
+    // There is a success and error callback so that the caller gets feedback on the polling.
+    if (waitTxn !== "") {
+      let attempts = 0;
+      let numTries = 160;
+      let timeoutMillis = 750;
+      // Set an interval to repeat
+      let interval = setInterval(() => {
+        if (attempts >= numTries) {
+          errorCallback(comp);
+          clearInterval(interval);
         }
-      });
+        this.backendApi
+          .GetTxn(this.localNode, waitTxn)
+          .subscribe(
+            (res: any) => {
+              if (!res.TxnFound) {
+                return;
+              }
+              clearInterval(interval);
+              successCallback(comp);
+            },
+            (error) => {
+              clearInterval(interval);
+              errorCallback(comp);
+            }
+          )
+          .add(() => attempts++);
+      }, timeoutMillis) as any;
+    } else {
+      if (this.pausePolling) {
+        return;
+      }
     }
   }
 }

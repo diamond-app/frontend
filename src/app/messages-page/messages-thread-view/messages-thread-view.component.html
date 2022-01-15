@@ -37,10 +37,10 @@
           (click)="_sendMessage()"
           class="btn btn-primary fs-15px ml-15px messages-thread__border-radius mr-15px"
         >
-          Send
+        {{ 'messages.send' | transloco }}
         </button>
         <button *ngIf="sendMessageBeingCalled" class="btn btn-primary fs-15px ml-15px messages-thread__border-radius mr-15px">
-          Sending...
+          {{ 'messages.sending' | transloco }}...
         </button>
       </div>
     </div>

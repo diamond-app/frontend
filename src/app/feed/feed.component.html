@@ -11,10 +11,10 @@
 
   <!-- Mobile DeSo Price -->
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
-    <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
+    <div>{{ 'feed.deso_price' | transloco }}&nbsp;&nbsp;&nbsp;</div>
     <div>
       <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
-      <span class="text-muted">&nbsp;USD per coin</span>
+      <span class="text-muted">&nbsp;{{ 'feed.usd_coin' | transloco }}</span>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
       class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have an unlimited <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> referral link</span>
+      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>
     </div>
   </a>
   <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>
@@ -56,7 +56,7 @@
       class="feed-desktop-center-banner"
     >
       <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">You have an unlimited <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> referral link</span>
+      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>
     </div>
   </a>
 
@@ -93,7 +93,7 @@
       [ngStyle]="{ 'margin': isMobile ? '0px 8px' : 'auto'}"
     >
       <i class="fas fa fa-fire mr-10px"></i>
-      <span class="mr-5px">Find more people to follow in the <b>Hot</b> feed</span>
+      <span class="mr-5px">{{ 'feed.find_people_in_hot' | transloco }}</span>
     </div>
   </a>
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
@@ -133,8 +133,8 @@
       class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
       (click)="loadMorePosts()"
     >
-      <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
-      <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
+      <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">{{ 'feed.load_more' | transloco }}</div>
+      <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">{{ 'feed.loading' | transloco }}</div>
     </div>
   </div>
 
@@ -147,7 +147,7 @@
     class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center"
     style="height: 400px"
   >
-    <div>No posts yet</div>
+    <div>{{ 'feed.no_posts' | transloco }}</div>
 
     <div class="mt-10px">
       <a
@@ -156,9 +156,9 @@
         [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
         queryParamsHandling="merge"
       >
-        Check out the HOT feed
+      {{ 'feed.check_hot_0' | transloco }}
       </a>
-      to find more people to follow
+      {{ 'feed.check_hot_1' | transloco }}
     </div>
   </div>
   <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
