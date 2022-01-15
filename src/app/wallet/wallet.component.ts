@@ -15,12 +15,15 @@ import { document } from "ngx-bootstrap/utils";
 import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
+//import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
 })
 export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
+  //constructor(private translocoService: TranslocoService) {}
+
   static PAGE_SIZE = 20;
   static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
@@ -45,8 +48,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
 
-  static coinsPurchasedTab: string = "Coins Purchased";
-  static coinsReceivedTab: string = "Coins Received";
+  static coinsPurchasedTab: string = "wallet.coins_purchased";
+  static coinsReceivedTab: string = "wallet.coins_received";
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
   tutorialUsername: string;
@@ -88,20 +91,20 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 3;
+          this.tutorialStepNumber = 1;
           this.tutorialSkippable = true;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
           this.tutorialHeaderText = "Sell a Creator";
-          this.tutorialStepNumber = 3;
+          this.tutorialStepNumber = 1;
           this.nextButtonText = "Setup your profile";
           break;
         }
         case TutorialStatus.INVEST_SELF: {
           this.tutorialHeaderText = "Invest in Yourself";
-          this.tutorialStepNumber = 4;
+          this.tutorialStepNumber = 2;
           this.nextButtonText = "Give a diamond";
           break;
         }
@@ -396,6 +399,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
           if (res.isDismissed) {
             return this.backendApi
               .UpdateProfile(
+                environment.verificationEndpointHostname,
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 "",
@@ -473,7 +477,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
+    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 2/4</span>';
     const walletContainerClass = this.globalVars.isMobile() ? ".global__content__inner" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
@@ -508,7 +512,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 3/6</span>';
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 1/4</span>';
     const walletContainerClass = this.globalVars.isMobile() ? "#wallet-container" : ".global__center__inner";
     this.introJS.setOptions({
       tooltipClass,
@@ -590,5 +594,11 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       this.introJS.exit(true);
       this.skipTutorialExitPrompt = false;
     }
+  }
+
+  getBlockExplorerLink() {
+    return this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
+      ? `https://openprosper.com/u/${this.globalVars.loggedInUser.ProfileEntryResponse.Username}/transactions`
+      : `https://openprosper.com/pk/${this.globalVars.loggedInUser.PublicKeyBase58Check}/transactions`;
   }
 }

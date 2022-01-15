@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
 import { FeedComponent } from "../../feed/feed.component";
+import { isNil } from "lodash";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -29,6 +30,7 @@ class Messages {
 export class BuyDeSoComponent implements OnInit {
   appData: GlobalVarsService;
   @Input() isModal: boolean = false;
+  @Input() activeTabInput: string = null;
   @Output() closeModal = new EventEmitter();
   @Output() showCloseButton = new EventEmitter<boolean>();
 
@@ -44,9 +46,12 @@ export class BuyDeSoComponent implements OnInit {
   static BUY_WITH_USD = "Buy with fiat";
   static BUY_WITH_BTC = "Buy with Bitcoin";
   static BUY_WITH_ETH = "Buy with ETH";
+  static BUY_ON_CB = "Buy on Coinbase";
+  static CB_LINK = "https://www.coinbase.com/price/decentralized-social";
 
   buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
   activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+  linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK }
 
   constructor(
     public ref: ChangeDetectorRef,
@@ -524,6 +529,12 @@ export class BuyDeSoComponent implements OnInit {
 
     if (this.globalVars.showBuyWithETH) {
       this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
+    }
+
+    this.buyTabs.push(BuyDeSoComponent.BUY_ON_CB);
+
+    if (!isNil(this.activeTabInput)) {
+      this.activeTab = this.activeTabInput;
     }
 
     // Query the website to get the fees.

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ProfileEntryResponse, TutorialStatus } from "../../backend-api.service";
-import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDeSoComponent } from "../../transfer-deso/transfer-deso.component";
 import { TransferDesoModalComponent } from "../../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
@@ -46,7 +46,7 @@ export class WalletActionsDropdownComponent implements OnInit {
       this.inTutorial && this.globalVars.isMobile() && window.innerHeight < 765
         ? ""
         : "modal-dialog-centered buy-deso-modal";
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: dialogClass,
       initialState,
     });

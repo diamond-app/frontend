@@ -16,7 +16,7 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./feed.component.sass"],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static HOT_TAB = "Hot 🔥";
+  static HOT_TAB = "Hot";
   static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
@@ -93,6 +93,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.activeTab = FeedComponent.SHOWCASE_TAB;
         } else {
           this.activeTab = queryParams.feedTab;
+          if (this.activeTab === "Hot 🔥") {
+            this.activeTab = FeedComponent.HOT_TAB;
+          }
         }
       } else {
         // A default activeTab will be set after we load the follow feed (based on whether
@@ -133,19 +136,24 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   fetchUserReferrals() {
-    this.backendApi
-      .GetReferralInfoForUser(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-      .subscribe(
-        (res: any) => {
-          const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
-          if (filteredReferrals.length > 0) {
-            this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
+    if (this.globalVars.loggedInUser) {
+      this.backendApi
+        .GetReferralInfoForUser(
+          environment.verificationEndpointHostname,
+          this.globalVars.loggedInUser.PublicKeyBase58Check
+        )
+        .subscribe(
+          (res: any) => {
+            const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
+            if (filteredReferrals.length > 0) {
+              this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
+            }
+          },
+          (err: any) => {
+            console.log(err);
           }
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+        );
+    }
   }
 
   ngAfterViewChecked() {
@@ -191,16 +199,31 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       // this._onTabSwitch()
     }
 
-    // Request the follow feed (so we have it ready for display if needed)
-    if (this.globalVars.followFeedPosts.length === 0) {
-      this.loadingFirstBatchOfFollowFeedPosts = true;
-      this._reloadFollowFeed();
-    }
-
+    const feedPromises = [];
     // Request the hot feed (so we have it ready for display if needed)
     if (this.globalVars.hotFeedPosts.length === 0) {
       this.loadingFirstBatchOfHotFeedPosts = true;
-      this._loadHotFeedPosts();
+      feedPromises.push(this._loadHotFeedPosts());
+    }
+
+    // Request the follow feed (so we have it ready for display if needed)
+    if (this.globalVars.followFeedPosts.length === 0) {
+      this.loadingFirstBatchOfFollowFeedPosts = true;
+      feedPromises.push(this._reloadFollowFeed());
+    }
+
+    if (feedPromises.length > 0) {
+      Promise.all(feedPromises).then(() => {
+        if (
+          this.globalVars.hotFeedPosts.length > 0 &&
+          this.globalVars.hotFeedPosts[0].IsPinned &&
+          this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex &&
+          ((this.globalVars.followFeedPosts.length > 0 && !this.globalVars.followFeedPosts[0].IsPinned) ||
+            this.globalVars.followFeedPosts.length === 0)
+        ) {
+          this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+        }
+      });
     }
 
     // The activeTab is set after we load the following based on whether the user is
@@ -462,6 +485,13 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
+              if (
+                this.globalVars.hotFeedPosts.length > 0 &&
+                this.globalVars.hotFeedPosts[0].IsPinned &&
+                this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex
+              ) {
+                this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+              }
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
               this.serverHasMoreFollowFeedPosts = false;
@@ -508,6 +538,24 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
+            // Remove pinned post if it's been dismissed by the user
+            if (
+              this.globalVars.hotFeedPosts.length > 0 &&
+              this.globalVars.hotFeedPosts[0].IsPinned &&
+              this.backendApi.GetStorage("dismissedPinnedPostHashHex") === this.globalVars.hotFeedPosts[0].PostHashHex
+            ) {
+              this.globalVars.hotFeedPosts.shift();
+              // If the follow feed was loaded prior to the hot feed and is missing a pinned post, add it here
+            } else if (
+              this.globalVars.hotFeedPosts.length > 0 &&
+              this.globalVars.hotFeedPosts[0].IsPinned &&
+              this.backendApi.GetStorage("dismissedPinnedPostHashHex") !==
+                this.globalVars.hotFeedPosts[0].PostHashHex &&
+              this.globalVars.followFeedPosts.length > 0 &&
+              !this.globalVars.followFeedPosts[0].IsPinned
+            ) {
+              this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+            }
             for(let ii=0; ii < this.globalVars.hotFeedPosts.length; ii++) {
               this.hotFeedPostHashes = this.hotFeedPostHashes.concat(
                 this.globalVars.hotFeedPosts[ii]?.PostHashHex
@@ -535,7 +583,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
 
-    this.feedTabs = [FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
+    this.feedTabs = [
+      FeedComponent.FOLLOWING_TAB,
+      FeedComponent.HOT_TAB,
+      FeedComponent.GLOBAL_TAB,
+      FeedComponent.SHOWCASE_TAB,
+    ];
 
     if (!this.activeTab) {
       const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");
@@ -543,6 +596,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.activeTab = defaultActiveTab;
       } else {
         this.activeTab = storedTab;
+        if (this.activeTab === "Hot 🔥") {
+          this.activeTab = FeedComponent.HOT_TAB;
+        }
       }
     }
     this._handleTabClick(this.activeTab);

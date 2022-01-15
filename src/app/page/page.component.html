@@ -17,7 +17,7 @@
           style="height: 30px"
         />
       </a>
-      <div class="position-relative" style="width: 343px; height: 48px">
+      <div *ngIf="!inTutorial" class="position-relative" style="width: 343px; height: 48px">
         <search-bar [resultsUnderBar]="true"></search-bar>
       </div>
       <change-account-selector></change-account-selector>

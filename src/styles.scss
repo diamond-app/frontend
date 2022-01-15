@@ -30,7 +30,8 @@ $feed-border-radius: 12px;
 .main {
   background: var(--background);
   color: var(--text);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
 }
 
 html {
@@ -42,7 +43,8 @@ html {
 }
 
 html, body {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   min-height: 100%; // allows for scrolling
 }
 
@@ -62,7 +64,8 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-weight: normal;
 }
 
@@ -153,7 +156,7 @@ pre, code{
 
 $global__top-bar__height: 60px;
 $global__top-bar__desktop-height: 20px;
-$global__nav__width: 263px;
+$global__nav__width: 271px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
 $global__content__width: $global__center__width + $global__sidebar__width;
@@ -216,6 +219,7 @@ $green-font-color: #19B028;
 // font weights
 // font-weight-light: 300
 // font-weight-normal: 400
+.font-weight-bold { font-weight: 600 !important; }
 .font-weight-semibold { font-weight: 500 }
 .font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
@@ -436,6 +440,8 @@ $green-font-color: #19B028;
 .mr-10px { margin-right: 10px; }
 .mb-10px { margin-bottom: 10px; }
 .ml-10px { margin-left: 10px; }
+.mx-10px { margin-left: 10px; margin-right: 10px; }
+.my-10px { margin-top: 10px; margin-bottom: 10px; }
 
 .m-12px { margin: 12px; }
 .mt-12px { margin-top: 12px; }
@@ -812,6 +818,12 @@ $green-font-color: #19B028;
   align-items: center;
 }
 
+.modal-wide {
+  @media (min-width: 992px) {
+    max-width: 775px !important;
+  }
+}
+
 .modal-dialog-high {
   .modal-content {
     position: fixed;
@@ -913,7 +925,8 @@ input.bs-timepicker-field {
 }
 
 .loading-container {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-size: 17px;
   font-weight: 500;
 }
@@ -954,6 +967,24 @@ app-landing-page {
   @media (max-width: 992px) {
     top: -140px;
   }
+}
+
+@keyframes disappear {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes appear {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.disappear {
+  animation: .5s ease 0s 1 disappear forwards;
+}
+
+.appear {
+  animation: .5s ease 0s 1 appear forwards;
 }
 
 app-landing-page {
@@ -1821,6 +1852,12 @@ tab-selector {
   }
 }
 
+.left-bar-more-container {
+  background: var(--tile-secondary-bg);
+  bottom: 0px;
+  border-radius: 10px;
+}
+
 .left-bar-mobile__translucent-background {
   z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
   position: fixed;
@@ -2017,6 +2054,39 @@ feed-create-post {
 
 #country-search-box {
   font-size: 15px !important;
+}
+
+.onboarding-info-bar-circle {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--border);
+  border-radius: 100%
+}
+
+.onboarding-follow-selection {
+  max-height: calc(100vh - 400px);
+  overflow-y: scroll;
+}
+
+.onboarding-selected-section {
+  background: var(--background-secondary);
+  opacity: 1;
+  transition: all 1s ease;
+}
+
+.onboarding-unselected-section {
+  background: var(--tile-bg);
+  transition: all 1s ease;
+  opacity: 0.5;
+}
+
+sign-up {
+  .global__center__inner {
+    width: 800px;
+  }
+  .global__sidebar__inner {
+    display: none;
+  }
 }
 
 .feed-create-post__avatar.change-account-selector__account-image {
@@ -2315,6 +2385,10 @@ feed-create-post {
   background-position: center;
 }
 
+.modal-open {
+  padding-right: 0px !important;
+}
+
 .modal-header .feed-create-comment-form__close {
   margin: 0;
   padding: 0;
@@ -2335,6 +2409,16 @@ feed-create-post {
   span {
     margin: 0px 8px;
   }
+}
+
+trends {
+  .icon-diamond {
+    margin-left: 0px !important;
+  }
+}
+
+.trends-scroll-container {
+  height: calc(100vh - 210px) !important;
 }
 
 .trend-box {
@@ -2412,6 +2496,8 @@ feed-create-post {
 
 .feed-post-container {
   margin-bottom: 12px;
+  border-radius: 10px;
+  background: var(--tile-bg);
 }
 
 .js-feed-post-hover:hover {
@@ -2753,7 +2839,8 @@ feed {
   padding: 2px 8px;
   border-radius: 10px;
   background-color: var(--tile-secondary-bg);
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -2930,15 +3017,20 @@ feed-post-dropdown {
   background: var(--highlight);
 }
 
-
 .left-bar-button {
   height: 56px;
   margin-left: 12px;
   font-weight: 600;
   font-size: 17px;
   color: var(--text-secondary);
+  &:hover {
+    color: var(--highlight);
+  }
   a {
     color: var(--text-secondary);
+    &:hover {
+      color: var(--highlight);
+    }
   }
   i-feather {
     margin-right: 20px;
@@ -2946,6 +3038,15 @@ feed-post-dropdown {
     height: 20px;
     position: relative;
     top: -1px;
+  }
+}
+
+.left-bar-link {
+  &:hover {
+    color: var(--highlight) !important;
+    a {
+      color: var(--highlight) !important;
+    }
   }
 }
 
@@ -3159,6 +3260,13 @@ right-bar-creators {
 
 .creator-profile__ellipsis-restriction {
   max-width: 150px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.creator-profile__ellipsis-restriction-full {
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -3587,7 +3695,7 @@ creator-profile-nfts {
 .buy-deso__country-dropdown {
   max-height: 28vh;
   overflow-y: scroll;
-  right: 138px !important;
+  right: -110px !important;
 }
 
 .buy-deso__copy-button {
@@ -4738,6 +4846,10 @@ input {
   padding: 0px 5px;
 }
 
+.bg-tile {
+  background-color: var(--tile-bg) !important;
+}
+
 .bg-light {
   background-color: var(--background-secondary) !important;
 }
@@ -4824,7 +4936,8 @@ input {
 }
 
 .modal-content {
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   background: none;
   border: none;
   position: relative;
@@ -5146,6 +5259,21 @@ sell-nft-modal {
   }
 }
 
+.secondary-button {
+  width: 137px;
+  height: 48px;
+  background: none;
+  border-radius: 16px;
+  color: var(--highlight);
+  border: 1px solid var(--highlight);
+  &:hover {
+    color: var(--highlight);
+  }
+  &.disabled-button {
+    background: var(--highlight-secondary)
+  }
+}
+
 .narrow-button {
   width: 75px !important;
 }
@@ -5179,6 +5307,17 @@ sell-nft-modal {
   &.disabled-button {
     background: var(--tile-bg)
   }
+}
+
+.trend-dropdown-button {
+  border-radius: 12px;
+  border: none;
+  border: 1px solid var(--border);
+  background: var(--tile-secondary-bg);
+  height: 48px;
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
 }
 
 .nft-modal-separator {
@@ -5219,7 +5358,8 @@ sell-nft-modal {
   color: var(--tile-bg);
   font-size: 17px;
   border-radius: 4px;
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   right: 50vw;
   .toast-link {
@@ -5417,7 +5557,8 @@ sell-nft-modal {
 
 .cloutavista-button {
   border-radius: 0px 0px 16px 16px;
-  font-family: Gilroy, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Helvetica Neue", sans-serif;
   position: sticky;
   bottom: 0px;
   a {
@@ -5438,164 +5579,195 @@ sell-nft-modal {
   }
 }
 
+.mobile-reaction-box {
+  @media(min-width: 600px) {
+    display: none !important;
+  }
+}
+
+.non-mobile-reaction-box {
+  @media(max-width: 600px) {
+    display: none !important;
+  }
+}
+
+// Contains the button which triggers diamond pop ups
+.diamond-btn {
+  @media (max-width: 991.98px) {
+    @media (max-width: 600px) {
+      bottom: 35px;
+    }
+    width: 100%;
+  }
+  width: 44px; height: 30px;
+  position: absolute;
+  left: -4px;
+  cursor: pointer;
+  &::before {
+    display: none
+  }
+  // Contains box which contains all of the selectable diamond levels
+  .reaction-box {
+    // This creates an invisible, hoverable space for our pointer to use without losing hover focus
+    // Basically, a bridge between the diamond button and the diamond row
+    &::after {
+      content: "."; opacity: 0;
+      display: block;
+      width: 340px;
+      // On desktop, move the diamond bar higher to prevent accidental clicking
+      @media (max-width: 991.98px) {
+        height: 10px;
+        top: 50px; left: 0px;
+      }
+      height: 30px;
+      position: absolute;
+      top: 50px; left: 0px;
+    }
+
+    filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+    // Need to position box above top bar when explainer is triggered
+    z-index: 30;
+    position: absolute;
+    width: 340px; height: 55px;
+    background: var(--tile-bg);
+    border-radius: 20px;
+    // On mobile, need to position this box further left so it doesn't leave the screen
+    @media (max-width: 991.98px) {
+      @media (min-width: 600px) {
+        left: -300px;
+        bottom: 35px;
+      }
+      @media (max-width: 600px) {
+        left: 0px;
+      }
+      bottom: 45px;
+    }
+    left: -125px; bottom: 50px;
+    display: none;
+
+    // Each selectable diamond level in the diamond pop-up
+    .reaction-icon {
+      // Enables "pop-up" animation
+      transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
+      opacity: 0;
+      transform: translate(0, 50px) scale(0);
+      width: 47px; height: 20px;
+      display: inline-block;
+      background: var(--background-secondary);
+      background-color: transparent;
+      content: '\f219';
+      border-radius: 15px;
+      margin: 8px 0 0 0;
+      text-align: center;
+
+      .diamond-reaction {
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
+        top: -30px;
+        left: -2px;
+        position: relative;
+        transition: color .3s;
+      }
+
+      .diamond-help {
+        color: var(--grey);
+      }
+
+        label {
+        padding: 3px 5px 3px 5px;
+        position: relative;
+        top: -24px;
+        border-radius: 10px;
+        font-size: 11px;
+        color: #FFF;
+        background: #333;
+        visibility: visible;
+      }
+
+      // Make selectable area smaller, to prevent accidental selections
+      .reaction-icon-display {
+        height: 14px;
+      }
+    }
+  }
+
+  // Don't show the diamond selector when it's the user's own post
+  &.hide-diamonds {
+    .reaction-box{
+      display: none !important;
+    }
+  }
+
+  // We want to disable phone-sized devices from showing the selector on hover.
+  @media(max-width: 600px) {
+    &.dragged-like {
+      .reaction-box-icons {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .reaction-box {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+  // Show the selector on hover for tablets and desktop machines
+  @media(min-width: 601px) {
+    &:hover {
+      .reaction-box {
+        display: block;
+      }
+    }
+  }
+
+  // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
+  &.dragged-like,&:hover {
+
+    .reaction-box {
+
+      .reaction-icon {
+
+        // Skip the "show" trigger on tablets, the on-hover property can be touchy
+        @media (min-width: 601px) and (pointer: coarse) {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+        // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
+        &.show {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+
+        // For those elements we want to grow, scale them up when they're hovered
+        &.transformable{
+          // Prevent hover effects on mobile, we use the drag interface for that
+          @media (pointer: fine) {
+            &.dragged-icon,&:hover {
+              transform: scale(1.3);
+              transform-origin: bottom;
+            }
+          }
+          // Scale up icons on mobile when they're dragged across
+          @media (pointer: coarse) {
+            &.dragged-icon {
+              transform: scale(1.3);
+              transform-origin: bottom;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 .feed-reaction {
   position: relative;
 
   i {
     position: relative;
     font-size: 22px;
-  }
-
-  // Contains the button which triggers diamond pop ups
-  .diamond-btn {
-    width: 44px; height: 30px;
-    position: absolute;
-    left: -4px;
-    cursor: pointer;
-    &::before {
-      display: none
-    }
-    // Contains box which contains all of the selectable diamond levels
-    .reaction-box {
-      // This creates an invisible, hoverable space for our pointer to use without losing hover focus
-      // Basically, a bridge between the diamond button and the diamond row
-      &::after {
-        content: "."; opacity: 0;
-        display: block;
-        width: 340px;
-        // On desktop, move the diamond bar higher to prevent accidental clicking
-        @media (max-width: 991.98px) {
-          height: 10px;
-          top: 50px; left: 0px;
-        }
-        height: 30px;
-        position: absolute;
-        top: 50px; left: 0px;
-      }
-
-      filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
-      // Need to position box above top bar when explainer is triggered
-      z-index: 30;
-      position: absolute;
-      width: 340px; height: 55px;
-      background: var(--tile-bg);
-      border-radius: 20px;
-      // On mobile, need to position this box further left so it doesn't leave the screen
-      @media (max-width: 991.98px) {
-        left: -300px; bottom: 35px;
-      }
-      left: -125px; bottom: 50px;
-      display: none;
-
-      // Each selectable diamond level in the diamond pop-up
-      .reaction-icon {
-        // Enables "pop-up" animation
-        transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
-        opacity: 0;
-        transform: translate(0, 50px) scale(0);
-        width: 47px; height: 20px;
-        display: inline-block;
-        background: var(--background-secondary);
-        background-color: transparent;
-        content: '\f219';
-        border-radius: 15px;
-        margin: 8px 0 0 0;
-        text-align: center;
-
-        .diamond-reaction {
-          width: 30px;
-          height: 30px;
-          font-size: 25px;
-          top: -30px;
-          left: -2px;
-          position: relative;
-          transition: color .3s;
-        }
-
-        .diamond-help {
-          color: var(--grey);
-        }
-
-          label {
-          padding: 3px 5px 3px 5px;
-          position: relative;
-          top: -24px;
-          border-radius: 10px;
-          font-size: 11px;
-          color: #FFF;
-          background: #333;
-          visibility: visible;
-        }
-
-        // Make selectable area smaller, to prevent accidental selections
-        .reaction-icon-display {
-          height: 14px;
-        }
-      }
-    }
-
-    // Don't show the diamond selector when it's the user's own post
-    &.hide-diamonds {
-      .reaction-box{
-        display: none !important;
-      }
-    }
-
-    // We want to disable phone-sized devices from showing the selector on hover.
-    @media(max-width: 600px) {
-      &.dragged-like {
-        .reaction-box {
-          display: block;
-        }
-      }
-    }
-    // Show the selector on hover for tablets and desktop machines
-    @media(min-width: 601px) {
-      &:hover {
-        .reaction-box {
-          display: block;
-        }
-      }
-    }
-
-    // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
-    &.dragged-like,&:hover {
-
-      .reaction-box {
-
-        .reaction-icon {
-
-          // Skip the "show" trigger on tablets, the on-hover property can be touchy
-          @media (min-width: 601px) and (pointer: coarse) {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
-          }
-          // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
-          &.show {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
-          }
-
-          // For those elements we want to grow, scale them up when they're hovered
-          &.transformable{
-            // Prevent hover effects on mobile, we use the drag interface for that
-            @media (pointer: fine) {
-              &.dragged-icon,&:hover {
-                transform: scale(1.3);
-                transform-origin: bottom;
-              }
-            }
-            // Scale up icons on mobile when they're dragged across
-            @media (pointer: coarse) {
-              &.dragged-icon {
-                transform: scale(1.3);
-                transform-origin: bottom;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -5637,6 +5809,7 @@ sell-nft-modal {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
+    border-radius: 10px;
 
     &.show {
       visibility: visible;

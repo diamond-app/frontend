@@ -1,4 +1,4 @@
-![DeSo Logo](src/assets/img/camelcase_logo.svg)
+![DeSo Logo](src/assets/diamond/camelcase_logo.svg)
 
 # About DeSo
 DeSo is a blockchain built from the ground up to support a fully-featured
@@ -21,7 +21,7 @@ The quickest way to contribute changes to DiamondApp is the following these step
 
 1. Open frontend repo in Gitpod
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/deso-protocol/frontend)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/diamond-app/frontend)
 
 You can use any repo / branch URL and just prepend `https://gitpod.io/#` to it.
 

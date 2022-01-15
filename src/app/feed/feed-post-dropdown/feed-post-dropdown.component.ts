@@ -17,6 +17,7 @@ import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal
 import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import * as _ from "lodash";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 const RouteNames = RouteNamesService;
 @Component({
@@ -24,7 +25,7 @@ const RouteNames = RouteNamesService;
   templateUrl: "./feed-post-dropdown.component.html",
   styleUrls: ["./feed-post-dropdown.component.sass"],
 })
-export class FeedPostDropdownComponent {
+export class FeedPostDropdownComponent implements OnInit{
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
@@ -37,6 +38,7 @@ export class FeedPostDropdownComponent {
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
   showSharePost: boolean = false;
+  showUnfollowUser: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -45,17 +47,22 @@ export class FeedPostDropdownComponent {
     private router: Router,
     private modalService: BsModalService,
     private platformLocation: PlatformLocation,
-    public ref: ChangeDetectorRef
+    public ref: ChangeDetectorRef,
+    private followService: FollowService
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
     }
   }
 
+  ngOnInit() {
+    this.showUnfollowUser = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
+  }
+
   reportPost(): void {
     this.globalVars.logEvent("post : report-content");
     window.open(
-      `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
+      `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
     );
   }
 
@@ -148,10 +155,10 @@ export class FeedPostDropdownComponent {
 
     const loggedInUserPostedThis =
       this.globalVars.loggedInUser.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
-    const loggedInUserIsGloboMod =
-      this.globalVars.globoMods && this.globalVars.globoMods[this.globalVars.loggedInUser.PublicKeyBase58Check];
+    const loggedInUserIsParamUpdater =
+      this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
 
-    return loggedInUserPostedThis || loggedInUserIsGloboMod;
+    return loggedInUserPostedThis || loggedInUserIsParamUpdater;
   }
 
   globalFeedEligible(): boolean {
@@ -216,6 +223,11 @@ export class FeedPostDropdownComponent {
     this.userBlocked.emit();
   }
 
+  unfollowUser(event) {
+    event.stopPropagation();
+    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check);
+  }
+
   addMultiplier() {
     this.modalService.show(PostMultiplierComponent, {
       class: "modal-dialog-centered buy-deso-modal",
@@ -231,6 +243,13 @@ export class FeedPostDropdownComponent {
     this.togglePostPin.emit(event);
     this.post.IsPinned = !this.post.IsPinned;
     this.dropdown.hide();
+  }
+
+  hidePinnedPost(event) {
+    event.stopPropagation();
+    this.backendApi.SetStorage("dismissedPinnedPostHashHex", this.post.PostHashHex);
+    this.globalVars.followFeedPosts.shift();
+    this.globalVars.hotFeedPosts.shift();
   }
 
   copyPostLinkToClipboard(event) {

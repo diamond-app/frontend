@@ -1,0 +1,13 @@
+{
+  "loader":{
+    "loading":"Cargando Ahora"
+  },
+  "landing":{
+    "login":"Entrar",
+    "signup":"Registrar",
+    "signuptoday":"Registrar Hoy",
+    "settle":"No te conformes",
+    "fora":"Por un",
+    "diamonds":"Obten diamantes, y invierte en tus creadores"
+  }
+}

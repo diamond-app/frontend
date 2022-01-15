@@ -31,6 +31,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   MIN_DESO_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() inTutorial: boolean = false;
   @Input() hideWarning: boolean;
   @Output() previewClicked = new EventEmitter();
   @Output() buyDesoClicked = new EventEmitter();

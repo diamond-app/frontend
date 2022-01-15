@@ -11,13 +11,15 @@ import * as _ from "lodash";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { FollowService } from "../../../lib/services/follow/follow.service";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "feed-post",
@@ -66,7 +68,9 @@ export class FeedPostComponent implements OnInit {
     private router: Router,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private followService: FollowService,
+    private translocoService: TranslocoService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -158,6 +162,7 @@ export class FeedPostComponent implements OnInit {
   serialNumbersDisplay: string;
   nftEntryResponses: NFTEntryResponse[];
   decryptableNFTEntryResponses: NFTEntryResponse[];
+  isFollowing: boolean;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -233,12 +238,13 @@ export class FeedPostComponent implements OnInit {
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
+    this.isFollowing = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
   }
 
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
     const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
-    this.modalService.show(TradeCreatorComponent, {
+    this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
@@ -584,7 +590,6 @@ export class FeedPostComponent implements OnInit {
         nftEntryResponse.IsPending
       );
     });
-    console.log(transferNFTEntryResponses);
     if (!this.globalVars.isMobile()) {
       this.modalService.show(TransferNftAcceptModalComponent, {
         class: "modal-dialog-centered modal-lg",
@@ -640,6 +645,16 @@ export class FeedPostComponent implements OnInit {
       this.ref.detectChanges();
     }, 50);
   }
+
+  showUnlockableText() {
+    const textKey = this.decryptableNFTEntryResponses?.length
+      ? this.showUnlockableContent
+        ? "feed_post.hide_unlockable"
+        : "feed_post.show_unlockable"
+      : "feed_post.unlockable_content";
+    return this.translocoService.translate(textKey);
+  }
+
   toggleShowUnlockableContent(): void {
     if (!this.decryptableNFTEntryResponses?.length) {
       return;
