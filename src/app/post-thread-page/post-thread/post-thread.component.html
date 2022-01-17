@@ -64,13 +64,15 @@
           [showIconRow]="true"
           [showReplyingToContent]="true"
           [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, item, currentPost)"
+          [isThreaded]="!!item.Comments.length"
+          [hasThreadIndicator]="!!item.Comments.length"
           [blocked]="isPostBlocked(item)"
           (postDeleted)="onPostHidden(item, currentPost, null)"
           (userBlocked)="afterUserBlocked($event)"
         ></feed-post>
 
         <div *ngFor="let subcommentPost of item.Comments">
-          <div class="pb-15px post-thread__subcomment-container" *ngIf="!isPostBlocked(item)">
+          <div class="post-thread__subcomment-container" *ngIf="!isPostBlocked(item)">
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
@@ -82,7 +84,7 @@
               [showIconRow]="true"
               [showDropdown]="true"
               [showReplyingToContent]="true"
-              [isSubcomment]="true"
+              [isThreaded]="true"
               [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, item, currentPost)"
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onPostHidden(subcommentPost, item, currentPost)"
