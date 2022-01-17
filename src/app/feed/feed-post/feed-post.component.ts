@@ -24,7 +24,7 @@ import { TranslocoService } from "@ngneat/transloco";
 @Component({
   selector: "feed-post",
   templateUrl: "./feed-post.component.html",
-  styleUrls: ["./feed-post.component.sass"],
+  styleUrls: ["./feed-post.component.scss"],
 })
 export class FeedPostComponent implements OnInit {
   @Input()
@@ -130,7 +130,10 @@ export class FeedPostComponent implements OnInit {
   @Input() acceptNFT: boolean = false;
 
   // Determines whether the post should have the thread subcomment UI treatment.
-  @Input() isSubcomment: boolean = false;
+  @Input() isThreaded: boolean = false;
+
+  // Determines whether the post should have the thread subcomment UI treatment.
+  @Input() hasThreadIndicator: boolean = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
