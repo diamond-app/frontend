@@ -5,8 +5,9 @@
   <div class="messages-inbox__header d-flex align-items-center" *ngIf="!_settingsTrayIsOpen()">
     <!-- Tabs -->
     <tab-selector
-      [tabs]="['All', 'Holders']"
+      [tabs]="['My Coin Holders', 'Everyone']"
       [activeTab]="activeTab"
+      class="w-100"
       (tabClick)="_handleTabClick($event)"
     ></tab-selector>
 

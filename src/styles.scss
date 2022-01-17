@@ -3760,12 +3760,11 @@ creator-profile-nfts {
 }
 
 .messages-page__header {
-  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
   padding: 0px 16px;
   background: var(--tile-bg);
   height: 80px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
   span {
     font-size: 24px;
     line-height: 32px;
@@ -3777,7 +3776,7 @@ creator-profile-nfts {
     height: 48px;
     background: var(--highlight);
     color: var(--tile-bg);
-    border-radius: 16px;
+    border-radius: 4px;
     font-size: 17px;
     line-height: 24px;
     border: none;
@@ -3827,7 +3826,7 @@ creator-profile-nfts {
 }
 
 .messages-filter-menu__dropdown {
-  border-radius: 16px !important;
+  border-radius: 4px !important;
   text-align: left;
   padding: 8px 12px;
   background: var(--tile-secondary-bg);
@@ -3858,7 +3857,7 @@ creator-profile-nfts {
   font-size: 17px;
   color: var(--text-secondary);
   button {
-    border-radius: 16px;
+    border-radius: 4px;
     margin-right: 24px;
     width: 94px;
     height: 48px;
@@ -3941,7 +3940,7 @@ creator-profile-nfts {
 }
 
 .messages-thread__border-radius {
-  border-radius: 12px;
+  border-radius: 99px;
 }
 
 .messages-thread__ellipsis-restriction {
@@ -4018,7 +4017,7 @@ creator-profile-nfts {
   height: 40px;
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 100px;
 
   background-size: cover;
   background-repeat: no-repeat;
