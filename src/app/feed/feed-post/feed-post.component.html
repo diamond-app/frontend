@@ -266,7 +266,7 @@
           <!-- Avatar -->
 
           <!-- Main Content -->
-          <div class="w-100">
+          <div class="w-100" [ngClass]="{ 'feed-post__content-wrapper': showReplyingToContent }">
             <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
               {{ 'feed_post.replying_to' | transloco }}
               <a
