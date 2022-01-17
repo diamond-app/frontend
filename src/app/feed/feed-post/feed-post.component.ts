@@ -129,6 +129,9 @@ export class FeedPostComponent implements OnInit {
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
 
+  // Determines whether the post should have the thread subcomment UI treatment.
+  @Input() isSubcomment: boolean = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
