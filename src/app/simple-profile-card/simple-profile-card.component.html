@@ -83,7 +83,7 @@
       </div>
       <div *ngIf="showTutorialFollow">
         <span (click)="onboardingFollow()" class="fc-default fs-15px cursor-pointer">
-          {{ tutorialFollowing ? "Unfollow" : "Follow" }}
+          {{ tutorialFollowing ? 'simple_profile.unfollow' : 'simple_profile.unfollow' | transloco }}
         </span>
       </div>
       <follow-button

@@ -2,12 +2,12 @@
 <div *ngIf="activeTab === 'Single User'" class="fs-15px">
   <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom
               border-color-grey light-grey-divider">
-    Enter a user in order to modify its referral links.
+              {{ 'referral_program.enter_user_to_modify' | transloco }}
   </div>
 
   <div class="fs-15px mt-15px px-15px">
     <div class="font-weight-semibold mb-10px">
-    Public key or username:
+      {{ 'referral_program.pubkey_or_user' | transloco }}
     </div>
     <!-- Search Bar -->
     <search-bar
@@ -29,13 +29,13 @@
 
   <div *ngIf="selectedCreator" class="pt-5px px-15px font-weight-semibold">
     <div>
-      Create a new referral link:
+      {{ 'referral_program.create_new_reflink' | transloco }}
     </div>
     <div class="mt-5px px-10px pb-10px br-3px border border-color-grey">
       <!-- Referrer Amount -->
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
         <div class="font-weight-normal">
-          Referrer Amount
+          {{ 'referral_program.referrer_amount' | transloco }}
         </div>
         <div class="d-flex flex-grow flex-wrap">
           <div class="input-group py-5px">
@@ -55,7 +55,7 @@
       <!-- Referee Amount -->
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">
-          Referee Amount
+          {{ 'referral_program.referree_amount' | transloco }}
         </div>
         <div class="d-flex flex-grow flex-wrap">
           <div class="input-group py-5px">
@@ -75,7 +75,7 @@
       <!-- Max Referrals -->
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">
-          Max Referrals
+          {{ 'referral_program.max_referrals' | transloco }}
         </div>
         <div class="d-flex flex-grow flex-wrap">
           <input
@@ -88,7 +88,7 @@
 
       <!-- Requires Jumio -->
       <div class="d-flex justify-content-between align-items-center fs-15px">
-        <div class="font-weight-normal">Requires Jumio</div>
+        <div class="font-weight-normal">{{ 'referral_program.requires_jumio' | transloco }}</div>
         <div class="custom-control custom-switch custom-switch-lg">
           <input [(ngModel)]="requiresJumio" type="checkbox" class="custom-control-input" id="customSwitch1">
           <label class="custom-control-label" for="customSwitch1"></label>
@@ -98,16 +98,16 @@
       <button (click)="_createNewLink()"
               *ngIf="!creatingNewLink"
               class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
-        Create New Link
+          {{ 'referral_program.create_link_btn' | transloco }}
       </button>
       <button *ngIf="creatingNewLink" class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
-        Creating...
+        {{ 'referral_program.create_link_btn_loading' | transloco }}
       </button>
     </div>
   </div>
 
   <div *ngIf="selectedCreator" class="px-15px py-15px font-weight-semibold">
-    Existing referral links:
+    {{ 'referral_program.existing_links' | transloco }}
     <simple-center-loader
       *ngIf="fetchingExistingLinks"
       [titleLoadingText]="''"
@@ -115,7 +115,7 @@
     </simple-center-loader>
     <div *ngIf="existingLinks.length == 0 && !fetchingExistingLinks"
          class="font-weight-normal font-italic">
-      No existing links found.
+      {{ 'referral_program.no_existing_links' | transloco }}
     </div>
     <div *ngIf="existingLinks.length > 0 && !fetchingExistingLinks"
          class="font-weight-normal">
@@ -145,7 +145,7 @@
           <!-- Referrer Amount -->
           <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
             <div class="font-weight-normal">
-              Referrer Amount
+              {{ 'referral_program.referrer_amount' | transloco }}
             </div>
             <div class="d-flex flex-grow flex-wrap">
               <div class="input-group py-5px">
@@ -165,7 +165,7 @@
           <!-- Referee Amount -->
           <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">
-              Referee Amount
+              {{ 'referral_program.referree_amount' | transloco }}
             </div>
             <div class="d-flex flex-grow flex-wrap">
               <div class="input-group py-5px">
@@ -185,7 +185,7 @@
           <!-- Max Referrals -->
           <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">
-              Max Referrals
+              {{ 'referral_program.max_referrals' | transloco }}
             </div>
             <div class="d-flex flex-grow flex-wrap">
               <input
@@ -198,7 +198,7 @@
 
           <!-- Requires Jumio -->
           <div class="d-flex justify-content-between align-items-center fs-15px">
-            <div class="font-weight-normal">Requires Jumio</div>
+            <div class="font-weight-normal">{{ 'referral_program.requires_jumio' | transloco }}</div>
             <div class="custom-control custom-switch custom-switch-lg">
               <input [(ngModel)]="linkInfo.Info.RequiresJumio"
                      type="checkbox" class="custom-control-input" [id]="'requiresJumio'+ii">
@@ -208,7 +208,7 @@
 
           <!-- Is Active -->
           <div class="d-flex justify-content-between align-items-center fs-15px">
-            <div class="font-weight-normal">Is Active</div>
+            <div class="font-weight-normal">{{ 'referral_program.is_active' | transloco }}</div>
             <div class="custom-control custom-switch custom-switch-lg">
               <input [(ngModel)]="linkInfo.IsActive"
                      type="checkbox" class="custom-control-input" [id]="'isActive'+ii">
@@ -220,23 +220,23 @@
             <button (click)="_updateExistingLink(ii)"
                     *ngIf="!updatingLink[ii]"
                     class="btn btn-warning btn-sm fs-15px">
-              Update Link
+              {{ 'referral_program.update_link_btn' | transloco }}
             </button>
             <button *ngIf="updatingLink[ii]"
                     class="btn btn-warning btn-sm fs-15px" disabled>
-              Updating...
+              {{ 'referral_program.update_link_btn_loading' | transloco }}
             </button>
             <div class="pl-15px">
               <span class="font-weight-bold">Stats:</span>
               {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}},
-              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referrals,
-              {{globalVars.nanosToUSD(linkInfo.Info.TotalRefereeDeSoNanos, 2)}} paid to referee
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} {{ 'referral_program.paid_to_referrals' | transloco }},
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalRefereeDeSoNanos, 2)}} {{ 'referral_program.paid_to_referee' | transloco }}
             </div>
           </div>
           <div *ngIf="linkInfo.ReferredUsers.length > 0"
                (click)="linkInfo.ShowReferredUsers = !linkInfo.ShowReferredUsers"
                class="font-weight-bold mt-10px cursor-pointer">
-            Referred Users (click here to hide):
+            {{ 'referral_program.referred_users_click_to_hide' | transloco }}
           </div>
           <div *ngIf="linkInfo.ShowReferredUsers && linkInfo.ReferredUsers.length > 0">
             <div *ngFor="let referredUser of linkInfo.ReferredUsers">
@@ -257,26 +257,26 @@
 <div *ngIf="activeTab === 'Bulk CSV Upload'" class="fs-15px">
   <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom
               border-color-grey light-grey-divider">
-    Here you can download detailed CSV reports for the referral program and modify referral links en masse.
+    {{ 'referral_program.download_csv_explanation' | transloco }}
   </div>
 
   <!-- Download -->
   <div class="p-15px font-weight-semibold">
-    <div>Download a CSV with all referral links:</div>
+    <div>{{ 'referral_program.download_csv_with_links' | transloco }}</div>
     <button (click)="_downloadReferralCSV()"
             *ngIf="!downloadingReferralCSV"
             class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
-      <i class="fas fa-download"></i>&nbsp;Download CSV
+      <i class="fas fa-download"></i>&nbsp;{{ 'referral_program.download_csv_btn' | transloco }}
     </button>
     <button *ngIf="downloadingReferralCSV"
             class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
-      Downloading...
+      {{ 'referral_program.download_csv_btn_loading' | transloco }}
     </button>
   </div>
 
   <!-- Upload -->
   <div class="p-15px font-weight-semibold" style="position: relative">
-    <div>Upload a CSV of links to update or create:</div>
+    <div>{{ 'referral_program.upload_csv_of_links' | transloco }}</div>
     <input
       class="file-upload-button"
       type="file"
@@ -295,24 +295,24 @@
       "
     />
     <button *ngIf="!uploadingReferralCSV" type="file" class="btn btn-warning fs-15px lh-15px p-10px mt-5px">
-      <i class="fas fa-upload"></i>&nbsp;Upload CSV
+      <i class="fas fa-upload"></i>&nbsp;{{ 'referral_program.upload_csv_btn' | transloco }}
     </button>
     <button *ngIf="uploadingReferralCSV" type="file" class="btn btn-warning fs-15px lh-15px p-10px mt-5px" disabled>
-      Uploading...
+      {{ 'referral_program.upload_csv_btn_loading' | transloco }}
     </button>
   </div>
 
   <!-- Download Referee CSV -->
   <div class="p-15px font-weight-semibold">
-    <div>Download a CSV with info on all referees:</div>
+    <div>{{ 'referral_program.download_csv_with_info' | transloco }}</div>
     <button (click)="_downloadRefereeCSV()"
             *ngIf="!downloadingRefereeCSV"
             class="btn btn-info btn-sm font-weight-bold fs-15px mt-5px">
-      <i class="fas fa-glasses"></i>&nbsp;Download Info
+      <i class="fas fa-glasses"></i>&nbsp;{{ 'referral_program.download_info_btn' | transloco }}
     </button>
     <button *ngIf="downloadingRefereeCSV"
             class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
-      Downloading...
+            {{ 'referral_program.download_info_btn_loading' | transloco }}
     </button>
   </div>
 </div>

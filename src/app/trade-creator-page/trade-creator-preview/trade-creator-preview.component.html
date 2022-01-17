@@ -6,9 +6,8 @@
   ></trade-creator-table>
 
   <div *ngIf="showHighLoadWarning" class="bg-light mt-15px p-15px roboto-regular br-12px text-grey5">
-    Due to high load, {{ creatorCoinTrade.tradeVerbString() | lowercase }}s may take several minutes to process. Please
-    keep your browser open. If you refresh the page and resubmit, your next
-    {{ creatorCoinTrade.tradeVerbString() | lowercase }} will still likely be slow, and you may end up making multiple
+    {{ 'trade-creator.high_load_warning_0' | transloco }} {{ creatorCoinTrade.tradeVerbString() | lowercase }}s {{ 'trade-creator.high_load_warning_1' | transloco }}
+    {{ creatorCoinTrade.tradeVerbString() | lowercase }} {{ 'trade-creator.high_load_warning_2' | transloco }}
     {{ creatorCoinTrade.tradeVerbString() | lowercase }}s.
   </div>
 
@@ -22,7 +21,7 @@
       [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled, 'disabled-button': buyButtonDisabled }"
       (click)="_tradeCreatorCoin()"
     >
-      Confirm
+      {{ 'trade-creator.confirm' | transloco }}
       {{ creatorCoinTrade.tradeVerbString() }}
     </button>
   </div>

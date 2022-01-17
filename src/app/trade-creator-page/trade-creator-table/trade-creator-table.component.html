@@ -1,7 +1,7 @@
 <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer(); else elseBlock">
   <!-- Amount you're transferring -->
   <div *ngIf="!displayForCreatorForm" class="py-3 border-bottom d-flex justify-content-between flex-wrap align-items-center">
-    <span>Recipient</span>
+    <span>{{ 'trade-creator.recipient' | transloco }}</span>
 
     <div class="d-inline-block" style="max-width: 70%; overflow-wrap: anywhere">
       <simple-profile-card
@@ -15,7 +15,7 @@
 
   <!-- Amount you're transferring -->
   <div class="py-3 border-bottom d-flex justify-content-between flex-wrap">
-    <span>You're transferring</span>
+    <span>{{ 'trade-creator.youre_transferring' | transloco }}</span>
 
     <div class="d-inline-block">
       {{ creatorCoinTrade.amount.value | number: "0.0-9" }}
@@ -29,16 +29,16 @@
 
     <div class="d-inline-block" style="text-align: end">
       {{ globalVars.nanosToDeSo(creatorCoinTrade.networkFeeNanos, 9) }}
-      DeSo
+      {{ 'trade-creator.deso' | transloco }}
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-none d-lg-inline">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
-        USD
+        {{ 'trade-creator.usd' | transloco }}
       </span>
 
       <div *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-lg-none" style="text-align: end">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
-        USD
+        {{ 'trade-creator.usd' | transloco }}
       </div>
     </div>
   </div>
@@ -47,7 +47,7 @@
 <ng-template #elseBlock>
   <!-- Amount you're selling -->
   <div class="py-3 border-bottom d-flex justify-content-between flex-wrap">
-    <span>You're exchanging</span>
+    <span>{{ 'trade-creator.youre_exchanging' | transloco }}</span>
 
     <div class="d-inline-block" id="tutorial-amount-purchasing">
       <span *ngIf="!inTutorial || !creatorCoinTrade.isBuyingCreatorCoin">
@@ -57,14 +57,14 @@
 
       <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
         {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
-        USD
+        {{ 'trade-creator.usd' | transloco }}
       </span>
     </div>
   </div>
 
   <!-- Amount you're receiving -->
   <div class="py-3 border-bottom d-flex justify-content-between flex-wrap">
-    <span>You receive</span>
+    <span>{{ 'trade-creator.you_receive' | transloco }}</span>
 
     <div class="d-inline-block" id="tutorial-amount-selling">
       <span *ngIf="!inTutorial || creatorCoinTrade.isBuyingCreatorCoin">
@@ -74,7 +74,7 @@
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
         {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
-        USD
+        {{ 'trade-creator.usd' | transloco }}
       </span>
     </div>
   </div>
@@ -84,17 +84,17 @@
     *ngIf="creatorCoinTrade.desoPriceOfCreatorCoin()"
     class="py-3 border-bottom d-flex justify-content-between flex-wrap"
   >
-    <span>Price per coin</span>
+    <span>{{ 'trade-creator.price_per_coin' | transloco }}</span>
 
     <div class="d-inline-block">
       <span *ngIf="!inTutorial">
         ~{{ creatorCoinTrade.desoPriceOfCreatorCoin().toFixed(4) }}
-        DeSo
+        {{ 'trade-creator.deso' | transloco }}
       </span>
 
       <span [ngClass]="{ 'text-muted': !inTutorial }">
         {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
-        USD
+        {{ 'trade-creator.usd' | transloco }}
       </span>
     </div>
   </div>
@@ -108,11 +108,11 @@
       <i class="fas fa-heart fa-md text-grey5"></i>
     </div>
     <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }" class="text-grey5">
-      @{{ creatorCoinTrade.creatorProfile.Username }} will receive
+      @{{ creatorCoinTrade.creatorProfile.Username }} {{ 'trade-creator.user_will_receive_reward_0' | transloco }}
       <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number: "0.0-9" }}%</span>
-      of your purchase as a
+      {{ 'trade-creator.user_will_receive_reward_1' | transloco }}
       <span style="white-space: nowrap">
-        founder reward
+        {{ 'trade-creator.user_will_receive_reward_2' | transloco }}
         <i
           (click)="tooltip.toggle()"
           class="fas fa-info-circle text-grey5 fs-15px global__tooltip-icon"
@@ -141,6 +141,6 @@
     >
       <i-feather name="check"></i-feather>
     </button>
-    <span class="ml-5px">Follow {{ creatorCoinTrade.creatorProfile.Username }}</span>
+    <span class="ml-5px">{{ 'trade-creator.follow' | transloco }} {{ creatorCoinTrade.creatorProfile.Username }}</span>
   </div>
 </ng-template>

@@ -7,14 +7,14 @@
   <!-- Buttons -->
   <div class="row no-gutters pt-3">
     <div class="d-flex justify-content-end w-100">
-      <button class="plain-button mr-10px" (click)="this._buyMoreClicked()">Back</button>
+      <button class="plain-button mr-10px" (click)="this._buyMoreClicked()">{{ 'trade-creator.back' | transloco }}</button>
       <button
         class="primary-button"
         [routerLink]="'/' + this.appData.RouteNames.WALLET"
         (click)="viewWalletClicked.emit()"
         queryParamsHandling="merge"
       >
-        View Wallet
+        {{ 'trade-creator.view_wallet' | transloco }}
       </button>
     </div>
   </div>

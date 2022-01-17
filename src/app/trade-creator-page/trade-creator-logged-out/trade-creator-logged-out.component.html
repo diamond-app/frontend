@@ -6,17 +6,17 @@
   >
     <div class="d-flex align-items-center">
       <div class="font-weight-bold fs-18px">
-        {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+        {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} {{ 'trade-creator.coin' | transloco }}
       </div>
     </div>
   </div>
 
   <!--CTA-->
   <div class="text-center px-20px not-found__content-container" style="margin-top: 16px">
-    <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
-    or
-    <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
+    <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">{{ 'trade-creator.create_account' | transloco }}</a>
+    {{ 'trade-creator.or' | transloco }}
+    <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">{{ 'trade-creator.login' | transloco }}</a>
     <br />
-    to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
+    {{ 'trade-creator.to' | transloco }} {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} {{ 'trade-creator.coin' | transloco }}.
   </div>
 </div>

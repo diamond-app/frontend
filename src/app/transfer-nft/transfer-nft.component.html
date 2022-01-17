@@ -1,30 +1,30 @@
 <div app-theme class="nft-modal-container p-15px">
   <div class="w-100 d-flex justify-content-between nft-modal__header">
-    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Transfer NFT" }}</div>
+    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? 'transfer_nft.select_edition' : 'transfer_nft.transfer_nft' | transloco }}</div>
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
     <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
       <div class="fs-15px text-grey5">
-        You are about to transfer the NFT shown below.
+        {{ 'transfer_nft.about_to_transfer_nft' | transloco }}
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
-          <span class="m-16px">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
-          <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
+          <span class="m-16px">{{ 'transfer_nft.number' | transloco }} #{{ selectedSerialNumber?.SerialNumber }}</span>
+          <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">{{ 'transfer_nft.change' | transloco }}</a>
       </div>
 
       <div *ngIf="globalVars.isMobile()">
         <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
-          <span class="font-weight-bold">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
+          <span class="font-weight-bold">{{ 'transfer_nft.number' | transloco }} #{{ selectedSerialNumber?.SerialNumber }}</span>
           <div>
-            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">{{ 'transfer_nft.change' | transloco }}</a>
           </div>
         </div>
       </div>
 
       <div class="font-weight-semibold mb-10px">
-        Search for a public key or username to whom you want to transfer this NFT
+        {{ 'transfer_nft.search_pubkey_user' | transloco }}
       </div>
       <search-bar
         [isSearchForUsersToSendDESO]="true"
@@ -40,7 +40,7 @@
 
       <div *ngIf="this.post.HasUnlockable">
         <div class="fs-15px pt-15px pb-30px text-grey5">
-          This NFT includes unlockable content. Enter it below.
+          {{ 'transfer_nft.nft_includes_unlockables' | transloco }}
         </div>
 
         <textarea
@@ -80,7 +80,7 @@
               (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
           }"
         >
-          {{ transferringNFT ? "Transferring NFT" : "Transfer NFT" }}
+          {{ transferringNFT ? 'transfer_nft.transferring_nft' : 'transfer_nft.transfer_nft' | transloco }}
         </button>
       </div>
 
@@ -102,7 +102,7 @@
 
 
     <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">These are the serial numbers that are transferable</div>
+      <div class="nft-modal__subtitle">{{ 'transfer_nft.serials_transferable' | transloco }}</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="transferableSerialNumbers"
@@ -111,7 +111,7 @@
       </div>
     </div>
     <div *ngIf="!transferableSerialNumbers.length" class="fs-15px">
-      There are no serial numbers available for you to transfer.
+      {{ 'transfer_nft.no_serials_transferable' | transloco }}
     </div>
   </div>
 </div>

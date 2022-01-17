@@ -1,48 +1,48 @@
 <div app-theme class="nft-modal-container p-15px">
   <div class="w-100 d-flex justify-content-between nft-modal__header">
-    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Confirm transfer" }}</div>
+    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? 'transfer_nft.select_edition' : 'transfer_nft.confirm_transfer' | transloco }}</div>
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
     <div *ngIf="transferNFTEntryResponses?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
       <div class="fs-15px text-grey5">
-        You are about to accept an NFT transferred by @{{ this.transferringUser }}.
+        {{ 'transfer_nft.about_to_accept_nft_0' | transloco }} @{{ this.transferringUser }}{{ 'transfer_nft.about_to_accept_nft_1' | transloco }}
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
         <div class="col-2 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
-          <span>Number</span>
+          <span>{{ 'transfer_nft.number' | transloco }}</span>
           <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
         </div>
         <div class="col-5 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
-          <span>Highest Bid</span>
-          <span class="mt-5px">{{ globalVars.nanosToDeSo(highBid) }} DESO (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
+          <span>{{ 'transfer_nft.highest_bid' | transloco }}</span>
+          <span class="mt-5px">{{ globalVars.nanosToDeSo(highBid) }} {{ 'transfer_nft.deso' | transloco }} (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
         </div>
         <div class="col-5 d-flex flex-column m-16px">
-          <span>Min Bid Amount</span>
-          <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
+          <span>{{ 'transfer_nft.min_bid' | transloco }}</span>
+          <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} {{ 'transfer_nft.deso' | transloco }} (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
         </div>
       </div>
 
       <div *ngIf="globalVars.isMobile()">
         <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
-          <span class="font-weight-bold">Number</span>
+          <span class="font-weight-bold">{{ 'transfer_nft.number' | transloco }}</span>
           <div>
             <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
-            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">{{ 'transfer_nft.change' | transloco }}</a>
           </div>
         </div>
         <div class="nft-modal-bid-details d-flex flex-column justify-content-center p-16px">
           <div class="border-bottom pb-10px d-flex justify-content-between">
-            <span class="font-weight-bold">Highest Bid</span>
+            <span class="font-weight-bold">{{ 'transfer_nft.highest_bid' | transloco }}</span>
             <span>
-              {{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
+              {{ globalVars.nanosToDeSo(highBid) }} {{ 'transfer_nft.deso' | transloco }} (~{{ globalVars.nanosToUSD(highBid, 2) }})
             </span>
           </div>
           <div class="pt-10px d-flex justify-content-between">
-            <span class="font-weight-bold">Min Bid Amount</span>
+            <span class="font-weight-bold">{{ 'transfer_nft.min_bid' | transloco }}</span>
             <span>
-              {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{
+              {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} {{ 'transfer_nft.deso' | transloco }} (~{{
                 globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
               }})
             </span>
@@ -83,7 +83,7 @@
           [disabled]="acceptingTransfer"
           [class]="{ 'disabled-button': acceptingTransfer }"
         >
-          {{ acceptingTransfer ? "Accepting Transfer" : "Accept Transfer" }}
+          {{ acceptingTransfer ? 'transfer_nft.accepting_tranfer' : 'transfer_nft.accept_tranfer' | transloco }}
         </button>
       </div>
 
@@ -91,7 +91,7 @@
 
 
     <div *ngIf="transferNFTEntryResponses?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">An NFT can have multiple editions, each with its own unique serial number.</div>
+      <div class="nft-modal__subtitle">{{ 'transfer_nft.nft_can_have_multiple_eds' | transloco }}</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="transferNFTEntryResponses"
@@ -100,7 +100,7 @@
       </div>
     </div>
     <div *ngIf="!transferNFTEntryResponses.length" class="fs-15px">
-      There are no serial numbers available for you to accept.
+      {{ 'transfer_nft.no_serials_to_accept' | transloco }}
     </div>
   </div>
 </div>

@@ -2,17 +2,17 @@
 <div class="p-16px">
   <div class="d-flex justify-content-between align-items-center">
     <div class="fc-secondary fs-15px">
-      {{ creatorCoinTrade.assetToSellBalance() }} {{ creatorCoinTrade.assetToSellString() }} available&nbsp;
+      {{ creatorCoinTrade.assetToSellBalance() }} {{ creatorCoinTrade.assetToSellString() }} {{ 'trade-creator.available' | transloco }}&nbsp;
       <span *ngIf="creatorCoinTrade.assetToSellBalanceInUsd()">
-        ≈ {{ creatorCoinTrade.assetToSellBalanceInUsd() | currency }} USD
+        ≈ {{ creatorCoinTrade.assetToSellBalanceInUsd() | currency }} {{ 'trade-creator.usd' | transloco }}
       </span>
     </div>
     <button
-      *ngIf="creatorCoinTrade.tradeType === buyTab && !inTutorial"
+      *ngIf="creatorCoinTrade.tradeType === buyTab"
       class="plain-button fc-default font-weight-bold"
       (click)="_onBuyDeSoClicked()"
     >
-      Buy DESO
+      {{ 'trade-creator.buy_DESO' | transloco }}
     </button>
   </div>
 </div>
@@ -20,7 +20,7 @@
 <div class="p-16px">
   <!-- Transfer Recipient Box -->
   <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer()" [ngStyle]="{ 'margin-bottom': creatorCoinTrade?.transferRecipient?.value ? '16px' : '32px' }">
-    <div class="mint-nft__sub-title mt-0px" style="margin-top: 0px">Recipient</div>
+    <div class="mint-nft__sub-title mt-0px" style="margin-top: 0px">{{ 'trade-creator.recipient' | transloco }}</div>
 
     <div *ngIf="creatorCoinTrade.amount">
       <div class="mt-16px">
@@ -41,16 +41,16 @@
 
     <div class="text-danger text-left fs-14px mt-2">
       <div *ngIf="creatorCoinTrade.showUsernameError" class="mt-10px">
-        Username "{{ creatorCoinTrade.transferRecipient.value.Username }}" could not be found.
+        {{ 'trade-creator.user_not_found_0' | transloco }} "{{ creatorCoinTrade.transferRecipient.value.Username }}" {{ 'trade-creator.user_not_found_1' | transloco }}
       </div>
-      <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">Please enter a valid username or public key.</div>
+      <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">{{ 'trade-creator.enter_user_or_key' | transloco }}</div>
       <div *ngIf="creatorCoinTrade.showCannotSendToSelfError" class="mt-10px">
-        Please enter a recipient that is not the logged in user.
+        {{ 'trade-creator.enter_not_logged_in' | transloco }}
       </div>
     </div>
   </div>
 
-  <div class="mint-nft__sub-title">Amount</div>
+  <div class="mint-nft__sub-title">{{ 'trade-creator.amount' | transloco }}</div>
   <div class="d-flex">
     <div
       class="d-flex"
@@ -85,14 +85,14 @@
         min="0"
         placeholder="0"
       />
-      <span class="mint-nft__floating-span fc-blue cursor-pointer" (click)="_maxButtonClicked()">Max</span>
-      <span *ngIf="creatorCoinTrade.tradeType !== buyTab" class="mint-nft__floating-span" style="right: 80px">{{creatorCoinTrade.creatorProfile.Username}} coin</span>
+      <span class="mint-nft__floating-span fc-blue cursor-pointer" (click)="_maxButtonClicked()">{{ 'trade-creator.max' | transloco }}</span>
+      <span *ngIf="creatorCoinTrade.tradeType !== buyTab" class="mint-nft__floating-span" style="right: 80px">{{creatorCoinTrade.creatorProfile.Username}} {{ 'trade-creator.coin' | transloco }}</span>
     </div>
   </div>
   <!-- Slippage error box -->
   <div *ngIf="creatorCoinTrade.showSlippageError" class="px-3 mt-3">
     <div class="w-100 border border-color-grey bg-light text-danger">
-      <div class="p-3 fs-14px">The price changed while you were waiting to buy. Please reconfirm your purchase.</div>
+      <div class="p-3 fs-14px">{{ 'trade-creator.price_changed_while_waiting' | transloco }}</div>
     </div>
   </div>
 
@@ -103,28 +103,28 @@
   >
     <div *ngIf="creatorCoinTrade.amount.errors.required" class="mt-10px error-container">
       <i-feather name="alert-circle" class="feather-large"></i-feather>
-      Amount is required
+      {{ 'trade-creator.amount_required' | transloco }}
     </div>
 
     <div *ngIf="creatorCoinTrade.amount.errors.exclusiveMin" class="mt-10px error-container">
       <i-feather name="alert-circle" class="feather-large"></i-feather>
-      Amount must be greater than {{ this._minAmount() | number: "0.0-9" }}
-      (to cover fees)
+      {{ 'trade-creator.amount_must_be_greater_0' | transloco }} {{ this._minAmount() | number: "0.0-9" }}
+      {{ 'trade-creator.amount_must_be_greater_1' | transloco }}
     </div>
 
-    <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px error-container d-flex">
-      <i-feather name="alert-circle" class="feather-large mr-5px"></i-feather>
+    <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px error-container">
+      <i-feather name="alert-circle" class="feather-large"></i-feather>
       <div *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock">
-        Amount must be less than
-        {{ this._maxAmount() | number: "0.0-6" }}
-        (your balance net of fees)
+        {{ 'trade-creator.amount_must_be_less_0' | transloco }}
+        {{ this._maxAmount() | number: "0.0-9" }}
+        {{ 'trade-creator.amount_must_be_less_1' | transloco }}
       </div>
-      <ng-template #elseBlock>Amount must be less than your balance plus fees</ng-template>
+      <ng-template #elseBlock>{{ 'trade-creator.amount_less_than_balance' | transloco }}</ng-template>
     </div>
 
     <div *ngIf="creatorCoinTrade.amount.errors.pattern" class="mt-10px error-container">
       <i-feather name="alert-circle" class="feather-large"></i-feather>
-      Amount must be numbers and decimals only
+      {{ 'trade-creator.amount_must_be_number' | transloco }}
     </div>
   </div>
 </div>
@@ -133,7 +133,7 @@
   <div *ngIf="isUpdatingAmounts; else isUpdatingAmountsElseBlock">
     <!-- Loading spinner-->
     <div class="mt-3 spinner-border text-secondary" role="status">
-      <span class="sr-only">Loading...</span>
+      <span class="sr-only">{{ 'trade-creator.loading' | transloco }}</span>
     </div>
   </div>
   <ng-template #isUpdatingAmountsElseBlock>
@@ -147,15 +147,15 @@
   </ng-template>
 
   <!-- Review button -->
-  <div class="pb-3 pt-3" *ngIf="_allowPreviewClick() || !inTutorial">
+  <div class="pb-3 pt-3">
     <button
       class="primary-button"
       [ngClass]="{ 'disabled-button': !_allowPreviewClick() }"
       [disabled]="!_allowPreviewClick()"
       (click)="_onPreviewClicked()"
     >
-      Review
+      {{ 'trade-creator.review' | transloco }}
     </button>
-    <a *ngIf="!inTutorial" class="fc-muted ml-25px" (click)="_closeModal()">Cancel</a>
+    <a class="fc-muted ml-25px" (click)="_closeModal()">{{ 'trade-creator.cancel' | transloco }}</a>
   </div>
 </div>
