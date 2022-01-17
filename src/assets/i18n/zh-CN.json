@@ -7,7 +7,7 @@
 	"add_unlockable_modal": {
 		"btn_add": "加",
 		"btn_selling_NFT": "出售 NFT",
-		"mft_contains_unlockable_content": "此 NFT 包括可解锁的内容。在下面输入它。",
+		"nft_contains_unlockable_content": "此 NFT 包括可解锁的内容。在下面输入它。",
 		"soldcounter_of": "的",
 		"soldcounter_sold": "出售",
 		"unlockable_text_placeholder": "输入 URL、兑换代码、链接等..."
@@ -341,7 +341,9 @@
 		"post": "发布",
 		"referrals": "介绍人",
 		"tutorial": "讲解",
-		"update_profile": "更新配置文件"
+		"update_profile": "更新配置文件",
+		"settings": "Settings",
+		"more": "More"	
 	},
 	"loader": {
 		"loading": "正在加载"
@@ -497,7 +499,7 @@
 		"back_to_nft": "回到 NFT",
 		"coinholder_royalty": "硬币持有人版税",
 		"creator_royalty": "创作者版税",
-		"ernings": "收益",
+		"earnings": "收益",
 		"number": "数",
 		"select_one_bid": "您必须至少选择一个出价才能出售此 NFT。",
 		"sell_an_nft": "出售 NFT",
@@ -536,8 +538,8 @@
 	},
 	"tab_selector": {
 		"all_bids": "所有投标",
-		"my_Auction": "我的拍卖",
-		"my_Bids": "我的出价",
+		"my_auction": "我的拍卖",
+		"my_bids": "我的出价",
 		"new": "新",
 		"owners": "拥有者",
 		"thread": "线"

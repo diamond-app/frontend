@@ -1,6 +1,6 @@
 {
   "add_unlockable_modal": {
-    "mft_contains_unlockable_content": "Este NFT incluye contenido desbloqueable. Introdúcelo aquí.",
+    "nft_contains_unlockable_content": "Este NFT incluye contenido desbloqueable. Introdúcelo aquí.",
     "unlockable_text_placeholder": "Introduce URL, código para redimir, enlace, etc…",
     "btn_selling_NFT": "Vendiendo NFTs",
     "btn_add": "Añade",
@@ -336,7 +336,9 @@
     "post": "Publicar",
     "admin": "Admin",
     "buy": "Comprar",
-    "logout": "Salir"
+    "logout": "Salir",
+    "settings": "Settings",
+    "more": "More"
   },
   "loader": {
     "loading": "Cargando Ahora"
@@ -493,7 +495,7 @@
     "are_you_sure": "¿Estás seguro?",
     "selling_price": "Precio de Venta",
     "number": "Número",
-    "ernings": "Ingresos",
+    "earnings": "Ingresos",
     "creator_royalty": "Royalty de Creador",
     "coinholder_royalty": "Royalty de Poseedor de Moneda",
     "select_one_bid": "Debes seleccionar por lo menos una puja para vender este NFT.",
@@ -532,8 +534,8 @@
   "tab_selector": {
     "new": "Nuevo",
     "all_bids": "Todas las Pujas",
-    "my_Bids": "Mis Pujas",
-    "my_Auction": "Mi Subasta",
+    "my_bids": "Mis Pujas",
+    "my_auction": "Mi Subasta",
     "owners": "Dueños",
     "thread": "Hilo"
   },
