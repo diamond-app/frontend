@@ -13,6 +13,36 @@ import * as _ from "lodash";
 import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
 
+const walkComments = (post, cb) => {
+  cb(post);
+
+  if (Array.isArray(post?.Comments)) {
+    post.Comments.forEach((comment) => {
+      walkComments(comment, cb);
+    });
+  } else {
+    // means tree depth is exhausted for this iteration. We use it as a signal
+    // to start a new thread for the next comment tree.
+    cb(null);
+  }
+};
+
+const flattenThread = (post) => {
+  let thread = {
+    parent: post,
+    children: [],
+  };
+  walkComments(post, (comment) => {
+    if (comment && comment.PostHashHex !== thread.parent.PostHashHex) {
+      thread.children.push(comment);
+    } else if (!!thread.children.length) {
+      thread.children[thread.children.length - 1].isLastNode = true;
+    }
+  });
+
+  return thread;
+};
+
 @Component({
   selector: "post-thread",
   templateUrl: "./post-thread.component.html",
@@ -51,16 +81,6 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  _rerenderThread() {
-    // Force angular to re-render the whole thread tree by cloning currentPost
-    // If we don't do this, the parent's commentCount won't always update (angular won't
-    // be able to detect a change)
-    //
-    // Note: this may lead to performance issues in a big thread, so this may not be
-    // a good long-term solution
-    this.currentPost = _.cloneDeep(this.currentPost);
-  }
-
   ngAfterViewInit() {
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
@@ -84,20 +104,23 @@ export class PostThreadComponent implements AfterViewInit {
   }
 
   // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
+  // TODO: will have to deal with this when getting more data
   getDataSource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
-        const comments = this.currentPost.Comments || [];
-        if (!comments || (this.scrollingDisabled && index > comments.length)) {
+        const threads = this.currentPost.threads || [];
+
+        if (this.scrollingDisabled && index > threads.length) {
           success([]);
           return;
         }
-        if (index + count < comments.length || (index + count > comments.length && this.scrollingDisabled)) {
+
+        if (index + count < threads.length || (index + count > threads.length && this.scrollingDisabled)) {
           // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
           if (index < 0) {
             index = 0;
           }
-          success(comments.slice(index, index + count));
+          success(threads.slice(index, index + count));
           return;
         }
 
@@ -113,8 +136,9 @@ export class PostThreadComponent implements AfterViewInit {
                 this.currentPost.Comments.push(...res.PostFound.Comments);
                 // Make sure we don't have duplicate comments
                 this.currentPost.Comments = _.uniqBy(this.currentPost.Comments, "PostHashHex");
+                this.currentPost.threads = this.currentPost.Comments.map(flattenThread);
               }
-              success(this.currentPost.Comments.slice(index, index + count));
+              success(this.currentPost.threads.slice(index, index + count));
               return;
             } else {
               // If there are no more comments, we should stop scrolling
@@ -314,6 +338,7 @@ export class PostThreadComponent implements AfterViewInit {
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
+
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
       this.currentPostHashHex /*PostHashHex*/,
@@ -344,6 +369,8 @@ export class PostThreadComponent implements AfterViewInit {
         }
         // Set current post
         this.currentPost = res.PostFound;
+        this.currentPost.threads = this.currentPost.Comments?.map(flattenThread);
+        console.log(this.currentPost.threads);
         const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
         this.postLoaded.emit(
           `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
