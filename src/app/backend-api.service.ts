@@ -1197,8 +1197,7 @@ export class BackendApiService {
     FetchParents: boolean = true,
     CommentOffset: number = 0,
     CommentLimit: number = 20,
-    AddGlobalFeedBool: boolean = false,
-    ThreadLevelLimit: number = 5
+    AddGlobalFeedBool: boolean = false
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSinglePost, {
       PostHashHex,
@@ -1207,7 +1206,9 @@ export class BackendApiService {
       CommentOffset,
       CommentLimit,
       AddGlobalFeedBool,
-      ThreadLevelLimit,
+      ThreadLevelLimit: 2,
+      ThreadLeafLimit: 1,
+      LoadAuthorThread: true,
     });
   }
 
