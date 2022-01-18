@@ -167,43 +167,60 @@ export class PostThreadComponent implements AfterViewInit {
   // Note: I removed grandparent comment count incrementing on here. From a UX perspective,
   // I personally found it more confusing than useful.
   async appendSubcomment(newPost, uiParentPost, shouldAppend) {
-    let trueParentPost = await this._findTrueParentOfPost(newPost);
-    let trueParentPostHashHex = trueParentPost.PostHashHex;
-    await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
-    await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = data as any;
-        // If the current post is the true parent, increment the true parent's commentCount
-        if (currentPost.PostHashHex == trueParentPostHashHex) {
-          currentPost.CommentCount += 1;
-        }
-        // If current post is the UI parent, update the UI parent's comments array to
-        // include the currentPost.
-        if (currentPost.PostHashHex == uiParentPost.PostHashHex) {
-          // Look for the true parent within the comments.
-          // If they're in there, bump up their comment count.
-          for (let [index, comment] of (currentPost.Comments || []).entries()) {
-            if (comment.PostHashHex == trueParentPostHashHex) {
-              comment.CommentCount += 1;
-              // Need to clone here to force an angular re-render. Otherwise, when commenting
-              // on another subcomment, the subcomment comment count won't update.
-              currentPost.Comments[index] = _.cloneDeep(comment);
-            }
-          }
-          // Push onto uiParentPost's Comments array
-          currentPost.Comments = currentPost.Comments || [];
-          if (shouldAppend) {
-            currentPost.Comments.push(newPost);
-          } else {
-            currentPost.Comments.unshift(newPost);
-          }
-        }
-        // Need to clone here to force an angular re-render. Otherwise, when commenting on
-        // a comment, the parent comment count won't update.
-        currentPost = _.cloneDeep(currentPost);
-        return [currentPost];
-      },
-    });
+    // TODO: if we had an identity map of PostHashHex to comments we wouldn't need to do this array
+    // search every time.
+    const thread = this.currentPost.threads.find((thread) => thread.parent.PostHashHex === uiParentPost.PostHashHex);
+    if (thread.children.length) {
+      const prevLastNode = thread.children[thread.children.length - 1];
+      thread.children[thread.children.length - 1] = {
+        ...prevLastNode,
+        CommentCount: prevLastNode.CommentCount + 1,
+        isLastNode: false,
+      };
+
+      newPost.isLastNode = true;
+    }
+
+    thread.children.push(newPost);
+    debugger;
+    // debugger;
+    // let trueParentPost = await this._findTrueParentOfPost(newPost);
+    // let trueParentPostHashHex = trueParentPost.PostHashHex;
+    // await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    // await this.datasource.adapter.update({
+    //   predicate: ({ $index, data, element }) => {
+    //     let currentPost = data as any;
+    //     // If the current post is the true parent, increment the true parent's commentCount
+    //     if (currentPost.PostHashHex == trueParentPostHashHex) {
+    //       currentPost.CommentCount += 1;
+    //     }
+    //     // If current post is the UI parent, update the UI parent's comments array to
+    //     // include the currentPost.
+    //     if (currentPost.PostHashHex == uiParentPost.PostHashHex) {
+    //       // Look for the true parent within the comments.
+    //       // If they're in there, bump up their comment count.
+    //       for (let [index, comment] of (currentPost.Comments || []).entries()) {
+    //         if (comment.PostHashHex == trueParentPostHashHex) {
+    //           comment.CommentCount += 1;
+    //           // Need to clone here to force an angular re-render. Otherwise, when commenting
+    //           // on another subcomment, the subcomment comment count won't update.
+    //           currentPost.Comments[index] = _.cloneDeep(comment);
+    //         }
+    //       }
+    //       // Push onto uiParentPost's Comments array
+    //       currentPost.Comments = currentPost.Comments || [];
+    //       if (shouldAppend) {
+    //         currentPost.Comments.push(newPost);
+    //       } else {
+    //         currentPost.Comments.unshift(newPost);
+    //       }
+    //     }
+    //     // Need to clone here to force an angular re-render. Otherwise, when commenting on
+    //     // a comment, the parent comment count won't update.
+    //     currentPost = _.cloneDeep(currentPost);
+    //     return [currentPost];
+    //   },
+    // });
   }
 
   // Returns a flat array of all posts in the data source
