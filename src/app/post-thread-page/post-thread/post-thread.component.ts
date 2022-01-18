@@ -8,40 +8,11 @@ import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
 import { Location } from "@angular/common";
 import { environment } from "src/environments/environment";
+import { flattenThread } from "../helpers/flatten-thread";
 
 import * as _ from "lodash";
 import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
-
-const walkComments = (post, cb) => {
-  cb(post);
-
-  if (Array.isArray(post?.Comments)) {
-    post.Comments.forEach((comment) => {
-      walkComments(comment, cb);
-    });
-  } else {
-    // means tree depth is exhausted for this iteration. We use it as a signal
-    // to start a new thread for the next comment tree.
-    cb(null);
-  }
-};
-
-const flattenThread = (post) => {
-  let thread = {
-    parent: post,
-    children: [],
-  };
-  walkComments(post, (comment) => {
-    if (comment && comment.PostHashHex !== thread.parent.PostHashHex) {
-      thread.children.push(comment);
-    } else if (!!thread.children.length) {
-      thread.children[thread.children.length - 1].isLastNode = true;
-    }
-  });
-
-  return thread;
-};
 
 @Component({
   selector: "post-thread",
@@ -84,10 +55,10 @@ export class PostThreadComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        if(lastVisible.element.parentElement) {
+        if (lastVisible.element.parentElement) {
           setTimeout(() => {
             this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-          //   this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+            //   this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
           }, 1);
         }
       })
@@ -198,17 +169,14 @@ export class PostThreadComponent implements AfterViewInit {
   async appendSubcomment(newPost, uiParentPost, shouldAppend) {
     let trueParentPost = await this._findTrueParentOfPost(newPost);
     let trueParentPostHashHex = trueParentPost.PostHashHex;
-
     await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
         let currentPost = data as any;
-
         // If the current post is the true parent, increment the true parent's commentCount
         if (currentPost.PostHashHex == trueParentPostHashHex) {
           currentPost.CommentCount += 1;
         }
-
         // If current post is the UI parent, update the UI parent's comments array to
         // include the currentPost.
         if (currentPost.PostHashHex == uiParentPost.PostHashHex) {
@@ -222,21 +190,17 @@ export class PostThreadComponent implements AfterViewInit {
               currentPost.Comments[index] = _.cloneDeep(comment);
             }
           }
-
           // Push onto uiParentPost's Comments array
           currentPost.Comments = currentPost.Comments || [];
-
           if (shouldAppend) {
             currentPost.Comments.push(newPost);
           } else {
             currentPost.Comments.unshift(newPost);
           }
         }
-
         // Need to clone here to force an angular re-render. Otherwise, when commenting on
         // a comment, the parent comment count won't update.
         currentPost = _.cloneDeep(currentPost);
-
         return [currentPost];
       },
     });
