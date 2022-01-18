@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Input } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { GlobalVarsService } from "../global-vars.service";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "comment-modal",
@@ -14,7 +15,7 @@ export class CommentModalComponent implements AfterViewInit {
   @Input() isQuote = false;
 
   warnBeforeClose: boolean = false;
-  constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService) {}
+  constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService, private translocoService: TranslocoService) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -27,6 +28,11 @@ export class CommentModalComponent implements AfterViewInit {
   postUpdated(postNotEmpty: boolean) {
     console.log(postNotEmpty);
     this.warnBeforeClose = postNotEmpty;
+  }
+
+  quoteReplyText() {
+    const textKey = this.isQuote ? "comment_modal.quoting" : "comment_modal.replying_to";
+    return this.translocoService.translate(textKey);
   }
 
   closeModal() {
