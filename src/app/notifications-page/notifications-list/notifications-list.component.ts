@@ -177,8 +177,8 @@ export class NotificationsListComponent implements OnInit {
     // doesn't have to do any hard work
     const result = {
       actor, // who created the notification
-      icon: null,
       category: null, // category used for filtering
+      icon: null,
       iconClass: null,
       action: null, // the action they took
       actionDetails: null, // Summarized details of the action for compact mode
@@ -396,7 +396,7 @@ export class NotificationsListComponent implements OnInit {
       result.link = AppRoutingModule.postPath(postHash);
 
       return result;
-    } else if (txnMeta.TxnType == "NFT_BID") {
+    } else if (txnMeta.TxnType === "NFT_BID") {
       const nftBidMeta = txnMeta.NFTBidTxindexMetadata;
       if (!nftBidMeta) {
         return null;
@@ -407,7 +407,10 @@ export class NotificationsListComponent implements OnInit {
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       const truncatedPost = this.truncatePost(postHash);
       const postText = `<i class="fc-muted">${truncatedPost}</i>`;
-      if (nftBidMeta.IsBuyNowBid) {
+      if (
+        nftBidMeta.IsBuyNowBid &&
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58check
+      ) {
         result.action = `${actorName} purchased serial number ${
           nftBidMeta.SerialNumber
         } for ${this.globalVars.nanosToDeSo(nftBidMeta.BidAmountNanos)} DESO ${postText}`;

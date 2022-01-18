@@ -27,6 +27,14 @@
       name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
     ></i-feather>
   </div>
+  <div *ngIf="includeColumn('buyNow')" class="col-5 mb-0px cursor-pointer" (click)="updateBidSort(BUY_NOW_PRICE_FIELD)">
+    {{ columns.buyNow }}
+    <i-feather
+      *ngIf="sortByField === BUY_NOW_PRICE_FIELD"
+      class="feather-small fc-secondary"
+      name="{{ sortByOrder === 'asc' ? 'arrow-down' : 'arrow-up' }}"
+    ></i-feather>
+  </div>
 </div>
 <div class="place-bid-rows mb-30px" *ngIf="!buyingNow">
   <div
@@ -55,6 +63,12 @@
       <div>
         <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }})</div>
+      </div>
+    </div>
+    <div *ngIf="includeColumn('buyNow')" class="col-5 mb-0px d-flex align-items-center">
+      <div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO </div>
+        <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.BuyNowPriceNanos, 2) }})</div>
       </div>
     </div>
   </div>

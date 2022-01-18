@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
@@ -12,7 +12,7 @@ import { TranslocoService } from "@ngneat/transloco";
   selector: "create-nft-auction",
   templateUrl: "./create-nft-auction-modal.component.html",
 })
-export class CreateNftAuctionModalComponent {
+export class CreateNftAuctionModalComponent implements OnInit {
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
@@ -24,7 +24,11 @@ export class CreateNftAuctionModalComponent {
   creatingAuction: boolean = false;
   isBuyNow: boolean = false;
   minBidCurrency: string = "USD";
+  buyNowCurrency: string = "USD";
   minBidInput: number = 0;
+  buyNowInput: number = 0;
+  buyNowPriceUSD: number = 0;
+  buyNowPriceDESO: number = 0;
 
   constructor(
     private backendApi: BackendApiService,
@@ -33,6 +37,10 @@ export class CreateNftAuctionModalComponent {
     private router: Router,
     private translocoService: TranslocoService
   ) {}
+
+  ngOnInit() {
+    this.initializeSelectedSerialNumbers();
+  }
 
   updateMinBidAmountUSD(desoAmount) {
     this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9);
@@ -44,6 +52,35 @@ export class CreateNftAuctionModalComponent {
 
   minBidAmountUSDFormatted() {
     return isNumber(this.minBidAmountUSD) ? `~${this.globalVars.formatUSD(this.minBidAmountUSD, 0)}` : "";
+  }
+
+  buyNowPriceUSDFormatted() {
+    return isNumber(this.buyNowPriceUSD) ? `~${this.globalVars.formatUSD(this.buyNowPriceUSD, 0)}` : "";
+  }
+
+  updateBuyNowPrice(amount: number) {
+    if (this.buyNowCurrency === "DESO") {
+      this.buyNowPriceDESO = amount;
+      this.updateBuyNowPriceUSD(amount);
+    } else {
+      this.buyNowPriceUSD = amount;
+      this.updateBuyNowPriceDESO(amount);
+    }
+  }
+
+  updateBuyNowPriceUSD(desoAmount): void {
+    this.buyNowPriceUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9);
+  }
+
+  updateBuyNowPriceDESO(usdAmount): void {
+    this.buyNowPriceDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  updateBuyNowStatus(isBuyNow: boolean): void {
+    if (!isBuyNow) {
+      this.buyNowPriceDESO = 0;
+      this.buyNowPriceUSD = 0;
+    }
   }
 
   updateMinBidAmount(amount: number) {
@@ -77,10 +114,11 @@ export class CreateNftAuctionModalComponent {
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 this.post.PostHashHex,
-                val,
+                val + 1,
                 true,
-                this.isBuyNow,
                 Math.trunc(this.minBidAmountDESO * 1e9),
+                this.isBuyNow,
+                Math.trunc(this.buyNowPriceDESO * 1e9),
                 this.globalVars.defaultFeeRateNanosPerKB
               )
               .pipe(
@@ -116,10 +154,12 @@ export class CreateNftAuctionModalComponent {
     );
   }
 
-  toggleSelectAll() {
-    this.selectAll = !this.selectAll;
+  toggleSelectAll(event) {
+    event.stopPropagation();
+    const selectedNFTs = this.selectedSerialNumbers.filter((serialNumber) => serialNumber);
+    const selectAll = selectedNFTs.length !== this.mySerialNumbersNotForSale().length;
     this.mySerialNumbersNotForSale().forEach(
-      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = this.selectAll)
+      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber - 1] = selectAll)
     );
   }
 
@@ -127,10 +167,14 @@ export class CreateNftAuctionModalComponent {
     return !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length;
   }
 
-  selectSerialNumber(idx: number): void {
-    this.selectAll = false;
-    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
-      this.selectedSerialNumbers[ii] = ii === idx;
+  initializeSelectedSerialNumbers() {
+    this.selectedSerialNumbers = [];
+    for (let ii = 0; ii < this.nftEntryResponses.length; ii++) {
+      this.selectedSerialNumbers.push(false);
     }
+  }
+
+  selectSerialNumber(idx: number): void {
+    this.selectedSerialNumbers[idx - 1] = !this.selectedSerialNumbers[idx - 1];
   }
 }

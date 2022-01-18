@@ -17,7 +17,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
 
   @Input() serialNumbers: NFTEntryResponse[];
   // Which columns should be included. The string value determines what the column should be labeled
-  @Input() columns: { high?: string; min?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
+  @Input() columns: { high?: string; min?: string, buyNow?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
   @Input() postHashHex: string;
   @Output() serialNumberSelected = new EventEmitter<NFTEntryResponse>();
   @Output() closeModal = new EventEmitter<any>();
@@ -25,6 +25,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   SN_FIELD = "SerialNumber";
   HIGH_BID_FIELD = "HighestBidAmountNanos";
   MIN_BID_FIELD = "MinBidAmountNanos";
+  BUY_NOW_PRICE_FIELD = "BuyNowPriceNanos";
   selectedSerialNumber: NFTEntryResponse = null;
   sortedSerialNumbers: NFTEntryResponse[];
   sortByField = this.SN_FIELD;

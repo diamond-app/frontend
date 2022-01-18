@@ -200,16 +200,8 @@ import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-n
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/buy-now-confirmation.component";
-=======
-import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
->>>>>>> main
-=======
 import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/buy-now-confirmation.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
->>>>>>> 868177802251d185d2aea8d0ce77a8e300aa0949
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };

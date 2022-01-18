@@ -62,7 +62,7 @@ export class BuyNowConfirmationComponent {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        this.selectedSerialNumber.MinBidAmountNanos,
+        this.selectedSerialNumber.BuyNowPriceNanos,
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(

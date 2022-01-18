@@ -53,7 +53,7 @@ export class PlaceBidComponent implements OnInit {
   tabs = [this.BID_TAB, this.BUY_TAB];
   activeTab = this.BID_TAB;
   showTabs = false;
-  serialNumberSelectColumns: { high?: string; min?: string };
+  serialNumberSelectColumns: { high?: string; min?: string, buyNow?: string };
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -85,8 +85,8 @@ export class PlaceBidComponent implements OnInit {
         );
         const hasAuctionNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: false }).length > 0;
         const hasBuyNowNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
-        // Only show tabs if there are both buy now and auction SNs
-        this.showTabs = hasAuctionNFTs && hasBuyNowNFTs;
+        // Only show tabs if there are buy now SNs
+        this.showTabs = hasBuyNowNFTs;
         // If there are only Buy Now SNs available for purchase, set the tab to buy now, otherwise default to auctions
         this.activeTab = hasBuyNowNFTs && !hasAuctionNFTs ? this.BUY_TAB : this.BID_TAB;
         this.tabClicked(this.activeTab);
@@ -97,8 +97,7 @@ export class PlaceBidComponent implements OnInit {
   tabClicked(tabName: string) {
     this.activeTab = tabName;
     this.serialNumberSelectColumns =
-      this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount" } : { min: "Buy Now Price" };
-    this.serialNumbersForTab = _.filter(this.biddableSerialNumbers, { IsBuyNow: tabName === this.BUY_TAB });
+      this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount" } : { buyNow: "Buy Now Price" };
   }
 
   updateBidAmountUSD(deSoAmount) {

@@ -10,7 +10,7 @@
     </div>
     <div class="col-5 d-flex flex-column m-16px">
       <span>Purchase Price</span>
-      <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber.MinBidAmountNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber.MinBidAmountNanos, 2)}})</span>
+      <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber.BuyNowPriceNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber.BuyNowPriceNanos, 2)}})</span>
     </div>
   </div>
 
@@ -26,8 +26,8 @@
       <div class="pt-10px d-flex justify-content-between">
         <span class="font-weight-bold">Purchase Price</span>
         <span>
-              {{ globalVars.nanosToDeSo(selectedSerialNumber.MinBidAmountNanos) }} DESO (~{{
-          globalVars.nanosToUSD(selectedSerialNumber.MinBidAmountNanos, 2)
+              {{ globalVars.nanosToDeSo(selectedSerialNumber.BuyNowPriceNanos) }} DESO (~{{
+          globalVars.nanosToUSD(selectedSerialNumber.BuyNowPriceNanos, 2)
           }})
             </span>
       </div>

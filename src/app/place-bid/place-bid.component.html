@@ -157,7 +157,7 @@
       ></tab-selector>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
-          [serialNumbers]="serialNumbersForTab"
+          [serialNumbers]="biddableSerialNumbers"
           [columns]="serialNumberSelectColumns"
           [postHashHex]="post.PostHashHex"
           (serialNumberSelected)="selectSerialNumber($event)"
