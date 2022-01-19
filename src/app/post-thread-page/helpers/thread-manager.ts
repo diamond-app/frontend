@@ -82,10 +82,6 @@ export class ThreadManager {
     this.threadMap.set(comment.PostHashHex, flattenThread(comment));
   }
 
-  /**
-   * @returns returns true if we inserted the new reply into the thread. Returns
-   * false if we only incremented the parent's count.
-   */
   addReplyToThread(threadPostHashHex, replyingToComment, reply) {
     const thread = this.threadMap.get(threadPostHashHex);
     const lastChild = thread.children.length ? thread.children[thread.children.length - 1] : null;
