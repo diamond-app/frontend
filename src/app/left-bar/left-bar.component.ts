@@ -31,6 +31,7 @@ export class LeftBarComponent {
   @Input() inTutorial: boolean = false;
   @Output() closeMobile = new EventEmitter<boolean>();
   currentRoute: string;
+  showMore: boolean = false;
 
   AppRoutingModule = AppRoutingModule;
 
@@ -59,6 +60,15 @@ export class LeftBarComponent {
       class: "modal-dialog-centered",
       ignoreBackdropClick: true,
     });
+  }
+
+  displayMore(event: any) {
+    event.stopPropagation();
+    this.showMore = true;
+  }
+
+  hideMore() {
+    this.showMore = false
   }
 
   getHelpMailToAttr(): string {

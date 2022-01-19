@@ -7,6 +7,7 @@ import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
 import {ToastrService} from "ngx-toastr";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "add-unlockable-modal",
@@ -27,13 +28,20 @@ export class AddUnlockableModalComponent implements OnInit {
     public bsModalRef: BsModalRef,
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translocoService: TranslocoService
   ) {}
 
   ngOnInit(): void {}
 
   sellNFTTotal: number;
   sellNFTCounter: number = 0;
+
+  sellNFTText() {
+    const textKey = this.sellingNFT ? "add_unlockable_modal.btn_selling_NFT" : "add_unlockable_modal.btn_add";
+    return this.translocoService.translate(textKey);
+  }
+
   sellNFT(): void {
     this.addDisabled = true;
     this.sellingNFT = true;

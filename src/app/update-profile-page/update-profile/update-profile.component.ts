@@ -105,6 +105,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   founderRewardTooltip() {
     return (
+      "{{ 'update_profile.enter_emailaddress' | transloco }}" +
       "When someone purchases your coin, a percentage of that " +
       "gets allocated to you as a founder reward.\n\n" +
       "A value of 0% means you get no money when someone buys, " +
@@ -406,11 +407,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
   }
 
-  updateShowPriceInFeed() {
-    this.globalVars.setShowPriceOnFeed(!this.globalVars.showPriceOnFeed);
-    this.globalVars.updateEverything();
-  }
-
   private handleError() {
     return (err: any) => {
       return Observable;
@@ -445,10 +441,5 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _resetImage() {
     this.profilePicInput = "";
-  }
-
-  selectChangeHandler(event: any) {
-    const newTheme = event.target.value;
-    this.themeService.setTheme(newTheme);
   }
 }

@@ -9,7 +9,7 @@
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather name="home" class="feather-medium"></i-feather>
-        <div class="mt-5px">Home</div>
+        <div class="mt-5px">{{ 'bottom_bar_mobile.home' | transloco }}</div>
       </div>
     </bottom-bar-mobile-tab>
 
@@ -24,7 +24,7 @@
           class="feather-medium"
         ></i-feather>
         <div class="mt-5px">
-          Notifications
+          {{ 'bottom_bar_mobile.notifications' | transloco }}
           <span *ngIf="globalVars.unreadNotifications > 0">
             ({{ globalVars.unreadNotifications > 99 ? "99+" : globalVars.unreadNotifications }})
           </span>
@@ -47,7 +47,7 @@
           class="feather-medium"
         ></i-feather>
         <div class="mt-5px">
-          Messages
+          {{ 'bottom_bar_mobile.messages' | transloco }}
           <span *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0">
             ({{
               globalVars.messageResponse.NumberOfUnreadThreads > 999
@@ -77,7 +77,7 @@
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather name="diamond" class="feather-medium"></i-feather>
-        <div class="mt-5px">Wallet</div>
+        <div class="mt-5px">{{ 'bottom_bar_mobile.wallet' | transloco }}</div>
       </div>
     </bottom-bar-mobile-tab>
   </div>

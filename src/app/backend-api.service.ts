@@ -150,6 +150,9 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
+
+  // Onboarding routes
+  static RoutePathSubscribeToOnboardingEmails = "/api-internal/v0/onboarding-email-subscription";
 }
 
 export class Transaction {
@@ -377,6 +380,12 @@ export class NFTBidData {
   PostEntryResponse: PostEntryResponse;
   NFTEntryResponses: NFTEntryResponse[];
   BidEntryResponses: NFTBidEntryResponse[];
+}
+
+export class DeSoNode {
+  Name: string;
+  URL: string;
+  Owner: string;
 }
 
 type GetUserMetadataResponse = {
@@ -1197,6 +1206,9 @@ export class BackendApiService {
       CommentOffset,
       CommentLimit,
       AddGlobalFeedBool,
+      ThreadLevelLimit: 2,
+      ThreadLeafLimit: 1,
+      LoadAuthorThread: true,
     });
   }
 
@@ -2470,5 +2482,11 @@ export class BackendApiService {
       }
     }
     return errorMessage;
+  }
+
+  OnboardingEmailSubscribe(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubscribeToOnboardingEmails, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+    });
   }
 }

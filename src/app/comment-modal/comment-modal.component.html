@@ -17,9 +17,8 @@
     ></feed-post>
   </div>
 
-
   <div class="fs-12px text-muted feed-create-comment-form__reply-container">
-    {{ isQuote ? "Quoting " : "Replying to " }}
+    {{ quoteReplyText() }}
     <span>@{{ parentPost.ProfileEntryResponse.Username }}</span>
   </div>
 

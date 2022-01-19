@@ -14,13 +14,13 @@
         "
         class="p-15px bg-warning"
       >
-        Creating a profile costs {{ globalVars.createProfileFeeInDeSo() }} DeSo ≈
+        {{ 'update_profile.create_a_profile_cost' | transloco }} {{ globalVars.createProfileFeeInDeSo() }} DeSo ≈
         {{ globalVars.createProfileFeeInUsd() }} USD.
         <br />
-        This helps prevent spam.
+        {{ 'update_profile.this_helps_prevent_spam' | transloco }}
       </div>
       <!-- Form Inputs -->
-      <div class="mt-30px font-weight-bold update-profile__avatar-title">Avatar</div>
+      <div class="mt-30px font-weight-bold update-profile__avatar-title">{{ 'update_profile.avatar' | transloco }}</div>
       <div class="update-profile__holder">
         <div class="update-profile__avatar">
           <div>
@@ -52,7 +52,7 @@
               />
               <button type="file">
                 <i-feather name="refresh-cw"></i-feather>
-                Upload Image
+                {{ 'update_profile.upload_image' | transloco }}
               </button>
             </div>
             <div>
@@ -61,7 +61,7 @@
                 [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
                 class="fs-13px text-grey5 mt-5px d-flex justify-content-center"
               >
-                No image selected
+              {{ 'update_profile.no_image_selected' | transloco }}
               </div>
             </div>
 
@@ -71,30 +71,30 @@
           *ngIf="globalVars.loggedInUser"
           class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars update-profile__text"
         >
-          <div class="update-profile__title update-profile__username">Username<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
+          <div class="update-profile__title update-profile__username">{{ 'update_profile.username' | transloco }}<span *ngIf="inTutorial" class="ml-5px fs-18px">*</span></div>
           <div>
             <input
               [(ngModel)]="usernameInput"
               (ngModelChange)="_validateUsername($event)"
               class="form-control fs-15px lh-18px p-10px"
-              placeholder="Enter username"
+              placeholder="{{ 'update_profile.enter_username' | transloco }}"
             />
             <div
               *ngIf="profileUpdateErrors.usernameError"
               [ngClass]="{ 'fc-red': profileUpdateErrors.usernameError }"
               class="fs-13px font-italic mt-5px"
             >
-              Please set a username
+            {{ 'update_profile.please_set_username' | transloco }}
             </div>
           </div>
           <div *ngIf="usernameValidationError" class="fc-error fs-13px ml-5px mt-5px">
             {{ usernameValidationError }}
           </div>
           <div *ngIf="!usernameValidationError && usernameInput?.length > 0" class="fc-success fs-13px ml-5px mt-5px">
-            {{ usernameInput }} is available
+            {{ usernameInput }} {{ 'update_profile.is_available' | transloco }}
           </div>
           <div *ngIf="inTutorial">
-            <div class="update-profile__title">Email<span class="ml-5px fs-18px">*</span></div>
+            <div class="update-profile__title">{{ 'update_profile.email' | transloco }}<span class="ml-5px fs-18px">*</span></div>
             <div class="form-group">
               <input
                 type="email"
@@ -103,10 +103,10 @@
                 [(ngModel)]="emailAddress"
                 (ngModelChange)="_validateEmail($event)"
               />
-              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+              <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">{{ 'update_profile.please_enter_valid_email' | transloco }}</div>
             </div>
           </div>
-          <div class="update-profile__title">Description</div>
+          <div class="update-profile__title">{{ 'update_profile.description' | transloco }}</div>
 
           <div>
             <textarea
@@ -120,13 +120,13 @@
               [ngClass]="{ 'fc-red': profileUpdateErrors.descriptionError }"
               class="fs-13px font-italic"
             >
-              Description can only be 180 characters
+            {{ 'update_profile.description_can_only_be' | transloco }} 180 {{ 'update_profile.characters' | transloco }}
             </div>
           </div>
 
           <div *ngIf="!inTutorial">
             <div class="update-profile__title">
-              Founder Reward Percentage
+              {{ 'update_profile.founder_reward_percentage' | transloco }}
               <i-feather
                 name="info"
                 (click)="tooltip.toggle()"
@@ -150,48 +150,26 @@
                 *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
                 class="fc-muted font-italic fs-13px pt-5px"
               >
-                * You must purchase your own coin before lowering your founder reward.
+                * {{ 'update_profile.you_must_purchase_own_coin' | transloco }}
               </div>
               <div
                 *ngIf="profileUpdateErrors.founderRewardError"
                 [ngClass]="{ 'fc-red': profileUpdateErrors.founderRewardError }"
                 class="fs-13px font-italic pt-5px"
               >
-                Please set a founder reward between 0-100.
+              {{ 'update_profile.please_set_founder' | transloco }}
               </div>
             </div>
-            <div class="update-profile__title">Email</div>
+            <div class="update-profile__title">{{ 'update_profile.email' | transloco }}</div>
             <div class="form-group">
               <input
                 type="email"
                 class="form-control fs-15px"
-                placeholder="Enter an email address."
+                placeholder="{{ 'update_profile.enter_emailaddress' | transloco }}"
                 [(ngModel)]="emailAddress"
                 (ngModelChange)="_validateEmail($event)"
               />
-              <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
-            </div>
-            <div class="update-profile__title">{{environment.node.name}} Theme</div>
-            <select
-              name="theme"
-              id="theme"
-              (change)="selectChangeHandler($event)"
-              style="padding: 6px 12px"
-              class="form-control selector">
-              <option
-                *ngFor="let theme of themeService.themes"
-                [value]="theme.key"
-                [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
-            </select>
-            <div class="d-flex align-items-center">
-              <div class="update-profile__title mr-16px">Show prices in feed</div>
-              <button
-                class="checkbox-circle mt-12px"
-                [ngClass]="{ checked: globalVars.showPriceOnFeed }"
-                (click)="updateShowPriceInFeed()"
-              >
-                <i-feather name="check"></i-feather>
-              </button>
+              <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">{{ 'update_profile.please_enter_valid_email' | transloco }}</div>
             </div>
           </div>
 
@@ -201,7 +179,7 @@
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
               class="btn update-profile__update-btn"
             >
-              Update Profile
+            {{ 'update_profile.update_profile' | transloco }}
             </a>
             <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
           </div>

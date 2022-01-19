@@ -1880,6 +1880,12 @@ tab-selector {
   }
 }
 
+.left-bar-more-container {
+  background: var(--tile-secondary-bg);
+  bottom: 0px;
+  border-radius: 10px;
+}
+
 .left-bar-mobile__translucent-background {
   z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
   position: fixed;
@@ -2316,13 +2322,12 @@ sign-up {
     border-right: 1px solid var(--border);
     border-left: 1px solid var(--border);
   }
-  .first-item {
-    .feed-post-container {
-      border-top: 1px solid var(--border);
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
-    }
-  }
+  // .first-item {
+  //   .feed-post-container {
+  //     border-top-right-radius: 10px;
+  //     border-top-left-radius: 10px;
+  //   }
+  // }
   .last-item {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
@@ -2345,7 +2350,7 @@ sign-up {
 }
 
 .post-thread__subcomment-container {
-  margin-left: 65px;
+  // margin-left: 65px;
 }
 
 .post-thread__container {
@@ -2405,6 +2410,10 @@ sign-up {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.modal-open {
+  padding-right: 0px !important;
 }
 
 .modal-header .feed-create-comment-form__close {
@@ -3047,7 +3056,6 @@ feed-post-dropdown {
   background: var(--highlight);
 }
 
-
 .left-bar-button {
   font-weight: 400;
   font-size: 17px;
@@ -3070,6 +3078,15 @@ feed-post-dropdown {
     height: 20px;
     position: relative;
     top: -1px;
+  }
+}
+
+.left-bar-link {
+  &:hover {
+    color: var(--highlight) !important;
+    a {
+      color: var(--highlight) !important;
+    }
   }
 }
 

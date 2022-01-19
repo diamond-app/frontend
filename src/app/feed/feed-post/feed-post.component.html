@@ -29,15 +29,15 @@
     <div class="creator-profile-nfts__list-body d-flex flex-column">
       <div>{{ postContent?.Body }}</div>
       <div>
-        {{ postContent?.NumNFTCopiesForSale }} of {{ postContent?.NumNFTCopies }} for sale
+        {{ postContent?.NumNFTCopiesForSale }} {{ 'feed_post.of' | transloco }} {{ postContent?.NumNFTCopies }} {{ 'feed_post.for_sale' | transloco }}
         <span *ngIf="postContent.HasUnlockable" class="feed-post__nft-list-view-unlockable">
           <i-feather name="lock"></i-feather>
-          <span>Unlockable content</span>
+          <span>{{ 'feed_post.unlockable_content' | transloco }}</span>
         </span>
       </div>
       <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
       <div *ngIf="postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-        Last price: ≈{{
+        {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
         }}
       </div>
@@ -56,6 +56,8 @@
   *ngIf="!isNFTListSummary"
   class="d-flex flex-column"
   [ngClass]="{
+    'br-12px': setBorder || cardStyle,
+    border: setBorder || cardStyle,
     'feed-post__quoted-content': hoverable && isQuotedContent,
     'feed-post-container': !isQuotedContent,
     'pinned-post': showLeftSelectedBorder
@@ -64,7 +66,7 @@
   <div class="w-100">
     <div
       *ngIf="post.IsHidden || (post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
-      class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
+      class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px br-10px"
     >
       <a
         (click)="onPostClicked($event)"
@@ -72,7 +74,7 @@
         [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, post.PostHashHex])"
         queryParamsHandling="merge"
       >
-        This post was removed by the author.
+      {{ 'feed_post.removed_by_author' | transloco }}
       </a>
     </div>
 
@@ -86,8 +88,7 @@
         [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username])"
         queryParamsHandling="merge"
       >
-        This is a post from {{ post.ProfileEntryResponse.Username }} who you have blocked. Click here to visit their
-        profile to unblock them.
+      {{ 'feed_post.this_post_from' | transloco }} {{ post.ProfileEntryResponse.Username }} {{ 'feed_post.who_you_have_blocked' | transloco }}
       </a>
     </div>
 
@@ -99,6 +100,7 @@
         !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)
       "
       class="d-flex flex-column js-feed-post"
+      [ngStyle]="{ 'border-radius': setBorder ? '12px 12px 0 0' : '' }"
     >
       <a
         (click)="onPostClicked($event)"
@@ -122,8 +124,7 @@
         </div>
         <div
           *ngIf="reposterProfile"
-          class="mb-12px d-flex justify-content-left w-100 pb-5px"
-          style="border-radius: 0px;"
+          class="feed-post__container d-flex justify-content-left w-100 pb-5px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pt-10px': includePaddingOnPost
@@ -135,7 +136,7 @@
             [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reposterProfile.Username])"
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
-            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
+            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} {{ 'feed_post.reposted' | transloco }}</span>
           </a>
 
           <feed-post-dropdown
@@ -166,7 +167,7 @@
             [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
             queryParamsHandling="merge"
           >
-            The original post was removed by its author.
+          {{ 'feed_post.original_removed' | transloco }}
           </a>
         </div>
 
@@ -180,7 +181,7 @@
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </span>
             <!-- Buy link -->
-            <span class="p-5px">Buy</span>
+            <span class="p-5px">{{ 'feed_post.buy' | transloco }}</span>
           </a>
         </ng-template>
 
@@ -189,12 +190,15 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reposterProfile
+            'pt-15px': includePaddingOnPost && !reposterProfile,
+            'd-flex': isThreaded,
+            'flex-column': isThreaded
+          }"
+          [ngStyle]="{
+            'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
           }"
           *ngIf="!postContent.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
-        >         
-          <!-- Main Content -->
-
+        >
           <!-- Avatar and top 2 header rows -->
           <div class="d-flex position-relative">
             <div class="feed-post__avatar-container">
@@ -213,210 +217,212 @@
               ></a>
             </div>
 
-            <div class="w-100">
-              <div>
-                <div class="d-flex align-items-center">
-                  <!-- Username-->
-                  <a
-                    class="feed-post__username fc-default font-weight-bold"
-                    [routerLink]="
-                      inTutorial
-                        ? []
-                        : ['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]
-                    "
-                    queryParamsHandling="merge"
-                  >
-                    {{ postContent.ProfileEntryResponse.Username }}
-                  </a>
-
-                  <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
-                    <i-feather class="feather-small" name="check-circle"></i-feather>
-                  </span>
-                  <div class="desktop-creator-coin-info">
-                    <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
-                  </div>
-
-                  <feed-post-dropdown
-                    *ngIf="showDropdown && !reposterProfile"
-                    class="ml-auto"
-                    [post]="post"
-                    [postContent]="postContent"
-                    [nftEntryResponses]="nftEntryResponses"
-                    (postHidden)="hidePost()"
-                    (userBlocked)="blockUser()"
-                    (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
-                    (togglePostPin)="_pinPostToGlobalFeed($event)"
-                  ></feed-post-dropdown>
-                </div>
-
-                <!-- Follow button-->
-                <div class="feed-post__second-header-ln">
-                  <follow-button
-                    *ngIf="!hideFollowLink && !isFollowing"
-                    class="fs-12px"
-                    [displayAsLink]="true"
-                    [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
-                    [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-                    [creatorCoinTemplate]="creatorCoinInfo"
-                  ></follow-button>
-                </div>
-              </div>
-              <!-- Avatar -->
-              <div class="w-100">
-                <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
-                  replying to
-                  <a
-                    [routerLink]="getRouterLink(['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username])"
-                    queryParamsHandling="merge"
-                  >
-                    @{{ parentPost.ProfileEntryResponse.Username }}
-                  </a>
-                </div>
-
-                <!-- Content -->
-                <div
-                  class="feed-post__content"
-                  [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
-                  [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+            <div>
+              <div class="d-flex align-items-center">
+                <!-- Username-->
+                <a
+                  class="feed-post__username fc-default font-weight-bold"
+                  [routerLink]="
+                    inTutorial
+                      ? []
+                      : ['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]
+                  "
                   queryParamsHandling="merge"
-                ></div>
-
-                <!-- Media, don't show images on comment posts. -->
-                <div
-                  *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
-                  class="feed-post__image-container"
-                  [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
                 >
-                  <img
-                    (click)="openImgModal($event, postContent.ImageURLs[0])"
-                    data-toggle="modal"
-                    class="feed-post__image"
-                    src="{{ mapImageURLs(postContent.ImageURLs[0]) }}"
-                  />
+                  {{ postContent.ProfileEntryResponse.Username }}
+                </a>
+
+                <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+                  <i-feather class="feather-small" name="check-circle"></i-feather>
+                </span>
+                <div class="desktop-creator-coin-info">
+                  <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
                 </div>
 
-                <!-- Video -->
+                <feed-post-dropdown
+                  *ngIf="showDropdown && !reposterProfile"
+                  class="ml-auto"
+                  [post]="post"
+                  [postContent]="postContent"
+                  [nftEntryResponses]="nftEntryResponses"
+                  (postHidden)="hidePost()"
+                  (userBlocked)="blockUser()"
+                  (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+                  (togglePostPin)="_pinPostToGlobalFeed($event)"
+                ></feed-post-dropdown>
+              </div>
+
+              <!-- Follow button-->
+              <div class="feed-post__second-header-ln">
+                <follow-button
+                  *ngIf="!hideFollowLink && !isFollowing"
+                  class="fs-12px"
+                  [displayAsLink]="true"
+                  [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
+                  [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                  [creatorCoinTemplate]="creatorCoinInfo"
+                ></follow-button>
+              </div>
+            </div>
+          </div>
+          <!-- Avatar -->
+
+          <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div>
+
+          <!-- Main Content -->
+          <div class="w-100" [ngClass]="{ 'feed-post__content-wrapper': isThreaded }">
+            <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
+              {{ 'feed_post.replying_to' | transloco }}
+              <a
+                [routerLink]="getRouterLink(['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username])"
+                queryParamsHandling="merge"
+              >
+                @{{ parentPost.ProfileEntryResponse.Username }}
+              </a>
+            </div>
+
+            <!-- Content -->
+            <div
+              class="feed-post__content"
+              [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+              [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+              queryParamsHandling="merge"
+            ></div>
+
+            <!-- Media, don't show images on comment posts. -->
+            <div
+              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
+              class="feed-post__image-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
+              <img
+                (click)="openImgModal($event, postContent.ImageURLs[0])"
+                data-toggle="modal"
+                class="feed-post__image"
+                src="{{ mapImageURLs(postContent.ImageURLs[0]) }}"
+              />
+            </div>
+
+            <!-- Video -->
+            <div
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              class="feed-post__video-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
+              <iframe
+                [src]="postContent.VideoURLs[0] | sanitizeVideoUrl"
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowfullscreen
+                class="feed-post__video"
+              >
+              </iframe>
+            </div>
+
+            <!-- Embedded Content -->
+            <div
+              *ngIf="constructedEmbedURL"
+              class="feed-post__embed-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
+              <iframe
+                id="embed-iframe"
+                [height]="getEmbedHeight()"
+                class="feed-post__image"
+                [ngStyle]="{
+                  'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+                  'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+                  'max-width': getEmbedWidth(constructedEmbedURL)
+                }"
+                [src]="constructedEmbedURL | sanitizeEmbed"
+                frameborder="0"
+                allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer; encrypted-media;"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <feed-post
+              *ngIf="quotedContent && showQuotedContent"
+              [post]="quotedContent"
+              [isQuotedContent]="true"
+              [includePaddingOnPost]="true"
+              [showIconRow]="false"
+              [showDropdown]="false"
+              [showQuotedContent]="false"
+              [contentShouldLinkToThread]="contentShouldLinkToThread"
+              [hoverable]="hoverable"
+              [showNFTDetails]="true"
+              [cardStyle]="true"
+            ></feed-post>
+
+            <!-- Bottom Buttons -->
+            <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
+              <!-- Like, Comment, Repost, Share Buttons -->
+              <feed-post-icon-row
+                *ngIf="showIconRow"
+                [post]="post"
+                [postContent]="postContent"
+                [parentPost]="parentPost"
+                [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+                [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+                [inTutorial]="inTutorial"
+                (diamondSent)="diamondSent.emit()"
+              ></feed-post-icon-row>
+
+              <!-- Admin Buttons -->
+              <div *ngIf="showAdminRow" class="pt-10px fs-15px d-flex align-items-center">
                 <div
-                  *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
-                  class="feed-post__video-container"
-                  [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+                  *ngIf="!postContent.InGlobalFeed && !addingPostToGlobalFeed"
+                  (click)="_addPostToGlobalFeed($event)"
+                  class="py-5px px-10px admin__add-to-feed-button"
                 >
-                  <iframe
-                    [src]="postContent.VideoURLs[0] | sanitizeVideoUrl"
-                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                    allowfullscreen
-                    class="feed-post__video"
+                  <i class="fas fa-folder-plus"></i>
+                  &nbsp;{{ 'feed_post.whitelist' | transloco }}
+                </div>
+                <div
+                  *ngIf="!postContent.InGlobalFeed && addingPostToGlobalFeed"
+                  class="py-5px px-10px admin__add-to-feed-button"
+                >
+                  <i class="fas fa-folder-plus"></i>
+                  {{ 'feed_post.adding' | transloco }}
+                </div>
+                <div
+                  *ngIf="postContent.InGlobalFeed && !addingPostToGlobalFeed"
+                  (click)="_addPostToGlobalFeed($event)"
+                  class="py-5px px-10px admin__remove-from-feed-button"
+                >
+                  <i class="fas fa-check"></i>
+                  {{ 'feed_post.whitelisted' | transloco }}<span *ngIf="postContent.InHotFeed"> & {{ 'feed_post.in_hot_feed' | transloco }</span>
+                </div>
+                <div
+                  *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
+                  class="py-5px px-10px admin__remove-from-feed-button"
+                >
+                  <i class="fas fa-check"></i>
+                  {{ 'feed_post.removing' | transloco }}
+                </div>
+
+                <div>
+                  &nbsp;&nbsp;&middot;
+                  <a
+                    [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
+                    queryParamsHandling="merge"
                   >
-                  </iframe>
+                  {{ 'feed_post.view' | transloco }}
+                  </a>
                 </div>
 
-                <!-- Embedded Content -->
-                <div
-                  *ngIf="constructedEmbedURL"
-                  class="feed-post__embed-container"
-                  [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
-                >
-                  <iframe
-                    id="embed-iframe"
-                    [height]="getEmbedHeight()"
-                    class="feed-post__image"
-                    [ngStyle]="{
-                      'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
-                      'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
-                      'max-width': getEmbedWidth(constructedEmbedURL)
-                    }"
-                    [src]="constructedEmbedURL | sanitizeEmbed"
-                    frameborder="0"
-                    allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer; encrypted-media;"
-                    allowfullscreen
-                  ></iframe>
+                <div *ngIf="post.HotnessScore && post.HotnessScore > 0">
+                  &nbsp;&nbsp;&middot;
+                  {{getHotnessScore()}}
                 </div>
 
-                <feed-post
-                  *ngIf="quotedContent && showQuotedContent"
-                  [post]="quotedContent"
-                  [isQuotedContent]="true"
-                  [includePaddingOnPost]="true"
-                  [showIconRow]="false"
-                  [showDropdown]="false"
-                  [showQuotedContent]="false"
-                  [contentShouldLinkToThread]="contentShouldLinkToThread"
-                  [hoverable]="hoverable"
-                  [showNFTDetails]="true"
-                  [cardStyle]="true"
-                ></feed-post>
+                <div *ngIf="post.PostMultiplier !== 0 && post.PostMultiplier !== 1">
+                  &nbsp;&nbsp;&middot;
+                  ⭐ {{ 'feed_post.multiplier' | transloco }}: {{post.PostMultiplier}} ⭐
+                </div>
 
-                <!-- Bottom Buttons -->
-                <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
-                  <!-- Like, Comment, Repost, Share Buttons -->
-                  <feed-post-icon-row
-                    *ngIf="showIconRow"
-                    [post]="post"
-                    [postContent]="postContent"
-                    [parentPost]="parentPost"
-                    [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-                    [afterRepostCreatedCallback]="afterRepostCreatedCallback"
-                    [inTutorial]="inTutorial"
-                    (diamondSent)="diamondSent.emit()"
-                  ></feed-post-icon-row>
-
-                  <!-- Admin Buttons -->
-                  <div *ngIf="showAdminRow" class="pt-10px fs-15px d-flex align-items-center">
-                    <div
-                      *ngIf="!postContent.InGlobalFeed && !addingPostToGlobalFeed"
-                      (click)="_addPostToGlobalFeed($event)"
-                      class="py-5px px-10px admin__add-to-feed-button"
-                    >
-                      <i class="fas fa-folder-plus"></i>
-                      &nbsp;Whitelist
-                    </div>
-                    <div
-                      *ngIf="!postContent.InGlobalFeed && addingPostToGlobalFeed"
-                      class="py-5px px-10px admin__add-to-feed-button"
-                    >
-                      <i class="fas fa-folder-plus"></i>
-                      Adding...
-                    </div>
-                    <div
-                      *ngIf="postContent.InGlobalFeed && !addingPostToGlobalFeed"
-                      (click)="_addPostToGlobalFeed($event)"
-                      class="py-5px px-10px admin__remove-from-feed-button"
-                    >
-                      <i class="fas fa-check"></i>
-                      Whitelisted<span *ngIf="postContent.InHotFeed"> & in Hot Feed</span>
-                    </div>
-                    <div
-                      *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
-                      class="py-5px px-10px admin__remove-from-feed-button"
-                    >
-                      <i class="fas fa-check"></i>
-                      Removing...
-                    </div>
-
-                    <div>
-                      &nbsp;&nbsp;&middot;
-                      <a
-                        [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
-                        queryParamsHandling="merge"
-                      >
-                        View
-                      </a>
-                    </div>
-
-                    <div *ngIf="post.HotnessScore && post.HotnessScore > 0">
-                      &nbsp;&nbsp;&middot;
-                      {{getHotnessScore()}}
-                    </div>
-
-                    <div *ngIf="post.PostMultiplier !== 0 && post.PostMultiplier !== 1">
-                      &nbsp;&nbsp;&middot;
-                      ⭐ Multiplier: {{post.PostMultiplier}} ⭐
-                    </div>
-
-                    <div class="text-grey8A">
-                      &nbsp;&nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-                    </div>
-                  </div>
+                <div class="text-grey8A">
+                  &nbsp;&nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
                 </div>
               </div>
             </div>
@@ -445,25 +451,25 @@
           ></feed-post-icon-row>
         </div>
       </div>
-      <div *ngIf="showInteractionDetails" class="d-flex justify-content-between align-items-center p-16px fc-muted">
+      <div *ngIf="showInteractionDetails" class="d-flex justify-content-between align-items-center border-top p-16px fc-muted">
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openRepostsPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.RepostCount, 0) }}
-            Repost{{ post.RepostCount === 1 ? "" : "s" }}
+            {{ 'feed_post.repost' | transloco }}{{ post.RepostCount === 1 ? "" : "s" }}
           </span>
           <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.QuoteRepostCount, 0) }}
-            Quote Repost{{ post.QuoteRepostCount === 1 ? "" : "s" }}
+            {{ 'feed_post.quote_repost' | transloco }}{{ post.QuoteRepostCount === 1 ? "" : "s" }}
           </span>
         </div>
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openLikesPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.LikeCount, 0) }}
-            Like{{ post.LikeCount === 1 ? "" : "s" }}
+            {{ 'feed_post.like' | transloco }}{{ post.LikeCount === 1 ? "" : "s" }}
           </span>
           <span (click)="openDiamondsPage($event)" class="interaction-detail">
             {{ globalVars.abbreviateNumber(post.DiamondCount, 0) }}
-            Diamond{{ post.DiamondCount === 1 ? "" : "s" }}
+            {{ 'feed_post.diamond' | transloco }}{{ post.DiamondCount === 1 ? "" : "s" }}
           </span>
         </div>
       </div>
@@ -473,6 +479,7 @@
   <div
     *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
     class="fs-15px w-100 feed-post__nft-footer"
+    [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
     (click)="onPostClicked($event)"
     [ngClass]="{ 'cursor-pointer': contentShouldLinkToThread }"
   >
@@ -490,7 +497,7 @@
             [matTooltip]="mOfNNFTTooltip"
             #NFTMOfNTooltip="matTooltip"
           >
-            {{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} for sale
+            {{ postContent.NumNFTCopiesForSale }} {{ 'feed_post.of' | transloco }} {{ postContent.NumNFTCopies }} {{ 'feed_post.for_sale' | transloco }}
           </div>
           <span
             *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
@@ -503,18 +510,12 @@
             #tooltip="matTooltip"
           >
             <i-feather name="Lock"></i-feather>
-            {{
-              decryptableNFTEntryResponses?.length
-                ? showUnlockableContent
-                  ? "Hide Unlockable"
-                  : "Show Unlockable"
-                : "Unlockable Content"
-            }}
+            {{ showUnlockableText() }}
           </span>
         </div>
-        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">{{ 'feed_post.from' | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
         <div *ngIf="nftLastAcceptedBidAmountNanos !== undefined && postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
-          Last price: ≈{{
+          {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
           }}
         </div>
@@ -546,7 +547,7 @@
           <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid && !acceptNFT">
             <span class="d-flex align-items-center">
               <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              Place a bid
+              {{ 'feed_post.place_a_bid' | transloco }}
             </span>
           </button>
           <button
@@ -556,7 +557,7 @@
             *ngIf="acceptNFT"
           >
             <span class="d-flex align-items-center justify-content-center fs-12px">
-              Accept Transfer
+              {{ 'feed_post.accept_transfer' | transloco }}
             </span>
           </button>
         </div>

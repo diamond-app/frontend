@@ -19,11 +19,12 @@ import { RepostsModalComponent } from "../../reposts-details/reposts-modal/repos
 import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FollowService } from "../../../lib/services/follow/follow.service";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "feed-post",
   templateUrl: "./feed-post.component.html",
-  styleUrls: ["./feed-post.component.sass"],
+  styleUrls: ["./feed-post.component.scss"],
 })
 export class FeedPostComponent implements OnInit {
   @Input()
@@ -68,7 +69,8 @@ export class FeedPostComponent implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private toastr: ToastrService,
-    private followService: FollowService
+    private followService: FollowService,
+    private translocoService: TranslocoService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -126,6 +128,12 @@ export class FeedPostComponent implements OnInit {
 
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
+
+  // Determines whether the post should have the thread subcomment UI treatment.
+  @Input() isThreaded: boolean = false;
+
+  // Determines whether the post should have the thread subcomment UI treatment.
+  @Input() hasThreadIndicator: boolean = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
@@ -643,6 +651,16 @@ export class FeedPostComponent implements OnInit {
       this.ref.detectChanges();
     }, 50);
   }
+
+  showUnlockableText() {
+    const textKey = this.decryptableNFTEntryResponses?.length
+      ? this.showUnlockableContent
+        ? "feed_post.hide_unlockable"
+        : "feed_post.show_unlockable"
+      : "feed_post.unlockable_content";
+    return this.translocoService.translate(textKey);
+  }
+
   toggleShowUnlockableContent(): void {
     if (!this.decryptableNFTEntryResponses?.length) {
       return;
