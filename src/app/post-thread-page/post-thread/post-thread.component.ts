@@ -121,7 +121,18 @@ export class PostThreadComponent implements AfterViewInit {
 
   async appendToSubcommentList(replyParent, threadParent, newPost) {
     await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    // TODO: deal with case where only count is incremented and the reply is not
+    // actually rendered. show a toast, etc.
+    const beforeReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
     this.threadManager.addReplyToThread(threadParent.PostHashHex, replyParent, newPost);
+    const afterReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
+
+    if (beforeReplyCount === afterReplyCount) {
+      // if we hit this case, it means only the count was incremented for an intermediate
+      // reply. The new reply was not actually rendered in the UI.
+      this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
+    }
+
     await this.datasource.adapter.replace({
       predicate: (item) => {
         const post = item as any;
