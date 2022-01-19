@@ -38,18 +38,30 @@ export function flattenThread(parent: Post): Thread {
 }
 
 export class ThreadManager {
-  threadMap = new Map();
+  // We don't want any outside sets on this
+  private threadMap = new Map();
+
+  private threadArrayCache;
 
   get threadCount() {
     return this.threadMap.size;
   }
 
   get threads() {
-    return Array.from(this.threadMap.values());
+    if (this.threadArrayCache) {
+      return this.threadArrayCache;
+    }
+    this.threadArrayCache = Array.from(this.threadMap.values());
+
+    return this.threadArrayCache;
   }
 
   constructor(rootPost) {
     this.addThreads(rootPost.Comments);
+  }
+
+  getThread(parentPostHashHex) {
+    return this.threadMap.get(parentPostHashHex);
   }
 
   addThreads(comments) {
@@ -63,6 +75,7 @@ export class ThreadManager {
   }
 
   addThread(comment) {
+    this.threadArrayCache = undefined;
     this.threadMap.set(comment.PostHashHex, flattenThread(comment));
   }
 

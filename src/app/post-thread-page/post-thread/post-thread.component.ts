@@ -127,7 +127,7 @@ export class PostThreadComponent implements AfterViewInit {
         const post = item as any;
         return post.PostHashHex === threadParent.PostHashHex;
       },
-      items: [this.threadManager.threadMap.get(threadParent.PostHashHex)],
+      items: [this.threadManager.getThread(threadParent.PostHashHex)],
     });
   }
 
@@ -163,7 +163,7 @@ export class PostThreadComponent implements AfterViewInit {
     // parentPost.CommentCount += 1;
     this.currentPost.CommentCount += 1;
     this.threadManager.addThread(postEntryResponse);
-    this.datasource.adapter.prepend(this.threadManager.threadMap.get(postEntryResponse.PostHashHex));
+    this.datasource.adapter.prepend(this.threadManager.getThread(postEntryResponse.PostHashHex));
     // TODO: this doesn't seem to be doing anything...
     // this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
   }
