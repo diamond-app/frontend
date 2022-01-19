@@ -8,7 +8,7 @@ import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
 import { Location } from "@angular/common";
 import { environment } from "src/environments/environment";
-import { flattenThread } from "../helpers/flatten-thread";
+import { ThreadManager } from "../helpers/thread-manager";
 
 import * as _ from "lodash";
 import { document } from "ngx-bootstrap/utils";
@@ -27,6 +27,7 @@ export class PostThreadComponent implements AfterViewInit {
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
   subscriptions = new Subscription();
+  threadManager: ThreadManager;
 
   @Input() hideHeader: boolean = false;
   @Input() hideCurrentPost: boolean = false;
@@ -79,51 +80,34 @@ export class PostThreadComponent implements AfterViewInit {
   getDataSource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
-        const threads = this.currentPost.threads || [];
-
-        if (this.scrollingDisabled && index > threads.length) {
+        if (this.scrollingDisabled && index > this.threadManager.threadCount) {
           success([]);
-          return;
-        }
-
-        if (index + count < threads.length || (index + count > threads.length && this.scrollingDisabled)) {
-          // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
-          if (index < 0) {
-            index = 0;
-          }
-          success(threads.slice(index, index + count));
-          return;
-        }
-
-        this.getPost(false, index, count).subscribe(
-          (res) => {
-            // If we got more comments, push them onto the list of comments, increase comment count
-            // and determine if we should continue scrolling
-            if (res.PostFound.Comments) {
-              if (res.PostFound.Comments.length < count) {
+        } else if (this.threadManager.threadCount > index + count) {
+          success(this.threadManager.threads.slice(index, index + count));
+        } else {
+          this.getPost(false, index, count).subscribe(
+            (res) => {
+              // If we got more comments, push them onto the list of comments, increase comment count
+              // and determine if we should continue scrolling
+              if (res.PostFound.Comments?.length) {
+                if (res.PostFound.Comments.length < count) {
+                  this.scrollingDisabled = true;
+                }
+                this.threadManager.addThreads(res.PostFound.Comments);
+                success(this.threadManager.threads.slice(index, index + count));
+              } else {
+                // If there are no more comments, we should stop scrolling
                 this.scrollingDisabled = true;
+                success([]);
               }
-              if (this.currentPost.Comments) {
-                this.currentPost.Comments.push(...res.PostFound.Comments);
-                // Make sure we don't have duplicate comments
-                this.currentPost.Comments = _.uniqBy(this.currentPost.Comments, "PostHashHex");
-                this.currentPost.threads = this.currentPost.Comments.map(flattenThread);
-              }
-              success(this.currentPost.threads.slice(index, index + count));
-              return;
-            } else {
-              // If there are no more comments, we should stop scrolling
-              this.scrollingDisabled = true;
-              success([]);
-              return;
+            },
+            (err) => {
+              // TODO: post threads: rollbar
+              console.error(err);
+              this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
             }
-          },
-          (err) => {
-            // TODO: post threads: rollbar
-            console.error(err);
-            this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
-          }
-        );
+          );
+        }
       },
       settings: {
         startIndex: 0,
@@ -135,92 +119,16 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  // Call this when the post object in the datasource is outdated. Typically this is called
-  // after we updated the comment count. This replaces the outdated object with the new object.
-  replacePostInDatasource(datasourceAdapter, postEntryResponse) {
-    datasourceAdapter.replace({
-      predicate: ({ data }) => (data as any).PostHashHex === postEntryResponse.PostHashHex,
-      items: [postEntryResponse],
+  async appendToSubcommentList(replyParent, threadParent, newPost) {
+    await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    this.threadManager.addReplyToThread(threadParent.PostHashHex, replyParent, newPost);
+    await this.datasource.adapter.replace({
+      predicate: (item) => {
+        const post = item as any;
+        return post.PostHashHex === threadParent.PostHashHex;
+      },
+      items: [this.threadManager.threadMap.get(threadParent.PostHashHex)],
     });
-  }
-
-  appendToSubcommentList(postWithComments, postWithCommentsParent, postEntryResponse) {
-    this.appendSubcomment(postEntryResponse, postWithComments, true /* shouldAppend */);
-  }
-
-  // Appends newPost to uiParentPost's Comments array, and updates CommentCounts as needed
-  //
-  // newPost is the post the user created
-  //
-  // uiParentPost is the "parent" in the UI - the post that we're attaching newPost to in the UI.
-  // We attach newPost by adding to uiParentPost's Comments array. This is arguably very confusing,
-  // since newPost is not neccesarily a comment on uiParentPost. We should probably change this.
-  //
-  // uiParentPost may not be the same as the "true parent" - the post that the user actually responded to
-  // when creating newPost.
-  //
-  // If shouldAppend is true, this appends newPost to uiParentPost's Comments. Otherwise,
-  // this prepends to uiParentPost's Comments.
-  //
-  // All posts are postEntryResponses
-  //
-  // Note: I removed grandparent comment count incrementing on here. From a UX perspective,
-  // I personally found it more confusing than useful.
-  async appendSubcomment(newPost, uiParentPost, shouldAppend) {
-    // TODO: if we had an identity map of PostHashHex to comments we wouldn't need to do this array
-    // search every time.
-    const thread = this.currentPost.threads.find((thread) => thread.parent.PostHashHex === uiParentPost.PostHashHex);
-    if (thread.children.length) {
-      const prevLastNode = thread.children[thread.children.length - 1];
-      thread.children[thread.children.length - 1] = {
-        ...prevLastNode,
-        CommentCount: prevLastNode.CommentCount + 1,
-        isLastNode: false,
-      };
-
-      newPost.isLastNode = true;
-    }
-
-    thread.children.push(newPost);
-    debugger;
-    // debugger;
-    // let trueParentPost = await this._findTrueParentOfPost(newPost);
-    // let trueParentPostHashHex = trueParentPost.PostHashHex;
-    // await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
-    // await this.datasource.adapter.update({
-    //   predicate: ({ $index, data, element }) => {
-    //     let currentPost = data as any;
-    //     // If the current post is the true parent, increment the true parent's commentCount
-    //     if (currentPost.PostHashHex == trueParentPostHashHex) {
-    //       currentPost.CommentCount += 1;
-    //     }
-    //     // If current post is the UI parent, update the UI parent's comments array to
-    //     // include the currentPost.
-    //     if (currentPost.PostHashHex == uiParentPost.PostHashHex) {
-    //       // Look for the true parent within the comments.
-    //       // If they're in there, bump up their comment count.
-    //       for (let [index, comment] of (currentPost.Comments || []).entries()) {
-    //         if (comment.PostHashHex == trueParentPostHashHex) {
-    //           comment.CommentCount += 1;
-    //           // Need to clone here to force an angular re-render. Otherwise, when commenting
-    //           // on another subcomment, the subcomment comment count won't update.
-    //           currentPost.Comments[index] = _.cloneDeep(comment);
-    //         }
-    //       }
-    //       // Push onto uiParentPost's Comments array
-    //       currentPost.Comments = currentPost.Comments || [];
-    //       if (shouldAppend) {
-    //         currentPost.Comments.push(newPost);
-    //       } else {
-    //         currentPost.Comments.unshift(newPost);
-    //       }
-    //     }
-    //     // Need to clone here to force an angular re-render. Otherwise, when commenting on
-    //     // a comment, the parent comment count won't update.
-    //     currentPost = _.cloneDeep(currentPost);
-    //     return [currentPost];
-    //   },
-    // });
   }
 
   // Returns a flat array of all posts in the data source
@@ -244,21 +152,6 @@ export class PostThreadComponent implements AfterViewInit {
     return posts;
   }
 
-  // Iterates over all the posts in datasource and returns the "true parent" of postEntryResponse.
-  // The true parent is the post that postEntryResponse is a reply to.
-  async _findTrueParentOfPost(postEntryResponse) {
-    if (!postEntryResponse) {
-      return null;
-    }
-    let allPosts = await this._allPosts();
-
-    const trueParentPostIndex = allPosts.findIndex((post) => {
-      return post.PostHashHex === postEntryResponse.ParentStakeID;
-    });
-
-    return allPosts[trueParentPostIndex];
-  }
-
   updateCommentCountAndShowToast(parentPost, postEntryResponse) {
     parentPost.CommentCount += 1;
 
@@ -267,15 +160,12 @@ export class PostThreadComponent implements AfterViewInit {
   }
 
   prependToCommentList(parentPost, postEntryResponse) {
-    parentPost.CommentCount += 1;
-
-    // Prepend the comment to the scroll datasource
-    this.datasource.adapter.prepend(postEntryResponse);
-    this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
-  }
-
-  prependToSubcommentList(postWithComments, postWithCommentsParent, postEntryResponse) {
-    this.appendSubcomment(postEntryResponse, postWithComments, false /* shouldAppend */);
+    // parentPost.CommentCount += 1;
+    this.currentPost.CommentCount += 1;
+    this.threadManager.addThread(postEntryResponse);
+    this.datasource.adapter.prepend(this.threadManager.threadMap.get(postEntryResponse.PostHashHex));
+    // TODO: this doesn't seem to be doing anything...
+    // this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
   }
 
   onPostHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
@@ -350,8 +240,7 @@ export class PostThreadComponent implements AfterViewInit {
         }
         // Set current post
         this.currentPost = res.PostFound;
-        this.currentPost.threads = this.currentPost.Comments?.map(flattenThread);
-        console.log(this.currentPost.threads);
+        this.threadManager = new ThreadManager(res.PostFound);
         const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
         this.postLoaded.emit(
           `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`

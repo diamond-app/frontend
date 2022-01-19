@@ -51,7 +51,10 @@
 
   <div class="post-thread__comment-container" id="comment-scroller">
     <div #uiScroll *uiScroll="let thread of datasource; let i = index" [attr.data-index]="i">
-      <div class="post-thread__single-comment" [ngClass]="{ 'first-item': i === 0, 'last-item': i === currentPost?.Comments?.length - 1 }">
+      <div
+        class="post-thread__single-comment"
+        [ngClass]="{ 'first-item': i === 0, 'last-item': i === threadManager.threadCount - 1 }"
+      >
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
         <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
         <feed-post
@@ -62,7 +65,7 @@
           [contentShouldLinkToThread]="true"
           [showIconRow]="true"
           [showReplyingToContent]="true"
-          [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, thread.parent, currentPost)"
+          [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, thread.parent)"
           [isThreaded]="!!thread.children.length"
           [hasThreadIndicator]="!!thread.children.length"
           [blocked]="isPostBlocked(thread.parent)"
@@ -70,7 +73,7 @@
           (userBlocked)="afterUserBlocked($event)"
         ></feed-post>
 
-        <div *ngFor="let subcommentPost of thread.children">
+        <div *ngFor="let subcommentPost of thread.children; let j = index" [attr.data-index]="j">
           <div class="post-thread__subcomment-container" *ngIf="!isPostBlocked(thread.parent)">
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
@@ -78,14 +81,14 @@
               *ngIf="subcommentPost.ProfileEntryResponse != null"
               [includePaddingOnPost]="true"
               [post]="subcommentPost"
-              [parentPost]="thread.parent"
+              [parentPost]="thread.children[j]"
               [contentShouldLinkToThread]="true"
               [showIconRow]="true"
               [showDropdown]="true"
               [showReplyingToContent]="true"
               [isThreaded]="true"
-              [hasThreadIndicator]="!subcommentPost.isLastNode"
-              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, currentPost)"
+              [hasThreadIndicator]="j !== thread.children.length - 1"
+              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onPostHidden(subcommentPost, thread.parent, currentPost)"
               (userBlocked)="afterUserBlocked($event)"
