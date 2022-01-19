@@ -83,7 +83,9 @@ export class PostThreadComponent implements AfterViewInit {
         if (this.scrollingDisabled && index > this.threadManager.threadCount) {
           success([]);
         } else if (this.threadManager.threadCount > index + count) {
-          success(this.threadManager.threads.slice(index, index + count));
+          // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
+          const start = index < 0 ? 0 : index;
+          success(this.threadManager.threads.slice(start, index + count));
         } else {
           this.getPost(false, index, count).subscribe(
             (res) => {
