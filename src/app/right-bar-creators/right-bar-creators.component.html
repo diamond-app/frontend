@@ -1,4 +1,4 @@
-<div class="global__sidebar__inner" *transloco="let t">
+<div class="global__sidebar__inner">
   <!-- Sign Up Flow -->
   <div *ngIf="globalVars.isMobile() && globalVars.loggedInUser == null" class="mb-30px">
     <right-bar-signup></right-bar-signup>
@@ -9,14 +9,14 @@
       <div class="d-flex">
         <div class="w-100 deso-metrics">
           <div class="d-flex justify-content-between">
-            <div>{{ t('right_bar.creators.deso_price') }}</div>
+            <div>{{ 'right_bar.creators.deso_price' | transloco }}</div>
             <div>
               <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
           <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-            <div class="d-flex" style="min-width: 130px">{{ t('right_bar.creators.your_deso') }}</div>
+            <div class="d-flex" style="min-width: 130px">{{ 'right_bar.creators.your_deso' | transloco }}</div>
             <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
@@ -24,7 +24,7 @@
                 <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
               </div>
               <!-- Amount in USD-->
-              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
+              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">{{ 'right_bar.creators.fetching' | transloco }}</div>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
       <a (click)="openBuyCloutModal()">
         <div class="d-flex justify-content-center cursor-pointer">
           <div class="buy-deso">
-            <span>{{ t('right_bar.creators.buy_deso') }}</span>
+            <span>{{ 'right_bar.creators.buy_deso' | transloco }}</span>
           </div>
         </div>
       </a>
@@ -46,17 +46,17 @@
         <div *ngIf="globalVars.loggedInUser.HasEmail">
           <a (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">
             <i-feather name="send"></i-feather>
-            <span>Resend Verification Email</span>
+            <span>{{ 'right_bar.creators.resend_verification_email' | transloco }}</span>
             <i-feather name="chevron-right" class="right-20px"></i-feather>
           </a>
           <div *ngIf="globalVars.resentVerifyEmail">
             <i-feather name="check"></i-feather>
-            <span>{{ t('right_bar.creators.sent') }}</span>
+            <span>{{ 'right_bar.creators.sent' | transloco }}</span>
           </div>
         </div>
         <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.UPDATE_PROFILE" class="font-weight-bold">
           <i-feather name="mail"></i-feather>
-          <span>{{ t('right_bar.creators.update_your_email') }}</span>
+          <span>{{ 'right_bar.creators.update_your_email' | transloco }}</span>
           <i-feather name="chevron-right" class="right-20px"></i-feather>
         </a>
       </div>
@@ -72,7 +72,7 @@
       class="trend-title"
     >
       <div class="d-flex">
-        <span>{{ t(activeTab) }}</span>
+        <span>{{ activeTab | transloco }}</span>
         <!-- Dropdown -->
         <div
           (click)="$event.stopPropagation()"
@@ -104,7 +104,7 @@
                 (click)="this.switchCreatorTab(option.key, $event)"
                 data-toggle="dropdown"
               >
-                {{ t(option.key) }}
+                {{ option.key | transloco }}
               </a>
               <a
                 class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
@@ -113,7 +113,7 @@
                 [routerLink]="'/' + globalVars.RouteNames.TRENDS"
                 queryParamsHandling="merge"
               >
-                Trends Page
+                {{ 'right_bar.creators.trends_page' | transloco }}
               </a>
             </div>
           </div>
@@ -122,7 +122,7 @@
       <div class="d-flex" *ngIf="activeRightTabOption.poweredBy">
         <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
           <i class="fas fa-external-link-alt pr-5px"></i>
-          {{ t('right_bar.creators.powered_by')}} {{ activeRightTabOption.poweredBy.name }}
+          {{ 'right_bar.creators.powered_by' | transloco }} {{ activeRightTabOption.poweredBy.name }}
         </a>
       </div>
     </div>
