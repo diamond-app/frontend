@@ -1,11 +1,10 @@
 <div class="position-relative" *transloco="let t">
   <div class="w-100 position-absolute left-bar-more-container" #more id="more">
-    <div class="d-flex justify-content-end align-items-center pt-16px pr-16px">
+    <div class="left-bar-more-close">
       <i-feather (click)="_exitMore()" name="x" class="feather-small fs-0px cursor-pointer"></i-feather>
     </div>
     <a
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
-      style="height: 56px"
       (click)="openSettings()"
     >
       <i-feather name="settings" class="feather-medium fs-0px"></i-feather>
@@ -15,7 +14,6 @@
     </a>
     <div
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
-      style="height: 56px"
       (click)="startTutorial()"
       *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"
     >
@@ -30,8 +28,7 @@
     ></left-bar-button>
     <a
       *ngIf="environment.supportEmail"
-      class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
-      style="height: 56px"
+      class="left-bar-button"
       (click)="logHelp()"
       [href]="getHelpMailToAttr()"
       target="_blank"

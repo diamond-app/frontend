@@ -1,8 +1,14 @@
 <app-page [inTutorial]="true">
   <div class="nft-modal-container w-100 px-15px pb-15px">
     <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
-      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond!</div>
-      <div class="w-100 text-center mt-20px fs-20px fc-secondary font-weight-bold">
+      <div class="w-100 text-center fs-32px font-weight-heavy">
+        <img
+          src="/assets/diamond/diamond-symbol-logo-black.svg"
+          class="w-10 m-auto d-block pb-20px"
+        />        
+        Welcome to Diamond
+      </div>
+      <div class="w-100 text-center mt-20px fs-20px font-weight-bold">
         Validate your account to earn starter $DESO
       </div>
       <div class="w-100 d-flex align-items-center flex-column">
@@ -13,7 +19,7 @@
         <button
           (click)="launchSMSVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="primary-button"
+          class="primary-button mb-10px"
         >
           Get $DESO with Phone Number
         </button>
@@ -21,7 +27,7 @@
         <button
           (click)="launchTransferDesoModal()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="secondary-button mt-30px"
+          class="secondary-button mt-30px mb-10px"
         >
           Buy or Send $DESO Anonymously
         </button>
@@ -29,7 +35,7 @@
         <button
           (click)="launchJumioVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="secondary-button mt-30px"
+          class="secondary-button mt-30px mb-10px"
         >
           Get $DESO with ID
         </button>

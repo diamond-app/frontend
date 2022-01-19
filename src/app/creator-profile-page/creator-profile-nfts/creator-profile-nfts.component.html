@@ -1,7 +1,7 @@
 <!-- Posts -->
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
-  class="fs-15px text-grey5 font-weight-bold d-flex flex-column pt-15px"
+  class="fs-15px text-grey5 font-weight-bold d-flex flex-column"
   *ngIf="!isLoading"
 >
   <div
@@ -88,26 +88,26 @@
           <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
             <div>
               <a
-                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_RECENT)"
               >
               {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_RECENT }}
               </a>
               <a
-                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_POPULAR)"
               >
               {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_POPULAR }}
               </a>
               <a
-                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_DESC)"
               >
               {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}
                 <i-feather name="arrow-down" class="feather-xsmall position-relative" style="top:-2px"></i-feather>
               </a>
               <a
-                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_ASC)"
               >
               {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}

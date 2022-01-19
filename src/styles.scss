@@ -219,6 +219,7 @@ $green-font-color: #19B028;
 // font weights
 // font-weight-light: 300
 // font-weight-normal: 400
+.font-weight-heavy { font-weight: 800 !important; }
 .font-weight-bold { font-weight: 600 !important; }
 .font-weight-semibold { font-weight: 500 }
 .font-weight-normal { font-weight: 400 }
@@ -615,7 +616,7 @@ $green-font-color: #19B028;
     }
   }
   .mobile-scroll {
-    padding: 0px 8px;
+    // padding: 0px 8px;
   }
   browse-page {
     top-bar-mobile-header {
@@ -1881,9 +1882,16 @@ tab-selector {
 }
 
 .left-bar-more-container {
-  background: var(--tile-secondary-bg);
+  background: var(--tile-bg);
   bottom: 0px;
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+.left-bar-more-close {
+  position: absolute;
+  right: 12px;
+  top: 2px;
 }
 
 .left-bar-mobile__translucent-background {
@@ -1943,36 +1951,23 @@ left-bar-mobile {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-
   height: 100px;
   width: 100px;
   background-color: transparent;
   position: relative;
-  border-radius: 12px;
+  border-radius: 99px;
 }
 
 .update-profile__image-delete {
-  width: 36px;
-  height: 36px;
   position: absolute;
-  right: 4px;
-  top: 4px;
-  border-radius: 8px;
+  right: -30px;
+  top: -10px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--error);
   cursor: pointer;
-  font-weight: bold;
-  font-size: 1.25rem;
   vertical-align: middle;
-  padding-bottom: .15rem;
-  background-color: var(--tile-bg);
-  i-feather {
-    margin-top: -5px;
-    height: 20px;
-    width: 20px;
-  }
 }
 
 feed-create-post {
@@ -2109,10 +2104,20 @@ feed-create-post {
 }
 
 sign-up {
+  background: var(--black) !important;
+
   .global__center__inner {
     width: 800px;
+    margin-bottom: 60px;
   }
   .global__sidebar__inner {
+    display: none;
+  }
+  .global__sidebar__fixed,
+  .global__nav__inner {
+    border: none;
+  }
+  .desktop-top-bar {
     display: none;
   }
 }
@@ -2312,15 +2317,10 @@ sign-up {
 
 .post-thread__comment-container {
   border-radius: 10px;
-  .post-thread__single-comment {
-    border-bottom: 1px solid var(--border);
-  }
   .feed-post-container {
     background: var(--tile-bg);
     margin-bottom: 0px;
     border-radius: 0px;
-    border-right: 1px solid var(--border);
-    border-left: 1px solid var(--border);
   }
   // .first-item {
   //   .feed-post-container {
@@ -2338,7 +2338,6 @@ sign-up {
   }
 
   flex-grow: 1;
-  margin-top: 20px;
 }
 
 .pinned-post {
@@ -2842,16 +2841,14 @@ feed {
   jumio-status {
     @media (max-width: 992px) {
       margin-top: -8px;
-      margin-right: 8px;
-      margin-left: 8px;
     }
   }
 }
 
 .feed-post__container {
   background: var(--tile-bg);
-  border-bottom: 1px solid var(--border);
   border-radius: 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .feed-post__quoted-content {
@@ -3017,8 +3014,7 @@ feed {
 .nft-bid-btn {
   button {
     color: var(--text);
-    width: 118px;
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--tile-bg);
     margin: 0px 0px;
     padding: 6px 12px;
@@ -3027,7 +3023,6 @@ feed {
     font-size: 13px;
     line-height: 20px;
     border: none;
-    heigth: 20px;
     span {
       top: 1px;
       i-feather {
@@ -3058,7 +3053,7 @@ feed-post-dropdown {
 
 .left-bar-button {
   font-weight: 400;
-  font-size: 17px;
+  font-size: 16px;
   padding: 10px 16px;
   border-radius: 6px;
   transition: all .2s ease-in-out;
@@ -3075,9 +3070,9 @@ feed-post-dropdown {
   i-feather {
     margin-right: 20px;
     width: 20px;
-    height: 20px;
+    height: auto;
     position: relative;
-    top: -1px;
+    top: -1.5px;
   }
 }
 
@@ -3103,7 +3098,7 @@ feed-post-dropdown {
   color: var(--tile-bg);
   margin-left: 20px;
   &:hover {
-    background: var(--black);
+    background: var(--highlight);
   }
 }
 
@@ -3235,13 +3230,11 @@ right-bar-creators {
 }
 
 .creator-profile-top-card__buy-btn {
-  width: 78px;
-  height: 48px;
   background: var(--highlight);
   color: var(--tile-bg);
   margin-left: 24px;
   border-radius: 4px;
-  padding-top: 12px;
+  padding: 8px 16px;
   &:hover {
     color: var(--tile-bg);
   }
@@ -3338,7 +3331,7 @@ right-bar-creators {
 .update-profile__avatar{
   display: flex;
   justify-content: center;
-  background: var(--nft-section-bg);
+  background: var(--black);
   padding: 24px;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
@@ -3348,6 +3341,7 @@ right-bar-creators {
   background: var(--tile-bg);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  padding: 14px 24px;
 }
 
 .update-profile__title {
@@ -3370,7 +3364,7 @@ right-bar-creators {
   padding-top: 10px;
   height: 48px;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--tile-bg);
   background: var(--highlight);
   font-size: 17px;
@@ -3521,7 +3515,9 @@ transfer-deso {
 
 modal-container {
   .update-profile-modal {
-    max-width: 400px;
+    width: 100%;
+    max-width: 600px;
+    top: -60px;
   }
 }
 
@@ -3538,8 +3534,10 @@ update-profile {
     display: none;
   }
   .update-profile__image {
-    height: 140px;
-    width: 140px;
+    height: 100px;
+    width: 100px;
+    border: 4px solid var(--tile-bg);
+    margin: 0 auto;
   }
   button {
     margin-top: 10px;
@@ -3548,21 +3546,24 @@ update-profile {
       width: 16px !important;
       margin-right: 10px;
     }
-    border: 1px solid var(--tile-bg);
+    border: 2px solid var(--tile-bg);
     background: none;
-    border-radius: 12px;
-    padding-top: 2px;
+    border-radius: 99px;
+    padding: 8px 24px 10px;
     color: var(--tile-bg);
-    height: 32px;
-    width: 136px;
     font-size: 13px;
     line-height: 20px;
   }
   .form-control,textarea {
-    border: none;
-    border-radius: 16px;
+    border: 1px solid transparent;
+    border-radius: 4px;
     background: var(--tile-secondary-bg) !important;
-    resize: none;
+    resize: true;
+    &:focus {
+      border: 1px solid var(--highlight);
+      box-shadow: none;
+      outline: initial;
+    }
   }
   .update-profile__cc-percent-symbol {
     position: absolute;
@@ -3600,8 +3601,6 @@ creator-diamonds {
 
   .creator-diamonds__tab-container {
     background: var(--tile-bg);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
   }
   .creator-diamonds__header {
     background: var(--tile-bg);
@@ -3624,7 +3623,6 @@ creator-diamonds {
   background: var(--tile-bg);
   padding: 14px 0;
   border-bottom: 1px solid var(--border);
-  border-top: 1px solid var(--border);
 }
 
 .creator-profile-nfts__no-nfts {
@@ -3815,7 +3813,6 @@ creator-profile-nfts {
 }
 
 .messages-inbox__header {
-  height: 72px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -4607,7 +4604,7 @@ app-notifications-list {
 .form-control {
   color: var(--text) !important;
   background: var(--formbg) !important;
-  border-color: var(--border) !important;
+  border-color: var(--border);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -5099,7 +5096,7 @@ creator-profile-hodlers {
   }
 
   .creator-profile-hodlers__row {
-    padding: 0px 16px;
+    padding: 6px 16px;
     background: var(--tile-bg);
   }
   .total-row {
@@ -5171,7 +5168,7 @@ creator-profile-hodlers {
 }
 .mint-nft__dropdown-btn {
   border: 1px solid var(--border);
-  border-radius: 16px 0px 0px 16px;
+  border-radius: 4px 0px 0px 4px;
   background: var(--tile-secondary-bg);
   width: 96px;
   height: 48px;
@@ -5184,7 +5181,7 @@ creator-profile-hodlers {
   height: 48px;
   background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 4px;
   font-size: 15px;
   color: var(--text-secondary);
 }
@@ -5302,11 +5299,12 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: none;
-  border-radius: 16px;
-  color: var(--highlight);
-  border: 1px solid var(--highlight);
+  border-radius: 4px;
+  color: var(--black);
+  border: 1px solid var(--black);
   &:hover {
-    color: var(--highlight);
+    color: var(--tile-bg);
+    background: var(--black);
   }
   &.disabled-button {
     background: var(--highlight-secondary)
@@ -5337,7 +5335,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--text);
   font-weight: 600;
   &:hover {

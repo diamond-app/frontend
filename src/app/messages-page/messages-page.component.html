@@ -16,10 +16,12 @@
           style="height: auto; width: 120px;"
         />
       </a>
-      <div class="position-relative" style="width: 343px; height: 48px">
-        <search-bar [resultsUnderBar]="true"></search-bar>
+      <div class="d-flex align-items-center">
+        <div class="position-relative" style="width: 343px; height: 48px; top: 2px">
+          <search-bar [resultsUnderBar]="true"></search-bar>
+        </div>
+        <change-account-selector></change-account-selector>
       </div>
-      <change-account-selector></change-account-selector>
     </div>
   </div>
   <div class="d-flex" style="margin-top: 64px">

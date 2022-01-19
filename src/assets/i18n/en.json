@@ -285,7 +285,6 @@
     "usd_coin": "USD per coin",
     "you_have_referral_0": "You have an unlimited ",
     "you_have_referral_1": "referral link",
-    "find_people_in_hot": "Find more people to follow in the Hot feed",
     "load_more": "Load More",
     "loading": "Loading...",
     "no_posts": "No posts yet",
@@ -301,7 +300,7 @@
     "get_starter_deso": "Get Starter $DESO"
   },
   "jumio_status": {
-    "your_free":"Your free",
+    "your_free":"your free",
     "will_arive_in_a_minute":"will arrive in about a minute.",
     "robot_check_failed":"Your robot check failed. Click here to try again.",
     "click_here_to_get":"Click here to get",
@@ -320,7 +319,7 @@
   },
   "left_bar": {
     "home":"Home",
-    "buy_creators":"Buy Creators",
+    "buy_creators":"Discover",
     "buy_deso":"Buy DESO",
     "buy_deso2":"Buy $DESO",
     "notifications":"Notifications",

@@ -131,7 +131,7 @@
   <ng-container *ngIf="!isComment">
     <i-feather name="external-link" (click)="showImageLink = !showImageLink"></i-feather>
     <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-    <i-feather name="diamond" (click)="videoInput.click()"></i-feather>
+    <i-feather name="video" (click)="videoInput.click()"></i-feather>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i-feather
       name="image"

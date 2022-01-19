@@ -65,16 +65,6 @@
             [buttonLabel]="t('left_bar.update_profile')"
             [iconName]="'user'"
           ></left-bar-button>
-          <div
-            class="d-flex w-100 align-items-center left-bar-button"
-            (click)="startTutorial()"
-            *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"
-          >            
-            <a class="cursor-pointer fs-17px">
-              <span><i-feather name="monitor" class="feather-medium fs-0px"></i-feather></span>
-              Tutorial
-            </a>
-          </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"

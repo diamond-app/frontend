@@ -12,10 +12,6 @@
 <div
   *ngIf="datasource.adapter.itemsCount > 0"
   class="w-100 d-flex justify-content-start px-15px fs-15px creator-profile-hodlers__header"
-  [ngStyle]="{
-    'border-radius':
-      profile.PublicKeyBase58Check === globalVars?.loggedInUser?.PublicKeyBase58Check ? '10px 10px 0px 0px' : '0px'
-  }"
 >
   <div class="font-weight-bold fs-15px pl-0px">
     {{ 'creator_profile_holders.holders_of_0' | transloco }} ${{ profile.Username }} {{ 'creator_profile_holders.holders_of_1' | transloco }}
