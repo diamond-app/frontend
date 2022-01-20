@@ -70,11 +70,25 @@ export class ThreadManager {
     }
 
     comments.forEach((comment) => {
-      this.addThread(comment);
+      this.appendComment(comment);
     });
   }
 
-  addThread(comment) {
+  prependComment(comment) {
+    const currentThreads = this.threads;
+
+    if (this.threadArrayCache) {
+      this.threadArrayCache = undefined;
+    }
+
+    this.threadMap = new Map();
+    this.threadMap.set(comment.PostHashHex, flattenThread(comment));
+    currentThreads.forEach((thread) => {
+      this.threadMap.set(thread.parent.PostHashHex, thread);
+    });
+  }
+
+  appendComment(comment) {
     if (this.threadArrayCache) {
       this.threadArrayCache = undefined;
     }
@@ -82,7 +96,18 @@ export class ThreadManager {
     this.threadMap.set(comment.PostHashHex, flattenThread(comment));
   }
 
-  addReplyToThread(threadPostHashHex, replyingToComment, reply) {
+  /**
+   * The logic here does something close to how twitter threading works.
+   * 1. If replying to a top level post it starts a new thread and shows
+   *    the new reply prepended to the list of replies in the UI.
+   * 2. If replying to a sub-reply that is the last child in the thread tree,
+   *    it will increment the sub-reply's reply count and render the new
+   *    reply as the new leaf node in the reply chain.
+   * 3. If replying to either a thread parent or a thread intermediate child,
+   *    it will increment the count of the parent being replied to but it does
+   *    not render the new reply in the UI.
+   */
+  addReplyToComment(threadPostHashHex, replyingToComment, reply) {
     const thread = this.threadMap.get(threadPostHashHex);
     const lastChild = thread.children.length ? thread.children[thread.children.length - 1] : null;
 
@@ -123,5 +148,10 @@ export class ThreadManager {
         ...thread.children.slice(indexToReplace + 1, thread.children.length),
       ];
     }
+  }
+
+  reset() {
+    this.threadMap = new Map();
+    this.threadArrayCache = undefined;
   }
 }

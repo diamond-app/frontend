@@ -81,7 +81,7 @@
               *ngIf="subcommentPost.ProfileEntryResponse != null"
               [includePaddingOnPost]="true"
               [post]="subcommentPost"
-              [parentPost]="thread.children[j]"
+              [parentPost]="thread.children[j - 1] || thread.parent"
               [contentShouldLinkToThread]="true"
               [showIconRow]="true"
               [showDropdown]="true"

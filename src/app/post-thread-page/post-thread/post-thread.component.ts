@@ -11,7 +11,6 @@ import { environment } from "src/environments/environment";
 import { ThreadManager } from "../helpers/thread-manager";
 
 import * as _ from "lodash";
-import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -123,22 +122,22 @@ export class PostThreadComponent implements AfterViewInit {
 
   async appendToSubcommentList(replyParent, threadParent, newPost) {
     await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
-    // TODO: deal with case where only count is incremented and the reply is not
-    // actually rendered. show a toast, etc.
-    const beforeReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
-    this.threadManager.addReplyToThread(threadParent.PostHashHex, replyParent, newPost);
-    const afterReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
-
-    if (beforeReplyCount === afterReplyCount) {
-      // if we hit this case, it means only the count was incremented for an intermediate
-      // reply. The new reply was not actually rendered in the UI.
-      this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
-    }
-
     await this.datasource.adapter.replace({
       predicate: (item) => {
-        const post = item as any;
-        return post.PostHashHex === threadParent.PostHashHex;
+        const dataSourceItem = item as any;
+        const post = dataSourceItem.data.parent;
+        if (post.PostHashHex === threadParent.PostHashHex) {
+          const beforeReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
+          this.threadManager.addReplyToComment(threadParent.PostHashHex, replyParent, newPost);
+          const afterReplyCount = this.threadManager.getThread(threadParent.PostHashHex).children.length;
+
+          if (beforeReplyCount === afterReplyCount) {
+            // if we hit this case, it means only the count was incremented for an intermediate
+            // reply. The new reply was not actually rendered in the UI.
+            this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
+          }
+          return true;
+        }
       },
       items: [this.threadManager.getThread(threadParent.PostHashHex)],
     });
@@ -172,20 +171,22 @@ export class PostThreadComponent implements AfterViewInit {
     this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
   }
 
-  prependToCommentList(parentPost, postEntryResponse) {
+  async prependToCommentList(parentPost, postEntryResponse) {
     // parentPost.CommentCount += 1;
     this.currentPost.CommentCount += 1;
-    this.threadManager.addThread(postEntryResponse);
-    this.datasource.adapter.prepend(this.threadManager.getThread(postEntryResponse.PostHashHex));
+    this.threadManager.prependComment(postEntryResponse);
+    await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    await this.datasource.adapter.prepend(this.threadManager.getThread(postEntryResponse.PostHashHex));
     // TODO: this doesn't seem to be doing anything...
     // this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
   }
 
   onPostHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
     if (parentPostEntryResponse == null) {
-      // TODO: this has a bug. Posts cached in the global state can still show up in the
-      // user's the global feed after deletion.
-      // deleted the root post, redirect home
+      // TODO: this has a bug. Posts cached in the global state can still show
+      // up in the user's the global feed after deletion.  deleted the root
+      // post, redirect home. Maybe we can fix this by optimizing the fetch for
+      // the feed to be faster and not need client side caching.
       this.router.navigate(["/"], { queryParamsHandling: "merge" });
     } else {
       this.onCommentHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse);
@@ -278,6 +279,10 @@ export class PostThreadComponent implements AfterViewInit {
     // page" and re-render the whole component using the new post hash. instead, angular will
     // continue using the current component and merely change the URL. so we need to explictly
     // refresh the posts every time the route changes.
+    if (this.threadManager?.threadCount > 0) {
+      this.threadManager.reset();
+    }
+
     this.refreshPosts();
     this.datasource.adapter.reset();
   }
