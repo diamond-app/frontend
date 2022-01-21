@@ -2293,12 +2293,6 @@ sign-up {
     border-right: 1px solid var(--border);
     border-left: 1px solid var(--border);
   }
-  // .first-item {
-  //   .feed-post-container {
-  //     border-top-right-radius: 10px;
-  //     border-top-left-radius: 10px;
-  //   }
-  // }
   .last-item {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
@@ -2317,10 +2311,6 @@ sign-up {
   &.border {
     border-left: 3px solid var(--highlight) !important;
   }
-}
-
-.post-thread__subcomment-container {
-  // margin-left: 65px;
 }
 
 .post-thread__container {

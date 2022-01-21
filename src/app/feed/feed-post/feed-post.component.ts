@@ -130,10 +130,13 @@ export class FeedPostComponent implements OnInit {
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
 
-  // Determines whether the post should have the thread subcomment UI treatment.
+  // Determines whether this is part of a comment thread. It controls the left
+  // padding applies to threaded comments.
   @Input() isThreaded: boolean = false;
 
-  // Determines whether the post should have the thread subcomment UI treatment.
+  // Determines whether the comment has the vertical line connecting a single
+  // thread. We use a different prop for this since the last node of a thread
+  // does not have the vertical line. It only has the left padding.
   @Input() hasThreadIndicator: boolean = false;
 
   // emits the PostEntryResponse
