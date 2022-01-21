@@ -15,18 +15,19 @@
       </div>
     </div>
 
-    <div *ngFor="let parentPost of currentPost.ParentPosts">
+    <div *ngFor="let parentPost of currentPost.ParentPosts; let i = index" [attr.data-index]="i">
       <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
       <!--  top-level post should be prepended to the post's list of comments -->
+      <!-- NOTE: if a parent post is deleted on the thread page it just gets removed from the UI -->
       <feed-post
         [post]="parentPost"
         [includePaddingOnPost]="true"
         [contentShouldLinkToThread]="true"
-        [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
+        [afterCommentCreatedCallback]="updateParentCommentCountAndShowToast.bind(this, parentPost)"
         [isParentPostInThread]="true"
         [showThreadConnectionLine]="true"
+        [isOnThreadPage]="true"
         [blocked]="isPostBlocked(parentPost)"
-        (postDeleted)="onPostHidden(currentPost, null, null)"
         (userBlocked)="afterUserBlocked($event)"
       ></feed-post>
     </div>
@@ -38,12 +39,12 @@
         [post]="currentPost"
         [includePaddingOnPost]="true"
         [contentShouldLinkToThread]="true"
-        [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
+        [afterCommentCreatedCallback]="prependToCommentList.bind(this)"
         [isParentPostInThread]="true"
         [showLeftSelectedBorder]="false"
         [showInteractionDetails]="true"
         [blocked]="isPostBlocked(currentPost)"
-        (postDeleted)="onPostHidden(currentPost, null, null)"
+        (postDeleted)="onCurrentPostHidden()"
         (userBlocked)="afterUserBlocked($event)"
       ></feed-post>
     </div>
@@ -68,8 +69,9 @@
           [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, thread.parent)"
           [isThreaded]="!!thread.children.length"
           [hasThreadIndicator]="!!thread.children.length"
+          [isOnThreadPage]="true"
           [blocked]="isPostBlocked(thread.parent)"
-          (postDeleted)="onPostHidden(thread.parent, currentPost, null)"
+          (postDeleted)="onThreadParentHidden(thread.parent)"
           (userBlocked)="afterUserBlocked($event)"
         ></feed-post>
 
@@ -89,8 +91,9 @@
               [isThreaded]="true"
               [hasThreadIndicator]="j !== thread.children.length - 1"
               [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
+              [isOnThreadPage]="true"
               [blocked]="isPostBlocked(subcommentPost)"
-              (postDeleted)="onPostHidden(subcommentPost, thread.parent, currentPost)"
+              (postDeleted)="onSubcommentHidden(thread.children[j - 1] || thread.parent, thread.parent)"
               (userBlocked)="afterUserBlocked($event)"
             ></feed-post>
           </div>

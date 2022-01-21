@@ -2,13 +2,11 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Outpu
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
-import { FeedComponent } from "../../feed/feed.component";
-import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
+import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
-import { Location } from "@angular/common";
 import { environment } from "src/environments/environment";
-import { ThreadManager } from "../helpers/thread-manager";
+import { Post, Thread, ThreadManager } from "../helpers/thread-manager";
 
 import * as _ from "lodash";
 import { Subscription } from "rxjs";
@@ -24,7 +22,7 @@ export class PostThreadComponent implements AfterViewInit {
   scrollingDisabled = false;
   showToast = false;
   commentLimit = 20;
-  datasource: IDatasource<IAdapter<any>>;
+  datasource: IDatasource<Thread>;
   subscriptions = new Subscription();
   threadManager: ThreadManager;
 
@@ -37,10 +35,8 @@ export class PostThreadComponent implements AfterViewInit {
     private router: Router,
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private changeRef: ChangeDetectorRef,
     private toastr: ToastrService,
-    private titleService: Title,
-    private location: Location
+    private titleService: Title
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -74,10 +70,12 @@ export class PostThreadComponent implements AfterViewInit {
     }
   }
 
-  // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
-  // TODO: will have to deal with this when getting more data
+  /**
+   * Builds the data source that will be used to pull items for the
+   * ngx-ui-scroll component.
+   */
   getDataSource() {
-    return new Datasource<IAdapter<any>>({
+    return new Datasource<Thread>({
       get: (index, count, success) => {
         if (this.scrollingDisabled && index > this.threadManager.threadCount) {
           success([]);
@@ -120,7 +118,13 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  async appendToSubcommentList(replyParent, threadParent, newPost) {
+  /**
+   * When adding a reply to a subcomment, we need to know if it already has a
+   * reply rendered in the UI. If it does, we just increment the comment count.
+   * If it doesn't currently have a reply in the UI we increment the parent
+   * comment count AND render the new reply.
+   */
+  async appendToSubcommentList(replyParent: Post, threadParent: Post, newPost: Post) {
     await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
     await this.datasource.adapter.replace({
       predicate: (item) => {
@@ -143,77 +147,55 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  // Returns a flat array of all posts in the data source
-  async _allPosts() {
-    let posts = [];
-
-    // Update is a hack. I just need some way to iterate over all the posts in the datasource.
-    // It'd be better if there were an explicit iteration method, but I don't think it exists
-    // (at least not at the time of writing).
-    await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = data as any;
-
-        posts.push(currentPost);
-        posts = posts.concat(currentPost.Comments || []);
-
-        return true;
-      },
-    });
-
-    return posts;
-  }
-
-  updateCommentCountAndShowToast(parentPost, postEntryResponse) {
+  /**
+   * Called if a users replies to a parent post of the current post in the page
+   * header.
+   */
+  updateParentCommentCountAndShowToast(parentPost: Post) {
     parentPost.CommentCount += 1;
 
     // Show toast when adding comment to parent post
     this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
   }
 
-  async prependToCommentList(parentPost, postEntryResponse) {
-    // parentPost.CommentCount += 1;
-    this.currentPost.CommentCount += 1;
+  /**
+   * This prepends a new top level comment thread to the current post. Note this is transitory
+   * and only for UX convenience. If the comments are reloaded from the api it will appear in
+   * its true chronological position.
+   */
+  async prependToCommentList(postEntryResponse: Post) {
     this.threadManager.prependComment(postEntryResponse);
-    await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    await this.datasource.adapter.relax();
     await this.datasource.adapter.prepend(this.threadManager.getThread(postEntryResponse.PostHashHex));
-    // TODO: this doesn't seem to be doing anything...
-    // this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
   }
 
-  onPostHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
-    if (parentPostEntryResponse == null) {
-      // TODO: this has a bug. Posts cached in the global state can still show
-      // up in the user's the global feed after deletion.  deleted the root
-      // post, redirect home. Maybe we can fix this by optimizing the fetch for
-      // the feed to be faster and not need client side caching.
-      this.router.navigate(["/"], { queryParamsHandling: "merge" });
-    } else {
-      this.onCommentHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse);
-    }
+  /**
+   * If the main post for the the page is hidden, we just bail and go back to
+   * home feed. TODO: this has a bug. Posts cached in the global state can still
+   * show up in the user's the global feed after deletion. Maybe we can fix this
+   * by optimizing the fetch for the feed to be faster and not need client side
+   * caching for the feed.
+   */
+  onCurrentPostHidden() {
+    this.router.navigate(["/"], { queryParamsHandling: "merge" });
   }
 
-  // Note: there are definitely issues here where we're decrementing parent/grandparent CommentCounts
-  // by the incorrect amount in many cases. For example, when adding a new comment and subcomment,
-  // the frontend is currently only incrementing the parent, so this only decrements the parent.
-  // However, the backend is incrementing both the parent and grandparent. We should revisit / unify
-  // all this stuff.
-  async onCommentHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
-    let allPosts = await this._allPosts();
-    FeedComponent.onPostHidden(allPosts, hiddenPostEntryResponse, parentPostEntryResponse, null);
-
-    // This seems a little off. We're decrementing all the way up the tree, but I think
-    // our comment counts only take into account two layers. TODO: reconsider this
-    if (parentPostEntryResponse.PostHashHex === this.currentPostHashHex) {
-      this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount--);
-    }
-
-    // Remove hidden post from datasource if it's in there. Note: It may not be in there if
-    // it's a reply to a subcomment.
-    this.datasource.adapter.remove({
-      predicate: ({ data }) => {
-        return (data as any).PostHashHex === hiddenPostEntryResponse.PostHashHex;
+  /**
+   * When a subcomment is hidden we just need to decrement its parent's comment
+   * count. The feed component will internally adjust its UI to hide the
+   * content.
+   */
+  async onSubcommentHidden(commentToHide: Post, parentComment: Post, threadParent) {
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.replace({
+      predicate: (item) => {
+        const dataSourceItem = item as any;
+        if (dataSourceItem.data.parent.PostHashHex === threadParent.PostHashHex) {
+          this.threadManager.hideComment(commentToHide, parentComment, threadParent.PostHashHex);
+          return true;
+        }
       },
+      items: [this.threadManager.getThread(threadParent.PostHashHex)],
     });
   }
 
