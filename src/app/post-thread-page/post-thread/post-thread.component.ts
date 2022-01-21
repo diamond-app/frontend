@@ -5,10 +5,12 @@ import { BackendApiService } from "../../backend-api.service";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
+import { Location } from "@angular/common";
 import { environment } from "src/environments/environment";
 import { Post, Thread, ThreadManager } from "../helpers/thread-manager";
 
 import * as _ from "lodash";
+import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -36,7 +38,8 @@ export class PostThreadComponent implements AfterViewInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private toastr: ToastrService,
-    private titleService: Title
+    private titleService: Title,
+    private location: Location
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
