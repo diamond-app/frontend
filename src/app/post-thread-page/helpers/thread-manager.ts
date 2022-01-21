@@ -73,7 +73,6 @@ export class ThreadManager {
 
   constructor(rootPost: Post) {
     this.addThreads(rootPost.Comments);
-    debugger;
   }
 
   getThread(parentPostHashHex: string): Thread | undefined {
