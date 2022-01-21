@@ -39,10 +39,10 @@ export class BuyNowConfirmationComponent {
 
   setErrors(): void {
     this.errors = [];
-    if (this.selectedSerialNumber.MinBidAmountNanos > this.globalVars.loggedInUser.BalanceNanos) {
-      this.errors.push(`You do not have ${this.selectedSerialNumber.MinBidAmountNanos} DESO to fulfill this purchase.`);
+    if (this.selectedSerialNumber.BuyNowPriceNanos > this.globalVars.loggedInUser.BalanceNanos) {
+      this.errors.push(`You do not have ${this.selectedSerialNumber.BuyNowPriceNanos} DESO to fulfill this purchase.`);
     }
-    if (this.selectedSerialNumber.MinBidAmountNanos === 0) {
+    if (this.selectedSerialNumber.BuyNowPriceNanos === 0) {
       this.errors.push(`The purchase must be greater than 0 DESO`);
     }
     if (!this.selectedSerialNumber.IsBuyNow) {
