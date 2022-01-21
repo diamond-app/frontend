@@ -15,7 +15,10 @@ export type Thread = {
  * callback.
  */
 const walkSubcomments = (subComment: Post, cb: Function) => {
-  cb(subComment);
+  if (subComment) {
+    cb(subComment);
+  }
+
   if (Array.isArray(subComment?.Comments)) {
     // At each nested level we only take the first comment since it doesn't make
     // sense to flatten at every level. We just want the most relevant reply to
