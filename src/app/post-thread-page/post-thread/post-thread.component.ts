@@ -291,7 +291,7 @@ export class PostThreadComponent implements AfterViewInit {
     // page" and re-render the whole component using the new post hash. instead, angular will
     // continue using the current component and merely change the URL. so we need to explictly
     // refresh the posts every time the route changes.
-    if (this.threadManager && this.threadManager?.threadCount > 0) {
+    if (this.threadManager) {
       this.threadManager.reset();
     }
 
