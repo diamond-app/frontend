@@ -72,21 +72,21 @@ export class ThreadManager {
     this.addThreads(rootPost.Comments);
   }
 
-  getThread(parentPostHashHex: string): Thread | undefined {
-    return this.threadMap.get(parentPostHashHex);
+  private appendComment(comment: PostEntryResponse) {
+    this.threadMap.set(comment.PostHashHex, flattenThread(comment));
   }
 
-  removeThread(parentPostHashHex: string) {
-    if (this.threadArrayCache) {
-      this.threadArrayCache = undefined;
-    }
-
-    this.threadMap.delete(parentPostHashHex);
+  getThread(parentPostHashHex: string): Thread | undefined {
+    return this.threadMap.get(parentPostHashHex);
   }
 
   addThreads(comments: PostEntryResponse[]) {
     if (!Array.isArray(comments)) {
       return;
+    }
+
+    if (this.threadArrayCache) {
+      this.threadArrayCache = undefined;
     }
 
     comments.forEach((comment) => {
@@ -106,14 +106,6 @@ export class ThreadManager {
     currentThreads.forEach((thread) => {
       this.threadMap.set(thread.parent.PostHashHex, thread);
     });
-  }
-
-  appendComment(comment: PostEntryResponse) {
-    if (this.threadArrayCache) {
-      this.threadArrayCache = undefined;
-    }
-
-    this.threadMap.set(comment.PostHashHex, flattenThread(comment));
   }
 
   /**
