@@ -56,6 +56,12 @@
             </a>
             <a
               class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="_copyPublicKey()"
+            >
+              Copy User's Public Key
+            </a>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
               *ngIf="!profileBelongsToLoggedInUser()"
             >
