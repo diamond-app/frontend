@@ -37,6 +37,11 @@
       "http": ["./node_modules/stream-http"],
       "https": ["./node_modules/https-browserify"],
       "os": ["./node_modules/os-browserify"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "typescript-strict-plugin"
+      }
+    ]
   }
 }
