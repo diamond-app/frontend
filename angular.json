@@ -44,6 +44,14 @@
             ]
           },
           "configurations": {
+            "prod-proxy": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod-proxy.ts"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -80,6 +88,9 @@
             "browserTarget": "deso-frontend:build"
           },
           "configurations": {
+            "prod-proxy": {
+              "browserTarget": "deso-frontend:build:prod-proxy"
+            },
             "production": {
               "browserTarget": "deso-frontend:build:production"
             }
