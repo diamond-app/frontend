@@ -1,20 +1,16 @@
-export type Post = {
-  PostHashHex: string;
-  Comments: Post[] | null;
-  CommentCount: number;
-  IsHidden: boolean;
-};
+// @ts-strict
+import { PostEntryResponse } from "src/app/backend-api.service";
 
 export type Thread = {
-  parent: Post;
-  children: Post[];
+  parent: PostEntryResponse;
+  children: PostEntryResponse[];
 };
 
 /**
  * A simple comment tree walker. Passes each comment in the tree to the given
  * callback.
  */
-const walkSubcomments = (subComment: Post, cb: Function) => {
+const walkSubcomments = (subComment: PostEntryResponse, cb: Function) => {
   if (subComment) {
     cb(subComment);
   }
@@ -31,15 +27,15 @@ const walkSubcomments = (subComment: Post, cb: Function) => {
  * Takes a tree of comments and flattens it to a linear thread for
  * rendering in the UI.
  */
-export function flattenThread(parent: Post): Thread {
-  let thread = {
+export function flattenThread(parent: PostEntryResponse): Thread {
+  let thread: Thread = {
     parent,
     children: [],
   };
 
   if (Array.isArray(parent.Comments)) {
     parent.Comments.forEach((comment) => {
-      walkSubcomments(comment, (subComment) => {
+      walkSubcomments(comment, (subComment: PostEntryResponse) => {
         thread.children.push(subComment);
       });
     });
@@ -56,10 +52,8 @@ export function flattenThread(parent: Post): Thread {
  * linear fashion similar to twitter threads.
  */
 export class ThreadManager {
-  // We don't want any outside sets on this
   private threadMap = new Map<string, Thread>();
-
-  private threadArrayCache: Thread[];
+  private threadArrayCache: Thread[] | undefined;
 
   get threadCount(): number {
     return this.threadMap.size;
@@ -74,7 +68,7 @@ export class ThreadManager {
     return this.threadArrayCache;
   }
 
-  constructor(rootPost: Post) {
+  constructor(rootPost: PostEntryResponse) {
     this.addThreads(rootPost.Comments);
   }
 
@@ -90,7 +84,7 @@ export class ThreadManager {
     this.threadMap.delete(parentPostHashHex);
   }
 
-  addThreads(comments: Post[]) {
+  addThreads(comments: PostEntryResponse[]) {
     if (!Array.isArray(comments)) {
       return;
     }
@@ -100,7 +94,7 @@ export class ThreadManager {
     });
   }
 
-  prependComment(comment: Post) {
+  prependComment(comment: PostEntryResponse) {
     const currentThreads = this.threads;
 
     if (this.threadArrayCache) {
@@ -114,7 +108,7 @@ export class ThreadManager {
     });
   }
 
-  appendComment(comment: Post) {
+  appendComment(comment: PostEntryResponse) {
     if (this.threadArrayCache) {
       this.threadArrayCache = undefined;
     }
@@ -137,11 +131,10 @@ export class ThreadManager {
    * thread parent to get things to re-render. Will have to dig deeper into the
    * rendering logic to understand exactly why this is necessary.
    */
-  addReplyToComment(threadPostHashHex: string, replyingToComment: Post, reply: Post) {
-    const thread = this.threadMap.get(threadPostHashHex);
+  addReplyToComment(thread: Thread, replyingToComment: PostEntryResponse, reply: PostEntryResponse) {
     const lastChild = thread.children.length ? thread.children[thread.children.length - 1] : null;
 
-    if (replyingToComment.PostHashHex === threadPostHashHex && !lastChild) {
+    if (replyingToComment.PostHashHex === thread.parent.PostHashHex && !lastChild) {
       // increment the parent count && push its first child
       thread.parent = {
         ...thread.parent,
@@ -156,7 +149,7 @@ export class ThreadManager {
       };
       thread.parent = { ...thread.parent };
       thread.children = [...thread.children.slice(0, thread.children.length - 1), prevLastChild, reply];
-    } else if (replyingToComment.PostHashHex === threadPostHashHex) {
+    } else if (replyingToComment.PostHashHex === thread.parent.PostHashHex) {
       // we've replied to a thread parent that already has replies. We
       // just increment its count
       thread.parent = {
@@ -184,10 +177,9 @@ export class ThreadManager {
    *  Sets the IsHidden field on the hidden post and decrements its parent's
    *  CommentCount
    */
-  hideComment(commentToHide: Post, parentComment: Post, threadPostHashHex: string) {
-    const thread = this.getThread(threadPostHashHex);
+  hideComment(thread: Thread, commentToHide: PostEntryResponse, parentComment: PostEntryResponse) {
     commentToHide.IsHidden = true;
-    if (parentComment.PostHashHex === threadPostHashHex) {
+    if (parentComment.PostHashHex === thread.parent.PostHashHex) {
       thread.parent = {
         ...thread.parent,
         CommentCount: thread.parent.CommentCount - 1,

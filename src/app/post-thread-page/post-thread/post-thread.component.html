@@ -93,7 +93,7 @@
               [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
               [isOnThreadPage]="true"
               [blocked]="isPostBlocked(subcommentPost)"
-              (postDeleted)="onSubcommentHidden(thread.children[j - 1] || thread.parent, thread.parent)"
+              (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
               (userBlocked)="afterUserBlocked($event)"
             ></feed-post>
           </div>
