@@ -650,6 +650,7 @@
     "email": "Email",
     "please_enter_valid_email": "Please enter a valid email address.",
     "theme": "Theme",
+    "language": "Language",
     "show_price_in_feed": "Show prices in feed",
     "update_profile": "Update Profile",
     "enter_username": "Enter username",
