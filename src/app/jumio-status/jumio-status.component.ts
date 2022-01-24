@@ -25,8 +25,8 @@ export class JumioStatusComponent {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: "jumio_status.yes",
-      cancelButtonText: "t(jumio_status.no)",
+      confirmButtonText: this.translocoService.translate("jumio_status.yes"),
+      cancelButtonText: this.translocoService.translate("jumio_status.no"),
       reverseButtons: true,
     }).then(async (alertRes: any) => {
       if (alertRes.isConfirmed) {
