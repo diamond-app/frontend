@@ -411,7 +411,7 @@ export class NotificationsListComponent implements OnInit {
       const postText = `<i class="fc-muted">${truncatedPost}</i>`;
       if (
         nftBidMeta.IsBuyNowBid &&
-        this.globalVars.loggedInUser?.PublicKeyBase58Check !== nftBidMeta.OwnerPublicKeyBase58check
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58Check
       ) {
         result.action = `${actorName} purchased serial number ${
           nftBidMeta.SerialNumber
@@ -449,7 +449,7 @@ export class NotificationsListComponent implements OnInit {
           result.action = `${actor.Username} bought an NFT that generated ${desoRoyaltyStr}${
             desoRoyaltyStr && coinRoyaltyStr && " and "
           }${coinRoyaltyStr}`;
-          result.icon = "fas fa-hand-holding-usd fc-green";
+          result.icon = "dollar-sign";
           return result;
         } else {
           result.action = nftBidMeta.BidAmountNanos
