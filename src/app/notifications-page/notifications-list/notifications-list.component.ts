@@ -190,6 +190,8 @@ export class NotificationsListComponent implements OnInit {
       nftEntryResponses: null, // NFT Entry Responses, for transfers
     };
 
+    console.log(txnMeta);
+
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
       const basicTransferMeta = txnMeta.BasicTransferTxindexMetadata;
       if (!basicTransferMeta) {
@@ -433,13 +435,15 @@ export class NotificationsListComponent implements OnInit {
           const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
           const coinRoyaltyStr = additionalCoinRoyalty
             ? `a royalty of ${this.globalVars.nanosToDeSo(additionalCoinRoyalty)} (~${this.globalVars.nanosToUSD(
-                additionalCoinRoyalty
+                additionalCoinRoyalty,
+                2
               )}) DESO to your creator coin`
             : "";
           const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
           const desoRoyaltyStr = additionalDESORoyalty
             ? `a royalty of ${this.globalVars.nanosToDeSo(additionalDESORoyalty)} (~${this.globalVars.nanosToUSD(
-                additionalDESORoyalty
+                additionalDESORoyalty,
+                2
               )}) DESO to your wallet`
             : "";
           result.action = `${actor.Username} bought an NFT that generated ${desoRoyaltyStr}${
@@ -448,7 +452,14 @@ export class NotificationsListComponent implements OnInit {
           result.icon = "fas fa-hand-holding-usd fc-green";
           return result;
         } else {
-          return null;
+          result.action = nftBidMeta.BidAmountNanos
+            ? `${actorName} bid ${this.globalVars.nanosToDeSo(
+                nftBidMeta.BidAmountNanos,
+                2
+              )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+                nftBidMeta.SerialNumber
+              } ${postText}`
+            : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
         }
       }
       result.icon = "coin";

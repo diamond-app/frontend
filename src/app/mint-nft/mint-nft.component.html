@@ -233,23 +233,39 @@
           name="info"
           class="ml-5px mt-5px fs-0px feather-small fc-secondary"
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-          [matTooltip]="'Share creator royalties with other users'"
+          [matTooltip]="
+            'Share royalties with other users for all primary and secondary sales of this NFT. Royalties will come in the form of $DESO to their wallet'
+          "
           #tooltip="matTooltip"
         ></i-feather>
-        <i-feather name="plus-circle" class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer" (click)="addNewDESORoyalty()"></i-feather>
+        <i-feather
+          name="plus-circle"
+          class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer"
+          (click)="addNewDESORoyalty()"
+        ></i-feather>
       </div>
       <ng-container *ngFor="let additionalDESORoyalty of additionalDESORoyalties; let ii = index">
         <div
           class="d-flex align-items-center justify-content-between w-100"
           [ngClass]="{ 'flex-column': globalVars.isMobile() }"
         >
-          <search-bar
+          <div
             [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
-            [isSearchForUsersToSendDESO]="true"
-            [showCloutavista]="false"
-            (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalDESORoyalties, ii)"
+            class="d-flex align-items-center"
             *ngIf="!additionalDESORoyalty.ProfileEntryResponse"
-          ></search-bar>
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalDESORoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer mr-5px"
+            ></i-feather>
+            <search-bar
+              class="w-100"
+              [isSearchForUsersToSendDESO]="true"
+              [showCloutavista]="false"
+              (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalDESORoyalties, ii)"
+            ></search-bar>
+          </div>
           <div
             [ngClass]="{ 'w-100': globalVars.isMobile() }"
             class="d-flex align-items-center"
@@ -308,23 +324,40 @@
           name="info"
           class="ml-5px mt-5px fs-0px feather-small fc-secondary"
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-          [matTooltip]="'Contribute coin royalties to other users'"
+          [matTooltip]="
+            'Share royalties with other users for all primary and secondary sales of this NFT. Royalties will come in the form of additional $DESO locked to their creator coin. This means any owners of the recipient\'s coin will reap the benefit of this royalty. The recipient must own some of their own coin in order to receive this royalty.'
+          "
           #tooltip="matTooltip"
         ></i-feather>
-        <i-feather name="plus-circle" class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer" (click)="addNewCoinRoyalty()"></i-feather>
+        <i-feather
+          name="plus-circle"
+          class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer"
+          (click)="addNewCoinRoyalty()"
+        ></i-feather>
       </div>
       <ng-container *ngFor="let additionalCoinRoyalty of additionalCoinRoyalties; let ii = index">
         <div
           class="d-flex align-items-center justify-content-between w-100"
           [ngClass]="{ 'flex-column': globalVars.isMobile() }"
         >
-          <search-bar
+          <div
             [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
-            [isSearchForUsersToSendDESO]="true"
-            [showCloutavista]="false"
-            (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalCoinRoyalties, ii)"
+            class="d-flex align-items-center"
             *ngIf="!additionalCoinRoyalty.ProfileEntryResponse"
-          ></search-bar>
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalCoinRoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer mr-5px"
+            ></i-feather>
+            <search-bar
+              class="w-100"
+              [isSearchForUsersToSendDESO]="true"
+              [showCloutavista]="false"
+              (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalCoinRoyalties, ii)"
+              *ngIf="!additionalCoinRoyalty.ProfileEntryResponse"
+            ></search-bar>
+          </div>
           <div
             [ngClass]="{ 'w-100': globalVars.isMobile() }"
             class="d-flex align-items-center"

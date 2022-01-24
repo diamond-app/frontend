@@ -361,7 +361,9 @@ export class MintNftComponent {
   }
 
   addNewDESORoyalty(): void {
-    this.additionalDESORoyalties.push({ RoyaltyPercent: 0 });
+    if (this.additionalDESORoyalties.length === 0 || this.additionalDESORoyalties[0]?.PublicKeyBase58Check) {
+      this.additionalDESORoyalties.push({ RoyaltyPercent: 0 });
+    }
   }
 
   addNewCoinRoyalty(): void {
