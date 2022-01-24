@@ -178,15 +178,6 @@
     "name": "名字",
     "price": "价格"
   },
-  "desocialworld": {
-    "feed": {
-      "tab": {
-        "language": "语言",
-        "newbies": "新手",
-        "searchclout": "热"
-      }
-    }
-  },
   "diamonds_pages": {
     "diamonds_from": "打赏收入",
     "diamonds_given_by": "打赏"
