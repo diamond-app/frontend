@@ -1,12 +1,10 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
+import { BackendApiService, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import * as introJs from "intro.js/intro.js";
-import * as AOS from "aos";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
 import { of, Subscription, zip } from "rxjs";
@@ -313,6 +311,8 @@ export class AppComponent implements OnInit {
         });
       }
     });
+
+    this.globalVars.pollUnreadNotifications();
 
     this.installDD();
     this.installAmplitude();
