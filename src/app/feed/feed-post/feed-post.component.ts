@@ -113,6 +113,7 @@ export class FeedPostComponent implements OnInit {
   @Input() isForSaleOnly: boolean = false;
   nftLastAcceptedBidAmountNanos: number;
   nftMinBidAmountNanos: number;
+  nftBuyNowPriceNanos: number;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
@@ -221,9 +222,13 @@ export class FeedPostComponent implements OnInit {
         });
         this.lowBid = Math.max(lowestBidObject?.HighestBidAmountNanos || 0, lowestBidObject?.MinBidAmountNanos || 0);
         if (this.nftEntryResponses.length === 1) {
-          this.nftLastAcceptedBidAmountNanos = this.nftEntryResponses[0].LastAcceptedBidAmountNanos;
-          if (this.nftEntryResponses[0].MinBidAmountNanos > 0) {
-            this.nftMinBidAmountNanos = this.nftEntryResponses[0].MinBidAmountNanos;
+          const nftEntryResponse = this.nftEntryResponses[0];
+          this.nftLastAcceptedBidAmountNanos = nftEntryResponse.LastAcceptedBidAmountNanos;
+          if (nftEntryResponse.MinBidAmountNanos > 0) {
+            this.nftMinBidAmountNanos = nftEntryResponse.MinBidAmountNanos;
+          }
+          if (nftEntryResponse.BuyNowPriceNanos > 0 && nftEntryResponse.IsBuyNow) {
+            this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
         }
         this.ref.detectChanges();
@@ -623,7 +628,7 @@ export class FeedPostComponent implements OnInit {
       });
       const onHideEvent = modalDetails.onHide;
       onHideEvent.subscribe((response) => {
-        if (response === "bid placed") {
+        if (response === "bid placed" || response === "nft purchased") {
           this.getNFTEntries();
           this.nftBidPlaced.emit();
         }
