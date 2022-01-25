@@ -25,7 +25,6 @@ export class PostThreadComponent implements AfterViewInit {
   previousPostHashHex: string | undefined;
   scrollingDisabled = false;
   showToast = false;
-  commentLimit = 20;
   subscriptions = new Subscription();
   threadManager: ThreadManager | undefined;
   datasource = new Datasource<Thread>({
@@ -224,7 +223,12 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  getPost(fetchParents: boolean = true, commentOffset: number = 0, commentLimit: number = this.commentLimit) {
+  getPost(
+    fetchParents = true,
+    commentOffset = 0,
+    commentLimit = 20,
+    subCommentPostHashHex: string | undefined = undefined
+  ) {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
@@ -238,7 +242,7 @@ export class PostThreadComponent implements AfterViewInit {
 
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
-      this.postHashHexRouteParam /*PostHashHex*/,
+      subCommentPostHashHex ?? this.postHashHexRouteParam /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       fetchParents,
       commentOffset,
@@ -305,5 +309,20 @@ export class PostThreadComponent implements AfterViewInit {
 
   afterUserBlocked(blockedPubKey: any) {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
+  }
+
+  loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
+    this.getPost(false, 0, 1, subcomment.PostHashHex)?.subscribe(
+      (res) => {
+        if (!res || !res.PostFound) {
+          throw "This should never happen unless there is an api error. Let's show a toast just in case?";
+        }
+        this.threadManager?.addChildrenToThread(thread, res.PostFound);
+      },
+      (err) => {
+        // TODO: show a toast
+        console.error(err);
+      }
+    );
   }
 }

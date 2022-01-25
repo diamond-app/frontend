@@ -185,6 +185,10 @@ export class ThreadManager {
     }
   }
 
+  addChildrenToThread(thread: Thread, subcomment: PostEntryResponse) {
+    thread.children = [...thread.children, ...flattenThread(subcomment).children];
+  }
+
   /**
    * Dumps any existing threads and busts the array cache.
    */
