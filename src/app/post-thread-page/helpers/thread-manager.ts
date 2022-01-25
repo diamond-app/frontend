@@ -186,7 +186,11 @@ export class ThreadManager {
   }
 
   addChildrenToThread(thread: Thread, subcomment: PostEntryResponse) {
-    thread.children = [...thread.children, ...flattenThread(subcomment).children];
+    thread.children = [
+      ...thread.children.slice(0, thread.children.length - 1),
+      { ...subcomment },
+      ...flattenThread(subcomment).children,
+    ];
   }
 
   /**
