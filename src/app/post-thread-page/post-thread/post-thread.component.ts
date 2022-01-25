@@ -28,6 +28,7 @@ export class PostThreadComponent implements AfterViewInit {
   showToast = false;
   subscriptions = new Subscription();
   threadManager: ThreadManager | undefined;
+  isLoadingMoreReplies = false;
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
       const numThreads = this.threadManager?.threadCount ?? 0;
@@ -315,8 +316,10 @@ export class PostThreadComponent implements AfterViewInit {
 
   loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
     const errorMsg = this.transloco.translate("generic_toast_error");
-    this.getPost(false, 0, 1, subcomment.PostHashHex)?.subscribe(
-      (res) => {
+    this.isLoadingMoreReplies = true;
+    this.getPost(false, 0, 1, subcomment.PostHashHex)
+      ?.toPromise()
+      .then((res) => {
         if (!res || !res.PostFound) {
           // this *should* never happen.
           this.toastr.error(errorMsg, undefined, {
@@ -327,14 +330,16 @@ export class PostThreadComponent implements AfterViewInit {
         }
 
         this.threadManager?.addChildrenToThread(thread, res.PostFound);
-      },
-      (err) => {
+      })
+      .catch((err) => {
+        console.log(err);
         this.toastr.error(errorMsg, undefined, {
           positionClass: "toast-top-center",
           timeOut: 3000,
         });
-        console.error(err);
-      }
-    );
+      })
+      .finally(() => {
+        this.isLoadingMoreReplies = false;
+      });
   }
 }
