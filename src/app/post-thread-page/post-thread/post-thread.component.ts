@@ -83,7 +83,7 @@ export class PostThreadComponent implements AfterViewInit {
     private toastr: ToastrService,
     private titleService: Title,
     private location: Location,
-    private i18n: TranslocoService
+    private transloco: TranslocoService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -314,7 +314,7 @@ export class PostThreadComponent implements AfterViewInit {
   }
 
   loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
-    const errorMsg = this.i18n.translate("generic_toast_error");
+    const errorMsg = this.transloco.translate("generic_toast_error");
     this.getPost(false, 0, 1, subcomment.PostHashHex)?.subscribe(
       (res) => {
         if (!res || !res.PostFound) {
@@ -329,7 +329,6 @@ export class PostThreadComponent implements AfterViewInit {
         this.threadManager?.addChildrenToThread(thread, res.PostFound);
       },
       (err) => {
-        // TODO: show a toast
         this.toastr.error(errorMsg, undefined, {
           positionClass: "toast-top-center",
           timeOut: 3000,
