@@ -576,5 +576,6 @@
   "NFT Gallery": "NFT Gallery",
   "post_thread": {
     "see_more": "See more replies"
-  }
+  },
+  "generic_toast_error": "Something went wrong. Please try again."
 }

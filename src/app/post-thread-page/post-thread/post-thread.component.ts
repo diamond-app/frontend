@@ -13,6 +13,7 @@ import { Thread, ThreadManager } from "../helpers/thread-manager";
 import * as _ from "lodash";
 import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "post-thread",
@@ -81,7 +82,8 @@ export class PostThreadComponent implements AfterViewInit {
     private backendApi: BackendApiService,
     private toastr: ToastrService,
     private titleService: Title,
-    private location: Location
+    private location: Location,
+    private i18n: TranslocoService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -312,15 +314,26 @@ export class PostThreadComponent implements AfterViewInit {
   }
 
   loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
+    const errorMsg = this.i18n.translate("generic_toast_error");
     this.getPost(false, 0, 1, subcomment.PostHashHex)?.subscribe(
       (res) => {
         if (!res || !res.PostFound) {
-          throw "This should never happen unless there is an api error. Let's show a toast just in case?";
+          // this *should* never happen.
+          this.toastr.error(errorMsg, undefined, {
+            positionClass: "toast-top-center",
+            timeOut: 3000,
+          });
+          return;
         }
+
         this.threadManager?.addChildrenToThread(thread, res.PostFound);
       },
       (err) => {
         // TODO: show a toast
+        this.toastr.error(errorMsg, undefined, {
+          positionClass: "toast-top-center",
+          timeOut: 3000,
+        });
         console.error(err);
       }
     );
