@@ -307,8 +307,8 @@
     "click_here_to_get":"Click here to get",
     "hide_banner":"Hide banner",
     "hide_banner_message":"Do you want to hide the free money banner?",
-    "yes": "Ja",
-    "no": "Nee"
+    "yes": "Yes",
+    "no": "No"
   },
   "landing":{
     "login":"Login",
