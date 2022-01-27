@@ -5089,6 +5089,17 @@ creator-profile-hodlers {
   }
 }
 
+mint-nft-page {
+  search-bar {
+    .search-bar.input-group {
+      border: 1px solid var(--border);
+    }
+    #searchbar {
+      height: 46px;
+    }
+  }
+}
+
 .mint-nft__section {
   padding: 40px;
   border-bottom: 1px solid var(--border);

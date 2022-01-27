@@ -41,7 +41,7 @@
         <div
           class="d-flex align-items-center fs-14px link--unstyled"
           *ngFor="let bidEntry of selectedBidEntries; let i = index">
-          <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between align-items-center sell-nft__row">
+          <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between align-items-center sell-nft__row secalt-bg br-10px">
             <div class="d-flex flex-column col-2 border-right">
               <div class="font-weight-bold">{{ 'sell_nft.number' | transloco }}</div>
               <div>#{{ bidEntry.SerialNumber }}</div>
@@ -63,7 +63,7 @@
             <div class="d-flex justify-content-center align-items-center col-2 px-16px">
               <i-feather
                 name="trash-2"
-                class="feather-medium fc-error cursor-pointer"
+                class="feather-medium fc-error cursor-pointer fs-0px"
                 (click)="remove(bidEntry)"
               ></i-feather>
             </div>

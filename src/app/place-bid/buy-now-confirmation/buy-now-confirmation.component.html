@@ -1,0 +1,69 @@
+<div>
+  <div class="fs-15px text-grey5">
+    You are about to purchase an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
+  </div>
+
+  <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
+    <div class="col-5 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
+      <span>Number</span>
+      <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
+    </div>
+    <div class="col-5 d-flex flex-column m-16px">
+      <span>Purchase Price</span>
+      <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber.BuyNowPriceNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber.BuyNowPriceNanos, 2)}})</span>
+    </div>
+  </div>
+
+  <div *ngIf="globalVars.isMobile()">
+    <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
+      <span class="font-weight-bold">Number</span>
+      <div>
+        <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
+        <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+      </div>
+    </div>
+    <div class="nft-modal-bid-details d-flex flex-column justify-content-center p-16px">
+      <div class="pt-10px d-flex justify-content-between">
+        <span class="font-weight-bold">Purchase Price</span>
+        <span>
+              {{ globalVars.nanosToDeSo(selectedSerialNumber.BuyNowPriceNanos) }} DESO (~{{
+          globalVars.nanosToUSD(selectedSerialNumber.BuyNowPriceNanos, 2)
+          }})
+            </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Availability metadata -->
+  <div class="fs-15px">
+    <div class="d-flex">
+      <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
+      <span class="d-lg-inline-block d-block ml-30px">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
+    </div>
+  </div>
+
+  <div *ngFor="let error of errors" class="error-container" style="white-space: pre-line;">
+    <i-feather name="alert-circle" class="feather-large"></i-feather>
+    {{ error }}
+  </div>
+  <div
+    [ngClass]="{
+          'floating-bottom-bar': globalVars.isMobile(),
+          'mb-15px': !globalVars.isMobile(),
+          'mt-30px': !globalVars.isMobile()
+        }"
+    class="d-flex align-items-center"
+  >
+    <button
+      class="primary-button font-weight-bold fs-15px br-12px"
+      style="height: 48px; width: 140px; line-height: 15px"
+      (click)="placeBid()"
+      [disabled]="buyingNFT || errors.length > 0 || !selectedSerialNumber?.BuyNowPriceNanos"
+      [class]="{ 'disabled-button': buyingNFT || errors.length > 0 || !selectedSerialNumber?.BuyNowPriceNanos }"
+    >
+      {{ buyingNFT ? "Buying" : "Buy Now" }}
+    </button>
+    <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">Buy DESO</div>
+  </div>
+
+</div>
