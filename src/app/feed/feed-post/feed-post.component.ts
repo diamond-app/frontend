@@ -49,7 +49,9 @@ export class FeedPostComponent implements OnInit {
       this.postContent = post;
     }
 
-    if (this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
+    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
+    // a read more link to the detail.
+    if (!this.router.url.startsWith("/posts/") && this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
       // NOTE: We first spread the string into an array since this will account
       // for unicode multi-codepoint characters like emojis. Just using
       // substring will potentially break a string in the middle of a
