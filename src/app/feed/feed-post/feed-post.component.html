@@ -278,12 +278,22 @@
             </div>
 
             <!-- Content -->
-            <div
-              class="feed-post__content"
-              [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
-              [innerHTML]="postContent.Body | sanitizeAndAutoLink"
-              queryParamsHandling="merge"
-            ></div>
+            <div class="feed-post__content">
+              <span
+                [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+                [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+                queryParamsHandling="merge"
+              ></span>
+              <a
+                *ngIf="showReadMoreRollup"
+                [routerLink]="getRouterLink('/' + this.globalVars.RouteNames.POSTS + '/' + postContent.PostHashHex)"
+                queryParamsHandling="merge"
+                class="link--unstyled"
+              >
+                &nbsp;
+                <strong>Read more</strong>
+              </a>
+            </div>
 
             <!-- Media, don't show images on comment posts. -->
             <div
