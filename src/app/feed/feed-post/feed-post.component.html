@@ -130,7 +130,9 @@
           class="feed-post__container d-flex justify-content-left w-100 pb-5px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
-            'pt-10px': includePaddingOnPost
+            'pt-10px': includePaddingOnPost,
+            'feed-post__container--is-threaded': isThreaded,
+            'feed-post__container--is-thread-child': isThreadChild
           }"
         >
           <a
@@ -193,7 +195,9 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reposterProfile
+            'pt-15px': includePaddingOnPost && !reposterProfile,
+            'feed-post__container--is-threaded': isThreaded,
+            'feed-post__container--is-thread-child': isThreadChild
           }"
           [ngStyle]="{
             'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
@@ -268,8 +272,10 @@
           </div>
           <!-- Avatar -->
 
+          <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div>
+
           <!-- Main Content -->
-          <div class="w-100">
+          <div class="w-100" [ngClass]="{ 'feed-post__content-wrapper': isThreaded }">
             <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
               {{ 'feed_post.replying_to' | transloco }}
               <a
@@ -281,16 +287,25 @@
             </div>
 
             <!-- Content -->
-            <div
-              class="feed-post__content"
-              [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
-              [innerHTML]="postContent.Body | sanitizeAndAutoLink"
-              queryParamsHandling="merge"
-            ></div>
+            <div class="feed-post__content">
+              <span
+                [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+                [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+                queryParamsHandling="merge"
+              ></span>
+              <a
+                *ngIf="showReadMoreRollup"
+                [routerLink]="getRouterLink('/' + this.globalVars.RouteNames.POSTS + '/' + postContent.PostHashHex)"
+                queryParamsHandling="merge"
+                class="link--unstyled"
+              >
+                &nbsp;
+                <strong>Read more</strong>
+              </a>
+            </div>
 
-            <!-- Media, don't show images on comment posts. -->
             <div
-              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]"
               class="feed-post__image-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
@@ -304,7 +319,7 @@
 
             <!-- Video -->
             <div
-              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0]"
               class="feed-post__video-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
@@ -433,7 +448,9 @@
         class="feed-post__container d-flex justify-content-left w-100"
         [ngClass]="{
           'px-15px': includePaddingOnPost,
-          'pb-15px': includePaddingOnPost
+          'pb-15px': includePaddingOnPost,
+          'feed-post__container--is-threaded': isThreaded,
+          'feed-post__container--is-thread-child': isThreadChild
         }"
       >
         <div class="w-100" style="margin-left: -5px">
@@ -572,4 +589,5 @@
       </div>
     </div>
   </div>
+  <ng-content select="[feed-post-footer]"></ng-content>
 </div>

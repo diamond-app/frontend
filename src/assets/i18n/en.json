@@ -194,6 +194,7 @@
     "video_processing":"Video Processing In Progress",
     "uploading":"Uploading:",
     "complete":"Complete",
+    "multi_post_progress": "Submitting posts:",
     "post": "Post",
     "embed_image": "Link to Arweave image",
     "embed_video": "Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud",
@@ -216,6 +217,14 @@
       "quote16": "Elementary, my dear Watson",
       "quote17": "I'm going to make him an offer he can't refuse.",
       "quote18": "Big things have small beginnings."
+    },
+    "a11y_text": {
+      "embed_video": "Add a video embed link",
+      "embed_arweave": "Add an arweave image link",
+      "upload_video": "Upload a video file",
+      "upload_image": "Upload an image file",
+      "add_post": "A another post",
+      "remove_post": "Remove this post"
     }
   },
   "feed_post": {
@@ -573,5 +582,9 @@
   "All":"All",
   "Following": "Following",
   "New": "New",
-  "NFT Gallery": "NFT Gallery"
+  "NFT Gallery": "NFT Gallery",
+  "post_thread": {
+    "see_more": "See more replies"
+  },
+  "generic_toast_error": "Something went wrong. Please try again."
 }

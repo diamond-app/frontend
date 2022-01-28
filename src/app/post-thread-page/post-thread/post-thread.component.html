@@ -1,4 +1,3 @@
-
 <!-- FIXME: TODO: post threads: loading skeletons -->
 <div *ngIf="currentPost" class="d-flex flex-column">
   <div class="post-thread__container">
@@ -16,18 +15,19 @@
       </div>
     </div>
 
-    <div *ngFor="let parentPost of currentPost.ParentPosts">
+    <div *ngFor="let parentPost of currentPost.ParentPosts; let i = index" [attr.data-index]="i">
       <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
       <!--  top-level post should be prepended to the post's list of comments -->
+      <!-- NOTE: if a parent post is deleted on the thread page it just gets removed from the UI -->
       <feed-post
         [post]="parentPost"
         [includePaddingOnPost]="true"
         [contentShouldLinkToThread]="true"
-        [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
+        [afterCommentCreatedCallback]="updateParentCommentCountAndShowToast.bind(this, parentPost)"
         [isParentPostInThread]="true"
         [showThreadConnectionLine]="true"
+        [isOnThreadPage]="true"
         [blocked]="isPostBlocked(parentPost)"
-        (postDeleted)="onPostHidden(currentPost, null, null)"
         (userBlocked)="afterUserBlocked($event)"
       ></feed-post>
     </div>
@@ -39,56 +39,79 @@
         [post]="currentPost"
         [includePaddingOnPost]="true"
         [contentShouldLinkToThread]="true"
-        [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
+        [afterCommentCreatedCallback]="prependToCommentList.bind(this)"
         [isParentPostInThread]="true"
         [showLeftSelectedBorder]="false"
         [showInteractionDetails]="true"
+        [hasReadMoreRollup]="false"
         [blocked]="isPostBlocked(currentPost)"
-        (postDeleted)="onPostHidden(currentPost, null, null)"
+        (postDeleted)="onCurrentPostHidden()"
         (userBlocked)="afterUserBlocked($event)"
       ></feed-post>
     </div>
   </div>
 
   <div class="post-thread__comment-container" id="comment-scroller">
-    <div #uiScroll *uiScroll="let item of datasource; let i = index" [attr.data-index]="i">
-      <div class="post-thread__single-comment" [ngClass]="{ 'first-item': i === 0, 'last-item': i === currentPost?.Comments?.length - 1 }">
+    <div #uiScroll *uiScroll="let thread of datasource; let i = index" [attr.data-index]="i">
+      <div
+        class="post-thread__single-comment"
+        [ngClass]="{ 'first-item': i === 0, 'last-item': i === threadManager.threadCount - 1 }"
+      >
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
         <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
         <feed-post
-          *ngIf="item.ProfileEntryResponse != null"
+          *ngIf="thread.parent.ProfileEntryResponse != null"
           [includePaddingOnPost]="true"
-          [post]="item"
+          [post]="thread.parent"
           [parentPost]="currentPost"
           [contentShouldLinkToThread]="true"
           [showIconRow]="true"
           [showReplyingToContent]="true"
-          [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, item, currentPost)"
-          [blocked]="isPostBlocked(item)"
-          (postDeleted)="onPostHidden(item, currentPost, null)"
+          [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, thread.parent)"
+          [isThreaded]="!!thread.children.length"
+          [hasThreadIndicator]="!!thread.children.length"
+          [isOnThreadPage]="true"
+          [blocked]="isPostBlocked(thread.parent)"
+          (postDeleted)="onThreadParentHidden(thread.parent)"
           (userBlocked)="afterUserBlocked($event)"
         ></feed-post>
 
-        <div *ngFor="let subcommentPost of item.Comments">
-          <div class="px-15px pb-15px post-thread__subcomment-container" *ngIf="!isPostBlocked(item)">
+        <div *ngFor="let subcommentPost of thread.children; let j = index" [attr.data-index]="j">
+          <div class="post-thread__subcomment-container" *ngIf="!isPostBlocked(thread.parent)">
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
-              class="p-15px"
               *ngIf="subcommentPost.ProfileEntryResponse != null"
               [includePaddingOnPost]="true"
               [post]="subcommentPost"
-              [parentPost]="item"
+              [parentPost]="thread.children[j - 1] || thread.parent"
               [contentShouldLinkToThread]="true"
-              [showIconRow]="false"
-              [showDropdown]="false"
-              [showReplyingToContent]="false"
-              [isSubcomment]="true"
-              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, item, currentPost)"
+              [showIconRow]="true"
+              [showDropdown]="true"
+              [showReplyingToContent]="true"
+              [isThreaded]="true"
+              [hasThreadIndicator]="j !== thread.children.length - 1"
+              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
+              [isOnThreadPage]="true"
+              [isThreadChild]="true"
               [blocked]="isPostBlocked(subcommentPost)"
-              (postDeleted)="onPostHidden(subcommentPost, item, currentPost)"
+              (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
               (userBlocked)="afterUserBlocked($event)"
-            ></feed-post>
+            >
+              <ng-container *ngIf="j === thread.children.length - 1 && subcommentPost.CommentCount" feed-post-footer>
+                <div *ngIf="isLoadingMoreReplies" class="post-thread__see-more-loader">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <button
+                  *ngIf="!isLoadingMoreReplies"
+                  class="post-thread__see-more-button"
+                  (click)="loadMoreReplies(thread, subcommentPost)"
+                  #seeMoreReplies
+                >
+                  {{ "post_thread.see_more" | transloco }}
+                </button>
+              </ng-container>
+            </feed-post>
           </div>
         </div>
       </div>
