@@ -11,10 +11,8 @@
 
 .feed-create-post__icon-bar-item {
   cursor: pointer;
-  height: 24px;
-  width: 24px;
   color: var(--text-muted);
-  margin-right: 25px;
+  margin: 0 10px;
 }
 
 .feed-create-post__right-btn-group {
@@ -34,8 +32,14 @@
 
 .feed-create-post__add-comment-btn {
   background: transparent;
-  padding: 11px 11px;
+  padding: 10px 10px;
   border-radius: 100%;
-  border: 1px solid var(--highlight);
+  border: 2px solid #689eff;
+  color: var(--highlight);
   margin-right: 8px;
+
+  &:hover {
+    // Not sure what would be good here.
+    background-color: lightblue;
+  }
 }

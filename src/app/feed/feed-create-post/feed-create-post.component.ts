@@ -72,11 +72,7 @@ class PostModel {
     }
 
     const randomQuoteIndex = Math.floor(Math.random() * this.quotes.length);
-    const quote = this.quotes[randomQuoteIndex];
-    this.quotes = [
-      ...this.quotes.slice(0, randomQuoteIndex),
-      ...this.quotes.slice(randomQuoteIndex + 1, this.quotes.length),
-    ];
+    const [quote] = this.quotes.splice(randomQuoteIndex, 1);
 
     return quote;
   }

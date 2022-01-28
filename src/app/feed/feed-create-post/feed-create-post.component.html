@@ -154,17 +154,15 @@
     name="code"
     (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
   ></i-feather>
-  <i
-    class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px"
+  <i-feather
+    name="external-link"
+    class="feed-create-post__icon-bar-item"
     (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-  ></i>
+  ></i-feather>
   <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-  <i
-    class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
-    (click)="videoInput.click()"
-  ></i>
+  <i-feather name="video" class="feed-create-post__icon-bar-item" (click)="videoInput.click()"></i-feather>
   <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-  <i-feather class="feed-create-post__icon-bar-item" name="image" (click)="imageInput.click()"></i-feather>
+  <i-feather name="image" class="feed-create-post__icon-bar-item" (click)="imageInput.click()"></i-feather>
   <i-feather
     class="feed-create-post__icon-bar-item"
     name="link"
@@ -173,14 +171,14 @@
   <div class="feed-create-post__right-btn-group">
     <button
       *ngIf="hasAddCommentButton()"
-      class="feed-create-post__add-comment-btn btn wiggle"
+      class="feed-create-post__add-comment-btn btn"
       attr.aria-label="{{ 'feed_create_post.thread_quotes.start' | transloco }}"
       [ngClass]="{
+        wiggle: showCharacterCountWarning(),
         disabled:
-          (this.currentPostModel.text.length <= 0 &&
-            !this.currentPostModel.postImageSrc &&
-            !this.currentPostModel.postVideoSrc) ||
-          characterCountExceedsMaxLength()
+          this.currentPostModel.text.length <= 0 &&
+          !this.currentPostModel.postImageSrc &&
+          !this.currentPostModel.postVideoSrc
       }"
       (click)="addComment()"
     >
@@ -190,9 +188,9 @@
       class="feed-create-post__post-btn btn primary"
       [ngClass]="{
         disabled:
-          (this.currentPostModel.text.length <= 0 &&
-            !this.currentPostModel.postImageSrc &&
-            !this.currentPostModel.postVideoSrc) ||
+          (this.postModels[0].text.length <= 0 &&
+            !this.postModels[0].postImageSrc &&
+            !this.postModels[0].postVideoSrc) ||
           characterCountExceedsMaxLength(),
         'btn-loading': submittingPost,
         wiggle: inTutorial

@@ -62,6 +62,7 @@ import {
   UserPlus,
   Users,
   UserX,
+  Video,
   X,
   XSquare,
 } from "angular-feather/icons";
@@ -166,6 +167,7 @@ const icons = {
   Users,
   UserPlus,
   UserX,
+  Video,
   X,
   XSquare,
 };
