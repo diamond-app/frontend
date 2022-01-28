@@ -302,9 +302,8 @@
               </a>
             </div>
 
-            <!-- Media, don't show images on comment posts. -->
             <div
-              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]"
               class="feed-post__image-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
@@ -318,7 +317,7 @@
 
             <!-- Video -->
             <div
-              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0]"
               class="feed-post__video-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
