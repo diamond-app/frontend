@@ -98,7 +98,7 @@ const SHOW_POST_LENGTH_WARNING_THRESHOLD = 515;
   styleUrls: ["./feed-create-post.component.scss"],
 })
 export class FeedCreatePostComponent implements OnInit {
-  isComment = false;
+  isReply = false;
   submittingPost = false;
   postModels: PostModel[] = [];
   currentPostModel = new PostModel();
@@ -195,7 +195,7 @@ export class FeedCreatePostComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.isComment = !this.isQuote && !!this.parentPost;
+    this.isReply = !this.isQuote && !!this.parentPost;
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
     this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
@@ -309,7 +309,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
-    const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
+    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "create";
 
     if (this.postModels.length > 1 && !this.postSubmitPercentage) {
       this.postSubmitPercentage = "0";
@@ -320,7 +320,7 @@ export class FeedCreatePostComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        this.isComment ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
+        this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
@@ -541,7 +541,7 @@ export class FeedCreatePostComponent implements OnInit {
 
   hasAddCommentButton(): boolean {
     // we only show this on the main/primary post UI
-    if (this.isUploadingMedia || this.isComment || this.isQuote) {
+    if (this.isUploadingMedia || this.isReply || this.isQuote) {
       return false;
     }
 
