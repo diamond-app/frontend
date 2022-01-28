@@ -1,6 +1,6 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
-<div class="create-post" *transloco="let t">
+<div class="feed-create-post" [ngClass]="{ 'feed-create-post--in-modal': inModal }" *transloco="let t">
   <!-- Avatar + Input -->
   <div class="d-flex flex-column align-items-top pt-15px pr-15px pl-15px avatar-input-row">
     <div class="d-flex">
@@ -140,7 +140,10 @@
 </div>
 
 <!-- Image Upload + Post Buttons -->
-<div class="create-post-icon-bar align-items-center">
+<div
+  class="feed-create-post__icon-bar align-items-center"
+  [ngClass]="{ 'feed-create-post__icon-bar--in-modal': inModal }"
+>
   <span
     class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
     [ngClass]="{
@@ -198,7 +201,7 @@
       <i-feather name="plus"></i-feather>
     </button>
     <button
-      class="feed-create-post__post-btn btn primary"
+      class="feed-create-post__post-btn btn"
       [ngClass]="{
         disabled:
           (this.postModels[0].text.length <= 0 &&
@@ -206,7 +209,8 @@
             !this.postModels[0].postVideoSrc) ||
           characterCountExceedsMaxLength(),
         'btn-loading': submittingPost,
-        wiggle: inTutorial
+        wiggle: inTutorial,
+        'feed-create-post__post-btn--in-modal': inModal
       }"
       (click)="_createPost()"
     >

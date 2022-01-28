@@ -110,8 +110,9 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
   @Input() parentPost: PostEntryResponse | null = null;
-  @Input() isQuote: boolean = false;
-  @Input() inTutorial: boolean = false;
+  @Input() isQuote = false;
+  @Input() inTutorial = false;
+  @Input() inModal = false;
   @Output() postUpdated = new EventEmitter<boolean>();
   @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
@@ -349,7 +350,7 @@ export class FeedCreatePostComponent implements OnInit {
         if (this.postModels.length > currentPostModelIndex + 1) {
           // Recursively submit until we have submitted all posts. This is only
           // relevant for multi-post threads
-          this.postSubmitPercentage = (((currentPostModelIndex + 1) / this.postModels.length) * 100).toString();
+          this.postSubmitPercentage = (((currentPostModelIndex + 1) / this.postModels.length) * 100).toFixed();
           return this.submitPost(response.PostEntryResponse, currentPostModelIndex + 1);
         }
 
