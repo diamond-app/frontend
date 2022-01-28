@@ -95,7 +95,21 @@
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
               (userBlocked)="afterUserBlocked($event)"
-            ></feed-post>
+            >
+              <ng-container *ngIf="j === thread.children.length - 1 && subcommentPost.CommentCount" feed-post-footer>
+                <div *ngIf="isLoadingMoreReplies" class="post-thread__see-more-loader">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <button
+                  *ngIf="!isLoadingMoreReplies"
+                  class="post-thread__see-more-button"
+                  (click)="loadMoreReplies(thread, subcommentPost)"
+                  #seeMoreReplies
+                >
+                  {{ "post_thread.see_more" | transloco }}
+                </button>
+              </ng-container>
+            </feed-post>
           </div>
         </div>
       </div>

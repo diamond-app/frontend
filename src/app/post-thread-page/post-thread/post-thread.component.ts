@@ -13,6 +13,7 @@ import { Thread, ThreadManager } from "../helpers/thread-manager";
 import * as _ from "lodash";
 import { document } from "ngx-bootstrap/utils";
 import { Subscription } from "rxjs";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
   selector: "post-thread",
@@ -25,9 +26,9 @@ export class PostThreadComponent implements AfterViewInit {
   previousPostHashHex: string | undefined;
   scrollingDisabled = false;
   showToast = false;
-  commentLimit = 20;
   subscriptions = new Subscription();
   threadManager: ThreadManager | undefined;
+  isLoadingMoreReplies = false;
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
       const numThreads = this.threadManager?.threadCount ?? 0;
@@ -82,7 +83,8 @@ export class PostThreadComponent implements AfterViewInit {
     private backendApi: BackendApiService,
     private toastr: ToastrService,
     private titleService: Title,
-    private location: Location
+    private location: Location,
+    private transloco: TranslocoService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -224,7 +226,12 @@ export class PostThreadComponent implements AfterViewInit {
     });
   }
 
-  getPost(fetchParents: boolean = true, commentOffset: number = 0, commentLimit: number = this.commentLimit) {
+  getPost(
+    fetchParents = true,
+    commentOffset = 0,
+    commentLimit = 20,
+    subCommentPostHashHex: string | undefined = undefined
+  ) {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
@@ -238,7 +245,7 @@ export class PostThreadComponent implements AfterViewInit {
 
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
-      this.postHashHexRouteParam /*PostHashHex*/,
+      subCommentPostHashHex ?? this.postHashHexRouteParam /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       fetchParents,
       commentOffset,
@@ -305,5 +312,34 @@ export class PostThreadComponent implements AfterViewInit {
 
   afterUserBlocked(blockedPubKey: any) {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
+  }
+
+  loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
+    const errorMsg = this.transloco.translate("generic_toast_error");
+    this.isLoadingMoreReplies = true;
+    this.getPost(false, 0, 1, subcomment.PostHashHex)
+      ?.toPromise()
+      .then((res) => {
+        if (!res || !res.PostFound) {
+          // this *should* never happen.
+          this.toastr.error(errorMsg, undefined, {
+            positionClass: "toast-top-center",
+            timeOut: 3000,
+          });
+          return;
+        }
+
+        this.threadManager?.addChildrenToThread(thread, res.PostFound);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.toastr.error(errorMsg, undefined, {
+          positionClass: "toast-top-center",
+          timeOut: 3000,
+        });
+      })
+      .finally(() => {
+        this.isLoadingMoreReplies = false;
+      });
   }
 }
