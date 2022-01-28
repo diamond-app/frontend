@@ -286,6 +286,7 @@ export class PostEntryResponse {
   NFTRoyaltyToCreatorBasisPoints: number;
   HotnessScore: number;
   PostMultiplier: number;
+  PostExtraData: Record<string, any>;
 }
 
 export class DiamondsPost {

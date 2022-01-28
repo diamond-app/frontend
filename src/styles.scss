@@ -1715,6 +1715,7 @@ feed-create-post {
 
 }
 
+// TODO: migrate to isolated file
 feed-create-post-modal {
   .create-post {
     border-radius: 10px 10px 0px 0px;
@@ -1724,7 +1725,7 @@ feed-create-post-modal {
     border-radius: 0px 0px 10px 10px;
     margin: 0px;
     padding: 16px 16px 32px 16px;
-    button {
+    .feed-create-post__post-btn {
       margin-right: 16px;
     }
   }
@@ -1820,26 +1821,6 @@ tab-selector {
   justify-content: flex-start;
   position: relative;
   margin: 16px 16px 32px 16px;
-  i-feather {
-    cursor: pointer;
-    height: 24px;
-    width: 24px;
-    color: var(--text-muted);
-    margin-right: 25px;
-  }
-  button {
-    position: absolute;
-    right: 0px;
-    background: var(--highlight);
-    width: 82px;
-    height: 48px;
-    border-radius: 16px;
-    border: none;
-    color: var(--tile-bg);
-    &:hover {
-      color: var(--tile-bg);
-    }
-  }
 }
 
 .global__top-bar__height {

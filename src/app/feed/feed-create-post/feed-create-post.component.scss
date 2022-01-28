@@ -1,0 +1,30 @@
+.feed-create-post__icon-bar-item {
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  color: var(--text-muted);
+  margin-right: 25px;
+}
+
+.feed-create-post__right-btn-group {
+  margin-left: auto;
+}
+
+.feed-create-post__post-btn {
+  background: var(--highlight);
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: none;
+  color: var(--tile-bg);
+  &:hover {
+    color: var(--tile-bg);
+  }
+}
+
+.feed-create-post__add-comment-btn {
+  background: transparent;
+  padding: 11px 11px;
+  border-radius: 100%;
+  border: 1px solid var(--highlight);
+  margin-right: 8px;
+}

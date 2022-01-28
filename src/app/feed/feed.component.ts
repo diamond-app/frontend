@@ -537,7 +537,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(
         tap(
           (res) => {
-            this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
+            if (res.HotFeedPage) {
+              this.globalVars.hotFeedPosts = this.globalVars.hotFeedPosts.concat(res.HotFeedPage);
+            }
+
             // Remove pinned post if it's been dismissed by the user
             if (
               this.globalVars.hotFeedPosts.length > 0 &&
