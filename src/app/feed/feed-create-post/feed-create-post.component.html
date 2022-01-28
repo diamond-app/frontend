@@ -17,21 +17,18 @@
         </div>
       </div>
       <div class="d-flex flex-column flex-fill">
-        <div *ngFor="let _ of postModels; let i = index" [attr.data-index]="i" class="autofill-container">
+        <div
+          *ngFor="let _ of postModels; let i = index"
+          [attr.data-index]="i"
+          class="feed-create-post__post-content-container autofill-container"
+        >
+          <button *ngIf="i > 0" class="feed-create-post__post-remove-btn btn" (click)="removePostModelAtIndex(i)">
+            <i-feather name="x"></i-feather>
+          </button>
           <textarea
             [(ngModel)]="postModels[i].text"
             rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
-            [ngClass]="{
-              'border-0': !parentPost,
-              'feed-create-post__textarea': !parentPost,
-              'm-5px': !parentPost,
-              'p-0': !parentPost,
-              'br-12px': parentPost,
-              'feed-create-comment__textarea': parentPost,
-              'lh-18px': parentPost,
-              'background-color-white': !parentPost
-            }"
-            class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative"
+            class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative background-color-white"
             id="textarea-{{ i + 1 }}"
             [placeholder]="t(postModels[i].placeHolderText)"
             (paste)="onPaste($event)"
@@ -46,24 +43,21 @@
           <div id="menu-{{ i + 1 }}" #menus class="menu" role="listbox"></div>
 
           <!-- Post image -->
-          <div class="feed-post__image-container" *ngIf="!isComment && postModels[i].postImageSrc">
+          <div class="feed-post__image-container" *ngIf="!!postModels[i].postImageSrc">
             <div (click)="postModels[i].postImageSrc = null" class="update-profile__image-delete">
               <i-feather name="trash-2"></i-feather>
             </div>
             <img class="feed-post__image" src="{{ postModels[i].postImageSrc }}" />
           </div>
 
-          <!-- Video is processing - please wait -->
-          <div
-            class="d-flex flex-column align-items-center"
-            *ngIf="!isComment && postModels[i].postVideoSrc && !isUploadingMedia"
-          >
+          <!-- Video is processing - please wait. TODO: Test what this looks like -->
+          <div class="d-flex flex-column align-items-center" *ngIf="!!postModels[i].postVideoSrc && isUploadingMedia">
             <div>{{ "feed_create_post.video_processing" | transloco }}</div>
             <simple-center-loader [height]="150"></simple-center-loader>
           </div>
 
           <!-- Video Player -->
-          <div *ngIf="!isComment && postModels[i].postVideoSrc && isUploadingMedia" class="feed-post__video-container">
+          <div *ngIf="!!postModels[i].postVideoSrc && !isUploadingMedia" class="feed-post__video-container">
             <iframe
               [src]="postModels[i].postVideoSrc | sanitizeVideoUrl"
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
@@ -72,7 +66,7 @@
             ></iframe>
           </div>
 
-          <!-- TODO: Refactor Embedded Content -->
+          <!-- Embedded Content -->
           <div class="feed-post__embed-container" *ngIf="postModels[i].constructedEmbedURL">
             <i
               class="icon-close feed-post__image-delete"
@@ -81,13 +75,13 @@
               "
             ></i>
             <iframe
-              [height]="EmbedUrlParserService.getEmbedHeight(postModels[i].constructedEmbedURL)"
+              [height]="embedUrlParserService.getEmbedHeight(postModels[i].constructedEmbedURL)"
               class="feed-post__image"
               [src]="postModels[i].constructedEmbedURL | sanitizeEmbed"
               frameborder="0"
               allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
               [ngStyle]="{
-                'max-width': EmbedUrlParserService.isValidTiktokEmbedURL(postModels[i].constructedEmbedURL)
+                'max-width': embedUrlParserService.isValidTiktokEmbedURL(postModels[i].constructedEmbedURL)
                   ? '325px'
                   : ''
               }"
@@ -95,7 +89,7 @@
             ></iframe>
           </div>
           <div
-            class="flex-fill px-15px br-10px create-post"
+            class="flex-fill br-10px create-post"
             [ngClass]="{ 'pt-10px': parentPost }"
             *ngIf="postModels[i].showEmbedURL"
           >
@@ -107,11 +101,7 @@
               placeholder="{{ 'feed_create_post.embed_video' | transloco }}"
             />
           </div>
-          <div
-            class="flex-fill px-15px bg-tile"
-            [ngClass]="{ 'pt-10px': parentPost }"
-            *ngIf="postModels[i].showImageLink"
-          >
+          <div class="flex-fill bg-tile" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="postModels[i].showImageLink">
             <input
               class="br-3px"
               type="url"
@@ -130,6 +120,14 @@
           {{ "feed_create_post.complete" | transloco }}
         </div>
         <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
+      </div>
+      <!-- Post Submit Progress Bar -->
+      <div class="d-flex flex-column align-items-center" *ngIf="postSubmitPercentage">
+        <div>
+          {{ "feed_create_post.multi_post_progress" | transloco }} {{ postSubmitPercentage }}%
+          {{ "feed_create_post.complete" | transloco }}
+        </div>
+        <mat-progress-bar [value]="postSubmitPercentage" [mode]="'determinate'"></mat-progress-bar>
       </div>
     </div>
   </div>
@@ -156,24 +154,22 @@
     name="code"
     (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
   ></i-feather>
-  <ng-container *ngIf="!isComment">
-    <i
-      class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px"
-      (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-    ></i>
-    <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-    <i
-      class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
-      (click)="videoInput.click()"
-    ></i>
-    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-    <i-feather class="feed-create-post__icon-bar-item" name="image" (click)="imageInput.click()"></i-feather>
-    <i-feather
-      class="feed-create-post__icon-bar-item"
-      name="link"
-      (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-    ></i-feather>
-  </ng-container>
+  <i
+    class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px"
+    (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
+  ></i>
+  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
+  <i
+    class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
+    (click)="videoInput.click()"
+  ></i>
+  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+  <i-feather class="feed-create-post__icon-bar-item" name="image" (click)="imageInput.click()"></i-feather>
+  <i-feather
+    class="feed-create-post__icon-bar-item"
+    name="link"
+    (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
+  ></i-feather>
   <div class="feed-create-post__right-btn-group">
     <button
       *ngIf="hasAddCommentButton()"

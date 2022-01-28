@@ -1,3 +1,14 @@
+.feed-create-post__post-content-container {
+  position: relative;
+}
+
+.feed-create-post__post-remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .feed-create-post__icon-bar-item {
   cursor: pointer;
   height: 24px;

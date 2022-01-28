@@ -103,12 +103,14 @@ export class FeedCreatePostComponent implements OnInit {
   postModels: PostModel[] = [];
   currentPostModel = new PostModel();
   videoUploadPercentage: string | null = null;
+  postSubmitPercentage: string | null = null;
   videoStreamInterval: Timer | null = null;
   isUploadingMedia = false;
   fallbackProfilePicURL: string | undefined;
   maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
+  embedUrlParserService = EmbedUrlParserService;
 
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
@@ -241,10 +243,8 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   handleFileDrop(event: any, postModel: PostModel): void {
-    if (!this.isComment) {
-      this.currentPostModel = postModel;
-      this._handleFileInput(event[0]);
-    }
+    this.currentPostModel = postModel;
+    this._handleFileInput(event[0]);
   }
 
   showCharacterCountIsFine() {
@@ -264,7 +264,9 @@ export class FeedCreatePostComponent implements OnInit {
 
   setEmbedURL() {
     EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.currentPostModel.embedURL).subscribe(
-      (res) => (this.currentPostModel.constructedEmbedURL = res)
+      (res) => {
+        this.currentPostModel.constructedEmbedURL = res;
+      }
     );
   }
 
@@ -301,21 +303,24 @@ export class FeedCreatePostComponent implements OnInit {
 
     const bodyObj = {
       Body: post.text,
-      // Only submit images if the post is a quoted repost or a vanilla post.
-      ImageURLs: !this.isComment ? [post.postImageSrc].filter((n) => n) : [],
-      VideoURLs: !this.isComment ? [post.postVideoSrc].filter((n) => n) : [],
+      ImageURLs: post.postImageSrc ? [post.postImageSrc] : [],
+      VideoURLs: post.postVideoSrc ? [post.postVideoSrc] : [],
     };
-    // TODO: will need to revisit this...
-    const repostedPostHashHex = this.isQuote && parentPost?.PostHashHex ? parentPost?.PostHashHex : "";
+
+    const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
     const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
+
+    if (this.postModels.length > 1 && !this.postSubmitPercentage) {
+      this.postSubmitPercentage = "0";
+    }
 
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        parentPost?.PostHashHex ?? "", // does it neeed the empty string? TODO: figure this out this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
+        this.isComment ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
@@ -338,15 +343,18 @@ export class FeedCreatePostComponent implements OnInit {
         }
 
         if (parentPost) {
+          parentPost.CommentCount++;
           parentPost.Comments = [response.PostEntryResponse];
         }
 
         if (this.postModels.length > currentPostModelIndex + 1) {
           // Recursively submit until we have submitted all posts. This is only
           // relevant for multi-post threads
+          this.postSubmitPercentage = (((currentPostModelIndex + 1) / this.postModels.length) * 100).toString();
           return this.submitPost(response.PostEntryResponse, currentPostModelIndex + 1);
         }
 
+        this.postSubmitPercentage = null;
         this.currentPostModel = new PostModel();
         this.postModels = [this.currentPostModel];
 
@@ -371,8 +379,8 @@ export class FeedCreatePostComponent implements OnInit {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
         this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
-
         this.submittingPost = false;
+
         this.changeRef.detectChanges();
       });
   }
@@ -532,7 +540,8 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   hasAddCommentButton(): boolean {
-    if (this.isUploadingMedia) {
+    // we only show this on the main/primary post UI
+    if (this.isUploadingMedia || this.isComment || this.isQuote) {
       return false;
     }
 
@@ -544,11 +553,29 @@ export class FeedCreatePostComponent implements OnInit {
     );
   }
 
-  // TODO: we need a way to remove them too...
   addComment() {
     this.postModels.push(new PostModel());
     setTimeout(() => {
       this.textAreas?.last.nativeElement.focus();
     }, 50);
+  }
+
+  removePostModelAtIndex(index: number) {
+    const removedItem = this.postModels[index];
+    let indexToFocus: number;
+
+    if (this.currentPostModel === removedItem) {
+      this.currentPostModel = this.postModels[index - 1];
+      indexToFocus = index - 1;
+      this.textAreas?.get(index - 1)?.nativeElement.focus();
+    } else {
+      indexToFocus = this.postModels.findIndex((model) => model === this.currentPostModel);
+    }
+
+    if (indexToFocus > -1) {
+      this.textAreas?.get(indexToFocus)?.nativeElement.focus();
+    }
+
+    this.postModels.splice(index, 1);
   }
 }

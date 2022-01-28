@@ -194,6 +194,7 @@
     "video_processing":"Video Processing In Progress",
     "uploading":"Uploading:",
     "complete":"Complete",
+    "multi_post_progress": "Submitting posts:",
     "post": "Post",
     "embed_image": "Link to Arweave image",
     "embed_video": "Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud",
