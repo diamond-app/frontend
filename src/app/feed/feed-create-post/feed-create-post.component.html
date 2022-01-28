@@ -51,13 +51,19 @@
           </div>
 
           <!-- Video is processing - please wait. TODO: Test what this looks like -->
-          <div class="d-flex flex-column align-items-center" *ngIf="!!postModels[i].postVideoSrc && isUploadingMedia">
+          <div
+            class="d-flex flex-column align-items-center"
+            *ngIf="!!postModels[i].postVideoSrc && postModels[i].isUploadingMedia"
+          >
             <div>{{ "feed_create_post.video_processing" | transloco }}</div>
             <simple-center-loader [height]="150"></simple-center-loader>
           </div>
 
           <!-- Video Player -->
-          <div *ngIf="!!postModels[i].postVideoSrc && !isUploadingMedia" class="feed-post__video-container">
+          <div
+            *ngIf="!!postModels[i].postVideoSrc && !postModels[i].isUploadingMedia"
+            class="feed-post__video-container"
+          >
             <iframe
               [src]="postModels[i].postVideoSrc | sanitizeVideoUrl"
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
@@ -149,29 +155,36 @@
     </div>
     <div>/ {{ this.maxPostLength }}</div>
   </span>
-  <i-feather
-    class="feed-create-post__icon-bar-item"
-    name="code"
+  <button
+    class="btn feed-create-post__icon-bar-item"
     (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
-  ></i-feather>
-  <i-feather
-    name="external-link"
-    class="feed-create-post__icon-bar-item"
+  >
+    <i-feather name="code"></i-feather>
+  </button>
+  <button
+    class="btn feed-create-post__icon-bar-item"
     (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-  ></i-feather>
+  >
+    <i-feather name="external-link"></i-feather>
+  </button>
   <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-  <i-feather name="video" class="feed-create-post__icon-bar-item" (click)="videoInput.click()"></i-feather>
+  <button class="btn feed-create-post__icon-bar-item" (click)="videoInput.click()">
+    <i-feather name="video"></i-feather>
+  </button>
   <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-  <i-feather name="image" class="feed-create-post__icon-bar-item" (click)="imageInput.click()"></i-feather>
-  <i-feather
-    class="feed-create-post__icon-bar-item"
-    name="link"
+  <button class="btn feed-create-post__icon-bar-item" (click)="imageInput.click()">
+    <i-feather name="image"></i-feather>
+  </button>
+  <button
+    class="btn feed-create-post__icon-bar-item"
     (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-  ></i-feather>
+  >
+    <i-feather name="link"></i-feather>
+  </button>
   <div class="feed-create-post__right-btn-group">
     <button
       *ngIf="hasAddCommentButton()"
-      class="feed-create-post__add-comment-btn btn"
+      class="feed-create-post__add-comment-btn btn appear"
       attr.aria-label="{{ 'feed_create_post.thread_quotes.start' | transloco }}"
       [ngClass]="{
         wiggle: showCharacterCountWarning(),

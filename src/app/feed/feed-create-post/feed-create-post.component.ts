@@ -55,6 +55,7 @@ class PostModel {
   showImageLink = false;
   isMentionified = false;
   placeHolderText: string;
+  isUploadingMedia = false;
 
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
@@ -100,7 +101,6 @@ export class FeedCreatePostComponent implements OnInit {
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
   videoStreamInterval: Timer | null = null;
-  isUploadingMedia = false;
   fallbackProfilePicURL: string | undefined;
   maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
@@ -196,6 +196,10 @@ export class FeedCreatePostComponent implements OnInit {
     if (this.inTutorial) {
       this.currentPostModel.text = "It's Diamond time!";
     }
+
+    if (this.isReply) {
+      this.autoFocusTextArea();
+    }
   }
 
   /**
@@ -266,6 +270,10 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   submitPost(parentPost: PostEntryResponse | undefined = undefined, currentPostModelIndex = 0) {
+    if (this.submittingPost) {
+      return;
+    }
+
     const post = this.postModels[currentPostModelIndex];
 
     if (post.text.length > GlobalVarsService.MAX_POST_LENGTH) {
@@ -273,11 +281,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     // post can't be blank
-    if (post.text.length === 0 && !post.postImageSrc && !post.postVideoSrc) {
-      return;
-    }
-
-    if (this.submittingPost) {
+    if (post.text.trim().length === 0 && !post.postImageSrc && !post.postVideoSrc) {
       return;
     }
 
@@ -416,7 +420,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
 
-    this.isUploadingMedia = true;
+    this.currentPostModel.isUploadingMedia = true;
     let uploadPromise;
 
     if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
@@ -429,7 +433,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     if (uploadPromise) {
       uploadPromise.finally(() => {
-        this.isUploadingMedia = false;
+        this.currentPostModel.isUploadingMedia = false;
       });
     }
   }
@@ -535,8 +539,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   hasAddCommentButton(): boolean {
-    // we only show this on the main/primary post UI
-    if (this.isUploadingMedia || this.isReply || this.isQuote) {
+    if (this.currentPostModel.isUploadingMedia || this.isReply || this.isQuote) {
       return false;
     }
 
@@ -550,9 +553,7 @@ export class FeedCreatePostComponent implements OnInit {
 
   addComment() {
     this.postModels.push(new PostModel());
-    setTimeout(() => {
-      this.textAreas?.last.nativeElement.focus();
-    }, 50);
+    this.autoFocusTextArea();
   }
 
   removePostModelAtIndex(index: number) {
@@ -572,5 +573,11 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     this.postModels.splice(index, 1);
+  }
+
+  private autoFocusTextArea() {
+    setTimeout(() => {
+      this.textAreas?.last.nativeElement.focus();
+    }, 50);
   }
 }

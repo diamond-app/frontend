@@ -3,14 +3,22 @@
 }
 
 .feed-create-post__post-remove-btn {
+  border-radius: 100%;
+  padding: 2px;
+  color: var(--text-muted);
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right: 10px;
   z-index: 1;
+
+  &:hover {
+    color: var(--text-inverted);
+    background-color: darkgrey;
+  }
 }
 
 .feed-create-post__icon-bar-item {
-  cursor: pointer;
+  padding: 0;
   color: var(--text-muted);
   margin: 0 10px;
 }
@@ -34,12 +42,15 @@
   background: transparent;
   padding: 10px 10px;
   border-radius: 100%;
-  border: 2px solid #689eff;
+  border: 2px solid var(--highlight);
   color: var(--highlight);
   margin-right: 8px;
 
   &:hover {
-    // Not sure what would be good here.
-    background-color: lightblue;
+    background-color: var(--background-secondary);
   }
+}
+
+.feed-create-post__character-counter {
+  margin-top: 2px;
 }
