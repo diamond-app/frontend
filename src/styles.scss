@@ -2229,12 +2229,23 @@ sign-up {
     background: var(--tile-bg);
     margin-bottom: 0px;
   }
+  .feed-post__container {
+    border-radius: 0px;
+  }
   .last-item {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
-    .feed-post-container {
+    .feed-post-container, .feed-post__container {
       border-bottom-right-radius: 10px;
       border-bottom-left-radius: 10px;
+    }
+  }
+  .first-item {
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    .feed-post__container {
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
     }
   }
 
