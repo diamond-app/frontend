@@ -1225,6 +1225,9 @@ export class BackendApiService {
       CommentOffset,
       CommentLimit,
       AddGlobalFeedBool,
+      ThreadLevelLimit: 2,
+      ThreadLeafLimit: 1,
+      LoadAuthorThread: true,
     });
   }
 

@@ -24,9 +24,10 @@ import { TranslocoService } from "@ngneat/transloco";
 @Component({
   selector: "feed-post",
   templateUrl: "./feed-post.component.html",
-  styleUrls: ["./feed-post.component.sass"],
+  styleUrls: ["./feed-post.component.scss"],
 })
 export class FeedPostComponent implements OnInit {
+  @Input() isOnThreadPage;
   @Input()
   get post(): PostEntryResponse {
     return this._post;
@@ -145,6 +146,15 @@ export class FeedPostComponent implements OnInit {
 
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
+
+  // Determines whether this is part of a comment thread. It controls the left
+  // padding applies to threaded comments.
+  @Input() isThreaded: boolean = false;
+
+  // Determines whether the comment has the vertical line connecting a single
+  // thread. We use a different prop for this since the last node of a thread
+  // does not have the vertical line. It only has the left padding.
+  @Input() hasThreadIndicator: boolean = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
@@ -393,15 +403,20 @@ export class FeedPostComponent implements OnInit {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        // Hide the post in the UI immediately, even before the delete goes thru, to give
-        // the user some indication that his delete is happening. This is a little janky.
-        // For example, on the feed, the border around the post is applied by an outer element,
-        // so the border will remain (and the UI will look a bit off) until the delete goes thru,
-        // we emit the delete event, and the parent removes the outer element/border from the UI.
-        //
+        if (this.isOnThreadPage) {
+          // On the thread page we keep the element in the dom, but re-render it
+          // with the generic "Post removed by author" message.
+          this.post.IsHidden = true;
+        } else {
+          // Hide the post in the UI immediately, even before the delete goes thru, to give
+          // the user some indication that his delete is happening. This is a little janky.
+          // For example, on the feed, the border around the post is applied by an outer element,
+          // so the border will remain (and the UI will look a bit off) until the delete goes thru,
+          // we emit the delete event, and the parent removes the outer element/border from the UI.
+          this.hidingPost = true;
+        }
         // Note: This is a rare instance where I needed to call detectChanges(). Angular wasn't
         // picking up the changes until I called this explicitly. IDK why.
-        this.hidingPost = true;
         this.ref.detectChanges();
         this.backendApi
           .SubmitPost(
