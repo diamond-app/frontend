@@ -58,6 +58,8 @@ export class BackendRoutes {
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
   static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
   static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
+  static RoutePathGetUsernameForPublicKey = "/api/v0/get-user-name-for-public-key";
+  static RoutePathGetPublicKeyForUsername = "/api/v0/get-public-key-for-user-name";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -287,6 +289,8 @@ export class PostEntryResponse {
   HotnessScore: number;
   PostMultiplier: number;
   PostExtraData: Record<string, any>;
+  AdditionalDESORoyaltiesMap: { [k: string]: number };
+  AdditionalCoinRoyaltiesMap: { [k: string]: number };
 }
 
 export class DiamondsPost {
@@ -339,6 +343,7 @@ export class NFTEntryResponse {
   SerialNumber: number;
   IsForSale: boolean;
   IsPending?: boolean;
+  IsBuyNow: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
@@ -349,6 +354,7 @@ export class NFTEntryResponse {
   LastOwnerPublicKeyBase58Check: string | undefined;
   EncryptedUnlockableText: string | undefined;
   DecryptedUnlockableText: string | undefined;
+  BuyNowPriceNanos: number;
 }
 
 export class NFTBidEntryResponse {
@@ -864,6 +870,10 @@ export class BackendApiService {
     HasUnlockable: boolean,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
+    AdditionalDESORoyaltiesMap: { [k: string]: number },
+    AdditionalCoinRoyaltiesMap: { [k: string]: number },
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
@@ -875,6 +885,10 @@ export class BackendApiService {
       HasUnlockable,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
+      AdditionalDESORoyaltiesMap,
+      AdditionalCoinRoyaltiesMap,
       MinFeeRateNanosPerKB,
     });
 
@@ -888,6 +902,8 @@ export class BackendApiService {
     SerialNumber: number,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
@@ -896,6 +912,8 @@ export class BackendApiService {
       SerialNumber,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
       MinFeeRateNanosPerKB,
     });
 
@@ -1093,10 +1111,10 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? this.identityService.encrypt({
-        ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-        recipientPublicKey: ReceiverPublicKeyBase58Check,
-        message: UnencryptedUnlockableText,
-      })
+          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+          recipientPublicKey: ReceiverPublicKeyBase58Check,
+          message: UnencryptedUnlockableText,
+        })
       : of({ encryptedMessage: "" });
     request = request.pipe(
       switchMap((encrypted) => {
@@ -1787,6 +1805,14 @@ export class BackendApiService {
 
   GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
     return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
+  }
+
+  GetUsernameForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<string> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUsernameForPublicKey + "/" + PublicKeyBase58Check);
+  }
+
+  GetPublicKeyForUsername(endpoint: string, Username: string): Observable<string> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetPublicKeyForUsername + "/" + Username);
   }
 
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {

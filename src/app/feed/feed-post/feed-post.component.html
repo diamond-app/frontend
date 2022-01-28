@@ -36,6 +36,9 @@
         </span>
       </div>
       <div *ngIf="postContent.NumNFTCopiesForSale !== 0">From: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+      <div *ngIf="postContent.NumNFTCopiesForSale !== 0 && nftBuyNowPriceNanos">
+        Buy Now Price: {{ globalVars.nanosToUSD(nftBuyNowPriceNanos, 2) }}
+      </div>
       <div *ngIf="postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
         {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
@@ -515,6 +518,9 @@
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
           }}
         </div>
+        <div *ngIf="postContent.NumNFTCopiesForSale !== 0 && nftBuyNowPriceNanos">
+          Buy Now Price: {{ globalVars.nanosToUSD(nftBuyNowPriceNanos, 2) }}
+        </div>
       </div>
       <div
         class="d-flex flex-column justify-content-center align-items-end"
@@ -541,9 +547,9 @@
         </span>
         <div class="nft-bid-btn">
           <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid && !acceptNFT">
-            <span class="d-flex align-items-center">
+            <span class="d-flex align-items-center justify-content-center">
               <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              {{ 'feed_post.place_a_bid' | transloco }}
+              Purchase
             </span>
           </button>
           <button

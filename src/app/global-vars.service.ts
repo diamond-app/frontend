@@ -271,6 +271,14 @@ export class GlobalVarsService {
     this.LoadInitialMessages();
   }
 
+  pollUnreadNotifications() {
+    this.GetUnreadNotifications();
+    this.LoadInitialMessages();
+    setTimeout(() => {
+      this.pollUnreadNotifications();
+    }, 10000);
+  }
+
   GetUnreadNotifications() {
     if (this.loggedInUser) {
       this.backendApi

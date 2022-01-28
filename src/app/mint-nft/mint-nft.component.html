@@ -1,27 +1,21 @@
 <div app-theme class="nft-modal-container">
   <div *ngIf="!globalVars.isMobile()" class="mint-nft__section" style="padding: 16px 12px">
     <div (click)="location.back()" class="cursor-pointer">
-      <i-feather
-        name="arrow-left"
-        class="feather-medium mr-12px position-relative"
-        style="top: -2px"
-      ></i-feather>
+      <i-feather name="arrow-left" class="feather-medium mr-12px position-relative" style="top: -2px"></i-feather>
       <span class="font-weight-bold fs-17px">Back to feed</span>
     </div>
   </div>
   <div class="mint-nft__section">
     <div class="mint-nft__title">Create an NFT</div>
     <div class="mint-nft__text">
-      Non-Fungible Tokens (NFTs) are digital assets that can be bought and sold, typically representing a
-      piece of digital content
+      Non-Fungible Tokens (NFTs) are digital assets that can be bought and sold, typically representing a piece of
+      digital content
     </div>
   </div>
   <!-- Type of NFT -->
   <div class="mint-nft__section">
     <div class="mint-nft__title">Type of NFT</div>
-    <div class="mint-nft__text">
-      An NFT can have multiple editions, each with its own unique serial number.
-    </div>
+    <div class="mint-nft__text mb-16px">An NFT can have multiple editions, each with its own unique serial number.</div>
     <div class="d-flex justify-content-between align-items-center">
       <div
         class="mint-nft__type-selector cursor-pointer d-flex justify-content-center align-items-center"
@@ -46,7 +40,69 @@
     </div>
   </div>
   <div class="mint-nft__section">
+    <div class="mint-nft__title">Auction Type</div>
+    <div class="mint-nft__text">NFTs can be sold in an auction format, or as a "Buy Now" NFT for a set price.</div>
+    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input
+          [(ngModel)]="isBuyNow"
+          (ngModelChange)="updateBuyNowStatus($event)"
+          type="checkbox"
+          class="custom-control-input"
+          id="buyNowCheckbox"
+        />
+        <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
+      </div>
+      <div>Sell as "Buy Now" NFT</div>
+    </div>
+    <div *ngIf="hasUnreasonableBuyNowPrice()" class="fs-15px fc-red pt-15px">
+      The Buy Now Price must be greater than or equal to the min bid amount.
+    </div>
+  </div>
+  <div class="mint-nft__section">
     <div class="mint-nft__title">{{ priceSectionTitle() }}</div>
+    <div class="mint-nft__price-full" *ngIf="isBuyNow">
+      <div class="mint-nft__sub-title">Buy Now Price</div>
+      <div class="d-flex">
+        <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
+          <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
+            {{ buyNowCurrency }}
+            <i-feather name="chevron-down" class="feather-small"></i-feather>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu" *dropdownMenu>
+            <div>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="buyNowCurrency = 'USD'"
+              >
+                USD
+              </a>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="buyNowCurrency = 'DESO'"
+              >
+                DESO
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative w-100">
+          <input
+            [(ngModel)]="buyNowInput"
+            (ngModelChange)="updateBuyNowAmount($event)"
+            style="border-radius: 0px 16px 16px 0px"
+            aria-describedby="usd-label"
+            class="mint-nft__input"
+            type="number"
+            min="0"
+            placeholder="0"
+          />
+          <span *ngIf="buyNowCurrency === 'DESO'" class="mint-nft__floating-span">
+            {{ buyNowPriceUSDFormatted() }}
+          </span>
+        </div>
+      </div>
+    </div>
     <div class="d-flex justify-content-between">
       <div *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES" class="w-50" style="margin-right: 8px">
         <div class="mint-nft__sub-title">Number of copies</div>
@@ -59,16 +115,15 @@
           placeholder="1"
         />
       </div>
-      <div [ngClass]="{ 'mint-nft__price-half': copiesRadioValue === IS_MULTIPLE_COPIES, 'mint-nft__price-full': copiesRadioValue === IS_SINGLE_COPY }">
-        <div class="mint-nft__sub-title">Minimum bid</div>
+      <div
+        [ngClass]="{
+          'mint-nft__price-half': copiesRadioValue === IS_MULTIPLE_COPIES,
+          'mint-nft__price-full': copiesRadioValue === IS_SINGLE_COPY
+        }"
+      >
+        <div class="mint-nft__sub-title">{{ "Minimum bid" }}</div>
         <div class="d-flex">
-          <div
-            class="d-flex"
-            dropdown
-            (click)="$event.stopPropagation()"
-            container="body"
-            style="align-items: center"
-          >
+          <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
             <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
               {{ minBidCurrency }}
               <i-feather name="chevron-down" class="feather-small"></i-feather>
@@ -77,13 +132,13 @@
               <div>
                 <a
                   class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                  (click)="minBidCurrency='USD'"
+                  (click)="minBidCurrency = 'USD'"
                 >
                   USD
                 </a>
                 <a
                   class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                  (click)="minBidCurrency='DESO'"
+                  (click)="minBidCurrency = 'DESO'"
                 >
                   DESO
                 </a>
@@ -101,7 +156,9 @@
               min="0"
               placeholder="0"
             />
-            <span *ngIf="minBidCurrency === 'DESO'" class="mint-nft__floating-span">{{ minBidAmountUSDFormatted() }}</span>
+            <span *ngIf="minBidCurrency === 'DESO'" class="mint-nft__floating-span">
+              {{ minBidAmountUSDFormatted() }}
+            </span>
           </div>
         </div>
       </div>
@@ -113,12 +170,17 @@
     </div>
     <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
       <div class="custom-control custom-switch custom-switch-lg">
-        <input [(ngModel)]="putOnSale" type="checkbox" class="custom-control-input" id="putOnSaleCheckbox" />
+        <input
+          [(ngModel)]="putOnSale"
+          (ngModelChange)="updateOnSaleStatus($event)"
+          type="checkbox"
+          class="custom-control-input"
+          id="putOnSaleCheckbox"
+        />
         <label class="custom-control-label mt-2px" for="putOnSaleCheckbox"></label>
       </div>
       <div>Put it on sale</div>
     </div>
-
   </div>
   <div class="mint-nft__section">
     <div class="mint-nft__title">Royalties</div>
@@ -127,16 +189,14 @@
     </div>
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }">
-        <div class="mint-nft__sub-title">
-          % Creator Royalty
-        </div>
+        <div class="mint-nft__sub-title">% Creator Royalty</div>
         <div class="position-relative">
           <input
             [(ngModel)]="creatorRoyaltyPercent"
             class="mint-nft__input"
             type="number"
             min="1"
-            [max]="maxCopiesPerNFT"
+            max="100"
             placeholder="1"
           />
           <span class="mint-nft__floating-span" style="top: 6px">
@@ -145,16 +205,14 @@
         </div>
       </div>
       <div [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }">
-        <div class="mint-nft__sub-title">
-          % Coin-Holder Royalty
-        </div>
+        <div class="mint-nft__sub-title">% Coin-Holder Royalty</div>
         <div class="position-relative">
           <input
             [(ngModel)]="coinRoyaltyPercent"
             class="mint-nft__input"
             type="number"
             min="1"
-            [max]="maxCopiesPerNFT"
+            max="100"
             placeholder="1"
           />
           <span class="mint-nft__floating-span" style="top: 6px">
@@ -163,16 +221,213 @@
         </div>
       </div>
     </div>
+    <div class="d-flex align-items-center cursor-pointer pt-10px fs-16px fc-muted" (click)="showAdvancedRoyalties = !showAdvancedRoyalties">
+      Advanced
+      <i-feather *ngIf="!showAdvancedRoyalties" name="chevron-down" class="fs-0px fc-muted feather-medium"></i-feather>
+      <i-feather *ngIf="showAdvancedRoyalties" name="chevron-up" class="fs-0px fc-muted feather-medium"></i-feather>
+    </div>
+    <div *ngIf="showAdvancedRoyalties">
+      <div class="d-flex align-items-center">
+        <div class="mint-nft__sub-title">Additional DESO Royalties</div>
+        <i-feather
+          name="info"
+          class="ml-5px mt-5px fs-0px feather-small fc-secondary"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+            'Share royalties with other users for all primary and secondary sales of this NFT. Royalties will come in the form of $DESO to their wallet'
+          "
+          #tooltip="matTooltip"
+        ></i-feather>
+        <i-feather
+          name="plus-circle"
+          class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer"
+          (click)="addNewDESORoyalty()"
+        ></i-feather>
+      </div>
+      <ng-container *ngFor="let additionalDESORoyalty of additionalDESORoyalties; let ii = index">
+        <div
+          class="d-flex align-items-center justify-content-between w-100"
+          [ngClass]="{ 'flex-column': globalVars.isMobile() }"
+        >
+          <div
+            [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
+            class="d-flex align-items-center"
+            *ngIf="!additionalDESORoyalty.ProfileEntryResponse"
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalDESORoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer mr-5px"
+            ></i-feather>
+            <search-bar
+              class="w-100"
+              [isSearchForUsersToSendDESO]="true"
+              [showCloutavista]="false"
+              (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalDESORoyalties, ii)"
+            ></search-bar>
+          </div>
+          <div
+            [ngClass]="{ 'w-100': globalVars.isMobile() }"
+            class="d-flex align-items-center"
+            *ngIf="additionalDESORoyalty.ProfileEntryResponse"
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalDESORoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer"
+            ></i-feather>
+            <simple-profile-card
+              [profile]="additionalDESORoyalty.ProfileEntryResponse"
+              [singleColumn]="true"
+              [hideFollowLink]="true"
+            ></simple-profile-card>
+          </div>
+          <div
+            [ngClass]="{ 'mt-16px': globalVars.isMobile() }"
+            [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
+          >
+            <div class="position-relative">
+              <input
+                [(ngModel)]="additionalDESORoyalty.RoyaltyPercent"
+                class="mint-nft__input"
+                type="number"
+                min="1"
+                [max]="maxCopiesPerNFT"
+                placeholder="1"
+              />
+              <span class="mint-nft__floating-span" style="top: 6px">
+                <i-feather name="percent" class="feather-small fs-0px"></i-feather>
+              </span>
+            </div>
+          </div>
+          <div
+            *ngIf="globalVars.isMobile() && additionalDESORoyalties.length > 0 && ii < additionalDESORoyalties.length - 1"
+            class="w-100 border-bottom my-15px"
+          ></div>
+        </div>
+        <div class="fc-red" *ngIf="additionalDESORoyalty.RoyaltyPercent < 0 || additionalDESORoyalty > 100">
+          Each royalty must be between 0% and 100%
+        </div>
+        <div
+          class="fc-red"
+          *ngIf="additionalDESORoyalty.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
+        >
+          Cannot specify an additional royalty to the post creator. Please specify above in the Creator Royalty section.
+        </div>
+      </ng-container>
+      <div *ngIf="hasDuplicatesInAdditionalRoyalties(additionalDESORoyalties)">
+        Each additional DESO royalties must go to a unique user.
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="mint-nft__sub-title">Additional Coin Royalties</div>
+        <i-feather
+          name="info"
+          class="ml-5px mt-5px fs-0px feather-small fc-secondary"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+            'Share royalties with other users for all primary and secondary sales of this NFT. Royalties will come in the form of additional $DESO locked to their creator coin. This means any owners of the recipient\'s coin will reap the benefit of this royalty. The recipient must own some of their own coin in order to receive this royalty.'
+          "
+          #tooltip="matTooltip"
+        ></i-feather>
+        <i-feather
+          name="plus-circle"
+          class="ml-5px mt-5px fs-0px feather-large fc-blue cursor-pointer"
+          (click)="addNewCoinRoyalty()"
+        ></i-feather>
+      </div>
+      <ng-container *ngFor="let additionalCoinRoyalty of additionalCoinRoyalties; let ii = index">
+        <div
+          class="d-flex align-items-center justify-content-between w-100"
+          [ngClass]="{ 'flex-column': globalVars.isMobile() }"
+        >
+          <div
+            [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
+            class="d-flex align-items-center"
+            *ngIf="!additionalCoinRoyalty.ProfileEntryResponse"
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalCoinRoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer mr-5px"
+            ></i-feather>
+            <search-bar
+              class="w-100"
+              [isSearchForUsersToSendDESO]="true"
+              [showCloutavista]="false"
+              (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalCoinRoyalties, ii)"
+              *ngIf="!additionalCoinRoyalty.ProfileEntryResponse"
+            ></search-bar>
+          </div>
+          <div
+            [ngClass]="{ 'w-100': globalVars.isMobile() }"
+            class="d-flex align-items-center"
+            *ngIf="additionalCoinRoyalty.ProfileEntryResponse"
+          >
+            <i-feather
+              (click)="removeRoyalty(additionalCoinRoyalties, ii)"
+              name="x"
+              class="fs-0px fc-secondary feather-medium cursor-pointer"
+            ></i-feather>
+            <simple-profile-card
+              [profile]="additionalCoinRoyalty.ProfileEntryResponse"
+              [singleColumn]="true"
+              [hideFollowLink]="true"
+            ></simple-profile-card>
+          </div>
+          <div
+            [ngClass]="{ 'mt-16px': globalVars.isMobile() }"
+            [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }"
+          >
+            <div class="position-relative">
+              <input
+                [(ngModel)]="additionalCoinRoyalty.RoyaltyPercent"
+                class="mint-nft__input"
+                type="number"
+                min="1"
+                [max]="maxCopiesPerNFT"
+                placeholder="1"
+              />
+              <span class="mint-nft__floating-span" style="top: 6px">
+                <i-feather name="percent" class="feather-small fs-0px"></i-feather>
+              </span>
+            </div>
+          </div>
+          <div
+            *ngIf="globalVars.isMobile() && additionalCoinRoyalties.length > 0 && ii < additionalCoinRoyalties.length - 1"
+            class="w-100 border-bottom my-15px"
+          ></div>
+        </div>
+        <div class="fc-red" *ngIf="additionalCoinRoyalty.RoyaltyPercent < 0 || additionalCoinRoyalty > 100">
+          Each royalty must be between 0% and 100%
+        </div>
+        <div
+          class="fc-red"
+          *ngIf="additionalCoinRoyalty.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
+        >
+          Cannot specify an additional royalty to the post creator's coin. Please specify above in the Coin-Holder Royalty
+          section.
+        </div>
+        <div class="fc-red" *ngIf="additionalCoinRoyalty.PublicKeyBase58Check && !additionalCoinRoyalty.Username">
+          Additional Coin Royalties may only be specified for public key's that already have a profile.
+        </div>
+      </ng-container>
+      <div *ngIf="hasDuplicatesInAdditionalRoyalties(additionalCoinRoyalties)">
+        Each additional coin royalties must go to a unique user.
+      </div>
+      <div *ngIf="hasUnreasonableRoyalties()" class="fs-15px fc-red pt-15px">
+        The sum of creator and coin-holder and additional royalties must be less than 100.
+      </div>
+    </div>
   </div>
   <div class="mint-nft__section" style="border-bottom: none">
     <div class="mint-nft__title">Unlock once purchased</div>
-    <div class="mint-nft__text">
-      Include exclusive text, like a URL, encrypted for NFT purchasers.
-    </div>
+    <div class="mint-nft__text">Include exclusive text, like a URL, encrypted for NFT purchasers.</div>
     <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
       <div class="custom-control custom-switch custom-switch-lg">
         <input
           [(ngModel)]="includeUnlockable"
+          [disabled]="isBuyNow"
+          (ngModelChange)="updateIncludeUnlockable($event)"
           type="checkbox"
           class="custom-control-input"
           id="unlockableContentCheckbox"
@@ -181,13 +436,19 @@
       </div>
       <div>Enable Unlockable Content</div>
     </div>
+    <span *ngIf="isBuyNow" class="fc-error fs-14px mt-16px">Unlockable content not available for "Buy Now" NFTs</span>
   </div>
 </div>
 <button
   [disabled]="
-    hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting
+    hasUnreasonableRoyalties() ||
+    hasUnreasonableNumCopies() ||
+    hasUnreasonableMinBidAmount() ||
+    hasUnreasonableBuyNowPrice() ||
+    hasAdditionalRoyaltyError() ||
+    minting
   "
-  (click)="mintNft()"
+  (click)="validateNFTMint()"
   class="mint-nft__create-btn"
 >
   {{ minting ? "Creating NFT" : "Create NFT" }}

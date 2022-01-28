@@ -1,10 +1,10 @@
 <div app-theme class="nft-modal-container p-15px">
   <div class="w-100 d-flex justify-content-between nft-modal__header">
-    <div class="d-flex align-items-center">{{ (isSelectingSerialNumber ? 'place_bid.select_an_edition' : 'place_bid.place_a_bid') | transloco }}</div>
+    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : showBuyNowConfirmation ? "Buy NFT" : "Place a bid" }}</div>
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !showSelectedSerialNumbers}">
       <div class="fs-15px text-grey5">
         {{ 'place_bid.place_bid' | transloco }} @{{ post.ProfileEntryResponse.Username}}.
       </div>
@@ -136,14 +136,32 @@
       </div>
 
     </div>
-
+    <div *ngIf="biddableSerialNumbers?.length && showBuyNowConfirmation">
+      <buy-now-confirmation
+        [post]="post"
+        [postHashHex]="postHashHex"
+        [selectedSerialNumber]="selectedSerialNumber"
+        (closeModal)="closeModal.emit()"
+        (goBack)="goBackToSerialSelection()"
+      ></buy-now-confirmation>
+    </div>
 
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">{{ 'place_bid.multiple_editions' | transloco }}</div>
+      <div class="nft-modal__subtitle mb-10px">{{ 'place_bid.multiple_editions' | transloco }}</div>
+      <tab-selector
+        *ngIf="showTabs"
+        [buttonSelector]="false"
+        [tabs]="tabs"
+        [activeTab]="activeTab"
+        (tabClick)="tabClicked($event)"
+      ></tab-selector>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="biddableSerialNumbers"
+          [columns]="serialNumberSelectColumns"
+          [postHashHex]="post.PostHashHex"
           (serialNumberSelected)="selectSerialNumber($event)"
+          (closeModal)="closeModal.emit($event)"
         ></nft-select-serial-number>
       </div>
     </div>
