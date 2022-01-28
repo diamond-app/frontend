@@ -250,7 +250,10 @@ export class PostThreadComponent implements AfterViewInit {
       fetchParents,
       commentOffset,
       commentLimit,
-      this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
+      this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
+      2 /*ThreadLevelLimit*/,
+      1 /*ThreadLeafLimit*/,
+      true /*LoadAuthorThread*/
     );
   }
 
