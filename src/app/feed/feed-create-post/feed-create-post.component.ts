@@ -7,7 +7,6 @@ import {
   EventEmitter,
   Output,
   ElementRef,
-  AfterViewInit,
   ViewChildren,
   QueryList,
 } from "@angular/core";
