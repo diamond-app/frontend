@@ -28,6 +28,7 @@ import { TranslocoService } from "@ngneat/transloco";
 })
 export class FeedPostComponent implements OnInit {
   @Input() isOnThreadPage;
+  @Input() hasReadMoreRollup = true;
   @Input()
   get post(): PostEntryResponse {
     return this._post;
@@ -50,24 +51,9 @@ export class FeedPostComponent implements OnInit {
       this.postContent = post;
     }
 
-    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
-    // a read more link to the detail.
-    if (!this.router.url.startsWith("/posts/") && this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
-      // NOTE: We first spread the string into an array since this will account
-      // for unicode multi-codepoint characters like emojis. Just using
-      // substring will potentially break a string in the middle of a
-      // "surrogate-pair" and render something unexpected in its place. This is
-      // still a relatively naive approach, but it should do the right thing in
-      // almost all cases.
-      // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
-      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
-      this.postContent.Body = `${chars.join("")}...`;
-      this.showReadMoreRollup = true;
-    }
-
-    setTimeout(()=>{
+    setTimeout(() => {
       this.ref.detectChanges();
-    }, 0)
+    }, 0);
   }
 
   @Input() set blocked(value: boolean) {
@@ -272,7 +258,23 @@ export class FeedPostComponent implements OnInit {
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
-    this.isFollowing = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
+    this.isFollowing = this.followService._isLoggedInUserFollowing(
+      this.postContent.ProfileEntryResponse.PublicKeyBase58Check
+    );
+    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
+    // a read more link to the detail.
+    if (this.hasReadMoreRollup && this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
+      // NOTE: We first spread the string into an array since this will account
+      // for unicode multi-codepoint characters like emojis. Just using
+      // substring will potentially break a string in the middle of a
+      // "surrogate-pair" and render something unexpected in its place. This is
+      // still a relatively naive approach, but it should do the right thing in
+      // almost all cases.
+      // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
+      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
+      this.postContent.Body = `${chars.join("")}...`;
+      this.showReadMoreRollup = true;
+    }
   }
 
   openBuyCreatorCoinModal(event, username: string) {

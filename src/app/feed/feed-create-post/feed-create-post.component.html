@@ -153,21 +153,21 @@
     <span
       class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
       [ngClass]="{
-        'd-none': this.currentPostModel.text.length == 0,
+        'd-none': currentPostModel.text.length == 0,
         'text-grey8A': showCharacterCountIsFine(),
         'text-warning': showCharacterCountWarning(),
         'fc-red': characterCountExceedsMaxLength()
       }"
     >
-      <div [ngStyle]="{ width: this.currentPostModel.text.length >= 100 ? '28px' : '20px' }">
-        {{ this.currentPostModel.text.length }}
+      <div [ngStyle]="{ width: currentPostModel.text.length >= 100 ? '28px' : '20px' }">
+        {{ currentPostModel.text.length }}
       </div>
-      <div>/ {{ this.maxPostLength }}</div>
+      <div>/ {{ maxPostLength }}</div>
     </span>
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
-      (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
+      (click)="currentPostModel.showEmbedURL = !currentPostModel.showEmbedURL"
     >
       <i-feather name="code"></i-feather>
     </button>
@@ -190,7 +190,7 @@
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
-      (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
+      (click)="currentPostModel.showImageLink = !currentPostModel.showImageLink"
     >
       <i-feather name="external-link"></i-feather>
     </button>
@@ -205,9 +205,9 @@
         disappear: !hasAddCommentButton(),
         wiggle: showCharacterCountWarning(),
         disabled:
-          this.currentPostModel.text.length <= 0 &&
-          !this.currentPostModel.postImageSrc &&
-          !this.currentPostModel.postVideoSrc
+          currentPostModel.text.length <= 0 &&
+          !currentPostModel.postImageSrc &&
+          !currentPostModel.postVideoSrc
       }"
       (click)="addComment()"
     >
@@ -217,9 +217,9 @@
       class="feed-create-post__post-btn btn"
       [ngClass]="{
         disabled:
-          (this.postModels[0].text.length <= 0 &&
-            !this.postModels[0].postImageSrc &&
-            !this.postModels[0].postVideoSrc) ||
+          (postModels[0].text.length <= 0 &&
+            !postModels[0].postImageSrc &&
+            !postModels[0].postVideoSrc) ||
           characterCountExceedsMaxLength(),
         'btn-loading': submittingPost,
         wiggle: inTutorial,
