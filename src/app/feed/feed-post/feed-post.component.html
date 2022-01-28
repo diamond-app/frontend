@@ -130,7 +130,8 @@
           class="feed-post__container d-flex justify-content-left w-100 pb-5px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
-            'pt-10px': includePaddingOnPost
+            'pt-10px': includePaddingOnPost,
+            'feed-post__container--is-threaded': isThreaded
           }"
         >
           <a
@@ -194,8 +195,7 @@
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
             'pt-15px': includePaddingOnPost && !reposterProfile,
-            'd-flex': isThreaded,
-            'flex-column': isThreaded
+            'feed-post__container--is-threaded': isThreaded
           }"
           [ngStyle]="{
             'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
@@ -446,7 +446,8 @@
         class="feed-post__container d-flex justify-content-left w-100"
         [ngClass]="{
           'px-15px': includePaddingOnPost,
-          'pb-15px': includePaddingOnPost
+          'pb-15px': includePaddingOnPost,
+          'feed-post__container--is-threaded': isThreaded
         }"
       >
         <div class="w-100" style="margin-left: -5px">
