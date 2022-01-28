@@ -22,7 +22,12 @@
           [attr.data-index]="i"
           class="feed-create-post__post-content-container autofill-container"
         >
-          <button *ngIf="i > 0" class="feed-create-post__post-remove-btn btn" (click)="removePostModelAtIndex(i)">
+          <button
+            *ngIf="i > 0"
+            class="feed-create-post__post-remove-btn btn"
+            attr.aria-label="{{ 'feed_create_post.a11y_text.remove_post' | transloco }}"
+            (click)="removePostModelAtIndex(i)"
+          >
             <i-feather name="x"></i-feather>
           </button>
           <textarea
@@ -160,35 +165,39 @@
   </span>
   <button
     class="btn feed-create-post__icon-bar-item"
+    attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
     (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
   >
     <i-feather name="code"></i-feather>
   </button>
+  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
   <button
     class="btn feed-create-post__icon-bar-item"
-    (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
+    attr.aria-label="{{ 'feed_create_post.a11y_text.upload_video' | transloco }}"
+    (click)="videoInput.click()"
   >
-    <i-feather name="external-link"></i-feather>
-  </button>
-  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-  <button class="btn feed-create-post__icon-bar-item" (click)="videoInput.click()">
     <i-feather name="video"></i-feather>
   </button>
   <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-  <button class="btn feed-create-post__icon-bar-item" (click)="imageInput.click()">
+  <button
+    class="btn feed-create-post__icon-bar-item"
+    attr.aria-label="{{ 'feed_create_post.a11y_text.upload_image' | transloco }}"
+    (click)="imageInput.click()"
+  >
     <i-feather name="image"></i-feather>
   </button>
   <button
     class="btn feed-create-post__icon-bar-item"
+    attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
     (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
   >
-    <i-feather name="link"></i-feather>
+    <i-feather name="external-link"></i-feather>
   </button>
   <div class="feed-create-post__right-btn-group">
     <button
       *ngIf="hasAddCommentButton()"
       class="feed-create-post__add-comment-btn btn appear"
-      attr.aria-label="{{ 'feed_create_post.thread_quotes.start' | transloco }}"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.add_post' | transloco }}"
       [ngClass]="{
         wiggle: showCharacterCountWarning(),
         disabled:

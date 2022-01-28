@@ -217,6 +217,14 @@
       "quote16": "Elementary, my dear Watson",
       "quote17": "I'm going to make him an offer he can't refuse.",
       "quote18": "Big things have small beginnings."
+    },
+    "a11y_text": {
+      "embed_video": "Add a video embed link",
+      "embed_arweave": "Add an arweave image link",
+      "upload_video": "Upload a video file",
+      "upload_image": "Upload an image file",
+      "add_post": "A another post",
+      "remove_post": "Remove this post"
     }
   },
   "feed_post": {
