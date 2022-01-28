@@ -149,56 +149,60 @@
   class="feed-create-post__icon-bar align-items-center"
   [ngClass]="{ 'feed-create-post__icon-bar--in-modal': inModal }"
 >
-  <span
-    class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
-    [ngClass]="{
-      'd-none': this.currentPostModel.text.length == 0,
-      'text-grey8A': showCharacterCountIsFine(),
-      'text-warning': showCharacterCountWarning(),
-      'fc-red': characterCountExceedsMaxLength()
-    }"
-  >
-    <div [ngStyle]="{ width: this.currentPostModel.text.length >= 100 ? '28px' : '20px' }">
-      {{ this.currentPostModel.text.length }}
-    </div>
-    <div>/ {{ this.maxPostLength }}</div>
-  </span>
-  <button
-    class="btn feed-create-post__icon-bar-item"
-    attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
-    (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
-  >
-    <i-feather name="code"></i-feather>
-  </button>
-  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-  <button
-    class="btn feed-create-post__icon-bar-item"
-    attr.aria-label="{{ 'feed_create_post.a11y_text.upload_video' | transloco }}"
-    (click)="videoInput.click()"
-  >
-    <i-feather name="video"></i-feather>
-  </button>
-  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-  <button
-    class="btn feed-create-post__icon-bar-item"
-    attr.aria-label="{{ 'feed_create_post.a11y_text.upload_image' | transloco }}"
-    (click)="imageInput.click()"
-  >
-    <i-feather name="image"></i-feather>
-  </button>
-  <button
-    class="btn feed-create-post__icon-bar-item"
-    attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
-    (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
-  >
-    <i-feather name="external-link"></i-feather>
-  </button>
+  <div class="feed-create-post__left-btn-group">
+    <span
+      class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
+      [ngClass]="{
+        'd-none': this.currentPostModel.text.length == 0,
+        'text-grey8A': showCharacterCountIsFine(),
+        'text-warning': showCharacterCountWarning(),
+        'fc-red': characterCountExceedsMaxLength()
+      }"
+    >
+      <div [ngStyle]="{ width: this.currentPostModel.text.length >= 100 ? '28px' : '20px' }">
+        {{ this.currentPostModel.text.length }}
+      </div>
+      <div>/ {{ this.maxPostLength }}</div>
+    </span>
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
+      (click)="this.currentPostModel.showEmbedURL = !this.currentPostModel.showEmbedURL"
+    >
+      <i-feather name="code"></i-feather>
+    </button>
+    <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.upload_video' | transloco }}"
+      (click)="videoInput.click()"
+    >
+      <i-feather name="video"></i-feather>
+    </button>
+    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.upload_image' | transloco }}"
+      (click)="imageInput.click()"
+    >
+      <i-feather name="image"></i-feather>
+    </button>
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
+      (click)="this.currentPostModel.showImageLink = !this.currentPostModel.showImageLink"
+    >
+      <i-feather name="external-link"></i-feather>
+    </button>
+  </div>
   <div class="feed-create-post__right-btn-group">
     <button
-      *ngIf="hasAddCommentButton()"
-      class="feed-create-post__add-comment-btn btn appear"
+      class="feed-create-post__add-comment-btn btn"
       attr.aria-label="{{ 'feed_create_post.a11y_text.add_post' | transloco }}"
+      [disabled]="!hasAddCommentButton()"
       [ngClass]="{
+        appear: hasAddCommentButton(),
+        disappear: !hasAddCommentButton(),
         wiggle: showCharacterCountWarning(),
         disabled:
           this.currentPostModel.text.length <= 0 &&

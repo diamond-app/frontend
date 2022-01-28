@@ -92,6 +92,7 @@
               [hasThreadIndicator]="j !== thread.children.length - 1"
               [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
               [isOnThreadPage]="true"
+              [isThreadChild]="true"
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
               (userBlocked)="afterUserBlocked($event)"

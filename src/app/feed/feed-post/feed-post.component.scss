@@ -13,7 +13,13 @@
 
 // thread modifiers
 .feed-post__container--is-threaded {
-  border-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   display: flex;
   flex-direction: column;
+}
+
+.feed-post__container--is-thread-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
 }

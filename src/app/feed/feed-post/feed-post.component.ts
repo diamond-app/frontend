@@ -149,12 +149,14 @@ export class FeedPostComponent implements OnInit {
 
   // Determines whether this is part of a comment thread. It controls the left
   // padding applies to threaded comments.
-  @Input() isThreaded: boolean = false;
+  @Input() isThreaded = false;
 
   // Determines whether the comment has the vertical line connecting a single
   // thread. We use a different prop for this since the last node of a thread
   // does not have the vertical line. It only has the left padding.
-  @Input() hasThreadIndicator: boolean = false;
+  @Input() hasThreadIndicator = false;
+
+  @Input() isThreadChild = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
