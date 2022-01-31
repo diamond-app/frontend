@@ -190,8 +190,6 @@ export class NotificationsListComponent implements OnInit {
       nftEntryResponses: null, // NFT Entry Responses, for transfers
     };
 
-    console.log(txnMeta);
-
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
       const basicTransferMeta = txnMeta.BasicTransferTxindexMetadata;
       if (!basicTransferMeta) {
