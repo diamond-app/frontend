@@ -1,4 +1,11 @@
 {
+  "Hot": "Hot",
+  "Posts": "Posts",
+  "Creator Coin": "Creator Coin",
+  "Diamonds": "Diamanten",
+  "NFTs": "NFTs",
+  "Given": "Gegeven",
+  "Received": "Ontvangen",
   "add_unlockable_modal": {
     "nft_contains_unlockable_content": "Deze NFT omvat ontgrendelbare content. Vul hem hieronder in.",
     "unlockable_text_placeholder": "Geef URL, redeemcode, link, etc...",
@@ -187,6 +194,7 @@
     "video_processing": "Video wordt verwerkt",
     "uploading": "Versturen:",
     "complete": "Voltooid",
+    "multi_post_progress": "Versturen berichten:",
     "post": "Plaats",
     "embed_image": "Voeg een link naar een Arweave afbeelding toe",
     "embed_video": "Voeg je Youtube, Vimeo, TikTok, Giphy, Spotify of SoundCloud video toe",
@@ -209,6 +217,14 @@
       "quote16": "Visie zonder actie is een dagdroom. Actie zonder visie is een nachtmerrie.",
       "quote17": "Alleen de allerwijsten en de allerdwaasten veranderen nooit van mening.",
       "quote18": "Grote dingen beginnen klein."
+    },
+    "a11y_text": {
+      "embed_video": "Voeg een ingesloten videolink toe",
+      "embed_arweave": "Voeg een arweave afbeelding link toe",
+      "upload_video": "Verstuur een video bestand",
+      "upload_image": "Verstuur een afbeelding",
+      "add_post": "Een ander bericht",
+      "remove_post": "Verwijder dit bericht"
     }
   },
   "feed_post": {
@@ -404,7 +420,8 @@
     "no_serial_available": "Er zijn geen serienummers beschikbaar om op te bieden."
   },
   "post_thread": {
-    "post": "Post"
+    "post": "Post",
+    "see_more": "Meer"
   },
   "quote_reposts": {
     "quote_reposts": "Reposts quoten"
@@ -703,5 +720,6 @@
   "All": "Allen",
   "Following": "Volgend",
   "New": "Nieuw",
-  "NFT Gallery": "NFT-galerij"
+  "NFT Gallery": "NFT-galerij",
+  "generic_toast_error": "Er ging wat mis. Probeer het a.u.b. opnieuw."
 }

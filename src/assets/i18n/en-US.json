@@ -1,4 +1,11 @@
 {
+  "Hot": "Hot",
+  "Posts": "Posts",
+  "Creator Coin": "Creator Coin",
+  "Diamonds": "Diamonds",
+  "NFTs": "NFTs",
+  "Given": "Given",
+  "Received": "Received",
   "add_unlockable_modal": {
     "nft_contains_unlockable_content": "This NFT includes unlockable content. Enter it below.",
     "unlockable_text_placeholder": "Enter URL, code to redeem, link, etc...",
@@ -187,6 +194,7 @@
     "video_processing": "Video Processing In Progress",
     "uploading": "Uploading:",
     "complete": "Complete",
+    "multi_post_progress": "Submitting posts:",
     "post": "Post",
     "embed_image": "Link to Arweave image",
     "embed_video": "Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud",
@@ -209,6 +217,14 @@
       "quote16": "Elementary, my dear Watson",
       "quote17": "I'm going to make him an offer he can't refuse.",
       "quote18": "Big things have small beginnings."
+    },
+    "a11y_text": {
+      "embed_video": "Add a video embed link",
+      "embed_arweave": "Add an arweave image link",
+      "upload_video": "Upload a video file",
+      "upload_image": "Upload an image file",
+      "add_post": "A another post",
+      "remove_post": "Remove this post"
     }
   },
   "feed_post": {
@@ -235,7 +251,7 @@
     "quote_repost": "Quote Repost",
     "like": "Like",
     "diamond": "Diamond",
-    "place_a_bid": "Place a bit",
+    "place_a_bid": "Place a bid",
     "accept_transfer": "Accept Tranfer",
     "hide_unlockable": "Hide Unlockable",
     "show_unlockable": "Show Unlockable"
@@ -404,7 +420,8 @@
     "no_serial_available": "There are no serial numbers available for you to bid on."
   },
   "post_thread": {
-    "post": "Post"
+    "post": "Post",
+    "see_more": "See more replies"
   },
   "quote_reposts": {
     "quote_reposts": "Quote Reposts"
@@ -703,5 +720,6 @@
   "All": "All",
   "Following": "Following",
   "New": "New",
-  "NFT Gallery": "NFT Gallery"
+  "NFT Gallery": "NFT Gallery",
+  "generic_toast_error": "Something went wrong. Please try again."
 }
