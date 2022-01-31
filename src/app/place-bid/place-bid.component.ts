@@ -53,7 +53,7 @@ export class PlaceBidComponent implements OnInit {
   tabs = [this.BID_TAB, this.BUY_TAB];
   activeTab = this.BID_TAB;
   showTabs = false;
-  serialNumberSelectColumns: { high?: string; min?: string, buyNow?: string };
+  serialNumberSelectColumns: { high?: string; min?: string; buyNow?: string };
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -75,14 +75,7 @@ export class PlaceBidComponent implements OnInit {
       .subscribe((res) => {
         this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
         this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
-        this.biddableSerialNumbers = _.orderBy(
-          this.availableSerialNumbers.filter(
-            (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
-          ),
-          [this.sortByField],
-          [this.sortByOrder]
-        );
+        this.getBiddableSerialNumbers();
         const hasAuctionNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: false }).length > 0;
         const hasBuyNowNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
         // Only show tabs if there are buy now SNs
@@ -98,6 +91,23 @@ export class PlaceBidComponent implements OnInit {
     this.activeTab = tabName;
     this.serialNumberSelectColumns =
       this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount" } : { buyNow: "Buy Now Price" };
+    this.getBiddableSerialNumbers();
+  }
+
+  getBiddableSerialNumbers () {
+    this.biddableSerialNumbers = _.orderBy(
+      this.availableSerialNumbers
+        .filter(
+          (nftEntryResponse) =>
+            nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
+        )
+        .filter((nftEntryResponse) => {
+          // If we're in they "buy now" tab, filter to only buy now SNs
+          return this.activeTab === this.BID_TAB || (nftEntryResponse.IsBuyNow && this.BUY_TAB);
+        }),
+      [this.sortByField],
+      [this.sortByOrder]
+    );
   }
 
   updateBidAmountUSD(deSoAmount) {

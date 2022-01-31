@@ -529,7 +529,7 @@
             {{ showUnlockableText() }}
           </span>
         </div>
-        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0">{{ 'feed_post.from' | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+        <div *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0 && (lowBid > 0 || !nftBuyNowPriceNanos)">{{ 'feed_post.from' | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
         <div *ngIf="nftLastAcceptedBidAmountNanos !== undefined && postContent.NumNFTCopiesForSale === 0 && nftLastAcceptedBidAmountNanos !== 0">
           {{ 'feed_post.last_price' | transloco }}: ≈{{
           globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2)
