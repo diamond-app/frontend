@@ -5,7 +5,8 @@
 </div>
 
 <feed-create-post
-  numberOfRowsInTextArea="7"
+  numberOfRowsInTextArea="3"
+  [inModal]="true"
   (postCreated)="onPostCreated($event)"
   (postCreated)="bsModalRef.hide()"
   (postUpdated)="postUpdated($event)"

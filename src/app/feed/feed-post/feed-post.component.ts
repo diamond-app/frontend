@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -24,9 +24,11 @@ import { TranslocoService } from "@ngneat/transloco";
 @Component({
   selector: "feed-post",
   templateUrl: "./feed-post.component.html",
-  styleUrls: ["./feed-post.component.sass"],
+  styleUrls: ["./feed-post.component.scss"],
 })
 export class FeedPostComponent implements OnInit {
+  @Input() isOnThreadPage;
+  @Input() hasReadMoreRollup = true;
   @Input()
   get post(): PostEntryResponse {
     return this._post;
@@ -48,9 +50,10 @@ export class FeedPostComponent implements OnInit {
     } else {
       this.postContent = post;
     }
-    setTimeout(()=>{
+
+    setTimeout(() => {
       this.ref.detectChanges();
-    }, 0)
+    }, 0);
   }
 
   @Input() set blocked(value: boolean) {
@@ -130,6 +133,17 @@ export class FeedPostComponent implements OnInit {
   // If this is a pending NFT post that still needs to be accepted by the user
   @Input() acceptNFT: boolean = false;
 
+  // Determines whether this is part of a comment thread. It controls the left
+  // padding applies to threaded comments.
+  @Input() isThreaded = false;
+
+  // Determines whether the comment has the vertical line connecting a single
+  // thread. We use a different prop for this since the last node of a thread
+  // does not have the vertical line. It only has the left padding.
+  @Input() hasThreadIndicator = false;
+
+  @Input() isThreadChild = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -164,6 +178,7 @@ export class FeedPostComponent implements OnInit {
   nftEntryResponses: NFTEntryResponse[];
   decryptableNFTEntryResponses: NFTEntryResponse[];
   isFollowing: boolean;
+  showReadMoreRollup = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -243,7 +258,23 @@ export class FeedPostComponent implements OnInit {
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
-    this.isFollowing = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
+    this.isFollowing = this.followService._isLoggedInUserFollowing(
+      this.postContent.ProfileEntryResponse.PublicKeyBase58Check
+    );
+    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
+    // a read more link to the detail.
+    if (this.hasReadMoreRollup && this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
+      // NOTE: We first spread the string into an array since this will account
+      // for unicode multi-codepoint characters like emojis. Just using
+      // substring will potentially break a string in the middle of a
+      // "surrogate-pair" and render something unexpected in its place. This is
+      // still a relatively naive approach, but it should do the right thing in
+      // almost all cases.
+      // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
+      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
+      this.postContent.Body = `${chars.join("")}...`;
+      this.showReadMoreRollup = true;
+    }
   }
 
   openBuyCreatorCoinModal(event, username: string) {
@@ -376,15 +407,20 @@ export class FeedPostComponent implements OnInit {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        // Hide the post in the UI immediately, even before the delete goes thru, to give
-        // the user some indication that his delete is happening. This is a little janky.
-        // For example, on the feed, the border around the post is applied by an outer element,
-        // so the border will remain (and the UI will look a bit off) until the delete goes thru,
-        // we emit the delete event, and the parent removes the outer element/border from the UI.
-        //
+        if (this.isOnThreadPage) {
+          // On the thread page we keep the element in the dom, but re-render it
+          // with the generic "Post removed by author" message.
+          this.post.IsHidden = true;
+        } else {
+          // Hide the post in the UI immediately, even before the delete goes thru, to give
+          // the user some indication that his delete is happening. This is a little janky.
+          // For example, on the feed, the border around the post is applied by an outer element,
+          // so the border will remain (and the UI will look a bit off) until the delete goes thru,
+          // we emit the delete event, and the parent removes the outer element/border from the UI.
+          this.hidingPost = true;
+        }
         // Note: This is a rare instance where I needed to call detectChanges(). Angular wasn't
         // picking up the changes until I called this explicitly. IDK why.
-        this.hidingPost = true;
         this.ref.detectChanges();
         this.backendApi
           .SubmitPost(

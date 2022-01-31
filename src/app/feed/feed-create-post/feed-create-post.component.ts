@@ -1,3 +1,4 @@
+// @ts-strict
 import {
   Component,
   OnInit,
@@ -5,9 +6,9 @@ import {
   Input,
   EventEmitter,
   Output,
-  ViewChild,
   ElementRef,
-  AfterViewInit,
+  ViewChildren,
+  QueryList,
 } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
@@ -23,72 +24,101 @@ import * as _ from "lodash";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { TranslocoService } from "@ngneat/transloco";
 
+const RANDOM_MOVIE_QUOTES = [
+  "feed_create_post.quotes.quote1",
+  "feed_create_post.quotes.quote2",
+  "feed_create_post.quotes.quote3",
+  "feed_create_post.quotes.quote4",
+  "feed_create_post.quotes.quote5",
+  "feed_create_post.quotes.quote6",
+  "feed_create_post.quotes.quote7",
+  "feed_create_post.quotes.quote8",
+  "feed_create_post.quotes.quote9",
+  "feed_create_post.quotes.quote10",
+  "feed_create_post.quotes.quote11",
+  "feed_create_post.quotes.quote12",
+  "feed_create_post.quotes.quote13",
+  "feed_create_post.quotes.quote14",
+  "feed_create_post.quotes.quote15",
+  "feed_create_post.quotes.quote16",
+  "feed_create_post.quotes.quote17",
+  "feed_create_post.quotes.quote18",
+];
+
+class PostModel {
+  text = "";
+  postImageSrc = "";
+  postVideoSrc = "";
+  embedURL = "";
+  constructedEmbedURL = "";
+  showEmbedURL = false;
+  showImageLink = false;
+  isMentionified = false;
+  placeHolderText: string;
+  isUploadingMedia = false;
+
+  private quotes = RANDOM_MOVIE_QUOTES.slice();
+
+  constructor() {
+    this.placeHolderText = this.getRandomMoveQuote();
+  }
+
+  /**
+   * Gets a new random quote for each new post in a multi-post thread. Ensures
+   * we don't see duplicates until after all quotes have been exhuasted.
+   */
+  private getRandomMoveQuote() {
+    if (this.quotes.length === 0) {
+      this.quotes = RANDOM_MOVIE_QUOTES.slice();
+    }
+
+    const randomQuoteIndex = Math.floor(Math.random() * this.quotes.length);
+    const [quote] = this.quotes.splice(randomQuoteIndex, 1);
+
+    return quote;
+  }
+}
+
+interface PostExtraData {
+  EmbedVideoURL?: string;
+  Node?: string;
+  Language?: string;
+}
+
+// show warning at 515 characters
+const SHOW_POST_LENGTH_WARNING_THRESHOLD = 515;
+
 @Component({
   selector: "feed-create-post",
   templateUrl: "./feed-create-post.component.html",
-  styleUrls: ["./feed-create-post.component.sass"],
+  styleUrls: ["./feed-create-post.component.scss"],
 })
-export class FeedCreatePostComponent implements OnInit, AfterViewInit {
-  static SHOW_POST_LENGTH_WARNING_THRESHOLD = 515; // show warning at 515 characters
-
-  EmbedUrlParserService = EmbedUrlParserService;
+export class FeedCreatePostComponent implements OnInit {
+  isReply = false;
+  submittingPost = false;
+  postModels: PostModel[] = [];
+  currentPostModel = new PostModel();
+  videoUploadPercentage: string | null = null;
+  postSubmitPercentage: string | null = null;
+  videoStreamInterval: Timer | null = null;
+  fallbackProfilePicURL: string | undefined;
+  maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
+  globalVars: GlobalVarsService;
+  submittedPost: PostEntryResponse | null = null;
+  embedUrlParserService = EmbedUrlParserService;
 
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
-  @Input() parentPost: PostEntryResponse = null;
-  @Input() isQuote: boolean = false;
-  @Input() inTutorial: boolean = false;
+  @Input() parentPost: PostEntryResponse | null = null;
+  @Input() isQuote = false;
+  @Input() inTutorial = false;
+  @Input() inModal = false;
   @Output() postUpdated = new EventEmitter<boolean>();
+  @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
-  isComment: boolean;
-
-  @ViewChild("autosize") autosize: CdkTextareaAutosize;
-  @ViewChild("textarea") textAreaEl: ElementRef<HTMLTextAreaElement>;
-  @ViewChild("menu") menuEl: ElementRef<HTMLDivElement>;
-
-  randomMovieQuote = "";
-  randomMovieQuotes = [
-    "feed_create_post.quotes.quote1",
-    "feed_create_post.quotes.quote2",
-    "feed_create_post.quotes.quote3",
-    "feed_create_post.quotes.quote4",
-    "feed_create_post.quotes.quote5",
-    "feed_create_post.quotes.quote6",
-    "feed_create_post.quotes.quote7",
-    "feed_create_post.quotes.quote8",
-    "feed_create_post.quotes.quote9",
-    "feed_create_post.quotes.quote10",
-    "feed_create_post.quotes.quote11",
-    "feed_create_post.quotes.quote12",
-    "feed_create_post.quotes.quote13",
-    "feed_create_post.quotes.quote14",
-    "feed_create_post.quotes.quote15",
-    "feed_create_post.quotes.quote16",
-    "feed_create_post.quotes.quote17",
-    "feed_create_post.quotes.quote18",
-  ];
-
-  submittingPost = false;
-  postInput = "";
-  postImageSrc = null;
-
-  postVideoSrc = null;
-  videoUploadPercentage = null;
-
-  showEmbedURL = false;
-  showImageLink = false;
-  embedURL = "";
-  constructedEmbedURL: any;
-  videoStreamInterval: Timer = null;
-  readyToStream: boolean = false;
-
-  // Emits a PostEntryResponse. It would be better if this were typed.
-  @Output() postCreated = new EventEmitter();
-
-  globalVars: GlobalVarsService;
-  GlobalVarsService = GlobalVarsService;
-
-  fallbackProfilePicURL: string;
+  @ViewChildren("autosizables") autosizables: QueryList<CdkTextareaAutosize> | undefined;
+  @ViewChildren("textareas") textAreas: QueryList<ElementRef<HTMLTextAreaElement>> | undefined;
+  @ViewChildren("menus") menus: QueryList<ElementRef<HTMLDivElement>> | undefined;
 
   constructor(
     private router: Router,
@@ -100,12 +130,13 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     private translocoService: TranslocoService
   ) {
     this.globalVars = appData;
+    this.postModels.push(this.currentPostModel);
   }
 
   // Functions for the mention autofill component
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
 
-  async getUsersFromPrefix(prefix): Promise<ProfileEntryResponse[]> {
+  async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
         this.globalVars.localNode,
@@ -139,7 +170,7 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     const profPicURL = _.escape(
       this.backendApi.GetSingleProfilePictureURL(
         this.globalVars.localNode,
-        user.PublicKeyBase58Check,
+        user.PublicKeyBase58Check ?? "",
         this.fallbackProfilePicURL
       )
     );
@@ -156,30 +187,44 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   replaceFn = (user: ProfileEntryResponse, trigger: string) => `${trigger}${user.Username} `;
 
   setInputElementValue = (mention: string): void => {
-    this.postInput = `${mention}`;
+    this.currentPostModel.text = `${mention}`;
   };
 
   ngOnInit() {
-    this.isComment = !this.isQuote && !!this.parentPost;
-    this._setRandomMovieQuote();
+    this.isReply = !this.isQuote && !!this.parentPost;
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
     this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
-      this.postInput = "It's Diamond time!";
+      this.currentPostModel.text = "It's Diamond time!";
+    }
+
+    if (this.isReply) {
+      this.autoFocusTextArea();
     }
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
+  /**
+   * Executed when a post text area receives focus. We update the current post
+   * model in case the user is editing a previously created post within a
+   * multi-post thread context. If this is the first time the the text area has
+   * recieved focus we also set up the @mention dropdown menu.
+   */
+  updateCurrentPostModel(postModel: PostModel) {
+    this.currentPostModel = postModel;
+
+    if (!this.currentPostModel.isMentionified && this.textAreas && this.menus) {
+      // initialize the @mention menu on the post text area
       new Mentionify<ProfileEntryResponse>(
-        this.textAreaEl.nativeElement,
-        this.menuEl.nativeElement,
+        this.textAreas.last.nativeElement,
+        this.menus.last.nativeElement,
         this.resolveFn,
         this.replaceFn,
         this.menuItemFn,
         this.setInputElementValue
       );
-    }, 50);
+
+      this.currentPostModel.isMentionified = true;
+    }
   }
 
   onPaste(event: any): void {
@@ -197,92 +242,85 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     }
   }
 
-  uploadFile(event: any): void {
-    if (!this.isComment) {
-      this._handleFileInput(event[0]);
-    }
+  handleFileDrop(event: any, postModel: PostModel): void {
+    this.currentPostModel = postModel;
+    this._handleFileInput(event[0]);
   }
 
   showCharacterCountIsFine() {
-    return this.postInput.length < FeedCreatePostComponent.SHOW_POST_LENGTH_WARNING_THRESHOLD;
+    return this.currentPostModel.text.length < SHOW_POST_LENGTH_WARNING_THRESHOLD;
   }
 
   showCharacterCountWarning() {
     return (
-      this.postInput.length >= FeedCreatePostComponent.SHOW_POST_LENGTH_WARNING_THRESHOLD &&
-      this.postInput.length <= GlobalVarsService.MAX_POST_LENGTH
+      this.currentPostModel.text.length >= SHOW_POST_LENGTH_WARNING_THRESHOLD &&
+      this.currentPostModel.text.length <= GlobalVarsService.MAX_POST_LENGTH
     );
   }
 
   characterCountExceedsMaxLength() {
-    return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
-  }
-
-  getPlaceholderText() {
-    // Creating vanilla post
-    if (!this.parentPost) {
-      return this.randomMovieQuote;
-    }
-    // Creating comment or quote repost;
-    return this.isQuote ? "Add a quote" : "Post your reply";
-  }
-
-  _setRandomMovieQuote() {
-    const randomInt = Math.floor(Math.random() * this.randomMovieQuotes.length);
-    this.randomMovieQuote = this.randomMovieQuotes[randomInt];
+    return this.currentPostModel.text.length > GlobalVarsService.MAX_POST_LENGTH;
   }
 
   setEmbedURL() {
-    EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.embedURL).subscribe(
-      (res) => (this.constructedEmbedURL = res)
+    EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.currentPostModel.embedURL).subscribe(
+      (res) => {
+        this.currentPostModel.constructedEmbedURL = res;
+      }
     );
   }
 
-  submitPost() {
-    if (this.postInput.length > GlobalVarsService.MAX_POST_LENGTH) {
-      return;
-    }
-
-    // post can't be blank
-    if (this.postInput.length === 0 && !this.postImageSrc && !this.postVideoSrc) {
-      return;
-    }
-
+  submitPost(parentPost: PostEntryResponse | undefined = undefined, currentPostModelIndex = 0) {
     if (this.submittingPost) {
       return;
     }
 
-    const postExtraData = {};
-    if (this.embedURL) {
-      if (EmbedUrlParserService.isValidEmbedURL(this.constructedEmbedURL)) {
-        postExtraData["EmbedVideoURL"] = this.constructedEmbedURL;
+    const post = this.postModels[currentPostModelIndex];
+
+    if (post.text.length > GlobalVarsService.MAX_POST_LENGTH) {
+      return;
+    }
+
+    // post can't be blank
+    if (post.text.trim().length === 0 && !post.postImageSrc && !post.postVideoSrc) {
+      return;
+    }
+
+    const postExtraData: PostExtraData = {};
+    if (post.embedURL) {
+      if (EmbedUrlParserService.isValidEmbedURL(post.constructedEmbedURL)) {
+        postExtraData.EmbedVideoURL = post.constructedEmbedURL;
       }
     }
 
     if (environment.node.id) {
-      postExtraData["Node"] = environment.node.id.toString();
+      postExtraData.Node = environment.node.id.toString();
     }
 
     if (this.translocoService.getActiveLang()) {
-      postExtraData["Language"] = this.translocoService.getActiveLang();
+      postExtraData.Language = this.translocoService.getActiveLang();
     }
 
     const bodyObj = {
-      Body: this.postInput,
-      // Only submit images if the post is a quoted repost or a vanilla post.
-      ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
-      VideoURLs: !this.isComment ? [this.postVideoSrc].filter((n) => n) : [],
+      Body: post.text,
+      ImageURLs: post.postImageSrc ? [post.postImageSrc] : [],
+      VideoURLs: post.postVideoSrc ? [post.postVideoSrc] : [],
     };
-    const repostedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
+
+    const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
-    const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
+    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "create";
+
+    if (this.postModels.length > 1 && !this.postSubmitPercentage) {
+      this.postSubmitPercentage = "0";
+    }
 
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
+        this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
@@ -294,46 +332,63 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
         this.inTutorial
       )
-      .subscribe(
-        (response) => {
-          this.globalVars.logEvent(`post : ${postType}`);
+      .toPromise()
+      .then((response) => {
+        this.globalVars.logEvent(`post : ${postType}`);
 
-          this.submittingPost = false;
+        this.submittingPost = false;
 
-          this.postInput = "";
-          this.postImageSrc = null;
-          this.postVideoSrc = null;
-          this.embedURL = "";
-          this.constructedEmbedURL = "";
-          this.changeRef.detectChanges();
-
-          // Refresh the post page.
-          if (this.postRefreshFunc && !this.inTutorial) {
-            this.postRefreshFunc(response.PostEntryResponse);
-          }
-
-          if (this.inTutorial) {
-            this.globalVars.updateEverything().add(() => {
-              this.postCreated.emit(response.PostEntryResponse);
-            });
-          } else {
-            this.postCreated.emit(response.PostEntryResponse);
-          }
-        },
-        (err) => {
-          const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars._alertError(parsedError);
-          this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
-
-          this.submittingPost = false;
-          this.changeRef.detectChanges();
+        if (!this.submittedPost) {
+          this.submittedPost = response.PostEntryResponse;
         }
-      );
+
+        if (parentPost) {
+          parentPost.CommentCount++;
+          parentPost.Comments = [response.PostEntryResponse];
+        }
+
+        if (this.postModels.length > currentPostModelIndex + 1) {
+          // Recursively submit until we have submitted all posts. This is only
+          // relevant for multi-post threads
+          this.postSubmitPercentage = (((currentPostModelIndex + 1) / this.postModels.length) * 100).toFixed();
+          return this.submitPost(response.PostEntryResponse, currentPostModelIndex + 1);
+        }
+
+        this.postSubmitPercentage = null;
+        this.currentPostModel = new PostModel();
+        this.postModels = [this.currentPostModel];
+
+        this.changeRef.detectChanges();
+
+        // Refresh the post page.
+        if (this.postRefreshFunc && !this.inTutorial) {
+          this.postRefreshFunc(this.submittedPost);
+        }
+
+        if (this.inTutorial) {
+          this.globalVars.updateEverything().add(() => {
+            this.postCreated.emit(this.submittedPost!);
+          });
+        } else {
+          this.postCreated.emit(this.submittedPost!);
+        }
+
+        this.submittedPost = null;
+      })
+      .catch((err) => {
+        const parsedError = this.backendApi.parsePostError(err);
+        this.globalVars._alertError(parsedError);
+        this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
+        this.submittingPost = false;
+
+        this.changeRef.detectChanges();
+      });
   }
 
-  updatePost() {
-    this.postUpdated.emit(this.postInput !== "");
+  updatePost(postModel: PostModel) {
+    this.postUpdated.emit(postModel.text !== "");
   }
+
   _createPost() {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {
@@ -354,9 +409,11 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
   }
 
   _handleFilesInput(files: FileList): void {
-    this.showImageLink = false;
+    this.currentPostModel.showImageLink = false;
     const fileToUpload = files.item(0);
-    this._handleFileInput(fileToUpload);
+    if (fileToUpload) {
+      this._handleFileInput(fileToUpload);
+    }
   }
 
   _handleFileInput(file: File): void {
@@ -364,12 +421,21 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.currentPostModel.isUploadingMedia = true;
+    let uploadPromise;
+
     if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
       this.globalVars._alertError("File selected does not have an image or video file type.");
     } else if (file.type.startsWith("video/")) {
-      this.uploadVideo(file);
+      uploadPromise = this.uploadVideo(file);
     } else if (file.type.startsWith("image/")) {
-      this.uploadImage(file);
+      uploadPromise = this.uploadImage(file);
+    }
+
+    if (uploadPromise) {
+      uploadPromise.finally(() => {
+        this.currentPostModel.isUploadingMedia = false;
+      });
     }
   }
 
@@ -380,92 +446,139 @@ export class FeedCreatePostComponent implements OnInit, AfterViewInit {
     }
     return this.backendApi
       .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
-      .subscribe(
-        (res) => {
-          this.postImageSrc = res.ImageURL;
-          this.postVideoSrc = null;
+      .toPromise()
+      .then((res) => {
+        this.currentPostModel.postImageSrc = res.ImageURL;
+        this.currentPostModel.postVideoSrc = "";
+      })
+      .catch((err) => {
+        this.globalVars._alertError(JSON.stringify(err.error.error));
+      });
+  }
+
+  uploadVideo(file: File): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (file.size > 4 * (1024 * 1024 * 1024)) {
+        this.globalVars._alertError("File is too large. Please choose a file less than 4GB");
+        return;
+      }
+      let upload: tus.Upload;
+      let mediaId = "";
+      const options: tus.UploadOptions = {
+        endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
+        chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
+        uploadSize: file.size,
+        onError: (error: Error) => {
+          this.globalVars._alertError(error.message);
+          upload
+            .abort(true)
+            .then(() => {
+              throw error;
+            })
+            .finally(reject);
         },
-        (err) => {
-          this.globalVars._alertError(JSON.stringify(err.error.error));
-        }
-      );
-  }
-
-  uploadVideo(file: File): void {
-    if (file.size > 4 * (1024 * 1024 * 1024)) {
-      this.globalVars._alertError("File is too large. Please choose a file less than 4GB");
-      return;
-    }
-    let upload: tus.Upload;
-    let mediaId = "";
-    const comp: FeedCreatePostComponent = this;
-    const options = {
-      endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
-      chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
-      uploadSize: file.size,
-      onError: function (error) {
-        comp.globalVars._alertError(error.message);
-        upload.abort(true).then(() => {
-          throw error;
-        });
-      },
-      onProgress: function (bytesUploaded, bytesTotal) {
-        comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-      },
-      onSuccess: function () {
-        // Construct the url for the video based on the videoId and use the iframe url.
-        comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
-        comp.postImageSrc = null;
-        comp.videoUploadPercentage = null;
-        comp.pollForReadyToStream();
-      },
-      onAfterResponse: function (req, res) {
-        return new Promise((resolve) => {
+        onProgress: (bytesUploaded: number, bytesTotal: number) => {
+          this.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+        },
+        onSuccess: () => {
+          // Construct the url for the video based on the videoId and use the iframe url.
+          this.currentPostModel.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
+          this.currentPostModel.postImageSrc = "";
+          this.videoUploadPercentage = null;
+          this.pollForReadyToStream(resolve);
+        },
+        onAfterResponse: (req: tus.HttpRequest, res: tus.HttpResponse) => {
           // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
-          let mediaIdHeader = res.getHeader("stream-media-id");
-          if (mediaIdHeader) {
-            mediaId = mediaIdHeader;
-          }
-          resolve(res);
-        });
-      },
-    };
-    // Clear the interval used for polling cloudflare to check if a video is ready to stream.
-    if (this.videoStreamInterval != null) {
-      clearInterval(this.videoStreamInterval);
-    }
-    // Reset the postVideoSrc and readyToStream values.
-    this.postVideoSrc = null;
-    this.readyToStream = false;
-    // Create and start the upload.
-    upload = new tus.Upload(file, options);
-    upload.start();
-    return;
+          return new Promise((resolve) => {
+            let mediaIdHeader = res.getHeader("stream-media-id");
+            if (mediaIdHeader) {
+              mediaId = mediaIdHeader;
+            }
+
+            resolve(res);
+          });
+        },
+      };
+      // Clear the interval used for polling cloudflare to check if a video is ready to stream.
+      if (this.videoStreamInterval != null) {
+        clearInterval(this.videoStreamInterval);
+      }
+      if (this.currentPostModel) {
+        // Reset the postVideoSrc and readyToStream values.
+        this.currentPostModel.postVideoSrc = "";
+      }
+      // Create and start the upload.
+      upload = new tus.Upload(file, options);
+      upload.start();
+    });
   }
 
-  pollForReadyToStream(): void {
+  pollForReadyToStream(onReadyToStream: Function): void {
     let attempts = 0;
     let numTries = 1200;
     let timeoutMillis = 500;
     this.videoStreamInterval = setInterval(() => {
       if (attempts >= numTries) {
-        clearInterval(this.videoStreamInterval);
+        clearInterval(this.videoStreamInterval!);
         return;
       }
       this.streamService
-        .checkVideoStatusByURL(this.postVideoSrc)
+        .checkVideoStatusByURL(this.currentPostModel.postVideoSrc)
         .subscribe(([readyToStream, exitPolling]) => {
           if (readyToStream) {
-            this.readyToStream = true;
-            clearInterval(this.videoStreamInterval);
+            onReadyToStream();
+            clearInterval(this.videoStreamInterval!);
             return;
           }
           if (exitPolling) {
-            clearInterval(this.videoStreamInterval);
+            clearInterval(this.videoStreamInterval!);
             return;
           }
         })
         .add(() => attempts++);
     }, timeoutMillis);
+  }
+
+  hasAddCommentButton(): boolean {
+    if (this.currentPostModel.isUploadingMedia || this.isReply || this.isQuote) {
+      return false;
+    }
+
+    return !!(
+      this.currentPostModel.text ||
+      this.currentPostModel.postImageSrc ||
+      this.currentPostModel.postVideoSrc ||
+      this.currentPostModel.constructedEmbedURL
+    );
+  }
+
+  addComment() {
+    this.postModels.push(new PostModel());
+    this.autoFocusTextArea();
+  }
+
+  removePostModelAtIndex(index: number) {
+    const removedItem = this.postModels[index];
+    let indexToFocus: number;
+
+    if (this.currentPostModel === removedItem) {
+      this.currentPostModel = this.postModels[index - 1];
+      indexToFocus = index - 1;
+      this.textAreas?.get(index - 1)?.nativeElement.focus();
+    } else {
+      indexToFocus = this.postModels.findIndex((model) => model === this.currentPostModel);
+    }
+
+    if (indexToFocus > -1) {
+      this.textAreas?.get(indexToFocus)?.nativeElement.focus();
+    }
+
+    this.postModels.splice(index, 1);
+  }
+
+  private autoFocusTextArea() {
+    setTimeout(() => {
+      this.textAreas?.last.nativeElement.focus();
+    }, 50);
   }
 }

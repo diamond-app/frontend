@@ -288,6 +288,7 @@ export class PostEntryResponse {
   NFTRoyaltyToCreatorBasisPoints: number;
   HotnessScore: number;
   PostMultiplier: number;
+  PostExtraData: Record<string, any>;
   AdditionalDESORoyaltiesMap: { [k: string]: number };
   AdditionalCoinRoyaltiesMap: { [k: string]: number };
 }
@@ -1215,7 +1216,10 @@ export class BackendApiService {
     FetchParents: boolean = true,
     CommentOffset: number = 0,
     CommentLimit: number = 20,
-    AddGlobalFeedBool: boolean = false
+    AddGlobalFeedBool: boolean = false,
+    ThreadLevelLimit: number | undefined = undefined,
+    ThreadLeafLimit: number | undefined = undefined,
+    LoadAuthorThread: boolean | undefined = undefined
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSinglePost, {
       PostHashHex,
@@ -1224,6 +1228,9 @@ export class BackendApiService {
       CommentOffset,
       CommentLimit,
       AddGlobalFeedBool,
+      ThreadLevelLimit,
+      ThreadLeafLimit,
+      LoadAuthorThread,
     });
   }
 

@@ -210,24 +210,20 @@ export class Mentionify<Type> {
     this.currentToken = query;
     this.makeOptions(query).then(() => {
       const coords = getCaretCoordinates(this.ref, positionIndex);
-      const { top, left } = this.ref.getBoundingClientRect();
-      let modalTop = 0;
-      let modalLeft = 0;
       const modal = document.querySelector(".modal-content");
       let scrollX = window.scrollX;
       let scrollY = window.scrollY;
+
       if (modal) {
-        const modalBoundingClientRect = modal.getBoundingClientRect();
-        modalLeft = modalBoundingClientRect.left;
-        modalTop = modalBoundingClientRect.top;
         scrollX = 0;
         scrollY = 0;
       }
 
       setTimeout(() => {
+        const staticLeftOffset = 30;
         this.active = 0;
-        this.left = scrollX + coords.left + left + this.ref.scrollLeft - modalLeft;
-        this.top = scrollY + coords.top + top + coords.height - this.ref.scrollTop - modalTop;
+        this.left = scrollX + coords.left + this.ref.scrollLeft + staticLeftOffset;
+        this.top = scrollY + coords.top + coords.height - this.ref.scrollTop;
         this.triggerIdx = triggerIdx;
         this.renderMenu();
       }, 0);
