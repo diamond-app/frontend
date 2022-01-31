@@ -23,6 +23,9 @@ handle_errors {
 
 rewrite @html {http.matchers.file.relative}
 
+# Cache languagefiles only for 1 day
+header /assets/i18n/ Cache-Control "max-age=86400"
+
 # Don't cache index.html and set CSP
 header @html Cache-Control no-store
 header @html Content-Security-Policy "
