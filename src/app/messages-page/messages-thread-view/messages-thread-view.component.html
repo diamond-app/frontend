@@ -30,6 +30,7 @@
         (keypress)="_messageTextChanged($event)"
         [(ngModel)]="messageText"
         class="w-100 h-100 py-5px fs-15px messages-thread__border-radius flex-grow-1 form-control"
+        (keydown.meta.Enter)="_sendMessage()"
       ></textarea>
       <div class="d-flex align-items-end pb-16px h-100 background-color-form">
         <button

@@ -44,6 +44,7 @@
             cdkTextareaAutosize
             #textareas
             #autosizables="cdkTextareaAutosize"
+            (keydown.meta.Enter)="_createPost()"
           ></textarea>
           <div id="menu-{{ i + 1 }}" #menus class="menu" role="listbox"></div>
 
