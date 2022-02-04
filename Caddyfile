@@ -71,6 +71,7 @@ header @html Content-Security-Policy "
     arweave.net
     *.arweave.net
     entre-app-media-dev.s3.us-east-2.amazonaws.com
+    *.pearl.app
     cloudflare-ipfs.com;
   font-src 'self'
     https://fonts.googleapis.com
