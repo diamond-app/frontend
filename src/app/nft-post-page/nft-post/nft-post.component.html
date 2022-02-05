@@ -30,6 +30,7 @@
         [showExpandedNFTDetails]="true"
         [contentShouldLinkToThread]="true"
         [afterCommentCreatedCallback]="incrementCommentCounter.bind(this)"
+        [hasReadMoreRollup]="false"
         (userBlocked)="afterUserBlocked($event)"
         (nftBidPlaced)="afterNftBidPlaced($event)"
       ></feed-post>
