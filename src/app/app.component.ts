@@ -312,7 +312,7 @@ export class AppComponent implements OnInit {
       }
     });
 
-    this.globalVars.pollUnreadNotifications();
+    // this.globalVars.pollUnreadNotifications();
 
     this.installDD();
     this.installAmplitude();

@@ -1054,6 +1054,23 @@ export class GlobalVarsService {
       });
   }
 
+  async launchDeriveFlow(derivedPublicKeyBase58Check: string): Promise<any> {
+    const signedDerivedKey = await this.identityService
+      .launch("/derive", {
+        derivedPublicKeyBase58Check,
+      })
+      .toPromise();
+    return this.backendApi
+      .AuthorizeDerivedKey(
+        this.loggedInUser.PublicKeyBase58Check,
+        signedDerivedKey.derivedPublicKey,
+        signedDerivedKey.expirationBlock,
+        signedDerivedKey.accessSignature,
+        false
+      )
+      .toPromise();
+  }
+
   checkForInAppBrowser(): string {
     if (!this.isMobile()) {
       return null;

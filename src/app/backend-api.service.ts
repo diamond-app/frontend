@@ -570,6 +570,54 @@ export class BackendApiService {
     return this.get(endpoint, BackendRoutes.ExchangeRateRoute);
   }
 
+  CreateDerivedKey(PublicKeyBase58Check: string, Purpose: string): Observable<any> {
+    const route = "/api/v0/create-derived-key";
+    const endpoint = "http://localhost:8080";
+    const body = {
+      PublicKeyBase58Check,
+      Purpose,
+    };
+    return this.post(endpoint, route, body);
+  }
+
+  CreateUserProfile(
+    OwnerPubkeyBase58check: string,
+    DerivedPublicKeyBase58Check: string,
+    Username: string,
+    Description: string,
+    ProfilePic: string
+  ): Observable<any> {
+    const route = "/api/v0/create-user-profile";
+    const endpoint = "http://localhost:8080";
+    const body = {
+      OwnerPubkeyBase58check,
+      DerivedPublicKeyBase58Check,
+      Username,
+      Description,
+      ProfilePic,
+    };
+    return this.post(endpoint, route, body);
+  }
+
+  AuthorizeDerivedKey(
+    OwnerPublicKeyBase58Check: string,
+    DerivedPublicKeyBase58Check: string,
+    ExpirationBlock: number,
+    AccessSignature: string,
+    DeleteKey: boolean
+  ): Observable<any> {
+    const route = "/api/v0/authorize-derived-key";
+    const endpoint = "http://localhost:8080";
+    const body = {
+      OwnerPublicKeyBase58Check,
+      DerivedPublicKeyBase58Check,
+      ExpirationBlock,
+      AccessSignature,
+      DeleteKey,
+    };
+    return this.post(endpoint, route, body);
+  }
+
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
     return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));

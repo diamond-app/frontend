@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { HttpParams } from "@angular/common/http";
+import { BackendApiService } from "./backend-api.service";
 
 @Injectable({
   providedIn: "root",
@@ -49,6 +50,7 @@ export class IdentityService {
       public_key?: string;
       accessLevelRequest?: string;
       hideJumio?: boolean;
+      derivedPublicKeyBase58Check?: string;
     }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
@@ -83,6 +85,10 @@ export class IdentityService {
 
     if (params?.hideJumio) {
       httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
+    }
+
+    if (params?.derivedPublicKeyBase58Check) {
+      httpParams = httpParams.append("derivedPublicKeyBase58Check", params.derivedPublicKeyBase58Check);
     }
 
     const paramsStr = httpParams.toString();
@@ -201,6 +207,15 @@ export class IdentityService {
     this.identityWindowSubject = null;
   }
 
+  private handleDerive(payload: any) {
+    this.identityWindow.close();
+    this.identityWindow = null;
+
+    this.identityWindowSubject.next(payload);
+    this.identityWindowSubject.complete();
+    this.identityWindowSubject = null;
+  }
+
   private handleInfo(id: string) {
     this.respond(this.identityWindow, id, {});
   }
@@ -208,6 +223,7 @@ export class IdentityService {
   // Message handling
 
   private handleMessage(event: MessageEvent) {
+    console.log("HERE IS THE EVENT", event);
     const { data } = event;
     const { service, method } = data;
 
@@ -236,6 +252,8 @@ export class IdentityService {
       this.handleLogin(payload);
     } else if (method === "info") {
       this.handleInfo(id);
+    } else if (method === "derive") {
+      this.handleDerive(payload);
     } else {
       console.error("Unhandled identity request");
       console.error(event);
