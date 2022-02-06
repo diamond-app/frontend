@@ -303,7 +303,7 @@
     "usd_coin": "USD per coin",
     "you_have_referral_0": "You have an unlimited ",
     "you_have_referral_1": "referral link",
-    "find_people_in_hot": "Find more people to follow in the <b>Hot</b> feed",
+    "find_people_in_hot": "Find more people to follow in the Hot feed",
     "load_more": "Load More",
     "loading": "Loading...",
     "no_posts": "No posts yet",
@@ -357,7 +357,7 @@
     "more": "More"
   },
   "loader": {
-    "loading": "Loading Now"
+    "loading": "Loading"
   },
   "messages": {
     "select_creator": "Select Creator",
