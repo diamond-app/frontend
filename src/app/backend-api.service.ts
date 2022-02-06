@@ -549,6 +549,31 @@ export class BackendApiService {
     return this.httpClient.post<any>(this._makeRequestURL(endpoint, path), body).pipe(catchError(this._handleError));
   }
 
+  postWithOptions(endpoint: string, path: string, body: any, options: any): Observable<any> {
+    return this.httpClient
+      .post<any>(this._makeRequestURL(endpoint, path), body, options)
+      .pipe(catchError(this._handleError));
+  }
+
+  // Create a post request and attach it to the authorization property in the request
+  jwtPost2(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(publicKey),
+    });
+
+    return request.pipe(
+      switchMap((signed) => {
+        const options = {
+          headers: {
+            Authorization: `Bearer ${signed.jwt}`,
+          }
+        };
+
+        return this.postWithOptions(endpoint, path, body, options).pipe(map((res) => ({ ...res, ...signed })));
+      })
+    );
+  }
+
   jwtPost(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
     const request = this.identityService.jwt({
       ...this.identityService.identityServiceParamsForKey(publicKey),
@@ -577,7 +602,7 @@ export class BackendApiService {
       PublicKeyBase58Check,
       Purpose,
     };
-    return this.post(endpoint, route, body);
+    return this.jwtPost2(endpoint, route, PublicKeyBase58Check, body);
   }
 
   CreateUserProfile(
