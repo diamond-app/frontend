@@ -4,7 +4,41 @@
     <right-bar-signup></right-bar-signup>
   </div>
   <!-- DESO Price / Balance -->
-  <balance-box-widget *ngIf="!inTutorial"></balance-box-widget>
+  <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
+    <div>
+      <div class="d-flex">
+        <div class="w-100 deso-metrics">
+          <div class="d-flex justify-content-between">
+            <div>{{ t('right_bar.creators.deso_price') }}</div>
+            <div>
+              <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
+              <span>&nbsp;USD</span>
+            </div>
+          </div>
+          <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
+            <div class="d-flex" style="min-width: 130px">{{ t('right_bar.creators.your_deso') }}</div>
+            <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
+              <div>
+                <!-- Amount in BitClout-->
+                {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }}
+                <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
+              </div>
+              <!-- Amount in USD-->
+              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <a (click)="openBuyCloutModal()">
+        <div class="d-flex justify-content-center cursor-pointer">
+          <div class="buy-deso">
+            <span>{{ t('right_bar.creators.buy_deso') }}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
 
   <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-20px fs-13px">
     <div class="jumio-status">

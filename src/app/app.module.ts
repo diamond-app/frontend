@@ -202,6 +202,7 @@ import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
 import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/buy-now-confirmation.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
+import { BalanceBoxWidgetComponent } from './balance-box-widget/balance-box-widget.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -382,6 +383,7 @@ export function playerFactory() {
     TransferNftPageComponent,
     TransferNftComponent,
     FreeDesoMessageComponent,
+    BalanceBoxWidgetComponent,
   ],
   imports: [
     BrowserModule,

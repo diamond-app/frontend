@@ -2,8 +2,6 @@ import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { environment } from "../../environments/environment";
 
 export class RightBarTabOption {
@@ -27,7 +25,6 @@ export class RightBarCreatorsComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private modalService: BsModalService
   ) {}
 
   activeTab: string;
@@ -85,11 +82,5 @@ export class RightBarCreatorsComponent implements OnInit {
     if (!skipStorage) {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
-  }
-  openBuyCloutModal() {
-    this.modalService.show(BuyDesoModalComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
-      backdrop: "static",
-    });
   }
 }
