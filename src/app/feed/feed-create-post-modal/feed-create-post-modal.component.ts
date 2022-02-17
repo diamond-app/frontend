@@ -6,6 +6,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { BsModalRef } from "ngx-bootstrap/modal";
+import { ToastrService } from "ngx-toastr";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -50,14 +51,17 @@ export class FeedCreatePostModalComponent implements AfterViewInit {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private router: Router,
-    public bsModalRef: BsModalRef
+    public bsModalRef: BsModalRef,
+    private toastr: ToastrService
   ) {}
 
   onPostCreated(postEntryResponse) {
-    this.router.navigate(
-      ["/" + this.globalVars.RouteNames.USER_PREFIX, postEntryResponse.ProfileEntryResponse.Username],
-      { queryParamsHandling: "merge" }
-    );
+    const link = `/${this.globalVars.RouteNames.POSTS}/${postEntryResponse.PostHashHex}`;
+    this.toastr.show(`Post Created<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
+      toastClass: "info-toast",
+      enableHtml: true,
+      positionClass: "toast-bottom-center",
+    });
   }
 
   ngAfterViewInit() {
