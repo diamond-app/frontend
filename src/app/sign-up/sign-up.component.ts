@@ -84,7 +84,9 @@ export class SignUpComponent {
   setStep() {
     // If user has completed onboarding, redirect to follow feed
     if (!isNil(this.globalVars.loggedInUser?.ProfileEntryResponse?.Username)) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+      const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+      const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+      this.router.navigate([redirectPath], {
         queryParams: { feedTab: "Following" },
         queryParamsHandling: "merge",
       });
