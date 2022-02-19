@@ -297,9 +297,9 @@ export class SignUpComponent {
       )
       .subscribe(
         (res) => {
-          this.backendApi
-            .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-            .subscribe(() => {
+          // this.backendApi
+          //   .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+          //   .subscribe(() => {
               this.backendApi
                 .UpdateTutorialStatus(
                   this.globalVars.localNode,
@@ -326,7 +326,7 @@ export class SignUpComponent {
                       });
                   });
                 });
-            });
+            // });
         },
         (err) => {
           console.log(err);
