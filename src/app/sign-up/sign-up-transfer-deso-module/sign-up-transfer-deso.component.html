@@ -15,6 +15,29 @@
         A
       </div>
     </div>
+    <div [ngClass]="{ 'ml-20px': !globalVars.isMobile() }" class="w-100">
+      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">Don't have any $DESO? We make it easy to buy.</div>
+      <div class="p-30px mb-20px bg-light br-10px d-flex flex-column align-items-center">
+        <div class="fc-default font-weight-bold fs-18px mb-20px text-center">Buy DESO with ETH, BTC, fiat, or on Coinbase</div>
+        <div class="d-flex justify-content-around">
+          <div class="col-10 d-flex align-items-center flex-column">
+            <button (click)="openBuyDeSoModal(true)" class="primary-button mb-16px" style="width: 200px">Buy Now!</button>
+            <div class="fs-12px fc-muted text-center">We support 20 fiat currencies including USD and more.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="border-bottom w-100 mb-30px"></div>
+  <div class="d-flex" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+    <div class="d-flex align-items-center flex-column fc-blue">
+      <div
+        style="border-color: var(--highlight)"
+        class="d-flex align-items-center justify-content-center fs-20px onboarding-info-bar-circle mb-10px"
+      >
+        B
+      </div>
+    </div>
     <div [ngClass]="{ 'ml-20px': !globalVars.isMobile() }">
       <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">Transfer $DESO to your new account</div>
       <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">You will need at least 0.01 $DESO to create your new account. This could be transferred from an exchange like Coinbase, or from another account on a DeSo app like Diamond.</div>
@@ -68,36 +91,6 @@
           <div (click)="refreshBalance()" class="ml-10px d-flex align-items-center cursor-pointer">
             <div class="d-flex"><i-feather class="fc-default feather-small fs-0px mr-5px" name="refresh-cw"></i-feather></div>
             <span class="fc-blue">Refresh</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="border-bottom w-100 mb-30px"></div>
-  <div class="d-flex" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-    <div class="d-flex align-items-center flex-column fc-blue">
-      <div
-        style="border-color: var(--highlight)"
-        class="d-flex align-items-center justify-content-center fs-20px onboarding-info-bar-circle mb-10px"
-      >
-        B
-      </div>
-    </div>
-    <div [ngClass]="{ 'ml-20px': !globalVars.isMobile() }">
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-20px fc-default font-weight-bold mb-16px">Don't have any $DESO? We make it easy to buy.</div>
-      <div [ngClass]="{ 'text-center': globalVars.isMobile() }" class="fs-16px fc-muted mb-30px">You can buy $DESO on an exchange like Coinbase, or directly on Diamond in a secure way.</div>
-      <div class="p-30px mb-20px bg-light br-10px d-flex flex-column align-items-center">
-        <div class="fc-default font-weight-bold fs-18px mb-20px">Choose which option you would like to explore</div>
-        <div class="d-flex justify-content-around">
-          <div class="col-6 d-flex align-items-center flex-column">
-            <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with fiat</div>
-            <button (click)="openBuyDeSoModal(true)" class="primary-button mb-16px">Show me how</button>
-            <div class="fs-12px fc-muted text-center">We support 20 fiat currencies including USD and more.</div>
-          </div>
-          <div class="col-6 d-flex align-items-center flex-column">
-            <div class="fs-16px font-weight-semibold mb-16px">Buying DESO with BTC / ETH</div>
-            <button (click)="openBuyDeSoModal(false)" class="primary-button mb-16px">Show me how</button>
-            <div class="fs-12px fc-muted text-center">You can buy on Diamond or on an exchange. All transactions are secure.</div>
           </div>
         </div>
       </div>

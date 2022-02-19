@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -20,6 +20,7 @@ import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { TranslocoService } from "@ngneat/transloco";
+import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 
 @Component({
   selector: "feed-post",
@@ -155,6 +156,8 @@ export class FeedPostComponent implements OnInit {
 
   // emits diamondSent event
   @Output() diamondSent = new EventEmitter();
+
+  @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
@@ -653,7 +656,7 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid", this.globalVars);
       return;
     }
     event.stopPropagation();
@@ -664,7 +667,11 @@ export class FeedPostComponent implements OnInit {
       });
       const onHideEvent = modalDetails.onHide;
       onHideEvent.subscribe((response) => {
-        if (response === "bid placed" || response === "nft purchased") {
+        if (response === "bid placed") {
+          this.getNFTEntries();
+          this.nftBidPlaced.emit();
+        } else if (response === "nft purchased") {
+          this.showAfterPurchaseModal();
           this.getNFTEntries();
           this.nftBidPlaced.emit();
         }
@@ -685,6 +692,34 @@ export class FeedPostComponent implements OnInit {
     setTimeout(() => {
       this.ref.detectChanges();
     }, 50);
+  }
+
+  showAfterPurchaseModal(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "NFT Purchased",
+      html: "",
+      showDenyButton: true,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light no",
+        denyButton: "btn btn-light",
+      },
+      confirmButtonText: "See Your Gallery",
+      denyButtonText: "Leave a Comment",
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.router.navigate(
+          ["/" + this.globalVars.RouteNames.USER_PREFIX + "/" + this.globalVars.loggedInUser.ProfileEntryResponse.Username],
+          {
+            queryParams: { nftTab: "my_gallery" },
+            queryParamsHandling: "merge",
+          }
+        );
+      } else if (res.isDenied) {
+        this.childFeedPostIconRowComponent.openModal(null, false);
+      }
+    });
   }
 
   showUnlockableText() {

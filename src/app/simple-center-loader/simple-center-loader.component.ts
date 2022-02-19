@@ -9,7 +9,7 @@ import { BackendApiService } from "../backend-api.service";
   styleUrls: ["./simple-center-loader.component.scss"],
 })
 export class SimpleCenterLoaderComponent implements OnInit {
-  @Input() titleLoadingText: string = "Loading";
+  @Input() titleLoadingText: string;
   @Input() subtitleLoadingText: string = "";
   @Input() spinnerColor: string = "gray";
   @Input() textColor: string = "gray";

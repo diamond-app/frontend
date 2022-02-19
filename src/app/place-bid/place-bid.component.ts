@@ -50,8 +50,8 @@ export class PlaceBidComponent implements OnInit {
   minBidInput: number = 0;
   BID_TAB = "Bid";
   BUY_TAB = "Buy Now";
-  tabs = [this.BID_TAB, this.BUY_TAB];
-  activeTab = this.BID_TAB;
+  tabs = [this.BUY_TAB, this.BID_TAB];
+  activeTab = this.BUY_TAB;
   showTabs = false;
   serialNumberSelectColumns: { high?: string; min?: string; buyNow?: string };
 
@@ -80,8 +80,8 @@ export class PlaceBidComponent implements OnInit {
         const hasBuyNowNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
         // Only show tabs if there are buy now SNs
         this.showTabs = hasBuyNowNFTs;
-        // If there are only Buy Now SNs available for purchase, set the tab to buy now, otherwise default to auctions
-        this.activeTab = hasBuyNowNFTs && !hasAuctionNFTs ? this.BUY_TAB : this.BID_TAB;
+        // If there are Buy Now SNs available for purchase, set the tab to buy now, otherwise default to auctions
+        this.activeTab = hasBuyNowNFTs ? this.BUY_TAB : this.BID_TAB;
         this.tabClicked(this.activeTab);
       })
       .add(() => (this.loading = false));

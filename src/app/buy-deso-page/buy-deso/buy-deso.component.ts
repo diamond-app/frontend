@@ -51,7 +51,7 @@ export class BuyDeSoComponent implements OnInit {
 
   buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
   activeTab = BuyDeSoComponent.BUY_WITH_BTC;
-  linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK }
+  linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
 
   constructor(
     public ref: ChangeDetectorRef,

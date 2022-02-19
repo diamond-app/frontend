@@ -17,7 +17,10 @@
     width="100px"
   />
   <div class="mt-12px fc-secondary">
-    <div class="fc-secondary fs-24px text-align-center">{{ 'loader.loading' | transloco }}</div>
+    <div class="fc-secondary fs-24px text-align-center">
+      <div *ngIf="titleLoadingText">{{ titleLoadingText }}</div>
+      <div *ngIf="!titleLoadingText">{{ 'loader.loading' | transloco }}</div>
+    </div>
     <div *ngIf="subtitleLoadingText">
       <div class="fc-secondary fs-15px text-center">{{ subtitleLoadingText }}</div>
     </div>

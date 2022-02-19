@@ -7,6 +7,8 @@ import { ToastrService } from "ngx-toastr";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Location } from "@angular/common";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { sprintf } from "sprintf-js";
 
 @Component({
   selector: "buy-now-confirmation",
@@ -103,6 +105,7 @@ export class BuyNowConfirmationComponent {
       toastClass: "info-toast",
       enableHtml: true,
       positionClass: "toast-bottom-center",
+      disableTimeOut: "extendedTimeOut",
     });
   }
 

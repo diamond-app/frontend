@@ -8,8 +8,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
-import { ThemeService } from "../../theme/theme.service";
-import { includes, round, set } from "lodash";
+import { includes, isNil, round, set } from "lodash";
 import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
@@ -365,8 +364,11 @@ export class FeedPostIconRowComponent {
     if (this.inTutorial) {
       return;
     }
-    // Prevent the post navigation click from occurring.
-    event.stopPropagation();
+
+    if (!isNil(event)) {
+      // Prevent the post navigation click from occurring.
+      event.stopPropagation();
+    }
 
     if (!this.globalVars.loggedInUser) {
       // Check if the user has an account.
