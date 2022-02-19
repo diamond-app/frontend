@@ -656,6 +656,12 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
+      if (_.isNil(this.globalVars.loggedInUser)) {
+        this.backendApi.SetStorage(
+          "signUpRedirect",
+          `/${this.globalVars.RouteNames.NFT}/${this.postContent.PostHashHex}`
+        );
+      }
       SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid", this.globalVars);
       return;
     }

@@ -4,7 +4,7 @@ import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../.
 import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import * as introJs from "intro.js/intro.js";
-import { includes, shuffle } from "lodash";
+import { includes, isNil, shuffle } from "lodash";
 import { LocationStrategy } from "@angular/common";
 import { environment } from "src/environments/environment";
 import { Router } from "@angular/router";
@@ -55,7 +55,6 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   ngOnInit() {
     this.addMobileFooter = this.globalVars.isMobile() && window.innerHeight < 575;
-    // this.isLoadingProfilesForFirstTime = true;
     this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
     this.userCanAffordCCBuy = this.globalVars.loggedInUser.BalanceNanos > this.globalVars.usdToNanosNumber(0.1);
   }
@@ -85,7 +84,12 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           true
         )
         .subscribe(() => {
-          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+          const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+          if (!isNil(signUpRedirect)) {
+            this.backendApi.RemoveStorage("signUpRedirect");
+          }
+          this.router.navigate([redirectPath], {
             queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
           });
         });

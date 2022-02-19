@@ -19,6 +19,7 @@ import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-cre
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
+import { isNil } from "lodash";
 
 @Component({
   selector: "trade-creator",
@@ -115,7 +116,12 @@ export class TradeCreatorComponent implements OnInit {
           )
           .subscribe(() => {
             if (response.isConfirmed) {
-              this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+              const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+              const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+              if (!isNil(signUpRedirect)) {
+                this.backendApi.RemoveStorage("signUpRedirect");
+              }
+              this.router.navigate([redirectPath], {
                 queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
               });
             } else {

@@ -1244,6 +1244,9 @@ export class GlobalVarsService {
     if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
       return "messages-page";
     }
+    if (router.url.startsWith("/" + RouteNames.NFT)) {
+      return "nft-post-page";
+    }
     return "app-page";
   }
 
