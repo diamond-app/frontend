@@ -662,7 +662,7 @@ export class FeedPostComponent implements OnInit {
           `/${this.globalVars.RouteNames.NFT}/${this.postContent.PostHashHex}`
         );
       }
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid", this.globalVars);
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "buy this NFT", this.globalVars);
       return;
     }
     event.stopPropagation();

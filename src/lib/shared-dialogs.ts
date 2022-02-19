@@ -54,7 +54,7 @@ export class SharedDialogs {
 
   static showCreateProfileToPerformActionDialog(router: Router, action: string, globalVarsService: GlobalVarsService) {
     const hasUser = !isNil(globalVarsService.loggedInUser);
-    const title = `${hasUser ? "Complete" : "Create"} your profile to ${action}`;
+    const title = hasUser ? `Complete your profile to ${action}` : `Create a wallet to ${action}`;
     const html = hasUser ? `You can be whoever you want to be.` : "";
     const confirmButtonText = hasUser ? "Complete Your Profile" : "Create Your Wallet";
     SwalHelper.fire({

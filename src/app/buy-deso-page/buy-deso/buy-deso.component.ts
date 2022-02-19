@@ -134,7 +134,7 @@ export class BuyDeSoComponent implements OnInit {
       this.closeModal.emit();
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-        queryParams: { feedTab: FeedComponent.HOT_TAB },
+        queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
       });
     }
   }

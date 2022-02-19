@@ -300,6 +300,9 @@
   </div>
 
   <ng-template #showBuyCompleteElseBlock>
-    <buy-deso-complete (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"></buy-deso-complete>
+    <buy-deso-complete
+      (closeModal)="cancelButtonClicked()"
+      (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"
+    ></buy-deso-complete>
   </ng-template>
 </div>
