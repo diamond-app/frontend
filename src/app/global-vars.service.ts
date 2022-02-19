@@ -1117,7 +1117,7 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
-    } else {
+    } else if (this.router.url === RouteNames.LANDING) {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
   }
