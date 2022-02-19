@@ -718,7 +718,10 @@ export class FeedPostComponent implements OnInit {
         this.router.navigate(
           ["/" + this.globalVars.RouteNames.USER_PREFIX + "/" + this.globalVars.loggedInUser.ProfileEntryResponse.Username],
           {
-            queryParams: { nftTab: "my_gallery" },
+            queryParams: {
+              nftTab: "my_gallery",
+              tab: "nfts",
+            },
             queryParamsHandling: "merge",
           }
         );
