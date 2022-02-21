@@ -657,12 +657,14 @@ export class FeedPostComponent implements OnInit {
     const videoPlayerHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
     const videoPlayerWidth = this.videoContainerDiv?.nativeElement?.offsetWidth;
     if (videoPlayerHeight > 0) {
-      // Set height of overlay
-      this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
       // If the source video has a narrower aspect ratio than our default player, adjust the player width to snugly fit the content
       if (videoPlayerWidth / videoPlayerHeight > this.sourceVideoAspectRatio) {
         const videoContainerHeightPerc = (videoPlayerWidth / videoPlayerHeight) / this.sourceVideoAspectRatio;
         this.videoContainerHeight = (videoContainerHeightPerc * videoPlayerHeight).toFixed(2) + "px";
+        this.videoOverlayContainerHeight = this.videoContainerHeight;
+      } else {
+        // Set height of overlay
+        this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
       }
 
       this.ref.detectChanges();
