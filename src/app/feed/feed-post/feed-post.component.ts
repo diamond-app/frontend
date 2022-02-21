@@ -202,7 +202,8 @@ export class FeedPostComponent implements OnInit {
   showVideoControls = false;
   // Height of video window, used for overlay to be clicked on to disable autoplay, enable controls and volume
   videoOverlayContainerHeight = "0px";
-  videoContainerWidth = "100%";
+  // Height of the video container window. Will expand when short videos have a narrow aspect ratio.
+  videoContainerHeight = "100%";
   sourceVideoAspectRatio: number;
 
   unlockableTooltip =
@@ -653,19 +654,19 @@ export class FeedPostComponent implements OnInit {
 
   // Check to see if video is loaded. If it is, set the video container height to the same size as the video;
   setVideoControllerHeight(retries: number) {
-    const videoHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
-    const videoWidth = this.videoContainerDiv?.nativeElement?.offsetWidth;
-    if (videoHeight > 0) {
+    const videoPlayerHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
+    const videoPlayerWidth = this.videoContainerDiv?.nativeElement?.offsetWidth;
+    if (videoPlayerHeight > 0) {
       // Set height of overlay
-      this.videoOverlayContainerHeight = `${videoHeight}px`;
+      this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
       // If the source video has a narrower aspect ratio than our default player, adjust the player width to snugly fit the content
-      if (videoWidth / videoHeight > this.sourceVideoAspectRatio) {
-        const videoContainerWidthPerc = this.sourceVideoAspectRatio / (videoWidth / videoHeight);
-        this.videoContainerWidth = (videoContainerWidthPerc * 100).toFixed(2) + "%";
+      if (videoPlayerWidth / videoPlayerHeight > this.sourceVideoAspectRatio) {
+        const videoContainerHeightPerc = (videoPlayerWidth / videoPlayerHeight) / this.sourceVideoAspectRatio;
+        this.videoContainerHeight = (videoContainerHeightPerc * videoPlayerHeight).toFixed(2) + "px";
       }
 
       this.ref.detectChanges();
-    } else if (videoHeight === 0 && retries > 0) {
+    } else if (videoPlayerHeight === 0 && retries > 0) {
       setTimeout(() => {
         this.setVideoControllerHeight(retries - 1);
       }, 100);

@@ -331,7 +331,7 @@
               <div
                 *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && videoURL"
                 class="feed-post__video-container"
-                [ngStyle]="{ width: videoContainerWidth }"
+                [ngStyle]="{ height: videoContainerHeight }"
                 [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
                 #videoContainer
               >
