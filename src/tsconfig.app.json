@@ -6,10 +6,10 @@
   },
   "files": [
     "main.ts",
-    "polyfills.ts",
-    "lib/services/stream/stream.d.ts"
+    "polyfills.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "**/*.d.ts",
   ]
 }
