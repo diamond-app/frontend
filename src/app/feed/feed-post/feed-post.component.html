@@ -317,19 +317,32 @@
               />
             </div>
 
+            <div class="position-relative w-100" style="height: 0px">
+              <div
+                class="w-100 position-absolute mt-10px"
+                [ngStyle]="{ height: videoOverlayContainerHeight }"
+                *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && videoURL && !showVideoControls"
+                style="width: 100%; z-index: 3000; position: relative"
+                (click)="addVideoControls($event)"
+              ></div>
+            </div>
             <!-- Video -->
-            <div
-              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0]"
-              class="feed-post__video-container"
-              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
-            >
-              <iframe
-                [src]="postContent.VideoURLs[0] | sanitizeVideoUrl"
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                allowfullscreen
-                class="feed-post__video"
+            <div class="w-100 d-flex justify-content-center">
+              <div
+                *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && videoURL"
+                class="feed-post__video-container"
+                [ngStyle]="{ height: videoContainerHeight }"
+                [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+                #videoContainer
               >
-              </iframe>
+                <iframe
+                  [src]="videoURL | sanitizeVideoUrl"
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                  allowfullscreen
+                  class="feed-post__video"
+                ></iframe>
+              </div>
+
             </div>
 
             <!-- Embedded Content -->

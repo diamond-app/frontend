@@ -60,7 +60,11 @@ export class SignUpTransferDesoComponent implements OnInit {
     onHideEvent.subscribe(() => {
       this.showModal = true;
       this.modalReappear = true;
-      this.refreshBalance();
+      this.globalVars.updateEverything().add(() => {
+        if (this.globalVars.loggedInUser.BalanceNanos > 0) {
+          this.modalService.hide();
+        }
+      });
     });
   }
 }

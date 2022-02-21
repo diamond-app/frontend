@@ -84,7 +84,9 @@ export class SignUpComponent {
   setStep() {
     // If user has completed onboarding, redirect to follow feed
     if (!isNil(this.globalVars.loggedInUser?.ProfileEntryResponse?.Username)) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+      const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+      const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+      this.router.navigate([redirectPath], {
         queryParams: { feedTab: "Following" },
         queryParamsHandling: "merge",
       });
@@ -314,8 +316,10 @@ export class SignUpComponent {
                   this.processingTransactions = false;
                   this.globalVars.removeOnboardingSettings();
                   this.globalVars.updateEverything().add(() => {
+                    const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+                    const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
                     this.router
-                      .navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+                      .navigate([redirectPath], {
                         queryParams: { feedTab: "Following" },
                         queryParamsHandling: "merge",
                       })
@@ -363,6 +367,8 @@ export class SignUpComponent {
             : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
             this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO]);
+          } else {
+            this.backendApi.RemoveStorage("signUpRedirect");
           }
         });
     });

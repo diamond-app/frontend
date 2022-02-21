@@ -84,6 +84,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
         toastClass: "info-toast",
         enableHtml: true,
         positionClass: "toast-bottom-center",
+        disableTimeOut: "extendedTimeOut",
       }
     );
   }

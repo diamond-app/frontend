@@ -141,7 +141,7 @@
         [post]="post"
         [postHashHex]="postHashHex"
         [selectedSerialNumber]="selectedSerialNumber"
-        (closeModal)="closeModal.emit()"
+        (closeModal)="closeModal.emit($event)"
         (goBack)="goBackToSerialSelection()"
       ></buy-now-confirmation>
     </div>

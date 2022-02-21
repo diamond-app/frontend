@@ -1117,7 +1117,7 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
-    } else {
+    } else if (this.router.url === RouteNames.LANDING) {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
   }
@@ -1243,6 +1243,9 @@ export class GlobalVarsService {
     }
     if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
       return "messages-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.NFT)) {
+      return "nft-post-page";
     }
     return "app-page";
   }

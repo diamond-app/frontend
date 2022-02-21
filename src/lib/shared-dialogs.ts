@@ -2,6 +2,7 @@ import RouteNamesService from "../app/route-names.service";
 import { SwalHelper } from "./helpers/swal-helper";
 import { GlobalVarsService } from "../app/global-vars.service";
 import { Router } from "@angular/router";
+import { isNil } from "lodash";
 
 const RouteNames = RouteNamesService;
 export class SharedDialogs {
@@ -51,12 +52,16 @@ export class SharedDialogs {
     });
   }
 
-  static showCreateProfileToPerformActionDialog(router: Router, action: string) {
+  static showCreateProfileToPerformActionDialog(router: Router, action: string, globalVarsService: GlobalVarsService) {
+    const hasUser = !isNil(globalVarsService.loggedInUser);
+    const title = hasUser ? `Complete your profile to ${action}` : `Create a wallet to ${action}`;
+    const html = hasUser ? `You can be whoever you want to be.` : "";
+    const confirmButtonText = hasUser ? "Complete Your Profile" : "Create Your Wallet";
     SwalHelper.fire({
       target: GlobalVarsService.getTargetComponentSelectorFromRouter(router),
       icon: "info",
-      title: `Complete your profile to ${action}`,
-      html: `You can be whoever you want to be.`,
+      title,
+      html,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
@@ -64,12 +69,16 @@ export class SharedDialogs {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: "Complete Your Profile",
+      confirmButtonText,
       cancelButtonText: "Nevermind",
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        router.navigate(["/" + RouteNames.UPDATE_PROFILE], { queryParamsHandling: "merge" });
+        if (hasUser) {
+          router.navigate(["/" + RouteNames.UPDATE_PROFILE], { queryParamsHandling: "merge" });
+        } else {
+          globalVarsService.launchSignupFlow();
+        }
       }
     });
   }

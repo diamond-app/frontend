@@ -11,7 +11,10 @@
       {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos, 9) }} $DESO
     </div>
 
-    <button class="primary-button mt-15px" (click)="buyMoreDeSoClicked.emit()">{{ 'buy_deso.buy_more_deso' | transloco }}</button>
+    <div class="d-flex align-items-center mt-15px">
+      <button class="primary-button" (click)="buyMoreDeSoClicked.emit()">{{ 'buy_deso.buy_more_deso' | transloco }}</button>
+      <span class="fs-15px ml-30px cursor-pointer fc-secondary" (click)="close()">Done</span>
+    </div>
 
   </div>
 </div>

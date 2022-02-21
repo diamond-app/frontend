@@ -8,6 +8,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 })
 export class BuyDeSoCompleteComponent implements OnInit {
   @Output() buyMoreDeSoClicked = new EventEmitter();
+  @Output() closeModal = new EventEmitter();
 
   globalVars: GlobalVarsService;
 
@@ -19,6 +20,10 @@ export class BuyDeSoCompleteComponent implements OnInit {
 
   triggerBuyMoreDeSo() {
     this.buyMoreDeSoClicked.emit();
+  }
+
+  close(): void {
+    this.closeModal.emit();
   }
 
   ngOnInit() {

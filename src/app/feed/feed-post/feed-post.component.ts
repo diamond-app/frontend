@@ -1,6 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef
+} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -20,6 +29,9 @@ import { ToastrService } from "ngx-toastr";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { TranslocoService } from "@ngneat/transloco";
+import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "feed-post",
@@ -73,7 +85,8 @@ export class FeedPostComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private toastr: ToastrService,
     private followService: FollowService,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private streamService: CloudflareStreamService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -85,6 +98,9 @@ export class FeedPostComponent implements OnInit {
   //   - https://stackoverflow.com/questions/7150652/regex-valid-twitter-mention/8975426
   //   - https://github.com/regexhq/mentions-regex
   static MENTIONS_REGEX = /\B\@([\w\-]+)/gim;
+
+  // The max video duration in seconds that will trigger an auto-play, muted, looped, no-visible control video
+  static AUTOPLAY_LOOP_SEC_THRESHOLD = 12;
 
   @Input() isNFTListSummary = false;
   @Input() showIconRow = true;
@@ -156,6 +172,9 @@ export class FeedPostComponent implements OnInit {
   // emits diamondSent event
   @Output() diamondSent = new EventEmitter();
 
+  @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
+  @ViewChild("videoContainer") videoContainerDiv: ElementRef;
+
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
   repost: any;
@@ -179,6 +198,13 @@ export class FeedPostComponent implements OnInit {
   decryptableNFTEntryResponses: NFTEntryResponse[];
   isFollowing: boolean;
   showReadMoreRollup = false;
+  videoURL: string;
+  showVideoControls = false;
+  // Height of video window, used for overlay to be clicked on to disable autoplay, enable controls and volume
+  videoOverlayContainerHeight = "0px";
+  // Height of the video container window. Will expand when short videos have a narrow aspect ratio.
+  videoContainerHeight = "100%";
+  sourceVideoAspectRatio: number;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -255,6 +281,7 @@ export class FeedPostComponent implements OnInit {
       this.post.RepostCount = 0;
     }
     this.setEmbedURLForPostContent();
+    this.setURLForVideoContent();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
@@ -603,6 +630,60 @@ export class FeedPostComponent implements OnInit {
     ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
+  setURLForVideoContent(): void {
+    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
+      const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
+      if (videoId != "") {
+        this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe((res) => {
+          if (res?.Duration && _.isNumber(res?.Duration)) {
+            this.videoURL =
+              res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD
+                ? this.postContent.VideoURLs[0]
+                : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+            if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
+              this.sourceVideoAspectRatio = res.Dimensions.width / res.Dimensions.height;
+            }
+            this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
+            this.ref.detectChanges();
+            this.setVideoControllerHeight(20);
+          }
+        });
+      }
+    }
+  }
+
+  // Check to see if video is loaded. If it is, set the video container height to the same size as the video;
+  setVideoControllerHeight(retries: number) {
+    const videoPlayerHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
+    const videoPlayerWidth = this.videoContainerDiv?.nativeElement?.offsetWidth;
+    if (videoPlayerHeight > 0) {
+      // If the source video has a narrower aspect ratio than our default player, adjust the player width to snugly fit the content
+      if (videoPlayerWidth / videoPlayerHeight > this.sourceVideoAspectRatio) {
+        const videoContainerHeightPerc = (videoPlayerWidth / videoPlayerHeight) / this.sourceVideoAspectRatio;
+        this.videoContainerHeight = (videoContainerHeightPerc * videoPlayerHeight).toFixed(2) + "px";
+        this.videoOverlayContainerHeight = this.videoContainerHeight;
+      } else {
+        // Set height of overlay
+        this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
+      }
+
+      this.ref.detectChanges();
+    } else if (videoPlayerHeight === 0 && retries > 0) {
+      setTimeout(() => {
+        this.setVideoControllerHeight(retries - 1);
+      }, 100);
+    }
+  }
+
+  addVideoControls(event): void {
+    event.stopPropagation();
+    if (this.videoURL) {
+      this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=true";
+      this.showVideoControls = true;
+      this.ref.detectChanges();
+    }
+  }
+
   getEmbedHeight(): number {
     return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
@@ -653,7 +734,13 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
+      if (_.isNil(this.globalVars.loggedInUser)) {
+        this.backendApi.SetStorage(
+          "signUpRedirect",
+          `/${this.globalVars.RouteNames.NFT}/${this.postContent.PostHashHex}`
+        );
+      }
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "buy this NFT", this.globalVars);
       return;
     }
     event.stopPropagation();
@@ -664,7 +751,11 @@ export class FeedPostComponent implements OnInit {
       });
       const onHideEvent = modalDetails.onHide;
       onHideEvent.subscribe((response) => {
-        if (response === "bid placed" || response === "nft purchased") {
+        if (response === "bid placed") {
+          this.getNFTEntries();
+          this.nftBidPlaced.emit();
+        } else if (response === "nft purchased") {
+          this.showAfterPurchaseModal();
           this.getNFTEntries();
           this.nftBidPlaced.emit();
         }
@@ -685,6 +776,37 @@ export class FeedPostComponent implements OnInit {
     setTimeout(() => {
       this.ref.detectChanges();
     }, 50);
+  }
+
+  showAfterPurchaseModal(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "NFT Purchased",
+      html: "",
+      showDenyButton: true,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light no",
+        denyButton: "btn btn-light",
+      },
+      confirmButtonText: "See Your Gallery",
+      denyButtonText: "Leave a Comment",
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.router.navigate(
+          ["/" + this.globalVars.RouteNames.USER_PREFIX + "/" + this.globalVars.loggedInUser.ProfileEntryResponse.Username],
+          {
+            queryParams: {
+              nftTab: "my_gallery",
+              tab: "nfts",
+            },
+            queryParamsHandling: "merge",
+          }
+        );
+      } else if (res.isDenied) {
+        this.childFeedPostIconRowComponent.openModal(null, false);
+      }
+    });
   }
 
   showUnlockableText() {

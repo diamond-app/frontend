@@ -110,10 +110,7 @@ export class CreatorProfileNftsComponent implements OnInit {
 
     if (!this.activeTab) {
       this.isLoading = true;
-      let defaultTab = this.profileBelongsToLoggedInUser()
-        ? CreatorProfileNftsComponent.MY_BIDS
-        : CreatorProfileNftsComponent.MY_GALLERY;
-      this.onActiveTabChange(defaultTab);
+      this.onActiveTabChange(CreatorProfileNftsComponent.MY_GALLERY);
     }
   }
 
