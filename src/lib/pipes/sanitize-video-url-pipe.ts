@@ -13,8 +13,8 @@ export class SanitizeVideoUrlPipe implements PipeTransform {
     } catch (err) {
       return false;
     }
-    // On this node, we also validate that it matches the expect video URL format
-    const regExp = /^https:\/\/iframe\.videodelivery\.net\/[A-Za-z0-9]+$/;
+    // On this node, we also validate that it matches the expect video URL format, including optional query params
+    const regExp = /^https:\/\/iframe\.videodelivery\.net\/[A-Za-z0-9]+[A-Za-z0-9]+(\?([A-Za-z0-9]+\=[A-Za-z0-9]+\&?)*)?$/;
     const match = videoURL.match(regExp);
     return match && match[0] && this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }

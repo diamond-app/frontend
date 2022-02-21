@@ -1,4 +1,13 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef
+} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
@@ -21,6 +30,8 @@ import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/trans
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { TranslocoService } from "@ngneat/transloco";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "feed-post",
@@ -74,7 +85,8 @@ export class FeedPostComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private toastr: ToastrService,
     private followService: FollowService,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private streamService: CloudflareStreamService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -86,6 +98,9 @@ export class FeedPostComponent implements OnInit {
   //   - https://stackoverflow.com/questions/7150652/regex-valid-twitter-mention/8975426
   //   - https://github.com/regexhq/mentions-regex
   static MENTIONS_REGEX = /\B\@([\w\-]+)/gim;
+
+  // The max video duration in seconds that will trigger an auto-play, muted, looped, no-visible control video
+  static AUTOPLAY_LOOP_SEC_THRESHOLD = 10;
 
   @Input() isNFTListSummary = false;
   @Input() showIconRow = true;
@@ -158,6 +173,7 @@ export class FeedPostComponent implements OnInit {
   @Output() diamondSent = new EventEmitter();
 
   @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
+  @ViewChild("videoContainer") videoContainerDiv: ElementRef;
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
@@ -182,6 +198,9 @@ export class FeedPostComponent implements OnInit {
   decryptableNFTEntryResponses: NFTEntryResponse[];
   isFollowing: boolean;
   showReadMoreRollup = false;
+  videoURL: string;
+  showVideoControls = false;
+  videoContainerHeight = "30px";
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -258,6 +277,7 @@ export class FeedPostComponent implements OnInit {
       this.post.RepostCount = 0;
     }
     this.setEmbedURLForPostContent();
+    this.setURLForVideoContent();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
@@ -604,6 +624,46 @@ export class FeedPostComponent implements OnInit {
       this.globalVars,
       this.postContent.PostExtraData["EmbedVideoURL"]
     ).subscribe((res) => (this.constructedEmbedURL = res));
+  }
+
+  setURLForVideoContent(): void {
+    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
+      const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
+      if (videoId != "") {
+        this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe((res) => {
+          if (res?.Duration && _.isNumber(res?.Duration)) {
+            this.videoURL =
+              res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD
+                ? this.postContent.VideoURLs[0]
+                : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+            this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
+            this.ref.detectChanges();
+            this.setVideoControllerHeight(20);
+          }
+        });
+      }
+    }
+  }
+
+  // Check to see if video is loaded. If it is, set the video container height to the same size as the video;
+  setVideoControllerHeight(retries: number) {
+    const videoHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
+    if (videoHeight > 0) {
+      this.videoContainerHeight = `${videoHeight}px`;
+      this.ref.detectChanges();
+    } else if (videoHeight === 0 && retries > 0) {
+      setTimeout(() => {
+        this.setVideoControllerHeight(retries - 1);
+      }, 100);
+    }
+  }
+
+  addVideoControls(): void {
+    if (this.videoURL) {
+      this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=true";
+      this.showVideoControls = true;
+      this.ref.detectChanges();
+    }
   }
 
   getEmbedHeight(): number {
