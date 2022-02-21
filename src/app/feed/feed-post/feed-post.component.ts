@@ -676,7 +676,6 @@ export class FeedPostComponent implements OnInit {
 
       player.addEventListener("canplay", () => {
         player.addEventListener("play", () => {
-          console.log("Playing");
           if (!this.videoAutoPlaying) {
             this.videoAutoPlaying = true;
           }
@@ -692,13 +691,6 @@ export class FeedPostComponent implements OnInit {
           }
         }, 300);
       });
-
-      console.log("Player: ", player);
-
-      setTimeout(() => {
-        console.log(player.paused);
-
-      }, 500);
 
       this.ref.detectChanges();
     } else if (videoPlayerHeight === 0 && retries > 0) {
