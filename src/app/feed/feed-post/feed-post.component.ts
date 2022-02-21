@@ -100,7 +100,7 @@ export class FeedPostComponent implements OnInit {
   static MENTIONS_REGEX = /\B\@([\w\-]+)/gim;
 
   // The max video duration in seconds that will trigger an auto-play, muted, looped, no-visible control video
-  static AUTOPLAY_LOOP_SEC_THRESHOLD = 10;
+  static AUTOPLAY_LOOP_SEC_THRESHOLD = 12;
 
   @Input() isNFTListSummary = false;
   @Input() showIconRow = true;
