@@ -672,22 +672,33 @@ export class FeedPostComponent implements OnInit {
       // Create a player object. If autoplay doesn't immediately occur, add controls to the video
       // (This happens in Safari on iOS during low-power mode)
       const player = Stream(this.videoIFrame.nativeElement);
-      player.addEventListener("play", () => {
-        if (!this.videoAutoPlaying) {
-          this.videoAutoPlaying = true;
-        }
+
+
+      player.addEventListener("canplay", () => {
+        player.addEventListener("play", () => {
+          console.log("Playing");
+          if (!this.videoAutoPlaying) {
+            this.videoAutoPlaying = true;
+          }
+        });
+        setTimeout(() => {
+          // If after a delay the video hasn't started autoplaying, we can assume that the browser is blocking autoplay.
+          // In this instance, we should show video controls to the user.
+          if (!this.videoAutoPlaying) {
+            player.controls = true;
+            this.videoAutoPlaying = true;
+            this.showVideoControls = true;
+            this.ref.detectChanges();
+          }
+        }, 300);
       });
 
+      console.log("Player: ", player);
+
       setTimeout(() => {
-        // If after 50 ms the video hasn't started autoplaying, we can assume that the browser is blocking autoplay.
-        // In this instance, we should show video controls to the user.
-        if (!this.videoAutoPlaying) {
-          player.controls = true;
-          this.videoAutoPlaying = true;
-          this.showVideoControls = true;
-          this.ref.detectChanges();
-        }
-      }, 50);
+        console.log(player.paused);
+
+      }, 500);
 
       this.ref.detectChanges();
     } else if (videoPlayerHeight === 0 && retries > 0) {
