@@ -675,12 +675,13 @@ export class FeedPostComponent implements OnInit {
         if (!this.videoAutoPlaying) {
           player.controls = true;
           this.showVideoControls = true;
+          this.videoAutoPlaying = true;
         }
       });
 
       setTimeout(() => {
         this.videoAutoPlaying = true;
-      }, 10);
+      }, 100);
 
       this.ref.detectChanges();
     } else if (videoPlayerHeight === 0 && retries > 0) {
