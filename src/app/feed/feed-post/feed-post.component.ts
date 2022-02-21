@@ -200,7 +200,10 @@ export class FeedPostComponent implements OnInit {
   showReadMoreRollup = false;
   videoURL: string;
   showVideoControls = false;
-  videoContainerHeight = "30px";
+  // Height of video window, used for overlay to be clicked on to disable autoplay, enable controls and volume
+  videoOverlayContainerHeight = "0px";
+  videoContainerWidth = "100%";
+  sourceVideoAspectRatio: number;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -636,6 +639,9 @@ export class FeedPostComponent implements OnInit {
               res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD
                 ? this.postContent.VideoURLs[0]
                 : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+            if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
+              this.sourceVideoAspectRatio = res.Dimensions.width / res.Dimensions.height;
+            }
             this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
             this.ref.detectChanges();
             this.setVideoControllerHeight(20);
@@ -648,8 +654,16 @@ export class FeedPostComponent implements OnInit {
   // Check to see if video is loaded. If it is, set the video container height to the same size as the video;
   setVideoControllerHeight(retries: number) {
     const videoHeight = this.videoContainerDiv?.nativeElement?.offsetHeight;
+    const videoWidth = this.videoContainerDiv?.nativeElement?.offsetWidth;
     if (videoHeight > 0) {
-      this.videoContainerHeight = `${videoHeight}px`;
+      // Set height of overlay
+      this.videoOverlayContainerHeight = `${videoHeight}px`;
+      // If the source video has a narrower aspect ratio than our default player, adjust the player width to snugly fit the content
+      if (videoWidth / videoHeight > this.sourceVideoAspectRatio) {
+        const videoContainerWidthPerc = this.sourceVideoAspectRatio / (videoWidth / videoHeight);
+        this.videoContainerWidth = (videoContainerWidthPerc * 100).toFixed(2) + "%";
+      }
+
       this.ref.detectChanges();
     } else if (videoHeight === 0 && retries > 0) {
       setTimeout(() => {
@@ -658,7 +672,8 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
-  addVideoControls(): void {
+  addVideoControls(event): void {
+    event.stopPropagation();
     if (this.videoURL) {
       this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=true";
       this.showVideoControls = true;
