@@ -40,7 +40,8 @@
             ],
             "scripts": [
               "./node_modules/intro.js/intro.js",
-              "./node_modules/aos/dist/aos.js"
+              "./node_modules/aos/dist/aos.js",
+              "./src/lib/services/stream/cloudflare-stream-embedded.js"
             ]
           },
           "configurations": {

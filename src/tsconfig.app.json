@@ -6,7 +6,8 @@
   },
   "files": [
     "main.ts",
-    "polyfills.ts"
+    "polyfills.ts",
+    "lib/services/stream/stream.d.ts"
   ],
   "include": [
     "src/**/*.d.ts"

@@ -317,9 +317,9 @@
               />
             </div>
 
-            <div class="position-relative w-100" style="height: 0px">
+            <div class="position-relative w-100 z-1" style="height: 0px">
               <div
-                class="w-100 position-absolute mt-10px"
+                class="w-100 position-absolute mt-10px z-2"
                 [ngStyle]="{ height: videoOverlayContainerHeight }"
                 *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && videoURL && !showVideoControls"
                 style="width: 100%; z-index: 3000; position: relative"
@@ -340,9 +340,10 @@
                   allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
                   allowfullscreen
                   class="feed-post__video"
+                  id="videoIframe"
+                  #videoIframe
                 ></iframe>
               </div>
-
             </div>
 
             <!-- Embedded Content -->
