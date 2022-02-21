@@ -6,7 +6,7 @@ import {
   EventEmitter,
   ChangeDetectorRef,
   ViewChild,
-  ElementRef
+  ElementRef,
 } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
@@ -174,6 +174,7 @@ export class FeedPostComponent implements OnInit {
 
   @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
   @ViewChild("videoContainer") videoContainerDiv: ElementRef;
+  @ViewChild("videoIframe") videoIFrame: ElementRef;
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
@@ -205,6 +206,7 @@ export class FeedPostComponent implements OnInit {
   // Height of the video container window. Will expand when short videos have a narrow aspect ratio.
   videoContainerHeight = "100%";
   sourceVideoAspectRatio: number;
+  videoAutoPlaying = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -666,6 +668,29 @@ export class FeedPostComponent implements OnInit {
         // Set height of overlay
         this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
       }
+
+      // Create a player object. If autoplay doesn't immediately occur, add controls to the video
+      // (This happens in Safari on iOS during low-power mode)
+      const player = Stream(this.videoIFrame.nativeElement);
+
+
+      player.addEventListener("canplay", () => {
+        player.addEventListener("play", () => {
+          if (!this.videoAutoPlaying) {
+            this.videoAutoPlaying = true;
+          }
+        });
+        setTimeout(() => {
+          // If after a delay the video hasn't started autoplaying, we can assume that the browser is blocking autoplay.
+          // In this instance, we should show video controls to the user.
+          if (!this.videoAutoPlaying) {
+            player.controls = true;
+            this.videoAutoPlaying = true;
+            this.showVideoControls = true;
+            this.ref.detectChanges();
+          }
+        }, 300);
+      });
 
       this.ref.detectChanges();
     } else if (videoPlayerHeight === 0 && retries > 0) {
