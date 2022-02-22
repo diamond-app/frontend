@@ -240,7 +240,9 @@
         [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
         [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
         [acceptNFT]="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS"
+        [videoPaused]="pauseVideos"
         (userBlocked)="userBlocked()"
+        (pauseAllVideos)="pauseAllVideos($event)"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
         <div class="d-flex align-items-center justify-content-between creator-profile__bid-details">

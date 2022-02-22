@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output, QueryList,
+  ViewChild, ViewChildren
+} from "@angular/core";
 import {
   BackendApiService,
   NFTBidEntryResponse,
@@ -14,6 +23,7 @@ import * as _ from "lodash";
 import { InfiniteScroller } from "../../infinite-scroller";
 import { of, Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -29,6 +39,8 @@ export class CreatorProfileNftsComponent implements OnInit {
   @Input() profile: ProfileEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
+
+  @ViewChildren("feedPost") feedPosts: QueryList<FeedPostComponent>;
 
   nftResponse: { NFTEntryResponses: NFTEntryResponse[]; PostEntryResponse: PostEntryResponse }[];
   myBids: NFTBidEntryResponse[];
@@ -73,6 +85,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   };
   cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
+  pauseVideos = false;
 
   @Output() blockUser = new EventEmitter();
 
@@ -223,6 +236,10 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   userBlocked() {
     this.blockUser.emit();
+  }
+
+  pauseAllVideos(isPaused) {
+    this.pauseVideos = isPaused;
   }
 
   profileBelongsToLoggedInUser(): boolean {

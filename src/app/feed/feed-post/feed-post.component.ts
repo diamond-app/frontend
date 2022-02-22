@@ -76,6 +76,14 @@ export class FeedPostComponent implements OnInit {
     return this._blocked;
   }
 
+  @Input() set videoPaused(value: boolean) {
+    if (value) {
+      this.pauseVideo();
+    } else {
+      this.resumeVideo();
+    }
+  }
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -172,6 +180,9 @@ export class FeedPostComponent implements OnInit {
   // emits diamondSent event
   @Output() diamondSent = new EventEmitter();
 
+  // tells parent component to pause all videos while transaction is going on
+  @Output() pauseAllVideos = new EventEmitter();
+
   @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
   @ViewChild("videoContainer") videoContainerDiv: ElementRef;
   @ViewChild("videoIframe") videoIFrame: ElementRef;
@@ -207,6 +218,8 @@ export class FeedPostComponent implements OnInit {
   videoContainerHeight = "100%";
   sourceVideoAspectRatio: number;
   videoAutoPlaying = false;
+  // If the user is buying an NFT, pause all videos. Track it here so that once the buy is complete we can resume the autoplay
+  videoTemporarilyPaused = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -709,6 +722,33 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
+  emitPause(isPaused: boolean) {
+    if (isPaused) {
+      this.pauseVideo();
+    } else {
+      this.resumeVideo();
+    }
+    this.pauseAllVideos.emit(isPaused);
+  }
+
+  resumeVideo(): void {
+    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0 && this.videoTemporarilyPaused) {
+      this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+      this.showVideoControls = false;
+      this.ref.detectChanges();
+    }
+  }
+
+  pauseVideo(): void {
+    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
+      // Remove autoplay and looping from video URLs
+      this.videoURL = this.postContent.VideoURLs[0];
+      // If this is a short video where we want autoplay, log that it's temporarily paused so that we can resume after.
+      this.videoTemporarilyPaused = !this.showVideoControls;
+      this.ref.detectChanges();
+    }
+  }
+
   getEmbedHeight(): number {
     return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
@@ -784,6 +824,7 @@ export class FeedPostComponent implements OnInit {
           this.getNFTEntries();
           this.nftBidPlaced.emit();
         }
+        this.emitPause(false);
       });
     } else {
       this.router.navigate(["/" + RouteNames.BID_NFT + "/" + this.postContent.PostHashHex], {
@@ -794,6 +835,7 @@ export class FeedPostComponent implements OnInit {
         },
       });
     }
+    this.emitPause(true);
   }
 
   showUnlockableContent = false;

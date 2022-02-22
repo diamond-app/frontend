@@ -25,7 +25,9 @@
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
         [cardStyle]="true"
         [showNFTDetails]="true"
+        [videoPaused]="pauseVideos"
         (userBlocked)="userBlocked()"
+        (pauseAllVideos)="pauseAllVideos($event)"
       ></feed-post>
     </div>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
