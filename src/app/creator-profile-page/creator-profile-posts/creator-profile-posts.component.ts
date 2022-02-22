@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component, ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output, QueryList,
+  ViewChild,
+  ViewChildren
+} from "@angular/core";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -6,6 +15,7 @@ import { Location } from "@angular/common";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import * as _ from "lodash";
+import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 
 @Component({
   selector: "creator-profile-posts",
@@ -21,6 +31,8 @@ export class CreatorProfilePostsComponent {
   @Input() profile: ProfileEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
+
+  @ViewChildren("feedPost") feedPosts: QueryList<FeedPostComponent>;
 
   lastPage = null;
   loadingFirstPage = true;
@@ -97,6 +109,12 @@ export class CreatorProfilePostsComponent {
 
   userBlocked() {
     this.blockUser.emit();
+  }
+
+  pauseAllVideos() {
+    this.feedPosts.forEach((feedPost) => {
+      feedPost.pauseVideo();
+    });
   }
 
   profileBelongsToLoggedInUser(): boolean {

@@ -26,6 +26,8 @@
         [cardStyle]="true"
         [showNFTDetails]="true"
         (userBlocked)="userBlocked()"
+        (pauseAllVideos)="pauseAllVideos()"
+        #feedPost
       ></feed-post>
     </div>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
