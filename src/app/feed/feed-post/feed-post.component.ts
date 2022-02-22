@@ -732,9 +732,7 @@ export class FeedPostComponent implements OnInit {
   }
 
   resumeVideo(): void {
-    console.log("Resuming video")
     if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0 && this.videoTemporarilyPaused) {
-      console.log("Changing url");
       this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
       this.showVideoControls = false;
       this.ref.detectChanges();

@@ -122,10 +122,10 @@
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
           [cardStyle]="true"
           [showNFTDetails]="true"
+          [videoPaused]="pauseVideos"
           (postDeleted)="onPostHidden($event)"
           (userBlocked)="userBlocked()"
           (pauseAllVideos)="pauseAllVideos($event)"
-          #feedPost}
         ></feed-post>
       </div>
     </div>

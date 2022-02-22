@@ -78,6 +78,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   userReferral = null;
 
+  pauseVideos = false;
+
   referralExpiration = new Date("2021-10-25T22:00:00.000Z");
 
   // This is [Following, Global, Market] if the user is following anybody. Otherwise,
@@ -277,14 +279,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   pauseAllVideos(isPaused) {
-    this.feedPosts.forEach((feedPost) => {
-      if (isPaused) {
-        feedPost.pauseVideo();
-      } else {
-        feedPost.resumeVideo();
-      }
-    });
+    this.pauseVideos = isPaused;
   }
+
 
   appendCommentAfterParentPost(postEntryResponse) {
     FeedComponent.appendCommentAfterParentPost(this.postsToShow(), postEntryResponse);

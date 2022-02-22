@@ -85,6 +85,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   };
   cardView = true;
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
+  pauseVideos = false;
 
   @Output() blockUser = new EventEmitter();
 
@@ -238,13 +239,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   pauseAllVideos(isPaused) {
-    this.feedPosts.forEach((feedPost) => {
-      if (isPaused) {
-        feedPost.pauseVideo();
-      } else {
-        feedPost.resumeVideo();
-      }
-    });
+    this.pauseVideos = isPaused;
   }
 
   profileBelongsToLoggedInUser(): boolean {
