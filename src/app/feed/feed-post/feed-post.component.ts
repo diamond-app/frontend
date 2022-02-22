@@ -693,7 +693,6 @@ export class FeedPostComponent implements OnInit {
 
       // If autoplay doesn't immediately occur, add controls to the video
       // (This happens in Safari on iOS during low-power mode)
-      // const player = Stream(this.videoIFrame.nativeElement);
 
       this.streamPlayer.addEventListener("canplay", () => {
         this.streamPlayer.addEventListener("play", () => {
