@@ -32,11 +32,10 @@ export class CreatorProfilePostsComponent {
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
-  @ViewChildren("feedPost") feedPosts: QueryList<FeedPostComponent>;
-
   lastPage = null;
   loadingFirstPage = true;
   loadingNextPage = false;
+  pauseVideos = false;
 
   pagedKeys = {
     0: "",
@@ -111,10 +110,8 @@ export class CreatorProfilePostsComponent {
     this.blockUser.emit();
   }
 
-  pauseAllVideos() {
-    this.feedPosts.forEach((feedPost) => {
-      feedPost.pauseVideo();
-    });
+  pauseAllVideos(isPaused) {
+    this.pauseVideos = isPaused;
   }
 
   profileBelongsToLoggedInUser(): boolean {

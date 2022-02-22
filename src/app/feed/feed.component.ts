@@ -1,4 +1,13 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, AfterViewChecked } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  ChangeDetectorRef,
+  AfterViewChecked,
+  ViewChildren,
+  QueryList
+} from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -9,6 +18,7 @@ import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 import { environment } from "src/environments/environment";
+import { FeedPostComponent } from "./feed-post/feed-post.component";
 
 @Component({
   selector: "feed",
@@ -27,6 +37,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @Input() activeTab: string;
   @Input() isMobile = false;
+
+  @ViewChildren("feedPost") feedPosts: QueryList<FeedPostComponent>;
 
   loggedInUserSubscription: Subscription;
   followChangeSubscription: Subscription;
@@ -262,6 +274,16 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   userBlocked() {
     this.cdr.detectChanges();
+  }
+
+  pauseAllVideos(isPaused) {
+    this.feedPosts.forEach((feedPost) => {
+      if (isPaused) {
+        feedPost.pauseVideo();
+      } else {
+        feedPost.resumeVideo();
+      }
+    });
   }
 
   appendCommentAfterParentPost(postEntryResponse) {
