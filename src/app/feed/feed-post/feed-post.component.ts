@@ -286,6 +286,8 @@ export class FeedPostComponent implements OnInit {
           if (nftEntryResponse.BuyNowPriceNanos > 0 && nftEntryResponse.IsBuyNow) {
             this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
+        } else if (this.nftEntryResponses.length > 1) {
+          this.nftBuyNowPriceNanos = _.minBy(this.availableSerialNumbers, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
         }
         this.ref.detectChanges();
       });
