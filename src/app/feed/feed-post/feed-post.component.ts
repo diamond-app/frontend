@@ -32,6 +32,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { environment } from "../../../environments/environment";
+import { filter } from "lodash";
 
 @Component({
   selector: "feed-post",
@@ -220,6 +221,7 @@ export class FeedPostComponent implements OnInit {
   videoAutoPlaying = false;
   // If the user is buying an NFT, pause all videos. Track it here so that once the buy is complete we can resume the autoplay
   videoTemporarilyPaused = false;
+  streamPlayer: any;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -287,7 +289,10 @@ export class FeedPostComponent implements OnInit {
             this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
         } else if (this.nftEntryResponses.length > 1) {
-          this.nftBuyNowPriceNanos = _.minBy(this.availableSerialNumbers, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
+          const buyNowNFTs = filter(this.availableSerialNumbers, (SN) => SN.BuyNowPriceNanos > 0);
+          if (buyNowNFTs.length > 0) {
+            this.nftBuyNowPriceNanos = _.minBy(buyNowNFTs, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
+          }
         }
         this.ref.detectChanges();
       });
@@ -662,11 +667,17 @@ export class FeedPostComponent implements OnInit {
             }
             this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
             this.ref.detectChanges();
+            this.initializeStream();
             this.setVideoControllerHeight(20);
           }
         });
       }
     }
+  }
+
+  // Create a player object for the video.
+  initializeStream() {
+    this.streamPlayer = Stream(this.videoIFrame.nativeElement);
   }
 
   // Check to see if video is loaded. If it is, set the video container height to the same size as the video;
@@ -684,13 +695,11 @@ export class FeedPostComponent implements OnInit {
         this.videoOverlayContainerHeight = `${videoPlayerHeight}px`;
       }
 
-      // Create a player object. If autoplay doesn't immediately occur, add controls to the video
+      // If autoplay doesn't immediately occur, add controls to the video
       // (This happens in Safari on iOS during low-power mode)
-      const player = Stream(this.videoIFrame.nativeElement);
 
-
-      player.addEventListener("canplay", () => {
-        player.addEventListener("play", () => {
+      this.streamPlayer.addEventListener("canplay", () => {
+        this.streamPlayer.addEventListener("play", () => {
           if (!this.videoAutoPlaying) {
             this.videoAutoPlaying = true;
           }
@@ -699,7 +708,7 @@ export class FeedPostComponent implements OnInit {
           // If after a delay the video hasn't started autoplaying, we can assume that the browser is blocking autoplay.
           // In this instance, we should show video controls to the user.
           if (!this.videoAutoPlaying) {
-            player.controls = true;
+            this.streamPlayer.controls = true;
             this.videoAutoPlaying = true;
             this.showVideoControls = true;
             this.ref.detectChanges();
@@ -734,20 +743,20 @@ export class FeedPostComponent implements OnInit {
   }
 
   resumeVideo(): void {
-    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0 && this.videoTemporarilyPaused) {
-      this.videoURL = this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
-      this.showVideoControls = false;
-      this.ref.detectChanges();
+    if (
+      this.postContent.VideoURLs &&
+      this.postContent.VideoURLs.length > 0 &&
+      this.videoTemporarilyPaused &&
+      this.streamPlayer
+    ) {
+      this.streamPlayer.play();
     }
   }
 
   pauseVideo(): void {
-    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
-      // Remove autoplay and looping from video URLs
-      this.videoURL = this.postContent.VideoURLs[0];
-      // If this is a short video where we want autoplay, log that it's temporarily paused so that we can resume after.
+    if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0 && this.streamPlayer) {
       this.videoTemporarilyPaused = !this.showVideoControls;
-      this.ref.detectChanges();
+      this.streamPlayer.pause();
     }
   }
 
