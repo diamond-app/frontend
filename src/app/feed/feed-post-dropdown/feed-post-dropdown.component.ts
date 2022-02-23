@@ -34,6 +34,7 @@ export class FeedPostDropdownComponent implements OnInit{
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
+  @Output() pauseVideos = new EventEmitter();
 
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
@@ -296,14 +297,20 @@ export class FeedPostDropdownComponent implements OnInit{
   }
 
   openCreateNFTAuctionModal(event): void {
-    this.modalService.show(CreateNftAuctionModalComponent, {
+    const modalDetails = this.modalService.show(CreateNftAuctionModalComponent, {
       class: "modal-dialog-centered",
       initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
+    });
+    this.pauseVideos.emit(true);
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      this.pauseVideos.emit(false);
     });
   }
 
   openTransferNFTModal(event): void {
     if (!this.globalVars.isMobile()) {
+      this.pauseVideos.emit(true);
       const modalDetails = this.modalService.show(TransferNftModalComponent, {
         class: "modal-dialog-centered modal-lg",
         initialState: { post: this.post, postHashHex: this.post.PostHashHex },
@@ -313,6 +320,7 @@ export class FeedPostDropdownComponent implements OnInit{
         if (response === "nft transferred") {
           // emit something to feed-post component to refresh.
         }
+        this.pauseVideos.emit(false);
       });
     } else {
       this.router.navigate(["/" + RouteNames.TRANSFER_NFT + "/" + this.postContent.PostHashHex], {
@@ -326,6 +334,7 @@ export class FeedPostDropdownComponent implements OnInit{
   }
 
   openBurnNFTModal(event): void {
+    this.pauseVideos.emit(true);
     const burnNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
         !nftEntryResponse.IsForSale &&
@@ -339,6 +348,7 @@ export class FeedPostDropdownComponent implements OnInit{
       });
       const onHideEvent = modalDetails.onHide;
       onHideEvent.subscribe((response) => {
+        this.pauseVideos.emit(false);
         if (response === "nft burned") {
           // emit something to feed-post component to refresh.
         }

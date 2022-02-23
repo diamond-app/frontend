@@ -32,6 +32,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { environment } from "../../../environments/environment";
+import { filter } from "lodash";
 
 @Component({
   selector: "feed-post",
@@ -288,7 +289,10 @@ export class FeedPostComponent implements OnInit {
             this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
         } else if (this.nftEntryResponses.length > 1) {
-          this.nftBuyNowPriceNanos = _.minBy(this.availableSerialNumbers, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
+          const buyNowNFTs = filter(this.availableSerialNumbers, (SN) => SN.BuyNowPriceNanos > 0);
+          if (buyNowNFTs.length > 0) {
+            this.nftBuyNowPriceNanos = _.minBy(buyNowNFTs, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
+          }
         }
         this.ref.detectChanges();
       });

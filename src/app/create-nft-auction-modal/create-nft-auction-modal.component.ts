@@ -5,7 +5,7 @@ import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backe
 import { concatMap, last, map } from "rxjs/operators";
 import { of } from "rxjs";
 import { Router } from "@angular/router";
-import { isNumber } from "lodash";
+import { filter, isNumber } from "lodash";
 import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
@@ -105,7 +105,12 @@ export class CreateNftAuctionModalComponent implements OnInit {
   createAuction() {
     this.auctionTotal = this.selectedSerialNumbers.filter((res) => res).length;
     this.creatingAuction = true;
-    of(...this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)))
+    of(
+      ...filter(
+        this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)),
+        (index) => index >= 0
+      )
+    )
       .pipe(
         concatMap((val) => {
           if (val >= 0) {
@@ -135,8 +140,8 @@ export class CreateNftAuctionModalComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
           this.bsModalRef.hide();
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
         },
         (err) => {
           console.error(err);
