@@ -156,7 +156,8 @@ export class NotificationsListComponent implements OnInit {
   // out by frontend_server's TxnMetaIsNotification
   protected transformNotification(notification: any) {
     const txnMeta = notification.Metadata;
-    const userPublicKeyBase58Check = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    console.log("Txn meta: ", txnMeta);
+    const userPublicKeyBase58Check = this.globalVars.loggedInUser?.PublicKeyBase58Check;
 
     if (txnMeta == null) {
       return null;
