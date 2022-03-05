@@ -40,7 +40,17 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    this.updateBidSort(this.SN_FIELD);
+    if ("buyNow" in this.columns) {
+      this.sortByField = this.BUY_NOW_PRICE_FIELD;
+      this.sortByOrder = "asc";
+      this.sortedSerialNumbers = _.orderBy(
+        this.serialNumbers,
+        [this.BUY_NOW_PRICE_FIELD, this.SN_FIELD],
+        [this.sortByOrder, this.sortByOrder]
+      );
+    } else {
+      this.updateBidSort(this.SN_FIELD);
+    }
   }
 
   // Update data when serialNumbers input changes
