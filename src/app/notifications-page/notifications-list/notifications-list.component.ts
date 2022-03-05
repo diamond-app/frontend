@@ -543,6 +543,7 @@ export class NotificationsListComponent implements OnInit {
                 user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
               result.action = `${actorName} transferred an NFT to you`;
               result.actor = user.Profile;
+              result.post.ProfileEntryResponse = user.Profile;
               console.log("Here is the new actor", actor);
             }
           });

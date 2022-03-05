@@ -65,30 +65,30 @@
           </button>
         </div>
       </div>
-<!--      <div class="cursor-pointer" *ngIf="item.post && expandNotifications">-->
-<!--        <feed-post-->
-<!--          [post]="item.post"-->
-<!--          [includePaddingOnPost]="true"-->
-<!--          [showReplyingToContent]="!!item.parentPost"-->
-<!--          [parentPost]="item.parentPost"-->
-<!--          [contentShouldLinkToThread]="true"-->
-<!--          [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"-->
-<!--        ></feed-post>-->
-<!--        <div *ngFor="let comment of item.post.Comments">-->
-<!--          <div class="px-15px pb-15px post-thread__subcomment-container">-->
-<!--            <feed-post-->
-<!--              [includePaddingOnPost]="false"-->
-<!--              [post]="comment"-->
-<!--              [parentPost]="item.post"-->
-<!--              [contentShouldLinkToThread]="true"-->
-<!--              [showIconRow]="false"-->
-<!--              [showDropdown]="false"-->
-<!--              [showReplyToContent]="false"-->
-<!--              [isSubcomment]="true"-->
-<!--            ></feed-post>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
+        <feed-post
+          [post]="item.post"
+          [includePaddingOnPost]="true"
+          [showReplyingToContent]="!!item.parentPost"
+          [parentPost]="item.parentPost"
+          [contentShouldLinkToThread]="true"
+          [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
+        ></feed-post>
+        <div *ngFor="let comment of item.post.Comments">
+          <div class="px-15px pb-15px post-thread__subcomment-container">
+            <feed-post
+              [includePaddingOnPost]="false"
+              [post]="comment"
+              [parentPost]="item.post"
+              [contentShouldLinkToThread]="true"
+              [showIconRow]="false"
+              [showDropdown]="false"
+              [showReplyToContent]="false"
+              [isSubcomment]="true"
+            ></feed-post>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>

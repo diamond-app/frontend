@@ -21,7 +21,7 @@
     <div class="feed-post__avatar-container">
       <a
         class="feed-post__avatar"
-        [avatar]="postContent?.ProfileEntryResponse.PublicKeyBase58Check"
+        [avatar]="postContent?.ProfileEntryResponse?.PublicKeyBase58Check"
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
         queryParamsHandling="merge"
       ></a>
@@ -209,7 +209,7 @@
             <div class="feed-post__avatar-container">
               <a
                 class="feed-post__avatar"
-                [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                [avatar]="postContent.ProfileEntryResponse?.PublicKeyBase58Check"
                 [routerLink]="
                   inTutorial
                     ? []
@@ -265,7 +265,7 @@
                   class="fs-12px"
                   [displayAsLink]="true"
                   [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
-                  [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                  [followedPubKeyBase58Check]="postContent.ProfileEntryResponse?.PublicKeyBase58Check"
                   [creatorCoinTemplate]="creatorCoinInfo"
                 ></follow-button>
               </div>
