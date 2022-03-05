@@ -29,67 +29,67 @@
     #uiScroll
     *uiScroll="let item of datasource; let index = index"
   >
-    <div
-      class="notifications__list-item"
-      [ngClass]="{
-        'last-item': index === totalItems - 1,
-        'border-none': (!item.action && !expandNotifications)
-      }"
-    >
-      <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
-        <div class="d-flex flex-row align-items-center justify-content-between">
-          <div class="d-flex align-items-center">
-            <div
-              class="notifications__avatar"
-              [avatar]="item.actor?.PublicKeyBase58Check"
-              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor?.Username]"
-            >
-              <div *ngIf="item.icon" class="notifications__icon">
-                <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>
-              </div>
-            </div>
-            <div
-              class="notifications__action"
-              [innerHtml]="
-                !expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action
-              "
-            ></div>
-          </div>
-          <button
-            *ngIf="item.icon === 'send' && item.category === 'nft' && item.nftEntryResponses?.length > 0"
-            class="secondary-button"
-            style="width: 120px; height: 40px"
-            (click)="acceptTransfer($event, item)"
-          >
-            Accept NFT
-          </button>
-        </div>
-      </div>
-      <div class="cursor-pointer" *ngIf="item.post && expandNotifications">
-        <feed-post
-          [post]="item.post"
-          [includePaddingOnPost]="true"
-          [showReplyingToContent]="!!item.parentPost"
-          [parentPost]="item.parentPost"
-          [contentShouldLinkToThread]="true"
-          [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
-        ></feed-post>
-        <div *ngFor="let comment of item.post.Comments">
-          <div class="px-15px pb-15px post-thread__subcomment-container">
-            <feed-post
-              [includePaddingOnPost]="false"
-              [post]="comment"
-              [parentPost]="item.post"
-              [contentShouldLinkToThread]="true"
-              [showIconRow]="false"
-              [showDropdown]="false"
-              [showReplyToContent]="false"
-              [isSubcomment]="true"
-            ></feed-post>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--    <div-->
+<!--      class="notifications__list-item"-->
+<!--      [ngClass]="{-->
+<!--        'last-item': index === totalItems - 1,-->
+<!--        'border-none': (!item.action && !expandNotifications)-->
+<!--      }"-->
+<!--    >-->
+<!--      <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">-->
+<!--        <div class="d-flex flex-row align-items-center justify-content-between">-->
+<!--          <div class="d-flex align-items-center">-->
+<!--            <div-->
+<!--              class="notifications__avatar"-->
+<!--              [avatar]="item.actor?.PublicKeyBase58Check"-->
+<!--              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor?.Username]"-->
+<!--            >-->
+<!--              <div *ngIf="item.icon" class="notifications__icon">-->
+<!--                <i-feather name="{{item.icon}}" class="fs-0px feather-xsmall {{item.iconClass}}"></i-feather>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div-->
+<!--              class="notifications__action"-->
+<!--              [innerHtml]="-->
+<!--                !expandNotifications && item.actionDetails ? item.action + ' ' + item.actionDetails : item.action-->
+<!--              "-->
+<!--            ></div>-->
+<!--          </div>-->
+<!--          <button-->
+<!--            *ngIf="item.icon === 'send' && item.category === 'nft' && item.nftEntryResponses?.length > 0"-->
+<!--            class="secondary-button"-->
+<!--            style="width: 120px; height: 40px"-->
+<!--            (click)="acceptTransfer($event, item)"-->
+<!--          >-->
+<!--            Accept NFT-->
+<!--          </button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="cursor-pointer" *ngIf="item.post && expandNotifications">-->
+<!--        <feed-post-->
+<!--          [post]="item.post"-->
+<!--          [includePaddingOnPost]="true"-->
+<!--          [showReplyingToContent]="!!item.parentPost"-->
+<!--          [parentPost]="item.parentPost"-->
+<!--          [contentShouldLinkToThread]="true"-->
+<!--          [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"-->
+<!--        ></feed-post>-->
+<!--        <div *ngFor="let comment of item.post.Comments">-->
+<!--          <div class="px-15px pb-15px post-thread__subcomment-container">-->
+<!--            <feed-post-->
+<!--              [includePaddingOnPost]="false"-->
+<!--              [post]="comment"-->
+<!--              [parentPost]="item.post"-->
+<!--              [contentShouldLinkToThread]="true"-->
+<!--              [showIconRow]="false"-->
+<!--              [showDropdown]="false"-->
+<!--              [showReplyToContent]="false"-->
+<!--              [isSubcomment]="true"-->
+<!--            ></feed-post>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
   <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
