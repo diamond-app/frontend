@@ -164,6 +164,7 @@ export class NotificationsListComponent implements OnInit {
 
     // The transactor is usually needed so parse her out and try to convert her
     // to a username.
+    // TODO: make sure this map contains profiles from nft transfers
     const actor = this.profileMap[txnMeta.TransactorPublicKeyBase58Check] || {
       Username: "anonymous",
       ProfilePic: "/assets/img/default_profile_pic.png",
