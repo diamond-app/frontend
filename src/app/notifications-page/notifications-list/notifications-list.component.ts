@@ -211,7 +211,7 @@ export class NotificationsListComponent implements OnInit {
       } else {
         let txnAmountNanos = 0;
         for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
-          if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
+          if (notification.TxnOutputResponses[ii]?.PublicKeyBase58Check === userPublicKeyBase58Check) {
             txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
           }
         }
@@ -294,7 +294,7 @@ export class NotificationsListComponent implements OnInit {
       // Go through the affected public keys until we find ours. Then
       // return a notification based on the Metadata.
       for (const currentPkObj of txnMeta.AffectedPublicKeys) {
-        if (currentPkObj.PublicKeyBase58Check !== userPublicKeyBase58Check) {
+        if (currentPkObj?.PublicKeyBase58Check !== userPublicKeyBase58Check) {
           continue;
         }
 
@@ -537,7 +537,7 @@ export class NotificationsListComponent implements OnInit {
         .subscribe((res) => {
           const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
               nftEntryResponse.IsPending
             );
           });
