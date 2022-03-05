@@ -119,6 +119,7 @@ export class NotificationsListComponent implements OnInit {
 
           // Map all notifications to a format that is easy for our template to render
           // Filter out any null notifications we couldn't process
+
           const chunk = res.Notifications.map((notification) => this.transformNotification(notification)).filter(
             Boolean
           );
@@ -156,7 +157,7 @@ export class NotificationsListComponent implements OnInit {
   // out by frontend_server's TxnMetaIsNotification
   protected transformNotification(notification: any) {
     const txnMeta = notification.Metadata;
-    const userPublicKeyBase58Check = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const userPublicKeyBase58Check = this.globalVars.loggedInUser?.PublicKeyBase58Check;
 
     if (txnMeta == null) {
       return null;
@@ -164,9 +165,11 @@ export class NotificationsListComponent implements OnInit {
 
     // The transactor is usually needed so parse her out and try to convert her
     // to a username.
+    // TODO: make sure this map contains profiles from nft transfers
     const actor = this.profileMap[txnMeta.TransactorPublicKeyBase58Check] || {
       Username: "anonymous",
       ProfilePic: "/assets/img/default_profile_pic.png",
+      PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
     const actorName = actor.IsVerified
@@ -211,7 +214,7 @@ export class NotificationsListComponent implements OnInit {
       } else {
         let txnAmountNanos = 0;
         for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
-          if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
+          if (notification.TxnOutputResponses[ii]?.PublicKeyBase58Check === userPublicKeyBase58Check) {
             txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
           }
         }
@@ -294,7 +297,7 @@ export class NotificationsListComponent implements OnInit {
       // Go through the affected public keys until we find ours. Then
       // return a notification based on the Metadata.
       for (const currentPkObj of txnMeta.AffectedPublicKeys) {
-        if (currentPkObj.PublicKeyBase58Check !== userPublicKeyBase58Check) {
+        if (currentPkObj?.PublicKeyBase58Check !== userPublicKeyBase58Check) {
           continue;
         }
 
@@ -520,9 +523,25 @@ export class NotificationsListComponent implements OnInit {
       }
 
       const postHash = nftTransferMeta.NFTPostHashHex;
-
+      // TODO: Fix backend response for profiles returned from NFT transfer notifications
+      if (actor.Username === "annonymous") {
+        this.backendApi
+          .GetSingleProfile(this.globalVars.localNode, txnMeta.TransactorPublicKeyBase58Check, "")
+          .subscribe((user) => {
+            if (user?.Profile?.Username) {
+              const actorName =
+                user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
+              result.action = `${actorName} transferred an NFT to you`;
+              result.actor = user.Profile;
+              result.post.ProfileEntryResponse = user.Profile;
+            }
+          });
+      }
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
+      if (_.isNil(result.post.ProfileEntryResponse)) {
+        result.post.ProfileEntryResponse = result.actor;
+      }
       result.action = `${actorName} transferred an NFT to you`;
       result.icon = "send";
       result.category = "nft";
@@ -537,7 +556,7 @@ export class NotificationsListComponent implements OnInit {
         .subscribe((res) => {
           const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
               nftEntryResponse.IsPending
             );
           });

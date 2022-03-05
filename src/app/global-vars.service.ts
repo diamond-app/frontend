@@ -1464,9 +1464,10 @@ export class GlobalVarsService {
   }
 
   getFreeDESOMessage(): string {
-    return this.referralUSDCents
+    const freeDesoMessage = this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
       : this.nanosToUSD(this.jumioDeSoNanos, 0);
+    return freeDesoMessage !== "$0" ? freeDesoMessage : "starter $DESO";
   }
 
   getReferralUSDCents(): void {
