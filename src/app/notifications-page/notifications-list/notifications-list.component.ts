@@ -521,6 +521,20 @@ export class NotificationsListComponent implements OnInit {
 
       const postHash = nftTransferMeta.NFTPostHashHex;
 
+      // TODO: Fix backend response for profiles returned from NFT transfer notifications
+      if (actor.Username === "annonymous") {
+        this.backendApi
+          .GetSingleProfile(this.globalVars.localNode, txnMeta.TransactorPublicKeyBase58Check, "")
+          .subscribe((user) => {
+            console.log("USER: ", user);
+            if (user?.Profile?.Username) {
+              const actorName =
+                user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
+              result.action = `${actorName} transferred an NFT to you`;
+              result.actor = user.Profile;
+            }
+          });
+      }
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
       result.action = `${actorName} transferred an NFT to you`;
