@@ -167,6 +167,7 @@ export class NotificationsListComponent implements OnInit {
     const actor = this.profileMap[txnMeta.TransactorPublicKeyBase58Check] || {
       Username: "anonymous",
       ProfilePic: "/assets/img/default_profile_pic.png",
+      PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
     const actorName = actor.IsVerified
@@ -520,7 +521,7 @@ export class NotificationsListComponent implements OnInit {
       }
 
       const postHash = nftTransferMeta.NFTPostHashHex;
-
+      console.log("Actor here");
       // TODO: Fix backend response for profiles returned from NFT transfer notifications
       if (actor.Username === "annonymous") {
         this.backendApi
@@ -532,6 +533,7 @@ export class NotificationsListComponent implements OnInit {
                 user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
               result.action = `${actorName} transferred an NFT to you`;
               result.actor = user.Profile;
+              console.log("Here is the new actor");
             }
           });
       }
