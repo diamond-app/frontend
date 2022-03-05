@@ -119,6 +119,13 @@ export class NotificationsListComponent implements OnInit {
 
           // Map all notifications to a format that is easy for our template to render
           // Filter out any null notifications we couldn't process
+
+          res.Notifications.forEach((notification, index) => {
+            console.log("Notification index ", index, ", ", notification);
+            const transformedNotification = this.transformNotification(notification);
+            console.log("Transformed notif index ", index, ", ", transformedNotification);
+          });
+
           const chunk = res.Notifications.map((notification) => this.transformNotification(notification)).filter(
             Boolean
           );
