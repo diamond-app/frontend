@@ -170,6 +170,7 @@ export class NotificationsListComponent implements OnInit {
       ProfilePic: "/assets/img/default_profile_pic.png",
       PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
+    console.log("Here is the actor", actor);
     const userProfile = this.profileMap[userPublicKeyBase58Check];
     const actorName = actor.IsVerified
       ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>`
@@ -534,7 +535,7 @@ export class NotificationsListComponent implements OnInit {
                 user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
               result.action = `${actorName} transferred an NFT to you`;
               result.actor = user.Profile;
-              console.log("Here is the new actor");
+              console.log("Here is the new actor", actor);
             }
           });
       }
