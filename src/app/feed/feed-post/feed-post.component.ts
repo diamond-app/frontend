@@ -308,7 +308,7 @@ export class FeedPostComponent implements OnInit {
       this.getNFTEntries();
     }
     this.isFollowing = this.followService._isLoggedInUserFollowing(
-      this.postContent.ProfileEntryResponse.PublicKeyBase58Check
+      this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
     // We only allow showing long form content on the post detail page. We truncate it everywhere else with
     // a read more link to the detail.
