@@ -120,12 +120,6 @@ export class NotificationsListComponent implements OnInit {
           // Map all notifications to a format that is easy for our template to render
           // Filter out any null notifications we couldn't process
 
-          res.Notifications.forEach((notification, index) => {
-            console.log("Notification index ", index, ", ", notification);
-            const transformedNotification = this.transformNotification(notification);
-            console.log("Transformed notif index ", index, ", ", transformedNotification);
-          });
-
           const chunk = res.Notifications.map((notification) => this.transformNotification(notification)).filter(
             Boolean
           );
@@ -163,7 +157,6 @@ export class NotificationsListComponent implements OnInit {
   // out by frontend_server's TxnMetaIsNotification
   protected transformNotification(notification: any) {
     const txnMeta = notification.Metadata;
-    console.log("Txn meta: ", txnMeta);
     const userPublicKeyBase58Check = this.globalVars.loggedInUser?.PublicKeyBase58Check;
 
     if (txnMeta == null) {
@@ -178,7 +171,6 @@ export class NotificationsListComponent implements OnInit {
       ProfilePic: "/assets/img/default_profile_pic.png",
       PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
-    console.log("Here is the actor", actor);
     const userProfile = this.profileMap[userPublicKeyBase58Check];
     const actorName = actor.IsVerified
       ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>`
@@ -531,20 +523,17 @@ export class NotificationsListComponent implements OnInit {
       }
 
       const postHash = nftTransferMeta.NFTPostHashHex;
-      console.log("Actor here");
       // TODO: Fix backend response for profiles returned from NFT transfer notifications
       if (actor.Username === "annonymous") {
         this.backendApi
           .GetSingleProfile(this.globalVars.localNode, txnMeta.TransactorPublicKeyBase58Check, "")
           .subscribe((user) => {
-            console.log("USER: ", user);
             if (user?.Profile?.Username) {
               const actorName =
                 user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
               result.action = `${actorName} transferred an NFT to you`;
               result.actor = user.Profile;
               result.post.ProfileEntryResponse = user.Profile;
-              console.log("Here is the new actor", actor);
             }
           });
       }
