@@ -50,6 +50,7 @@ export class NotificationsListComponent implements OnInit {
 
   showFilters = false;
   filteredOutSet = {};
+  pauseVideos = false;
 
   ngOnInit() {
     const savedNotificationFilterPreferences = this.backendApi.GetStorage("notificationFilterPreferences");
@@ -635,15 +636,24 @@ export class NotificationsListComponent implements OnInit {
     return _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
   }
 
+  pauseAllVideos(isPaused) {
+    this.pauseVideos = isPaused;
+  }
+
   acceptTransfer(event, notification) {
     event.stopPropagation();
     if (!this.globalVars.isMobile()) {
-      this.modalService.show(TransferNftAcceptModalComponent, {
+      this.pauseAllVideos(true);
+      const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {
         class: "modal-dialog-centered modal-lg",
         initialState: {
           post: notification.post,
           transferNFTEntryResponses: notification.nftEntryResponses,
         },
+      });
+      const onHideEvent = modalDetails.onHide;
+      onHideEvent.subscribe(() => {
+        this.pauseAllVideos(false);
       });
     } else {
       this.router.navigate(["/" + RouteNames.TRANSFER_NFT_ACCEPT + "/" + notification.post.PostHashHex], {

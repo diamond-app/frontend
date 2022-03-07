@@ -73,6 +73,7 @@
           [parentPost]="item.parentPost"
           [contentShouldLinkToThread]="true"
           [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
+          [videoPaused]="pauseVideos"
         ></feed-post>
         <div *ngFor="let comment of item.post.Comments">
           <div class="px-15px pb-15px post-thread__subcomment-container">
@@ -85,6 +86,7 @@
               [showDropdown]="false"
               [showReplyToContent]="false"
               [isSubcomment]="true"
+              [videoPaused]="pauseVideos"
             ></feed-post>
           </div>
         </div>
