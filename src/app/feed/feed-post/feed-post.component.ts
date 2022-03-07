@@ -169,6 +169,8 @@ export class FeedPostComponent implements OnInit {
 
   @Input() isThreadChild = false;
 
+  @Input() keepVideoPaused = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -659,7 +661,7 @@ export class FeedPostComponent implements OnInit {
         this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe((res) => {
           if (res?.Duration && _.isNumber(res?.Duration)) {
             this.videoURL =
-              res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD
+              res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
                 ? this.postContent.VideoURLs[0]
                 : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
             if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
