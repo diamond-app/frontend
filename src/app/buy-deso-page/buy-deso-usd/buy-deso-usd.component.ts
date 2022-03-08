@@ -28,7 +28,7 @@ export class BuyDeSoUSDComponent implements OnInit {
 
   debouncedGetQuotation: () => void;
 
-  maxUsdAmount = 450;
+  maxUsdAmount = 1000;
 
   usdEquivalent: number;
   supportedCountries: string[];
