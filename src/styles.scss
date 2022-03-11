@@ -244,6 +244,7 @@ $green-font-color: #19B028;
 .fc-secondary { color: var(--text-secondary); }
 .fc-muted { color: var(--text-muted); }
 .fc-blue { color: var(--highlight); }
+.fc-light-blue { color: var(--highlight-secondary); }
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
 .fc-success { color: var(--success); }
@@ -4789,6 +4790,14 @@ input {
 
 .bg-light {
   background-color: var(--background-secondary) !important;
+}
+
+.bg-highlight {
+  background-color: var(--highlight);
+}
+
+.bg-highlight-secondary {
+  background-color: var(--highlight-secondary);
 }
 
 // Animations by Carsen Klock @carsenk

@@ -53,7 +53,7 @@ export class PlaceBidComponent implements OnInit {
   tabs = [this.BUY_TAB, this.BID_TAB];
   activeTab = this.BUY_TAB;
   showTabs = false;
-  serialNumberSelectColumns: { high?: string; min?: string; buyNow?: string };
+  serialNumberSelectColumns: { high?: string; min?: string; buyNow?: string; secondaryIndicator: string; };
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -90,7 +90,7 @@ export class PlaceBidComponent implements OnInit {
   tabClicked(tabName: string) {
     this.activeTab = tabName;
     this.serialNumberSelectColumns =
-      this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount" } : { buyNow: "Buy Now Price" };
+      this.activeTab === this.BID_TAB ? { high: "Highest Bid", min: "Min Bid Amount", secondaryIndicator: "" } : { buyNow: "Buy Now Price", secondaryIndicator: "" };
     this.getBiddableSerialNumbers();
   }
 

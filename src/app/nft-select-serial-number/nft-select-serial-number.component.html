@@ -71,6 +71,13 @@
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.BuyNowPriceNanos, 2) }})</div>
       </div>
     </div>
+    <div
+      *ngIf="includeColumn('secondaryIndicator') && nft.OwnerPublicKeyBase58Check !== nftCreatorPublicKeyBase58Check"
+      [ngClass]="{ 'w-100 mt-5px text-center': globalVars.isMobile() || columnCount() > 1 }"
+      class="br-10px bg-highlight-secondary fc-blue py-5px px-10px"
+    >
+      <span>Resale</span>
+    </div>
   </div>
   <simple-center-loader *ngIf="buyingNow" [titleLoadingText]="'Processing'"></simple-center-loader>
 </div>

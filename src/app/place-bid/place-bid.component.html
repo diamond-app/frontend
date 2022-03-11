@@ -160,6 +160,7 @@
           [serialNumbers]="biddableSerialNumbers"
           [columns]="serialNumberSelectColumns"
           [postHashHex]="post.PostHashHex"
+          [nftCreatorPublicKeyBase58Check]="post.PosterPublicKeyBase58Check"
           (serialNumberSelected)="selectSerialNumber($event)"
           (closeModal)="closeModal.emit($event)"
         ></nft-select-serial-number>
