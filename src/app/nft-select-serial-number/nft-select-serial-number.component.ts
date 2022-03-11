@@ -19,6 +19,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   // Which columns should be included. The string value determines what the column should be labeled
   @Input() columns: { high?: string; min?: string, buyNow?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
   @Input() postHashHex: string;
+  @Input() nftCreatorPublicKeyBase58Check: string;
   @Output() serialNumberSelected = new EventEmitter<NFTEntryResponse>();
   @Output() closeModal = new EventEmitter<any>();
 
@@ -64,7 +65,8 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   }
 
   columnCount() {
-    return Object.keys(this.columns).length;
+    const subtraction = "secondaryIndicator" in this.columns ? 1 : 0
+    return Object.keys(this.columns).length - subtraction;
   }
 
   selectSerialNumber(idx: number) {
