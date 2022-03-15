@@ -117,8 +117,9 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
     const currentPageIdx = page * this.pageSize + this.pageOffset;
     const nextPageIdx = currentPageIdx + this.pageSize;
     return this.sortedSerialNumbers.slice(currentPageIdx, nextPageIdx);
-  }
+  };
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false, 50, 1);
+  // We only set the infinite scroller to use window viewport when in mobile
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile(), 15);
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
