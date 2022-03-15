@@ -4,6 +4,8 @@ import { BackendApiService, NFTEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
 import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
+import { InfiniteScroller } from "../infinite-scroller";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
   selector: "nft-select-serial-number",
@@ -32,6 +34,11 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   sortByField = this.SN_FIELD;
   sortByOrder: "desc" | "asc" = "desc";
   buyingNow: boolean = false;
+
+  // Infinite scroll metadata.
+  pageOffset = 0;
+  lastPage = null;
+  pageSize = 10;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -100,4 +107,19 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
       }
     );
   }
+
+  getPage = (page: number) => {
+    const lastPage = Math.ceil(this.serialNumbers.length / this.pageSize);
+    // After we have filled the lastPage, do not honor any more requests.
+    if (page > lastPage) {
+      return [];
+    }
+    const currentPageIdx = page * this.pageSize + this.pageOffset;
+    const nextPageIdx = currentPageIdx + this.pageSize;
+    return this.sortedSerialNumbers.slice(currentPageIdx, nextPageIdx);
+  };
+
+  // We only set the infinite scroller to use window viewport when in mobile
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile(), 15);
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
