@@ -140,6 +140,8 @@ export class NftPostComponent {
           `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
         );
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this._handleTabClick(this.activeTab);
+        this.loading = false;
         this.refreshBidData();
       },
       (err) => {
@@ -225,7 +227,6 @@ export class NftPostComponent {
   }
 
   afterNftBidPlaced() {
-    this.loading = true;
     this.refreshBidData();
   }
 

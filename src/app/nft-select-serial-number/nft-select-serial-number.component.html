@@ -37,8 +37,10 @@
   </div>
 </div>
 <div class="place-bid-rows mb-30px" *ngIf="!buyingNow">
+<!--    *ngFor="let nft of sortedSerialNumbers"-->
   <div
-    *ngFor="let nft of sortedSerialNumbers"
+    #uiScroll
+    *uiScroll="let nft of datasource"
     class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
     (click)="selectSerialNumber(nft.SerialNumber)"
   >
