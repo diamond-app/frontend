@@ -96,9 +96,6 @@
       <span class="mr-5px">{{ 'feed.find_people_in_hot' | transloco }}</span>
     </div>
   </a>
-  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
-    <nft-showcase></nft-showcase>
-  </div>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">
@@ -140,9 +137,7 @@
     </div>
   </div>
 
-  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
-    <nft-showcase></nft-showcase>
-  </div>
+
 
   <div
     *ngIf="showNoPostsFound()"

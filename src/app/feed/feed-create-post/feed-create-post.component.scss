@@ -46,9 +46,9 @@
 }
 
 .feed-create-post__post-btn {
-  background: var(--highlight);
+  background: #000;
   padding: 12px 24px;
-  border-radius: 16px;
+  border-radius: 6px;
   border: none;
   color: var(--tile-bg);
   &:hover {
@@ -60,8 +60,8 @@
   background: transparent;
   padding: 10px 10px;
   border-radius: 100%;
-  border: 2px solid var(--highlight);
-  color: var(--highlight);
+  border: 2px solid var(--tile-bg-secondary);
+  color: var(--tile-bg-secondary);
   margin-right: 8px;
 
   &:hover {

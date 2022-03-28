@@ -609,7 +609,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       FeedComponent.FOLLOWING_TAB,
       FeedComponent.HOT_TAB,
       FeedComponent.GLOBAL_TAB,
-      FeedComponent.SHOWCASE_TAB,
     ];
 
     if (!this.activeTab) {

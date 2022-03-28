@@ -3,7 +3,7 @@ $danger: #E63946;
 $secondary: #ecf0f1;
 $success: #32ED4B;
 $info: #689eff;
-$feed-border-radius: 12px;
+$feed-border-radius: 100px;
 
 @import 'variables.scss';
 @import 'app/theme/themes/index';
@@ -502,7 +502,7 @@ $green-font-color: #19B028;
 .br-4px { border-radius: 4px; }
 .br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
-.br-10px { border-radius: 10px; }
+.br-10px { border-radius: 6px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
@@ -586,6 +586,7 @@ $green-font-color: #19B028;
   align-items: stretch;
   margin: 0;
   padding: 0;
+  background: var(--tile-bg);
 }
 
 @media (min-width: 992px) {
@@ -637,7 +638,7 @@ $green-font-color: #19B028;
       margin-top: 54px !important;
     }
     .feed-post__container {
-      border-radius: 0px 0px 10px 10px;
+      border-radius: 0px 0px 0px 0px;
     }
   }
   mint-nft-page {
@@ -1148,7 +1149,7 @@ app-landing-page {
 .landing-page-profile-pic {
   width: 42.44px;
   height: 42.44px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing-page-row {
@@ -1250,7 +1251,7 @@ app-landing-page {
     width: 100%;
   }
   box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1);
-  border-radius: 16px;
+  border-radius: 6px;
   border: none;
   font-size: 20px;
   line-height: 22px;
@@ -1536,11 +1537,13 @@ app-landing-page {
   flex-grow: 1;
   align-items: flex-end;
   flex-direction: column;
+  background: var(--tile-bg);
   display: flex;
 }
 
 .global__nav__width {
   width: $global__nav__width;
+  background: var(--tile-bg);
   @media (max-width: 992px) {
     width: 100%;
   }
@@ -1548,6 +1551,8 @@ app-landing-page {
 
 .global__nav__fixed {
   top: 64px;
+  border-right: 1px solid var(--border);
+  background: var(--tile-bg);
   @media (max-width: 992px) {
     top: 42px;
   }
@@ -1570,10 +1575,10 @@ app-landing-page {
 
 .global__content__flex {
   @media (max-width: 992px) {
-    margin-top: 5px;
+    margin-top: 0px;
   }
-  margin-top: 20px;
   flex-grow: 1;
+  background: var(--tile-bg);
   align-items: flex-start;
   flex-shrink: 1;
   display: flex;
@@ -1606,6 +1611,7 @@ app-landing-page {
   height: calc(100% - 64px);
   position: fixed;
   overflow-y: scroll;
+  border-left: 1px solid var(--border);
 }
 
 .global__sidebar__inner {
@@ -1639,7 +1645,7 @@ browse-page {
 }
 
 .global__center__inner {
-  min-height: calc(100vh - 84px);
+  min-height: 100vh;
   width: $global__center__width;
   @media (min-width: 992px) {
     margin-top: 4px;
@@ -1685,7 +1691,7 @@ feed-create-post {
     background-color: var(--tile-bg);
     position: absolute;
     z-index: 3;
-    border-radius: 10px;
+    border-radius: 6px;
     box-shadow: 0px 4px 16px rgb(0 0 0 / 10%);
     :first-child {
       border-radius: 10px 10px 0px 0px;
@@ -1720,7 +1726,7 @@ nft-post {
   .nft-post-details {
     background: var(--tile-bg);
     margin-top: 20px;
-    border-radius: 10px;
+    border-radius: 6px;
     border: 1px solid var(--border);
   }
   post-thread {
@@ -1751,11 +1757,10 @@ tab-selector {
   button {
     background: var(--tile-bg);
     height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
     color: var(--highlight);
     font-weight: 600;
     position: relative;
+    border: 0;
     span {
       padding: 0px 9px;
       position: relative;
@@ -1768,7 +1773,7 @@ tab-selector {
     position: relative;
     top: -1px;
     height: 32px;
-    border-radius: 12px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     span {
@@ -1793,7 +1798,7 @@ tab-selector {
 .left-bar-more-container {
   background: var(--tile-secondary-bg);
   bottom: 0px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .left-bar-mobile__translucent-background {
@@ -1819,7 +1824,7 @@ tab-selector {
 .left-bar-mobile__deso-price {
   background: var(--tile-secondary-bg);
   padding: 7px 8px 7px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
 }
 
@@ -1836,7 +1841,7 @@ left-bar-mobile {
     .jumio-status {
       background: var(--tile-bg);
       padding: 7px 8px 7px;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
     }
   }
@@ -1858,7 +1863,7 @@ left-bar-mobile {
   width: 100px;
   background-color: transparent;
   position: relative;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .update-profile__image-delete {
@@ -1887,7 +1892,7 @@ left-bar-mobile {
 
 feed-create-post {
   .update-profile__image-delete {
-    border-radius: 12px;
+    border-radius: 6px;
   }
 }
 .holdings__creator-coin-name {
@@ -1920,7 +1925,7 @@ feed-create-post {
   width: 50px;
   min-width: 28px;
   margin-right: 15px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -2042,7 +2047,7 @@ sign-up {
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
-  border-radius: 16px;
+  border-radius: 6px;
 	border: 1px solid var(--borderheavy);
   font-size: 15px;
 
@@ -2109,7 +2114,7 @@ sign-up {
 .tutorial-skip-button {
   height: 30px;
   width: 60px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--tile-bg);
   color: var(--text-secondary);
@@ -2149,7 +2154,7 @@ sign-up {
 }
 
 .search-bar {
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text-muted);
   i-feather {
     height: 16px;
@@ -2166,8 +2171,8 @@ sign-up {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
   }
 }
 
@@ -2175,8 +2180,8 @@ sign-up {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
   background: var(--tile-secondary-bg);
   border: none;
 }
@@ -2220,7 +2225,7 @@ sign-up {
 }
 
 .post-thread__comment-container {
-  border-radius: 10px;
+  border-radius: 6px;
   .post-thread__single-comment {
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
@@ -2238,8 +2243,8 @@ sign-up {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     .feed-post-container, .feed-post__container {
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
   .first-item {
@@ -2264,13 +2269,10 @@ sign-up {
 
 .post-thread__container {
   background: var(--tile-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
   .feed-post-container {
     margin-bottom: 0px;
   }
   .post-thread__header {
-    border-bottom: 1px solid var(--border);
     color: var(--text);
     font-weight: 600;
     font-size: 17px;
@@ -2339,9 +2341,9 @@ sign-up {
   margin-bottom: 20px;
   padding: 16px 20px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--tile-bg);
-  color: var(--highlight);
+  color: var(--text);
   font-size: 15px;
   line-height: 24px;
   span {
@@ -2361,8 +2363,8 @@ trends {
 
 .trend-box {
   background: var(--tile-secondary-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
 }
 
 .trend-title {
@@ -2433,9 +2435,12 @@ trends {
 }
 
 .feed-post-container {
-  margin-bottom: 12px;
-  border-radius: 10px;
+  margin-bottom: 0;
+  border-radius: 0;
   background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-bottom: 0;
 }
 
 .js-feed-post-hover:hover {
@@ -2462,7 +2467,7 @@ bs-dropdown-container {
 
 .bc-dropdown-menu {
   background: var(--tile-bg);
-  border-radius: 16px;
+  border-radius: 6px;
   border: none;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
   div {
@@ -2511,7 +2516,7 @@ bs-dropdown-container {
   align-items: center;
   overflow: hidden;
   max-height: 450px;
-  border-radius: 16px;
+  border-radius: 6px;
   margin-top: 10px;
   margin-bottom: 5px;
 }
@@ -2541,7 +2546,7 @@ bs-dropdown-container {
   right: 0;
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .feed-post__blue-border {
@@ -2622,7 +2627,7 @@ bs-dropdown-container {
 .feed-post-icon-row__icon.repost-icon {
   &:hover {
     background-color: $repost-hover;
-    color: $repost-hover;
+    color: $repost-color;
     transition: background-color .5s;
   }
 }
@@ -2663,7 +2668,7 @@ bs-dropdown-container {
 }
 
 .desktop-top-bar-width {
-  max-width: 1212px;
+  max-width: 1250px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -2698,7 +2703,8 @@ bs-dropdown-container {
     position: relative;
     width: 343px;
     .search-bar,input {
-      height: 48px;
+      height: 44px;
+      top: 1px;
       i-feather {
         margin: 0px 12px;
       }
@@ -2714,14 +2720,16 @@ bs-dropdown-container {
 
 .desktop-create-post{
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: none;
+  border-right: 0;
 }
 
 .feed-desktop-center-banner {
   background-color: var(--tile-bg);
   font-size: 16px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   margin-top: 5px;
   padding: 10px;
@@ -2742,11 +2750,13 @@ bs-dropdown-container {
 
 feed {
   .jumio-status {
-    border-radius: 10px;
+    border-radius: 0;
     padding: 10px;
     position: relative;
-    margin-top: 5px;
+    margin-top: 0px;
+    border-top: 0;
     margin-bottom: 5px;
+    border-right: 0;
   }
   jumio-status {
     @media (max-width: 992px) {
@@ -2759,7 +2769,6 @@ feed {
 
 .feed-post__container {
   background: var(--tile-bg);
-  border-radius: 10px;
 }
 
 .feed-post__container.feed-post__parent-post-font-size {
@@ -2775,7 +2784,7 @@ feed {
   margin-left: 8px;
   height: 24px;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: 6px;
   background-color: var(--tile-secondary-bg);
   font-family: -apple-system, BlinkMacSystemFont,
                "Helvetica Neue", sans-serif;
@@ -2798,7 +2807,7 @@ feed {
   display: block;
   height: 50px;
   width: 50px;
-  border-radius: 12px;
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -2874,7 +2883,7 @@ feed {
   font-size: 15px;
   line-height: 24px;
   color: var(--text-inverted);
-  border-radius: 0px 0px 10px 10px;
+  border-radius: 0px 0px 0 0;
 }
 
 .nft-modal__header {
@@ -2917,7 +2926,7 @@ feed {
   button {
     color: var(--text);
     width: 118px;
-    border-radius: 12px;
+    border-radius: 6px;
     background: var(--tile-bg);
     margin: 0px 0px;
     padding: 6px 12px;
@@ -2947,17 +2956,12 @@ feed-post-dropdown {
 }
 
 .left-bar-active-indicator {
-  width: 4px;
-  border-radius: 10px;
-}
-
-.left-bar-active-indicator-active {
-  background: var(--highlight);
+  width: 0px;
+  border-radius: 6px;
 }
 
 .left-bar-button {
-  height: 56px;
-  margin-left: 12px;
+  height: 40px;
   font-weight: 600;
   font-size: 17px;
   color: var(--text-secondary);
@@ -2989,10 +2993,10 @@ feed-post-dropdown {
 }
 
 .left-bar__post-button {
-  width: 100%;
+  width: 80%;
   height: 48px;
-  background: var(--highlight);
-  border-radius: 16px;
+  background: #000;
+  border-radius: 6px;
   padding: 12px 24px;
   font-weight: 600;
   font-size: 17px;
@@ -3029,10 +3033,7 @@ feed-post-dropdown {
 }
 
 .left-desktop-selector {
-  background: var(--tile-bg);
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid var(--border);
+  // border: 1px solid var(--border);
 }
 
 right-bar-creators {
@@ -3042,12 +3043,11 @@ right-bar-creators {
 }
 
 .right-bar-creators__wallet-container {
-  border: 1px solid var(--border);
   background: var(--background-secondary);
   padding: 16px;
   font-size: 15px;
   color: var(--text-secondary);
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 20px;
 }
 
@@ -3055,8 +3055,7 @@ right-bar-creators {
   height: 40px;
   width: 40px;
   margin-right: 10px;
-  border-radius: 12px;
-
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -3066,18 +3065,17 @@ right-bar-creators {
   background-color: var(--tile-secondary-bg);
   color: var(--text-secondary);
   font-size: 15px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 20px;
   .deso-metrics {
     margin: 16px;
   }
   .divider {
     width: 100%;
-    border: 1px solid var(--border);
   }
   .buy-deso {
     font-weight: 600;
+    display: none;
     font-size: 17px;
     color: var(--highlight);
     margin-top: 5px;
@@ -3138,7 +3136,7 @@ right-bar-creators {
   background: var(--highlight);
   color: var(--tile-bg);
   margin-left: 24px;
-  border-radius: 16px;
+  border-radius: 6px;
   padding-top: 12px;
   &:hover {
     color: var(--tile-bg);
@@ -3149,7 +3147,7 @@ right-bar-creators {
   position: relative;
   height: 72px;
   width: 72px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3192,7 +3190,7 @@ right-bar-creators {
 .creator-profile__reserved-tag {
   font-weight: normal;
   background-color: #f3f3f3;
-  border-radius: 10px;
+  border-radius: 6px;
   height: fit-content;
 }
 
@@ -3270,7 +3268,7 @@ right-bar-creators {
   padding-top: 10px;
   height: 48px;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   background: var(--highlight);
   font-size: 17px;
@@ -3288,8 +3286,9 @@ wallet-page {
 
 .wallet__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: 0;
   @media (min-width: 992px) {
     margin-top: 4px;
   }
@@ -3298,7 +3297,7 @@ wallet-page {
 .wallet__table {
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0x;
   margin-top: 20px;
 }
 
@@ -3317,11 +3316,10 @@ wallet-tutorial-page {
   }
   .wallet-highlighted-creator {
     border: 1px solid var(--highlight) !important;
-    border-radius: 10px;
+    border-radius: 6px;
   }
   .wallet__table {
     margin-top: 0px;
-    border-radius: 0px 0px 10px 10px;
     tab-selector {
       .tab-selector__container {
         background: var(--background-secondary);
@@ -3372,7 +3370,7 @@ wallet-tutorial-page {
 
 transfer-deso {
   .search-bar__icon {
-    border-radius: 16px 0px 0px 16px;
+    border-radius: 6px 0px 0px 6px;
   }
   search-bar {
     .search-bar__results-dropdown {
@@ -3428,7 +3426,7 @@ modal-container {
 update-profile {
   .update-profile__holder {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 6px;
   }
   .update-profile__avatar-title {
     display: none;
@@ -3446,7 +3444,7 @@ update-profile {
     }
     border: 1px solid var(--tile-bg);
     background: none;
-    border-radius: 12px;
+    border-radius: 6px;
     padding-top: 2px;
     color: var(--tile-bg);
     height: 32px;
@@ -3456,7 +3454,7 @@ update-profile {
   }
   .form-control,textarea {
     border: none;
-    border-radius: 16px;
+    border-radius: 6px;
     background: var(--tile-secondary-bg) !important;
     resize: none;
   }
@@ -3522,7 +3520,7 @@ creator-diamonds {
   border-radius: 10px 10px 0px 0px;
   border: 1px solid var(--border);
   &.card-view {
-    border-radius: 10px;
+    border-radius: 6px;
     margin-bottom: 12px;
   }
 }
@@ -3560,7 +3558,7 @@ creator-profile-nfts {
 .creator-profile-nfts__dropdown {
   background: var(--tile-secondary-bg);
   color: var(--tile-secondary-bg);
-  border-radius: 16px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   height: 48px;
   width: 193px;
@@ -3610,7 +3608,7 @@ creator-profile-nfts {
 
 .buy-deso__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   padding-top: 16px;
 }
 
@@ -3621,7 +3619,7 @@ creator-profile-nfts {
 
 .buy-deso__country-selector {
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   background: var(--tile-secondary-bg);
   width: 105px;
   height: 48px;
@@ -3679,11 +3677,10 @@ creator-profile-nfts {
 
 .messages-page__header {
   border: 1px solid var(--border);
+  border-top: 0;
   padding: 0px 16px;
   background: var(--tile-bg);
   height: 80px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
   span {
     font-size: 24px;
     line-height: 32px;
@@ -3695,7 +3692,7 @@ creator-profile-nfts {
     height: 48px;
     background: var(--highlight);
     color: var(--tile-bg);
-    border-radius: 16px;
+    border-radius: 6px;
     font-size: 17px;
     line-height: 24px;
     border: none;
@@ -3776,7 +3773,7 @@ creator-profile-nfts {
   font-size: 17px;
   color: var(--text-secondary);
   button {
-    border-radius: 16px;
+    border-radius: 6px;
     margin-right: 24px;
     width: 94px;
     height: 48px;
@@ -3845,7 +3842,7 @@ creator-profile-nfts {
   height: 40px;
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3859,7 +3856,7 @@ creator-profile-nfts {
 }
 
 .messages-thread__border-radius {
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .messages-thread__ellipsis-restriction {
@@ -3936,7 +3933,7 @@ creator-profile-nfts {
   height: 40px;
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3946,7 +3943,7 @@ creator-profile-nfts {
 .message__avatar-placeholder {
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .messages-page__container {
@@ -4099,7 +4096,7 @@ trade-creator-form {
 .notifications__avatar {
    height: 40px;
    width: 40px;
-   border-radius: 12px;
+   border-radius: 6px;
    background-size: cover;
    background-repeat: no-repeat;
    background-position: center center;
@@ -4145,19 +4142,21 @@ app-notifications-list {
     background: var(--tile-bg);
     @media (min-width: 992px) {
       height: 72px;
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
       border: 1px solid var(--border);
+      border-right: 0;
+      border-top: 0;
     }
   }
   .notifications__list-item{
     border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    border-right: 0 solid var(--border);
     border-bottom: 1px solid var(--border);
     background: var(--tile-bg);
     &.last-item {
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
 }
@@ -4202,7 +4201,7 @@ app-notifications-list {
 .landing__nav-buy {
   height: 30px;
   font-size: 13px;
-  border-radius: 10px;
+  border-radius: 6px;
   padding-left: 15px;
   padding-right: 15px;
   background-color: var(--background-secondary);
@@ -4220,7 +4219,7 @@ app-notifications-list {
 .landing__sign-up {
   margin-top: 30px;
   width: 225px;
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 10px;
 }
 
@@ -4232,7 +4231,7 @@ app-notifications-list {
 
 .landing__buy {
   padding: 7px 20px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing__prop {
@@ -4280,7 +4279,7 @@ app-notifications-list {
 .landing__btn-cta {
   margin-top: 30px;
   padding: 7px 30px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing__platform {
@@ -4782,6 +4781,8 @@ input {
   text-align: center;
   line-height: 18px;
   padding: 0px 5px;
+  color: red;
+  font-weight: 700;
 }
 
 .bg-tile {
@@ -4945,15 +4946,18 @@ input {
 
 .creator-profile__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: 0;
+  border-right: 0;
   padding: 16px;
   margin-bottom: 15px;
 }
 
 creator-profile-details {
   .tab-selector__container{
-    margin-bottom: 15px;
+    margin-bottom: 6px;
+    margin-left: 6px;
   }
   .creator-profile-details__coin-container {
     .font-weight-bold {
@@ -5000,7 +5004,7 @@ creator-profile-hodlers {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 6px;
   simple-profile-card {
     .simple-profile-card__container {
       padding: 16px;
@@ -5044,7 +5048,7 @@ mint-nft-page {
   width: 40%;
   height: 186px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   transition: border .5s;
   &.nft-type-selected {
     border-color: var(--highlight);
@@ -5076,7 +5080,7 @@ mint-nft-page {
   height: 48px;
   background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   font-size: 15px;
   color: var(--text-secondary);
 }
@@ -5100,7 +5104,7 @@ mint-nft-page {
 .mint-nft__create-btn {
   width: 137px;
   height: 48px;
-  border-radius: 16px;
+  border-radius: 6px;
   background: var(--highlight);
   color: var(--tile-bg);
   font-size: 17px;
@@ -5116,7 +5120,7 @@ mint-nft-page {
   flex-direction: column;
   width: 100%;
   display: flex;
-  border-radius: 10px;
+  border-radius: 6px;
   outline: 0;
   position: relative;
 }
@@ -5128,7 +5132,7 @@ mint-nft-page {
 
 .nft-modal-bid-details {
   background: var(--tile-secondary-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 15px;
   margin: 16px 0px;
 }
@@ -5148,7 +5152,7 @@ sell-nft-modal {
 
 .sell-nft__row {
   background: var(--tile-secondary-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 16px 0px;
   margin-bottom: 16px;
   font-size: 15px;
@@ -5163,7 +5167,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: var(--error);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   border: none;
   &:hover {
@@ -5178,7 +5182,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: var(--highlight);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   border: none;
   &:hover {
@@ -5193,7 +5197,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: none;
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--highlight);
   border: 1px solid var(--highlight);
   &:hover {
@@ -5213,7 +5217,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--text-secondary);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text-secondary);
   &:hover {
     color: var(--text-secondary);
@@ -5228,7 +5232,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text);
   font-weight: 600;
   &:hover {
@@ -5240,7 +5244,7 @@ sell-nft-modal {
 }
 
 .trend-dropdown-button {
-  border-radius: 12px;
+  border-radius: 6px;
   border: none;
   border: 1px solid var(--border);
   background: var(--tile-secondary-bg);
@@ -5333,7 +5337,7 @@ sell-nft-modal {
   right: 10px;
   z-index: 500;
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
 }
 
@@ -5353,7 +5357,7 @@ sell-nft-modal {
   min-width: 300px;
   max-width: 550px;
   font-family: Gilroy Arial sans-serif;
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--tile-bg);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   .introjs-button {
@@ -5608,7 +5612,7 @@ sell-nft-modal {
         padding: 3px 5px 3px 5px;
         position: relative;
         top: -24px;
-        border-radius: 10px;
+        border-radius: 6px;
         font-size: 11px;
         color: #FFF;
         background: #333;
@@ -5739,7 +5743,7 @@ sell-nft-modal {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
-    border-radius: 10px;
+    border-radius: 6px;
 
     &.show {
       visibility: visible;
