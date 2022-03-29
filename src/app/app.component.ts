@@ -302,6 +302,8 @@ export class AppComponent implements OnInit {
     this._updateAppState();
     console.log("App State: ", this.globalVars.logTimeElapsed());
 
+    this.loadApp();
+
     this.identityService.info().subscribe((res) => {
       console.log("Identity info sub: ", this.globalVars.logTimeElapsed());
       // If the browser is not supported, display the browser not supported screen.
@@ -311,10 +313,7 @@ export class AppComponent implements OnInit {
       }
 
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-      if (res.hasStorageAccess || !isLoggedIn) {
-        this.loadApp();
-        console.log("First Load app: ", this.globalVars.logTimeElapsed());
-      } else {
+      if (!res.hasStorageAccess && isLoggedIn) {
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
           this.globalVars.requestingStorageAccess = false;
@@ -324,7 +323,7 @@ export class AppComponent implements OnInit {
       }
     });
 
-    // this.globalVars.pollUnreadNotifications();
+    this.globalVars.pollUnreadNotifications();
 
     this.installDD();
     console.log("DD: ", this.globalVars.logTimeElapsed());
