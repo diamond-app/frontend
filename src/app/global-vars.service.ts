@@ -77,6 +77,15 @@ export class GlobalVarsService {
   static CREATOR_COIN_TRADE_FEED_BASIS_POINTS = 1;
   static MAX_DIAMONDS_GIVABLE = 6;
 
+  lastLoggedTime;
+
+  logTimeElapsed() {
+    const loggedTime = performance.now();
+    const timeDiff = loggedTime - this.lastLoggedTime;
+    this.lastLoggedTime = loggedTime;
+    return timeDiff;
+  }
+
   // This is set to false immediately after our first attempt to get a loggedInUser.
   loadingInitialAppState = true;
 

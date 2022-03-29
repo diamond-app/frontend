@@ -95,6 +95,7 @@ export class AppComponent implements OnInit {
   }
 
   _updateTopLevelData(): Subscription {
+    console.log("Top level");
     if (this.callingUpdateTopLevelData) {
       return new Subscription();
     }
@@ -113,7 +114,7 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
-
+    console.log("Get user stateless & get user metadata for top level data call");
     return zip(
       this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
@@ -223,6 +224,7 @@ export class AppComponent implements OnInit {
     errorCallback: (comp: any) => void = () => {},
     comp: any = ""
   ) => {
+    console.log("Update everything");
     // Refresh the messageMeta periodically.
     this.globalVars.messageMeta = this.backendApi.GetStorage(this.backendApi.MessageMetaKey);
     if (!this.globalVars.messageMeta) {
@@ -278,22 +280,30 @@ export class AppComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.globalVars.lastLoggedTime = performance.now();
+    console.log("On init: ", this.globalVars.logTimeElapsed());
     // Load the theme
     this.themeService.init();
+    console.log("Theme: ", this.globalVars.logTimeElapsed());
 
     // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
       this._updateDeSoExchangeRate();
     }, 5 * 60 * 1000);
+    console.log("Exchange rate: ", this.globalVars.logTimeElapsed());
 
     this.globalVars.updateEverything = this._updateEverything;
+    console.log("Set update everything: ", this.globalVars.logTimeElapsed());
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
     this._updateDeSoExchangeRate();
+    console.log("Exch rate update: ", this.globalVars.logTimeElapsed());
     this._updateAppState();
+    console.log("App State: ", this.globalVars.logTimeElapsed());
 
     this.identityService.info().subscribe((res) => {
+      console.log("Identity info sub: ", this.globalVars.logTimeElapsed());
       // If the browser is not supported, display the browser not supported screen.
       if (!res.browserSupported) {
         this.globalVars.requestingStorageAccess = true;
@@ -303,21 +313,23 @@ export class AppComponent implements OnInit {
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
       if (res.hasStorageAccess || !isLoggedIn) {
         this.loadApp();
+        console.log("First Load app: ", this.globalVars.logTimeElapsed());
       } else {
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
           this.globalVars.requestingStorageAccess = false;
           this.loadApp();
         });
+        console.log("Second load app: ", this.globalVars.logTimeElapsed());
       }
     });
 
-    this.globalVars.pollUnreadNotifications();
+    // this.globalVars.pollUnreadNotifications();
 
     this.installDD();
+    console.log("DD: ", this.globalVars.logTimeElapsed());
     this.installAmplitude();
-
-    introJs().start();
+    console.log("AMP: ", this.globalVars.logTimeElapsed());
   }
 
   loadApp() {
