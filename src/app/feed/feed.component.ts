@@ -19,6 +19,7 @@ import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 import { environment } from "src/environments/environment";
 import { FeedPostComponent } from "./feed-post/feed-post.component";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "feed",
@@ -31,7 +32,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
   static NEW_TABS = [];
-  static NUM_TO_FETCH = 20;
+  static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
   static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
 
@@ -51,7 +52,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   hotFeedPostHashes = [];
 
   followedPublicKeyToProfileEntry = {};
-  followedCount = 0;
+  followedCount = -1;
   followBannerThreshold = 10;
 
   // We load the first batch of follow feed posts on page load and whenever the user follows someone
