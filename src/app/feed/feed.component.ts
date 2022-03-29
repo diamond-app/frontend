@@ -217,28 +217,30 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Request the hot feed (so we have it ready for display if needed)
     if (this.globalVars.hotFeedPosts.length === 0) {
       this.loadingFirstBatchOfHotFeedPosts = true;
-      feedPromises.push(this._loadHotFeedPosts());
+      this._loadHotFeedPosts();
+      // feedPromises.push(this._loadHotFeedPosts());
     }
 
     // Request the follow feed (so we have it ready for display if needed)
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
-      feedPromises.push(this._reloadFollowFeed());
+      this._reloadFollowFeed();
+      // feedPromises.push(this._reloadFollowFeed());
     }
 
-    if (feedPromises.length > 0) {
-      Promise.all(feedPromises).then(() => {
-        if (
-          this.globalVars.hotFeedPosts.length > 0 &&
-          this.globalVars.hotFeedPosts[0].IsPinned &&
-          this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex &&
-          ((this.globalVars.followFeedPosts.length > 0 && !this.globalVars.followFeedPosts[0].IsPinned) ||
-            this.globalVars.followFeedPosts.length === 0)
-        ) {
-          this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
-        }
-      });
-    }
+    // if (feedPromises.length > 0) {
+    //   Promise.all(feedPromises).then(() => {
+    //     if (
+    //       this.globalVars.hotFeedPosts.length > 0 &&
+    //       this.globalVars.hotFeedPosts[0].IsPinned &&
+    //       this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex &&
+    //       ((this.globalVars.followFeedPosts.length > 0 && !this.globalVars.followFeedPosts[0].IsPinned) ||
+    //         this.globalVars.followFeedPosts.length === 0)
+    //     ) {
+    //       this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
+    //     }
+    //   });
+    // }
 
     // The activeTab is set after we load the following based on whether the user is
     // already following anybody
