@@ -31,7 +31,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
   static NEW_TABS = [];
-  static NUM_TO_FETCH = 50;
+  static NUM_TO_FETCH = 20;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
   static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
 
@@ -469,6 +469,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   _loadFollowFeedPosts(reload: boolean = false) {
+    this.globalVars.lastLoggedTime = performance.now();
+    console.log("Top of load follow feed: ", this.globalVars.logTimeElapsed())
     this.loadingMoreFollowFeedPosts = true;
 
     // Get the reader's public key for the request.
@@ -482,6 +484,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.globalVars.followFeedPosts.length > 0 && !reload) {
       lastPostHash = this.globalVars.followFeedPosts[this.globalVars.followFeedPosts.length - 1].PostHashHex;
     }
+    console.log("Before get posts stateless: ", this.globalVars.logTimeElapsed())
     return this.backendApi
       .GetPostsStateless(
         this.globalVars.localNode,
@@ -502,17 +505,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(
         tap(
           (res) => {
+            console.log("Right after get posts: ", this.globalVars.logTimeElapsed())
             if (lastPostHash !== "") {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
-              if (
-                this.globalVars.hotFeedPosts.length > 0 &&
-                this.globalVars.hotFeedPosts[0].IsPinned &&
-                this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex
-              ) {
-                this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
-              }
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
               this.serverHasMoreFollowFeedPosts = false;

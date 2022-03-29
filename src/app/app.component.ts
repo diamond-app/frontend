@@ -281,31 +281,24 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.globalVars.lastLoggedTime = performance.now();
-    console.log("On init: ", this.globalVars.logTimeElapsed());
     // Load the theme
     this.themeService.init();
-    console.log("Theme: ", this.globalVars.logTimeElapsed());
 
     // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
       this._updateDeSoExchangeRate();
     }, 5 * 60 * 1000);
-    console.log("Exchange rate: ", this.globalVars.logTimeElapsed());
 
     this.globalVars.updateEverything = this._updateEverything;
-    console.log("Set update everything: ", this.globalVars.logTimeElapsed());
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
     this._updateDeSoExchangeRate();
-    console.log("Exch rate update: ", this.globalVars.logTimeElapsed());
     this._updateAppState();
-    console.log("App State: ", this.globalVars.logTimeElapsed());
 
     this.loadApp();
 
     this.identityService.info().subscribe((res) => {
-      console.log("Identity info sub: ", this.globalVars.logTimeElapsed());
       // If the browser is not supported, display the browser not supported screen.
       if (!res.browserSupported) {
         this.globalVars.requestingStorageAccess = true;
@@ -319,16 +312,13 @@ export class AppComponent implements OnInit {
           this.globalVars.requestingStorageAccess = false;
           this.loadApp();
         });
-        console.log("Second load app: ", this.globalVars.logTimeElapsed());
       }
     });
 
     this.globalVars.pollUnreadNotifications();
 
     this.installDD();
-    console.log("DD: ", this.globalVars.logTimeElapsed());
     this.installAmplitude();
-    console.log("AMP: ", this.globalVars.logTimeElapsed());
   }
 
   loadApp() {
