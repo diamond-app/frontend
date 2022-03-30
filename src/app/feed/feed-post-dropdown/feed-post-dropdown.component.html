@@ -10,117 +10,117 @@
     <div>
       <a
         *ngIf="post.IsPinned"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="hidePinnedPost($event)"
       >
         Hide pinned post
       </a>
       <a
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="copyPostLinkToClipboard($event)"
       >
       {{ 'feed_post_dropdown.link_to' | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
       </a>
       <a
         *ngIf="showSharePost"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="sharePostUrl($event)"
       >
       {{ 'feed_post_dropdown.share' | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
       </a>
       <a
         *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openMintNftPage($event)"
       >
       {{ 'feed_post_dropdown.create_nft' | transloco }}
       </a>
       <a
         *ngIf="showCreateNFTAuction()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openCreateNFTAuctionModal($event)"
       >
       {{ 'feed_post_dropdown.put_on_sale' | transloco }}
       </a>
       <a
         *ngIf="showTransferNFT()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openTransferNFTModal($event)"
       >
       {{ 'feed_post_dropdown.transfer_nft' | transloco }}
       </a>
       <a
         *ngIf="showBurnNFT()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openBurnNFTModal($event)"
       >
       {{ 'feed_post_dropdown.burn_nft' | transloco }}
       </a>
       <a
         *ngIf="post.IsNFT && globalVars.showAdminTools()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="dropNFT()"
       >
       {{ 'feed_post_dropdown.add_nft_to_drop' | transloco }}
       </a>
       <a
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="reportPost()"
       >
       {{ 'feed_post_dropdown.report_content' | transloco }}
       </a>
       <a
         *ngIf="showHidePostDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="hidePost()"
       >
       {{ 'feed_post_dropdown.hide' | transloco }}
       </a>
       <a
         *ngIf="showUnfollowUser"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="unfollowUser($event)"
       >
         Unfollow User
       </a>
       <a
         *ngIf="showBlockUserDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="blockUser()"
       >
       {{ 'feed_post_dropdown.block_user' | transloco }}
       </a>
       <a
         *ngIf="globalVars.showSuperAdminTools()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="addMultiplier()"
       >
       {{ 'feed_post_dropdown.add_multiplier' | transloco }}
       </a>
       <a
         *ngIf="showAddToGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
       {{ 'feed_post_dropdown.add_to_feed' | transloco }}
       </a>
       <a
         *ngIf="showRemoveFromGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
       {{ 'feed_post_dropdown.remove_from_feed' | transloco }}
       </a>
       <a
         *ngIf="showPinPostToGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
       {{ 'feed_post_dropdown.pin_to_feed' | transloco }}
       </a>
       <a
         *ngIf="showUnpinPostFromGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
       {{ 'feed_post_dropdown.unpin_from_feed' | transloco }}

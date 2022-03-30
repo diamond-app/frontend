@@ -126,7 +126,7 @@
         </div>
         <div
           *ngIf="reposterProfile"
-          class="feed-post__container d-flex justify-content-left w-100 pb-5px"
+          class="feed-post__container d-flex justify-content-left w-100 pb-15px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pt-10px': includePaddingOnPost,
@@ -376,6 +376,29 @@
                   [cardStyle]="true"
                 ></feed-post>
 
+                <div
+                  *ngIf="showInteractionDetails"
+                  class="feed-post__container d-flex justify-content-left w-100"
+                  [ngClass]="{
+                    'feed-post__container--is-threaded': isThreaded,
+                    'feed-post__container--is-thread-child': isThreadChild
+                  }"
+                >
+                  <div class="w-100">
+                    <feed-post-icon-row
+                      class="mt-2px"
+                      *ngIf="showIconRow"
+                      [post]="post"
+                      [postContent]="postContent"
+                      [parentPost]="parentPost"
+                      [hideNumbers]="true"
+                      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+                      [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+                      (diamondSent)="diamondSent.emit()"
+                    ></feed-post-icon-row>
+                  </div>
+                </div>                
+
                 <!-- Bottom Buttons -->
                 <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
                   <!-- Like, Comment, Repost, Share Buttons -->
@@ -455,30 +478,6 @@
           <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div>
         </div>
       </a>
-      <div
-        *ngIf="showInteractionDetails"
-        class="feed-post__container d-flex justify-content-left w-100"
-        [ngClass]="{
-          'px-15px': includePaddingOnPost,
-          'pb-15px': includePaddingOnPost,
-          'feed-post__container--is-threaded': isThreaded,
-          'feed-post__container--is-thread-child': isThreadChild
-        }"
-      >
-        <div class="w-100" style="margin-left: -5px">
-          <feed-post-icon-row
-            class="mt-2px"
-            *ngIf="showIconRow"
-            [post]="post"
-            [postContent]="postContent"
-            [parentPost]="parentPost"
-            [hideNumbers]="true"
-            [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-            [afterRepostCreatedCallback]="afterRepostCreatedCallback"
-            (diamondSent)="diamondSent.emit()"
-          ></feed-post-icon-row>
-        </div>
-      </div>
       <div *ngIf="showInteractionDetails" class="d-flex justify-content-between align-items-center border-top p-16px fc-muted">
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openRepostsPage($event)" class="interaction-detail">
@@ -507,7 +506,7 @@
   <div
     *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
     class="fs-15px w-100 feed-post__nft-footer"
-    [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
+    [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 0 0' : '' }"
     (click)="onPostClicked($event)"
     [ngClass]="{ 'cursor-pointer': contentShouldLinkToThread }"
   >

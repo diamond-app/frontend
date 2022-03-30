@@ -1,11 +1,11 @@
 <div class="position-relative" *transloco="let t">
   <div class="w-100 position-absolute left-bar-more-container" #more id="more">
-    <div class="d-flex justify-content-end align-items-center pt-16px pr-16px">
+    <div class="d-flex justify-content-end align-items-center pt-16px left-bar-close-button pr-16px">
       <i-feather (click)="_exitMore()" name="x" class="feather-small fs-0px cursor-pointer"></i-feather>
     </div>
     <a
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
-      style="height: 56px"
+      style="height: 36px"
       (click)="openSettings()"
     >
       <i-feather name="settings" class="feather-medium fs-0px"></i-feather>
@@ -15,7 +15,7 @@
     </a>
     <div
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
-      style="height: 56px"
+      style="height: 36px"
       (click)="startTutorial()"
       *ngIf="globalVars.loggedInUser.TutorialStatus !== TutorialStatus.COMPLETE"
     >
@@ -31,7 +31,7 @@
     <a
       *ngIf="environment.supportEmail"
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
-      style="height: 56px"
+      style="height: 36px"
       (click)="logHelp()"
       [href]="getHelpMailToAttr()"
       target="_blank"
@@ -39,11 +39,15 @@
       <i-feather name="help-circle" class="feather-medium fs-0px"></i-feather>
       <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">{{ "left_bar.help" | transloco }}</a>
     </a>
-    <left-bar-button
-      *ngIf="globalVars.showAdminTools()"
-      [link]="'/' + globalVars.RouteNames.ADMIN"
-      [buttonLabel]="t('left_bar.admin')"
-      [iconName]="'codesandbox'"
-    ></left-bar-button>
+    <div
+    class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+    style="height: 36px">
+      <left-bar-button
+        *ngIf="globalVars.showAdminTools()"
+        [link]="'/' + globalVars.RouteNames.ADMIN"
+        [buttonLabel]="t('left_bar.admin')"
+        [iconName]="'codesandbox'"
+      ></left-bar-button>
   </div>
+</div>
 </div>

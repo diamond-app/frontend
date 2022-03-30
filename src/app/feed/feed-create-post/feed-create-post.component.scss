@@ -15,6 +15,10 @@
   position: relative;
 }
 
+.feed-create-post__post-content-container-thread:not(:first-child) {
+  border-top: 1px solid var(--border); 
+}
+
 .feed-create-post__post-remove-btn {
   border-radius: 100%;
   padding: 2px;
@@ -38,7 +42,7 @@
 
 .feed-create-post__left-btn-group {
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .feed-create-post__right-btn-group {
@@ -46,7 +50,7 @@
 }
 
 .feed-create-post__post-btn {
-  background: #000;
+  background: var(--text);
   padding: 12px 24px;
   border-radius: 6px;
   border: none;

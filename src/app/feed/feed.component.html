@@ -79,23 +79,6 @@
     }"
     *ngIf="globalVars.loggedInUser && isMobile"
   ></jumio-status>
-  <a
-    *ngIf="
-      globalVars.loggedInUser && activeTab === FeedComponent.FOLLOWING_TAB && followedCount < followBannerThreshold
-    "
-    [routerLink]="['/' + globalVars.RouteNames.BROWSE]"
-    [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
-    queryParamsHandling="merge"
-    class="mb-5px"
-  >
-    <div
-      class="feed-desktop-center-banner"
-      [ngStyle]="{ 'margin': isMobile ? '0px 8px' : 'auto'}"
-    >
-      <i class="fas fa fa-fire mr-10px"></i>
-      <span class="mr-5px">{{ 'feed.find_people_in_hot' | transloco }}</span>
-    </div>
-  </a>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()">

@@ -132,7 +132,7 @@
 
   </div>
 
-  <div class="d-flex flex-column pl-15px pr-15px">
+  <div class="d-flex flex-column">
     <div class="fs-15px py-15px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
     <div class="creator-profile__divider-border"></div>
     <div class="fs-15px d-flex flex-column flex-wrap">
@@ -167,7 +167,7 @@
         </div>
         <div *ngIf="profile?.Username" [ngClass]="{ 'mt-10px': globalVars.isMobile() }">
           <a class="fc-blue" [href]="getUserDetailsLink()">
-            <u>View Activity</u>
+            View Activity
           </a>
         </div>
       </div>
