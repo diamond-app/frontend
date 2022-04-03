@@ -321,11 +321,11 @@
   },
   "landing":{
     "login":"Login",
-    "signup":"Sign Up",
-    "signuptoday":"Sign Up Today",
-    "settle":"Don´t settle",
+    "signup":"Create Account",
+    "signuptoday":"Create Account",
+    "settle":"The home for creators & communities",
     "fora":"for a",
-    "diamonds":"Get diamonds and invest in creators like never before. Your next post could be worth millions!"
+    "diamonds":"Diamond is the home for creators and their audience to build engaging communities around content, incentives & ownership."
   },
   "left_bar": {
     "home":"Home",
