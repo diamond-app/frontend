@@ -926,6 +926,11 @@ i-feather[name="check-circle"] {
   height: 60px;
 }
 
+.pwa-bottom-bar-mobile {
+  height: 80px !important;
+  padding-bottom: 20px;
+}
+
 .global__tooltip-icon {
   cursor: pointer;
 }
@@ -1348,7 +1353,7 @@ app-landing-page {
     margin: 0 auto;
   }
   .landing-page-testimonial {
-    margin-top: 250px !important; 
+    margin-top: 250px !important;
   }
 }
 

@@ -1492,6 +1492,10 @@ export class GlobalVarsService {
     }
   }
 
+  windowIsPWA(): Boolean {
+    return window.matchMedia("(display-mode: standalone)").matches
+  }
+
   waitForTransaction(
     waitTxn: string = "",
     successCallback: (comp: any) => void = () => {},
