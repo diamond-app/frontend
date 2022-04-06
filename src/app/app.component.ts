@@ -280,7 +280,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Load the theme
     this.themeService.init();
-    console.log("In the beginning");
+
     // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
@@ -293,21 +293,17 @@ export class AppComponent implements OnInit {
     this._updateDeSoExchangeRate();
     this._updateAppState();
 
-    console.log("Before trying to get identity info");
+    this.loadApp();
+
     this.identityService.info().subscribe((res) => {
-      console.log("After identity info");
       // If the browser is not supported, display the browser not supported screen.
-      console.log("Is the browser supported? ", res.browserSupported);
-      console.log("Do we have storage access? ", res.hasStorageAccess);
       if (!res.browserSupported) {
         this.globalVars.requestingStorageAccess = true;
         return;
       }
 
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-      if (res.hasStorageAccess || !isLoggedIn) {
-        this.loadApp();
-      } else {
+      if (!res.hasStorageAccess && isLoggedIn) {
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
           this.globalVars.requestingStorageAccess = false;

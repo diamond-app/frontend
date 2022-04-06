@@ -40,25 +40,25 @@
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
 
-  <a
-    *ngIf="globalVars.loggedInUser && userReferral && isMobile"
-    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
-    class="mt-40px mx-8px"
-    [ngClass]="{
-      'mb-5px': !(
-        globalVars.loggedInUser &&
-        !globalVars.loggedInUser.JumioVerified &&
-        this.globalVars.showFreeMoneyBanner
-      )
-    }"
-  >
-    <div
-      class="feed-desktop-center-banner"
-    >
-      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>
-    </div>
-  </a>
+<!--  <a-->
+<!--    *ngIf="globalVars.loggedInUser && userReferral && isMobile"-->
+<!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
+<!--    class="mt-40px mx-8px"-->
+<!--    [ngClass]="{-->
+<!--      'mb-5px': !(-->
+<!--        globalVars.loggedInUser &&-->
+<!--        !globalVars.loggedInUser.JumioVerified &&-->
+<!--        this.globalVars.showFreeMoneyBanner-->
+<!--      )-->
+<!--    }"-->
+<!--  >-->
+<!--    <div-->
+<!--      class="feed-desktop-center-banner"-->
+<!--    >-->
+<!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
+<!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
+<!--    </div>-->
+<!--  </a>-->
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
