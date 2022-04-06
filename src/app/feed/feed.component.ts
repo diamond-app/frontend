@@ -490,13 +490,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
-              if (
-                this.globalVars.hotFeedPosts.length > 0 &&
-                this.globalVars.hotFeedPosts[0].IsPinned &&
-                this.backendApi.GetStorage("dismissedPinnedPostHashHex") !== this.globalVars.hotFeedPosts[0].PostHashHex
-              ) {
-                this.globalVars.followFeedPosts.unshift(this.globalVars.hotFeedPosts[0]);
-              }
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
               this.serverHasMoreFollowFeedPosts = false;
