@@ -236,6 +236,7 @@ $green-font-color: #19B028;
 
 // Widths
 .w-10 { width: 10% }
+.w-15 { width: 15% }
 .w-20 { width: 20% }
 .w-30 { width: 10% }
 .w-40 { width: 40% }
@@ -1070,6 +1071,9 @@ app-landing-page {
     max-width: 100%;
     height: auto;
   }
+  .fc-landing-page {
+    color:rgba(255, 255, 255, 0.4);
+  }
 }
 
 .landing-page-diamond-square {
@@ -1179,6 +1183,14 @@ app-landing-page {
   max-height: 120px;
 }
 
+.landing-page-creator-coins-explainer-section-title {
+  color: white;
+  margin-top: 110px;
+  @media (min-width: 600px) {
+    margin-top: 80px;
+  }
+}
+
 .landing-page-creator-coins-explainer-title {
   color: white;
 }
@@ -1222,7 +1234,8 @@ app-landing-page {
     right: -70px;
   }
   @media (max-width: 992px) {
-    right: 36%
+    right: 36%;
+    opacity: 0.4;
   }
 }
 
@@ -1239,7 +1252,9 @@ app-landing-page {
     right: -274px;
   }
   @media (max-width: 992px) {
-    right: 9%
+    right: -31%;
+    max-width: 40%;
+    top: 40px;
   }
   backdrop-filter: blur(20px);
   position: relative;;
@@ -1271,11 +1286,12 @@ app-landing-page {
 }
 
 .landing-page-header-main {
-  font-size: 160px;
-  line-height: 130px;
+  font-size: 140px;
+  line-height: 115px;
   font-family: "Druk";
   text-transform: uppercase;
   margin-top: -100px;
+  letter-spacing: 2px;
   @media (max-width: 992px) {
     font-size: 80px;
     line-height: 70px;
@@ -1291,6 +1307,7 @@ app-landing-page {
   line-height: 130px;
   font-family: "Druk";
   text-transform: uppercase;
+  letter-spacing: 2px;
   @media (max-width: 992px) {
     font-size: 80px;
     line-height: 70px;
@@ -1300,6 +1317,40 @@ app-landing-page {
   color: $landing-page-highlight;
 }
 
+
+
+.landing-page-testimonial-quote {
+  font-family: "Druk";
+  color: #333;
+  text-transform: uppercase;
+  font-size: 102px;
+  letter-spacing: 2px;
+  width: 50%;
+  line-height: 88px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.landing-page-testimonial-person {
+  width: 15%;
+}
+
+@media (max-width: 601px) {
+  .landing-page-testimonial-quote {
+    font-size: 54px;
+    line-height: 50px;
+    width: 80%;
+    margin-top: 20px
+  }
+  .landing-page-testimonial-person {
+    width: 65%;
+    margin: 0 auto;
+  }
+  .landing-page-testimonial {
+    margin-top: 250px !important; 
+  }
+}
 
 .landing-page-title {
   z-index: 1;
@@ -1823,8 +1874,10 @@ nft-post {
   .nft-post-details {
     background: var(--tile-bg);
     margin-top: 20px;
-    border-radius: 6px;
+    border-radius: 0;
     border: 1px solid var(--border);
+    border-left: 0;
+    border-right: 0;
   }
   post-thread {
     .post-thread__container {
@@ -2123,6 +2176,14 @@ sign-up {
   .global__sidebar__inner {
     display: none;
   }
+  .desktop-top-bar {
+    background: var(--text);
+    border: none;
+    border-bottom: 1px solid #444;
+    .deso {
+      filter: invert(1);
+    }
+  }
 }
 
 .feed-create-post__avatar.change-account-selector__account-image {
@@ -2329,23 +2390,6 @@ sign-up {
   .feed-post__container {
     border-radius: 0px;
   }
-  .last-item {
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    .feed-post-container, .feed-post__container {
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-  }
-  .first-item {
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    .feed-post__container {
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
-    }
-  }
-
   flex-grow: 1;
 }
 
@@ -4201,7 +4245,6 @@ trade-creator-form {
    background-size: cover;
    background-repeat: no-repeat;
    background-position: center center;
-  position: relative;
 }
 
 .notifications__action {
@@ -4211,17 +4254,12 @@ trade-creator-form {
 
 .notifications__icon {
   position: absolute;
-  right: 0px;
-  bottom: 0px;
+  right: 6px;
+  top: 2px;
   height: 20px;
   width: 20px;
   border-radius: 100%;
   background: var(--tile-bg);
-  i-feather {
-    position: absolute;
-    right: 3px;
-    bottom: 3px;
-  }
 }
 
 @media (max-width: 992px) {
@@ -4738,6 +4776,7 @@ em {
   margin-right: .5rem;
   cursor: pointer;
 }
+.text-underline {text-decoration: underline;}
 .link {
     color: $light-color;
     text-decoration: underline;
