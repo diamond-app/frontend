@@ -25,7 +25,7 @@
 
         <!-- Left Bar Buttons -->
         <div class="pt-20px"></div>
-        <div class="left-desktop-selector" *ngIf="!inTutorial">
+        <div [ngClass]="{ 'ml-20px': globalVars.isMobile() }" class="left-desktop-selector" *ngIf="!inTutorial">
           <left-bar-button [link]="homeLink()" [buttonLabel]="t('left_bar.home')" [iconName]="'home'"></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"

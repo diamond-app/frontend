@@ -293,6 +293,8 @@ export class AppComponent implements OnInit {
     this._updateDeSoExchangeRate();
     this._updateAppState();
 
+    this.loadApp();
+
     this.identityService.info().subscribe((res) => {
       // If the browser is not supported, display the browser not supported screen.
       if (!res.browserSupported) {
@@ -301,9 +303,7 @@ export class AppComponent implements OnInit {
       }
 
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-      if (res.hasStorageAccess || !isLoggedIn) {
-        this.loadApp();
-      } else {
+      if (!res.hasStorageAccess && isLoggedIn) {
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
           this.globalVars.requestingStorageAccess = false;
