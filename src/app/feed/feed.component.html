@@ -81,7 +81,7 @@
   ></jumio-status>
 
   <!-- Posts -->
-  <div *ngIf="showGlobalOrFollowingOrHotPosts()">
+  <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-40px': globalVars.isMobile() }">
     <div class="mobile-scroll" *ngFor="let post of postsToShow()">
       <div *ngIf="post && post.ProfileEntryResponse">
         <!--
