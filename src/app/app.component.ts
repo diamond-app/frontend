@@ -297,6 +297,8 @@ export class AppComponent implements OnInit {
     this.identityService.info().subscribe((res) => {
       console.log("After identity info");
       // If the browser is not supported, display the browser not supported screen.
+      console.log("Is the browser supported? ", res.browserSupported);
+      console.log("Do we have storage access? ", res.hasStorageAccess);
       if (!res.browserSupported) {
         this.globalVars.requestingStorageAccess = true;
         return;

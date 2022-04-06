@@ -80,7 +80,6 @@ header @html Content-Security-Policy "
   frame-src 'self'
     localhost:*
     identity.deso.org
-    192.168.1.5:*
     identity.deso.blue
     identity.deso.green
     identity.bitclout.com
