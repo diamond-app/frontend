@@ -525,8 +525,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
 
+    const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, this.hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
+      .GetHotFeed(this.globalVars.localNode, readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
       .pipe(
         tap(
           (res) => {
@@ -541,7 +542,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.backendApi.GetStorage("dismissedPinnedPostHashHex") === this.globalVars.hotFeedPosts[0].PostHashHex
             ) {
               this.globalVars.hotFeedPosts.shift();
-              // If the follow feed was loaded prior to the hot feed and is missing a pinned post, add it here
             }
             for (let ii = 0; ii < this.globalVars.hotFeedPosts.length; ii++) {
               this.hotFeedPostHashes = this.hotFeedPostHashes.concat(this.globalVars.hotFeedPosts[ii]?.PostHashHex);
