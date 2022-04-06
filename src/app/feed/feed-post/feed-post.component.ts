@@ -224,6 +224,8 @@ export class FeedPostComponent implements OnInit {
   // If the user is buying an NFT, pause all videos. Track it here so that once the buy is complete we can resume the autoplay
   videoTemporarilyPaused = false;
   streamPlayer: any;
+  imageLoaded: boolean = false;
+  embedLoaded: boolean = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -326,6 +328,16 @@ export class FeedPostComponent implements OnInit {
       this.postContent.Body = `${chars.join("")}...`;
       this.showReadMoreRollup = true;
     }
+  }
+
+  imageLoadedEvent() {
+    this.imageLoaded = true;
+    this.ref.detectChanges();
+  }
+
+  embedLoadedEvent() {
+    this.embedLoaded = true;
+    this.ref.detectChanges();
   }
 
   openBuyCreatorCoinModal(event, username: string) {

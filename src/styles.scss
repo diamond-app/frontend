@@ -2662,6 +2662,21 @@ bs-dropdown-container {
   border-radius: 20px;
   margin-top: 10px;
   margin-bottom: 5px;
+  //min-height: 300px;
+  @media (max-width: 992px) {
+
+  }
+}
+
+.feed-post__embed-container-spacer {
+  min-height: 315px;
+}
+
+.feed-post__image-container-spacer {
+  min-height: 350px;
+  @media (max-width: 992px) {
+    min-height: 250px;
+  }
 }
 
 .feed-post__image-container {

@@ -302,9 +302,13 @@
                 <div
                   *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]"
                   class="feed-post__image-container"
-                  [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+                  [ngClass]="{
+                    'mb-10px': quotedContent && showQuotedContent,
+                    'feed-post__image-container-spacer': !imageLoaded
+                  }"
                 >
                   <img
+                    (load)="imageLoadedEvent()"
                     (click)="openImgModal($event, postContent.ImageURLs[0])"
                     data-toggle="modal"
                     class="feed-post__image"
@@ -345,9 +349,13 @@
                 <div
                   *ngIf="constructedEmbedURL"
                   class="feed-post__embed-container"
-                  [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+                  [ngClass]="{
+                    'mb-10px': quotedContent && showQuotedContent,
+                    'feed-post__embed-container-spacer': !embedLoaded
+                  }"
                 >
                   <iframe
+                    (load)="embedLoadedEvent()"
                     id="embed-iframe"
                     [height]="getEmbedHeight()"
                     class="feed-post__image"
@@ -398,7 +406,7 @@
                       (diamondSent)="diamondSent.emit()"
                     ></feed-post-icon-row>
                   </div>
-                </div>                
+                </div>
 
                 <!-- Bottom Buttons -->
                 <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
@@ -472,7 +480,7 @@
                     </div>
                   </div>
                 </div>
-              </div>    
+              </div>
             </div>
           </div>
           <!-- Avatar -->
