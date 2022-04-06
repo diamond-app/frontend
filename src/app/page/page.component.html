@@ -50,6 +50,7 @@
       </div>
 
       <bottom-bar-mobile
+        [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
         *ngIf="mobile && !inTutorial && showBottomBar"
         class="global__bottom-bar-mobile"
         [showPostButton]="showPostButton"

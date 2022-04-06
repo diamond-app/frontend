@@ -132,7 +132,11 @@
         ></messages-thread-view>
       </div>
     </div>
-    <bottom-bar-mobile *ngIf="!showThreadView" class="global__bottom-bar-mobile"></bottom-bar-mobile>
+    <bottom-bar-mobile
+      [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
+      *ngIf="!showThreadView"
+      class="global__bottom-bar-mobile"
+    ></bottom-bar-mobile>
   </div>
   <a
     class="messages-mobile__new-message-circle d-flex justify-content-center align-items-center cursor-pointer"
