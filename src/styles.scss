@@ -799,7 +799,7 @@ i-feather[name="check-circle"] {
   creator-profile-details {
     tab-selector {
       .tab-selector__container {
-        justify-content: center;        
+        justify-content: center;
       }
     }
     .creator-profile-details__coin-info {
@@ -1112,7 +1112,7 @@ app-landing-page {
 }
 
 .landing-page-nft-card-fs-large {
-  font-size: 26px;  
+  font-size: 26px;
   @media (max-width: 992px) {
     font-size: 20px;
   }
@@ -4242,7 +4242,7 @@ sign-up {
     margin-top: 50px;
     padding: 20px;
   }
-  
+
   .main,
   .global__nav__fixed,
   .global__nav__width,
@@ -5168,6 +5168,12 @@ mint-nft-page {
     #searchbar {
       height: 46px;
     }
+  }
+}
+
+mint-nft-page, sell-nft-page {
+  .global__nav__fixed {
+    border: none;
   }
 }
 
