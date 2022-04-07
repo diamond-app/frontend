@@ -1492,7 +1492,7 @@ export class GlobalVarsService {
   }
 
   windowIsPWA(): Boolean {
-    return window.matchMedia("(display-mode: standalone)").matches
+    return window.matchMedia("(display-mode: standalone)").matches;
   }
 
   waitForTransaction(
