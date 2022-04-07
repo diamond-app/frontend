@@ -13,7 +13,7 @@
         <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchSignupFlow()">
           {{t('landing.signup')}}
         </a>
-        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">{{t("landing.signuptoday")}}</button>
+        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn-inverted landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">{{t("landing.signuptoday")}}</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -39,10 +39,6 @@
               <div class="mb-10px">Create Account</div>
               <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
             </button>
-            <div class="text-center justify-center fc-landing-page align-items-center d-flex" style="opacity:0.55">
-              <p class="fc-landing-page fs-14px">Featured on</p>
-              <a href="https://cointelegraph.com/press-releases/deso-blockchain-eclipses-65m-transactions-as-big-names-eye-a-deso-summer" target="_blank"><img width="180px" style="filter: grayscale(60)" src="https://d186rf8qxzrqov.cloudfront.net/wp-content/uploads/2017/11/Cointelegraph.png?x78416" /></a>
-            </div>
           </div>
         </div>
         <div class="position-relative h-100 w-100" style="width: 600px !important">
@@ -90,9 +86,9 @@
     <p class="fc-landing-page fs-18px mb-20px">Over $30 million dollars paid directly to creators</p>
     <p class="fs-25px mb-20px landing-page-testimonial-quote">&ldquo;we’ve made more on Diamond than anything we’ve ever tried&rdquo;</p>
     <div class="d-flex m-auto landing-page-testimonial-person align-items-center justify-center">
-      <a href="https://diamondapp.com/u/goldberry" class="fc-landing-page d-block w-20" target="_blank"><img class="w-100 mr-15px" src="assets/diamond/goldberry.png"></a>
+      <a href="https://diamondapp.com/u/goldberry" class="fc-landing-page d-block w-20" target="_blank"><img class="w-100 br-6px mr-15px" src="assets/diamond/goldberry.png"></a>
       <span class="fc-landing-page text-left pl-20px">Goldberry • <a class="fs-14px fc-landing-page text-underline" target="_blank" href="https://diamondapp.com/u/goldberry">View Profile</a><br>
-        <span style="color:#444" class="fs-14px">Indie Folk Band, St. Louis</span>
+        <span style="color:#666" class="fs-14px">Indie Folk Band, St. Louis</span>
       </span>
     </div> 
   </div>
@@ -103,7 +99,7 @@
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image" src="https://ouch-cdn2.icons8.com/JwmyN-ATeUqhPr5AxMseIHUARYyu8Yh075izXXHlgtc/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTgy/LzY0NmFmZDI2LTQ2/MzAtNDhkYS1hYjVm/LWE2NjQwYjc0MjRm/NC5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image" src="/assets/diamond/icon-1.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Full ownership of your content &amp; identity</div>
@@ -111,7 +107,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image"src="https://ouch-cdn2.icons8.com/JR-sjXk2-W7LGA4BhS4wTu_GJ-OSMqnspvVaJFHN4UA/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMjc1/LzAzOWNmYzA2LWVi/NTctNDQwZC04ZGY4/LTU0ZWU5MmM4NTYy/Mi5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image"src="/assets/diamond/icon-2.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Monetize value, for your holders — not advertisers</div>
@@ -119,7 +115,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image" src="https://ouch-cdn2.icons8.com/Um3Vy5sFBlqqWPChLkkrxXZS5ZbJLCq8gfR1yDPlEWU/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMjQz/L2FkMjZhZmYxLTJl/OTUtNDJlMy1iM2Fi/LTkxZjI4ODc3MjJl/Mi5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image" src="/assets/diamond/icon-3.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Invest & grow with your favorite creators & fans</div>
@@ -143,7 +139,7 @@
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small" src="https://ouch-cdn2.icons8.com/uoP9GLN3srtG3rhXTX6X5gDKRbKkZjmVwgp4GpCaQn0/rs:fit:824:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMjcv/NjdhNGU5NWEtZjQ3/Ny00Y2JkLTg5MTIt/ZTA0YjdkYjQ1NGE0/LnBuZw.png"/>
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-4.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Mint NFTs in a few clicks</div>
@@ -152,7 +148,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small"src="https://ouch-cdn2.icons8.com/7ka27GX_6fpR_fofLtIxqMA2edIPR6uyarFPU3jAtoU/rs:fit:256:275/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjI4/L2M3ODdkM2I5LTM1/MGEtNDg0ZC1hZDI3/LTY0Mjk5NjQ0Yzcy/ZS5zdmc.png"/>
+          <img class="position-relative landing-page-explainer-image-small"src="/assets/diamond/icon-5.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Send tips with diamonds</div>
@@ -161,7 +157,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small" src="https://ouch-cdn2.icons8.com/U-0il1t6DhNALepAi8VFjmbErnGV2QOTuDkHNqteI-g/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvNjE0/LzQ5NjY3MjQzLWE1/M2EtNDI0My05Mjgz/LThkYjk0ZmUxZWYw/MS5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-6.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Buy creator coins</div>
@@ -175,7 +171,7 @@
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small" src="https://ouch-cdn2.icons8.com/-ExlG7PAXMtpZ6wq5agHalBeKtzDbXCvYG66SbwZctw/rs:fit:256:292/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvMTIw/L2FiMWFhM2Y3LTI1/YWMtNDBkMi04YmM4/LTM1OWRiYjM5Nzc1/YS5zdmc.png"/>
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-7.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Take your profile with you</div>
@@ -184,7 +180,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small"src="https://ouch-cdn2.icons8.com/SSvQdg2FqwwbjUQUWVb0UPpMeBb1gV2HP1bvuTUA5g8/rs:fit:256:305/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMzY2/L2JlYWVhNTRjLWE3/MjAtNDEwNC05YWUy/LTIyNmNkYzk0Zjc1/OS5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image-small"src="/assets/diamond/icon-8.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Collect founders reward</div>
@@ -193,7 +189,7 @@
       </div>
       <div class="position-relative landing-page-creator-coin-explainer-container">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative landing-page-explainer-image-small" src="https://ouch-cdn2.icons8.com/nkCA-GeviajhvxnICivVWVgHZCyII3Vj0Cf8H5Qn_Tw/rs:fit:256:315/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMjgz/LzY4MjJhMTc1LTg1/Y2MtNGM1Ni05OTEz/LTgxOTAwOGIwNWE5/NS5wbmc.png"/>
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-9.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
           <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Airdrop your NFTs</div>

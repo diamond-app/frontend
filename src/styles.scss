@@ -511,6 +511,7 @@ $green-font-color: #19B028;
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
 .br-5px { border-radius: 5px; }
+.br-6px { border-radius: 6px; }
 .br-8px { border-radius: 8px; }
 .br-10px { border-radius: 6px; }
 .br-12px { border-radius: $feed-border-radius; }
@@ -1301,7 +1302,6 @@ app-landing-page {
   color: $landing-page-highlight;
 }
 
-
 .landing-section-header {
   font-size: 200px;
   line-height: 130px;
@@ -1333,8 +1333,16 @@ app-landing-page {
 }
 
 .landing-page-testimonial-person {
-  width: 15%;
+  width: 240px;
 }
+
+@media (max-width: 992px) {
+  .landing-page-testimonial-quote {
+    width: 90%;
+    margin-top: 20px
+  }
+}
+
 
 @media (max-width: 601px) {
   .landing-page-testimonial-quote {
@@ -1351,6 +1359,7 @@ app-landing-page {
     margin-top: 250px !important; 
   }
 }
+
 
 .landing-page-title {
   z-index: 1;
@@ -1405,19 +1414,26 @@ app-landing-page {
 
 .landing-page-primary-btn {
   background: $landing-page-dark;
-  backdrop-filter: blur(14px);
   color: white;
   &:hover {
     background:$landing-page-highlight;
     color: black;
     .landing-page-button-subtext { color: black }
   }
+}
 
+.landing-page-primary-btn-inverted {
+  background: $landing-page-highlight;
+  color: black;
+  &:hover {
+    background: darken($landing-page-highlight, 10%);
+    color: black;
+    .landing-page-button-subtext { color: black }
+  }
 }
 
 .landing-page-secondary-btn {
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(5px);
   color: $landing-page-dark;
   &:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -2382,10 +2398,13 @@ sign-up {
 .post-thread__comment-container {
   .post-thread__single-comment {
     background: var(--tile-bg);
+    border-top: 1px solid var(--border);
   }
   .feed-post-container {
     background: var(--tile-bg);
     margin-bottom: 0px;
+    border-bottom: none;
+    border-top: none;
   }
   .feed-post__container {
     border-radius: 0px;
@@ -2561,6 +2580,10 @@ trends {
   min-height: 55px;
 }
 
+.modal-dialog .feed-create-post__textarea {
+  min-height: 250px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
@@ -2654,7 +2677,7 @@ bs-dropdown-container {
   align-items: center;
   overflow: hidden;
   max-height: 700px;
-  border-radius: 20px;
+  border-radius: 6px;
   margin-top: 10px;
   margin-bottom: 5px;
 }
@@ -2833,6 +2856,7 @@ bs-dropdown-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .bitclout-logo{
     svg {
       width: 16.93px;
@@ -3112,7 +3136,7 @@ feed-post-dropdown {
     color: var(--highlight);
   }
   a {
-    color: var(--text-secondary);
+    color: var(--text);
     &:hover {
       color: var(--highlight);
     }
@@ -3226,8 +3250,13 @@ right-bar-creators {
   }
 }
 
-.creator-leaderboard__load-more:hover {
+
+.creator-leaderboard__load-more {
   background-color: var(--background-secondary);
+}
+
+.creator-leaderboard__load-more:hover {
+  background-color: var(--nft-section-bg);
 }
 
 .feed__light-grey-divider {
@@ -4101,7 +4130,7 @@ creator-profile-nfts {
 
 .message__sender-bubble-color {
   background-color: var(--nft-section-bg);
-  color: var(--text-inverted);
+  color: var(--text);
 }
 
 .message__non-sender-bubble-color {
@@ -4315,6 +4344,9 @@ app-notifications-list {
     &.last-item {
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
+    }
+    .feed-post-container {
+      border-left: 0;
     }
   }
 }

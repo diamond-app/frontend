@@ -268,7 +268,7 @@
                   [creatorCoinTemplate]="creatorCoinInfo"
                 ></follow-button>
               </div>
-              <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div>
+              <!-- <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div> -->
               <!-- Main Content -->
               <div class="w-100" [ngClass]="{ 'feed-post__content-wrapper': isThreaded }">
                 <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
@@ -578,7 +578,7 @@
           <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid && !acceptNFT">
             <span class="d-flex align-items-center justify-content-center">
               <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              Purchase
+              Buy NFT
             </span>
           </button>
           <button

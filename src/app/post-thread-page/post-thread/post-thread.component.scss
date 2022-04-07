@@ -1,9 +1,13 @@
 .post-thread__see-more-button {
   width: 100%;
-  color: var(--link);
+  color: var(--text);
   border: none;
-  background-color: transparent;
-  padding-bottom: 16px;
+  padding: 8px 0;
+  background: var(--tile-secondary-bg);
+  font-size: 14px;
+  &:hover {
+    background: var(--nft-section-bg);
+  }
 }
 
 .post-thread__see-more-loader {

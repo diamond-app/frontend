@@ -389,7 +389,7 @@
   },
   "right_bar": {
     "creators":{
-      "sent":"Send",
+      "sent":"Sent",
       "buy_deso":"Buy $DESO",
       "deso_price":"$DESO Price",
       "your_deso":"Your $DESO",
@@ -465,7 +465,7 @@
     }
   },
   "wallet_widget": {
-    "wallet_of": "Wallet of",
+    "wallet_of": "My Creator Coin ",
     "coins_in_circulation":"Coins in Circulation",
     "total_usd_locked":"Total USD Locked",
     "usd_market_cap":"USD Market Cap"

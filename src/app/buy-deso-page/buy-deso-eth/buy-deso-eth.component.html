@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="position-relative w-100">
-          <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
+          <div class="mint-nft__input" style="border-radius: 0px 6px 6px 0px">
             {{ loadingBalance ? "Loading..." : ethBalance.toFixed(8) + " ETH" }}
           </div>
           <span class="mint-nft__floating-span fc-muted" *ngIf="!loadingBalance">
@@ -132,7 +132,7 @@
         </div>
       </div>
       <div class="position-relative w-100">
-        <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
+        <div class="mint-nft__input" style="border-radius: 0px 6px 6px 0px">
           {{ ethBalance.toFixed(8) }}
         </div>
       </div>
@@ -152,7 +152,7 @@
         <input
           [(ngModel)]="desoToBuy"
           (ngModelChange)="updateDESOToBuy($event)"
-          style="border-radius: 0px 16px 16px 0px"
+          style="border-radius: 0px 6px 6px 0px"
           aria-describedby="usd-label"
           class="mint-nft__input"
           type="number"
@@ -179,7 +179,7 @@
         <input
           [(ngModel)]="ethToExchange"
           (ngModelChange)="updateETHToExchange($event)"
-          style="border-radius: 0px 16px 16px 0px"
+          style="border-radius: 0px 6px 6px 0px"
           aria-describedby="usd-label"
           class="mint-nft__input"
           type="number"

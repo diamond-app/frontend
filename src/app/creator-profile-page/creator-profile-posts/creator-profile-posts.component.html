@@ -6,7 +6,7 @@
   "
   class="p-15px"
 >
-  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+  <div class="d-flex flex-row align-items-center" style="text-align: center">
     <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">{{ 'creator_profile_posts.create_fipo' | transloco }}</span>
     <ng-template #elseMissingPostBlock>
       <span>@{{ profile.Username }} {{ 'creator_profile_posts.on_platform_no_posts' | transloco }}</span>
