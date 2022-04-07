@@ -1,5 +1,5 @@
-<div class="global__nav__width" *transloco="let t">
-  <div class="global__nav__fixed">
+<div class="global__nav__width">
+  <div class="global__nav__fixed" *transloco="let t">
     <!-- Logged-in Left Bar -->
     <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner d-flex flex-column justify-content-between">
       <div>
@@ -124,7 +124,7 @@
       </div>
 
       <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
-      <div class="left-desktop-selector">
+      <div class="left-desktop-selector" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
         <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>

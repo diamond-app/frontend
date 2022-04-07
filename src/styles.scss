@@ -927,6 +927,11 @@ i-feather[name="check-circle"] {
   height: 60px;
 }
 
+.pwa-bottom-bar-mobile {
+  height: 80px !important;
+  padding-bottom: 20px;
+}
+
 .global__tooltip-icon {
   cursor: pointer;
 }
@@ -1356,7 +1361,7 @@ app-landing-page {
     margin: 0 auto;
   }
   .landing-page-testimonial {
-    margin-top: 250px !important; 
+    margin-top: 250px !important;
   }
 }
 
@@ -2680,6 +2685,21 @@ bs-dropdown-container {
   border-radius: 6px;
   margin-top: 10px;
   margin-bottom: 5px;
+  //min-height: 300px;
+  @media (max-width: 992px) {
+
+  }
+}
+
+.feed-post__embed-container-spacer {
+  min-height: 315px;
+}
+
+.feed-post__image-container-spacer {
+  min-height: 350px;
+  @media (max-width: 992px) {
+    min-height: 250px;
+  }
 }
 
 .feed-post__image-container {
@@ -4186,7 +4206,7 @@ creator-profile-nfts {
   width: 58px;
   text-align: center;
   border: none;
-  color: white;
+  color: var(--tile-bg);
   line-height: 0.65;
   background: var(--text) !important;
   display: flex;
