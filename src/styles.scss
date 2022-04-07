@@ -3,7 +3,8 @@ $danger: #E63946;
 $secondary: #ecf0f1;
 $success: #32ED4B;
 $info: #689eff;
-$feed-border-radius: 12px;
+$feed-border-radius: 100px;
+$landing-page-highlight: #00faff;
 
 @import 'variables.scss';
 @import 'app/theme/themes/index';
@@ -22,6 +23,13 @@ $feed-border-radius: 12px;
 @font-face {
   font-family: 'Gilroy';
   src: url('./assets/fonts/Gilroy-SemiBold.ttf')  format('truetype');
+  font-weight: 600;
+  ascent-override: 100%;
+}
+
+@font-face {
+  font-family: 'Druk';
+  src: url('./assets/fonts/DrukCond-Super.ttf')  format('truetype');
   font-weight: 600;
   ascent-override: 100%;
 }
@@ -219,6 +227,7 @@ $green-font-color: #19B028;
 // font weights
 // font-weight-light: 300
 // font-weight-normal: 400
+.font-weight-heavy { font-weight:00 !important; }
 .font-weight-bold { font-weight: 600 !important; }
 .font-weight-semibold { font-weight: 500 }
 .font-weight-normal { font-weight: 400 }
@@ -227,6 +236,7 @@ $green-font-color: #19B028;
 
 // Widths
 .w-10 { width: 10% }
+.w-15 { width: 15% }
 .w-20 { width: 20% }
 .w-30 { width: 10% }
 .w-40 { width: 40% }
@@ -501,8 +511,9 @@ $green-font-color: #19B028;
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
 .br-5px { border-radius: 5px; }
+.br-6px { border-radius: 6px; }
 .br-8px { border-radius: 8px; }
-.br-10px { border-radius: 10px; }
+.br-10px { border-radius: 6px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
@@ -513,6 +524,16 @@ $green-font-color: #19B028;
 }
 
 .position-fixed { position: fixed; }
+
+i-feather[name="check-circle"] {
+  svg {
+    display: none;
+  }
+  background-image: url('/assets/img/verified-badge.svg');
+  background-size: contain;
+  position: relative;
+  top: 3px;
+}
 
 .feather-xsmall {
   height: 14px !important;
@@ -552,6 +573,8 @@ $green-font-color: #19B028;
   -webkit-box-orient: vertical;
 }
 
+.modal-backdrop.show {opacitY: 0.9 !important}
+
 .global__container {
   min-height: 100vh;
   display: flex;
@@ -586,6 +609,7 @@ $green-font-color: #19B028;
   align-items: stretch;
   margin: 0;
   padding: 0;
+  background: var(--tile-bg);
 }
 
 @media (min-width: 992px) {
@@ -612,11 +636,12 @@ $green-font-color: #19B028;
         position: fixed;
         background: var(--tile-bg);
         z-index: 1;
+        border-bottom: 1px solid var(--border);
       }
     }
   }
   .mobile-scroll {
-    padding: 0px 8px;
+    // padding: 0px 8px;
   }
   browse-page {
     top-bar-mobile-header {
@@ -637,7 +662,7 @@ $green-font-color: #19B028;
       margin-top: 54px !important;
     }
     .feed-post__container {
-      border-radius: 0px 0px 10px 10px;
+      border-radius: 0px 0px 0px 0px;
     }
   }
   mint-nft-page {
@@ -801,8 +826,8 @@ $green-font-color: #19B028;
   }
   wallet-page, creator-profile-page, referrals {
     .global__content__inner {
-      padding-left: 8px;
-      padding-right: 8px;
+      padding-left: 0;
+      padding-right: 0;
     }
 
   }
@@ -843,14 +868,14 @@ $green-font-color: #19B028;
 .circle-div {
   height: 80px;
   width: 80px;
-  background: var(--border);
+  background: var(--nft-section-bg);
   border-radius: 100%;
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   i-feather {
-    color: var(--text-muted);
+    color: var(--highlight);
   }
 }
 
@@ -900,6 +925,11 @@ $green-font-color: #19B028;
   width: 100%;
   background-color: var(--background);
   height: 60px;
+}
+
+.pwa-bottom-bar-mobile {
+  height: 80px !important;
+  padding-bottom: 20px;
 }
 
 .global__tooltip-icon {
@@ -995,7 +1025,7 @@ app-landing-page {
 }
 
 .landing-page-top-bar {
-  margin: 8px auto 0px auto;
+  margin: 0px auto 0px auto;
   z-index: 1;
   max-width: 1200px;
   padding: 24px;
@@ -1021,8 +1051,13 @@ app-landing-page {
   background-repeat: no-repeat;
 }
 
+.landing-page-container-bg {
+  background: #000;
+}
+
 .landing-page-container-1 {
-  height: 1000px;
+  height: 900px;
+  background: #000;
   @media (max-width: 992px) {
     margin-bottom: 40px;
   }
@@ -1041,6 +1076,9 @@ app-landing-page {
   img {
     max-width: 100%;
     height: auto;
+  }
+  .fc-landing-page {
+    color:rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -1077,6 +1115,10 @@ app-landing-page {
     font-size: 15px;
   }
   font-weight: 600;
+}
+
+.landing-page-nft-card-fs-title {
+  color: white;
 }
 
 .landing-page-nft-card-fs-large {
@@ -1126,29 +1168,48 @@ app-landing-page {
     margin-bottom: 0px;
   }
   z-index: 1;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.52);
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.05);
 }
 
 .landing-page-creator-coins-explainer-header {
-  height: 181.8px;
   width: 100%;
-  background: rgba(225, 241, 255, 0.7);
-  border-radius: 30px 30px 0px 0px;
+  margin-bottom: 30px;
+}
+
+.landing-page-explainer-image {
+  filter: invert(1);
+  width: auto;
+  max-height: 180px;
+}
+
+
+.landing-page-explainer-image-small {
+  filter: invert(1);
+  width: auto;
+  max-height: 120px;
+}
+
+.landing-page-creator-coins-explainer-section-title {
+  color: white;
+  margin-top: 110px;
+  @media (min-width: 600px) {
+    margin-top: 80px;
+  }
+}
+
+.landing-page-creator-coins-explainer-title {
+  color: white;
 }
 
 .landing-page-creator-coins-explainer-body {
-  height: 292.2px;
   width: 100%;
-  border-radius: 0px 0px 30px 30px;
   padding: 0px 35px;
 }
 
 .landing-page-profile-pic {
   width: 42.44px;
   height: 42.44px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing-page-row {
@@ -1170,20 +1231,24 @@ app-landing-page {
   animation: 1s ease 0.5s 1 slideInFromTopLeft forwards;
   transform: translate(100px, 0px) rotate(0deg);
   z-index: 1;
-  background: rgba(255, 255, 255, 0.6);
   right: 79px;
+  filter: grayscale(100);
   top: 45.75px;
+  opacity: 0.2;
+  color: white;
   @media (max-width: 1150px) and (min-width: 992px) {
     right: -70px;
   }
   @media (max-width: 992px) {
-    right: 36%
+    right: 36%;
+    opacity: 0.4;
   }
 }
 
 .landing-page-robot-2 {
+  border: 8px solid $landing-page-highlight;
   transform: translate(-100px, 0px) rotate(0deg);
-  background: rgba(255, 255, 255, 0.7);
+  background: black;
   box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.13);
   animation: 1s ease 0.5s 1 slideInFromTopRight forwards;
   z-index: 2;
@@ -1193,27 +1258,119 @@ app-landing-page {
     right: -274px;
   }
   @media (max-width: 992px) {
-    right: 9%
+    right: -31%;
+    max-width: 40%;
+    top: 40px;
   }
   backdrop-filter: blur(20px);
+  position: relative;;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width:100%;
+    background: linear-gradient(60deg, #ff8b17, #ff4c28, #ff034a, #7700ff, #5073b8, #00ddff, #00ffdd, #3dff6e);
+    z-index: -1;
+    animation: animatedgradient 8s ease alternate infinite;
+    background-size: 300% 300%;
+    border-radius: 20px;
+  }
+}
+
+@keyframes animatedgradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 50% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 .landing-page-header-main {
-  font-size: 80px;
-  line-height: 94px;
+  font-size: 140px;
+  line-height: 115px;
+  font-family: "Druk";
+  text-transform: uppercase;
+  margin-top: -100px;
+  letter-spacing: 2px;
   @media (max-width: 992px) {
-    font-size: 46px;
-    line-height: 50px;
+    font-size: 80px;
+    line-height: 70px;
+    margin-top: 0px;
   }
-  font-weight: normal;
-  color: $landing-page-dark;
+  font-weight: 800;
+  color: $landing-page-highlight;
 }
+
+.landing-section-header {
+  font-size: 200px;
+  line-height: 130px;
+  font-family: "Druk";
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  @media (max-width: 992px) {
+    font-size: 80px;
+    line-height: 70px;
+    margin-top: 0px;
+  }
+  font-weight: 800;
+  color: $landing-page-highlight;
+}
+
+
+
+.landing-page-testimonial-quote {
+  font-family: "Druk";
+  color: #333;
+  text-transform: uppercase;
+  font-size: 102px;
+  letter-spacing: 2px;
+  width: 50%;
+  line-height: 88px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.landing-page-testimonial-person {
+  width: 240px;
+}
+
+@media (max-width: 992px) {
+  .landing-page-testimonial-quote {
+    width: 90%;
+    margin-top: 20px
+  }
+}
+
+
+@media (max-width: 601px) {
+  .landing-page-testimonial-quote {
+    font-size: 54px;
+    line-height: 50px;
+    width: 80%;
+    margin-top: 20px
+  }
+  .landing-page-testimonial-person {
+    width: 65%;
+    margin: 0 auto;
+  }
+  .landing-page-testimonial {
+    margin-top: 250px !important;
+  }
+}
+
 
 .landing-page-title {
   z-index: 1;
-  font-weight: 500;
-  font-size: 54px;
-  line-height: 62px;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1em;
   @media (max-width: 992px) {
     font-size: 34px;
     line-height: 40px;
@@ -1221,11 +1378,15 @@ app-landing-page {
   color: $landing-page-dark;
 }
 
+.landing-page-creator-coins-explainer-desc {
+  color: #888;
+}
+
 .landing-page-subtext {
-  font-size: 24px;
-  line-height: 38px;
-  font-weight: 500;
-  color: $landing-page-fc
+  font-size: 20px;
+  line-height: 1.4em;
+  font-weight: 400;
+  color: #999;
 }
 
 .landing-page-content-text {
@@ -1250,7 +1411,7 @@ app-landing-page {
     width: 100%;
   }
   box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1);
-  border-radius: 16px;
+  border-radius: 6px;
   border: none;
   font-size: 20px;
   line-height: 22px;
@@ -1258,17 +1419,26 @@ app-landing-page {
 
 .landing-page-primary-btn {
   background: $landing-page-dark;
-  backdrop-filter: blur(14px);
   color: white;
   &:hover {
-    background: rgba(0, 0, 0, 0.8);
+    background:$landing-page-highlight;
+    color: black;
+    .landing-page-button-subtext { color: black }
   }
+}
 
+.landing-page-primary-btn-inverted {
+  background: $landing-page-highlight;
+  color: black;
+  &:hover {
+    background: darken($landing-page-highlight, 10%);
+    color: black;
+    .landing-page-button-subtext { color: black }
+  }
 }
 
 .landing-page-secondary-btn {
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(5px);
   color: $landing-page-dark;
   &:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -1276,8 +1446,8 @@ app-landing-page {
 }
 
 .landing-page-button-subtext {
-  font-size: 16px;
-  color: #DFE3E9;
+  font-size: 14px;
+  color: #999;
 }
 
 .landing-page-blob-1 {
@@ -1536,11 +1706,13 @@ app-landing-page {
   flex-grow: 1;
   align-items: flex-end;
   flex-direction: column;
+  background: var(--tile-bg);
   display: flex;
 }
 
 .global__nav__width {
   width: $global__nav__width;
+  background: var(--tile-bg);
   @media (max-width: 992px) {
     width: 100%;
   }
@@ -1548,6 +1720,8 @@ app-landing-page {
 
 .global__nav__fixed {
   top: 64px;
+  border-right: 1px solid var(--border);
+  background: var(--tile-bg);
   @media (max-width: 992px) {
     top: 42px;
   }
@@ -1570,10 +1744,10 @@ app-landing-page {
 
 .global__content__flex {
   @media (max-width: 992px) {
-    margin-top: 5px;
+    margin-top: 0px;
   }
-  margin-top: 20px;
   flex-grow: 1;
+  background: var(--tile-bg);
   align-items: flex-start;
   flex-shrink: 1;
   display: flex;
@@ -1606,6 +1780,7 @@ app-landing-page {
   height: calc(100% - 64px);
   position: fixed;
   overflow-y: scroll;
+  border-left: 1px solid var(--border);
 }
 
 .global__sidebar__inner {
@@ -1639,7 +1814,7 @@ browse-page {
 }
 
 .global__center__inner {
-  min-height: calc(100vh - 84px);
+  min-height: 100vh;
   width: $global__center__width;
   @media (min-width: 992px) {
     margin-top: 4px;
@@ -1685,7 +1860,7 @@ feed-create-post {
     background-color: var(--tile-bg);
     position: absolute;
     z-index: 3;
-    border-radius: 10px;
+    border-radius: 6px;
     box-shadow: 0px 4px 16px rgb(0 0 0 / 10%);
     :first-child {
       border-radius: 10px 10px 0px 0px;
@@ -1720,8 +1895,10 @@ nft-post {
   .nft-post-details {
     background: var(--tile-bg);
     margin-top: 20px;
-    border-radius: 10px;
+    border-radius: 0;
     border: 1px solid var(--border);
+    border-left: 0;
+    border-right: 0;
   }
   post-thread {
     .post-thread__container {
@@ -1751,28 +1928,22 @@ tab-selector {
   button {
     background: var(--tile-bg);
     height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
     color: var(--highlight);
-    font-weight: 600;
     position: relative;
-    span {
-      padding: 0px 9px;
-      position: relative;
-    }
+    border: 0;
+    padding: 0;
+    font-size: 15px;
   }
   .new-tab-indicator {
-    margin-left: 8px;
     background: var(--tile-bg);
     color: var(--highlight);
     position: relative;
     top: -1px;
     height: 32px;
-    border-radius: 12px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     span {
-      padding: 0px 12px;
       position: relative;
       font-size: 13px;
       font-weight: normal;
@@ -1791,10 +1962,23 @@ tab-selector {
 }
 
 .left-bar-more-container {
-  background: var(--tile-secondary-bg);
+  background: var(--tile-bg);
   bottom: 0px;
-  border-radius: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--text);
+  box-shadow: 6px 6px var(--text);
+  padding: 12px 3px;
 }
+
+.left-bar-close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  &:hover {
+    color: var(--highlight);
+  }
+}
+
 
 .left-bar-mobile__translucent-background {
   z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
@@ -1819,7 +2003,7 @@ tab-selector {
 .left-bar-mobile__deso-price {
   background: var(--tile-secondary-bg);
   padding: 7px 8px 7px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
 }
 
@@ -1836,7 +2020,7 @@ left-bar-mobile {
     .jumio-status {
       background: var(--tile-bg);
       padding: 7px 8px 7px;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
     }
   }
@@ -1858,15 +2042,15 @@ left-bar-mobile {
   width: 100px;
   background-color: transparent;
   position: relative;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .update-profile__image-delete {
   width: 36px;
   height: 36px;
   position: absolute;
-  right: 4px;
-  top: 4px;
+  right: -36px;
+  top: -14px;
   border-radius: 8px;
   display: flex;
   justify-content: center;
@@ -1877,7 +2061,6 @@ left-bar-mobile {
   font-size: 1.25rem;
   vertical-align: middle;
   padding-bottom: .15rem;
-  background-color: var(--tile-bg);
   i-feather {
     margin-top: -5px;
     height: 20px;
@@ -1887,7 +2070,7 @@ left-bar-mobile {
 
 feed-create-post {
   .update-profile__image-delete {
-    border-radius: 12px;
+    border-radius: 6px;
   }
 }
 .holdings__creator-coin-name {
@@ -1920,7 +2103,7 @@ feed-create-post {
   width: 50px;
   min-width: 28px;
   margin-right: 15px;
-  border-radius: 12px;
+  border-radius: 100px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -1995,27 +2178,16 @@ feed-create-post {
 }
 
 .onboarding-info-bar-circle {
-  width: 60px;
-  height: 60px;
-  border: 3px solid var(--border);
-  border-radius: 100%
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--text);
+  border-radius: 100%;
+  font-size: 18px;
 }
 
 .onboarding-follow-selection {
   max-height: calc(100vh - 400px);
   overflow-y: scroll;
-}
-
-.onboarding-selected-section {
-  background: var(--background-secondary);
-  opacity: 1;
-  transition: all 1s ease;
-}
-
-.onboarding-unselected-section {
-  background: var(--tile-bg);
-  transition: all 1s ease;
-  opacity: 0.5;
 }
 
 sign-up {
@@ -2024,6 +2196,14 @@ sign-up {
   }
   .global__sidebar__inner {
     display: none;
+  }
+  .desktop-top-bar {
+    background: var(--text);
+    border: none;
+    border-bottom: 1px solid #444;
+    .deso {
+      filter: invert(1);
+    }
   }
 }
 
@@ -2042,7 +2222,7 @@ sign-up {
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
-  border-radius: 16px;
+  border-radius: 6px;
 	border: 1px solid var(--borderheavy);
   font-size: 15px;
 
@@ -2067,10 +2247,10 @@ sign-up {
 	margin-top: 3px;
 	width: 100%;
 	z-index: 99;
-	border: 1px solid var(--border);
+	border: 1px solid var(--text);
   font-size: 15px;
   border-radius: 8px;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 6px 6px var(--text);
 }
 
 .change-account-selector_list_accounts {
@@ -2083,7 +2263,8 @@ sign-up {
 }
 
 .change-account-selector_list__inner:hover{
-  background-color:var(--formbg);
+  background-color:var(--tile-secondary-bg);
+  border-radius: 6px 6px 0 0;
 }
 
 .change-account-selector__shadow {
@@ -2109,7 +2290,7 @@ sign-up {
 .tutorial-skip-button {
   height: 30px;
   width: 60px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--tile-bg);
   color: var(--text-secondary);
@@ -2149,7 +2330,7 @@ sign-up {
 }
 
 .search-bar {
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text-muted);
   i-feather {
     height: 16px;
@@ -2166,8 +2347,8 @@ sign-up {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
   }
 }
 
@@ -2175,8 +2356,8 @@ sign-up {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
   background: var(--tile-secondary-bg);
   border: none;
 }
@@ -2220,39 +2401,20 @@ sign-up {
 }
 
 .post-thread__comment-container {
-  border-radius: 10px;
   .post-thread__single-comment {
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    border-left: 1px solid var(--border);
     background: var(--tile-bg);
+    border-top: 1px solid var(--border);
   }
   .feed-post-container {
     background: var(--tile-bg);
     margin-bottom: 0px;
+    border-bottom: none;
+    border-top: none;
   }
   .feed-post__container {
     border-radius: 0px;
   }
-  .last-item {
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    .feed-post-container, .feed-post__container {
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
-    }
-  }
-  .first-item {
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    .feed-post__container {
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
-    }
-  }
-
   flex-grow: 1;
-  margin-top: 20px;
 }
 
 .pinned-post {
@@ -2264,13 +2426,10 @@ sign-up {
 
 .post-thread__container {
   background: var(--tile-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
   .feed-post-container {
     margin-bottom: 0px;
   }
   .post-thread__header {
-    border-bottom: 1px solid var(--border);
     color: var(--text);
     font-weight: 600;
     font-size: 17px;
@@ -2339,9 +2498,9 @@ sign-up {
   margin-bottom: 20px;
   padding: 16px 20px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--tile-bg);
-  color: var(--highlight);
+  color: var(--text);
   font-size: 15px;
   line-height: 24px;
   span {
@@ -2361,8 +2520,8 @@ trends {
 
 .trend-box {
   background: var(--tile-secondary-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
 }
 
 .trend-title {
@@ -2384,13 +2543,12 @@ trends {
 .trend-entry {
   a {
     border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
     .trend-holder {
       margin: 12px 16px;
     }
   }
   follow-button {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 20px;
     color: var(--text-secondary);
     a {
@@ -2427,23 +2585,41 @@ trends {
   min-height: 55px;
 }
 
+.modal-dialog .feed-create-post__textarea {
+  min-height: 250px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
 }
 
 .feed-post-container {
-  margin-bottom: 12px;
-  border-radius: 10px;
+  margin-bottom: 0;
+  border-radius: 0;
   background: var(--tile-bg);
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-bottom: 0;
 }
 
 .js-feed-post-hover:hover {
   background-color: var(--background-secondary);
 }
 
-.feed-post__quoted-content:hover {
-  background-color: var(--secalt) !important;
+.feed-post__quoted-content {
+  .feed-post__container {
+    border: 1px solid var(--border);
+    margin-top: 15px;
+  }
+  .feed-post__nft-footer {
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+}
+
+.feed-post__quoted-content .feed-post__container:hover {
+  box-shadow: 0 0 10px var(--border) !important;
 }
 
 .feed-post__nft-list-view-unlockable {
@@ -2462,9 +2638,10 @@ bs-dropdown-container {
 
 .bc-dropdown-menu {
   background: var(--tile-bg);
-  border-radius: 16px;
+  border-radius: 6px;
   border: none;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 6px 6px 0px var(--text);
+  border: 1px solid var(--text);
   div {
     margin: 6px;
   }
@@ -2472,6 +2649,12 @@ bs-dropdown-container {
 
 .feed-post__dropdown-menu-item {
   color: var(--text-muted);
+  padding: 10px;
+  padding-bottom: 0;
+  font-size: 14px !important;
+  &:last-of-type {
+    padding-bottom: 10px;
+  }
   &:hover {
     color: var(--text);
   }
@@ -2483,9 +2666,9 @@ bs-dropdown-container {
 
 .feed-post__dropdown-menu-item-repost {
   background-color: var(--tile-bg);
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--text);
+  border-radius: 6px;
+  box-shadow: 6px 6px 0px var(--text);
   padding: 0px;
   div {
     margin: 11px;
@@ -2499,9 +2682,24 @@ bs-dropdown-container {
   align-items: center;
   overflow: hidden;
   max-height: 700px;
-  border-radius: 20px;
+  border-radius: 6px;
   margin-top: 10px;
   margin-bottom: 5px;
+  //min-height: 300px;
+  @media (max-width: 992px) {
+
+  }
+}
+
+.feed-post__embed-container-spacer {
+  min-height: 315px;
+}
+
+.feed-post__image-container-spacer {
+  min-height: 350px;
+  @media (max-width: 992px) {
+    min-height: 250px;
+  }
 }
 
 .feed-post__image-container {
@@ -2511,7 +2709,7 @@ bs-dropdown-container {
   align-items: center;
   overflow: hidden;
   max-height: 450px;
-  border-radius: 16px;
+  border-radius: 6px;
   margin-top: 10px;
   margin-bottom: 5px;
 }
@@ -2541,7 +2739,7 @@ bs-dropdown-container {
   right: 0;
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .feed-post__blue-border {
@@ -2622,7 +2820,7 @@ bs-dropdown-container {
 .feed-post-icon-row__icon.repost-icon {
   &:hover {
     background-color: $repost-hover;
-    color: $repost-hover;
+    color: $repost-color;
     transition: background-color .5s;
   }
 }
@@ -2663,7 +2861,7 @@ bs-dropdown-container {
 }
 
 .desktop-top-bar-width {
-  max-width: 1212px;
+  max-width: 1250px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -2678,6 +2876,7 @@ bs-dropdown-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .bitclout-logo{
     svg {
       width: 16.93px;
@@ -2698,7 +2897,8 @@ bs-dropdown-container {
     position: relative;
     width: 343px;
     .search-bar,input {
-      height: 48px;
+      height: 44px;
+      top: 1px;
       i-feather {
         margin: 0px 12px;
       }
@@ -2714,14 +2914,16 @@ bs-dropdown-container {
 
 .desktop-create-post{
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: none;
+  border-right: 0;
 }
 
 .feed-desktop-center-banner {
   background-color: var(--tile-bg);
   font-size: 16px;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   margin-top: 5px;
   padding: 10px;
@@ -2742,24 +2944,18 @@ bs-dropdown-container {
 
 feed {
   .jumio-status {
-    border-radius: 10px;
+    border-radius: 0;
     padding: 10px;
     position: relative;
-    margin-top: 5px;
+    margin-top: 0px;
+    border-top: 0;
     margin-bottom: 5px;
-  }
-  jumio-status {
-    @media (max-width: 992px) {
-      margin-top: -8px;
-      margin-right: 8px;
-      margin-left: 8px;
-    }
+    border-right: 0;
   }
 }
 
 .feed-post__container {
   background: var(--tile-bg);
-  border-radius: 10px;
 }
 
 .feed-post__container.feed-post__parent-post-font-size {
@@ -2775,7 +2971,7 @@ feed {
   margin-left: 8px;
   height: 24px;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: 6px;
   background-color: var(--tile-secondary-bg);
   font-family: -apple-system, BlinkMacSystemFont,
                "Helvetica Neue", sans-serif;
@@ -2798,7 +2994,7 @@ feed {
   display: block;
   height: 50px;
   width: 50px;
-  border-radius: 12px;
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -2873,8 +3069,8 @@ feed {
   font-weight: normal;
   font-size: 15px;
   line-height: 24px;
-  color: var(--text-inverted);
-  border-radius: 0px 0px 10px 10px;
+  color: var(--text);
+  border-radius: 0px 0px 0 0;
 }
 
 .nft-modal__header {
@@ -2915,10 +3111,10 @@ feed {
 
 .nft-bid-btn {
   button {
-    color: var(--text);
+    color: var(--tile-bg);
     width: 118px;
-    border-radius: 12px;
-    background: var(--tile-bg);
+    border-radius: 6px;
+    background: var(--highlight);
     margin: 0px 0px;
     padding: 6px 12px;
     font-style: normal;
@@ -2926,7 +3122,7 @@ feed {
     font-size: 13px;
     line-height: 20px;
     border: none;
-    heigth: 20px;
+    height: 44px !important;
     span {
       top: 1px;
       i-feather {
@@ -2947,17 +3143,12 @@ feed-post-dropdown {
 }
 
 .left-bar-active-indicator {
-  width: 4px;
-  border-radius: 10px;
-}
-
-.left-bar-active-indicator-active {
-  background: var(--highlight);
+  width: 0px;
+  border-radius: 6px;
 }
 
 .left-bar-button {
-  height: 56px;
-  margin-left: 12px;
+  height: 40px;
   font-weight: 600;
   font-size: 17px;
   color: var(--text-secondary);
@@ -2965,7 +3156,7 @@ feed-post-dropdown {
     color: var(--highlight);
   }
   a {
-    color: var(--text-secondary);
+    color: var(--text);
     &:hover {
       color: var(--highlight);
     }
@@ -2989,10 +3180,10 @@ feed-post-dropdown {
 }
 
 .left-bar__post-button {
-  width: 100%;
+  width: 80%;
   height: 48px;
-  background: var(--highlight);
-  border-radius: 16px;
+  background: var(--text);
+  border-radius: 6px;
   padding: 12px 24px;
   font-weight: 600;
   font-size: 17px;
@@ -3029,10 +3220,7 @@ feed-post-dropdown {
 }
 
 .left-desktop-selector {
-  background: var(--tile-bg);
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid var(--border);
+  // border: 1px solid var(--border);
 }
 
 right-bar-creators {
@@ -3042,12 +3230,11 @@ right-bar-creators {
 }
 
 .right-bar-creators__wallet-container {
-  border: 1px solid var(--border);
-  background: var(--background-secondary);
+  background: var(--tile-secondary-bg);
   padding: 16px;
   font-size: 15px;
   color: var(--text-secondary);
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 20px;
 }
 
@@ -3055,8 +3242,7 @@ right-bar-creators {
   height: 40px;
   width: 40px;
   margin-right: 10px;
-  border-radius: 12px;
-
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -3066,18 +3252,17 @@ right-bar-creators {
   background-color: var(--tile-secondary-bg);
   color: var(--text-secondary);
   font-size: 15px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 20px;
   .deso-metrics {
     margin: 16px;
   }
   .divider {
     width: 100%;
-    border: 1px solid var(--border);
   }
   .buy-deso {
     font-weight: 600;
+    display: none;
     font-size: 17px;
     color: var(--highlight);
     margin-top: 5px;
@@ -3085,8 +3270,13 @@ right-bar-creators {
   }
 }
 
-.creator-leaderboard__load-more:hover {
+
+.creator-leaderboard__load-more {
   background-color: var(--background-secondary);
+}
+
+.creator-leaderboard__load-more:hover {
+  background-color: var(--nft-section-bg);
 }
 
 .feed__light-grey-divider {
@@ -3138,7 +3328,7 @@ right-bar-creators {
   background: var(--highlight);
   color: var(--tile-bg);
   margin-left: 24px;
-  border-radius: 16px;
+  border-radius: 6px;
   padding-top: 12px;
   &:hover {
     color: var(--tile-bg);
@@ -3149,7 +3339,8 @@ right-bar-creators {
   position: relative;
   height: 72px;
   width: 72px;
-  border-radius: 12px;
+  border-radius: 100px;
+  border: 3px solid var(--text);
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3163,7 +3354,8 @@ right-bar-creators {
 
 .creator-profile__update-buy {
   position: absolute;
-  right: 16px;
+  right: 0px;
+  top: 10px;
   i-feather {
     height: 16px;
     width: 16px;
@@ -3182,8 +3374,7 @@ right-bar-creators {
   height: 30px;
   width: 30px;
   padding-right: 5px;
-  border-radius: 5px;
-
+  border-radius: 100px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -3192,7 +3383,7 @@ right-bar-creators {
 .creator-profile__reserved-tag {
   font-weight: normal;
   background-color: #f3f3f3;
-  border-radius: 10px;
+  border-radius: 6px;
   height: fit-content;
 }
 
@@ -3238,10 +3429,8 @@ right-bar-creators {
 .update-profile__avatar{
   display: flex;
   justify-content: center;
-  background: var(--nft-section-bg);
+  background: var(--text);
   padding: 24px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
 }
 
 .update-profile__text {
@@ -3270,7 +3459,7 @@ right-bar-creators {
   padding-top: 10px;
   height: 48px;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   background: var(--highlight);
   font-size: 17px;
@@ -3288,8 +3477,9 @@ wallet-page {
 
 .wallet__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: 0;
   @media (min-width: 992px) {
     margin-top: 4px;
   }
@@ -3298,8 +3488,8 @@ wallet-page {
 .wallet__table {
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  margin-top: 20px;
+  border-top: 0;
+  border-radius: 0x;
 }
 
 buy-creator-coins-tutorial-page, wallet-tutorial-page {
@@ -3317,11 +3507,10 @@ wallet-tutorial-page {
   }
   .wallet-highlighted-creator {
     border: 1px solid var(--highlight) !important;
-    border-radius: 10px;
+    border-radius: 6px;
   }
   .wallet__table {
     margin-top: 0px;
-    border-radius: 0px 0px 10px 10px;
     tab-selector {
       .tab-selector__container {
         background: var(--background-secondary);
@@ -3372,7 +3561,7 @@ wallet-tutorial-page {
 
 transfer-deso {
   .search-bar__icon {
-    border-radius: 16px 0px 0px 16px;
+    border-radius: 6px 0px 0px 6px;
   }
   search-bar {
     .search-bar__results-dropdown {
@@ -3427,15 +3616,15 @@ modal-container {
 
 update-profile {
   .update-profile__holder {
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 0;
   }
   .update-profile__avatar-title {
     display: none;
   }
   .update-profile__image {
-    height: 140px;
-    width: 140px;
+    height: 120px;
+    width: 120px;
+    border-radius: 100px;
   }
   button {
     margin-top: 10px;
@@ -3446,7 +3635,7 @@ update-profile {
     }
     border: 1px solid var(--tile-bg);
     background: none;
-    border-radius: 12px;
+    border-radius: 6px;
     padding-top: 2px;
     color: var(--tile-bg);
     height: 32px;
@@ -3456,7 +3645,7 @@ update-profile {
   }
   .form-control,textarea {
     border: none;
-    border-radius: 16px;
+    border-radius: 6px;
     background: var(--tile-secondary-bg) !important;
     resize: none;
   }
@@ -3519,10 +3708,9 @@ creator-diamonds {
 .creator-profile-nfts__header {
   background: var(--tile-bg);
   height: 80px;
-  border-radius: 10px 10px 0px 0px;
   border: 1px solid var(--border);
+  border-right: 0;
   &.card-view {
-    border-radius: 10px;
     margin-bottom: 12px;
   }
 }
@@ -3539,6 +3727,9 @@ creator-profile-nfts {
         border-radius: 12px 12px 0px 0px;
         margin-bottom: 0px;
         border-bottom: none !important;
+        &:first-of-type {
+          border-top: none;
+        }
       }
       .feed-post__nft-footer {
         border-radius: 0px !important;
@@ -3546,13 +3737,13 @@ creator-profile-nfts {
     }
     .creator-profile__bid-details {
       background: var(--nft-section-bg);
-      color: var(--text-inverted-muted);
-      border-radius: 0px 0px 12px 12px;
+      color: var(--text);
       margin-bottom: 12px;
-      border: 1px solid var(--border);
-      border-top: none;
       position: relative;
       top: -1px;
+      border-top: 1px solid #ccc;
+      border-right: 0;
+      padding-top: 6px;
     }
   }
 }
@@ -3560,7 +3751,7 @@ creator-profile-nfts {
 .creator-profile-nfts__dropdown {
   background: var(--tile-secondary-bg);
   color: var(--tile-secondary-bg);
-  border-radius: 16px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   height: 48px;
   width: 193px;
@@ -3610,7 +3801,7 @@ creator-profile-nfts {
 
 .buy-deso__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   padding-top: 16px;
 }
 
@@ -3621,7 +3812,7 @@ creator-profile-nfts {
 
 .buy-deso__country-selector {
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   background: var(--tile-secondary-bg);
   width: 105px;
   height: 48px;
@@ -3679,11 +3870,10 @@ creator-profile-nfts {
 
 .messages-page__header {
   border: 1px solid var(--border);
+  border-top: 0;
   padding: 0px 16px;
   background: var(--tile-bg);
   height: 80px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
   span {
     font-size: 24px;
     line-height: 32px;
@@ -3695,7 +3885,7 @@ creator-profile-nfts {
     height: 48px;
     background: var(--highlight);
     color: var(--tile-bg);
-    border-radius: 16px;
+    border-radius: 6px;
     font-size: 17px;
     line-height: 24px;
     border: none;
@@ -3776,7 +3966,7 @@ creator-profile-nfts {
   font-size: 17px;
   color: var(--text-secondary);
   button {
-    border-radius: 16px;
+    border-radius: 6px;
     margin-right: 24px;
     width: 94px;
     height: 48px;
@@ -3845,7 +4035,7 @@ creator-profile-nfts {
   height: 40px;
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3859,7 +4049,7 @@ creator-profile-nfts {
 }
 
 .messages-thread__border-radius {
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .messages-thread__ellipsis-restriction {
@@ -3936,7 +4126,7 @@ creator-profile-nfts {
   height: 40px;
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -3946,7 +4136,7 @@ creator-profile-nfts {
 .message__avatar-placeholder {
   width: 40px;
   min-width: 40px;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .messages-page__container {
@@ -3960,7 +4150,7 @@ creator-profile-nfts {
 
 .message__sender-bubble-color {
   background-color: var(--nft-section-bg);
-  color: var(--text-inverted);
+  color: var(--text);
 }
 
 .message__non-sender-bubble-color {
@@ -4016,9 +4206,9 @@ creator-profile-nfts {
   width: 58px;
   text-align: center;
   border: none;
-  color: white;
+  color: var(--tile-bg);
   line-height: 0.65;
-  background: var(--highlight);
+  background: var(--text) !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4039,6 +4229,7 @@ creator-profile-nfts {
 .creators-leaderboard__avatar {
   height: 2.5rem;
   width: 2.5rem;
+  border-radius: 100px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -4099,11 +4290,10 @@ trade-creator-form {
 .notifications__avatar {
    height: 40px;
    width: 40px;
-   border-radius: 12px;
+   border-radius: 100px;
    background-size: cover;
    background-repeat: no-repeat;
    background-position: center center;
-  position: relative;
 }
 
 .notifications__action {
@@ -4113,17 +4303,12 @@ trade-creator-form {
 
 .notifications__icon {
   position: absolute;
-  right: 0px;
-  bottom: 0px;
+  right: 6px;
+  top: 2px;
   height: 20px;
   width: 20px;
   border-radius: 100%;
   background: var(--tile-bg);
-  i-feather {
-    position: absolute;
-    right: 3px;
-    bottom: 3px;
-  }
 }
 
 @media (max-width: 992px) {
@@ -4137,6 +4322,25 @@ trade-creator-form {
   }
 }
 
+sign-up {
+  background: var(--text) !important;
+
+  .nft-modal-container {
+    margin-top: 50px;
+    padding: 20px;
+  }
+
+  .main,
+  .global__nav__fixed,
+  .global__nav__width,
+  .global__nav__flex,
+  .global__content__flex,
+  .global__sidebar__fixed {
+    background: var(--text) !important;
+    border: none !important;
+  }
+
+}
 
 app-notifications-list {
   .global__top-bar {
@@ -4145,19 +4349,24 @@ app-notifications-list {
     background: var(--tile-bg);
     @media (min-width: 992px) {
       height: 72px;
-      border-top-right-radius: 10px;
-      border-top-left-radius: 10px;
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
       border: 1px solid var(--border);
+      border-right: 0;
+      border-top: 0;
     }
   }
   .notifications__list-item{
     border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    border-right: 0 solid var(--border);
     border-bottom: 1px solid var(--border);
     background: var(--tile-bg);
     &.last-item {
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .feed-post-container {
+      border-left: 0;
     }
   }
 }
@@ -4202,7 +4411,7 @@ app-notifications-list {
 .landing__nav-buy {
   height: 30px;
   font-size: 13px;
-  border-radius: 10px;
+  border-radius: 6px;
   padding-left: 15px;
   padding-right: 15px;
   background-color: var(--background-secondary);
@@ -4220,7 +4429,7 @@ app-notifications-list {
 .landing__sign-up {
   margin-top: 30px;
   width: 225px;
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 10px;
 }
 
@@ -4232,7 +4441,7 @@ app-notifications-list {
 
 .landing__buy {
   padding: 7px 20px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing__prop {
@@ -4280,7 +4489,7 @@ app-notifications-list {
 .landing__btn-cta {
   margin-top: 30px;
   padding: 7px 30px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .landing__platform {
@@ -4455,7 +4664,6 @@ app-notifications-list {
   color: $button-text-color-default !important;
   border-radius: 5px;
   border: none;
-  box-shadow: 3px 3px 8px 0 rgba(0, 0, 0, 0.1);
   font-weight: 700;
 
   display: inline-flex;
@@ -4620,6 +4828,7 @@ em {
   margin-right: .5rem;
   cursor: pointer;
 }
+.text-underline {text-decoration: underline;}
 .link {
     color: $light-color;
     text-decoration: underline;
@@ -4782,6 +4991,8 @@ input {
   text-align: center;
   line-height: 18px;
   padding: 0px 5px;
+  color: red;
+  font-weight: 700;
 }
 
 .bg-tile {
@@ -4945,15 +5156,43 @@ input {
 
 .creator-profile__container {
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
+  border-top: 0;
+  border-right: 0;
   padding: 16px;
+  padding-top: 80px;
   margin-bottom: 15px;
+  &:before {
+    background: var(--tile-secondary-bg);
+    content: "";
+    height: 112px;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+  }
+  .js-creator-profile-top-card-container {
+    position: relative;
+    padding-bottom: 0px;
+    i-feather[name=check-circle] {
+      position: relative;
+      top: 6px;
+    }
+  }
+}
+
+creator-diamonds {
+  .tab-selector__container{
+    margin-bottom: 6px;
+    border-top: 1px solid var(--border);
+  }
 }
 
 creator-profile-details {
   .tab-selector__container{
-    margin-bottom: 15px;
+    margin-bottom: 6px;
   }
   .creator-profile-details__coin-container {
     .font-weight-bold {
@@ -4962,14 +5201,12 @@ creator-profile-details {
   }
   .creator-profile-details__coin-info {
     background: var(--nft-section-bg);
-    color: var(--text-inverted);
+    color: var(--text);
     font-size: 13px;
     height: 56px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
   }
 }
 
@@ -4977,10 +5214,16 @@ creator-profile-hodlers {
   .creator-profile-hodlers__header {
     padding-top: 16px;
     background: var(--tile-bg);
+    border-radius: 0 !important;
+    border-top: 1px solid var(--border);
   }
 
-  .creator-profile-hodlers__row {
-    padding: 0px 16px;
+  .creator-profile-hodlers__row:first-child {
+    padding: 6px 16px;
+  }
+
+  .creator-profile-hodlers__row:not(:first-child) {
+    padding: 6px 16px;
     background: var(--tile-bg);
   }
   .total-row {
@@ -5000,7 +5243,7 @@ creator-profile-hodlers {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 6px;
   simple-profile-card {
     .simple-profile-card__container {
       padding: 16px;
@@ -5016,6 +5259,12 @@ mint-nft-page {
     #searchbar {
       height: 46px;
     }
+  }
+}
+
+mint-nft-page, sell-nft-page {
+  .global__nav__fixed {
+    border: none;
   }
 }
 
@@ -5044,7 +5293,7 @@ mint-nft-page {
   width: 40%;
   height: 186px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   transition: border .5s;
   &.nft-type-selected {
     border-color: var(--highlight);
@@ -5063,7 +5312,7 @@ mint-nft-page {
 }
 .mint-nft__dropdown-btn {
   border: 1px solid var(--border);
-  border-radius: 16px 0px 0px 16px;
+  border-radius: 6px 0px 0px 6px;
   background: var(--tile-secondary-bg);
   width: 96px;
   height: 48px;
@@ -5076,7 +5325,7 @@ mint-nft-page {
   height: 48px;
   background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   font-size: 15px;
   color: var(--text-secondary);
 }
@@ -5100,7 +5349,7 @@ mint-nft-page {
 .mint-nft__create-btn {
   width: 137px;
   height: 48px;
-  border-radius: 16px;
+  border-radius: 6px;
   background: var(--highlight);
   color: var(--tile-bg);
   font-size: 17px;
@@ -5116,7 +5365,7 @@ mint-nft-page {
   flex-direction: column;
   width: 100%;
   display: flex;
-  border-radius: 10px;
+  border-radius: 6px;
   outline: 0;
   position: relative;
 }
@@ -5128,7 +5377,7 @@ mint-nft-page {
 
 .nft-modal-bid-details {
   background: var(--tile-secondary-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 15px;
   margin: 16px 0px;
 }
@@ -5148,7 +5397,7 @@ sell-nft-modal {
 
 .sell-nft__row {
   background: var(--tile-secondary-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 16px 0px;
   margin-bottom: 16px;
   font-size: 15px;
@@ -5163,7 +5412,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: var(--error);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   border: none;
   &:hover {
@@ -5178,7 +5427,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: var(--highlight);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--tile-bg);
   border: none;
   &:hover {
@@ -5193,7 +5442,7 @@ sell-nft-modal {
   width: 137px;
   height: 48px;
   background: none;
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--highlight);
   border: 1px solid var(--highlight);
   &:hover {
@@ -5213,7 +5462,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--text-secondary);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text-secondary);
   &:hover {
     color: var(--text-secondary);
@@ -5228,7 +5477,7 @@ sell-nft-modal {
   height: 48px;
   background: var(--tile-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   color: var(--text);
   font-weight: 600;
   &:hover {
@@ -5240,7 +5489,7 @@ sell-nft-modal {
 }
 
 .trend-dropdown-button {
-  border-radius: 12px;
+  border-radius: 6px;
   border: none;
   border: 1px solid var(--border);
   background: var(--tile-secondary-bg);
@@ -5333,7 +5582,7 @@ sell-nft-modal {
   right: 10px;
   z-index: 500;
   background: var(--tile-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
 }
 
@@ -5353,7 +5602,7 @@ sell-nft-modal {
   min-width: 300px;
   max-width: 550px;
   font-family: Gilroy Arial sans-serif;
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--tile-bg);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   .introjs-button {
@@ -5377,6 +5626,7 @@ sell-nft-modal {
   z-index: 100000000;
   background-color: var(--tile-bg) !important;
   color: var(--text);
+  padding: 40px !important;
   border-radius: 10px !important;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   .swal2-title, .swal2-content {
@@ -5385,7 +5635,7 @@ sell-nft-modal {
   button {
     height: 48px;
     min-width: 70px;
-    border-radius: 16px !important;
+    border-radius: 6px !important;
     font-size: 20px !important;
     padding: 6px 16px !important;
   }
@@ -5412,6 +5662,11 @@ sell-nft-modal {
     }
   }
 
+}
+
+.swal2-container.swal2-backdrop-show,
+.swal2-container.swal2-noanimation {
+  background: rgba(0,0,0,0.9) !important;
 }
 
 //
@@ -5608,7 +5863,7 @@ sell-nft-modal {
         padding: 3px 5px 3px 5px;
         position: relative;
         top: -24px;
-        border-radius: 10px;
+        border-radius: 6px;
         font-size: 11px;
         color: #FFF;
         background: #333;
@@ -5739,7 +5994,7 @@ sell-nft-modal {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
-    border-radius: 10px;
+    border-radius: 6px;
 
     &.show {
       visibility: visible;

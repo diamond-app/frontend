@@ -1,19 +1,19 @@
 <script src="../../environments/environment.prod.ts"></script>
-<div class="position-relative"  *transloco="let t">
+<div class="position-relative landing-page-container-bg" *transloco="let t">
   <div class="position-relative landing-page-container-1">
     <div class="position-relative d-flex justify-content-between mt-30px landing-page-top-bar">
       <div class="fc-landing-page d-flex align-items-center">
-        <img src="assets/diamond/camelcase_logo.svg" height="28.63px"/>
+        <img src="assets/diamond/camelcase_logo_new.svg" style="filter: invert(100)" height="28.63px"/>
       </div>
       <div class="fc-landing-page d-flex align-items-center">
         <a class="fc-landing-page mr-15px" (click)="globalVars.launchLoginFlow()">
-          <i-feather *ngIf="!globalVars.isMobile()" name="lock-2" class="feather-small mr-5px position-relative" style="top: -2px"></i-feather>
+          <i-feather *ngIf="!globalVars.isMobile()" name="lock-2" class="feather-small fc-landing-page mr-5px position-relative" style="top: -2px"></i-feather>
           {{t('landing.login')}}
         </a>
         <a *ngIf="globalVars.isMobile()" class="fc-landing-page" (click)="globalVars.launchSignupFlow()">
           {{t('landing.signup')}}
         </a>
-        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">{{t("landing.signuptoday")}}</button>
+        <button *ngIf="!globalVars.isMobile()" style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn-inverted landing-page-btn fs-16px" (click)="globalVars.launchSignupFlow()">{{t("landing.signuptoday")}}</button>
       </div>
     </div>
   <!--  TODO: Put all of this styling into sensible classes.-->
@@ -21,12 +21,13 @@
     <div class="landing-page-content-container d-flex flex-column justify-content-center">
       <div class="d-flex align-items-center justify-content-between w-100 h-100" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
         <div data-aos="fade-right" data-aos-duration="500" data-aos-offset="-1000" style="top: 300px; z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '596px' : 'auto' }">
-          <h1 class="landing-page-header-main"><span>{{t('landing.settle')}}<br> {{t('landing.fora')}} </span><span [ngStyle]="{ 'line-height':  globalVars.isMobile() ? '60px' : '110px' }"><img class="landing-page-thumbs-up" src="assets/img/landing-page-thumbs-up.svg" width="89px" height="86px" /></span></h1>
+          <h1 class="landing-page-header-main">{{t('landing.settle')}}</h1>
           <h3 class="landing-page-subtext" style="margin-top: 18px">
             {{t("landing.diamonds")}}
+            <br>
+            <span class="d-block mt-15px">Built on DeSo — the Decentralized Social Blockchain.</span> 
           </h3>
           <div
-            class="d-flex justify-content-between"
             style="margin-top: 43px"
             [ngClass]="{ 'mr-30px': !globalVars.isMobile(), 'flex-column': globalVars.isMobile() }"
           >
@@ -35,40 +36,32 @@
               (click)="globalVars.launchSignupFlow()"
               [ngClass]="{ 'w-100': globalVars.isMobile() }"
             >
-              <div>Sign up today</div>
+              <div class="mb-10px">Create Account</div>
               <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
-            </button>
-            <button
-              class="landing-page-btn landing-page-secondary-btn font-weight-bold"
-              [routerLink]="'/' + globalVars.RouteNames.CREATORS"
-              queryParamsHandling="merge"
-              [ngClass]="{ 'w-100 mt-15px': globalVars.isMobile() }"
-            >
-              Explore Creators
             </button>
           </div>
         </div>
         <div class="position-relative h-100 w-100" style="width: 600px !important">
           <div class="landing-page-nft-card-holder landing-page-robot-2">
-            <img class="position-relative" src="/assets/img/example-nft-1.png" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
+            <img class="position-relative" src="/assets/img/example-nft-2.png" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
-                <div class="landing-page-nft-card-fs-large">Desomon #001</div>
+                <div class="landing-page-nft-card-fs-large landing-page-nft-card-fs-title">CloutPunk NFT #001</div>
                 <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
               </div>
               <div class="d-flex flex-column align-items-end">
                 <div class="landing-page-nft-card-fs-small" style="margin-top: 2px">Min Bid</div>
                 <div class="d-flex justify-content-end landing-page-nft-card-fs-large" style="margin-top: 5px">
-                  $87,290
+                  $69,420
                 </div>
               </div>
             </div>
           </div>
           <div class="landing-page-nft-card-holder landing-page-robot-1">
-            <img class="position-relative" src="/assets/img/example-nft-2.png" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
+            <img class="position-relative" src="/assets/img/example-nft-1.png" width="389.55px" height="447.11px" style="border-radius: 26.14px"/>
             <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px; margin-bottom: 36px">
               <div class="d-flex flex-column">
-                <div class="landing-page-nft-card-fs-large">cloutpunk #147</div>
+                <div class="landing-page-nft-card-fs-large">Desomon #147</div>
                 <div class="landing-page-nft-card-fs-small" style="margin-top: 10px">For Sale</div>
               </div>
               <div class="d-flex flex-column align-items-end">
@@ -80,248 +73,152 @@
               </div>
             </div>
           </div>
-          <div class="w-100 d-flex justify-content-center align-items-center" [ngStyle]="{ 'height': globalVars.isMobile() ? '900px' : '100%' }">
-            <div class="position-relative landing-page-rotating-blur">
-              <div class="landing-page-blob-2 landing-page-svg"></div>
-              <div class="landing-page-svg landing-page-blob-1"></div>
-              <div class="landing-page-svg landing-page-blob-3"></div>
-            </div>
-          </div>
         </div>
 
       </div>
       <!--Background blobs-->
     </div>
   </div>
-  <!--Second section-->
-  <div class="landing-page-content-container" style="padding-left: 0px; padding-right: 0px">
-    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 150px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
-      <div data-aos="fade-right" data-aos-id="diamond" data-aos-offset="200" class="position-relative" style="margin-left: -10px" [ngClass]="{ 'd-flex justify-content-center w-100': globalVars.isMobile() }">
-        <div *ngIf="!globalVars.isMobile()" style="width: 356px; height: 722px; top: 60px; z-index: 2" class="position-relative landing-page-diamond-device">
-          <img src="/assets/img/landing-page-diamond-shower-device-no-diamonds.png" width="356px" height="722px" style="top: 0px; left: 0px; z-index: 2" class="position-absolute landing-page-diamond-device"/>
-          <canvas width="356px" height="722px" style="position: absolute; z-index: 3" id="diamond-container"></canvas>
-        </div>
-        <img *ngIf="globalVars.isMobile()" src="/assets/img/landing-page-diamond-shower-device.png" width="356px" height="722px" style="top: 85px; z-index: 2" class="position-relative landing-page-diamond-device"/>
-        <img src="/assets/img/landing-page-diamond-shower-bg.png" width="529.59px" height="529.59px" style="top: 173px; z-index: 1;" class="position-absolute landing-page-diamond-square"/>
-        <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
-          <div class="position-absolute">
-            <div class="landing-page-svg landing-page-blob-5"></div>
-            <div class="landing-page-svg landing-page-blob-4"></div>
-            <div class="landing-page-svg landing-page-blob-6"></div>
-          </div>
-        </div>
-      </div>
-      <div class="position-relative" data-aos="fade-left" data-aos-offset="-100" style="z-index: 1" [ngStyle]="{ 'top': globalVars.isMobile() ? 'auto' : '65px', 'margin-left': globalVars.isMobile() ? '0px': '80px', 'width': globalVars.isMobile() ? 'auto' : '610px' }" [ngClass]="{ 'px-25px': globalVars.isMobile() }">
-        <div class="landing-page-title">Get Diamonds, Not Likes</div>
-        <div class="fs-24px fc-landing-page-title mt-15px ml-5px">What if every like on your posts got you up to $1000?</div>
-      </div>
-    </div>
-    <div class="position-relative d-flex align-items-center justify-content-between" [ngStyle]="{ 'margin-bottom': globalVars.isMobile() ? '-50px' : '75px' }" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <div data-aos="fade-down" data-aos-offset="300" style="z-index: 1" [ngClass]="{ 'ml-40px': !globalVars.isMobile(), 'px-25px': globalVars.isMobile() }" [ngStyle]="{ 'width': globalVars.isMobile() ? 'auto' : '585px' }">
-        <div class="landing-page-title">Your next post could be worth millions...</div>
-        <div class="d-flex mt-30px mr-20px">
-          <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Making an account on Diamond is as simple as creating an account on Instagram
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Minting your first NFT is as easy as making a post - just a single click
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Investing in NFTs is one-click, too!
-          </span>
-        </div>
-      </div>
-      <div data-aos="fade-up" data-aos-offset="0" [ngStyle]="{ 'margin-top': globalVars.isMobile() ? '150px': '0px' }">
-        <div class="position-relative">
-          <div class="position-relative" style="width: 425.13px; height: 506.44px">
-            <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
-              <div class="position-absolute">
-                <div class="landing-page-svg landing-page-blob-5" style="right: 110px"></div>
-                <div class="landing-page-svg landing-page-blob-4" style="left: 45px"></div>
-                <div class="landing-page-svg landing-page-blob-6" style="left: -220px; top: -240px"></div>
-              </div>
-            </div>
-            <img src="/assets/img/landing-page-network-top.svg" height="146.05px" width="453.37px" class="position-absolute landing-page-network-top" style="z-index: 1; top: -120px">
-            <img src="/assets/img/landing-page-network-bulb-pink.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; top: -75px; left: 70px">
-            <img src="/assets/img/landing-page-network-left.svg" height="376.57px" width="218.81px" class="position-absolute landing-page-network-left" style="z-index: 1; left: -200px; top: 50px">
-            <img src="/assets/img/landing-page-network-right.svg" height="376.57px" width="218.81px" class="position-absolute landing-page-network-right" style="z-index: 1; right: -183px; top: 53px">
-            <img src="/assets/img/landing-page-network-bulb-blue.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; right: -83px; top: 64px">
-            <img src="/assets/img/landing-page-network-bulb-violet.svg" height="55px" width="55px" class="position-absolute landing-page-network-bulb" style="z-index: 1; right: -83px; top: 368px">
-            <img src="/assets/img/landing-page-network-bottom.svg" width="453.37px" height="146.05px" class="position-absolute landing-page-network-bottom" style="z-index: 1; bottom: -120px">
-            <div class="landing-page-row-3-box position-relative">
-              <div class="landing-page-row-3-inner-box">
-                <img src="/assets/img/landing-page-nft-box.png" height="338px" width="338px" style="border-radius: 27px" />
-                <button class="landing-page-primary-btn landing-page-btn mt-16px" style="height: 72px; width: 338px; padding: 0px" (click)="globalVars.launchLoginFlow()">Mint NFT Now!</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px" [ngClass]="{ 'flex-column flex-column-reverse': globalVars.isMobile()}">
-      <div data-aos="fade-left" data-aos-offset="-100" class="position-relative" [ngStyle]="{ 'left': globalVars.isMobile() ? '-80px': '0px' }">
-        <img src="/assets/img/landing-page-device.png" width="426.09px" height="745.5px" style="top: 67px; left: 90px; z-index: 1;" class="position-relative landing-page-device"/>
-        <div class="w-100 h-100 d-flex align-items-center justify-content-center position-absolute" style="top: 0px">
-          <div class="position-relative" style="transform: scale(.9)">
-            <div class="landing-page-svg landing-page-blob-5"></div>
-            <div class="landing-page-svg landing-page-blob-4"></div>
-            <div class="landing-page-svg landing-page-blob-6"></div>
-          </div>
-        </div>
-      </div>
-      <div data-aos="fade-right" data-aos-offset="100" style="z-index: 1" [ngClass]="{ 'p-25px': globalVars.isMobile(), 'ml-40px': !globalVars.isMobile() }" [ngStyle]="{ width: !globalVars.isMobile() ? '600px' : 'auto' }">
-        <div class="landing-page-title">Investing in art is now as easy as using Instagram</div>
-        <div class="d-flex mt-30px mr-20px">
-          <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            For the first time, NFTs can show up directly in your social feed like posts. Engage like never before - with comments, likes, and diamonds
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            NFTs are the future of social media and now, for the first time, they can be tied to your social profile
-          </span>
-        </div>
-        <div class="d-flex mt-15px mr-20px">
-          <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
-          <span class="landing-page-content-text">
-            Show off your gallery on your profile, too!
-          </span>
-        </div>
-      </div>
-    </div>
+
+
+
+  <div class="m-auto text-center fc-landing-page landing-page-testimonial">
+    <p class="fc-landing-page fs-18px mb-20px">Over $30 million dollars paid directly to creators</p>
+    <p class="fs-25px mb-20px landing-page-testimonial-quote">&ldquo;we’ve made more on Diamond than anything we’ve ever tried&rdquo;</p>
+    <div class="d-flex m-auto landing-page-testimonial-person align-items-center justify-center">
+      <a href="https://diamondapp.com/u/goldberry" class="fc-landing-page d-block w-20" target="_blank"><img class="w-100 br-6px mr-15px" src="assets/diamond/goldberry.png"></a>
+      <span class="fc-landing-page text-left pl-20px">Goldberry • <a class="fs-14px fc-landing-page text-underline" target="_blank" href="https://diamondapp.com/u/goldberry">View Profile</a><br>
+        <span style="color:#666" class="fs-14px">Indie Folk Band, St. Louis</span>
+      </span>
+    </div> 
   </div>
-  <div class="landing-page-content-container">
-    <div class="w-100 d-flex justify-content-center align-items-center flex-column">
-      <div data-aos="zoom-in" data-aos-offset="300">
-        <div class="landing-page-title position-relative text-align-center" style="z-index: 1" [ngStyle]="{ width: !globalVars.isMobile() ? '585px' : 'auto' }">Invest in creators like never before</div>
-        <div class="landing-page-info-tile d-flex align-items-center justify-content-center fc-landing-page position-relative mt-15px" style="z-index: 1">
-          <div class="d-flex">
-            <i-feather name="info" class="feather-xlarge fs-0px position-relative" style="top: 3px"></i-feather>
-            <span class="pl-15px" style="line-height: 38px">All of the amounts presented below are real. <a href="https://cloutomy.com/rank" target="_blank" class="fc-landing-page"><u>Check them out here.</u></a></span>
-          </div>
-        </div>
-      </div>
-      <div class="position-relative h-100 w-100">
-        <div class="position-absolute" style="right: -25px; top: 50px">
-          <div class="landing-page-svg landing-page-blob-5"></div>
-          <div class="landing-page-svg landing-page-blob-6"></div>
-        </div>
-        <div class="position-absolute" style="left: -250px; bottom: 120px">
-          <div class="landing-page-svg landing-page-blob-4"></div>
-        </div>
-        <div data-aos="slide-up" data-aos-offset="-50" class="landing-page-creator-coins-table position-relative fs-20px" style="z-index: 1" [ngClass]="{ 'pt-40px pl-40px': !globalVars.isMobile(), 'pt-10px': globalVars.isMobile() }">
-          <div class="w-100 h-100 fc-landing-page" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
-            <div class="d-flex align-items-center font-weight-bold pb-10px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
-              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">Rank</div>
-              <div class="col-6">Creator</div>
-              <div class="col-2">Earnings</div>
-            </div>
-            <div *ngFor="let creator of featuredCreators; let idx = index" class="d-flex align-items-center landing-page-row">
-              <div class="col-2 pl-0px" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">#{{idx + 1}}</div>
-              <div class="col-6">
-                <img class="landing-page-profile-pic" src="{{ creator.pic }}" />
-                {{ creator.name }}
-              </div>
-              <div class="col-2">${{ creator.earnings }}</div>
-            </div>
-            <div class="landing-page-creator-coins-fade-out"></div>
-          </div>
-        </div>
-      </div>
-      <a href="https://cloutomy.com/rank" target="_blank" style="position: relative; z-index: 2">
-        <button class="landing-page-btn landing-page-secondary-btn font-weight-bold" style="height: 88px; width: 368px; margin-top: 48px; z-index: 2">
-          Explore Creator Earnings
-        </button>
-      </a>
-    </div>
-  </div>
-  <div class="landing-page-content-container mb-40px">
+
+  <div class="landing-page-content-container mb-40px pb-20px">
+    <div class="fs-32px font-weight-bold landing-page-creator-coins-explainer-section-title text-align-center mb-40px pb-40px">Finally, a monetizable social network, built for you.</div>
+
     <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <div data-aos="flip-up" data-aos-offset="100" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative" width="139.84px" height="152.4px" style="top: 66px" src="assets/img/landing-page-coin.png"/>
+          <img class="position-relative landing-page-explainer-image" src="/assets/diamond/icon-2.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">1. Creators can have coins</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can have an optional coin associated with their profile, and earn fees on every buy.</div>
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Full ownership of your content &amp; identity</div>
         </div>
       </div>
-      <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="250" class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative" width="213.71px" height="154.35px" style="top: 82.63px" src="assets/img/landing-page-cash.png"/>
+          <img class="position-relative landing-page-explainer-image"src="/assets/diamond/icon-1.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">2. Coins can have royalties</div>
-          <div class="fs-20px mt-16px text-align-center" style="color: #424447">Creators can attribute an optional royalty on every NFT sale back to their coin-holders</div>
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Monetize value, for your holders — not advertisers</div>
         </div>
       </div>
-      <div data-aos="flip-up" data-aos-offset="100" data-aos-delay="500" class="position-relative landing-page-creator-coin-explainer-container">
+      <div class="position-relative landing-page-creator-coin-explainer-container">
         <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
-          <img class="position-relative" width="160.19px" height="147.03px" style="top: 69px" src="assets/img/landing-page-hodl.png"/>
+          <img class="position-relative landing-page-explainer-image" src="/assets/diamond/icon-3.png"/>
         </div>
         <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
-          <div class="fs-24px font-weight-bold fc-landing-page text-align-center" style="margin-top: 76px">3. HODL to the moon!</div>
-          <div class="fs-20px mt-16px text-align-center fc-landing-page">Hold your favorite creator's coin to grow with them</div>
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Invest & grow with your favorite creators & fans</div>
         </div>
       </div>
     </div>
   </div>
+
+  
+  <div class="landing-page-content-container mb-40px text-center m-auto">
+    <h1 class="landing-section-header mb-30px">LIKES ARE FOR WEB2</h1>
+    <h1 class="landing-section-header mb-30px">DIAMONDS ARE FOREVER</h1>
+  </div>
+
+
+  <div class="landing-page-content-container mb-40px pb-20px">
+    <div class="fs-32px font-weight-bold landing-page-creator-coins-explainer-title text-align-center mb-40px pb-40px">
+        What makes Diamond unique &amp; unlike any other?
+        <p class="fc-white fs-20px landing-page-creator-coins-explainer-desc">For starters, imagine if your next post could earn you up to $1,000</p>
+    </div>
+    <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-4.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Mint NFTs in a few clicks</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Any post you create on Diamond can be minted as an NFT. They're also virtually gas-free.</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small"src="/assets/diamond/icon-5.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Send tips with diamonds</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Instead of "Likes", you can send users real money with tips ("diamonds") directly.</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-6.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Buy creator coins</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Every profile has creator coins (social tokens) that you can purchase and invest in.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-page-content-container mb-40px pb-20px">
+    <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-7.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Take your profile with you</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Thanks to the DeSo blockchain, your profile and social graph can be used across any DeSo app.</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container" [ngClass]="{ 'mr-25px': !globalVars.isMobile() }">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small"src="/assets/diamond/icon-8.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Collect founders reward</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Set a founders reward percentage to collect revenue whenever someone buys your social token.</div>
+        </div>
+      </div>
+      <div class="position-relative landing-page-creator-coin-explainer-container">
+        <div class="d-flex justify-content-center landing-page-creator-coins-explainer-header">
+          <img class="position-relative landing-page-explainer-image-small" src="/assets/diamond/icon-9.png"/>
+        </div>
+        <div class="d-flex flex-column align-items-center landing-page-creator-coins-explainer-body">
+          <div class="fs-24px font-weight-bold landing-page-creator-coins-explainer-title text-align-center">Airdrop your NFTs</div>
+          <div class="fs-20px mt-16px text-align-center" style="color:#888">Easily gift NFTs with an airdrop to your early adopters and most loyal supporters.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="landing-page-content-container mb-40px">
     <div class="d-flex justify-content-center position-relative" style="z-index: 1" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
-      <button class="landing-page-btn landing-page-primary-btn mr-30px font-weight-bold" (click)="globalVars.launchSignupFlow()">
-        <div>Sign up today</div>
-        <div class="landing-page-button-subtext">Get <free-deso-message></free-deso-message> free</div>
-      </button>
-      <button
-        class="landing-page-btn landing-page-secondary-btn font-weight-bold"
-        [ngClass]="{ 'mt-15px': globalVars.isMobile() }"
-        [routerLink]="'/' + globalVars.RouteNames.CREATORS"
-        queryParamsHandling="merge"
-      >
-        Explore Creators
+      <button class="landing-page-btn landing-page-primary-btn font-weight-bold" (click)="globalVars.launchSignupFlow()">
+        <div>Create Account</div>
+        <div class="landing-page-button-subtext pt-10px">Get <free-deso-message></free-deso-message> free</div>
       </button>
     </div>
   </div>
-  <div class="landing-page-content-container d-flex justify-content-center" style="margin-bottom: 100px">
-    <div class="position-relative w-100 h-100 d-flex justify-content-center">
-      <div class="position-absolute" style="top: 50%; left: 50%">
-        <div class="landing-page-svg landing-page-blob-5" style="top: -400px; right: -190px"></div>
-        <div class="landing-page-svg landing-page-blob-4" style="top: -68px"></div>
-        <div class="landing-page-svg landing-page-blob-6" style="top: 103px; left: auto; right: -5px"></div>
-      </div>
-      <div class="landing-page-build-on-deso-container d-flex flex-column align-items-center">
-        <img src="assets/deso/camelcase_logo.svg" width="142px"/>
-        <div class="landing-page-title text-align-center mt-25px">Built on the Decentralized Social Blockchain</div>
-        <div class="fs-24px fc-landing-page text-align-center mt-20px">Diamonds are forever, and so are your followers because everything is stored on the blockchain. You'll never lose your content because it's all truly yours.</div>
-        <a href="https://deso.org" target="_blank">
-          <button class="landing-page-btn landing-page-secondary-btn mt-25px" [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '466px', height: globalVars.isMobile() ? '74px' : '88px' }" style="padding: 0px">
-            Learn more about the DeSo Blockchain
-          </button>
-        </a>
-      </div>
+  <div class="position-relative d-flex justify-content-between landing-page-top-bar" style="padding: 50px 0px; margin-top: 0px; margin-bottom: 0px" [ngClass]="{ 'flex-column align-items-center': globalVars.isMobile() }">
+    <div class="fc-landing-page d-flex align-items-center m-auto" [ngClass]=" {'mb-16px': globalVars.isMobile()}">
     </div>
   </div>
-  <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; background-image: url('/assets/img/static.png')"></div>
-  <div class="landing-page-footer-border"></div>
-  <div class="position-relative d-flex justify-content-between landing-page-top-bar landing-page-footer-border" style="padding: 50px 0px; margin-top: 0px; margin-bottom: 0px" [ngClass]="{ 'flex-column align-items-center': globalVars.isMobile() }">
-    <div class="fc-landing-page d-flex align-items-center" [ngClass]=" {'mb-16px': globalVars.isMobile()} ">
-      <img src="assets/diamond/camelcase_logo.svg" height="28.63px"/>
-    </div>
-    <div class="fs-18px">
-      <a class="fc-landing-page mr-40px" (click)="globalVars.launchLoginFlow()">Login</a>
-      <a class="fc-landing-page mr-40px" (click)="globalVars.launchSignupFlow()">Sign up</a>
-    </div>
-  </div>
-  <div class="d-flex justify-content-center align-items-center py-30px">
-    <span style="color: #73767b" class="fs-18px" [ngClass]="{ 'fs-12px': globalVars.isMobile() }">Copyright © 2022 Diamond Labs | All Rights Reserved</span>
+  <div class="text-align-center pb-30px">
+    <p style="color: #888" class="fs-18px mb-40px d-block" [ngClass]="{ 'fs-12px': globalVars.isMobile() }">
+      <img src="assets/diamond/camelcase_logo_new.svg" height="28px" style="filter: invert(100)" class="m-auto text-align-center"/> <span class="d-inline-block mr-20px ml-20px">&times;</span>
+      <img src="https://uploads-ssl.webflow.com/6148aea00f7f90ad88e373a0/6148aea00f7f900364e37426_deso-logo-color.svg" height="28px" class="m-auto text-align-center"/>
+    </p>
+    <p style="color: #888" class="fs-18px mb-16px" [ngClass]="{ 'fs-12px': globalVars.isMobile() }">Diamond is built on DeSo — <a href="https://deso.org" target="_blank" class="fc-landing-page">the Decentralized Social Blockchain.</a></p>
+    <p style="color: #666" class="w-40 m-auto mb-20px pb-20px">DeSo is the leading layer-1 blockchain built from the ground up to<br/>scale decentralized social applications to one billion users</p>
+    <p class="mb-20px"> <a href="https://deso.org" target="_blank" class="text-underline fc-secondary"> Learn More About DeSo </a> </p>
+    <p style="color: #444" class="fs-14px" [ngClass]="{ 'fs-12px': globalVars.isMobile() }">Copyright © 2022 Diamond Labs &bull; All Rights Reserved</p>
   </div>
 </div>

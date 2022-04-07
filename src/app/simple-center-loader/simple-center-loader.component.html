@@ -1,6 +1,7 @@
 <div
   class="d-flex flex-column align-items-center justify-content-center loading-container"
   [ngStyle]="{ height: getHeight() }"
+  (click)="reload()"
 >
   <img
     *ngIf="!isDark"

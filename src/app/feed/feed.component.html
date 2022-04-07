@@ -18,17 +18,17 @@
     </div>
   </div>
 
-  <a
-    *ngIf="globalVars.loggedInUser && userReferral && !isMobile"
-    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
-  >
-    <div
-      class="feed-desktop-center-banner"
-    >
-      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>
-    </div>
-  </a>
+<!--  <a-->
+<!--    *ngIf="globalVars.loggedInUser && userReferral && !isMobile"-->
+<!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
+<!--  >-->
+<!--    <div-->
+<!--      class="feed-desktop-center-banner"-->
+<!--    >-->
+<!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
+<!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
+<!--    </div>-->
+<!--  </a>-->
   <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>
 
   <!-- Tab Selector -->
@@ -40,25 +40,25 @@
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
 
-  <a
-    *ngIf="globalVars.loggedInUser && userReferral && isMobile"
-    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"
-    class="mt-40px mx-8px"
-    [ngClass]="{
-      'mb-5px': !(
-        globalVars.loggedInUser &&
-        !globalVars.loggedInUser.JumioVerified &&
-        this.globalVars.showFreeMoneyBanner
-      )
-    }"
-  >
-    <div
-      class="feed-desktop-center-banner"
-    >
-      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>
-      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>
-    </div>
-  </a>
+<!--  <a-->
+<!--    *ngIf="globalVars.loggedInUser && userReferral && isMobile"-->
+<!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
+<!--    class="mt-40px mx-8px"-->
+<!--    [ngClass]="{-->
+<!--      'mb-5px': !(-->
+<!--        globalVars.loggedInUser &&-->
+<!--        !globalVars.loggedInUser.JumioVerified &&-->
+<!--        this.globalVars.showFreeMoneyBanner-->
+<!--      )-->
+<!--    }"-->
+<!--  >-->
+<!--    <div-->
+<!--      class="feed-desktop-center-banner"-->
+<!--    >-->
+<!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
+<!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
+<!--    </div>-->
+<!--  </a>-->
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
@@ -79,29 +79,9 @@
     }"
     *ngIf="globalVars.loggedInUser && isMobile"
   ></jumio-status>
-  <a
-    *ngIf="
-      globalVars.loggedInUser && activeTab === FeedComponent.FOLLOWING_TAB && followedCount < followBannerThreshold
-    "
-    [routerLink]="['/' + globalVars.RouteNames.BROWSE]"
-    [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
-    queryParamsHandling="merge"
-    class="mb-5px"
-  >
-    <div
-      class="feed-desktop-center-banner"
-      [ngStyle]="{ 'margin': isMobile ? '0px 8px' : 'auto'}"
-    >
-      <i class="fas fa fa-fire mr-10px"></i>
-      <span class="mr-5px">{{ 'feed.find_people_in_hot' | transloco }}</span>
-    </div>
-  </a>
-  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
-    <nft-showcase></nft-showcase>
-  </div>
 
   <!-- Posts -->
-  <div *ngIf="showGlobalOrFollowingOrHotPosts()">
+  <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-0px': globalVars.isMobile() }">
     <div class="mobile-scroll" *ngFor="let post of postsToShow()">
       <div *ngIf="post && post.ProfileEntryResponse">
         <!--
@@ -140,9 +120,7 @@
     </div>
   </div>
 
-  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
-    <nft-showcase></nft-showcase>
-  </div>
+
 
   <div
     *ngIf="showNoPostsFound()"

@@ -11,15 +11,17 @@
         queryParamsHandling="merge"
       >
         <img
-          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
           class="deso"
           style="height: 30px"
         />
       </a>
-      <div class="position-relative" style="width: 343px; height: 48px">
-        <search-bar [resultsUnderBar]="true"></search-bar>
+      <div class="d-flex">
+        <div class="position-relative mr-15px" style="width: 343px; height: 48px">
+          <search-bar [resultsUnderBar]="true"></search-bar>
+        </div>
+        <change-account-selector></change-account-selector>
       </div>
-      <change-account-selector></change-account-selector>
     </div>
   </div>
   <div class="d-flex" style="margin-top: 64px">
@@ -130,7 +132,11 @@
         ></messages-thread-view>
       </div>
     </div>
-    <bottom-bar-mobile *ngIf="!showThreadView" class="global__bottom-bar-mobile"></bottom-bar-mobile>
+    <bottom-bar-mobile
+      [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
+      *ngIf="!showThreadView"
+      class="global__bottom-bar-mobile"
+    ></bottom-bar-mobile>
   </div>
   <a
     class="messages-mobile__new-message-circle d-flex justify-content-center align-items-center cursor-pointer"

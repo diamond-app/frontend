@@ -20,7 +20,7 @@
         <div
           *ngFor="let _ of postModels; let i = index"
           [attr.data-index]="i"
-          class="feed-create-post__post-content-container autofill-container"
+          class="feed-create-post__post-content-container feed-create-post__post-content-container-thread autofill-container"
         >
           <button
             *ngIf="i > 0"
@@ -101,12 +101,12 @@
             ></iframe>
           </div>
           <div
-            class="flex-fill br-10px create-post"
+            class="flex-fill br-6px create-post"
             [ngClass]="{ 'pt-10px': parentPost }"
             *ngIf="postModels[i].showEmbedURL"
           >
             <input
-              class="br-3px"
+              class="br-3px p-15px"
               type="url"
               [(ngModel)]="postModels[i].embedURL"
               (ngModelChange)="setEmbedURL()"
@@ -115,7 +115,7 @@
           </div>
           <div class="flex-fill bg-tile" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="postModels[i].showImageLink">
             <input
-              class="br-3px"
+              class="br-3px p-15px"
               type="url"
               [(ngModel)]="postModels[i].postImageSrc"
               placeholder="{{ 'feed_create_post.embed_image' | transloco }}"
@@ -152,7 +152,7 @@
 >
   <div class="feed-create-post__left-btn-group">
     <span
-      class="mr-15px roboto-regular feed-create-post__character-counter fs-15px d-flex"
+      class="mr-15px feed-create-post__character-counter fs-15px d-flex"
       [ngClass]="{
         'd-none': currentPostModel.text.length == 0,
         'text-grey8A': showCharacterCountIsFine(),

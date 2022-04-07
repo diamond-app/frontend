@@ -12,15 +12,17 @@
         queryParamsHandling="merge"
       >
         <img
-          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
           class="deso"
           style="height: 30px"
         />
       </a>
-      <div *ngIf="!inTutorial" class="position-relative" style="width: 343px; height: 48px">
-        <search-bar [resultsUnderBar]="true"></search-bar>
+      <div class="d-flex">
+        <div *ngIf="!inTutorial" class="position-relative mr-15px" style="width: 343px; height: 48px">
+          <search-bar [resultsUnderBar]="true"></search-bar>
+        </div>
+        <change-account-selector></change-account-selector>
       </div>
-      <change-account-selector></change-account-selector>
     </div>
   </div>
   <top-bar-mobile-header
@@ -48,6 +50,7 @@
       </div>
 
       <bottom-bar-mobile
+        [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
         *ngIf="mobile && !inTutorial && showBottomBar"
         class="global__bottom-bar-mobile"
         [showPostButton]="showPostButton"

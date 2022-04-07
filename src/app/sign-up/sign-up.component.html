@@ -1,19 +1,19 @@
 <app-page [inTutorial]="true">
   <div class="nft-modal-container w-100 px-15px pb-15px">
     <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
-      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond!</div>
-      <div class="w-100 text-center mt-20px fs-20px fc-secondary font-weight-bold">
+      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond</div>
+      <div class="w-100 text-center mt-20px fs-20px font-weight-bold">
         Validate your account to earn starter $DESO
       </div>
       <div class="w-100 d-flex align-items-center flex-column">
-        <div style="max-width: 450px" class="w-100 text-center fs-18px mt-5px mb-30px fc-secondary">
-          This is the cryptocurrency that fuels the engagement on our site and allows you to invest in creators.
+        <div style="max-width: 500px" class="w-100 text-center fs-18px mt-5px mb-30px text-muted fc-secondary">
+          This is the cryptocurrency that fuels the engagement on Diamond and allows you to invest in creators & buy NFTs.
         </div>
         <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose an option</div>
         <button
           (click)="launchSMSVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="primary-button"
+          class="primary-button mb-10px"
         >
           Get $DESO with Phone Number
         </button>
@@ -21,7 +21,7 @@
         <button
           (click)="launchTransferDesoModal()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="secondary-button mt-30px"
+          class="secondary-button mt-30px mb-10px"
         >
           Buy or Send $DESO Anonymously
         </button>
@@ -29,7 +29,7 @@
         <button
           (click)="launchJumioVerification()"
           [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="secondary-button mt-30px"
+          class="secondary-button mt-30px mb-10px"
         >
           Get $DESO with ID
         </button>
@@ -41,11 +41,11 @@
     </div>
     <div *ngIf="stepNum !== 0" class="d-flex w-100 justify-content-between">
       <div
-        [ngClass]="{ 'fc-blue': stepNum === 1, 'fc-muted': stepNum !== 1 }"
+        [ngClass]="{ 'fc-black': stepNum === 1, 'fc-muted': stepNum !== 1 }"
         class="d-flex align-items-center flex-column p-16px"
       >
         <div
-          [ngStyle]="{ 'border-color': stepNum === 1 ? 'var(--highlight)' : 'var(--border)' }"
+          [ngStyle]="{ 'border-color': stepNum === 1 ? 'var(--text)' : 'var(--border)' }"
           class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
         >
           1
@@ -53,11 +53,11 @@
         <div class="text-center">Create your profile</div>
       </div>
       <div
-        [ngClass]="{ 'fc-blue': stepNum === 2, 'fc-muted': stepNum !== 2 }"
+        [ngClass]="{ 'fc-black': stepNum === 2, 'fc-muted': stepNum !== 2 }"
         class="d-flex align-items-center flex-column p-16px"
       >
         <div
-          [ngStyle]="{ 'border-color': stepNum === 2 ? 'var(--highlight)' : 'var(--border)' }"
+          [ngStyle]="{ 'border-color': stepNum === 2 ? 'var(--text)' : 'var(--border)' }"
           class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
         >
           2
@@ -65,11 +65,11 @@
         <div class="text-center">Find some creators to follow</div>
       </div>
       <div
-        [ngClass]="{ 'fc-blue': stepNum === 3, 'fc-muted': stepNum !== 3 }"
+        [ngClass]="{ 'fc-black': stepNum === 3, 'fc-muted': stepNum !== 3 }"
         class="d-flex align-items-center flex-column p-16px"
       >
         <div
-          [ngStyle]="{ 'border-color': stepNum === 3 ? 'var(--highlight)' : 'var(--border)' }"
+          [ngStyle]="{ 'border-color': stepNum === 3 ? 'var(--text)' : 'var(--border)' }"
           class="d-flex align-items-center justify-content-center fs-25px onboarding-info-bar-circle mb-10px"
         >
           3
@@ -78,7 +78,7 @@
       </div>
     </div>
     <div *ngIf="stepNum !== 0" class="w-100 border-bottom"></div>
-    <div *ngIf="stepNum === 1" class="mt-20px">
+    <div *ngIf="stepNum === 1">
       <update-profile
         [loggedInUser]="globalVars.loggedInUser"
         [inTutorial]="true"
@@ -110,9 +110,9 @@
           'onboarding-unselected-section': hoveredSection !== 0,
           'flex-column-reverse': globalVars.isMobile()
         }"
-        class="w-100 d-flex justify-content-around mt-30px py-10px br-12px"
+        class="w-100 d-block justify-content-around mt-30px py-10px br-12px"
       >
-        <div class="col-lg-4 d-flex align-items-center justify-content-center">
+        <div class="col-lg-8 m-auto text-center d-flex align-items-center justify-content-center">
           <img
             [ngClass]="{ 'd-none': hoveredSection !== 0 }"
             src="assets/img/onboarding-diamond-example.gif"
@@ -121,16 +121,14 @@
           />
           <img
             [ngClass]="{ 'd-none': hoveredSection === 0 }"
-            src="assets/img/onboarding-diamond-example-static.png"
+            src="assets/img/onboarding-diamond-example.gif"
             width="100%"
             style="border-radius: 6px"
           />
         </div>
-        <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Earn or Give Diamonds</div>
-          <span class="mb-5px">Diamonds are tips users can give each other for posts</span>
-          <span class="mb-5px">Each Diamond you recieve is worth real money</span>
-          <span>Make sure to give Diamonds for posts you enjoy!</span>
+        <div class="col-lg-8 fs-18px d-flex flex-column m-auto text-center">
+          <div class="fc-black font-weight-bold fs-25px mb-5px mt-20px">Earn or Give Diamonds</div>
+          <span class="mb-5px">Diamonds are tips users can give each other for posts, Each Diamond you recieve is worth real money.</span>
         </div>
       </div>
       <div
@@ -140,28 +138,25 @@
           'onboarding-unselected-section': hoveredSection !== 1,
           'flex-column-reverse': globalVars.isMobile()
         }"
-        class="w-100 d-flex justify-content-around mt-30px py-10px br-12px"
+        class="w-100 d-block justify-content-around mt-30px py-10px br-12px"
       >
-        <div class="col-lg-4 d-flex align-items-center justify-content-center">
+        <div class="col-lg-8 d-flex align-items-center m-auto justify-content-center">
           <img
             [ngClass]="{ 'd-none': hoveredSection !== 1 }"
             src="assets/img/onboarding-creator-coin-example.gif"
             width="100%"
-            style="border-radius: 6px"
+            style="border-radius: 6px; border: 1px solid #ddd"
           />
           <img
             [ngClass]="{ 'd-none': hoveredSection === 1 }"
-            src="assets/img/onboarding-creator-coin-example-static.png"
+            src="assets/img/onboarding-creator-coin-example.gif"
             width="100%"
-            style="border-radius: 6px"
+            style="border-radius: 6px; border: 1px solid #ddd"
           />
         </div>
-        <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Invest with Creator Coins</div>
-          <span class="mb-5px">Every creator has a coin associated with their profile</span>
-          <span>
-            If you find a creator you enjoy, you can buy some shares of their creator coin and participate in their
-            upside as they provide more value - and vice versa!
+        <div class="col-lg-8 fs-18px d-flex flex-column text-center m-auto">
+          <div class="fc-black font-weight-bold fs-25px mb-5px mt-20px">Invest with Creator Coins</div>
+          <span class="mb-5px">Every profile has a creator coin. If you find a creator you enjoy, you can buy some shares of their coin.
           </span>
         </div>
       </div>
@@ -172,9 +167,9 @@
           'onboarding-unselected-section': hoveredSection !== 2,
           'flex-column-reverse': globalVars.isMobile()
         }"
-        class="w-100 d-flex justify-content-around mt-30px py-10px br-12px"
+        class="w-100 d-block justify-content-around mt-30px py-10px br-12px"
       >
-        <div class="col-lg-4 d-flex align-items-center justify-content-center">
+        <div class="col-lg-8 m-auto d-flex align-items-center justify-content-center">
           <img
             [ngClass]="{ 'd-none': hoveredSection !== 2 }"
             src="assets/img/onboarding-nft-example.gif"
@@ -188,11 +183,9 @@
             style="border-radius: 6px"
           />
         </div>
-        <div class="col-lg-8 fc-secondary fs-18px d-flex flex-column mb-20px">
-          <div class="fc-secondary font-weight-bold fs-25px mb-10px">Social NFTs Have Never Been Easier</div>
-          <span class="mb-5px">Diamond makes minting and buying NFTs a breeze</span>
-          <span class="mb-5px">Every post you make can be turned into an NFT in 3 clicks</span>
-          <span>NFTs you purchase are displayed on your profile for all of your followers to see</span>
+        <div class="col-lg-8 fs-18px d-flex m-auto flex-column mb-20px text-center">
+          <div class="font-weight-bold fc-black fs-25px mt-20px mb-5px">Mint Social NFTs (gas-free)</div>
+          <span class="mb-5px">Any post you make can be turned into an NFT in one click.</span>
         </div>
       </div>
     </div>
@@ -225,7 +218,7 @@
       [ngClass]="{ 'disabled-button': globalVars.loggedInUser.BalanceNanos === 0 }"
       [disabled]="globalVars.loggedInUser.BalanceNanos === 0"
       [ngStyle]="{ width: globalVars.isMobile() ? '95%' : '70%' }"
-      class="primary-button"
+      class="primary-button mb-30px"
       (click)="processTransactions()"
     >
       {{ processingTransactions ? "Processing..." : "Continue" }}

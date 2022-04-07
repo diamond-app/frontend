@@ -1,10 +1,10 @@
-<div class="global__nav__width" *transloco="let t">
-  <div class="global__nav__fixed">
+<div class="global__nav__width">
+  <div class="global__nav__fixed" *transloco="let t">
     <!-- Logged-in Left Bar -->
     <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner d-flex flex-column justify-content-between">
       <div>
         <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
-          <div class="d-flex justify-content-between fc-secondary">
+          <div class="d-flex justify-content-between fc-default">
             <a
               class="link--unstyled d-flex align-items-center"
               (click)="globalVars.isLeftBarMobileOpen = false"
@@ -12,7 +12,7 @@
               queryParamsHandling="merge"
             >
               <img
-                [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+                [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
                 class="deso"
                 style="height: 27px"
               />
@@ -25,7 +25,7 @@
 
         <!-- Left Bar Buttons -->
         <div class="pt-20px"></div>
-        <div class="left-desktop-selector" *ngIf="!inTutorial">
+        <div [ngClass]="{ 'ml-20px': globalVars.isMobile() }" class="left-desktop-selector" *ngIf="!inTutorial">
           <left-bar-button [link]="homeLink()" [buttonLabel]="t('left_bar.home')" [iconName]="'home'"></left-bar-button>
           <left-bar-button
             [hasNotifications]="true"
@@ -67,12 +67,12 @@
           ></left-bar-button>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="t('left_bar.my_wallet')" [iconName]="'diamond'"></left-bar-button>
           <a
-            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary left-bar-link"
-            style="height: 56px"
+            class="cursor-pointer w-100 d-flex align-items-center fc-default left-bar-link"
+            style="height: 36px"
             (click)="displayMore($event)"
           >
             <i-feather name="more-horizontal" class="feather-medium fs-0px"></i-feather>
-            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">{{ 'left_bar.more' | transloco }}</a>
+            <a class="fs-17px fc-default font-weight-bold" style="margin-left: 23px">{{ 'left_bar.more' | transloco }}</a>
           </a>
           <div class="position-relative">
             <left-bar-more (closeMore)="hideMore()" *ngIf="showMore"></left-bar-more>
@@ -95,7 +95,7 @@
           <a href="/buy-deso" class="fc-blue fs-15px font-weight-bold">{{ 'left_bar.buy' | transloco }}</a>
         </div>
         <div class="w-100 border-bottom"></div>
-        <div class="fc-secondary cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
+        <div class="fc-default cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
           <i-feather name="power" class="feather-medium"></i-feather>
           <span class="fc-17px font-weight-bold ml-10px">{{ 'left_bar.logout' | transloco }}</span>
         </div>
@@ -114,7 +114,7 @@
             queryParamsHandling="merge"
           >
             <img
-              [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+              [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
               class="deso"
               style="height: 27px"
             />
@@ -124,7 +124,7 @@
       </div>
 
       <div *ngIf="globalVars.loggedInUser != null" class="pt-5px"></div>
-      <div class="left-desktop-selector">
+      <div class="left-desktop-selector" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
         <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>

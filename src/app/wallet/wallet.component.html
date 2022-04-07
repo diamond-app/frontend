@@ -31,15 +31,15 @@
             {{ globalVars.addOwnershipApostrophe(globalVars.loggedInUser.ProfileEntryResponse?.Username) }} Wallet
           </div>
           <!--Balance-->
-          <div class="fs-17px">
+          <div class="fs-15px">
             {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}
-            <span class="fc-secondary">&nbsp;{{ 'wallet.total_balance' | transloco }}</span>
+            <span class="text-muted font-weight-normal">&nbsp;{{ 'wallet.total_balance' | transloco }}</span>
           </div>
         </div>
       </div>
       <!--Key-->
       <div class="d-flex flex-column" [ngClass]="{ 'align-items-end': !globalVars.isMobile() }">
-        <div class="d-flex align-items-center fc-secondary fs-17px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
+        <div class="d-flex align-items-center text-muted fs-17px" [ngClass]="{ 'mt-20px': globalVars.isMobile() }">
           <div class="d-flex" [ngClass]="{ 'justify-content-between w-100': globalVars.isMobile() }">
             <div class="d-flex">
               <i-feather name="key" class="feather-large mr-10px"></i-feather>
@@ -74,11 +74,11 @@
     <div class="d-flex justify-content-between mx-16px my-25px" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
       <div class="d-flex flex-column">
         <!--Total DESO-->
-        <div class="mb-5px fs-17px">
+        <div class="mb-5px fs-17px font-weight-bold">
           {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }} $DESO
         </div>
         <!--Clout in USD-->
-        <div class="fc-secondary fs-15px">
+        <div class="text-muted fs-15px">
           <span class="mr-5px">{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
           <a
             *ngIf="!globalVars.loggedInUser.JumioFinishedTime"
@@ -103,8 +103,8 @@
     <div class="d-flex justify-content-between feed-post__nft-footer align-items-center">
       <!--Creator coin balance-->
       <div class="d-flex flex-column">
-        <div class="fs-17px mb-5px">{{ globalVars.loggedInUser.UsersYouHODL?.length }} Creator Coin{{ globalVars.loggedInUser.UsersYouHODL?.length > 1 ? "s" : "" }}</div>
-        <div class="fs-15px">{{ globalVars.nanosToDeSo(totalValue(), 0) }}&nbsp;$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+        <div class="fs-17px mb-5px font-weight-bold">{{ globalVars.loggedInUser.UsersYouHODL?.length }} Creator Coin{{ globalVars.loggedInUser.UsersYouHODL?.length > 1 ? "s" : "" }}</div>
+        <div class="fs-15px text-muted">{{ globalVars.nanosToDeSo(totalValue(), 0) }}&nbsp;$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
       </div>
       <!--Purchase creator coins-->
       <div class="nft-bid-btn d-flex align-items-center">

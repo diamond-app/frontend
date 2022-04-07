@@ -21,22 +21,22 @@
 
   <!-- Reserved -->
   <div *ngIf="showProfileAsReserved() && activeTab === 'Posts'" class="p-15px">
-    <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center">
+    <div class="border p-15px d-flex flex-row align-items-center">
       <i class="far fa-clock fs-1 fc-muted"></i>
       <div class="ml-25px fc-default">
-        <p class="roboto-mono fs-18px mb-5px font-weight-semibold">{{ 'creator_profile_details.profile_reserved' | transloco }}</p>
-        <p class="roboto-mono fs-15px">@{{ profile.Username }} {{ 'creator_profile_details.not_joined_yet' | transloco }}</p>
+        <p class=" fs-18px font-weight-bold font-weight-semibold">{{ 'creator_profile_details.profile_reserved' | transloco }}</p>
+        <p class=" fs-15px text-muted">@{{ profile.Username }} {{ 'creator_profile_details.not_joined_yet' | transloco }}</p>
       </div>
     </div>
     <div class="d-flex justify-content-center mt-30px">
       <div>
-        <p class="font-weight-semibold roboto-mono mb-10px">
+        <p class="font-weight-semibold  mb-10px">
           {{ 'creator_profile_details.are_you_on_twitter_0' | transloco }} @{{ profile.Username }} {{ 'creator_profile_details.are_you_on_twitter_1' | transloco }}
         </p>
         <ol>
           <li class="font-weight-semibold">
             <p
-              class="roboto-mono mb-10px font-weight-semibold cursor-pointer"
+              class=" mb-10px font-weight-semibold cursor-pointer"
               style="text-decoration: line-through"
               (click)="globalVars.launchSignupFlow()"
             >
@@ -44,7 +44,7 @@
             </p>
           </li>
           <li class="font-weight-semibold">
-            <p class="roboto-mono mb-10px font-weight-semibold">
+            <p class=" mb-10px font-weight-semibold">
               <a target="_blank" href="{{ tweetToClaimLink() }}">
                 {{ 'creator_profile_details.tweet_key' | transloco }}
               </a>
@@ -54,7 +54,7 @@
             </p>
           </li>
           <li class="font-weight-semibold">
-            <p class="roboto-mono mb-10px font-weight-semibold">{{ 'creator_profile_details.username_transferred' | transloco }}</p>
+            <p class=" mb-10px font-weight-semibold">{{ 'creator_profile_details.username_transferred' | transloco }}</p>
           </li>
         </ol>
       </div>

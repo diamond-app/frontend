@@ -273,7 +273,6 @@ export class GlobalVarsService {
 
   pollUnreadNotifications() {
     this.GetUnreadNotifications();
-    this.LoadInitialMessages();
     setTimeout(() => {
       this.pollUnreadNotifications();
     }, 10000);
@@ -1490,6 +1489,10 @@ export class GlobalVarsService {
           }
         });
     }
+  }
+
+  windowIsPWA(): Boolean {
+    return window.matchMedia("(display-mode: standalone)").matches;
   }
 
   waitForTransaction(

@@ -175,8 +175,8 @@
     "following": "Following"
   },
   "creators_leaderboard": {
-    "buy_coin": "Buy Creator Coin",
-    "buy_coin_subtitle": "All creators have a coin. Buy your favorites and get on their team!",
+    "buy_coin": "Discover Creators",
+    "buy_coin_subtitle": "All creators have a Creator Coin associated with them.",
     "name": "Name",
     "price": "Price"
   },
@@ -310,7 +310,7 @@
     "get_starter_deso": "Get Starter $DESO"
   },
   "jumio_status": {
-    "your_free":"Your free",
+    "your_free":"your free",
     "will_arive_in_a_minute":"will arrive in about a minute.",
     "robot_check_failed":"Your robot check failed. Click here to try again.",
     "click_here_to_get":"Click here to get",
@@ -321,15 +321,15 @@
   },
   "landing":{
     "login":"Login",
-    "signup":"Sign Up",
-    "signuptoday":"Sign Up Today",
-    "settle":"Don´t settle",
+    "signup":"Create Account",
+    "signuptoday":"Create Account",
+    "settle":"The home for creators & communities",
     "fora":"for a",
-    "diamonds":"Get diamonds and invest in creators like never before. Your next post could be worth millions!"
+    "diamonds":"Diamond is the home for creators and their audience to build engaging communities around content, incentives & ownership."
   },
   "left_bar": {
     "home":"Home",
-    "buy_creators":"Buy Creators",
+    "buy_creators":"Discover",
     "buy_deso":"Buy DESO",
     "buy_deso2":"Buy $DESO",
     "notifications":"Notifications",
@@ -389,7 +389,7 @@
   },
   "right_bar": {
     "creators":{
-      "sent":"Send",
+      "sent":"Sent",
       "buy_deso":"Buy $DESO",
       "deso_price":"$DESO Price",
       "your_deso":"Your $DESO",
@@ -465,7 +465,7 @@
     }
   },
   "wallet_widget": {
-    "wallet_of": "Wallet of",
+    "wallet_of": "My Creator Coin ",
     "coins_in_circulation":"Coins in Circulation",
     "total_usd_locked":"Total USD Locked",
     "usd_market_cap":"USD Market Cap"

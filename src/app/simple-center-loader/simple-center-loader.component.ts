@@ -27,6 +27,10 @@ export class SimpleCenterLoaderComponent implements OnInit {
     this.isDark = localStorage.getItem("theme") === "dark";
   }
 
+  reload() {
+    window.location.reload();
+  }
+
   doesFileExist(urlToFile) {
     const xhr = new XMLHttpRequest();
     try {

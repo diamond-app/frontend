@@ -3,7 +3,6 @@
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
     class="d-flex flex-column align-items-center h-100 pl-15px pr-15px"
-    [ngStyle]="{ 'padding-left': tab === tabs[0] && tab === activeTab && buttonSelector ? '0px' : '15px' }"
   >
     <div class="d-flex h-100 align-items-center">
       <div

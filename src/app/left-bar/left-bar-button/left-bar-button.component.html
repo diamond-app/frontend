@@ -34,21 +34,21 @@
         globalVars.messageResponse.NumberOfUnreadThreads != 0 &&
         notificationType === 'messages'
       "
-      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      class="ml-5px fs-12px notification p-0px position-relative"
       style="padding: 0px"
     >
       {{
         globalVars.messageResponse.NumberOfUnreadThreads > 999
-          ? "(999+)"
-          : "( " + globalVars.messageResponse.NumberOfUnreadThreads + " )"
+          ? "999+"
+          : globalVars.messageResponse.NumberOfUnreadThreads
       }}
     </div>
     <div
       *ngIf="hasNotifications && globalVars.unreadNotifications != 0 && notificationType === 'notifications'"
-      class="ml-5px fs-12px notification p-0px font-weight-normal position-relative"
+      class="ml-5px fs-12px notification p-0px position-relative"
       style="padding: 0px"
     >
-      {{ globalVars.unreadNotifications > 99 ? "(99+)" : "( " + globalVars.unreadNotifications + " )" }}
+      {{ globalVars.unreadNotifications > 99 ? "99+" : globalVars.unreadNotifications }}
     </div>
   </div>
 </div>

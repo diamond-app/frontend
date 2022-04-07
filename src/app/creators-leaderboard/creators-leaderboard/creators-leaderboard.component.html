@@ -7,10 +7,9 @@
     <div>
       <!-- Headers -->
       <div class="fs-15px">
-        <div class="row px-15px no-gutters border-bottom py-15px fc-muted" style="margin-left: 0; margin-right: 0">
-          <div class="col-lg-6 col-8 mb-0">{{ 'creators_leaderboard.name' | transloco }}</div>
-
-          <div class="col-lg-6 col-4 mb-0 text-left" style="min-width: 100px">
+        <div class="row px-15px no-gutters border-bottom py-15px justify-content-end fc-muted" style="margin-left: 0; margin-right: 0">
+          <div class="col-lg-5 col-8 mb-0">{{ 'creators_leaderboard.name' | transloco }}</div>
+          <div class="col-lg-7 col-4 mb-0 text-left" style="min-width: 100px">
             <div class="pl-15px">{{ 'creators_leaderboard.price' | transloco }}</div>
           </div>
         </div>
@@ -27,7 +26,7 @@
             queryParamsHandling="merge"
           >
             <div
-              class="creators-leaderboard__avatar d-inline-block align-top rounded"
+              class="creators-leaderboard__avatar d-inline-block align-top"
               [avatar]="item.PublicKeyBase58Check"
             ></div>
             <a class="d-inline-block ml-3 fc-default">{{ item.Username }}</a>
@@ -52,7 +51,7 @@
               <i-feather name="check-circle" class="fs-0px feather-medium"></i-feather>
             </span>
           </a>
-          <div class="col-lg-6 col-4 d-flex align-items-center mb-0px">
+          <div class="col-lg-6 col-4 d-flex align-items-center justify-content-end mb-0px">
             <a
               class="col-1 mb-0 py-15px link--unstyled text-left"
               [ngClass]="{ 'mr-30px': globalVars.isMobile() }"
@@ -64,8 +63,21 @@
             </a>
 
             <!--Hide on mobile-->
-            <div class="py-15px d-lg-block mb-0 d-flex">
-              <div class="pl-15px d-flex align-items-center">
+            <div class="py-15px d-lg-block mb-0 d-flex col-9">
+              <div class="pl-15px d-flex align-items-center justify-content-end">
+                <div *ngIf="appData.loggedInUser && !globalVars.isMobile()" class="d-inline-block text-right">
+                  <div class="mr-3 align-top">
+                    <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
+                      <follow-button
+                        [displayAsLink]="true"
+                        [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
+                      ></follow-button>
+                    </div>
+                    <div *ngIf="!canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
+
+                    </div>
+                  </div>
+                </div>
                 <button
                   class="primary-button"
                   (click)="openBuyCreatorCoinModal($event, item.Username)"
@@ -73,16 +85,6 @@
                 >
                   Buy
                 </button>
-                <div *ngIf="appData.loggedInUser && !globalVars.isMobile()" class="d-inline-block text-right">
-                  <div class="ml-3 align-top">
-                    <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
-                      <follow-button
-                        [displayAsLink]="true"
-                        [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
-                      ></follow-button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
