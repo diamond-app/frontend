@@ -186,8 +186,8 @@
   },
   "direct_to_browser_modal": {
     "tap_ellipsis": "1. Tap elipsis",
-    "select_safari": "2. Select <b>Open in Safari</b>",
-    "select_openwith": "2. Select <b>Open with</b>",
+    "select_safari": "2. Select Open in Browser",
+    "select_openwith": "2. Select Open with",
     "select_browser": "3. Select browser"
   },
   "feed_create_post": {
