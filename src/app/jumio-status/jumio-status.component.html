@@ -1,4 +1,10 @@
-<div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified && this.globalVars.showFreeMoneyBanner" class="w-100 jumio-status">
+<div
+  *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified && this.globalVars.showFreeMoneyBanner"
+  class="w-100 jumio-status"
+  [ngStyle]="{
+    'margin-bottom': globalVars.loggedInUser && globalVars.isMobile() ? '0px' : 'auto'
+  }"
+>
   <!-- User completed Jumio flow, but we haven't received the Jumio callback yet-->
   <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && !globalVars.loggedInUser.JumioReturned"
        class="d-flex align-items-center font-weight-normal justify-content-between">

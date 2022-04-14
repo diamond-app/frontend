@@ -9,14 +9,16 @@
     </div>
   </div>
 
+  <!--  Spacer for tab selector-->
+  <div *ngIf="isMobile" style="margin-top: 27px"></div>
   <!-- Mobile DeSo Price -->
-  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
-    <div>{{ 'feed.deso_price' | transloco }}&nbsp;&nbsp;&nbsp;</div>
-    <div>
-      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
-      <span class="text-muted">&nbsp;{{ 'feed.usd_coin' | transloco }}</span>
-    </div>
-  </div>
+<!--  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">-->
+<!--    <div>{{ 'feed.deso_price' | transloco }}&nbsp;&nbsp;&nbsp;</div>-->
+<!--    <div>-->
+<!--      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>-->
+<!--      <span class="text-muted">&nbsp;{{ 'feed.usd_coin' | transloco }}</span>-->
+<!--    </div>-->
+<!--  </div>-->
 
 <!--  <a-->
 <!--    *ngIf="globalVars.loggedInUser && userReferral && !isMobile"-->
@@ -65,20 +67,9 @@
     [fontWeight]="500"
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
+  <div *ngIf="isMobile" style="margin-top: 50px"></div>
   <div [id]="getPullToRefreshMarkerId()"></div>
-  <div
-    *ngIf="isMobile && !(globalVars.loggedInUser && userReferral)"
-    style="margin-top: 60px"
-  ></div>
-  <jumio-status
-    [ngStyle]="{
-      'margin-top':
-        globalVars.loggedInUser && userReferral && isMobile
-          ? 'auto'
-          : '-8px'
-    }"
-    *ngIf="globalVars.loggedInUser && isMobile"
-  ></jumio-status>
+  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-0px': globalVars.isMobile() }">
