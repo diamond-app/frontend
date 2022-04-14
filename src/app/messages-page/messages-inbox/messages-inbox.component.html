@@ -37,6 +37,8 @@
     <div *ngIf="fetchingMoreMessages" class="fs-15px">{{ 'messages.loading' | transloco }}...</div>
   </div>
 
+  <!-- Spacer for PWA Apps -->
+  <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div class="global__bottom-bar-mobile-height"></div>
   <div class="global__bottom-bar-mobile-height"></div>
 </div>

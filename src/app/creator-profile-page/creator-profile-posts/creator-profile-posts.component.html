@@ -30,6 +30,8 @@
         (pauseAllVideos)="pauseAllVideos($event)"
       ></feed-post>
     </div>
+    <!-- Spacer for PWA Apps -->
+    <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
   </div>
 </ng-container>

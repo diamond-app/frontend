@@ -281,4 +281,6 @@
     <simple-center-loader></simple-center-loader>
   </div>
 </div>
+<!-- Bottom spacer for PWA apps-->
+<div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile() && !inTutorial" class="mt-20px"></div>
 <div *ngIf="addMobileFooter" style="height: 400px"></div>

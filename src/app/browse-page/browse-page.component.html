@@ -52,6 +52,9 @@
     <div class="global__bottom-bar-mobile-height">&nbsp;</div>
   </div>
 
+  <!-- Bottom spacer for PWA apps-->
+  <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
+
   <!-- The staked posts have a z-index > 0 so we have to put the bottom bar above them. -->
   <bottom-bar-mobile
     [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
