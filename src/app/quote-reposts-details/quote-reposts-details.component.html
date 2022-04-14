@@ -18,6 +18,8 @@
       ></feed-post>
     </div>
   </div>
+  <!-- Bottom spacer for PWA apps-->
+  <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
 </div>

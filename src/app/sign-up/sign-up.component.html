@@ -205,6 +205,8 @@
     >
       Continue
     </button>
+    <!-- Bottom spacer for PWA apps-->
+    <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
   </div>
   <div *ngIf="stepNum === 3" class="w-100 flex-column align-items-center d-flex justify-content-center mt-10px">
@@ -225,6 +227,8 @@
       <span *ngIf="processingTransactions" class="mr-10px">{{ transactionProgress }}%</span>
       <i *ngIf="processingTransactions" class="fas fa-spinner fa-spin mr-5px"></i>
     </button>
+    <!-- Bottom spacer for PWA apps-->
+    <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
     <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
   </div>
 </app-page>

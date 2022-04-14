@@ -93,5 +93,7 @@
   </div>
 </div>
 
+<!-- Bottom spacer for PWA apps-->
+<div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>
