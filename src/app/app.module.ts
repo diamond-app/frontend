@@ -409,7 +409,7 @@ export function playerFactory() {
       themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
     IconsModule,
     LottieModule,
