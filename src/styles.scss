@@ -2800,6 +2800,10 @@ bs-dropdown-container {
 
 }
 
+.ptr--text, .ptr--icon{
+  color: var(--text) !important;
+}
+
 .feed-post-icon-row__icon-repost-option-text {
   color: var(--text-muted);
   &:hover {
