@@ -2903,6 +2903,10 @@ bs-dropdown-container {
   search-bar {
     position: relative;
     width: 343px;
+    .input-group-prepend {
+      position: relative;
+      top: 1px;
+    }
     .search-bar,input {
       height: 44px;
       top: 1px;
