@@ -2178,12 +2178,18 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     InteractionCap: number,
-    TimeDecayBlocks: number
+    InteractionCapTag: number,
+    TimeDecayBlocks: number,
+    TimeDecayBlocksTag: number,
+    TxnTypeMultiplierMap: { [txnType: number]: number }
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
       AdminPublicKey,
       InteractionCap,
+      InteractionCapTag,
       TimeDecayBlocks,
+      TimeDecayBlocksTag,
+      TxnTypeMultiplierMap,
     });
   }
 
