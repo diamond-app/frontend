@@ -1206,6 +1206,8 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       SeenPosts,
       ResponseLimit,
+      Tag: "nader",
+      SortByNew: false,
     });
   }
 
