@@ -1028,7 +1028,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
-        referralCode: this.referralCode(),
+        // referralCode: this.referralCode(),
       })
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
@@ -1041,7 +1041,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/log-in", {
         accessLevelRequest: "4",
-        referralCode: this.referralCode(),
+        // referralCode: this.referralCode(),
         hideJumio: true,
       })
       .subscribe((res) => {
