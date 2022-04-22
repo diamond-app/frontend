@@ -80,13 +80,13 @@
         <!--Clout in USD-->
         <div class="text-muted fs-15px">
           <span class="mr-5px">{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
-          <a
-            *ngIf="!globalVars.loggedInUser.JumioFinishedTime"
-            (click)="globalVars.launchGetFreeDESOFlow(true)"
-            class="fc-blue"
-          >
-            {{ 'wallet.claim_your_free' | transloco }} {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰
-          </a>
+<!--          <a-->
+<!--            *ngIf="!globalVars.loggedInUser.JumioFinishedTime"-->
+<!--            (click)="globalVars.launchGetFreeDESOFlow(true)"-->
+<!--            class="fc-blue"-->
+<!--          >-->
+<!--            {{ 'wallet.claim_your_free' | transloco }} {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰-->
+<!--          </a>-->
         </div>
       </div>
       <!--Buy/send DESO-->

@@ -22,13 +22,13 @@
       <i-feather name="monitor" class="feather-medium fs-0px"></i-feather>
       <a class="fs-17px fc-default font-weight-bold" style="margin-left: 23px">{{ 'left_bar.tutorial' | transloco }}</a>
     </div>
-    <div class="ml-16px" *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0">
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.REFERRALS"
-        [buttonLabel]="t('left_bar.referrals')"
-        [iconName]="'share-2'"
-      ></left-bar-button>
-    </div>
+<!--    <div class="ml-16px" *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0">-->
+<!--      <left-bar-button-->
+<!--        [link]="'/' + globalVars.RouteNames.REFERRALS"-->
+<!--        [buttonLabel]="t('left_bar.referrals')"-->
+<!--        [iconName]="'share-2'"-->
+<!--      ></left-bar-button>-->
+<!--    </div>-->
     <a
       *ngIf="environment.supportEmail"
       class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-default left-bar-link"
