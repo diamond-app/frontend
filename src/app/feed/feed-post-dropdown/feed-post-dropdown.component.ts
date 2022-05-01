@@ -63,7 +63,7 @@ export class FeedPostDropdownComponent implements OnInit{
   reportPost(): void {
     this.globalVars.logEvent("post : report-content");
     window.open(
-      `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
+      `https://desoreporting.aidaform.com/content?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
     );
   }
 
