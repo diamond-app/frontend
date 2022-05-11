@@ -252,7 +252,7 @@
                         {{
                         (
                           (buyDeSoFields.bitcoinToExchange * 1e8 +
-                            buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) /
+                            transactionFeeSatoshisInt()) /
                           1e8
                         ).toFixed(8)
                         }}
@@ -260,7 +260,7 @@
                         {{
                         appData.formatUSD(
                           ((buyDeSoFields.bitcoinToExchange * 1e8 +
-                              buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) *
+                              transactionFeeSatoshisInt()) *
                             appData.usdPerBitcoinExchangeRate) /
                           1e8,
                           2
