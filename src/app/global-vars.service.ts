@@ -272,10 +272,10 @@ export class GlobalVarsService {
   }
 
   pollUnreadNotifications() {
-    this.GetUnreadNotifications();
-    setTimeout(() => {
-      this.pollUnreadNotifications();
-    }, 10000);
+    // this.GetUnreadNotifications();
+    // setTimeout(() => {
+    //   this.pollUnreadNotifications();
+    // }, 10000);
   }
 
   GetUnreadNotifications() {
