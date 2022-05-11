@@ -188,6 +188,10 @@ export class BuyDeSoComponent implements OnInit {
     error: "",
   };
 
+  transactionFeeSatoshisInt(): number {
+    return parseInt(this.buyDeSoFields.bitcoinTotalTransactionFeeSatoshis);
+  }
+
   _updateBitcoinFee(bitcoinToExchange: number): Promise<any> {
     if (this.appData == null || this.appData.loggedInUser == null || this.appData.latestBitcoinAPIResponse == null) {
       SwalHelper.fire({
