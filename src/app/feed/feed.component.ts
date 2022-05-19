@@ -527,7 +527,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
+      .GetHotFeed("https://node.deso.org", readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
       .pipe(
         tap(
           (res) => {
