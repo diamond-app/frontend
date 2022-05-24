@@ -115,7 +115,7 @@ export class AdminComponent implements OnInit {
     "Mempool",
     "Wyre",
     "Jumio",
-    "Referral Program"
+    "Referral Program",
   ];
 
   POSTS_TAB = "Posts";
@@ -156,13 +156,21 @@ export class AdminComponent implements OnInit {
   loadingHotFeed = false;
   loadingMoreHotFeed = false;
   hotFeedInteractionCap = 0;
+  hotFeedTagInteractionCap = 0;
   hotFeedTimeDecayBlocks = 0;
+  hotFeedTagTimeDecayBlocks = 0;
+  hotFeedTxnTypeMultiplierMap = {};
+  hotFeedTxnTypeMultiplierNewKey: number;
+  hotFeedTxnTypeMultiplierNewValue: number;
   hotFeedUserForInteractionMultiplier: string;
   hotFeedUserInteractionMultiplier: number;
   hotFeedUserForPostsMultiplier: string;
   hotFeedUserPostsMultiplier: number;
   updatingHotFeedInteractionCap = false;
+  updatingHotFeedTagInteractionCap = false;
   updatingHotFeedTimeDecayBlocks = false;
+  updatingHotFeedTagTimeDecayBlocks = false;
+  updatingHotFeedTxnTypeMultiplierMap = false;
   updatingHotFeedUserInteractionMultiplier = false;
   updatingHotFeedUserPostsMultiplier = false;
   searchingHotFeedUserMultipliers = false;
@@ -306,28 +314,29 @@ export class AdminComponent implements OnInit {
     this.loadingHotFeed = true;
 
     // If the user is a super admin, fetch the hot feed algo constants.
-    if(this.globalVars.showSuperAdminTools() && (
-      this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0
-    )) {
+    if (
+      this.globalVars.showSuperAdminTools() &&
+      (this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0)
+    ) {
       this.backendApi
-        .AdminGetHotFeedAlgorithm(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-        ).subscribe(
+        .AdminGetHotFeedAlgorithm(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+        .subscribe(
           (res) => {
             this.hotFeedInteractionCap = res.InteractionCap / 1e9;
+            this.hotFeedTagInteractionCap = res.InteractionCapTag / 1e9;
             this.hotFeedTimeDecayBlocks = res.TimeDecayBlocks;
+            this.hotFeedTagTimeDecayBlocks = res.TimeDecayBlocksTag;
+            this.hotFeedTxnTypeMultiplierMap = res.TxnTypeMultiplierMap;
           },
           (err) => {
             console.error(err);
-            this.globalVars._alertError(
-              "Error getting hot feed constants: " + this.backendApi.stringifyError(err));
+            this.globalVars._alertError("Error getting hot feed constants: " + this.backendApi.stringifyError(err));
           }
-        )
+        );
     }
 
     // Fetch the hot feed.
-    if(this.hotFeedPostHashes.length > 0) {
+    if (this.hotFeedPostHashes.length > 0) {
       this.loadingMoreHotFeed = true;
     }
     this.backendApi
@@ -335,20 +344,21 @@ export class AdminComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         50,
-        this.hotFeedPostHashes,
-      ).subscribe(
+        this.hotFeedPostHashes
+      )
+      .subscribe(
         (res) => {
           this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
-          for(let ii = 0; ii < res.HotFeedPage?.length; ii++) {
-            this.hotFeedPostHashes = this.hotFeedPostHashes.concat(res.HotFeedPage[ii].PostHashHex)
+          for (let ii = 0; ii < res.HotFeedPage?.length; ii++) {
+            this.hotFeedPostHashes = this.hotFeedPostHashes.concat(res.HotFeedPage[ii].PostHashHex);
           }
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error loading hot feed: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error loading hot feed: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => {
+      )
+      .add(() => {
         this.loadingHotFeed = false;
         this.loadingMoreHotFeed = false;
       });
@@ -362,18 +372,52 @@ export class AdminComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.hotFeedInteractionCap * 1e9,
         0,
-      ).subscribe(
+        0,
+        0,
+        {}
+      )
+      .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
             "Successfully updated InteractionCap. The hot feed will take ~10s to recompute."
-          )
+          );
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error updating InteractionCap: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error updating InteractionCap: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { this.updatingHotFeedInteractionCap = false; });
+      )
+      .add(() => {
+        this.updatingHotFeedInteractionCap = false;
+      });
+  }
+
+  updateHotFeedTagInteractionCap() {
+    this.updatingHotFeedTagInteractionCap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        this.hotFeedTagInteractionCap * 1e9,
+        0,
+        0,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully updated Tag InteractionCap. The hot feed will take ~10s to recompute."
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError("Error updating Tag InteractionCap: " + this.backendApi.stringifyError(err));
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTagInteractionCap = false;
+      });
   }
 
   updateHotFeedTimeDecayBlocks() {
@@ -383,19 +427,87 @@ export class AdminComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         0,
+        0,
         this.hotFeedTimeDecayBlocks,
-      ).subscribe(
+        0,
+        {}
+      )
+      .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
             "Successfully updated TimeDecayBlocks. The hot feed will take ~10s to recompute."
-          )
+          );
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error updating hot TimeDecayBlocks: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error updating hot TimeDecayBlocks: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { this.updatingHotFeedTimeDecayBlocks = false; });
+      )
+      .add(() => {
+        this.updatingHotFeedTimeDecayBlocks = false;
+      });
+  }
+
+  updateHotFeedTagTimeDecayBlocks() {
+    this.updatingHotFeedTagTimeDecayBlocks = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        0,
+        0,
+        this.hotFeedTagTimeDecayBlocks,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully updated tag TimeDecayBlocks. The hot feed will take ~10s to recompute."
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError("Error updating tag hot TimeDecayBlocks: " + this.backendApi.stringifyError(err));
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTagTimeDecayBlocks = false;
+      });
+  }
+
+  addMultiplierToTxnTypeMultiplier() {
+    this.hotFeedTxnTypeMultiplierMap[this.hotFeedTxnTypeMultiplierNewKey] = this.hotFeedTxnTypeMultiplierNewValue;
+    this.hotFeedTxnTypeMultiplierNewKey = null;
+    this.hotFeedTxnTypeMultiplierNewValue = null;
+  }
+
+  updateHotFeedTxnTypeMultiplierMap() {
+    this.updatingHotFeedTxnTypeMultiplierMap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        0,
+        0,
+        0,
+        this.hotFeedTxnTypeMultiplierMap
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully updated txn type multiplier map. The hot feed will take ~10s to recompute."
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError("Error updating txn type multiplier map: " + this.backendApi.stringifyError(err));
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTxnTypeMultiplierMap = false;
+      });
   }
 
   updateHotFeedUserPostsMultiplier() {
@@ -405,18 +517,21 @@ export class AdminComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.hotFeedUserForPostsMultiplier,
-        -1, /*InteractionMultiplier -- negative values are ignored*/
-        this.hotFeedUserPostsMultiplier,
-      ).subscribe(
+        -1 /*InteractionMultiplier -- negative values are ignored*/,
+        this.hotFeedUserPostsMultiplier
+      )
+      .subscribe(
         (res) => {
-          this.globalVars._alertSuccess("Successfully updated posts multiplier.")
+          this.globalVars._alertSuccess("Successfully updated posts multiplier.");
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error updating posts multiplier: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error updating posts multiplier: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { this.updatingHotFeedUserPostsMultiplier = false; });
+      )
+      .add(() => {
+        this.updatingHotFeedUserPostsMultiplier = false;
+      });
   }
 
   updateHotFeedUserInteractionMultiplier() {
@@ -427,17 +542,20 @@ export class AdminComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.hotFeedUserForInteractionMultiplier,
         this.hotFeedUserInteractionMultiplier,
-        -1, /*PostsMultiplier -- negative values are ignored*/
-      ).subscribe(
+        -1 /*PostsMultiplier -- negative values are ignored*/
+      )
+      .subscribe(
         (res) => {
-          this.globalVars._alertSuccess("Successfully updated interaction multiplier.")
+          this.globalVars._alertSuccess("Successfully updated interaction multiplier.");
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error updating interaction multiplier: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error updating interaction multiplier: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { this.updatingHotFeedUserInteractionMultiplier = false; });
+      )
+      .add(() => {
+        this.updatingHotFeedUserInteractionMultiplier = false;
+      });
   }
 
   searchForHotFeedUserMultipliers() {
@@ -446,18 +564,27 @@ export class AdminComponent implements OnInit {
       .AdminGetHotFeedUserMultiplier(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.hotFeedUserForSearch,
-      ).subscribe(
-        (res) => { this.hotFeedUserSearchResults = JSON.stringify({
-          "InteractionMultiplier": res.InteractionMultiplier,
-          "PostsMultiplier": res.PostsMultiplier,
-        }, null, 4)},
+        this.hotFeedUserForSearch
+      )
+      .subscribe(
+        (res) => {
+          this.hotFeedUserSearchResults = JSON.stringify(
+            {
+              InteractionMultiplier: res.InteractionMultiplier,
+              PostsMultiplier: res.PostsMultiplier,
+            },
+            null,
+            4
+          );
+        },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(
-            "Error fetching user's multipliers: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError("Error fetching user's multipliers: " + this.backendApi.stringifyError(err));
         }
-      ).add(() => { this.searchingHotFeedUserMultipliers = false; });
+      )
+      .add(() => {
+        this.searchingHotFeedUserMultipliers = false;
+      });
   }
 
   _loadPosts() {

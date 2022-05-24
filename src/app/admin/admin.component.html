@@ -115,7 +115,7 @@
 
     <!-- Update HotFeed Interaction Cap (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Update Interaction Cap (max $DESO locked)
+      Update Interaction Cap - Global Hot Feed (max $DESO locked)
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="hotFeedInteractionCap"
@@ -141,9 +141,37 @@
       </div>
     </div>
 
+    <!-- Update HotFeed Interaction Cap For Tag Feed (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Update Interaction Cap - Tag Specific Feeds (max $DESO locked)
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedTagInteractionCap"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed tag interaction cap."
+        />
+        <button
+          *ngIf="!updatingHotFeedTagInteractionCap"
+          (click)="updateHotFeedTagInteractionCap()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedTagInteractionCap"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
     <!-- Update HotFeed Time Decay Blocks (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update Time Decay Blocks
+      Update Time Decay Blocks For Global Feed
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="hotFeedTimeDecayBlocks"
@@ -167,6 +195,83 @@
           Updating...
         </button>
       </div>
+    </div>
+
+    <!-- Update HotFeed Time Decay Blocks for Tag feed (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Time Decay Blocks For Tag Feed
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedTagTimeDecayBlocks"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed tag time decay blocks."
+        />
+        <button
+          *ngIf="!updatingHotFeedTagTimeDecayBlocks"
+          (click)="updateHotFeedTagTimeDecayBlocks()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedTagTimeDecayBlocks"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed Transaction Type Multipliers (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Transaction Type Multipliers
+      <div *ngFor="let txnTypeMultiplier of hotFeedTxnTypeMultiplierMap | keyvalue" class="d-flex align-items-center font-weight-normal mt-5px">
+        <input
+          class="form-control fs-15px lh-15px col-4"
+          [placeholder]="txnTypeMultiplier.key"
+        />
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierMap[txnTypeMultiplier.key]"
+          type="number"
+          class="form-control fs-15px lh-15px col-7 ml-5px"
+          placeholder="Multiplier Basis Points"
+        />
+      </div>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px mb-5px">
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierNewKey"
+          class="form-control fs-15px lh-15px col-4"
+          placeholder="Transaction Type"
+        />
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierNewValue"
+          type="number"
+          class="form-control fs-15px lh-15px col-7 ml-5px"
+          placeholder="Multiplier Basis Points"
+        />
+        <i-feather
+          (click)="addMultiplierToTxnTypeMultiplier()"
+          name="plus-circle"
+          class="fs-0px feather-medium col-1 fc-blue cursor-pointer"
+        ></i-feather>
+      </div>
+      <button
+        *ngIf="!updatingHotFeedTxnTypeMultiplierMap"
+        (click)="updateHotFeedTxnTypeMultiplierMap()"
+        class="btn btn-outline-primary fs-15px"
+        style="width: fit-content"
+      >
+        Update
+      </button>
+      <button
+        *ngIf="updatingHotFeedTxnTypeMultiplierMap"
+        class="btn btn-dark fs-15px"
+        style="width: fit-content" disabled>
+        Updating...
+      </button>
     </div>
 
     <!-- Update HotFeed User Posts Multiplier (Super Admin Only) -->

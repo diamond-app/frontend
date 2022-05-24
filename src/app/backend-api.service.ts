@@ -1206,6 +1206,8 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       SeenPosts,
       ResponseLimit,
+      Tag: "#deso",
+      SortByNew: false,
     });
   }
 
@@ -2178,12 +2180,18 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     InteractionCap: number,
-    TimeDecayBlocks: number
+    InteractionCapTag: number,
+    TimeDecayBlocks: number,
+    TimeDecayBlocksTag: number,
+    TxnTypeMultiplierMap: { [txnType: number]: number }
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
       AdminPublicKey,
       InteractionCap,
+      InteractionCapTag,
       TimeDecayBlocks,
+      TimeDecayBlocksTag,
+      TxnTypeMultiplierMap,
     });
   }
 
