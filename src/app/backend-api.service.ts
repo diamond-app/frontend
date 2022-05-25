@@ -1206,7 +1206,6 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       SeenPosts,
       ResponseLimit,
-      Tag: "#deso",
       SortByNew: false,
     });
   }
