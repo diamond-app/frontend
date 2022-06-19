@@ -395,7 +395,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         FeedComponent.NUM_TO_FETCH /*NumToFetch*/,
         false /*FetchSubcomments*/,
         false /*GetPostsForFollowFeed*/,
-        true /*GetPostsForGlobalWhitelist*/,
+        false /*GetPostsForGlobalWhitelist*/,
         false,
         false /*MediaRequired*/,
         0,
