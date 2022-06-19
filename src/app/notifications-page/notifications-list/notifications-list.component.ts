@@ -90,7 +90,7 @@ export class NotificationsListComponent implements OnInit {
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
       .GetNotifications(
-        this.globalVars.localNode,
+        "https://node.deso.org",
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
@@ -105,7 +105,7 @@ export class NotificationsListComponent implements OnInit {
           if (fetchStartIndex === -1) {
             this.backendApi
               .SetNotificationsMetadata(
-                this.globalVars.localNode,
+                "https://node.deso.org",
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,

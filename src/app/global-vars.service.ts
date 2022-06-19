@@ -281,7 +281,7 @@ export class GlobalVarsService {
   GetUnreadNotifications() {
     if (this.loggedInUser) {
       this.backendApi
-        .GetUnreadNotificationsCount(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+        .GetUnreadNotificationsCount("https://node.deso.org", this.loggedInUser.PublicKeyBase58Check)
         .toPromise()
         .then(
           (res) => {
@@ -289,7 +289,7 @@ export class GlobalVarsService {
             if (res.UpdateMetadata) {
               this.backendApi
                 .SetNotificationsMetadata(
-                  this.localNode,
+                  "https://node.deso.org",
                   this.loggedInUser.PublicKeyBase58Check,
                   -1,
                   res.LastUnreadNotificationIndex,
