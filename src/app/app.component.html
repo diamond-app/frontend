@@ -19,6 +19,7 @@
   class="main global__container bg-tile"
   [ngClass]="globalVars.userIsDragging ? 'unselectable' : ''"
   *ngIf="!globalVars.requestingStorageAccess"
+  (touchmove)="preventScroll($event)"
  >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
 <!--  <simple-center-loader *ngIf="globalVars.loadingInitialAppState"></simple-center-loader>-->
