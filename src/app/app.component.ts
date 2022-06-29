@@ -277,6 +277,12 @@ export class AppComponent implements OnInit {
     }
   };
 
+  preventScroll(event) {
+    if (this.globalVars.userIsDragging) {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
     // Load the theme
     this.themeService.init();
