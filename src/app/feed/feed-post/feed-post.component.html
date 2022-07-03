@@ -513,7 +513,13 @@
   </div>
 
   <div
-    *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
+    *ngIf="
+          showNFTDetails 
+          && postContent.IsNFT 
+          && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)
+          && !post.IsHidden
+          && !hidingPost
+          "
     class="fs-15px w-100 feed-post__nft-footer"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 0 0' : '' }"
     (click)="onPostClicked($event)"
