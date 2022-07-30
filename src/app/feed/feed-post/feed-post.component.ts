@@ -670,21 +670,30 @@ export class FeedPostComponent implements OnInit {
     if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
       const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
       if (videoId != "") {
-        this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe((res) => {
-          if (res?.Duration && _.isNumber(res?.Duration)) {
-            this.videoURL =
-              res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
-                ? this.postContent.VideoURLs[0]
-                : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
-            if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
-              this.sourceVideoAspectRatio = res.Dimensions.width / res.Dimensions.height;
+        this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe(
+          (res) => {
+            if (res?.Duration && _.isNumber(res?.Duration)) {
+              this.videoURL =
+                res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
+                  ? this.postContent.VideoURLs[0]
+                  : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+              if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
+                this.sourceVideoAspectRatio = res.Dimensions.width / res.Dimensions.height;
+              }
+              this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
+              this.ref.detectChanges();
+              this.initializeStream();
+              this.setVideoControllerHeight(20);
             }
-            this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
+          },
+          (err) => {
+            this.videoURL = this.postContent.VideoURLs[0];
+            this.showVideoControls = true;
             this.ref.detectChanges();
             this.initializeStream();
             this.setVideoControllerHeight(20);
           }
-        });
+        );
       }
     }
   }
