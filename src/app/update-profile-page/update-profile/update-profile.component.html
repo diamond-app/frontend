@@ -41,14 +41,14 @@
               padding: 0;
             "
           />
-          <button type="file" style="width: 100px; height: 45px">
+          <button type="file" style="width: 100px; height: 45px; background: var(--text)">
             <i-feather name="refresh-cw"></i-feather>
             Upload Cover Photo
           </button>
           <button
             *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl"
             class="mt-10px fc-red"
-            style="width: 100px; height: 45px"
+            style="width: 100px; height: 45px; background: var(--text)"
             (click)="removeExtraDataFields('cover')"
           >
             <i-feather name="trash-2"></i-feather>
@@ -65,6 +65,7 @@
                     *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                     (click)="_resetImage()"
                     class="update-profile__image-delete"
+                    style="background: var(--text)"
                   >
                     <i-feather name="trash-2"></i-feather>
                   </div>
@@ -93,7 +94,7 @@
                   padding: 0;
                 "
               />
-              <button type="file">
+              <button type="file" style="background: var(--text)">
                 <i-feather name="refresh-cw"></i-feather>
                 {{ 'update_profile.upload_image' | transloco }}
               </button>
@@ -105,7 +106,7 @@
             >
               <button
                 (click)="removeExtraDataFields('nft')"
-                style="height: 45px"
+                style="height: 45px; background: var(--text)"
               >
                 <i-feather name="trash-2"></i-feather>
                 Remove NFT Profile Picture
