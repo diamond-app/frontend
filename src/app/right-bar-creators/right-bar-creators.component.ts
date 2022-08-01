@@ -52,7 +52,7 @@ export class RightBarCreatorsComponent implements OnInit {
     poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
   };
   static HASHTAGS: RightBarTabOption = {
-    name: "right_bar.creators.hashtags",
+    name: "Top Daily Hashtags",
     width: 225,
     poweredBy: { name: "Open Prosper", link: "https://openprosper.com" },
   };

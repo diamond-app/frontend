@@ -40,6 +40,7 @@ header @html Content-Security-Policy "
     bithunt.bitclout.com
     pulse.bitclout.com
     https://altumbase.com
+    https://openprosper.xyz
     api.bitpop.dev
     localhost:*
     explorer.bitclout.com:*
