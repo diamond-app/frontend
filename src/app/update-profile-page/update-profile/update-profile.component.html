@@ -55,7 +55,7 @@
             Delete Cover Photo
           </button>
         </div>
-        <div class="update-profile__avatar" [style.background-image]="getCoverImageUrl()" style="background-repeat: no-repeat; background-position: center">
+        <div class="update-profile__avatar" [style.background-image]="getCoverImageUrl()" style="background-repeat: no-repeat; background-position: center; background-size: cover">
           <div>
             <div *ngIf="profilePicInput != null && profilePicInput.length > 0">
               <div [style.background-image]="'url(' + getProfileImageToShow() + ')'"></div>
