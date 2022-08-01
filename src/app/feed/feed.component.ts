@@ -326,7 +326,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, this.tag], {
       queryParamsHandling: "merge",
     });
+    this.loadingFirstBatchOfTagFeedPosts = true;
     this._loadTagFeedPosts(true);
+    this.loadingFirstBatchOfTagFeedPosts = false;
   }
 
   activeTabReadyForDisplay() {
