@@ -41,7 +41,11 @@
           <div class="d-flex align-items-center">
             <div
               class="notifications__avatar"
+              [ngClass]="{
+                nft__avatar: item?.actor?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+              }"
               [avatar]="item.actor?.PublicKeyBase58Check"
+              [nftProfileUrl]="item?.actor?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor?.Username]"
             >
               <div *ngIf="item.icon" class="notifications__icon">

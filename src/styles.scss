@@ -2201,12 +2201,8 @@ sign-up {
     display: none;
   }
   .desktop-top-bar {
-    background: var(--text);
     border: none;
     border-bottom: 1px solid #444;
-    .deso {
-      filter: invert(1);
-    }
   }
 }
 
@@ -3012,6 +3008,9 @@ feed {
   @media (max-width: 600px) {
     height: 36px;
     width: 36px;
+  }
+  &.nft__avatar {
+    border: 1px solid var(--highlight);
   }
 }
 
@@ -4343,8 +4342,6 @@ trade-creator-form {
 }
 
 sign-up {
-  background: var(--text) !important;
-
   .nft-modal-container {
     margin-top: 50px;
     padding: 20px;
@@ -4356,7 +4353,6 @@ sign-up {
   .global__nav__flex,
   .global__content__flex,
   .global__sidebar__fixed {
-    background: var(--text) !important;
     border: none !important;
   }
 
@@ -5174,6 +5170,45 @@ input {
   }
 }
 
+.feed__tag-container {
+  background: var(--text-muted);
+  width: 10px;
+  border: none;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-inverted);
+  &.feed__tag-container-expanded {
+    border-radius: 10px 0px 0px 10px;
+  }
+}
+
+.feed__tag-container-background {
+  background: var(--text-muted);
+  border: none;
+  height: 32px;
+  width: 0px;
+  &.feed__tag-container-expanded {
+    padding: 3px;
+    border-radius: 0px 10px 10px 0px;
+    width: 150px;
+    transition: width .5s;
+  }
+}
+
+.feed__tag-input {
+  width: 30px;
+  top: 0px;
+  left: 0px;
+  height: 32px;
+  color: var(--text-inverted);
+  border: none;
+  &.feed__tag-container-expanded {
+    display: block;
+    width: 175px;
+    padding-left: 25px;
+  }
+}
+
 .creator-profile__container {
   background: var(--tile-bg);
   border-radius: 0;
@@ -5183,6 +5218,14 @@ input {
   padding: 16px;
   padding-top: 80px;
   margin-bottom: 15px;
+  background-postition: bottom 20px;
+  &.creator-profile__container-cover{
+    &:before {
+      background-image: var(--cover-image);
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
   &:before {
     background: var(--tile-secondary-bg);
     content: "";

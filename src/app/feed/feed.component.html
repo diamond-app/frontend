@@ -34,13 +34,34 @@
 <!--  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>-->
 
   <!-- Tab Selector -->
-  <tab-selector
-    [buttonSelector]="!isMobile"
-    [tabs]="feedTabs"
-    [activeTab]="activeTab"
-    [newTabs]="newTabs"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
+  <div class="d-flex align-items-center">
+    <tab-selector
+      [buttonSelector]="!isMobile"
+      [tabs]="feedTabs"
+      [activeTab]="activeTab"
+      [newTabs]="newTabs"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
+    <div class="position-relative d-flex">
+      <div
+        class="cursor-pointer br-10px p-3 feed__tag-container d-flex align-items-center justify-content-center"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector }"
+      >
+        #
+      </div>
+      <div
+        class="cursor-pointer feed__tag-container-background"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector }"
+        style="margin-left: -3px"
+      ></div>
+      <input
+        (focusin)="toggleTagInput(true)"
+        class="cursor-pointer position-absolute feed__tag-input"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector }"
+      />
+    </div>
+<!--    <input [defaultValue]="'#'" class="br-10px p-3 feed__tag-container"/>-->
+  </div>
 
 <!--  <a-->
 <!--    *ngIf="globalVars.loggedInUser && userReferral && isMobile"-->
@@ -69,7 +90,7 @@
 
   <div *ngIf="isMobile" style="margin-top: 50px"></div>
   <div [id]="getPullToRefreshMarkerId()"></div>
-  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>
+<!--  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>-->
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-0px': globalVars.isMobile() }">

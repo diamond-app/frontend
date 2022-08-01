@@ -50,8 +50,12 @@
               class="col mb-0 py-15px link--unstyled d-flex align-items-center"
             >
               <div
+                [ngClass]="{
+                  nft__avatar: profileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                }"
                 class="creators-leaderboard__avatar d-inline-block align-top rounded"
                 [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
+                [nftProfileUrl]="profileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
               ></div>
 
               <div style="flex-grow: 1" class="mt-2 ml-3 fc-default">

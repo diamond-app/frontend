@@ -47,8 +47,12 @@
                     class="d-flex align-items-center link--unstyled"
                   >
                     <div
+                      [ngClass]="{
+                        nft__avatar: row?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                      }"
                       class="creator-profile-details__hodler-avatar mr-10px"
                       [avatar]="row.ProfileEntryResponse.PublicKeyBase58Check"
+                      [nftProfileUrl]="row.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                     ></div>
                     <div
                       class="text-truncate"

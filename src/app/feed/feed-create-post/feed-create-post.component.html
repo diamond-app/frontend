@@ -11,8 +11,12 @@
         ></div>
         <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
           <div
+            [ngClass]="{
+              nft__avatar: globalVars?.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+            }"
             class="feed-create-post__avatar"
             [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+            [nftProfileUrl]="globalVars.loggedInUser.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
           ></div>
         </div>
       </div>

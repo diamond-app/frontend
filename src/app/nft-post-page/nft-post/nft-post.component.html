@@ -125,7 +125,11 @@
                   <div class="simple-profile-card__avatar-container">
                     <div
                       class="simple-profile-card__avatar br-12px"
+                      [ngClass]="{
+                        nft__avatar: bidEntry?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                      }"
                       [avatar]="bidEntry.PublicKeyBase58Check"
+                      [nftProfileUrl]="bidEntry?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                     ></div>
                   </div>
                   <div class="text-truncate holdings__name fs-14px">
@@ -232,7 +236,11 @@
                 <div class="simple-profile-card__avatar-container">
                   <div
                     class="simple-profile-card__avatar br-12px"
+                    [ngClass]="{
+                      nft__avatar: owner?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                    }"
                     [avatar]="owner.OwnerPublicKeyBase58Check"
+                    [nftProfileUrl]="owner?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                   ></div>
                 </div>
                 <div class="text-truncate holdings__name fs-14px">

@@ -35,6 +35,13 @@ export class LeaderboardResponse {
   User: User;
 }
 
+export class HashtagResponse {
+  Hashtag: string;
+  Count: number;
+  AccountCount: number;
+}
+
+
 export const LeaderboardToDataAttribute = {
   [PulseLeaderboardType.DeSoLocked]: "net_change_24h_bitclout_nanos",
   [PulseLeaderboardType.Diamonds]: "diamonds",

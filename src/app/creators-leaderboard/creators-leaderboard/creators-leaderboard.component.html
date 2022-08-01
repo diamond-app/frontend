@@ -26,8 +26,12 @@
             queryParamsHandling="merge"
           >
             <div
+              [ngClass]="{
+                nft__avatar: item?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+              }"
               class="creators-leaderboard__avatar d-inline-block align-top"
               [avatar]="item.PublicKeyBase58Check"
+              [nftProfileUrl]="item?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
             ></div>
             <a class="d-inline-block ml-3 fc-default">{{ item.Username }}</a>
 

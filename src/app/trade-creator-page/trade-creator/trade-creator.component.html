@@ -4,8 +4,12 @@
       <div class="px-16px" *ngIf="screenToShow !== this.TRADE_CREATOR_PREVIEW_SCREEN">
         <div class="d-flex">
           <a
+            [ngClass]="{
+              nft__avatar: creatorCoinTrade?.creatorProfile?.ExtraData?.NFTProfilePictureUrl
+            }"
             class="d-none d-lg-block creator-profile__avatar mr-15px"
             [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
+            [nftProfileUrl]="creatorCoinTrade.creatorProfile?.ExtraData?.NFTProfilePictureUrl"
           ></a>
           <div class="d-flex flex-column justify-content-center fc-default">
             <div class="fs-24px">{{globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username)}} coin</div>
@@ -35,8 +39,12 @@
       <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN && inTutorial" class="p-16px">
         <div class="d-flex align-items-center">
           <div
+            [ngClass]="{
+              nft__avatar: creatorCoinTrade?.creatorProfile?.ExtraData?.NFTProfilePictureUrl
+            }"
             class="simple-profile-card__avatar br-12px"
             [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
+            [nftProfileUrl]="creatorCoinTrade.creatorProfile?.ExtraData?.NFTProfilePictureUrl"
           ></div>
           <div class="ml-16px fs-20px font-weight-bold">{{ creatorCoinTrade.tradeType }} {{ creatorCoinTrade.creatorProfile.Username }} Coin</div>
         </div>

@@ -27,6 +27,7 @@ import { FeedPostComponent } from "./feed-post/feed-post.component";
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static HOT_TAB = "Hot";
+  static TAG_TAB = "Tag";
   static GLOBAL_TAB = "New";
   static FOLLOWING_TAB = "Following";
   static SHOWCASE_TAB = "NFT Gallery";
@@ -49,6 +50,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   nextNFTShowcaseTime;
 
   hotFeedPostHashes = [];
+  tagFeedPostHashes = [];
 
   followedPublicKeyToProfileEntry = {};
   followedCount = 0;
@@ -62,6 +64,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   // We load the first batch of follow feed posts on page load and whenever the user follows someone
   loadingFirstBatchOfHotFeedPosts = false;
+  loadingFirstBatchOfTagFeedPosts = false;
 
   // We load the user's following on page load. This boolean tracks whether we're currently loading
   // or whether we've finished.
@@ -73,6 +76,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadingMoreFollowFeedPosts = false;
   loadingMoreGlobalFeedPosts = false;
   loadingMoreHotFeedPosts = false;
+  loadingMoreTagFeedPosts = false;
 
   pullToRefreshHandler;
 
@@ -90,6 +94,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   // the empty follow feed will be the first tab (which is incorrect) and
   feedTabs = [];
   newTabs = FeedComponent.NEW_TABS;
+  tag: string;
+  expandTagSelector: boolean = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -117,6 +123,14 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.activeTab = null;
       }
     });
+
+    this.route.params.subscribe((params) => {
+      if (params.tag) {
+        this.tag = params.tag;
+        this.activeTab = FeedComponent.TAG_TAB;
+        console.log("Here is the active tab:", this.activeTab)
+      }
+    })
 
     // Reload the follow feed any time the user follows / unfollows somebody
     this.followChangeSubscription = this.appData.followChangeObservable.subscribe((followChangeObservableResult) => {
@@ -220,6 +234,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this._loadHotFeedPosts();
     }
 
+    // Request the tag feed (so we have it ready for display if needed)
+    if (this.globalVars.tagFeedPosts.length === 0 && this.tag) {
+      this.loadingFirstBatchOfTagFeedPosts = true;
+      this._loadTagFeedPosts();
+    }
+
     // Request the follow feed (so we have it ready for display if needed)
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
@@ -283,9 +303,16 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       return this.globalVars.followFeedPosts;
     } else if (this.activeTab === FeedComponent.HOT_TAB) {
       return this.globalVars.hotFeedPosts;
+    } else if (this.activeTab === FeedComponent.TAG_TAB) {
+      return this.globalVars.tagFeedPosts;
     } else {
       return this.globalVars.postsToShow;
     }
+  }
+
+  toggleTagInput(expanded: boolean) {
+    this.expandTagSelector = expanded;
+
   }
 
   activeTabReadyForDisplay() {
@@ -325,7 +352,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       (
         this.activeTab === FeedComponent.GLOBAL_TAB ||
         this.activeTab === FeedComponent.FOLLOWING_TAB ||
-        this.activeTab === FeedComponent.HOT_TAB
+        this.activeTab === FeedComponent.HOT_TAB ||
+        this.activeTab === FeedComponent.TAG_TAB
       )
     );
   }
@@ -344,6 +372,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this._loadFollowFeedPosts();
     } else if (this.activeTab === FeedComponent.HOT_TAB) {
       this._loadHotFeedPosts();
+    } else if (this.activeTab === FeedComponent.TAG_TAB) {
+      this._loadTagFeedPosts();
     } else {
       this._loadPosts();
     }
@@ -561,6 +591,42 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .toPromise();
   }
 
+  _loadTagFeedPosts(reload: boolean = false) {
+    this.loadingMoreTagFeedPosts = true;
+
+    // Get the reader's public key for the request.
+    let readerPubKey = "";
+    if (this.globalVars.loggedInUser) {
+      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    }
+
+    const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");
+    return this.backendApi
+      .GetHotFeed(this.globalVars.localNode, readerPubKey, tagFeedPostHashes, this.FeedComponent.NUM_TO_FETCH, "#" + this.tag)
+      .pipe(
+        tap(
+          (res) => {
+            if (res.HotFeedPage) {
+              this.globalVars.tagFeedPosts = this.globalVars.tagFeedPosts.concat(res.HotFeedPage);
+            }
+
+            for (let ii = 0; ii < this.globalVars.tagFeedPosts.length; ii++) {
+              this.tagFeedPostHashes = this.tagFeedPostHashes.concat(this.globalVars.tagFeedPosts[ii]?.PostHashHex);
+            }
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+          }
+        ),
+        finalize(() => {
+          this.loadingMoreTagFeedPosts = false;
+        }),
+        first()
+      )
+      .toPromise();
+  }
+
   _afterLoadingFollowingOnPageLoad() {
     this.isLoadingFollowingOnPageLoad = false;
 
@@ -572,6 +638,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       FeedComponent.FOLLOWING_TAB,
       FeedComponent.HOT_TAB,
       FeedComponent.GLOBAL_TAB,
+      FeedComponent.TAG_TAB,
     ];
 
     if (!this.activeTab) {

@@ -36,8 +36,12 @@
   ></div>
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    [ngClass]="{
+      nft__avatar: globalVars?.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+    }"
     class="message__avatar ml-15px"
     [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"
+    [nftProfileUrl]="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
   ></div>
 
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->

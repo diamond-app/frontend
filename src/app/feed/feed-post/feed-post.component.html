@@ -20,8 +20,12 @@
   <div class="d-flex justify-content-between">
     <div class="feed-post__avatar-container">
       <a
+        [ngClass]="{
+          nft__avatar: postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+        }"
         class="feed-post__avatar"
         [avatar]="postContent?.ProfileEntryResponse?.PublicKeyBase58Check"
+        [nftProfileUrl]="postContent?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
         queryParamsHandling="merge"
       ></a>
@@ -207,8 +211,12 @@
           <div class="d-flex position-relative">
             <div class="feed-post__avatar-container">
               <a
+                [ngClass]="{
+                  nft__avatar: postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                }"
                 class="feed-post__avatar"
                 [avatar]="postContent.ProfileEntryResponse?.PublicKeyBase58Check"
+                [nftProfileUrl]="postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                 [routerLink]="
                   inTutorial
                     ? []

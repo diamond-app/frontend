@@ -22,7 +22,14 @@
       <div class="d-flex align-items-center">
         <!--Avatar-->
         <div>
-          <div class="creator-profile__avatar" [avatar]="globalVars.loggedInUser.ProfileEntryResponse?.PublicKeyBase58Check"></div>
+          <div
+            [ngClass]="{
+              nft__avatar: globalVars?.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+            }"
+            class="creator-profile__avatar"
+            [avatar]="globalVars.loggedInUser.ProfileEntryResponse?.PublicKeyBase58Check"
+            [nftProfileUrl]="globalVars.loggedInUser.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+          ></div>
         </div>
         <!--Username/balance-->
         <div class="d-flex flex-column fc-default font-weight-bold ml-20px">
@@ -196,7 +203,14 @@
                   queryParamsHandling="merge"
                   [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
                 >
-                  <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
+                  <div
+                    [ngClass]="{
+                      nft__avatar: creator?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                    }"
+                    class="holdings__avatar"
+                    [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"
+                    [nftProfileUrl]="creator.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+                  ></div>
                   <div class="text-truncate holdings__name">
                     <span>{{ creator.ProfileEntryResponse.Username }}</span>
                     <span

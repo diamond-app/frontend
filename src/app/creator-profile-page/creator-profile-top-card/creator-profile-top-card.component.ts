@@ -178,6 +178,14 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     });
   }
 
+  getCoverImageUrl() {
+    if (this.profile?.ExtraData?.CoverPhotoUrl) {
+      return `url(${this.profile?.ExtraData?.CoverPhotoUrl})`;
+    } else {
+      return "";
+    }
+  }
+
   _copyPublicKey() {
     this.globalVars._copyText(this.profile.PublicKeyBase58Check);
     this.publicKeyIsCopied = true;

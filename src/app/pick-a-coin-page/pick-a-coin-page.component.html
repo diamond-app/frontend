@@ -43,7 +43,14 @@
           [routerLink]="[AppRoutingModule.transferCreatorPath(creator.ProfileEntryResponse.Username)]"
           queryParamsHandling="merge"
         >
-          <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
+          <div
+            [ngClass]="{
+              nft__avatar: creator?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+            }"
+            class="holdings__avatar"
+            [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"
+            [nftProfileUrl]="creator.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+          ></div>
           <div class="text-truncate holdings__name">
             <span>{{ creator.ProfileEntryResponse.Username }}</span>
 
