@@ -19,6 +19,8 @@ import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 import { environment } from "src/environments/environment";
 import { FeedPostComponent } from "./feed-post/feed-post.component";
+import { OpenProsperService } from "../../lib/services/openProsper/openprosper-service";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "feed",
@@ -103,7 +105,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private titleService: Title
+    private titleService: Title,
+    private httpClient: HttpClient
   ) {
     this.globalVars = appData;
 
@@ -128,9 +131,16 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (params.tag) {
         this.tag = params.tag;
         this.activeTab = FeedComponent.TAG_TAB;
-        console.log("Here is the active tab:", this.activeTab)
+        // Request the tag feed (so we have it ready for display if needed)
+        this.loadingFirstBatchOfTagFeedPosts = true;
+        this._loadTagFeedPosts(true);
+        this.loadingFirstBatchOfTagFeedPosts = false;
+      } else {
+        if (this.activeTab === FeedComponent.TAG_TAB) {
+          this.activeTab = FeedComponent.HOT_TAB;
+        }
       }
-    })
+    });
 
     // Reload the follow feed any time the user follows / unfollows somebody
     this.followChangeSubscription = this.appData.followChangeObservable.subscribe((followChangeObservableResult) => {
@@ -234,12 +244,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this._loadHotFeedPosts();
     }
 
-    // Request the tag feed (so we have it ready for display if needed)
-    if (this.globalVars.tagFeedPosts.length === 0 && this.tag) {
-      this.loadingFirstBatchOfTagFeedPosts = true;
-      this._loadTagFeedPosts();
-    }
-
     // Request the follow feed (so we have it ready for display if needed)
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
@@ -288,7 +292,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.pauseVideos = isPaused;
   }
 
-
   appendCommentAfterParentPost(postEntryResponse) {
     FeedComponent.appendCommentAfterParentPost(this.postsToShow(), postEntryResponse);
   }
@@ -311,8 +314,19 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   toggleTagInput(expanded: boolean) {
-    this.expandTagSelector = expanded;
+    if (!expanded && (!this.tag || this.tag.length === 0)) {
+      this.expandTagSelector = expanded;
+    } else if (expanded) {
+      this.expandTagSelector = expanded;
+    }
+  }
 
+  updateTag() {
+    this.activeTab = FeedComponent.TAG_TAB;
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, this.tag], {
+      queryParamsHandling: "merge",
+    });
+    this._loadTagFeedPosts(true);
   }
 
   activeTabReadyForDisplay() {
@@ -341,6 +355,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadingFirstBatchOfActiveTabPosts() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       return this.loadingFirstBatchOfFollowFeedPosts;
+    } else if (this.activeTab === FeedComponent.TAG_TAB){
+      return this.loadingFirstBatchOfTagFeedPosts;
     } else {
       return this.loadingFirstBatchOfGlobalFeedPosts;
     }
@@ -362,7 +378,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // activeTab == FeedComponent.GLOBAL_TAB && globalVars.postsToShow.length == 0 && !loadingPosts
     return (
       this.postsToShow().length === 0 &&
-      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB) &&
+      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB || this.activeTab === FeedComponent.TAG_TAB) &&
       !this.loadingFirstBatchOfActiveTabPosts()
     );
   }
@@ -592,6 +608,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   _loadTagFeedPosts(reload: boolean = false) {
+    if (reload) {
+      this.globalVars.tagFeedPosts = [];
+      this.tagFeedPostHashes = [];
+    }
+
     this.loadingMoreTagFeedPosts = true;
 
     // Get the reader's public key for the request.
@@ -634,12 +655,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
 
-    this.feedTabs = [
-      FeedComponent.FOLLOWING_TAB,
-      FeedComponent.HOT_TAB,
-      FeedComponent.GLOBAL_TAB,
-      FeedComponent.TAG_TAB,
-    ];
+    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB];
 
     if (!this.activeTab) {
       const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");
@@ -661,7 +677,13 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;
-      this.router.navigate([], {
+      let commands = [];
+      if (tab !== FeedComponent.TAG_TAB) {
+        this.tag = null;
+        this.expandTagSelector = false;
+        commands = ["/" + this.globalVars.RouteNames.BROWSE];
+      }
+      this.router.navigate(commands, {
         relativeTo: this.route,
         queryParams: { feedTab: this.activeTab },
         queryParamsHandling: "merge",

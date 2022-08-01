@@ -15,8 +15,8 @@ class OpenProsperHashtagResult {
     Hours24: {
       FromTstampSecs: number;
       ToTstampSecs: number;
+      Top10Hashtags: OpenProsperHashtag[];
     };
-    Top10HashTags: OpenProsperHashtag[];
   };
 }
 
@@ -28,7 +28,7 @@ export enum OpenProsperLeaderboardType {
   providedIn: "root",
 })
 export class OpenProsperService {
-  static openProsperApiUrl = "https://openprosperapi.xyz/api/v0/p/social/";
+  static openProsperApiUrl = "https://openprosperapi.xyz/api/v0/p/social";
   constructor(private httpClient: HttpClient) {}
 
   constructOpenProsperURL(leaderboardType: string): string {
@@ -38,7 +38,7 @@ export class OpenProsperService {
   getTrendingHashtagsPage(): Observable<any> {
     return this.httpClient.get(this.constructOpenProsperURL(OpenProsperLeaderboardType.Hashtags)).pipe(
       switchMap((res: OpenProsperHashtagResult) => {
-        return res.value.Top10HashTags;
+        return of(res.value.Hours24.Top10Hashtags);
       })
     );
   }

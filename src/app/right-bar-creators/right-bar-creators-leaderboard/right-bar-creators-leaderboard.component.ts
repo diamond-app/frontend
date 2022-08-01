@@ -30,4 +30,13 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
         ["/" + this.globalVars.RouteNames.USER_PREFIX, username],
     )
   }
+
+  navigateToHashtag(hashtag: string) {
+    this._router.navigate(
+      ["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, hashtag.substring(1)],
+      {
+        queryParamsHandling: "merge",
+      }
+    );
+  }
 }

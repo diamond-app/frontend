@@ -31,7 +31,7 @@ import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
-import { OpenProsperService } from "../lib/services/openProsper/altumbase-service";
+import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
