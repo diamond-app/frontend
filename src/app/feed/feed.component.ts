@@ -630,7 +630,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             if (res.HotFeedPage) {
-              this.globalVars.tagFeedPosts = this.globalVars.tagFeedPosts.concat(res.HotFeedPage);
+              // Filter out pinned posts.
+              const hotFeedPage = _.filter(res.HotFeedPage, (hotFeedResult) => !hotFeedResult.IsPinned || hotFeedResult.Body.toLowerCase().includes(this.tag.toLowerCase()));
+              this.globalVars.tagFeedPosts = this.globalVars.tagFeedPosts.concat(hotFeedPage);
             }
 
             for (let ii = 0; ii < this.globalVars.tagFeedPosts.length; ii++) {
