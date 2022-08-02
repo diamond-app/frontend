@@ -510,7 +510,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       };
     } else {
       fieldsToRemove = {
-        CoverPhotoUrl: null,
+        FeaturedImageURL: null,
       };
     }
     this.backendApi
