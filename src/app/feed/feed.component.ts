@@ -102,12 +102,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
     private appData: GlobalVarsService,
     private router: Router,
-    private ref: ChangeDetectorRef,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private titleService: Title,
-    private httpClient: HttpClient
+    private titleService: Title
   ) {
     this.globalVars = appData;
 
@@ -134,10 +132,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.activeTab = FeedComponent.TAG_TAB;
         // Request the tag feed (so we have it ready for display if needed)
         this.loadingFirstBatchOfTagFeedPosts = true;
-        this.ref.detectChanges();
         this._loadTagFeedPosts(true);
         this.loadingFirstBatchOfTagFeedPosts = false;
-        this.ref.detectChanges();
       } else {
         if (this.activeTab === FeedComponent.TAG_TAB) {
           this.activeTab = FeedComponent.HOT_TAB;
@@ -329,10 +325,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, this.tag], {
       queryParamsHandling: "merge",
     });
-    this.ref.detectChanges();
     this.loadingFirstBatchOfTagFeedPosts = true;
     this._loadTagFeedPosts(true);
-    this.ref.detectChanges();
     this.loadingFirstBatchOfTagFeedPosts = false;
   }
 
