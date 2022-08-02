@@ -1,6 +1,14 @@
-<div class="position-relative creator-profile__container">
+<div class="position-relative creator-profile__container creator-profile__container-cover" [style.--cover-image]="getCoverImageUrl()" style="background-repeat: no-repeat; background-size: cover">
   <div class="d-flex js-creator-profile-top-card-container">
-    <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
+    <div
+      [ngClass]="{
+        nft__avatar: profile?.ExtraData?.NFTProfilePictureUrl
+      }"
+      class="creator-profile__avatar position-relative"
+      [avatar]="profile.PublicKeyBase58Check"
+      [nftProfileUrl]="profile?.ExtraData?.NFTProfilePictureUrl"
+    >
+    </div>
     <div class="d-flex flex-column creator-profile__username-price">
       <div class="fs-24px font-weight-bold d-flex align-items-center">
         @{{ profile.Username }}
@@ -32,6 +40,9 @@
           ≈{{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
           <span class="fc-muted font-weight-normal">{{ 'creator_profile_top_card.coin_price' | transloco }}</span>
         </div>
+      </div>
+      <div *ngIf="profile?.ExtraData?.NFTProfilePicturePostHashHex">
+        <a [routerLink]="['/' + globalVars.RouteNames.NFT, profile?.ExtraData?.NFTProfilePicturePostHashHex]" class="fs-14px fc-secondary"><u>View NFT</u></a>
       </div>
     </div>
     <div class="creator-profile__update-buy">

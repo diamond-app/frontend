@@ -191,7 +191,11 @@ export class SignUpComponent {
         1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
         false /*IsHidden*/,
         // End params
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
+        {
+          HighQualityProfilePicUrl: this.globalVars.newProfile.highQualityProfilePicUrl,
+          CoverPhotoUrl: this.globalVars.newProfile.coverPhotoUrl,
+        }
       )
       .subscribe(
         (res) => {

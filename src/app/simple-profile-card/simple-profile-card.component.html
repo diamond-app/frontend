@@ -10,7 +10,11 @@
       <div class="simple-profile-card__avatar-container">
         <div
           class="simple-profile-card__avatar br-12px"
+          [ngClass]="{
+            nft__avatar: profile?.ExtraData?.NFTProfilePictureUrl
+          }"
           [avatar]="profile.PublicKeyBase58Check"
+          [nftProfileUrl]="profile?.ExtraData?.NFTProfilePictureUrl"
         ></div>
       </div>
       <div class="d-flex">

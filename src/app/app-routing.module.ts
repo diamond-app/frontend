@@ -61,6 +61,7 @@ class RouteNames {
   public static FOLLOWERS = "followers";
 
   public static BROWSE = "browse";
+  public static TAG = "tag";
   public static CREATORS = "creators";
   public static BUY_DESO = "buy-deso";
   public static WALLET = "wallet";
@@ -107,6 +108,7 @@ class RouteNames {
 const routes: Routes = [
   { path: "", component: LandingPageComponent, pathMatch: "full" },
   { path: RouteNames.BROWSE, component: BrowsePageComponent, pathMatch: "full" },
+  { path: RouteNames.BROWSE + "/" + RouteNames.TAG + "/:tag", component: BrowsePageComponent, pathMatch: "full" },
   { path: RouteNames.CREATORS, component: CreatorsLeaderboardAppPageComponent, pathMatch: "full" },
   { path: RouteNames.USER_PREFIX + "/:username", component: CreatorProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.SETTINGS, component: SettingsPageComponent, pathMatch: "full" },

@@ -50,7 +50,11 @@
           <div
             *ngIf="publicKeyBase58Check"
             class="messages-thread__avatar mr-15px"
+            [ngClass]="{
+              nft__avatar: profileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+            }"
             [avatar]="publicKeyBase58Check"
+            [nftProfileUrl]="profileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
           ></div>
           {{ title }}
         </div>

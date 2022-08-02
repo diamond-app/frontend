@@ -51,6 +51,11 @@ export class RightBarCreatorsComponent implements OnInit {
     width: 225,
     poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
   };
+  static HASHTAGS: RightBarTabOption = {
+    name: "Top Daily Hashtags",
+    width: 225,
+    poweredBy: { name: "Open Prosper", link: "https://openprosper.com" },
+  };
 
   static ALL_TIME: RightBarTabOption = {
     name: "right_bar.creators.top_creators_alltime",
@@ -63,6 +68,7 @@ export class RightBarCreatorsComponent implements OnInit {
     [RightBarCreatorsComponent.DIAMONDS.name]: RightBarCreatorsComponent.DIAMONDS,
     [RightBarCreatorsComponent.COMMUNITY.name]: RightBarCreatorsComponent.COMMUNITY,
     [RightBarCreatorsComponent.ALL_TIME.name]: RightBarCreatorsComponent.ALL_TIME,
+    [RightBarCreatorsComponent.HASHTAGS.name]: RightBarCreatorsComponent.HASHTAGS,
   };
 
   ngOnInit() {

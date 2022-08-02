@@ -43,6 +43,13 @@
       {{ 'feed_post_dropdown.put_on_sale' | transloco }}
       </a>
       <a
+        *ngIf="showMakeNFTProfilePic()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="makeNFTProfilePic($event)"
+      >
+        Make NFT profile picture
+      </a>
+      <a
         *ngIf="showTransferNFT()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openTransferNFTModal($event)"

@@ -253,6 +253,7 @@ $green-font-color: #19B028;
 .fc-default { color: var(--text); }
 .fc-secondary { color: var(--text-secondary); }
 .fc-muted { color: var(--text-muted); }
+.fc-inverted { color: var(--text-inverted); }
 .fc-blue { color: var(--highlight); }
 .fc-light-blue { color: var(--highlight-secondary); }
 .fc-red { color: var(--cred); }
@@ -2201,12 +2202,8 @@ sign-up {
     display: none;
   }
   .desktop-top-bar {
-    background: var(--text);
     border: none;
     border-bottom: 1px solid #444;
-    .deso {
-      filter: invert(1);
-    }
   }
 }
 
@@ -2483,6 +2480,11 @@ sign-up {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  &.nft__avatar {
+    border-radius: 0px;
+    mask-image: url('/assets/img/rounded-hex.svg');
+    mask-size: 100%;
+  }
 }
 
 .modal-open {
@@ -3013,6 +3015,12 @@ feed {
     height: 36px;
     width: 36px;
   }
+  &.nft__avatar {
+    border-radius: 0px;
+    mask-image: url('/assets/img/rounded-hex.svg');
+    mask-size: 100%;
+  }
+
 }
 
 .feed-post__username {
@@ -3365,6 +3373,11 @@ right-bar-creators {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  &.nft__avatar {
+    border-radius: 0px;
+    mask-image: url('/assets/img/rounded-hex.svg');
+    mask-size: 100%;
+  }
 }
 
 .creator-profile__username-price {
@@ -4343,8 +4356,6 @@ trade-creator-form {
 }
 
 sign-up {
-  background: var(--text) !important;
-
   .nft-modal-container {
     margin-top: 50px;
     padding: 20px;
@@ -4356,7 +4367,6 @@ sign-up {
   .global__nav__flex,
   .global__content__flex,
   .global__sidebar__fixed {
-    background: var(--text) !important;
     border: none !important;
   }
 
@@ -5174,6 +5184,62 @@ input {
   }
 }
 
+.feed__tag-container {
+  background: var(--tile-secondary-bg);
+  width: 100px;
+  border: none;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  z-index: 2;
+  &.feed__tag-container-expanded {
+    width: 10px;
+  }
+  &.active {
+    color: var(--highlight);
+  }
+}
+
+.feed__tag-container-mobile {
+  position: fixed !important;
+  top: 65px;
+  left: 205px;
+  z-index: 1;
+}
+
+.feed__tag-container-background {
+  background: var(--tile-secondary-bg);
+  position: relative;
+  left: -30px;
+  border: none;
+  height: 32px;
+  width: 30px;
+  border-radius: 10px;
+  z-index: 1;
+  &.feed__tag-container-expanded {
+    cursor: auto;
+    padding: 3px;
+    width: 180px;
+    transition: width .5s;
+  }
+}
+
+.feed__tag-input {
+  z-index: 2;
+  width: 100px;
+  top: 0px;
+  left: 0px;
+  height: 32px;
+  color: var(--text-secondary);
+  border: none;
+  &.feed__tag-container-expanded {
+    cursor: auto;
+    display: block;
+    width: 175px;
+    padding-left: 25px;
+  }
+}
+
 .creator-profile__container {
   background: var(--tile-bg);
   border-radius: 0;
@@ -5183,6 +5249,15 @@ input {
   padding: 16px;
   padding-top: 80px;
   margin-bottom: 15px;
+  background-postition: bottom 20px;
+  &.creator-profile__container-cover{
+    &:before {
+      background-image: var(--cover-image);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+  }
   &:before {
     background: var(--tile-secondary-bg);
     content: "";

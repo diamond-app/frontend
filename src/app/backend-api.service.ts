@@ -190,6 +190,9 @@ export class ProfileEntryResponse {
   Posts?: PostEntryResponse[];
   IsReserved?: boolean;
   IsVerified?: boolean;
+  ExtraData?: {
+    [key: string]: string;
+  };
 }
 
 export enum TutorialStatus {
@@ -1229,12 +1232,19 @@ export class BackendApiService {
     });
   }
 
-  GetHotFeed(endpoint: string, ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit): Observable<any> {
+  GetHotFeed(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    SeenPosts,
+    ResponseLimit,
+    Tag?: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
       ReaderPublicKeyBase58Check,
       SeenPosts,
       ResponseLimit,
       SortByNew: false,
+      Tag,
     });
   }
 
@@ -1392,7 +1402,10 @@ export class BackendApiService {
     NewStakeMultipleBasisPoints: number,
     IsHidden: boolean,
     // End specific fields
-    MinFeeRateNanosPerKB: number
+    MinFeeRateNanosPerKB: number,
+    ExtraData: {
+      [key: string]: string;
+    } = {}
   ): Observable<any> {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
@@ -1407,6 +1420,7 @@ export class BackendApiService {
       NewStakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
+      ExtraData,
     }).pipe(
       switchMap((res) => {
         // We need to wait until the profile creation has been comped.

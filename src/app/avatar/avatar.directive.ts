@@ -8,10 +8,15 @@ import * as _ from "lodash";
 })
 export class AvatarDirective implements OnChanges {
   @Input() avatar: string = "";
+  @Input() nftProfileUrl: string = "";
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
+    if (this.nftProfileUrl && this.nftProfileUrl !== "") {
+      this.setURLOnElement(this.nftProfileUrl);
+      return;
+    }
     if (!this.avatar) {
       this.setURLOnElement(this.backendApi.GetDefaultProfilePictureURL(window.location.host));
       return;

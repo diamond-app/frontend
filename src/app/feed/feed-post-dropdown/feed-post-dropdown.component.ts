@@ -18,6 +18,8 @@ import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-mo
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import * as _ from "lodash";
 import { FollowService } from "../../../lib/services/follow/follow.service";
+import { environment } from "../../../environments/environment";
+import { ToastrService } from "ngx-toastr";
 
 const RouteNames = RouteNamesService;
 @Component({
@@ -49,7 +51,8 @@ export class FeedPostDropdownComponent implements OnInit{
     private modalService: BsModalService,
     private platformLocation: PlatformLocation,
     public ref: ChangeDetectorRef,
-    private followService: FollowService
+    private followService: FollowService,
+    private toastr: ToastrService,
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
@@ -216,6 +219,19 @@ export class FeedPostDropdownComponent implements OnInit{
     );
   }
 
+  showMakeNFTProfilePic(): boolean {
+    return (
+      this.post.IsNFT &&
+      this.post.ImageURLs.length > 0 &&
+      this.post.ImageURLs[0] !== "" &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
   hidePost() {
     this.postHidden.emit();
   }
@@ -306,6 +322,33 @@ export class FeedPostDropdownComponent implements OnInit{
     onHideEvent.subscribe((response) => {
       this.pauseVideos.emit(false);
     });
+  }
+
+  makeNFTProfilePic(event): void {
+    this.backendApi
+      .UpdateProfile(
+        environment.verificationEndpointHostname,
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        "",
+        "",
+        "",
+        "",
+        this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
+        1.25 * 100 * 100,
+        false,
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
+        {
+          NFTProfilePicturePostHashHex: this.post.PostHashHex,
+          NFTProfilePictureUrl: this.post.ImageURLs[0],
+        }
+      )
+      .subscribe(() => {
+        this.toastr.show("Your profile picture was updated", null, {
+          toastClass: "info-toast",
+          positionClass: "toast-bottom-center",
+        });
+      });
   }
 
   openTransferNFTModal(event): void {

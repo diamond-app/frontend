@@ -34,13 +34,44 @@
 <!--  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>-->
 
   <!-- Tab Selector -->
-  <tab-selector
-    [buttonSelector]="!isMobile"
-    [tabs]="feedTabs"
-    [activeTab]="activeTab"
-    [newTabs]="newTabs"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
+  <div class="d-flex align-items-center">
+    <tab-selector
+      [buttonSelector]="!isMobile"
+      [tabs]="feedTabs"
+      [activeTab]="activeTab"
+      [newTabs]="newTabs"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
+    <div class="position-relative d-flex mt-2px" [ngClass]="{ 'feed__tag-container-mobile': globalVars.isMobile() }">
+      <div
+        class="cursor-pointer br-10px p-3 feed__tag-container d-flex align-items-center justify-content-center"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== ''), 'active': activeTab === 'Tag' }"
+      >
+        {{ expandTagSelector || (tag && tag !== '') ? '#' : '# Explore' }}
+      </div>
+      <div
+        class="cursor-pointer feed__tag-container-background"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
+      ></div>
+      <input
+        (focusin)="toggleTagInput(true)"
+        (focusout)="toggleTagInput(false)"
+        (keydown.enter)="updateTag()"
+        class="cursor-pointer position-absolute feed__tag-input"
+        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
+        [(ngModel)]="tag"
+        [placeholder]="expandTagSelector || (tag && tag !== '') ? 'Search hashtags' : ''"
+      />
+      <div
+        *ngIf="expandTagSelector || (tag && tag !== '')"
+        (click)="updateTag()"
+        class="cursor-pointer d-flex align-items-center justify-content-center p-2 h-100 position-relative"
+        style="z-index: 10; right: 65px; top: -2px"
+      >
+        <i-feather name="arrow-right" class="feather-medium fc-blue fs-0px"></i-feather>
+      </div>
+    </div>
+  </div>
 
 <!--  <a-->
 <!--    *ngIf="globalVars.loggedInUser && userReferral && isMobile"-->
@@ -69,7 +100,7 @@
 
   <div *ngIf="isMobile" style="margin-top: 50px"></div>
   <div [id]="getPullToRefreshMarkerId()"></div>
-  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>
+<!--  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>-->
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-0px': globalVars.isMobile() }">

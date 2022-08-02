@@ -17,6 +17,8 @@ export type ProfileUpdates = {
   usernameUpdate: string;
   descriptionUpdate: string;
   profilePicUpdate: string;
+  highQualityProfilePicUpdate: string;
+  coverPhotoUpdate: string;
 };
 
 export type ProfileUpdateErrors = {
@@ -44,12 +46,16 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   usernameInput: string;
   descriptionInput: string;
   profilePicInput: string;
+  highQualityProfPicUrl: string;
+  coverPhotoUrl: string;
   founderRewardInput: number = 100;
   loggedInUserPublicKey = "";
   profileUpdates: ProfileUpdates = {
     usernameUpdate: "",
     descriptionUpdate: "",
     profilePicUpdate: "",
+    highQualityProfilePicUpdate: "",
+    coverPhotoUpdate: "",
   };
   profileUpdateErrors: ProfileUpdateErrors = {
     usernameError: false,
@@ -181,7 +187,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           console.log(err);
           this.globalVars.logEvent("profile : update : error", { err });
         }
-      )
+      );
   }
 
   _setProfileUpdates() {
@@ -192,6 +198,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       profileEntryResponse?.Description !== this.descriptionInput ? this.descriptionInput : "";
     this.profileUpdates.profilePicUpdate =
       profileEntryResponse?.ProfilePic !== this.profilePicInput ? this.profilePicInput : "";
+    this.profileUpdates.highQualityProfilePicUpdate =
+      profileEntryResponse?.ExtraData?.HighQualityProfilePictureUrl !== this.highQualityProfPicUrl
+        ? this.highQualityProfPicUrl
+        : "";
+    this.profileUpdates.coverPhotoUpdate =
+      profileEntryResponse?.ExtraData?.CoverPhotoUrl !== this.coverPhotoUrl ? this.coverPhotoUrl : "";
   }
 
   _setProfileErrors(): boolean {
@@ -249,7 +261,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
       false /*IsHidden*/,
       // End params
-      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
+      {
+        HighQualityProfilePicUrl: this.profileUpdates.highQualityProfilePicUpdate,
+        CoverPhotoUrl: this.profileUpdates.coverPhotoUpdate,
+      }
     );
   }
 
@@ -279,7 +295,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       username: this.usernameInput,
       profileEmail: this.emailAddress,
       profileDescription: this.descriptionInput,
-      profilePicInput: this.profilePicInput
+      profilePicInput: this.profilePicInput,
+      highQualityProfilePicUrl: this.highQualityProfPicUrl,
+      coverPhotoUrl: this.coverPhotoUrl,
     };
     this.profileSaved.emit();
   }
@@ -384,7 +402,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _validateUsername(username) {
     if (username === "") {
-      return
+      return;
     }
     this.usernameValidationError = null;
     // Make sure username matches acceptable pattern
@@ -412,7 +430,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return Observable;
     };
   }
-  _handleFileInput(files: FileList) {
+  _handleFileInput(files: FileList, fileType: string) {
     let fileToUpload = files.item(0);
     if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
       this.globalVars._alertError("File selected does not have an image file type.");
@@ -422,7 +440,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
       return;
     }
-    this._readImageFileToProfilePicInput(fileToUpload);
+    if (fileType === "profile") {
+      this._readImageFileToProfilePicInput(fileToUpload);
+    }
+    this.uploadImage(fileToUpload, fileType);
   }
 
   _readImageFileToProfilePicInput(file: Blob | File) {
@@ -439,7 +460,76 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     };
   }
 
+  uploadImage(file: File, fileType: string) {
+    if (file.size > 15 * (1024 * 1024)) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
+      return;
+    }
+    return this.backendApi
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .toPromise()
+      .then((res) => {
+        if (fileType === "profile") {
+          this.highQualityProfPicUrl = res.ImageURL;
+        } else {
+          this.coverPhotoUrl = res.ImageURL;
+        }
+      })
+      .catch((err) => {
+        this.globalVars._alertError(JSON.stringify(err.error.error));
+      });
+  }
+
   _resetImage() {
     this.profilePicInput = "";
+    this.highQualityProfPicUrl = "";
+  }
+
+  getProfileImageToShow() {
+    return this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+      ? this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+      : this.profilePicInput;
+  }
+
+  getCoverImageUrl() {
+    if (this.coverPhotoUrl && this.coverPhotoUrl !== "") {
+      return `url(${this.coverPhotoUrl})`;
+    } else if (this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl) {
+      return `url(${this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl})`;
+    } else {
+      return "";
+    }
+  }
+
+  removeExtraDataFields(type: string) {
+    let fieldsToRemove: { [key: string]: null }
+    if (type === "nft") {
+      fieldsToRemove = {
+        NFTProfilePicturePostHashHex: null,
+        NFTProfilePictureUrl: null,
+      };
+    } else {
+      fieldsToRemove = {
+        CoverPhotoUrl: null,
+      };
+    }
+    this.backendApi
+      .UpdateProfile(
+        environment.verificationEndpointHostname,
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        "",
+        "",
+        "",
+        "",
+        this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
+        1.25 * 100 * 100,
+        false,
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
+        fieldsToRemove,
+      )
+      .subscribe(() => {
+        this.globalVars.updateEverything();
+      });
   }
 }

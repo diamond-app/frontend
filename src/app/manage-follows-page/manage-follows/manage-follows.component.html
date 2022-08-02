@@ -31,8 +31,12 @@
         <!-- Avatar -->
         <div class="manage-follows__avatar-container">
           <a
+            [ngClass]="{
+              nft__avatar: profileEntry?.ExtraData?.NFTProfilePictureUrl
+            }"
             class="manage-follows__avatar br-12px"
             [avatar]="profileEntry.PublicKeyBase58Check"
+            [nftProfileUrl]="profileEntry?.ExtraData?.NFTProfilePictureUrl"
             [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
             queryParamsHandling="merge"
           ></a>

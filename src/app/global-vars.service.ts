@@ -19,7 +19,7 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { HashtagResponse, LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
@@ -31,6 +31,7 @@ import Timer = NodeJS.Timer;
 import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
+import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -111,6 +112,7 @@ export class GlobalVarsService {
   rightBarLeaderboard = [];
   topCreatorsAllTimeLeaderboard: LeaderboardResponse[] = [];
   topGainerLeaderboard: LeaderboardResponse[] = [];
+  hashtagLeaderboard: HashtagResponse[] = [];
   topDiamondedLeaderboard: LeaderboardResponse[] = [];
   allCommunityProjectsLeaderboard: CommunityProject[] = [];
   topCommunityProjectsLeaderboard: CommunityProject[] = [];
@@ -128,6 +130,7 @@ export class GlobalVarsService {
   postsToShow = [];
   followFeedPosts = [];
   hotFeedPosts = [];
+  tagFeedPosts = [];
   messageResponse = null;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -243,6 +246,8 @@ export class GlobalVarsService {
   newProfile: {
     username: string;
     profilePicInput: string;
+    highQualityProfilePicUrl: string;
+    coverPhotoUrl: string;
     profileEmail: string;
     profileDescription: string;
   };
@@ -1178,12 +1183,16 @@ export class GlobalVarsService {
 
   updateLeaderboard(forceRefresh: boolean = false): void {
     const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
+    const openProsperService = new OpenProsperService(this.httpClient);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
       altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+    }
+    if (this.hashtagLeaderboard.length === 0 || forceRefresh) {
+      openProsperService.getTrendingHashtagsPage().subscribe((res) => (this.hashtagLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {

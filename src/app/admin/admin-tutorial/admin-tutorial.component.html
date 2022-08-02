@@ -25,8 +25,12 @@
         class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
       >
         <div
+          [ngClass]="{
+            nft__avatar: profileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+          }"
           class="right-bar-creators-leaderboard__creator-avatar ml-2"
           [avatar]="profileEntryResponse.PublicKeyBase58Check"
+          [nftProfileUrl]="profileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
         ></div>
 
         <div style="flex-grow: 1" class="ml-2">

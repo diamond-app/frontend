@@ -31,7 +31,7 @@ export class SanitizeAndAutoLinkPipe implements PipeTransform {
     });
 
     // Only link usernames and cashtags for now (not hashtags etc)
-    entities = _.filter(entities, (entity) => entity.screenName || entity.cashtag);
+    entities = _.filter(entities, (entity) => entity.screenName || entity.cashtag || entity.hashtag);
 
     const textWithMentionLinks = twitter.autoLinkEntities(text, entities, {
       usernameUrlBase: `/${RouteNames.USER_PREFIX}/`,
@@ -39,6 +39,8 @@ export class SanitizeAndAutoLinkPipe implements PipeTransform {
       usernameIncludeSymbol: true,
       cashtagUrlBase: `/${RouteNames.USER_PREFIX}/`,
       cashtagClass: AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS,
+      hashtagUrlBase: `/${RouteNames.BROWSE}/${RouteNames.TAG}/`,
+      hashtagClass: AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS,
     });
 
     return Autolinker.link(textWithMentionLinks);

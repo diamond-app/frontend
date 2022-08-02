@@ -21,24 +21,68 @@
       </div>
       <!-- Form Inputs -->
       <div class="mt-30px font-weight-bold update-profile__avatar-title">{{ 'update_profile.avatar' | transloco }}</div>
-      <div class="update-profile__holder">
-        <div class="update-profile__avatar">
+      <div class="update-profile__holder position-relative">
+        <div class="mt-10px position-absolute" style="top: 0px; left: 5px; width: 100px; height: 45px">
+          <input
+            class="file-upload-button"
+            type="file"
+            accept="image/png, image/jpeg"
+            id="cover-file"
+            (change)="_handleFileInput($event.target.files, 'cover')"
+            style="
+              position: absolute;
+              left: 0;
+              top: 10px;
+              bottom: 0;
+              opacity: 0;
+              cursor: pointer;
+              width: 100px;
+              height: 45px;
+              padding: 0;
+            "
+          />
+          <button type="file" style="width: 100px; height: 45px; background: var(--text)">
+            <i-feather name="refresh-cw"></i-feather>
+            Upload Cover Photo
+          </button>
+          <button
+            *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl"
+            class="mt-10px fc-red"
+            style="width: 100px; height: 45px; background: var(--text)"
+            (click)="removeExtraDataFields('cover')"
+          >
+            <i-feather name="trash-2"></i-feather>
+            Delete Cover Photo
+          </button>
+        </div>
+        <div class="update-profile__avatar" [style.background-image]="getCoverImageUrl()" style="background-repeat: no-repeat; background-position: center; background-size: cover">
           <div>
             <div *ngIf="profilePicInput != null && profilePicInput.length > 0">
-              <div [style.background-image]="'url(' + profilePicInput + ')'"></div>
+              <div [style.background-image]="'url(' + getProfileImageToShow() + ')'"></div>
               <div *ngIf="profilePicInput">
-                <div class="update-profile__image" [style.background-image]="'url(' + profilePicInput + ')'">
-                  <div (click)="_resetImage()" class="update-profile__image-delete"><i-feather name="trash-2"></i-feather></div>
+                <div class="update-profile__image" [style.background-image]="'url(' + getProfileImageToShow() + ')'">
+                  <div
+                    *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+                    (click)="_resetImage()"
+                    class="update-profile__image-delete"
+                    style="background: var(--text)"
+                  >
+                    <i-feather name="trash-2"></i-feather>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="mt-10px" style="position: relative">
+            <div
+              *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+              class="mt-10px"
+              style="position: relative"
+            >
               <input
                 class="file-upload-button"
                 type="file"
                 accept="image/png, image/jpeg"
                 id="file"
-                (change)="_handleFileInput($event.target.files)"
+                (change)="_handleFileInput($event.target.files, 'profile')"
                 style="
                   position: absolute;
                   left: 0;
@@ -50,9 +94,22 @@
                   padding: 0;
                 "
               />
-              <button type="file">
+              <button type="file" style="background: var(--text)">
                 <i-feather name="refresh-cw"></i-feather>
                 {{ 'update_profile.upload_image' | transloco }}
+              </button>
+            </div>
+            <div
+              *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+              class="mt-10px"
+              style="position: relative"
+            >
+              <button
+                (click)="removeExtraDataFields('nft')"
+                style="height: 45px; background: var(--text)"
+              >
+                <i-feather name="trash-2"></i-feather>
+                Remove NFT Profile Picture
               </button>
             </div>
             <div>
