@@ -5196,12 +5196,15 @@ input {
 
 .feed__tag-container {
   background: var(--tile-secondary-bg);
-  width: 10px;
+  width: 100px;
   border: none;
   height: 32px;
   border-radius: 10px;
   color: var(--text-secondary);
   z-index: 2;
+  &.feed__tag-container-expanded {
+    width: 10px;
+  }
   &.active {
     color: var(--highlight);
   }
@@ -5221,7 +5224,6 @@ input {
   border: none;
   height: 32px;
   width: 30px;
-  transition: width .5s;
   border-radius: 10px;
   z-index: 1;
   &.feed__tag-container-expanded {
@@ -5234,7 +5236,7 @@ input {
 
 .feed__tag-input {
   z-index: 2;
-  width: 30px;
+  width: 100px;
   top: 0px;
   left: 0px;
   height: 32px;
