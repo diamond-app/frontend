@@ -133,13 +133,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Request the tag feed (so we have it ready for display if needed)
         this.loadingFirstBatchOfTagFeedPosts = true;
         this._loadTagFeedPosts(true);
-        this.loadingFirstBatchOfTagFeedPosts = false;
-      } else {
-        if (this.activeTab === FeedComponent.TAG_TAB) {
-          this.activeTab = FeedComponent.HOT_TAB;
-        }
       }
     });
+
+    if (this.activeTab === FeedComponent.TAG_TAB && (!this.tag || this.tag === "")) {
+      this.activeTab = FeedComponent.HOT_TAB;
+    }
 
     // Reload the follow feed any time the user follows / unfollows somebody
     this.followChangeSubscription = this.appData.followChangeObservable.subscribe((followChangeObservableResult) => {
@@ -227,6 +226,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   _initializeFeeds() {
+    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB];
     if (this.globalVars.postsToShow.length === 0) {
       // Get some posts to show the user.
       this.loadingFirstBatchOfGlobalFeedPosts = true;
@@ -327,7 +327,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
     this.loadingFirstBatchOfTagFeedPosts = true;
     this._loadTagFeedPosts(true);
-    this.loadingFirstBatchOfTagFeedPosts = false;
   }
 
   activeTabReadyForDisplay() {
@@ -356,7 +355,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadingFirstBatchOfActiveTabPosts() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       return this.loadingFirstBatchOfFollowFeedPosts;
-    } else if (this.activeTab === FeedComponent.TAG_TAB){
+    } else if (this.activeTab === FeedComponent.TAG_TAB) {
       return this.loadingFirstBatchOfTagFeedPosts;
     } else {
       return this.loadingFirstBatchOfGlobalFeedPosts;
@@ -645,6 +644,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         ),
         finalize(() => {
           this.loadingMoreTagFeedPosts = false;
+          this.loadingFirstBatchOfTagFeedPosts = false;
         }),
         first()
       )
@@ -658,7 +658,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
 
-    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB];
 
     if (!this.activeTab) {
       const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");

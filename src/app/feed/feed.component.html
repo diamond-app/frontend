@@ -42,7 +42,7 @@
       [newTabs]="newTabs"
       (tabClick)="_handleTabClick($event)"
     ></tab-selector>
-    <div class="position-relative d-flex mt-2px" [ngClass]="{ 'feed__tag-container-mobile': globalVars.isMobile() }">
+    <div class="position-relative d-flex mt-2px" [ngClass]="{ 'feed__tag-container-mobile': globalVars.isMobile(), 'logged-out': !globalVars.loggedInUser }">
       <div
         class="cursor-pointer br-10px p-3 feed__tag-container d-flex align-items-center justify-content-center"
         [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== ''), 'active': activeTab === 'Tag' }"
@@ -142,8 +142,6 @@
     </div>
   </div>
 
-
-
   <div
     *ngIf="showNoPostsFound()"
     class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center"
@@ -164,6 +162,7 @@
     </div>
   </div>
   <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
+
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <!--  <div class="global__bottom-bar-mobile-height"></div>-->
 <!--  <div class="global__bottom-bar-mobile-height"></div>-->
