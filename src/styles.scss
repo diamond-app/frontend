@@ -2481,6 +2481,7 @@ sign-up {
   background-repeat: no-repeat;
   background-position: center;
   &.nft__avatar {
+    border: 0px;
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
@@ -3016,6 +3017,7 @@ feed {
     width: 36px;
   }
   &.nft__avatar {
+    border: 0px;
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
@@ -3374,6 +3376,7 @@ right-bar-creators {
   background-repeat: no-repeat;
   background-position: center;
   &.nft__avatar {
+    border: 0px;
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
