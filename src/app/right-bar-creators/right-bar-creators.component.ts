@@ -74,7 +74,7 @@ export class RightBarCreatorsComponent implements OnInit {
   ngOnInit() {
     const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
     this.activeTab =
-      defaultTab in RightBarCreatorsComponent.chartMap ? defaultTab : RightBarCreatorsComponent.DIAMONDS.name;
+      defaultTab in RightBarCreatorsComponent.chartMap ? defaultTab : RightBarCreatorsComponent.HASHTAGS.name;
     this.selectTab(true);
   }
 

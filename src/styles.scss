@@ -3365,6 +3365,20 @@ right-bar-creators {
   }
 }
 
+.creator-profile__avatar-border.nft__avatar {
+  height: 78px;
+  width: 78px;
+  background: var(--text);
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  border: 0px;
+  border-radius: 0px;
+  mask-image: url('/assets/img/rounded-hex.svg');
+  mask-size: 100%;
+  z-index: 0;
+}
+
 .creator-profile__avatar {
   position: relative;
   height: 72px;
@@ -3376,6 +3390,7 @@ right-bar-creators {
   background-repeat: no-repeat;
   background-position: center;
   &.nft__avatar {
+    z-index: 1;
     border: 0px;
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
@@ -5208,6 +5223,9 @@ input {
   top: 65px;
   left: 205px;
   z-index: 1;
+  &.logged-out {
+    top: 96px;
+  }
 }
 
 .feed__tag-container-background {

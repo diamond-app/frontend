@@ -9,6 +9,13 @@
       [nftProfileUrl]="profile?.ExtraData?.NFTProfilePictureUrl"
     >
     </div>
+    <div
+      [ngClass]="{
+        nft__avatar: profile?.ExtraData?.NFTProfilePictureUrl
+      }"
+      class="creator-profile__avatar-border"
+    >
+    </div>
     <div class="d-flex flex-column creator-profile__username-price">
       <div class="fs-24px font-weight-bold d-flex align-items-center">
         @{{ profile.Username }}
