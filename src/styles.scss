@@ -2484,8 +2484,6 @@ sign-up {
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
-    height: 55px;
-    width: 55px;
   }
 }
 
@@ -3021,12 +3019,6 @@ feed {
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
-    height: 55px;
-    width: 55px;
-    @media (max-width: 600px) {
-      height: 40px;
-      width: 40px;
-    }
   }
 
 }
@@ -3385,8 +3377,6 @@ right-bar-creators {
     border-radius: 0px;
     mask-image: url('/assets/img/rounded-hex.svg');
     mask-size: 100%;
-    height: 80px;
-    width: 80px;
   }
 }
 
