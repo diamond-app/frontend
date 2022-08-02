@@ -193,8 +193,8 @@ export class SignUpComponent {
         // End params
         this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
         {
-          HighQualityProfilePicUrl: this.globalVars.newProfile.highQualityProfilePicUrl,
-          CoverPhotoUrl: this.globalVars.newProfile.coverPhotoUrl,
+          LargeProfilePicURL: this.globalVars.newProfile.highQualityProfilePicUrl,
+          FeaturedImageURL: this.globalVars.newProfile.coverPhotoUrl,
         }
       )
       .subscribe(

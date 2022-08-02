@@ -46,7 +46,7 @@
             Upload Cover Photo
           </button>
           <button
-            *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl"
+            *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.FeaturedImageURL"
             class="mt-10px fc-red"
             style="width: 100px; height: 45px; background: var(--text)"
             (click)="removeExtraDataFields('cover')"

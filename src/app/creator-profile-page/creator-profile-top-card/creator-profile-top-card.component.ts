@@ -179,8 +179,8 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   getCoverImageUrl() {
-    if (this.profile?.ExtraData?.CoverPhotoUrl) {
-      return `url(${this.profile?.ExtraData?.CoverPhotoUrl})`;
+    if (this.profile?.ExtraData?.FeaturedImageURL) {
+      return `url(${this.profile?.ExtraData?.FeaturedImageURL})`;
     } else {
       return "";
     }

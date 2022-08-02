@@ -203,7 +203,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         ? this.highQualityProfPicUrl
         : "";
     this.profileUpdates.coverPhotoUpdate =
-      profileEntryResponse?.ExtraData?.CoverPhotoUrl !== this.coverPhotoUrl ? this.coverPhotoUrl : "";
+      profileEntryResponse?.ExtraData?.FeaturedImageURL !== this.coverPhotoUrl ? this.coverPhotoUrl : "";
   }
 
   _setProfileErrors(): boolean {
@@ -263,8 +263,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       // End params
       this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
       {
-        HighQualityProfilePicUrl: this.profileUpdates.highQualityProfilePicUpdate,
-        CoverPhotoUrl: this.profileUpdates.coverPhotoUpdate,
+        LargeProfilePicURL: this.profileUpdates.highQualityProfilePicUpdate,
+        FeaturedImageURL: this.profileUpdates.coverPhotoUpdate,
       }
     );
   }
@@ -494,8 +494,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   getCoverImageUrl() {
     if (this.coverPhotoUrl && this.coverPhotoUrl !== "") {
       return `url(${this.coverPhotoUrl})`;
-    } else if (this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl) {
-      return `url(${this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.CoverPhotoUrl})`;
+    } else if (this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.FeaturedImageURL) {
+      return `url(${this.globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.FeaturedImageURL})`;
     } else {
       return "";
     }
@@ -510,7 +510,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       };
     } else {
       fieldsToRemove = {
-        CoverPhotoUrl: null,
+        FeaturedImageURL: null,
       };
     }
     this.backendApi
