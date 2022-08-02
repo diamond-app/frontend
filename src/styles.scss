@@ -5187,8 +5187,10 @@ input {
 }
 
 .feed__tag-container-mobile {
-  top: 26px;
+  position: fixed !important;
+  top: 65px;
   left: 205px;
+  z-index: 1;
 }
 
 .feed__tag-container-background {

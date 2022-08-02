@@ -12,6 +12,9 @@ import { environment } from "src/environments/environment";
 import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
 import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
 import { HttpClient } from "@angular/common/http";
+import { OpenProsperService } from "../../../lib/services/openProsper/openprosper-service";
+import { Router } from "@angular/router";
+import { HashtagResponse } from "../../../lib/services/pulse/pulse-service";
 
 @Component({
   selector: "trends",
@@ -37,8 +40,10 @@ export class TrendsComponent implements OnInit {
   activeTab: string = RightBarCreatorsComponent.GAINERS.name;
   activeRightTabOption: RightBarTabOption;
   selectedOptionWidth: string;
+  hashtagLeaderboard: HashtagResponse[] = [];
   availableTabs = [
     RightBarCreatorsComponent.GAINERS.name,
+    RightBarCreatorsComponent.HASHTAGS.name,
     RightBarCreatorsComponent.DIAMONDS.name,
     RightBarCreatorsComponent.COMMUNITY.name,
   ];
@@ -59,7 +64,8 @@ export class TrendsComponent implements OnInit {
     private backendApi: BackendApiService,
     private titleService: Title,
     private modalService: BsModalService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private _router: Router
   ) {
     this.appData = globalVars;
     this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
@@ -73,6 +79,15 @@ export class TrendsComponent implements OnInit {
     this.selectedOptionWidth = rightTabOption.width + "px";
     this.infiniteScroller.reset();
     this.datasource.adapter.reset();
+    if (this.activeTab === RightBarCreatorsComponent.HASHTAGS.name) {
+      const openProsperService = new OpenProsperService(this.httpClient);
+      return openProsperService
+        .getTrendingHashtagsPage()
+        .toPromise()
+        .then((res) => {
+          this.hashtagLeaderboard = res;
+        });
+    }
   }
 
   getPage(page: number) {
@@ -166,6 +181,15 @@ export class TrendsComponent implements OnInit {
     this.isLoadingProfilesForFirstTime = true;
     this.infiniteScroller.reset();
     this.datasource.adapter.reset();
+  }
+
+  navigateToHashtag(hashtag: string) {
+    this._router.navigate(
+      ["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, hashtag.substring(1)],
+      {
+        queryParamsHandling: "merge",
+      }
+    );
   }
 
   ngOnInit() {
