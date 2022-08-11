@@ -222,6 +222,7 @@ export class FeedPostDropdownComponent implements OnInit{
   showMakeNFTProfilePic(): boolean {
     return (
       this.post.IsNFT &&
+      this.post?.ImageURLs &&
       this.post.ImageURLs.length > 0 &&
       this.post.ImageURLs[0] !== "" &&
       !!this.nftEntryResponses?.filter(
