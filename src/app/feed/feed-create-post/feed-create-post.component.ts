@@ -247,21 +247,6 @@ export class FeedCreatePostComponent implements OnInit {
     this._handleFileInput(event[0]);
   }
 
-  showCharacterCountIsFine() {
-    return this.currentPostModel.text.length < SHOW_POST_LENGTH_WARNING_THRESHOLD;
-  }
-
-  showCharacterCountWarning() {
-    return (
-      this.currentPostModel.text.length >= SHOW_POST_LENGTH_WARNING_THRESHOLD &&
-      this.currentPostModel.text.length <= GlobalVarsService.MAX_POST_LENGTH
-    );
-  }
-
-  characterCountExceedsMaxLength() {
-    return this.currentPostModel.text.length > GlobalVarsService.MAX_POST_LENGTH;
-  }
-
   setEmbedURL() {
     EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.currentPostModel.embedURL).subscribe(
       (res) => {
@@ -276,10 +261,6 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     const post = this.postModels[currentPostModelIndex];
-
-    if (post.text.length > GlobalVarsService.MAX_POST_LENGTH) {
-      return;
-    }
 
     // post can't be blank
     if (post.text.trim().length === 0 && !post.postImageSrc && !post.postVideoSrc) {
