@@ -155,20 +155,6 @@
   [ngClass]="{ 'feed-create-post__icon-bar--in-modal': inModal }"
 >
   <div class="feed-create-post__left-btn-group">
-    <span
-      class="mr-15px feed-create-post__character-counter fs-15px d-flex"
-      [ngClass]="{
-        'd-none': currentPostModel.text.length == 0,
-        'text-grey8A': showCharacterCountIsFine(),
-        'text-warning': showCharacterCountWarning(),
-        'fc-red': characterCountExceedsMaxLength()
-      }"
-    >
-      <div [ngStyle]="{ width: currentPostModel.text.length >= 100 ? '28px' : '20px' }">
-        {{ currentPostModel.text.length }}
-      </div>
-      <div>/ {{ maxPostLength }}</div>
-    </span>
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
@@ -208,11 +194,8 @@
       [ngClass]="{
         appear: hasAddCommentButton(),
         disappear: !hasAddCommentButton(),
-        wiggle: showCharacterCountWarning(),
-        disabled:
-          currentPostModel.text.length <= 0 &&
-          !currentPostModel.postImageSrc &&
-          !currentPostModel.postVideoSrc
+        wiggle: false,
+        disabled: currentPostModel.text.length <= 0 && !currentPostModel.postImageSrc && !currentPostModel.postVideoSrc
       }"
       (click)="addComment()"
     >
@@ -221,11 +204,7 @@
     <button
       class="feed-create-post__post-btn btn"
       [ngClass]="{
-        disabled:
-          (postModels[0].text.length <= 0 &&
-            !postModels[0].postImageSrc &&
-            !postModels[0].postVideoSrc) ||
-          characterCountExceedsMaxLength(),
+        disabled: postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc,
         'btn-loading': submittingPost,
         wiggle: inTutorial,
         'feed-create-post__post-btn--in-modal': inModal
