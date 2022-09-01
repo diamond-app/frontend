@@ -11,9 +11,14 @@ more.
 # About This Repo
 Documentation for this repo lives on docs.deso.org. Specifically, the following
 docs should give you everything you need to get started:
-* [DeSo Code Walkthrough](https://docs.deso.org/code/walkthrough)
-* [Setting Up Your Dev Environment](https://docs.deso.org/code/dev-setup)
-* [Making Your First Changes](https://docs.deso.org/code/making-your-first-changes)
+
+- [DeSo Code Walkthrough](https://docs.deso.org/code/walkthrough)
+- [Setting Up Your Dev Environment](https://docs.deso.org/code/dev-setup)
+- [Making Your First Changes](https://docs.deso.org/code/making-your-first-changes)
+
+# Node / NPM versions
+
+This frontend works best with Node v14.15.5 and Npm v7. If you cant use these versions, then try `npm install --force`.
 
 # Start Coding
 
