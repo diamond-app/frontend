@@ -92,6 +92,7 @@ export class TransferDeSoComponent implements OnInit {
           this.transferDeSoError = "";
           this.networkFee = res.FeeNanos / 1e9;
           this.transferAmount = res.SpendAmountNanos / 1e9;
+          this.maxSendAmount = res.SpendAmountNanos / 1e9;
         },
         (error) => {
           this.loadingMax = false;
