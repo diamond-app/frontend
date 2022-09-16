@@ -447,16 +447,16 @@ export class GlobalVarsService {
 
     if (this.loggedInUser) {
       // Fetch referralLinks for the userList before completing the load.
-      this.backendApi
-        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
-        .subscribe(
-          (res: any) => {
-            this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-          },
-          (err: any) => {
-            console.log(err);
-          }
-        );
+      // this.backendApi
+      //   .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+      //   .subscribe(
+      //     (res: any) => {
+      //       this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+      //     },
+      //     (err: any) => {
+      //       console.log(err);
+      //     }
+      //   );
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.

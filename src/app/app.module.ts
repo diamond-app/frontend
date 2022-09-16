@@ -188,6 +188,7 @@ import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/trans
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
 import { TranslocoRootModule } from "./transloco-root.module";
 import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
+import { QuillModule } from "ngx-quill";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -202,6 +203,8 @@ import { NftBurnComponent } from "./nft-burn/nft-burn.component";
 import { NftBurnModalComponent } from "./nft-burn/nft-burn-modal/nft-burn-modal.component";
 import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/buy-now-confirmation.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
+import { CreateLongPostComponent } from "./create-long-post-page/create-long-post/create-long-post.component";
+import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -382,6 +385,8 @@ export function playerFactory() {
     TransferNftPageComponent,
     TransferNftComponent,
     FreeDesoMessageComponent,
+    CreateLongPostComponent,
+    CreateLongPostPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -405,6 +410,9 @@ export function playerFactory() {
     BsDatepickerModule.forRoot(),
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
+    QuillModule.forRoot({
+      format: "text",
+    }),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme, icydarkTheme],
       active:

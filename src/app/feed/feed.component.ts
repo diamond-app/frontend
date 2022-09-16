@@ -151,7 +151,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Set activeTab to null so that a sensible default tab is selected
         this.activeTab = null;
         this._initializeFeeds();
-        this.fetchUserReferrals();
+        // this.fetchUserReferrals();
       }
     });
 
@@ -168,7 +168,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnInit() {
     this._initializeFeeds();
     this.titleService.setTitle(`Feed - ${environment.node.name}`);
-    this.fetchUserReferrals();
+    // this.fetchUserReferrals();
   }
 
   fetchUserReferrals() {

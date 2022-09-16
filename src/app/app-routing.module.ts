@@ -47,6 +47,7 @@ import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/trans
 import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
 import { BuyDesoTutorialPageComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial-page.component";
+import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -85,6 +86,7 @@ class RouteNames {
   public static SEND_DESO = "send-deso";
   // TODO: how do I make this /posts/new?
   public static CREATE_POST = "posts/new";
+  public static CREATE_LONG_POST = "blog-posts/new";
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
   public static GET_STARTER_DESO = "get-starter-deso";
@@ -130,6 +132,7 @@ const routes: Routes = [
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
+  { path: RouteNames.CREATE_LONG_POST, component: CreateLongPostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS,
