@@ -1136,7 +1136,8 @@ export class GlobalVarsService {
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
 
-    this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
+    // this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
+    this.localNode = "https://node.deso.org";
 
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
