@@ -205,6 +205,8 @@ import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/bu
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { CreateLongPostComponent } from "./create-long-post-page/create-long-post/create-long-post.component";
 import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
+import { BlogPageComponent } from './blog-page/blog-page.component';
+import { BlogDetailComponent } from './blog-page/blog-detail/blog-detail.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -387,6 +389,8 @@ export function playerFactory() {
     FreeDesoMessageComponent,
     CreateLongPostComponent,
     CreateLongPostPageComponent,
+    BlogPageComponent,
+    BlogDetailComponent,
   ],
   imports: [
     BrowserModule,

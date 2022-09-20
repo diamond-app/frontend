@@ -43,7 +43,7 @@
             "scripts": [
               "./node_modules/intro.js/intro.js",
               "./node_modules/aos/dist/aos.js",
-              "./node_modules/quill/dist/core.js",
+              "./node_modules/quill/dist/quill.core.js",
               "./src/lib/services/stream/cloudflare-stream-embedded.js"
             ]
           },
