@@ -13,6 +13,7 @@ export class CreateLongPostComponent {
   constructor(private backendApi: BackendApiService, private appData: GlobalVarsService) {}
 
   handleContentChange($event) {
+    console.log("Editor changed:", $event);
     this.content = $event.content;
   }
 
@@ -37,8 +38,10 @@ export class CreateLongPostComponent {
         false
       )
       .toPromise()
-      .then(() => {
-        alert("your post is ready.");
+      .then((res) => {
+        console.log(
+          `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
+        );
       });
   }
 }
