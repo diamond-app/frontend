@@ -6257,10 +6257,17 @@ sell-nft-modal {
   border-left: 5px solid $buy-button-blue !important;
 }
 
-//.ql-toolbar {
-//  border-color: var(--border) !important;
-//}
-//
-//.ql-container {
-//  border-color: var(--border) !important;
-//}
+.ql-toolbar {
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+.ql-container {
+  border: none !important;
+}
+
+.ql-editor {
+  min-height: 300px !important;
+}

@@ -162,11 +162,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG, component: BlogPageComponent, pathMatch: "full" },
-  {
-    path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG + "/:postHashHex",
-    component: BlogDetailComponent,
-    pathMatch: "full",
-  },
+  { path: RouteNames.BLOG + "/:postHashHex", component: BlogDetailComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },

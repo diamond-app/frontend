@@ -1,2 +1,4 @@
-<div class="pt-1"></div>
-<quill-editor (onContentChanged)="handleContentChange($event)"></quill-editor>
+<div class="p-1 header">
+  <button class="publish-btn btn-primary" (click)="publish()">Publish</button>
+</div>
+<quill-editor (onContentChanged)="handleContentChange($event)" placeholder="Write something..."></quill-editor>
