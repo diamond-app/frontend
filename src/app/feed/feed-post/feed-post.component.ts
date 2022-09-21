@@ -1,38 +1,38 @@
 import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectorRef,
-  ViewChild,
+  Component,
   ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
 } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { Router } from "@angular/router";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
+import { filter } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { ToastrService } from "ngx-toastr";
+import { environment } from "../../../environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
+import { FollowService } from "../../../lib/services/follow/follow.service";
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
+import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
-import { ToastrService } from "ngx-toastr";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
-import { FollowService } from "../../../lib/services/follow/follow.service";
-import { TranslocoService } from "@ngneat/transloco";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
-import { environment } from "../../../environments/environment";
-import { filter } from "lodash";
+import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -374,7 +374,10 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
+    const postRoute = this.postContent.PostExtraData?.BlogDeltaRtfFormat
+      ? this.globalVars.RouteNames.BLOG
+      : this.globalVars.RouteNames.POSTS;
+    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : postRoute;
 
     // identify ctrl+click (or) cmd+clik and opens feed in new tab
     if (event.ctrlKey) {
@@ -710,7 +713,7 @@ export class FeedPostComponent implements OnInit {
     if (videoPlayerHeight > 0) {
       // If the source video has a narrower aspect ratio than our default player, adjust the player width to snugly fit the content
       if (videoPlayerWidth / videoPlayerHeight > this.sourceVideoAspectRatio) {
-        const videoContainerHeightPerc = (videoPlayerWidth / videoPlayerHeight) / this.sourceVideoAspectRatio;
+        const videoContainerHeightPerc = videoPlayerWidth / videoPlayerHeight / this.sourceVideoAspectRatio;
         this.videoContainerHeight = (videoContainerHeightPerc * videoPlayerHeight).toFixed(2) + "px";
         this.videoOverlayContainerHeight = this.videoContainerHeight;
       } else {
@@ -895,7 +898,12 @@ export class FeedPostComponent implements OnInit {
     }).then((res: any) => {
       if (res.isConfirmed) {
         this.router.navigate(
-          ["/" + this.globalVars.RouteNames.USER_PREFIX + "/" + this.globalVars.loggedInUser.ProfileEntryResponse.Username],
+          [
+            "/" +
+              this.globalVars.RouteNames.USER_PREFIX +
+              "/" +
+              this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          ],
           {
             queryParams: {
               nftTab: "my_gallery",
