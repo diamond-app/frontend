@@ -178,10 +178,10 @@
         >
           <a
             (click)="onPostClicked($event)"
-            class="link--unstyled itme"
+            class="link--unstyled"
             [routerLink]="
               getRouterLink([
-                '/' + postContent.PostExtraData.BlogDeltaRtfFormat
+                '/' + postContent.PostExtraData?.BlogDeltaRtfFormat
                   ? gobalVars.RouteNames.BLOG
                   : gobalVars.RouteNames.POSTS,
                 postContent.PostHashHex
@@ -259,7 +259,7 @@
                   "
                   queryParamsHandling="merge"
                 >
-                  <span *ngIf="postContent.PostExtraData.BlogDeltaRtfFormat">Blog /</span>
+                  <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">Blog /</span>
                   {{ postContent.ProfileEntryResponse.Username }}
                 </a>
 
@@ -321,7 +321,7 @@
                   <span
                     [ngClass]="{
                       'pb-10px': quotedContent && showQuotedContent,
-                      'text-secondary': !!postContent.PostExtraData.BlogDeltaRtfFormat
+                      'text-secondary': !!postContent.PostExtraData?.BlogDeltaRtfFormat
                     }"
                     [innerHTML]="postContent.Body | sanitizeAndAutoLink"
                     queryParamsHandling="merge"
@@ -336,7 +336,7 @@
                     <strong>Read more</strong>
                   </a>
                   <div class="py-1">
-                    <strong *ngIf="postContent.PostExtraData.BlogDeltaRtfFormat" class="text-underline">
+                    <strong *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat" class="text-underline">
                       Read full article
                     </strong>
                   </div>
