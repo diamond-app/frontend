@@ -1,3 +1,15 @@
 <app-page hideSidebar="true">
-  <p>blog-page works!</p>
+  <div class="list-group list-group-flush">
+    <article *ngFor="let post of blogPosts" class="list-group-item py-5">
+      <a [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + post.PostHashHex]" class="d-flex">
+        <div>
+          <h2>{{ post.PostExtraData.Title }}</h2>
+          <p>{{ post.PostExtraData.Description }}</p>
+        </div>
+        <div class="ml-auto">
+          <img [src]="post.PostExtraData.CoverImage" [alt]="post.PostExtraData.Title" width="112" />
+        </div>
+      </a>
+    </article>
+  </div>
 </app-page>
