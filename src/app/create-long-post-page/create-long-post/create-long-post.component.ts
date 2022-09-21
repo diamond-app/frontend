@@ -81,6 +81,9 @@ export class CreateLongPostComponent {
       CoverImage: (imgFile && (await this.uploadImage(imgFile))) ?? "",
     };
 
+    const postBody = `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`;
+
+    // TODO: Add preview image URL to post object
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -89,7 +92,7 @@ export class CreateLongPostComponent {
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {
-          Body: postExtraData.Description,
+          Body: postBody,
         } /*BodyObj*/,
         "" /*RepostedPostHashHex*/,
         postExtraData /*PostExtraData*/,
