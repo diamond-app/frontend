@@ -1,0 +1,34 @@
+<!-- Blog Posts -->
+<simple-center-loader [height]="200" *ngIf="loadingFirstPage"></simple-center-loader>
+<div *ngIf="!showProfileAsReserved && !loadingFirstPage && blogPosts.length === 0" class="p-15px">
+  <div class="d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">
+      {{ "creator_profile_posts.create_fipo" | transloco }}
+    </span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} {{ "creator_profile_posts.on_platform_no_posts" | transloco }}</span>
+    </ng-template>
+  </div>
+</div>
+<ng-container *ngIf="!showProfileAsReserved">
+  <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
+    <div *ngFor="let post of blogPosts; let index = index">
+      <feed-post
+        *ngIf="post.ProfileEntryResponse"
+        [contentShouldLinkToThread]="true"
+        [includePaddingOnPost]="true"
+        [post]="post"
+        [afterCommentCreatedCallback]="_prependComment.bind(this, post, index)"
+        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [cardStyle]="true"
+        [showNFTDetails]="true"
+        [videoPaused]="pauseVideos"
+        (userBlocked)="userBlocked()"
+        (pauseAllVideos)="pauseAllVideos($event)"
+      ></feed-post>
+    </div>
+    <!-- Spacer for PWA Apps -->
+    <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
+    <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
+  </div>
+</ng-container>

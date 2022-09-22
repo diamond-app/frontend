@@ -1,12 +1,12 @@
+import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
+import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/creator-profile-top-card.component";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
 
 @Component({
   selector: "creator-profile-details",
@@ -23,12 +23,14 @@ export class CreatorProfileDetailsComponent implements OnInit {
     "coin-purchasers": "Creator Coin",
     diamonds: "Diamonds",
     nfts: "NFTs",
+    blog: "Blog",
   };
   static TABS_LOOKUP = {
     Posts: "posts",
     "Creator Coin": "creator-coin",
     Diamonds: "diamonds",
     NFTs: "nfts",
+    Blog: "blog",
   };
   appData: GlobalVarsService;
   userName: string;
@@ -215,7 +217,9 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   tweetToClaimLink() {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `Claiming my account on ${environment.node.url.replace("https://", "")} 💎🙌\n\n${environment.node.url}/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}\n\n@desoprotocol #deso`
+      `Claiming my account on ${environment.node.url.replace("https://", "")} 💎🙌\n\n${environment.node.url}/u/${
+        this.userName
+      }?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}\n\n@desoprotocol #deso`
     )}`;
   }
 

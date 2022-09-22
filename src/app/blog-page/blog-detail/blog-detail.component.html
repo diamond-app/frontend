@@ -1,13 +1,57 @@
 <app-page hideSidebar="true">
-  <div *ngIf="isLoading">Loading...</div>
-  <div *ngIf="!!blogData">
-    <header class="p-2">
-      <h1>{{ blogData.Title }}</h1>
-      <p>{{ blogData.Description }}</p>
+  <simple-center-loader [height]="200" *ngIf="isLoading"></simple-center-loader>
+  <article *ngIf="!isLoading && !!post">
+    <header class="p-2 mt-4">
+      <h1 class="font-weight-bold mb-2 fs-20px">{{ post.PostExtraData.Title }}</h1>
+      <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+      <div class="d-flex align-items-center py-2 fs-12px">
+        <a
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + post.ProfileEntryResponse.Username]"
+          class="link--unstyled font-weight-bold"
+        >
+          <img
+            class="rounded-circle overflow-hidden border border-dark mr-1"
+            height="24"
+            width="24"
+            [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, post.PosterPublicKeyBase58Check)"
+            alt=""
+          />
+          {{ post.ProfileEntryResponse.Username }}
+        </a>
+        <span class="ml-auto">{{ globalVars.convertTstampToDateOrTime(post.TimestampNanos) }}</span>
+      </div>
     </header>
-    <figure>
-      <img [src]="blogData.CoverImage" alt="" width="700" />
+    <figure class="w-100 overflow-hidden" [ngStyle]="{ maxHeight: '500px' }">
+      <img [src]="post.PostExtraData.CoverImage" alt="" width="100%" />
     </figure>
-    <quill-view [content]="blogData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+    <quill-view [content]="post.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+  </article>
+  <div class="w-100">
+    <feed-post-icon-row
+      class="mt-2px"
+      [post]="post"
+      [postContent]="post"
+      [hideNumbers]="false"
+      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+      [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+      (diamondSent)="diamondSent.emit()"
+    ></feed-post-icon-row>
   </div>
+  <section *ngIf="recentPosts.length > 0" class="mx-2 mt-5 mb-2 p-2">
+    <h2 class="font-weight-bold mb-2 ml-2 fs-16px">Recent Articles</h2>
+    <div class="list-group">
+      <a
+        [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + post.PostHashHex]"
+        *ngFor="let post of recentPosts"
+        class="list-group-item link--unstyled"
+      >
+        <article>
+          <header>
+            <h3 class="font-weight-bold fs-14px">{{ post.PostExtraData.Title }}</h3>
+            <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+          </header>
+        </article>
+      </a>
+    </div>
+  </section>
 </app-page>

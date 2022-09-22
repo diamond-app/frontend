@@ -323,11 +323,15 @@
                       'pb-10px': quotedContent && showQuotedContent,
                       'text-secondary': !!postContent.PostExtraData?.BlogDeltaRtfFormat
                     }"
-                    [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+                    [innerHTML]="
+                      !!postContent.PostExtraData?.BlogDeltaRtfFormat
+                        ? postContent.PostExtraData?.Description
+                        : (postContent.Body | sanitizeAndAutoLink)
+                    "
                     queryParamsHandling="merge"
                   ></span>
                   <a
-                    *ngIf="showReadMoreRollup"
+                    *ngIf="!postContent.PostExtraData?.BlogDeltaRtfFormat && showReadMoreRollup"
                     [routerLink]="getRouterLink('/' + this.globalVars.RouteNames.POSTS + '/' + postContent.PostHashHex)"
                     queryParamsHandling="merge"
                     class="link--unstyled"
@@ -335,13 +339,16 @@
                     &nbsp;
                     <strong>Read more</strong>
                   </a>
-                  <div class="py-1">
-                    <strong *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat" class="text-underline">
-                      Read full article
-                    </strong>
+                  <div *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat" class="py-1">
+                    <strong class="text-underline">Read full article</strong>
                   </div>
-                  <div *ngIf="postContent.PostExtraData.CoverImage" class="text-center mr-5 border border-light p-1">
-                    <img [src]="postContent.PostExtraData.CoverImage" [alt]="postContent.PostExtraData.Title" />
+                  <div *ngIf="postContent.PostExtraData.CoverImage" class="feed-post__image-container">
+                    <img
+                      class="feed-post__image"
+                      [src]="postContent.PostExtraData.CoverImage"
+                      [alt]="postContent.PostExtraData.Title"
+                      data-toggle="modal"
+                    />
                   </div>
                 </div>
 
