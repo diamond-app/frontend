@@ -36,6 +36,7 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
       )
       .toPromise()
       .then(({ Posts }) =>
+        // Filter to only posts that have a blog post rich text extra data field.
         Posts.filter(
           (p: PostEntryResponse) => typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined"
         )
@@ -49,7 +50,6 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
   }
 
   async _prependComment(uiPostParent: PostEntryResponse, index: number, newComment: PostEntryResponse) {
-    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     const affectedBlogPost = this.blogPosts[index];
     this.blogPosts = [
       ...this.blogPosts.slice(0, index),

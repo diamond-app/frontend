@@ -1,13 +1,32 @@
 <app-page hideSidebar="true">
-  <div *ngIf="isLoading">Loading...</div>
-  <div *ngIf="!!blogData">
+  <simple-center-loader [height]="200" *ngIf="isLoading"></simple-center-loader>
+  <article *ngIf="!!post">
     <header class="p-2">
-      <h1>{{ blogData.Title }}</h1>
-      <p>{{ blogData.Description }}</p>
+      <h1 class="font-weight-bold mb-2 fs-20px">{{ post.PostExtraData.Title }}</h1>
+      <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+      <div class="d-flex align-items-center py-2 fs-12px">
+        <a
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + post.ProfileEntryResponse.Username]"
+          class="link--unstyled font-weight-bold"
+        >
+          <img
+            class="rounded-circle overflow-hidden border border-dark mr-1"
+            height="24"
+            width="24"
+            [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, post.PosterPublicKeyBase58Check)"
+            alt=""
+          />
+          {{ post.ProfileEntryResponse.Username }}
+        </a>
+        <span class="ml-auto">{{ globalVars.convertTstampToDateOrTime(post.TimestampNanos) }}</span>
+      </div>
     </header>
     <figure>
-      <img [src]="blogData.CoverImage" alt="" width="700" />
+      <img [src]="post.PostExtraData.CoverImage" alt="" width="100%" />
     </figure>
-    <quill-view [content]="blogData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+    <quill-view [content]="post.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+  </article>
+  <div *ngIf="recentPosts.length > 0">
+    <article *ngFor="let post of recentPosts"></article>
   </div>
 </app-page>

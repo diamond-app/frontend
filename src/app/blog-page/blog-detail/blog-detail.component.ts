@@ -10,21 +10,22 @@ import { GlobalVarsService } from "src/app/global-vars.service";
   styleUrls: ["./blog-detail.component.scss"],
 })
 export class BlogDetailComponent implements AfterViewInit {
-  private pendingBlogPost: Promise<PostEntryResponse>;
-  content = "";
-  blogData: BlogPostExtraData;
-  isLoading: boolean;
+  isLoading = true;
+  post: PostEntryResponse;
+  recentPosts: PostEntryResponse[] = [];
 
   constructor(
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute
-  ) {
-    this.isLoading = true;
-    this.pendingBlogPost = this.backendApi
+  ) {}
+
+  ngAfterViewInit(): void {
+    // TODO: error handling
+    this.backendApi
       .GetSinglePost(
         this.globalVars.localNode,
-        route.snapshot.params.postHashHex /*PostHashHex*/,
+        this.route.snapshot.params.postHashHex /*PostHashHex*/,
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
         false /*FetchParents */,
         0 /*CommentOffset*/,
@@ -35,13 +36,31 @@ export class BlogDetailComponent implements AfterViewInit {
         false /*LoadAuthorThread*/
       )
       .toPromise()
-      .then(({ PostFound }) => PostFound);
-  }
-
-  ngAfterViewInit(): void {
-    this.pendingBlogPost
-      .then((p) => {
-        this.blogData = p.PostExtraData as BlogPostExtraData;
+      .then(({ PostFound }) => {
+        this.post = PostFound;
+        this.backendApi
+          .GetPostsForPublicKey(
+            this.globalVars.localNode,
+            "",
+            PostFound.PostEntryResponse.Username,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
+            "",
+            1000, // NOTE: we currently cant filter to only blog posts on the api, just get the last 1000 posts and filter them.
+            false /*MediaRequired*/
+          )
+          .toPromise()
+          .then(({ Posts }) =>
+            // Filter to only posts that have a blog post rich text extra data field.
+            Posts.filter(
+              (p: PostEntryResponse) => typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined"
+            ).slice(10)
+          )
+          .then((posts) => {
+            this.recentPosts = posts.map((p: PostEntryResponse) => ({
+              ...p,
+              ProfileEntryResponse: PostFound.PostEntryResponse,
+            }));
+          });
       })
       .finally(() => {
         this.isLoading = false;
