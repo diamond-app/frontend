@@ -242,16 +242,8 @@ export class GlobalVarsService {
   // How many unread notifications the user has
   unreadNotifications: number = 0;
 
-  // Variables that are stored while a user is in between setting up their profile and waiting for the jumio verification callback
-  newProfile: {
-    username: string;
-    profilePicInput: string;
-    highQualityProfilePicUrl: string;
-    coverPhotoUrl: string;
-    profileEmail: string;
-    profileDescription: string;
-  };
-  onboardingCreatorsToFollow: { [key: string]: boolean } = {};
+  // Track when the user is signing up to prevent redirects
+  userSigningUp: boolean = false;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -371,32 +363,6 @@ export class GlobalVarsService {
       result.isSameUserAsBefore = isSameUserAsBefore;
       observer.next(result);
     });
-  }
-
-  initializeOnboardingSettings() {
-    const newProfile = this.backendApi.GetStorage("newOnboardingProfile");
-    const newOnboardingCreatorsToFollow = this.backendApi.GetStorage("newOnboardingCreatorsToFollow");
-    if (!isNil(newProfile)) {
-      this.newProfile = newProfile;
-    }
-    if (!isNil(newOnboardingCreatorsToFollow)) {
-      this.onboardingCreatorsToFollow = newOnboardingCreatorsToFollow;
-    }
-  }
-
-  removeOnboardingSettings() {
-    this.backendApi.RemoveStorage("newOnboardingProfile");
-    this.backendApi.RemoveStorage("newOnboardingCreatorsToFollow");
-  }
-
-  setOnboardingProfile(newOnboardingProfile) {
-    this.backendApi.SetStorage("newOnboardingProfile", newOnboardingProfile);
-    this.newProfile = newOnboardingProfile;
-  }
-
-  setOnboardingCreatorsToFollow(onboardingCreatorsToFollow) {
-    this.backendApi.SetStorage("newOnboardingCreatorsToFollow", onboardingCreatorsToFollow);
-    this.onboardingCreatorsToFollow = onboardingCreatorsToFollow;
   }
 
   initializeShowPriceSetting() {
@@ -1051,6 +1017,7 @@ export class GlobalVarsService {
       })
       .subscribe((res) => {
         this.logEvent(`account : ${event} : success`);
+        this.userSigningUp = res.signedUp;
         this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
         this.updateEverything().add(() => {
           this.flowRedirect(res.signedUp);
@@ -1121,6 +1088,7 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
+      this.userSigningUp = false;
     } else if (this.router.url === RouteNames.LANDING) {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }

@@ -147,22 +147,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.loggedInUserSubscription = this.appData.loggedInUserObservable.subscribe((loggedInUserObservableResult) => {
       // Reload the follow feed if the logged in user changed
-      if (!loggedInUserObservableResult.isSameUserAsBefore) {
+      if (!loggedInUserObservableResult.isSameUserAsBefore && !this.globalVars.userSigningUp) {
         // Set activeTab to null so that a sensible default tab is selected
         this.activeTab = null;
         this._initializeFeeds();
-        this.fetchUserReferrals();
       }
     });
-
-    // Go see if there is an upcoming NFT showcase that should be advertised.
-    this.backendApi
-      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res: any) => {
-        if (res.NextNFTShowcaseTstamp) {
-          this.nextNFTShowcaseTime = new Date(res.NextNFTShowcaseTstamp / 1e6);
-        }
-      });
   }
 
   ngOnInit() {
