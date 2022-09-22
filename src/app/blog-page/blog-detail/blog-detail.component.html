@@ -1,7 +1,7 @@
 <app-page hideSidebar="true">
   <simple-center-loader [height]="200" *ngIf="isLoading"></simple-center-loader>
-  <article *ngIf="!!post">
-    <header class="p-2">
+  <article *ngIf="!isLoading && !!post">
+    <header class="p-2 mt-4">
       <h1 class="font-weight-bold mb-2 fs-20px">{{ post.PostExtraData.Title }}</h1>
       <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
       <div class="d-flex align-items-center py-2 fs-12px">
@@ -21,12 +21,26 @@
         <span class="ml-auto">{{ globalVars.convertTstampToDateOrTime(post.TimestampNanos) }}</span>
       </div>
     </header>
-    <figure>
+    <figure class="w-100 overflow-hidden" [ngStyle]="{ maxHeight: '500px' }">
       <img [src]="post.PostExtraData.CoverImage" alt="" width="100%" />
     </figure>
     <quill-view [content]="post.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
   </article>
-  <div *ngIf="recentPosts.length > 0">
-    <article *ngFor="let post of recentPosts"></article>
-  </div>
+  <section *ngIf="recentPosts.length > 0" class="mx-2 mt-5 mb-2 p-2">
+    <h2 class="font-weight-bold mb-2 ml-2 fs-16px">Recent Articles</h2>
+    <div class="list-group">
+      <a
+        [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + post.PostHashHex]"
+        *ngFor="let post of recentPosts"
+        class="list-group-item link--unstyled"
+      >
+        <article>
+          <header>
+            <h3 class="font-weight-bold fs-14px">{{ post.PostExtraData.Title }}</h3>
+            <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+          </header>
+        </article>
+      </a>
+    </div>
+  </section>
 </app-page>
