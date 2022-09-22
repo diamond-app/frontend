@@ -3,6 +3,19 @@ import { Observable, Subject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { HttpParams } from "@angular/common/http";
 
+export enum MessagingGroupOperation {
+  DEFAULT_KEY = "DefaultKey",
+  CREATE_GROUP = "CreateGroup",
+  ADD_MEMBERS = "AddMembers",
+}
+
+export type IdentityMessagingResponse = {
+  encryptedToApplicationGroupMessagingPrivateKey: string;
+  encryptedToMembersGroupMessagingPrivateKey: string[];
+  messagingKeySignature: string;
+  messagingPublicKeyBase58Check: string;
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -48,6 +61,13 @@ export class IdentityService {
       referralCode?: string;
       public_key?: string;
       accessLevelRequest?: string;
+      transactionSpendingLimitResponse?: any;
+      operation?: MessagingGroupOperation;
+      applicationMessagingPublicKeyBase58Check?: string;
+      updatedGroupOwnerPublicKeyBase58Check?: string;
+      updatedGroupKeyName?: string;
+      updatedMembersPublicKeysBase58Check?: string[];
+      updatedMembersKeyNames?: string[];
       hideJumio?: boolean;
     }
   ): Observable<any> {
@@ -85,6 +105,41 @@ export class IdentityService {
       httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
     }
 
+    if (params?.operation) {
+      httpParams = httpParams.append("operation", params.operation.toString());
+    }
+    if (params?.applicationMessagingPublicKeyBase58Check) {
+      httpParams = httpParams.append(
+        "applicationMessagingPublicKeyBase58Check",
+        params.applicationMessagingPublicKeyBase58Check
+      );
+    }
+    if (params?.updatedGroupOwnerPublicKeyBase58Check) {
+      httpParams = httpParams.append(
+        "updatedGroupOwnerPublicKeyBase58Check",
+        params.updatedGroupOwnerPublicKeyBase58Check
+      );
+    }
+    if (params?.updatedGroupKeyName) {
+      httpParams = httpParams.append("updatedGroupKeyName", params.updatedGroupKeyName);
+    }
+    if (params?.updatedMembersPublicKeysBase58Check) {
+      httpParams = httpParams.append(
+        "updatedMembersPublicKeysBase58Check",
+        params.updatedMembersPublicKeysBase58Check.join(",")
+      );
+    }
+    if (params?.updatedMembersKeyNames) {
+      httpParams = httpParams.append("updatedMembersKeyNames", params.updatedMembersKeyNames.join(","));
+    }
+
+    if (params?.transactionSpendingLimitResponse) {
+      httpParams = httpParams.append(
+        "transactionSpendingLimitResponse",
+        encodeURIComponent(JSON.stringify(params.transactionSpendingLimitResponse))
+      );
+    }
+
     const paramsStr = httpParams.toString();
     if (paramsStr) {
       url += `?${paramsStr}`;
@@ -100,6 +155,15 @@ export class IdentityService {
     this.identityWindowSubject = new Subject();
 
     return this.identityWindowSubject;
+  }
+
+  launchDefaultMessagingKey(publicKeyBase58Check: string): Observable<IdentityMessagingResponse> {
+    return this.launch("/messaging-group", {
+      operation: MessagingGroupOperation.DEFAULT_KEY,
+      applicationMessagingPublicKeyBase58Check: publicKeyBase58Check,
+      updatedGroupKeyName: "default-key",
+      updatedGroupOwnerPublicKeyBase58Check: publicKeyBase58Check,
+    });
   }
 
   // Outgoing messages
@@ -206,6 +270,15 @@ export class IdentityService {
     this.respond(this.identityWindow, id, {});
   }
 
+  private handleMessagingGroup(payload: any) {
+    this.identityWindow.close();
+    this.identityWindow = null;
+
+    this.identityWindowSubject.next(payload);
+    this.identityWindowSubject.complete();
+    this.identityWindowSubject = null;
+  }
+
   // Message handling
 
   private handleMessage(event: MessageEvent) {
@@ -237,6 +310,8 @@ export class IdentityService {
       this.handleLogin(payload);
     } else if (method === "info") {
       this.handleInfo(id);
+    } else if (method === "messagingGroup") {
+      this.handleMessagingGroup(payload);
     } else {
       console.error("Unhandled identity request");
       console.error(event);
