@@ -151,7 +151,7 @@ export class SignUpComponent {
               const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
               this.router
                 .navigate([redirectPath], {
-                  queryParams: { feedTab: "Following" },
+                  queryParams: { feedTab: "Hot" },
                   queryParamsHandling: "merge",
                 })
                 .then(() => {
