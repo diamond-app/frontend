@@ -140,7 +140,11 @@ export class CreateLongPostComponent {
   }
 
   async submit(event: Event) {
+    console.log("Here is the title: ", this.title);
+    console.log("Here is the event: ", event);
+    console.log("Before replace");
     await this.uploadAndReplaceBase64Images();
+    console.log("After replace");
 
     // TODO: Validate that all required fields are present and set.
     const postExtraData: BlogPostExtraData = {
@@ -152,12 +156,13 @@ export class CreateLongPostComponent {
 
     const postBody = `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`;
 
+    console.log("Before submit");
     // TODO: Add preview image URL to post object
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        "" /*PostHashHexToModify*/,
+        this.editPostHashHex /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {
