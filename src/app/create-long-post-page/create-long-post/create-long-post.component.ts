@@ -1,10 +1,11 @@
 // @ts-strict
-import { Component } from "@angular/core";
-import { ContentChange } from "ngx-quill";
-import { BackendApiService } from "src/app/backend-api.service";
+import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { ContentChange, QuillEditorComponent } from "ngx-quill";
+import { BackendApiService, GetSinglePostResponse, PostEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { has } from "lodash";
 import { environment } from "src/environments/environment";
+import { ActivatedRoute } from "@angular/router";
 
 export interface BlogPostExtraData {
   Title: string;
@@ -20,6 +21,12 @@ export interface BlogPostExtraData {
 })
 export class CreateLongPostComponent {
   private content = "";
+  coverImageUrl: string = "";
+  title: string = "";
+  description: string = "";
+  editPostHashHex: string = "";
+  blogDeltaRtfFormat: string = "";
+  quillEditor: QuillEditorComponent | undefined;
 
   formFieldNames = {
     coverImage: "coverImage",
@@ -27,15 +34,81 @@ export class CreateLongPostComponent {
     description: "description",
   };
 
-  constructor(private backendApi: BackendApiService, private globalVars: GlobalVarsService) {}
+  constructor(
+    private backendApi: BackendApiService,
+    private globalVars: GlobalVarsService,
+    private route: ActivatedRoute
+  ) {}
+
+  async checkForBlogPostFields(): Promise<void> {
+    if (this.route.snapshot.params?.postHashHex && this.route.snapshot.params.postHashHex !== "") {
+      this.editPostHashHex = this.route.snapshot.params.postHashHex;
+      await this.getAndSetBlogPostFields(this.editPostHashHex);
+    }
+  }
+
+  async onEditorCreated(event: any) {
+    await this.checkForBlogPostFields();
+    this.quillEditor = event;
+
+    if (this.blogDeltaRtfFormat !== "") {
+      const rtfJson = JSON.parse(this.blogDeltaRtfFormat);
+      // @ts-ignore
+      this.quillEditor.setContents(rtfJson);
+    }
+  }
+
+  async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
+    return this.backendApi
+      .GetSinglePost(
+        this.globalVars.localNode,
+        blogPostHashHex /*PostHashHex*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
+        false /*FetchParents */,
+        0 /*CommentOffset*/,
+        20 /*CommentLimit*/,
+        this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
+        2 /*ThreadLevelLimit*/,
+        1 /*ThreadLeafLimit*/,
+        false /*LoadAuthorThread*/
+      )
+      .toPromise();
+  }
+
+  async setFieldsFromPost(blogPost: GetSinglePostResponse): Promise<void> {
+    this.title = blogPost.PostFound.PostExtraData.Title;
+    this.description = blogPost.PostFound.PostExtraData.Description;
+    this.coverImageUrl = blogPost.PostFound.PostExtraData.CoverImage;
+    this.blogDeltaRtfFormat = blogPost.PostFound.PostExtraData.BlogDeltaRtfFormat;
+  }
+
+  async getAndSetBlogPostFields(blogPostHashHex: string): Promise<void> {
+    const blogPost = await this.getBlogPostToEdit(blogPostHashHex);
+    await this.setFieldsFromPost(blogPost);
+  }
 
   handleContentChange($event: ContentChange) {
-    console.log("Editor changed:", $event);
     this.content = $event.content;
   }
 
+  async _handleFileInput(files: FileList): Promise<void> {
+    let fileToUpload = files.item(0);
+    if (fileToUpload === null) {
+      return;
+    }
+    if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
+      this.globalVars._alertError("File selected does not have an image file type.");
+      return;
+    }
+    if (fileToUpload.size > 5 * 1024 * 1024) {
+      this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
+      return;
+    }
+    this.coverImageUrl = await this.uploadImage(fileToUpload);
+  }
+
   dataURLtoFile(dataurl: string, filename: string): File {
-    let arr = dataurl.split(",")
+    let arr = dataurl.split(",");
     // @ts-ignore
     let mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]),
@@ -47,6 +120,7 @@ export class CreateLongPostComponent {
     return new File([u8arr], filename, { type: mime });
   }
 
+  // TODO: Add file size checker
   // Loop through all ops in the Delta, convert any images from base64 to a File object, upload them, and then replace
   // that image in the Delta object with the link to the uploaded image.
   // This is done to drastically reduce on-chain file size.
@@ -54,7 +128,7 @@ export class CreateLongPostComponent {
     await Promise.all(
       // @ts-ignore
       this.content.ops.map(async (op) => {
-        if (has(op, "insert.image")) {
+        if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = this.dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
             .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, newFile)
@@ -67,18 +141,13 @@ export class CreateLongPostComponent {
 
   async submit(event: Event) {
     await this.uploadAndReplaceBase64Images();
-    const formElements = (event.currentTarget as HTMLFormElement)?.elements;
-    const imageEl = formElements.namedItem(this.formFieldNames.coverImage) as HTMLInputElement;
-    const titleEl = formElements.namedItem(this.formFieldNames.title) as HTMLInputElement;
-    const descEl = formElements.namedItem(this.formFieldNames.description) as HTMLInputElement;
 
-    const imgFile = imageEl.files?.item(0);
-
+    // TODO: Validate that all required fields are present and set.
     const postExtraData: BlogPostExtraData = {
-      Title: titleEl.value.trim(),
-      Description: descEl.value.trim(),
+      Title: this.title,
+      Description: this.description,
       BlogDeltaRtfFormat: JSON.stringify(this.content),
-      CoverImage: (imgFile && (await this.uploadImage(imgFile))) ?? "",
+      CoverImage: this.coverImageUrl,
     };
 
     const postBody = `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`;

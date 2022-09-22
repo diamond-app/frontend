@@ -248,6 +248,10 @@ export class User {
   MustCompleteTutorial: boolean;
 }
 
+export class GetSinglePostResponse {
+  PostFound: PostEntryResponse;
+}
+
 export class PostEntryResponse {
   PostHashHex: string;
   PosterPublicKeyBase58Check: string;

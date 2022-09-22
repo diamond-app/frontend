@@ -89,6 +89,7 @@ class RouteNames {
   // TODO: how do I make this /posts/new?
   public static CREATE_POST = "posts/new";
   public static CREATE_LONG_POST = "blog-posts/new";
+  public static EDIT_LONG_POST = "blog-posts/edit";
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
   public static GET_STARTER_DESO = "get-starter-deso";
@@ -140,6 +141,7 @@ const routes: Routes = [
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.CREATE_LONG_POST, component: CreateLongPostPageComponent, pathMatch: "full" },
+  { path: RouteNames.EDIT_LONG_POST + "/:postHashHex", component: CreateLongPostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS,

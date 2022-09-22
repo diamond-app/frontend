@@ -1,9 +1,17 @@
 <div>
   <form (submit)="submit($event)">
     <button class="publish-btn btn-primary" type="submit">Publish</button>
-    <input type="file" [name]="formFieldNames.coverImage" accept="image/*" />
-    <input type="text" [name]="formFieldNames.title" placeholder="Title..." />
-    <input type="text" [name]="formFieldNames.description" placeholder="Description..." />
+    <input
+      type="file"
+      (change)="_handleFileInput($event.target.files)"
+      accept="image/*"
+    />
+    <input type="text" [(ngModel)]="title" name="title" placeholder="Title..." />
+    <input type="text" [(ngModel)]="description" name="description" placeholder="Description..." />
   </form>
-  <quill-editor (onContentChanged)="handleContentChange($event)" placeholder="Write something..."></quill-editor>
+  <quill-editor
+    (onEditorCreated)="onEditorCreated($event)"
+    (onContentChanged)="handleContentChange($event)"
+    placeholder="Write something..."
+  ></quill-editor>
 </div>
