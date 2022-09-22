@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
@@ -9,10 +9,14 @@ import { GlobalVarsService } from "src/app/global-vars.service";
   templateUrl: "./blog-detail.component.html",
   styleUrls: ["./blog-detail.component.scss"],
 })
-export class BlogDetailComponent {
+export class BlogDetailComponent implements OnInit {
   isLoading = true;
   post: PostEntryResponse;
   recentPosts: PostEntryResponse[] = [];
+
+  @Output() diamondSent = new EventEmitter();
+
+  ngOnInit() {}
 
   constructor(
     private backendApi: BackendApiService,
@@ -50,6 +54,12 @@ export class BlogDetailComponent {
         });
     });
   }
+
+  // TODO
+  afterCommentCreatedCallback() {}
+
+  // TODO
+  afterRepostCreatedCallback() {}
 
   _fetchRecentPosts(profile: ProfileEntryResponse) {
     this.backendApi

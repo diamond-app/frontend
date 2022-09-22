@@ -26,6 +26,17 @@
     </figure>
     <quill-view [content]="post.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
   </article>
+  <div class="w-100">
+    <feed-post-icon-row
+      class="mt-2px"
+      [post]="post"
+      [postContent]="post"
+      [hideNumbers]="false"
+      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+      [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+      (diamondSent)="diamondSent.emit()"
+    ></feed-post-icon-row>
+  </div>
   <section *ngIf="recentPosts.length > 0" class="mx-2 mt-5 mb-2 p-2">
     <h2 class="font-weight-bold mb-2 ml-2 fs-16px">Recent Articles</h2>
     <div class="list-group">
