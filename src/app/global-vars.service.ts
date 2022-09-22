@@ -3,6 +3,7 @@ import {
   BackendApiService,
   BalanceEntryResponse,
   DeSoNode,
+  MessagingGroupEntryResponse,
   PostEntryResponse,
   TutorialStatus,
   User,
@@ -119,6 +120,7 @@ export class GlobalVarsService {
 
   // We track logged-in state
   loggedInUser: User;
+  loggedInUserDefaultKey: MessagingGroupEntryResponse;
   userList: User[] = [];
 
   // Temporarily track tutorial status here until backend it flowing
@@ -448,7 +450,52 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
+    if (user.BalanceNanos) {
+      this.getLoggedInUserDefaultKey();
+    }
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+  }
+
+  getLoggedInUserDefaultKey() {
+    this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+      if (!res) {
+        SwalHelper.fire({
+          html:
+            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+          showCancelButton: false,
+        }).then(({ isConfirmed }) => {
+          if (isConfirmed) {
+            // Ask user to generate a default key
+            this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+              if (res) {
+                this.backendApi
+                  .RegisterGroupMessagingKey(
+                    this.localNode,
+                    this.loggedInUser.PublicKeyBase58Check,
+                    res.messagingPublicKeyBase58Check,
+                    "default-key",
+                    res.messagingKeySignature,
+                    [],
+                    {},
+                    this.feeRateDeSoPerKB * 1e9
+                  )
+                  .subscribe((res) => {
+                    if (res) {
+                      this.backendApi
+                        .GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+                        .subscribe((messagingGroupEntryResponse) => {
+                          this.loggedInUserDefaultKey = messagingGroupEntryResponse;
+                        });
+                    }
+                  });
+              }
+            });
+          }
+        });
+      } else {
+        this.loggedInUserDefaultKey = res;
+      }
+    });
   }
 
   preventBackButton() {
