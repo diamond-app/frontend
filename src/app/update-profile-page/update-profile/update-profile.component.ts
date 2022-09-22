@@ -270,36 +270,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfile() {
-    if (!this.inTutorial) {
-      this._saveProfileUpdates();
-    } else {
-      this._cacheProfileUpdates();
-    }
-  }
-
-  _cacheProfileUpdates() {
-    // Trim the username input in case the user added a space at the end. Some mobile
-    // browsers may do this.
-    this.usernameInput = this.usernameInput.trim();
-    if (this.emailAddress === "") {
-      this.invalidEmailEntered = true;
-    } else {
-      this._validateEmail(this.emailAddress);
-    }
-    const hasErrors = this._setProfileErrors();
-    if (hasErrors || this.invalidEmailEntered) {
-      this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
-      return;
-    }
-    this.globalVars.newProfile = {
-      username: this.usernameInput,
-      profileEmail: this.emailAddress,
-      profileDescription: this.descriptionInput,
-      profilePicInput: this.profilePicInput,
-      highQualityProfilePicUrl: this.highQualityProfPicUrl,
-      coverPhotoUrl: this.coverPhotoUrl,
-    };
-    this.profileSaved.emit();
+    this._saveProfileUpdates();
   }
 
   _saveProfileUpdates() {
@@ -355,16 +326,15 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfileSuccess(comp: UpdateProfileComponent) {
-    comp.globalVars.celebrate();
+    if (!comp.inTutorial) {
+      comp.globalVars.celebrate();
+    }
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
+    comp.profileSaved.emit();
     if (comp.inTutorial) {
-      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.FOLLOW_CREATOR], {
-        queryParamsHandling: "merge",
-      });
       return;
     }
-    comp.profileSaved.emit();
     if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
       SwalHelper.fire({
         target: comp.globalVars.getTargetComponentSelector(),
