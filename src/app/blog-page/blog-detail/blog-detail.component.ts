@@ -1,8 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
+import { TranslocoService } from "@ngneat/transloco";
+import { ToastrService } from "ngx-toastr";
+import { Datasource } from "ngx-ui-scroll";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-blog-detail",
@@ -11,48 +17,253 @@ import { GlobalVarsService } from "src/app/global-vars.service";
 })
 export class BlogDetailComponent implements OnInit {
   isLoading = true;
-  post: PostEntryResponse;
+  currentPost: PostEntryResponse;
   recentPosts: PostEntryResponse[] = [];
+  scrollingDisabled = false;
+  threadManager?: ThreadManager;
+  isLoadingMoreReplies = false;
+
+  datasource = new Datasource<Thread>({
+    get: (index, count, success) => {
+      const numThreads = this.threadManager?.threadCount ?? 0;
+      if (this.scrollingDisabled && index > numThreads) {
+        success([]);
+      } else if (numThreads > index + count) {
+        // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
+        const start = index < 0 ? 0 : index;
+        success(this.threadManager?.threads.slice(start, index + count) ?? []);
+      } else {
+        this.getPost(this.route.snapshot.params.postHashHex, index, count)?.subscribe(
+          (res) => {
+            // If we got more comments, push them onto the list of comments, increase comment count
+            // and determine if we should continue scrolling
+            if (res.PostFound.Comments?.length) {
+              if (res.PostFound.Comments.length < count) {
+                this.scrollingDisabled = true;
+              }
+              this.threadManager?.addThreads(res.PostFound.Comments);
+              success(this.threadManager?.threads.slice(index, index + count) ?? []);
+            } else {
+              // If there are no more comments, we should stop scrolling
+              this.scrollingDisabled = true;
+              success([]);
+            }
+          },
+          (err) => {
+            this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          }
+        );
+      }
+    },
+    settings: {
+      startIndex: 0,
+      minIndex: 0,
+      bufferSize: 10,
+      windowViewport: true,
+      infinite: true,
+    },
+  });
 
   @Output() diamondSent = new EventEmitter();
+  @Output() postLoaded = new EventEmitter();
 
   ngOnInit() {}
 
   constructor(
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private titleService: Title,
+    private toastr: ToastrService,
+    private transloco: TranslocoService
   ) {
-    this.route.params.subscribe(() => {
-      // TODO: error handling
-      this.isLoading = true;
-      this.backendApi
-        .GetSinglePost(
-          this.globalVars.localNode,
-          route.snapshot.params.postHashHex /*PostHashHex*/,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
-          false /*FetchParents */,
-          0 /*CommentOffset*/,
-          20 /*CommentLimit*/,
-          this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
-          2 /*ThreadLevelLimit*/,
-          1 /*ThreadLeafLimit*/,
-          false /*LoadAuthorThread*/
-        )
-        .toPromise()
-        .then(({ PostFound }) => {
-          this.post = PostFound;
-          return PostFound;
-        })
-        .then((post: PostEntryResponse) => {
-          // NOTE: don't return this since it would block rendering for the
-          // initial post fetch.
-          this._fetchRecentPosts(post.ProfileEntryResponse);
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
+    // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
+    // behaves strangely and can reuse data from a previous post.
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.route.params.subscribe(({ postHashHex }) => {
+      this._setStateFromActivatedRoute(postHashHex);
     });
+  }
+
+  getPost(postHashHex: string, commentOffset = 0, commentLimit = 20) {
+    return this.backendApi.GetSinglePost(
+      this.globalVars.localNode,
+      postHashHex,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
+      false /*FetchParents */,
+      commentOffset,
+      commentLimit,
+      this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
+      2 /*ThreadLevelLimit*/,
+      1 /*ThreadLeafLimit*/,
+      true /*LoadAuthorThread*/
+    );
+  }
+
+  refreshPosts(postHashHex: string) {
+    return this.getPost(postHashHex)
+      .toPromise()
+      .then((res) => {
+        if (!res || !res.PostFound) {
+          this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
+        }
+        // we've loaded an NFT post on the blog detail page
+        if (
+          res.PostFound.IsNFT &&
+          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
+        ) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.route.snapshot.params.postHashHex], {
+            queryParamsHandling: "merge",
+          });
+          return;
+        }
+        // we've loaded a regular post on the blog detail page
+        if (!res.PostFound.PostExtraData?.BlogDeltaRtfFormat) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.route.snapshot.params.postHashHex], {
+            queryParamsHandling: "merge",
+          });
+          return;
+        }
+
+        // Set current post
+        this.currentPost = res.PostFound as PostEntryResponse;
+        this.threadManager = new ThreadManager(res.PostFound);
+        // const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
+        // this.postLoaded.emit(
+        //   `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
+        // );
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this._fetchRecentPosts(res.PostFound.ProfileEntryResponse);
+      })
+      .catch((err) => {
+        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+      });
+  }
+
+  /**
+   * When adding a reply to a subcomment, we need to know if it already has a
+   * reply rendered in the UI. If it does, we just increment the comment count.
+   * If it doesn't currently have a reply in the UI we increment the parent
+   * comment count AND render the new reply.
+   */
+  async appendToSubcommentList(
+    replyParent: PostEntryResponse,
+    threadParent: PostEntryResponse,
+    newPost: PostEntryResponse
+  ) {
+    const thread = this.threadManager?.getThread(threadParent.PostHashHex);
+
+    if (!thread) {
+      // NOTE: This should *never* happen unless there is a bug. It's totally
+      // unexpected in any case. Likely we should show a ui error.
+      console.error(`No thread found for PostHashHex ${threadParent.PostHashHex}`);
+      return;
+    }
+
+    await this.datasource.adapter.relax(); // Wait until it's ok to modify the data
+    await this.datasource.adapter.replace({
+      predicate: (item) => {
+        const dataSourceItem = item as any;
+        const post = dataSourceItem.data.parent;
+        if (post.PostHashHex === threadParent.PostHashHex) {
+          const beforeReplyCount = thread.children.length;
+          this.threadManager?.addReplyToComment(thread, replyParent, newPost);
+          const afterReplyCount = thread.children.length;
+
+          if (beforeReplyCount === afterReplyCount) {
+            // if we hit this case, it means only the count was incremented for an intermediate
+            // reply. The new reply was not actually rendered in the UI.
+            this.toastr.info("Your post was sent!", undefined, { positionClass: "toast-top-center", timeOut: 3000 });
+          }
+          return true;
+        }
+
+        return false;
+      },
+      items: [thread],
+    });
+  }
+
+  /**
+   * This prepends a new top level comment thread to the current post. Note this is transitory
+   * and only for UX convenience. If the comments are reloaded from the api it will appear in
+   * its true chronological position.
+   */
+  async prependToCommentList(postEntryResponse: PostEntryResponse) {
+    this.threadManager?.prependComment(postEntryResponse);
+
+    const thread = this.threadManager?.getThread(postEntryResponse.PostHashHex);
+
+    if (!thread) {
+      // NOTE: This should *never* happen unless there is a bug. It's totally
+      // unexpected in any case. Likely we should throw an error and show a ui
+      // error.
+      console.error(`No thread found for PostHashHex ${postEntryResponse.PostHashHex}`);
+      return;
+    }
+
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.prepend(thread);
+  }
+
+  /**
+   * When a subcomment is hidden we just need to decrement its parent's comment
+   * count. The feed component will internally adjust its UI to hide the
+   * content.
+   */
+  async onSubcommentHidden(commentToHide: PostEntryResponse, parentComment: PostEntryResponse, thread: Thread) {
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.replace({
+      predicate: (item) => {
+        const dataSourceItem = item as any;
+        if (dataSourceItem.data.parent.PostHashHex === thread.parent.PostHashHex) {
+          this.threadManager?.hideComment(thread, commentToHide, parentComment);
+          return true;
+        }
+
+        return false;
+      },
+      items: [thread],
+    });
+  }
+
+  isPostBlocked(post: any): boolean {
+    return this.globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check);
+  }
+
+  afterUserBlocked(blockedPubKey: any) {
+    this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
+  }
+
+  loadMoreReplies(thread: Thread, subcomment: PostEntryResponse) {
+    const errorMsg = this.transloco.translate("generic_toast_error");
+    this.isLoadingMoreReplies = true;
+    this.getPost(subcomment.PostHashHex, 0, 1)
+      ?.toPromise()
+      .then((res) => {
+        if (!res || !res.PostFound) {
+          // this *should* never happen.
+          this.toastr.error(errorMsg, undefined, {
+            positionClass: "toast-top-center",
+            timeOut: 3000,
+          });
+          return;
+        }
+
+        this.threadManager?.addChildrenToThread(thread, res.PostFound);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.toastr.error(errorMsg, undefined, {
+          positionClass: "toast-top-center",
+          timeOut: 3000,
+        });
+      })
+      .finally(() => {
+        this.isLoadingMoreReplies = false;
+      });
   }
 
   // TODO
@@ -60,6 +271,27 @@ export class BlogDetailComponent implements OnInit {
 
   // TODO
   afterRepostCreatedCallback() {}
+
+  _setStateFromActivatedRoute(postHashHex: string) {
+    // get the username of the target user (user whose followers / following we're obtaining)
+    // this.postHashHexRouteParam = route.snapshot.params.postHashHex;
+
+    // it's important that we call this here and not in ngOnInit. Angular does not reload components when only a param changes.
+    // We are responsible for refreshing the components.
+    // if the user is on a thread page and clicks on a comment, the currentPostHashHex will change, but angular won't "load a new
+    // page" and re-render the whole component using the new post hash. instead, angular will
+    // continue using the current component and merely change the URL. so we need to explictly
+    // refresh the posts every time the route changes.
+    if (this.threadManager) {
+      this.threadManager.reset();
+    }
+
+    this.isLoading = true;
+    this.refreshPosts(postHashHex).finally(() => {
+      this.isLoading = false;
+    });
+    this.datasource.adapter.reset();
+  }
 
   _fetchRecentPosts(profile: ProfileEntryResponse) {
     this.backendApi
@@ -76,8 +308,10 @@ export class BlogDetailComponent implements OnInit {
       .then(({ Posts }) =>
         // Filter to only posts that have a blog post rich text extra data field.
         Posts.filter(
-          (p: PostEntryResponse) => typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined"
-        ).slice(0, 10)
+          (p: PostEntryResponse) =>
+            typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined" &&
+            p.PostHashHex !== this.currentPost.PostHashHex
+        ).slice(0, 5)
       )
       .then((posts) => {
         this.recentPosts = posts.map((p: PostEntryResponse) => ({
