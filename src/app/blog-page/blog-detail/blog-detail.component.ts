@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
@@ -15,7 +15,7 @@ import { environment } from "src/environments/environment";
   templateUrl: "./blog-detail.component.html",
   styleUrls: ["./blog-detail.component.scss"],
 })
-export class BlogDetailComponent implements OnInit {
+export class BlogDetailComponent {
   isLoading = true;
   currentPost: PostEntryResponse;
   recentPosts: PostEntryResponse[] = [];
@@ -66,8 +66,6 @@ export class BlogDetailComponent implements OnInit {
 
   @Output() diamondSent = new EventEmitter();
   @Output() postLoaded = new EventEmitter();
-
-  ngOnInit() {}
 
   constructor(
     private backendApi: BackendApiService,
@@ -267,7 +265,23 @@ export class BlogDetailComponent implements OnInit {
   }
 
   // TODO
-  afterCommentCreatedCallback() {}
+  async afterCommentCreatedCallback(comment: PostEntryResponse) {
+    debugger;
+    this.threadManager?.prependComment(comment);
+
+    const thread = this.threadManager?.getThread(comment.PostHashHex);
+
+    if (!thread) {
+      // NOTE: This should *never* happen unless there is a bug. It's totally
+      // unexpected in any case. Likely we should throw an error and show a ui
+      // error.
+      console.error(`No thread found for PostHashHex ${comment.PostHashHex}`);
+      return;
+    }
+
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.prepend(thread);
+  }
 
   // TODO
   afterRepostCreatedCallback() {}
