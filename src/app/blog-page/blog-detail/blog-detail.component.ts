@@ -266,7 +266,6 @@ export class BlogDetailComponent {
 
   // TODO
   async afterCommentCreatedCallback(comment: PostEntryResponse) {
-    debugger;
     this.threadManager?.prependComment(comment);
 
     const thread = this.threadManager?.getThread(comment.PostHashHex);
