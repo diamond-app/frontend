@@ -1,11 +1,12 @@
 // @ts-strict
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ContentChange, QuillEditorComponent } from "ngx-quill";
 import { BackendApiService, GetSinglePostResponse, PostEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { has } from "lodash";
 import { environment } from "src/environments/environment";
 import { ActivatedRoute } from "@angular/router";
+import { Title } from "@angular/platform-browser";
 
 export interface BlogPostExtraData {
   Title: string;
@@ -19,7 +20,7 @@ export interface BlogPostExtraData {
   templateUrl: "./create-long-post.component.html",
   styleUrls: ["./create-long-post.component.scss"],
 })
-export class CreateLongPostComponent {
+export class CreateLongPostComponent implements OnInit {
   private content = "";
   coverImageUrl: string = "";
   title: string = "";
@@ -37,8 +38,17 @@ export class CreateLongPostComponent {
   constructor(
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private titleService: Title
   ) {}
+
+  ngOnInit() {
+    this.titleService.setTitle(`Publish Blog Post`);
+  }
+
+  showCoverPhoto(): boolean {
+    return this.coverImageUrl !== "";
+  }
 
   async checkForBlogPostFields(): Promise<void> {
     if (this.route.snapshot.params?.postHashHex && this.route.snapshot.params.postHashHex !== "") {

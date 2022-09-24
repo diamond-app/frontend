@@ -1,11 +1,35 @@
 <div>
   <form (submit)="submit($event)">
     <button class="publish-btn btn-primary" type="submit">Publish</button>
-    <input
-      type="file"
-      (change)="_handleFileInput($event.target.files)"
-      accept="image/*"
-    />
+    <div
+      *ngIf="showCoverPhoto()"
+      [style.background-image]="'url(' + coverImageUrl + ')'"
+      style="height: 250px; background-repeat: no-repeat; background-position: center; background-size: cover"
+    ></div>
+    <div class="d-flex align-items-center justify-content-center my-10px">
+      <div class="d-flex position-relative">
+        <input
+          class="file-upload-button"
+          accept="image/png, image/jpeg"
+          type="file"
+          (change)="_handleFileInput($event.target.files)"
+          style="
+            position: absolute;
+            left: 0;
+            top: 0px;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 110px;
+            height: 45px;
+            padding: 0;
+          "
+        />
+        <button class="br-6px border fs-13px p-2px" type="file" style="width: 110px; height: 45px; background: var(--text)">
+          {{ showCoverPhoto() ? 'Update' : 'Upload' }} Preview Photo
+        </button>
+      </div>
+    </div>
     <input type="text" [(ngModel)]="title" name="title" placeholder="Title..." />
     <input type="text" [(ngModel)]="description" name="description" placeholder="Description..." />
   </form>
