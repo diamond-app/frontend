@@ -1,38 +1,42 @@
+<!-- TODO: do we want the back button header thing? -->
 <app-page hideSidebar="true">
-  <simple-center-loader [height]="200" *ngIf="isLoading"></simple-center-loader>
-  <article *ngIf="!isLoading && !!post">
+  <div *ngIf="isLoading" class="mt-5">
+    <simple-center-loader [height]="200"></simple-center-loader>
+  </div>
+  <article *ngIf="!isLoading && !!currentPost">
     <header class="p-2 mt-4">
-      <h1 class="font-weight-bold mb-2 fs-20px">{{ post.PostExtraData.Title }}</h1>
-      <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+      <h1 class="font-weight-bold mb-2 fs-20px">{{ currentPost.PostExtraData.Title }}</h1>
+      <p class="text-secondary fs-13px">{{ currentPost.PostExtraData.Description }}</p>
       <div class="d-flex align-items-center py-2 fs-12px">
         <a
-          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + post.ProfileEntryResponse.Username]"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + currentPost.ProfileEntryResponse.Username]"
+          [queryParams]="{ tab: 'blog' }"
           class="link--unstyled font-weight-bold"
         >
           <img
             class="rounded-circle overflow-hidden border border-dark mr-1"
             height="24"
             width="24"
-            [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, post.PosterPublicKeyBase58Check)"
+            [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, currentPost.PosterPublicKeyBase58Check)"
             alt=""
           />
-          {{ post.ProfileEntryResponse.Username }}
+          {{ currentPost.ProfileEntryResponse.Username }}
         </a>
-        <span class="ml-auto">{{ globalVars.convertTstampToDateOrTime(post.TimestampNanos) }}</span>
+        <span class="ml-auto">{{ globalVars.convertTstampToDateOrTime(currentPost.TimestampNanos) }}</span>
       </div>
     </header>
     <figure class="w-100 overflow-hidden" [ngStyle]="{ maxHeight: '500px' }">
-      <img [src]="post.PostExtraData.CoverImage" alt="" width="100%" />
+      <img [src]="currentPost.PostExtraData.CoverImage" alt="" width="100%" />
     </figure>
-    <quill-view [content]="post.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+    <quill-view [content]="currentPost.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
   </article>
-  <div class="w-100">
+  <div *ngIf="!isLoading && !!currentPost" class="w-100 px-5 py-2">
     <feed-post-icon-row
       class="mt-2px"
-      [post]="post"
-      [postContent]="post"
+      [post]="currentPost"
+      [postContent]="currentPost"
       [hideNumbers]="false"
-      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+      [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
       [afterRepostCreatedCallback]="afterRepostCreatedCallback"
       (diamondSent)="diamondSent.emit()"
     ></feed-post-icon-row>
@@ -41,17 +45,86 @@
     <h2 class="font-weight-bold mb-2 ml-2 fs-16px">Recent Articles</h2>
     <div class="list-group">
       <a
-        [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + post.PostHashHex]"
-        *ngFor="let post of recentPosts"
+        *ngFor="let recentPost of recentPosts"
+        [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + recentPost.PostHashHex]"
         class="list-group-item link--unstyled"
       >
         <article>
-          <header>
-            <h3 class="font-weight-bold fs-14px">{{ post.PostExtraData.Title }}</h3>
-            <p class="text-secondary fs-13px">{{ post.PostExtraData.Description }}</p>
+          <header class="d-flex">
+            <div class="w-75">
+              <h3 class="font-weight-bold fs-14px">{{ recentPost.PostExtraData.Title }}</h3>
+              <p class="text-secondary fs-13px">{{ recentPost.PostExtraData.Description }}</p>
+            </div>
+            <p class="ml-auto fs-12px">{{ globalVars.convertTstampToDateOrTime(recentPost.TimestampNanos) }}</p>
           </header>
         </article>
       </a>
     </div>
   </section>
+  <div class="post-thread__comment-container" id="comment-scroller">
+    <div #uiScroll *uiScroll="let thread of datasource; let i = index" [attr.data-index]="i">
+      <div
+        class="post-thread__single-comment"
+        [ngClass]="{ 'first-item': i === 0, 'last-item': i === threadManager.threadCount - 1 }"
+      >
+        <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
+        <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
+        <feed-post
+          *ngIf="thread.parent.ProfileEntryResponse != null"
+          [includePaddingOnPost]="true"
+          [post]="thread.parent"
+          [parentPost]="currentPost"
+          [contentShouldLinkToThread]="true"
+          [showIconRow]="true"
+          [showReplyingToContent]="true"
+          [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, thread.parent)"
+          [isThreaded]="!!thread.children.length"
+          [hasThreadIndicator]="!!thread.children.length"
+          [isOnThreadPage]="true"
+          [blocked]="isPostBlocked(thread.parent)"
+          (postDeleted)="onThreadParentHidden(thread.parent)"
+          (userBlocked)="afterUserBlocked($event)"
+        ></feed-post>
+
+        <div *ngFor="let subcommentPost of thread.children; let j = index" [attr.data-index]="j">
+          <div class="post-thread__subcomment-container" *ngIf="!isPostBlocked(thread.parent)">
+            <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
+            <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
+            <feed-post
+              *ngIf="subcommentPost.ProfileEntryResponse != null"
+              [includePaddingOnPost]="true"
+              [post]="subcommentPost"
+              [parentPost]="thread.children[j - 1] || thread.parent"
+              [contentShouldLinkToThread]="true"
+              [showIconRow]="true"
+              [showDropdown]="true"
+              [showReplyingToContent]="true"
+              [isThreaded]="true"
+              [hasThreadIndicator]="j !== thread.children.length - 1"
+              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
+              [isOnThreadPage]="true"
+              [isThreadChild]="true"
+              [blocked]="isPostBlocked(subcommentPost)"
+              (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
+              (userBlocked)="afterUserBlocked($event)"
+            >
+              <ng-container *ngIf="j === thread.children.length - 1 && subcommentPost.CommentCount" feed-post-footer>
+                <div *ngIf="isLoadingMoreReplies" class="post-thread__see-more-loader">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <button
+                  *ngIf="!isLoadingMoreReplies"
+                  class="post-thread__see-more-button"
+                  (click)="loadMoreReplies(thread, subcommentPost)"
+                  #seeMoreReplies
+                >
+                  {{ "post_thread.see_more" | transloco }}
+                </button>
+              </ng-container>
+            </feed-post>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-page>
