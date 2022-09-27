@@ -134,32 +134,32 @@ export class SignUpComponent {
   }
 
   finishOnboarding() {
+    // this.backendApi
+    //   .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+    //   .subscribe(() => {
     this.backendApi
-      .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .UpdateTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        TutorialStatus.COMPLETE,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        true
+      )
       .subscribe(() => {
-        this.backendApi
-          .UpdateTutorialStatus(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            TutorialStatus.COMPLETE,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            true
-          )
-          .subscribe(() => {
-            this.globalVars.updateEverything().add(() => {
-              const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-              const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
-              this.router
-                .navigate([redirectPath], {
-                  queryParams: { feedTab: "Hot" },
-                  queryParamsHandling: "merge",
-                })
-                .then(() => {
-                  this.launchTutorial();
-                });
+        this.globalVars.updateEverything().add(() => {
+          const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
+          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+          this.router
+            .navigate([redirectPath], {
+              queryParams: { feedTab: "Hot" },
+              queryParamsHandling: "merge",
+            })
+            .then(() => {
+              this.launchTutorial();
             });
-          });
+        });
       });
+    // });
   }
 
   launchTutorial() {
