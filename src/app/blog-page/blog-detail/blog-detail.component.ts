@@ -282,23 +282,8 @@ export class BlogDetailComponent {
     await this.datasource.adapter.prepend(thread);
   }
 
-  // TODO
-  afterRepostCreatedCallback() {}
-
   _setStateFromActivatedRoute(postHashHex: string) {
-    // get the username of the target user (user whose followers / following we're obtaining)
-    // this.postHashHexRouteParam = route.snapshot.params.postHashHex;
-
-    // it's important that we call this here and not in ngOnInit. Angular does not reload components when only a param changes.
-    // We are responsible for refreshing the components.
-    // if the user is on a thread page and clicks on a comment, the currentPostHashHex will change, but angular won't "load a new
-    // page" and re-render the whole component using the new post hash. instead, angular will
-    // continue using the current component and merely change the URL. so we need to explictly
-    // refresh the posts every time the route changes.
-    if (this.threadManager) {
-      this.threadManager.reset();
-    }
-
+    this.threadManager?.reset();
     this.isLoading = true;
     this.refreshPosts(postHashHex).finally(() => {
       this.isLoading = false;

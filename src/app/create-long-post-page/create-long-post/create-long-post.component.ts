@@ -1,39 +1,31 @@
 // @ts-strict
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
-import { ContentChange, QuillEditorComponent } from "ngx-quill";
-import { BackendApiService, GetSinglePostResponse, PostEntryResponse } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { has } from "lodash";
-import { environment } from "src/environments/environment";
-import { ActivatedRoute } from "@angular/router";
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-
-export interface BlogPostExtraData {
-  Title: string;
-  Description: string;
-  BlogDeltaRtfFormat: string;
-  CoverImage: string;
-}
+import { ActivatedRoute } from "@angular/router";
+import { has } from "lodash";
+import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
+import { GlobalVarsService } from "src/app/global-vars.service";
+import { environment } from "src/environments/environment";
+import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
 
 @Component({
   selector: "create-long-post",
   templateUrl: "./create-long-post.component.html",
   styleUrls: ["./create-long-post.component.scss"],
 })
-export class CreateLongPostComponent implements OnInit {
-  private content = "";
-  coverImageUrl: string = "";
-  title: string = "";
-  description: string = "";
+export class CreateLongPostComponent implements AfterViewInit {
+  imagePreviewDataURL?: string;
+  coverImageFile?: File;
+  model = new FormModel();
+  isDraggingFileOverDropZone = false;
+  isLoadingEditModel = true;
   editPostHashHex: string = "";
-  blogDeltaRtfFormat: string = "";
-  quillEditor: QuillEditorComponent | undefined;
 
-  formFieldNames = {
-    coverImage: "coverImage",
-    title: "title",
-    description: "description",
-  };
+  get coverImgSrc() {
+    return this.imagePreviewDataURL ?? this.model.coverImageURL;
+  }
+
+  @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
 
   constructor(
     private backendApi: BackendApiService,
@@ -42,31 +34,55 @@ export class CreateLongPostComponent implements OnInit {
     private titleService: Title
   ) {}
 
-  ngOnInit() {
+  async ngAfterViewInit() {
     this.titleService.setTitle(`Publish Blog Post`);
-  }
 
-  showCoverPhoto(): boolean {
-    return this.coverImageUrl !== "";
-  }
-
-  async checkForBlogPostFields(): Promise<void> {
-    if (this.route.snapshot.params?.postHashHex && this.route.snapshot.params.postHashHex !== "") {
+    if (this.route.snapshot.params?.postHashHex) {
       this.editPostHashHex = this.route.snapshot.params.postHashHex;
-      await this.getAndSetBlogPostFields(this.editPostHashHex);
+      // TODO: needs try/catch
+      try {
+        const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
+        if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
+          const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
+          Object.assign(this.model, {
+            title: editPostData.Title,
+            description: editPostData.Description,
+            contentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
+            coverImageURL: editPostData.CoverImage,
+          });
+        }
+      } catch (e) {
+        debugger;
+        // TODO: error handling
+      }
     }
+
+    this.isLoadingEditModel = false;
   }
 
-  async onEditorCreated(event: any) {
-    await this.checkForBlogPostFields();
-    this.quillEditor = event;
+  // async onEditorCreated() {
+  //   if (this.route.snapshot.params?.postHashHex) {
+  //     this.editPostHashHex = this.route.snapshot.params.postHashHex;
+  //     // TODO: needs try/catch
+  //     try {
+  //       const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
+  //       if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
+  //         const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
+  //         Object.assign(this.model, {
+  //           title: editPostData.Title,
+  //           description: editPostData.Description,
+  //           contentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
+  //           coverImageURL: editPostData.CoverImage,
+  //         });
+  //       }
+  //     } catch (e) {
+  //       debugger;
+  //       // TODO: error handling
+  //     }
+  //   }
 
-    if (this.blogDeltaRtfFormat !== "") {
-      const rtfJson = JSON.parse(this.blogDeltaRtfFormat);
-      // @ts-ignore
-      this.quillEditor.setContents(rtfJson);
-    }
-  }
+  //   this.isLoadingEditModel = false;
+  // }
 
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
     return this.backendApi
@@ -76,70 +92,23 @@ export class CreateLongPostComponent implements OnInit {
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
         false /*FetchParents */,
         0 /*CommentOffset*/,
-        20 /*CommentLimit*/,
+        0 /*CommentLimit*/,
         this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
-        2 /*ThreadLevelLimit*/,
-        1 /*ThreadLeafLimit*/,
+        0 /*ThreadLevelLimit*/,
+        0 /*ThreadLeafLimit*/,
         false /*LoadAuthorThread*/
       )
       .toPromise();
   }
 
-  async setFieldsFromPost(blogPost: GetSinglePostResponse): Promise<void> {
-    this.title = blogPost.PostFound.PostExtraData.Title;
-    this.description = blogPost.PostFound.PostExtraData.Description;
-    this.coverImageUrl = blogPost.PostFound.PostExtraData.CoverImage;
-    this.blogDeltaRtfFormat = blogPost.PostFound.PostExtraData.BlogDeltaRtfFormat;
-  }
-
-  async getAndSetBlogPostFields(blogPostHashHex: string): Promise<void> {
-    const blogPost = await this.getBlogPostToEdit(blogPostHashHex);
-    await this.setFieldsFromPost(blogPost);
-  }
-
-  handleContentChange($event: ContentChange) {
-    this.content = $event.content;
-  }
-
-  async _handleFileInput(files: FileList): Promise<void> {
-    let fileToUpload = files.item(0);
-    if (fileToUpload === null) {
-      return;
-    }
-    if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
-      this.globalVars._alertError("File selected does not have an image file type.");
-      return;
-    }
-    if (fileToUpload.size > 5 * 1024 * 1024) {
-      this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
-      return;
-    }
-    this.coverImageUrl = await this.uploadImage(fileToUpload);
-  }
-
-  dataURLtoFile(dataurl: string, filename: string): File {
-    let arr = dataurl.split(",");
-    // @ts-ignore
-    let mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  }
-
-  // TODO: Add file size checker
   // Loop through all ops in the Delta, convert any images from base64 to a File object, upload them, and then replace
   // that image in the Delta object with the link to the uploaded image.
   // This is done to drastically reduce on-chain file size.
   async uploadAndReplaceBase64Images() {
     await Promise.all(
-      // @ts-ignore
-      this.content.ops.map(async (op) => {
+      this.model.contentDelta.ops.map(async (op: any) => {
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
-          const newFile = this.dataURLtoFile(op.insert.image, "uploaded_image");
+          const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
             .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, newFile)
             .toPromise();
@@ -149,48 +118,44 @@ export class CreateLongPostComponent implements OnInit {
     );
   }
 
-  async submit(event: Event) {
-    console.log("Here is the title: ", this.title);
-    console.log("Here is the event: ", event);
-    console.log("Before replace");
+  async submit(ev: Event) {
+    ev.preventDefault();
     await this.uploadAndReplaceBase64Images();
-    console.log("After replace");
-
-    // TODO: Validate that all required fields are present and set.
+    // TODO: validation for required fields, etc
+    // TODO: handle case of removing cover image from existing post or not editing it at all.
     const postExtraData: BlogPostExtraData = {
-      Title: this.title,
-      Description: this.description,
-      BlogDeltaRtfFormat: JSON.stringify(this.content),
-      CoverImage: this.coverImageUrl,
+      Title: this.model.title.trim(),
+      Description: this.model.description.trim(),
+      BlogDeltaRtfFormat: JSON.stringify(this.model.contentDelta),
+      CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? "",
     };
 
-    const postBody = `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`;
+    console.log("submit post", postExtraData);
 
-    console.log("Before submit");
-    // TODO: Add preview image URL to post object
-    this.backendApi
-      .SubmitPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.editPostHashHex /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
-        "" /*Title*/,
-        {
-          Body: postBody,
-        } /*BodyObj*/,
-        "" /*RepostedPostHashHex*/,
-        postExtraData /*PostExtraData*/,
-        "" /*Sub*/,
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        false
-      )
-      .toPromise()
-      .then((res) => {
-        console.log(
-          `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
-        );
-      });
+    // this.backendApi
+    //   .SubmitPost(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser.PublicKeyBase58Check,
+    //     this.editPostHashHex /*PostHashHexToModify*/,
+    //     "" /*ParentPostHashHex*/,
+    //     "" /*Title*/,
+    //     {
+    //       Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
+    //       ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+    //     } /*BodyObj*/,
+    //     "" /*RepostedPostHashHex*/,
+    //     postExtraData /*PostExtraData*/,
+    //     "" /*Sub*/,
+    //     false /*IsHidden*/,
+    //     this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+    //     false
+    //   )
+    //   .toPromise()
+    //   .then((res) => {
+    //     console.log(
+    //       `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
+    //     );
+    //   });
   }
 
   /**
@@ -210,4 +175,75 @@ export class CreateLongPostComponent implements OnInit {
         this.globalVars._alertError(JSON.stringify(err.error.error));
       });
   }
+
+  onDragOver(ev: any) {
+    ev.preventDefault();
+    this.isDraggingFileOverDropZone = true;
+  }
+
+  onDragEnter(ev: any) {
+    ev.preventDefault();
+    this.isDraggingFileOverDropZone = true;
+  }
+
+  onDragLeave(ev: any) {
+    ev.preventDefault();
+    this.isDraggingFileOverDropZone = false;
+  }
+
+  onClickSelectFile(ev: any) {
+    ev.preventDefault();
+    if (!this.coverImgInput?.nativeElement) {
+      // TODO: error toast
+      console.log("no input element ref");
+      return;
+    }
+
+    this.coverImgInput.nativeElement.click();
+  }
+
+  onDropImg(ev: DragEvent) {
+    ev.preventDefault();
+    this.isDraggingFileOverDropZone = false;
+    const file = ev?.dataTransfer?.files?.[0];
+    if (!file) {
+      // TODO: we need some kind of toast error for this scenario.
+      console.log("No files dropped!");
+      return;
+    }
+
+    this.handleCoverImgFileChange(file);
+  }
+
+  onFileSelected(ev: Event) {
+    ev.preventDefault();
+    const file = (ev.currentTarget as HTMLInputElement)?.files?.[0];
+
+    if (!file) {
+      // TODO: we need some kind of toast error for this scenario.
+      console.log("No files dropped!");
+      return;
+    }
+
+    this.handleCoverImgFileChange(file);
+  }
+
+  async handleCoverImgFileChange(file: File) {
+    this.imagePreviewDataURL = await fileToDataURL(file);
+    this.coverImageFile = file;
+  }
+}
+
+export interface BlogPostExtraData {
+  Title: string;
+  Description: string;
+  BlogDeltaRtfFormat: string;
+  CoverImage: string;
+}
+
+class FormModel {
+  title = "";
+  description = "";
+  contentDelta: any = {};
+  coverImageURL = "";
 }
