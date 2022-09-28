@@ -92,10 +92,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-          this.model = {
-            ...(editPost.PostFound?.PostExtraData as BlogPostExtraData),
-            ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
-          };
+          this.model = { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) };
         }
       } catch (e) {
         // TODO: error handling
