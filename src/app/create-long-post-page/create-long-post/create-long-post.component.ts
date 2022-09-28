@@ -54,7 +54,6 @@ export class CreateLongPostComponent implements AfterViewInit {
     CoverImage: "",
   };
   isDraggingFileOverDropZone = false;
-  didRemoveCoverImg = false;
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   quillModules = {
@@ -258,6 +257,5 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.imagePreviewDataURL = undefined;
     this.coverImageFile = undefined;
     this.model.CoverImage = "";
-    this.didRemoveCoverImg = true;
   }
 }
