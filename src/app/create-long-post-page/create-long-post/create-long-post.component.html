@@ -12,11 +12,11 @@
         (dragover)="onDragOver($event)"
         (dragenter)="onDragEnter($event)"
         (dragleave)="onDragLeave($event)"
-        class="border rounded text-center d-flex justify-content-center align-items-center position-relative"
+        class="border rounded text-center d-flex justify-content-center align-items-center position-relative bg-light"
         [ngClass]="{ 'border-dotted': isDraggingFileOverDropZone }"
         tabindex="0"
         [ngStyle]="{
-          height: coverImgSrc ? 'auto' : '500px',
+          height: '300px',
           width: '100%',
           overflow: 'hidden',
           border: isDraggingFileOverDropZone ? '3px dashed blue !important' : '',
@@ -25,8 +25,8 @@
       >
         <input #coverImgInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
         <div *ngIf="coverImgSrc" class="position-absolute p-2" [ngStyle]="{ top: 0, right: 0 }">
-          <button class="rounded mr-1">Change</button>
-          <button class="rounded">Remove</button>
+          <button type="button" class="rounded mr-1" (click)="onClickSelectFile($event)">Change</button>
+          <button type="button" class="rounded" (click)="onRemoveCoverImg($event)">Remove</button>
         </div>
         <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
         <span *ngIf="!coverImgSrc">
@@ -35,8 +35,30 @@
         </span>
       </div>
     </div>
-    <input [(ngModel)]="model.title" name="blogTitle" type="text" placeholder="Headline..." />
-    <input [(ngModel)]="model.description" name="blogTagline" type="text" placeholder="Description..." />
+    <div class="p-2">
+      <input
+        [(ngModel)]="model.title"
+        name="blogTitle"
+        type="text"
+        placeholder="Headline..."
+        class="mb-2 rounded"
+        autocomplete="off"
+      />
+      <input
+        [(ngModel)]="model.description"
+        name="blogTagline"
+        type="text"
+        placeholder="Description..."
+        class="rounded"
+        autocomplete="off"
+      />
+    </div>
   </form>
-  <quill-editor [(ngModel)]="model.contentDelta" format="object" placeholder="Write something..."></quill-editor>
+  <quill-editor
+    [modules]="quillModules"
+    [(ngModel)]="model.contentDelta"
+    (onEditorCreated)="onEditorCreated($event)"
+    format="object"
+    placeholder="Write something..."
+  ></quill-editor>
 </div>

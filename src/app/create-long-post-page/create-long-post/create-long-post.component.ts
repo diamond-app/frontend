@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { has } from "lodash";
+import Quill from "quill";
 import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
@@ -18,11 +19,24 @@ export class CreateLongPostComponent implements AfterViewInit {
   coverImageFile?: File;
   model = new FormModel();
   isDraggingFileOverDropZone = false;
-  isLoadingEditModel = true;
-  editPostHashHex: string = "";
+  isLoadingEditModel: boolean;
+  quillModules = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike"], // toggled buttons
+      ["blockquote", "code-block"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ script: "sub" }, { script: "super" }], // superscript/subscript
+      [{ header: [1, 2, 3, false] }],
+      ["link", "image", "video"], // link and image, video
+    ],
+  };
 
   get coverImgSrc() {
     return this.imagePreviewDataURL ?? this.model.coverImageURL;
+  }
+
+  get editPostHashHex() {
+    return this.route.snapshot.params?.postHashHex;
   }
 
   @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
@@ -32,14 +46,14 @@ export class CreateLongPostComponent implements AfterViewInit {
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private titleService: Title
-  ) {}
+  ) {
+    this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
+  }
 
   async ngAfterViewInit() {
     this.titleService.setTitle(`Publish Blog Post`);
 
-    if (this.route.snapshot.params?.postHashHex) {
-      this.editPostHashHex = this.route.snapshot.params.postHashHex;
-      // TODO: needs try/catch
+    if (this.editPostHashHex) {
       try {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
@@ -55,34 +69,14 @@ export class CreateLongPostComponent implements AfterViewInit {
         debugger;
         // TODO: error handling
       }
-    }
 
-    this.isLoadingEditModel = false;
+      this.isLoadingEditModel = false;
+    }
   }
 
-  // async onEditorCreated() {
-  //   if (this.route.snapshot.params?.postHashHex) {
-  //     this.editPostHashHex = this.route.snapshot.params.postHashHex;
-  //     // TODO: needs try/catch
-  //     try {
-  //       const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
-  //       if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
-  //         const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-  //         Object.assign(this.model, {
-  //           title: editPostData.Title,
-  //           description: editPostData.Description,
-  //           contentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
-  //           coverImageURL: editPostData.CoverImage,
-  //         });
-  //       }
-  //     } catch (e) {
-  //       debugger;
-  //       // TODO: error handling
-  //     }
-  //   }
-
-  //   this.isLoadingEditModel = false;
-  // }
+  onEditorCreated(editor: Quill) {
+    editor.focus();
+  }
 
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
     return this.backendApi
@@ -231,6 +225,13 @@ export class CreateLongPostComponent implements AfterViewInit {
   async handleCoverImgFileChange(file: File) {
     this.imagePreviewDataURL = await fileToDataURL(file);
     this.coverImageFile = file;
+  }
+
+  onRemoveCoverImg(ev: Event) {
+    ev.preventDefault();
+    this.imagePreviewDataURL = undefined;
+    this.coverImageFile = undefined;
+    this.model.coverImageURL = "";
   }
 }
 
