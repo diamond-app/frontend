@@ -93,7 +93,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
           this.model = {
-            ...editPostData,
+            ...(editPost.PostFound?.PostExtraData as BlogPostExtraData),
             ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
           };
         }
@@ -195,22 +195,22 @@ export class CreateLongPostComponent implements AfterViewInit {
       });
   }
 
-  onDragOver(ev: any) {
+  onDragOver(ev: DragEvent) {
     ev.preventDefault();
     this.isDraggingFileOverDropZone = true;
   }
 
-  onDragEnter(ev: any) {
+  onDragEnter(ev: DragEvent) {
     ev.preventDefault();
     this.isDraggingFileOverDropZone = true;
   }
 
-  onDragLeave(ev: any) {
+  onDragLeave(ev: DragEvent) {
     ev.preventDefault();
     this.isDraggingFileOverDropZone = false;
   }
 
-  onClickSelectFile(ev: any) {
+  onClickSelectFile(ev: DragEvent) {
     ev.preventDefault();
     if (!this.coverImgInput?.nativeElement) {
       // TODO: error toast
