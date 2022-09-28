@@ -61,7 +61,10 @@
         </div>
         <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
         <span *ngIf="!coverImgSrc">
-          <p>Add a cover image that compliments your blog post.</p>
+          <p class="w-75 mb-2" [ngStyle]="{ margin: '0 auto' }">
+            Add a cover image that compliments your blog post. Drag a file into this area or select a file from your
+            computer.
+          </p>
           <button
             type="button"
             [ngClass]="{ 'btn-success': isDraggingFileOverDropZone }"
