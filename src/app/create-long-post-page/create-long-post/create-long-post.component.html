@@ -33,25 +33,43 @@
         (dragenter)="onDragEnter($event)"
         (dragleave)="onDragLeave($event)"
         class="border rounded text-center d-flex justify-content-center align-items-center position-relative bg-light"
-        [ngClass]="{ 'border-dotted': isDraggingFileOverDropZone }"
         tabindex="0"
         [ngStyle]="{
           height: '300px',
           width: '100%',
-          overflow: 'hidden',
-          border: isDraggingFileOverDropZone ? '3px dashed blue !important' : '',
-          cursor: 'pointer'
+          overflow: 'hidden'
         }"
       >
         <input #coverImgInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
         <div *ngIf="coverImgSrc" class="position-absolute p-2" [ngStyle]="{ top: 0, right: 0 }">
-          <button type="button" class="rounded mr-1" (click)="onClickSelectFile($event)">Change</button>
-          <button type="button" class="rounded" (click)="onRemoveCoverImg($event)">Remove</button>
+          <button
+            type="button"
+            class="rounded-circle mr-1 p-2"
+            (click)="onClickSelectFile($event)"
+            aria-label="Change cover image"
+          >
+            <i-feather name="edit-2"></i-feather>
+          </button>
+          <button
+            type="button"
+            class="rounded-circle p-2"
+            (click)="onRemoveCoverImg($event)"
+            aria-label="Remove cover image"
+          >
+            <i-feather name="x"></i-feather>
+          </button>
         </div>
         <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
         <span *ngIf="!coverImgSrc">
           <p>Add a cover image that compliments your blog post.</p>
-          <button type="button" (click)="onClickSelectFile($event)" class="rounded">Select File</button>
+          <button
+            type="button"
+            [ngClass]="{ 'btn-success': isDraggingFileOverDropZone }"
+            (click)="onClickSelectFile($event)"
+            class="rounded"
+          >
+            Select File
+          </button>
         </span>
       </div>
     </div>
