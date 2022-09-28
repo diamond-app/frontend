@@ -3,11 +3,38 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { has } from "lodash";
-import Quill from "quill";
 import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
+
+const RANDOM_MOVIE_QUOTES = [
+  "feed_create_post.quotes.quote1",
+  "feed_create_post.quotes.quote2",
+  "feed_create_post.quotes.quote3",
+  "feed_create_post.quotes.quote4",
+  "feed_create_post.quotes.quote5",
+  "feed_create_post.quotes.quote6",
+  "feed_create_post.quotes.quote7",
+  "feed_create_post.quotes.quote8",
+  "feed_create_post.quotes.quote9",
+  "feed_create_post.quotes.quote10",
+  "feed_create_post.quotes.quote11",
+  "feed_create_post.quotes.quote12",
+  "feed_create_post.quotes.quote13",
+  "feed_create_post.quotes.quote14",
+  "feed_create_post.quotes.quote15",
+  "feed_create_post.quotes.quote16",
+  "feed_create_post.quotes.quote17",
+  "feed_create_post.quotes.quote18",
+];
+
+export interface BlogPostExtraData {
+  Title: string;
+  Description: string;
+  BlogDeltaRtfFormat: string;
+  CoverImage: string;
+}
 
 @Component({
   selector: "create-long-post",
@@ -15,11 +42,21 @@ import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
   styleUrls: ["./create-long-post.component.scss"],
 })
 export class CreateLongPostComponent implements AfterViewInit {
+  @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
+  @ViewChild("titleInput") titleInput?: ElementRef<HTMLInputElement>;
+
   imagePreviewDataURL?: string;
   coverImageFile?: File;
-  model = new FormModel();
+  model: Omit<BlogPostExtraData, "BlogDeltaRtfFormat"> & { ContentDelta: any } = {
+    Title: "",
+    Description: "",
+    ContentDelta: null,
+    CoverImage: "",
+  };
   isDraggingFileOverDropZone = false;
+  didRemoveCoverImg = false;
   isLoadingEditModel: boolean;
+  placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   quillModules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -32,14 +69,12 @@ export class CreateLongPostComponent implements AfterViewInit {
   };
 
   get coverImgSrc() {
-    return this.imagePreviewDataURL ?? this.model.coverImageURL;
+    return this.imagePreviewDataURL ?? this.model.CoverImage;
   }
 
   get editPostHashHex() {
     return this.route.snapshot.params?.postHashHex;
   }
-
-  @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
 
   constructor(
     private backendApi: BackendApiService,
@@ -58,24 +93,18 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-          Object.assign(this.model, {
-            title: editPostData.Title,
-            description: editPostData.Description,
-            contentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
-            coverImageURL: editPostData.CoverImage,
-          });
+          this.model = {
+            ...editPostData,
+            ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat),
+          };
         }
       } catch (e) {
-        debugger;
         // TODO: error handling
       }
-
-      this.isLoadingEditModel = false;
     }
-  }
 
-  onEditorCreated(editor: Quill) {
-    editor.focus();
+    this.isLoadingEditModel = false;
+    this.titleInput?.nativeElement?.focus();
   }
 
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
@@ -100,7 +129,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   // This is done to drastically reduce on-chain file size.
   async uploadAndReplaceBase64Images() {
     await Promise.all(
-      this.model.contentDelta.ops.map(async (op: any) => {
+      this.model.ContentDelta.ops.map(async (op: any) => {
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
@@ -115,13 +144,14 @@ export class CreateLongPostComponent implements AfterViewInit {
   async submit(ev: Event) {
     ev.preventDefault();
     await this.uploadAndReplaceBase64Images();
-    // TODO: validation for required fields, etc
-    // TODO: handle case of removing cover image from existing post or not editing it at all.
+    // TODO: validation for required fields (title and blog content at the least), etc
+    const coverImage = this.coverImageFile && (await this.uploadImage(this.coverImageFile));
+    const coverImageFallback = this.didRemoveCoverImg ? "" : this.model.CoverImage;
     const postExtraData: BlogPostExtraData = {
-      Title: this.model.title.trim(),
-      Description: this.model.description.trim(),
-      BlogDeltaRtfFormat: JSON.stringify(this.model.contentDelta),
-      CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? "",
+      Title: this.model.Title.trim(),
+      Description: this.model.Description.trim(),
+      BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
+      CoverImage: coverImage ?? coverImageFallback,
     };
 
     console.log("submit post", postExtraData);
@@ -231,20 +261,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     ev.preventDefault();
     this.imagePreviewDataURL = undefined;
     this.coverImageFile = undefined;
-    this.model.coverImageURL = "";
+    this.model.CoverImage = "";
+    this.didRemoveCoverImg = true;
   }
-}
-
-export interface BlogPostExtraData {
-  Title: string;
-  Description: string;
-  BlogDeltaRtfFormat: string;
-  CoverImage: string;
-}
-
-class FormModel {
-  title = "";
-  description = "";
-  contentDelta: any = {};
-  coverImageURL = "";
 }

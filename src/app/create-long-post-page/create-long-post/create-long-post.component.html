@@ -7,6 +7,26 @@
       <button class="ml-auto btn-primary rounded" type="submit">Publish</button>
     </div>
     <div class="p-2">
+      <input
+        #titleInput
+        [(ngModel)]="model.Title"
+        name="blogTitle"
+        type="text"
+        placeholder="Headline..."
+        class="mb-2 p-2 rounded font-weight-bold fs-24px border-light"
+        autocomplete="off"
+        autofocus="true"
+      />
+      <input
+        [(ngModel)]="model.Description"
+        name="blogTagline"
+        type="text"
+        placeholder="Description..."
+        class="rounded border-light"
+        autocomplete="off"
+      />
+    </div>
+    <div class="p-2">
       <div
         (drop)="onDropImg($event)"
         (dragover)="onDragOver($event)"
@@ -35,30 +55,11 @@
         </span>
       </div>
     </div>
-    <div class="p-2">
-      <input
-        [(ngModel)]="model.title"
-        name="blogTitle"
-        type="text"
-        placeholder="Headline..."
-        class="mb-2 rounded"
-        autocomplete="off"
-      />
-      <input
-        [(ngModel)]="model.description"
-        name="blogTagline"
-        type="text"
-        placeholder="Description..."
-        class="rounded"
-        autocomplete="off"
-      />
-    </div>
   </form>
   <quill-editor
     [modules]="quillModules"
-    [(ngModel)]="model.contentDelta"
-    (onEditorCreated)="onEditorCreated($event)"
+    [(ngModel)]="model.ContentDelta"
     format="object"
-    placeholder="Write something..."
+    [placeholder]="placeholder | transloco"
   ></quill-editor>
 </div>

@@ -1,28 +1,28 @@
 // @ts-strict
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  Input,
-  EventEmitter,
-  Output,
-  ElementRef,
-  ViewChildren,
-  QueryList,
-} from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import { Router, ActivatedRoute } from "@angular/router";
-import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
-import { environment } from "../../../environments/environment";
-import * as tus from "tus-js-client";
-import Timer = NodeJS.Timer;
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
-import * as _ from "lodash";
-import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChildren,
+} from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import * as _ from "lodash";
+import * as tus from "tus-js-client";
+import { environment } from "../../../environments/environment";
+import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
+import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
+import { SharedDialogs } from "../../../lib/shared-dialogs";
+import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import Timer = NodeJS.Timer;
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
