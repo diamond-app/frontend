@@ -3,28 +3,28 @@
 </div>
 <div *ngIf="!isLoadingEditModel" class="mt-2">
   <form (submit)="submit($event)">
-    <div class="d-flex align-items-center p-2">
+    <div class="d-flex align-items-start p-2">
+      <div [ngStyle]="{ 'flex-grow': 1 }" class="mr-3">
+        <input
+          #titleInput
+          [(ngModel)]="model.Title"
+          name="blogTitle"
+          type="text"
+          placeholder="Headline..."
+          class="mb-2 p-2 rounded font-weight-bold fs-24px border-light"
+          autocomplete="off"
+          autofocus="true"
+        />
+        <input
+          [(ngModel)]="model.Description"
+          name="blogTagline"
+          type="text"
+          placeholder="Description..."
+          class="rounded border-light"
+          autocomplete="off"
+        />
+      </div>
       <button class="ml-auto btn-primary rounded" type="submit">Publish</button>
-    </div>
-    <div class="p-2">
-      <input
-        #titleInput
-        [(ngModel)]="model.Title"
-        name="blogTitle"
-        type="text"
-        placeholder="Headline..."
-        class="mb-2 p-2 rounded font-weight-bold fs-24px border-light"
-        autocomplete="off"
-        autofocus="true"
-      />
-      <input
-        [(ngModel)]="model.Description"
-        name="blogTagline"
-        type="text"
-        placeholder="Description..."
-        class="rounded border-light"
-        autocomplete="off"
-      />
     </div>
     <div class="p-2">
       <div
