@@ -145,16 +145,12 @@ export class CreateLongPostComponent implements AfterViewInit {
     ev.preventDefault();
     await this.uploadAndReplaceBase64Images();
     // TODO: validation for required fields (title and blog content at the least), etc
-    const coverImage = this.coverImageFile && (await this.uploadImage(this.coverImageFile));
-    const coverImageFallback = this.didRemoveCoverImg ? "" : this.model.CoverImage;
     const postExtraData: BlogPostExtraData = {
       Title: this.model.Title.trim(),
       Description: this.model.Description.trim(),
       BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
-      CoverImage: coverImage ?? coverImageFallback,
+      CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
     };
-
-    console.log("submit post", postExtraData);
 
     this.backendApi
       .SubmitPost(
