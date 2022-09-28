@@ -73,7 +73,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   }
 
   get editPostHashHex() {
-    return this.route.snapshot.params?.postHashHex;
+    return this.route.snapshot.params?.postHashHex ?? "";
   }
 
   constructor(
@@ -156,30 +156,30 @@ export class CreateLongPostComponent implements AfterViewInit {
 
     console.log("submit post", postExtraData);
 
-    // this.backendApi
-    //   .SubmitPost(
-    //     this.globalVars.localNode,
-    //     this.globalVars.loggedInUser.PublicKeyBase58Check,
-    //     this.editPostHashHex /*PostHashHexToModify*/,
-    //     "" /*ParentPostHashHex*/,
-    //     "" /*Title*/,
-    //     {
-    //       Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
-    //       ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
-    //     } /*BodyObj*/,
-    //     "" /*RepostedPostHashHex*/,
-    //     postExtraData /*PostExtraData*/,
-    //     "" /*Sub*/,
-    //     false /*IsHidden*/,
-    //     this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-    //     false
-    //   )
-    //   .toPromise()
-    //   .then((res) => {
-    //     console.log(
-    //       `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
-    //     );
-    //   });
+    this.backendApi
+      .SubmitPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.editPostHashHex /*PostHashHexToModify*/,
+        "" /*ParentPostHashHex*/,
+        "" /*Title*/,
+        {
+          Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
+          ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+        } /*BodyObj*/,
+        "" /*RepostedPostHashHex*/,
+        postExtraData /*PostExtraData*/,
+        "" /*Sub*/,
+        false /*IsHidden*/,
+        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+        false
+      )
+      .toPromise()
+      .then((res) => {
+        console.log(
+          `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
+        );
+      });
   }
 
   /**
