@@ -248,6 +248,10 @@ export class CreateLongPostComponent implements AfterViewInit {
   }
 
   async handleCoverImgFileChange(file: File) {
+    if (file.size > 15 * (1024 * 1024)) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
+      return "";
+    }
     this.imagePreviewDataURL = await fileToDataURL(file);
     this.coverImageFile = file;
   }
