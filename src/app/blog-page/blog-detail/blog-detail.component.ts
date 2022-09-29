@@ -68,6 +68,7 @@ export class BlogDetailComponent {
   @Output() diamondSent = new EventEmitter();
   @Output() postLoaded = new EventEmitter();
   @Output() postDeleted = new EventEmitter();
+  @Output() userBlocked = new EventEmitter();
 
   constructor(
     private backendApi: BackendApiService,
@@ -325,6 +326,42 @@ export class BlogDetailComponent {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
               this.globalVars.logEvent("post : hide : error", { parsedError });
+              this.globalVars._alertError(parsedError);
+            }
+          );
+      }
+    });
+  }
+
+  blockUser() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Block user?",
+      html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((response: any) => {
+      if (response.isConfirmed) {
+        this.backendApi
+          .BlockPublicKey(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.currentPost.PosterPublicKeyBase58Check
+          )
+          .subscribe(
+            () => {
+              this.globalVars.logEvent("user : block");
+              this.globalVars.loggedInUser.BlockedPubKeys[this.currentPost.PosterPublicKeyBase58Check] = {};
+              this.userBlocked.emit(this.currentPost.PosterPublicKeyBase58Check);
+            },
+            (err) => {
+              console.error(err);
+              const parsedError = this.backendApi.stringifyError(err);
+              this.globalVars.logEvent("user : block : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
