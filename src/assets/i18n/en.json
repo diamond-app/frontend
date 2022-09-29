@@ -281,7 +281,7 @@
     "remove_from_feed": "Remove From Feed",
     "pin_to_feed": "Pin To Feed",
     "unpin_from_feed": "Unpin From Feed",
-    "edit_post": "Edit Post"
+    "edit": "Edit"
   },
   "feed_post_icon_row": {
     "loading": "Loading...",
