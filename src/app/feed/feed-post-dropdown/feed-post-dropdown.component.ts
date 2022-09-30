@@ -31,6 +31,7 @@ export class FeedPostDropdownComponent implements OnInit {
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
+  @Output() toggleBlogPin = new EventEmitter();
   @Output() pauseVideos = new EventEmitter();
 
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
@@ -258,6 +259,60 @@ export class FeedPostDropdownComponent implements OnInit {
     this.togglePostPin.emit(event);
     this.post.IsPinned = !this.post.IsPinned;
     this.dropdown.hide();
+  }
+
+  canPinPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.PostExtraData?.BlogDeltaRtfFormat !== "" &&
+      (!this.post?.PostExtraData?.BlogPostIsPinned || this.post?.PostExtraData?.BlogPostIsPinned === "false")
+    );
+  }
+
+  canUnpinPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.PostExtraData?.BlogPostIsPinned === "true"
+    );
+  }
+
+  pinBlogPostToProfile(event: any, isPinned: boolean) {
+    event.stopPropagation();
+    const postExtraData = this.post.PostExtraData;
+    postExtraData["BlogPostIsPinned"] = isPinned.toString();
+
+    const updateSuccessCallback = isPinned ? this.updateBlogPostPinnedSuccess : this.updateBlogPostUnpinnedSuccess;
+    this.backendApi
+      .SubmitPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.post.PostHashHex /*PostHashHexToModify*/,
+        "" /*ParentPostHashHex*/,
+        "" /*Title*/,
+        {
+          Body: this.post.Body,
+          ImageURLs: this.post.ImageURLs ? this.post.ImageURLs : [],
+        } /*BodyObj*/,
+        "" /*RepostedPostHashHex*/,
+        postExtraData /*PostExtraData*/,
+        "" /*Sub*/,
+        false /*IsHidden*/,
+        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+        false
+      )
+      .toPromise()
+      .then((res) => {
+        this.globalVars.waitForTransaction(res.TxnHashHex, updateSuccessCallback, null, this);
+        this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
+      });
+  }
+
+  updateBlogPostPinnedSuccess(comp) {
+    comp.toggleBlogPin.emit({ postHashHex: comp.post.PostHashHex, isPinned: true });
+  }
+
+  updateBlogPostUnpinnedSuccess(comp) {
+    comp.toggleBlogPin.emit({ postHashHex: comp.post.PostHashHex, isPinned: false });
   }
 
   hidePinnedPost(event) {

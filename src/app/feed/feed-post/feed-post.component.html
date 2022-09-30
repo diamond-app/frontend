@@ -164,6 +164,7 @@
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed()"
+            (toggleBlogPin)="toggleBlogPinnedStatus($event)"
           ></feed-post-dropdown>
         </div>
 
@@ -281,6 +282,7 @@
                   (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
                   (togglePostPin)="_pinPostToGlobalFeed($event)"
                   (pauseVideos)="emitPause($event)"
+                  (toggleBlogPin)="toggleBlogPinnedStatus($event)"
                 ></feed-post-dropdown>
               </div>
 

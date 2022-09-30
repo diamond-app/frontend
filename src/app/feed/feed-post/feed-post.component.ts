@@ -186,6 +186,8 @@ export class FeedPostComponent implements OnInit {
   // tells parent component to pause all videos while transaction is going on
   @Output() pauseAllVideos = new EventEmitter();
 
+  @Output() toggleBlogPin = new EventEmitter();
+
   @ViewChild(FeedPostIconRowComponent, { static: false }) childFeedPostIconRowComponent;
   @ViewChild("videoContainer") videoContainerDiv: ElementRef;
   @ViewChild("videoIframe") videoIFrame: ElementRef;
@@ -590,6 +592,10 @@ export class FeedPostComponent implements OnInit {
     if (abbrev.length <= 4) {
       return abbrev;
     }
+  }
+
+  toggleBlogPinnedStatus(pinnedPostHashHex) {
+    this.toggleBlogPin.emit(pinnedPostHashHex);
   }
 
   _addPostToGlobalFeed(event: any) {

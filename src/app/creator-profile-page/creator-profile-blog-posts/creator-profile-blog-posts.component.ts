@@ -1,8 +1,9 @@
 // @ts-strict
-import { AfterViewInit, Component, EventEmitter, Input, Output } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { sortBy } from "lodash";
 
 @Component({
   selector: "creator-profile-blog-posts",
@@ -20,7 +21,11 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
 
   @Output() blockUser = new EventEmitter();
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    private globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngAfterViewInit(): void {
     this.loadingFirstPage = true;
@@ -42,11 +47,41 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
         )
       )
       .then((posts) => {
-        this.blogPosts = posts.map((p: PostEntryResponse) => ({ ...p, ProfileEntryResponse: this.profile }));
+        this.blogPosts = this.sortPosts(
+          posts.map((p: PostEntryResponse) => ({ ...p, ProfileEntryResponse: this.profile }))
+        );
       })
       .finally(() => {
+        console.log("Posts after: ", this.blogPosts);
         this.loadingFirstPage = false;
       });
+  }
+
+  sortPosts(posts: PostEntryResponse[]): PostEntryResponse[] {
+    return sortBy(posts, [
+      // Sort first by pinned post (sort order is ascending by default, ergo pinned gets a 0 and non-pinned gets 1)
+      (post) => {
+        return post?.PostExtraData?.BlogPostIsPinned === "true" ? 0 : 1;
+      },
+      // Sort second by timestamp nanos descending (sort order for the sortby function is automatically ascending,
+      // so we need to inverse the timestamp nanos)
+      (post) => {
+        return post.TimestampNanos * -1;
+      },
+    ]);
+  }
+
+  // If the user pins a blog post,
+  updatePinnedPosts(pinnedMetadata: { postHashHex: string; isPinned: boolean }): void {
+    this.blogPosts = this.sortPosts(
+      this.blogPosts.map((post) => {
+        if (post.PostHashHex === pinnedMetadata.postHashHex) {
+          post.PostExtraData.BlogPostIsPinned = pinnedMetadata?.isPinned ? "true" : "false";
+        }
+        return post;
+      })
+    );
+    this.cdr.detectChanges();
   }
 
   async _prependComment(uiPostParent: PostEntryResponse, index: number, newComment: PostEntryResponse) {

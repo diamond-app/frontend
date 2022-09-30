@@ -9,6 +9,20 @@
   <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu fs-15px fc-muted" style="width: 164px" *dropdownMenu>
     <div>
       <a
+        *ngIf="canPinPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinBlogPostToProfile($event, true)"
+      >
+        Pin blog post
+      </a>
+      <a
+        *ngIf="canUnpinPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinBlogPostToProfile($event, false)"
+      >
+        Unpin blog post
+      </a>
+      <a
         *ngIf="post.IsPinned"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="hidePinnedPost($event)"

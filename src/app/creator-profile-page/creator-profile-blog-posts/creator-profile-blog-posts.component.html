@@ -18,6 +18,7 @@
     <div *ngFor="let post of blogPosts; let index = index">
       <feed-post
         *ngIf="post.ProfileEntryResponse"
+        [showLeftSelectedBorder]="post?.PostExtraData?.BlogPostIsPinned === 'true'"
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
         [post]="post"
@@ -28,6 +29,7 @@
         [videoPaused]="pauseVideos"
         (userBlocked)="userBlocked()"
         (pauseAllVideos)="pauseAllVideos($event)"
+        (toggleBlogPin)="updatePinnedPosts($event)"
       ></feed-post>
     </div>
     <!-- Spacer for PWA Apps -->
