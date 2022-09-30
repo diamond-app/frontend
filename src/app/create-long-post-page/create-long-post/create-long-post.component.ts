@@ -63,7 +63,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       [{ list: "ordered" }, { list: "bullet" }],
       [{ script: "sub" }, { script: "super" }], // superscript/subscript
       [{ header: [1, 2, 3, false] }],
-      ["link", "image", "video"], // link and image, video
+      ["link", "image"], // link and image
     ],
   };
 

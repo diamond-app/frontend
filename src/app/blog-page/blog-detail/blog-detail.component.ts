@@ -9,6 +9,7 @@ import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-pos
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
 import { environment } from "src/environments/environment";
+import { SwalHelper } from "src/lib/helpers/swal-helper";
 
 @Component({
   selector: "app-blog-detail",
@@ -66,6 +67,8 @@ export class BlogDetailComponent {
 
   @Output() diamondSent = new EventEmitter();
   @Output() postLoaded = new EventEmitter();
+  @Output() postDeleted = new EventEmitter();
+  @Output() userBlocked = new EventEmitter();
 
   constructor(
     private backendApi: BackendApiService,
@@ -282,6 +285,90 @@ export class BlogDetailComponent {
     await this.datasource.adapter.prepend(thread);
   }
 
+  hidePost() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Hide post?",
+      html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((response: any) => {
+      if (response.isConfirmed) {
+        this.currentPost.IsHidden = true;
+
+        this.backendApi
+          .SubmitPost(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.currentPost.PostHashHex /*PostHashHexToModify*/,
+            "" /*ParentPostHashHex*/,
+            "" /*Title*/,
+            {
+              Body: this.currentPost.Body,
+              ImageURLs: this.currentPost.ImageURLs,
+            } /*BodyObj*/,
+            "",
+            this.currentPost.PostExtraData,
+            "" /*Sub*/,
+            true /*IsHidden*/,
+            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+          )
+          .subscribe(
+            (response) => {
+              this.globalVars.logEvent("post : hide");
+              this.postDeleted.emit(response.PostEntryResponse);
+            },
+            (err) => {
+              console.error(err);
+              const parsedError = this.backendApi.parsePostError(err);
+              this.globalVars.logEvent("post : hide : error", { parsedError });
+              this.globalVars._alertError(parsedError);
+            }
+          );
+      }
+    });
+  }
+
+  blockUser() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Block user?",
+      html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((response: any) => {
+      if (response.isConfirmed) {
+        this.backendApi
+          .BlockPublicKey(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.currentPost.PosterPublicKeyBase58Check
+          )
+          .subscribe(
+            () => {
+              this.globalVars.logEvent("user : block");
+              this.globalVars.loggedInUser.BlockedPubKeys[this.currentPost.PosterPublicKeyBase58Check] = {};
+              this.userBlocked.emit(this.currentPost.PosterPublicKeyBase58Check);
+            },
+            (err) => {
+              console.error(err);
+              const parsedError = this.backendApi.stringifyError(err);
+              this.globalVars.logEvent("user : block : error", { parsedError });
+              this.globalVars._alertError(parsedError);
+            }
+          );
+      }
+    });
+  }
+
   _setStateFromActivatedRoute(postHashHex: string) {
     this.threadManager?.reset();
     this.isLoading = true;
@@ -307,6 +394,7 @@ export class BlogDetailComponent {
         // Filter to only posts that have a blog post rich text extra data field.
         Posts.filter(
           (p: PostEntryResponse) =>
+            !p.IsHidden &&
             typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined" &&
             p.PostHashHex !== this.currentPost.PostHashHex
         ).slice(0, 5)

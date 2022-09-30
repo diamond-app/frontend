@@ -1,4 +1,23 @@
+import { LocationStrategy } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AmplitudeClient } from "amplitude-js";
+import ConfettiGenerator from "confetti-js";
+import { isNil } from "lodash";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { Observable, Observer } from "rxjs";
+import Swal from "sweetalert2";
+import { environment } from "../environments/environment";
+import { SwalHelper } from "../lib/helpers/swal-helper";
+import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
+import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
+import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
   BalanceEntryResponse,
@@ -7,31 +26,11 @@ import {
   TutorialStatus,
   User,
 } from "./backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { RouteNames } from "./app-routing.module";
-import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
-import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
-import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { environment } from "../environments/environment";
-import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer } from "@angular/platform-browser";
-import { IdentityService } from "./identity.service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { HashtagResponse, LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
-import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import { HttpClient } from "@angular/common/http";
-import { FeedComponent } from "./feed/feed.component";
-import { filter, isNil } from "lodash";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import Swal from "sweetalert2";
-import Timer = NodeJS.Timer;
-import { LocationStrategy } from "@angular/common";
-import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
-import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { FeedComponent } from "./feed/feed.component";
+import { IdentityService } from "./identity.service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -1143,7 +1142,7 @@ export class GlobalVarsService {
       if (environment.production) {
         this.localNode = hostname;
       } else {
-        this.localNode = `${hostname}:17001`;
+        this.localNode = `${hostname}:18001`;
       }
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);

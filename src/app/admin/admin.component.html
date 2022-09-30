@@ -10,11 +10,7 @@
         (change)="_tabClicked($event)"
         [(ngModel)]="activeTab"
       >
-        <option
-          *ngFor="let option of adminTabs"
-          [value]="option"
-          class="fs-15px text-grey5 font-weight-bold"
-        >
+        <option *ngFor="let option of adminTabs" [value]="option" class="fs-15px text-grey5 font-weight-bold">
           {{ option }}
         </option>
       </select>
@@ -22,7 +18,11 @@
   </div>
 
   <!-- Post Whitelist Selector -->
-  <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts">
+  <div
+    style="overflow-y: scroll"
+    class="disable-scrollbars"
+    *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts"
+  >
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -36,16 +36,15 @@
     <div
       *ngIf="activePostTab == POSTS_BY_DESO_TAB"
       class="w-100 px-15px py-5px fs-15px border-bottom border-color-grey d-flex"
-      style="justify-content: flex-start; align-items: center;"
+      style="justify-content: flex-start; align-items: center"
     >
       <div>
         <mat-form-field appearance="fill" class="pb-0">
-          <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle;">
+          <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle">
             Time Window:
           </mat-label>
-          <mat-select id="time-window" style="height: auto; vertical-align: middle;" [(value)]="selectedTimeWindow">
-            <mat-option *ngFor="let timeWindow of timeWindowOptions | keyvalue"
-                        [value]="timeWindow.value">
+          <mat-select id="time-window" style="height: auto; vertical-align: middle" [(value)]="selectedTimeWindow">
+            <mat-option *ngFor="let timeWindow of timeWindowOptions | keyvalue" [value]="timeWindow.value">
               {{ timeWindow.key }}
             </mat-option>
           </mat-select>
@@ -54,13 +53,12 @@
       <div class="p-15px">
         <a
           class="btn btn-primary"
-          style="vertical-align: middle; float: right; text-align: center;"
+          style="vertical-align: middle; float: right; text-align: center"
           (click)="_searchPostsByDESO()"
         >
           Search
         </a>
       </div>
-
     </div>
     <simple-center-loader *ngIf="searchingForPostsByDESO; else showPosts"></simple-center-loader>
     <ng-template #showPosts>
@@ -107,9 +105,10 @@
 
   <!-- Hot Feed -->
   <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Hot Feed'">
-    <div *ngIf="globalVars.showSuperAdminTools()" class="
-      w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted
-      border-bottom border-color-grey light-grey-divider">
+    <div
+      *ngIf="globalVars.showSuperAdminTools()"
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
       Update the hot feed algorithm by updating the values below.
     </div>
 
@@ -135,7 +134,9 @@
         <button
           *ngIf="updatingHotFeedInteractionCap"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -163,7 +164,9 @@
         <button
           *ngIf="updatingHotFeedTagInteractionCap"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -191,7 +194,9 @@
         <button
           *ngIf="updatingHotFeedTimeDecayBlocks"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -219,7 +224,9 @@
         <button
           *ngIf="updatingHotFeedTagTimeDecayBlocks"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -228,11 +235,11 @@
     <!-- Update HotFeed Transaction Type Multipliers (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Update Transaction Type Multipliers
-      <div *ngFor="let txnTypeMultiplier of hotFeedTxnTypeMultiplierMap | keyvalue" class="d-flex align-items-center font-weight-normal mt-5px">
-        <input
-          class="form-control fs-15px lh-15px col-4"
-          [placeholder]="txnTypeMultiplier.key"
-        />
+      <div
+        *ngFor="let txnTypeMultiplier of hotFeedTxnTypeMultiplierMap | keyvalue"
+        class="d-flex align-items-center font-weight-normal mt-5px"
+      >
+        <input class="form-control fs-15px lh-15px col-4" [placeholder]="txnTypeMultiplier.key" />
         <input
           [(ngModel)]="hotFeedTxnTypeMultiplierMap[txnTypeMultiplier.key]"
           type="number"
@@ -269,14 +276,17 @@
       <button
         *ngIf="updatingHotFeedTxnTypeMultiplierMap"
         class="btn btn-dark fs-15px"
-        style="width: fit-content" disabled>
+        style="width: fit-content"
+        disabled
+      >
         Updating...
       </button>
     </div>
 
     <!-- Update HotFeed User Posts Multiplier (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update User Posts Multiplier <span class="font-weight-normal">(boost all of a user's posts)</span>
+      Update User Posts Multiplier
+      <span class="font-weight-normal">(boost all of a user's posts)</span>
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="hotFeedUserForPostsMultiplier"
@@ -300,7 +310,9 @@
         <button
           *ngIf="updatingHotFeedUserPostsMultiplier"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -308,7 +320,8 @@
 
     <!-- Update HotFeed User Interaction Multiplier (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update User Interaction Multiplier <span class="font-weight-normal">(boost all of a user's interactions)</span>
+      Update User Interaction Multiplier
+      <span class="font-weight-normal">(boost all of a user's interactions)</span>
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="hotFeedUserForInteractionMultiplier"
@@ -332,7 +345,9 @@
         <button
           *ngIf="updatingHotFeedUserInteractionMultiplier"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Updating...
         </button>
       </div>
@@ -340,14 +355,10 @@
 
     <!-- Look Up HotFeed User Multipliers (Super Admin Only) -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      <i class="fa fa-search"></i>&nbsp;
-      Look Up User Interaction Multipliers
+      <i class="fa fa-search"></i>
+      &nbsp; Look Up User Interaction Multipliers
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
-        <input
-          [(ngModel)]="hotFeedUserForSearch"
-          class="form-control fs-15px lh-15px w-100"
-          placeholder="Username"
-        />
+        <input [(ngModel)]="hotFeedUserForSearch" class="form-control fs-15px lh-15px w-100" placeholder="Username" />
         <button
           *ngIf="!searchingHotFeedUserMultipliers"
           (click)="searchForHotFeedUserMultipliers()"
@@ -359,7 +370,9 @@
         <button
           *ngIf="searchingHotFeedUserMultipliers"
           class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
+          style="width: fit-content"
+          disabled
+        >
           Searching...
         </button>
       </div>
@@ -368,9 +381,9 @@
       {{ hotFeedUserSearchResults }}
     </div>
 
-    <div class="
-      w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted
-      border-bottom border-color-grey light-grey-divider mb-5px">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider mb-5px"
+    >
       Select posts below to whitelist.
     </div>
 
@@ -456,12 +469,19 @@
         <button
           *ngIf="!submittingGraylistUpdate"
           (click)="updateProfileModerationLevel('graylist')"
-          class="btn btn-secondary fs-15px ml-5px"
-          style="width: 150px;background-color:#606060 !important;"
+          class="btn diamond-btn-secondary fs-15px ml-5px"
+          style="width: 150px; background-color: #606060 !important"
         >
           Graylist&nbsp;
         </button>
-        <button *ngIf="submittingGraylistUpdate" class="btn btn-secondary fs-15px ml-5px" style="background-color:#606060 !important;" disabled>Working...</button>
+        <button
+          *ngIf="submittingGraylistUpdate"
+          class="btn diamond-btn-secondary fs-15px ml-5px"
+          style="background-color: #606060 !important"
+          disabled
+        >
+          Working...
+        </button>
       </div>
       <div *ngIf="updateProfileSuccessType === 'graylist'" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
@@ -841,21 +861,13 @@
   </div>
 
   <!-- Tutorial -->
-  <div
-    *ngIf="activeTab == 'Tutorial'"
-    class="w-100 d-flex flex-column disable-scrollbars"
-    style="overflow-y: scroll"
-  >
+  <div *ngIf="activeTab == 'Tutorial'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <admin-tutorial></admin-tutorial>
   </div>
 
   <!-- NFTs -->
-  <div
-    *ngIf="activeTab == 'NFTs'"
-    class="w-100 d-flex flex-column disable-scrollbars"
-    style="overflow-y: scroll"
-  >
-      <nft-drop-mgr></nft-drop-mgr>
+  <div *ngIf="activeTab == 'NFTs'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
+    <nft-drop-mgr></nft-drop-mgr>
   </div>
 
   <!-- Referral Program -->
@@ -864,7 +876,7 @@
     class="w-100 h-100 d-flex flex-column disable-scrollbars"
     style="overflow-y: scroll; min-height: 400px"
   >
-      <referral-program-mgr></referral-program-mgr>
+    <referral-program-mgr></referral-program-mgr>
   </div>
 
   <!-- Super Info -->
@@ -1096,12 +1108,7 @@
         >
           Update
         </button>
-        <button
-          *ngIf="updatingMaxCopiesPerNFT"
-          class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content"
-          disabled
-        >
+        <button *ngIf="updatingMaxCopiesPerNFT" class="btn btn-dark fs-15px ml-5px" style="width: fit-content" disabled>
           Updating...
         </button>
       </div>
@@ -1232,9 +1239,11 @@
           (click)="updateUSDToDeSoReserveExchangeRate()"
           class="btn btn-outline-primary fs-15px ml-5px"
         >
-         Update
+          Update
         </button>
-        <button *ngIf="submittingUSDToDeSoReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingUSDToDeSoReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>
+          Working...
+        </button>
       </div>
     </div>
 
