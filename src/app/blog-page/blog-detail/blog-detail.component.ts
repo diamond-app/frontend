@@ -1,3 +1,4 @@
+import { Location } from "@angular/common";
 import { Component, EventEmitter, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -23,6 +24,7 @@ export class BlogDetailComponent {
   scrollingDisabled = false;
   threadManager?: ThreadManager;
   isLoadingMoreReplies = false;
+  title = "";
 
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
@@ -72,12 +74,13 @@ export class BlogDetailComponent {
 
   constructor(
     private backendApi: BackendApiService,
-    private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
     private toastr: ToastrService,
-    private transloco: TranslocoService
+    private transloco: TranslocoService,
+    public globalVars: GlobalVarsService,
+    public location: Location
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -131,10 +134,9 @@ export class BlogDetailComponent {
         // Set current post
         this.currentPost = res.PostFound as PostEntryResponse;
         this.threadManager = new ThreadManager(res.PostFound);
-        // const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
-        // this.postLoaded.emit(
-        //   `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
-        // );
+        this.title = `${this.globalVars.addOwnershipApostrophe(
+          this.currentPost.ProfileEntryResponse.Username
+        )} Blog Post`;
         this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this._fetchRecentPosts(res.PostFound.ProfileEntryResponse);
       })

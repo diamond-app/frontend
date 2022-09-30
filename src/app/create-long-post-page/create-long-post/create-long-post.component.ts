@@ -1,7 +1,8 @@
 // @ts-strict
+import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { has } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
@@ -101,8 +102,10 @@ export class CreateLongPostComponent implements AfterViewInit {
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
+    private router: Router,
     private titleService: Title,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private location: Location
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
   }
@@ -118,7 +121,9 @@ export class CreateLongPostComponent implements AfterViewInit {
           Object.assign(this.model, { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) });
         }
       } catch (e) {
-        // TODO: error handling
+        // This is assuming 404 which might hide other types of errors, but this is currently what the
+        // post thread page does...
+        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
       }
     }
 

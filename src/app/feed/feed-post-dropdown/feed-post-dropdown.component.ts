@@ -26,7 +26,7 @@ export class FeedPostDropdownComponent implements OnInit {
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
-
+  @Input() disableTooltip?: boolean;
   @Output() postHidden = new EventEmitter();
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
