@@ -266,8 +266,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   onClickSelectFile(ev: DragEvent) {
     ev.preventDefault();
     if (!this.coverImgInput?.nativeElement) {
-      // TODO: error toast
-      console.log("no input element ref");
+      this.globalVars._alertError("Whoops, something went wrong. Unable to select files.");
       return;
     }
 
@@ -279,8 +278,9 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.isDraggingFileOverDropZone = false;
     const file = ev?.dataTransfer?.files?.[0];
     if (!file) {
-      // TODO: we need some kind of toast error for this scenario.
-      console.log("No files dropped!");
+      this.globalVars._alertError(
+        "No files were detected. Please try it again. If the error continues, try another file."
+      );
       return;
     }
 
@@ -292,8 +292,9 @@ export class CreateLongPostComponent implements AfterViewInit {
     const file = (ev.currentTarget as HTMLInputElement)?.files?.[0];
 
     if (!file) {
-      // TODO: we need some kind of toast error for this scenario.
-      console.log("No files dropped!");
+      this.globalVars._alertError(
+        "No files were detected. Please try it again. If the error continues, try another file."
+      );
       return;
     }
 
