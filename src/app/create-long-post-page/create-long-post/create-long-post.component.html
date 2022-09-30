@@ -7,6 +7,7 @@
       <div [ngStyle]="{ 'flex-grow': 1 }" class="mr-3">
         <input
           #titleInput
+          [required]="true"
           [(ngModel)]="model.Title"
           name="blogTitle"
           type="text"
@@ -86,6 +87,7 @@
     </div>
   </form>
   <quill-editor
+    [required]="true"
     [modules]="quillModules"
     [(ngModel)]="model.ContentDelta"
     format="object"
