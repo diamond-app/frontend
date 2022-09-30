@@ -2,7 +2,7 @@
   <simple-center-loader [height]="200"></simple-center-loader>
 </div>
 <div *ngIf="!isLoadingEditModel" class="mt-2">
-  <form (submit)="submit($event)">
+  <form (submit)="submit($event)" (input)="onFormInput($event)">
     <div class="d-flex align-items-start p-2">
       <div [ngStyle]="{ 'flex-grow': 1 }" class="mr-3">
         <input
@@ -24,7 +24,15 @@
           autocomplete="off"
         />
       </div>
-      <button class="ml-auto btn-primary rounded" type="submit">Publish</button>
+      <button
+        class="ml-auto btn-primary rounded"
+        type="submit"
+        [disabled]="this.isSubmittingPost"
+        [ngStyle]="{ minWidth: '80px' }"
+      >
+        <span *ngIf="this.isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+        <span *ngIf="!this.isSubmittingPost">Publish</span>
+      </button>
     </div>
     <div class="p-2">
       <div

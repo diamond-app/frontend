@@ -36,6 +36,31 @@ export interface BlogPostExtraData {
   CoverImage: string;
 }
 
+class FormModel {
+  Title = "";
+  Description = "";
+  ContentDelta: any = null;
+  CoverImage = "";
+  errors: string[] = [];
+
+  get hasErrors() {
+    return this.errors.length > 0;
+  }
+
+  validate() {
+    if (this.Title.trim() === "") {
+      this.errors.push("Headline is a required field!");
+    }
+    if (!this.ContentDelta?.ops) {
+      this.errors.push("Blog content is required field!");
+    }
+  }
+
+  clearErrors() {
+    this.errors = [];
+  }
+}
+
 @Component({
   selector: "create-long-post",
   templateUrl: "./create-long-post.component.html",
@@ -47,13 +72,9 @@ export class CreateLongPostComponent implements AfterViewInit {
 
   imagePreviewDataURL?: string;
   coverImageFile?: File;
-  model: Omit<BlogPostExtraData, "BlogDeltaRtfFormat"> & { ContentDelta: any } = {
-    Title: "",
-    Description: "",
-    ContentDelta: null,
-    CoverImage: "",
-  };
+  model = new FormModel();
   isDraggingFileOverDropZone = false;
+  isSubmittingPost = false;
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   quillModules = {
@@ -61,9 +82,9 @@ export class CreateLongPostComponent implements AfterViewInit {
       ["bold", "italic", "underline", "strike"], // toggled buttons
       ["blockquote", "code-block"],
       [{ list: "ordered" }, { list: "bullet" }],
-      [{ script: "sub" }, { script: "super" }], // superscript/subscript
+      [{ script: "super" }],
       [{ header: [1, 2, 3, false] }],
-      ["link", "image"], // link and image
+      ["link", "image"],
     ],
   };
 
@@ -92,7 +113,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-          this.model = { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) };
+          Object.assign(this.model, { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) });
         }
       } catch (e) {
         // TODO: error handling
@@ -139,39 +160,65 @@ export class CreateLongPostComponent implements AfterViewInit {
 
   async submit(ev: Event) {
     ev.preventDefault();
-    await this.uploadAndReplaceBase64Images();
-    // TODO: validation for required fields (title and blog content at the least), etc
-    const postExtraData: BlogPostExtraData = {
-      Title: this.model.Title.trim(),
-      Description: this.model.Description.trim(),
-      BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
-      CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
-    };
+    if (this.isSubmittingPost) {
+      return;
+    }
 
-    this.backendApi
-      .SubmitPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.editPostHashHex /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
-        "" /*Title*/,
-        {
-          Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
-          ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
-        } /*BodyObj*/,
-        "" /*RepostedPostHashHex*/,
-        postExtraData /*PostExtraData*/,
-        "" /*Sub*/,
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        false
-      )
-      .toPromise()
-      .then((res) => {
-        console.log(
-          `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
-        );
-      });
+    this.model.validate();
+
+    if (this.model.hasErrors) {
+      this.globalVars._alertError(this.model.errors[0]);
+      return;
+    }
+
+    this.isSubmittingPost = true;
+
+    try {
+      await this.uploadAndReplaceBase64Images();
+
+      const postExtraData: BlogPostExtraData = {
+        Title: this.model.Title.trim(),
+        Description: this.model.Description.trim(),
+        BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
+        CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
+      };
+
+      await this.backendApi
+        .SubmitPost(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.editPostHashHex /*PostHashHexToModify*/,
+          "" /*ParentPostHashHex*/,
+          "" /*Title*/,
+          {
+            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
+            ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+          } /*BodyObj*/,
+          "" /*RepostedPostHashHex*/,
+          postExtraData /*PostExtraData*/,
+          "" /*Sub*/,
+          false /*IsHidden*/,
+          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+          false
+        )
+        .toPromise()
+        .then((res) => {
+          console.log(
+            `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
+          );
+        });
+    } catch (e) {
+      this.globalVars._alertError(
+        `Whoops, something went wrong...${e?.error?.error ? JSON.stringify(e.error.error) : e.toString()}`
+      );
+    }
+
+    this.isSubmittingPost = false;
+  }
+
+  onFormInput(ev: Event) {
+    ev.preventDefault();
+    this.model.clearErrors();
   }
 
   /**
@@ -189,6 +236,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       .then((res) => res.ImageURL)
       .catch((err) => {
         this.globalVars._alertError(JSON.stringify(err.error.error));
+        return "";
       });
   }
 
