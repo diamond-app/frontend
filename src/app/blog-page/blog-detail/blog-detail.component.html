@@ -7,7 +7,7 @@
     >
       <div class="d-flex align-items-center">
         <span role="button" (click)="location.back()"><i-feather name="arrow-left"></i-feather></span>
-        <span>{{ globalVars.addOwnershipApostrophe(currentPost?.ProfileEntryResponse?.Username) }} Post</span>
+        <span>{{ title }}</span>
       </div>
     </div>
     <div *ngIf="isLoading" class="mt-5">
