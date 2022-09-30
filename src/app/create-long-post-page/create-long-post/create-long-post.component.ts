@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { has } from "lodash";
+import { ToastrService } from "ngx-toastr";
 import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
@@ -100,7 +101,8 @@ export class CreateLongPostComponent implements AfterViewInit {
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
+    private toastr: ToastrService
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
   }
@@ -203,8 +205,14 @@ export class CreateLongPostComponent implements AfterViewInit {
         )
         .toPromise()
         .then((res) => {
-          console.log(
-            `Your post is ready, view it here: ${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}`
+          this.toastr.show(
+            `Blog Post Created<a href="${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}" class="toast-link cursor-pointer">View</a>`,
+            undefined,
+            {
+              toastClass: "info-toast",
+              enableHtml: true,
+              positionClass: "toast-bottom-center",
+            }
           );
         });
     } catch (e) {
