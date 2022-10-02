@@ -1201,6 +1201,14 @@ app-landing-page {
   }
 }
 
+.style-for-buy-eth-warning {
+  @media (min-width: 600px) {
+  }
+  @media (max-width: 600px) {
+    margin-top: 15px;
+  }
+}
+
 .landing-page-creator-coins-explainer-title {
   color: white;
 }
