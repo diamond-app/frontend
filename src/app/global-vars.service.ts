@@ -33,6 +33,7 @@ import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -882,6 +883,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err !== `${environment.node.name} is experiencing heavy load. Please try again in one minute.`) {
+      err = parseCleanErrorMsg(err);
+    }
+
     if (err === "Your balance is insufficient.") {
       showBuyDeSo = true;
     }
