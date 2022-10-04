@@ -304,8 +304,7 @@ export class FeedPostDropdownComponent implements OnInit {
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
         return this.globalVars.waitForTransaction(res.TxnHashHex);
       })
-      .then((txFound) => {
-        if (!txFound) return;
+      .then(() => {
         if (isPinned) {
           this.updateBlogPostPinnedSuccess();
         } else {

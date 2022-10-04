@@ -201,8 +201,7 @@ export class SignUpComponent {
         (res) => {
           this.globalVars
             .waitForTransaction(res.TxnHashHex)
-            .then((txFound) => {
-              if (!txFound) return;
+            .then(() => {
               this.updateProfileSuccess();
             })
             .catch((err) => this.updateProfileFailure(err));
@@ -225,8 +224,7 @@ export class SignUpComponent {
         (res) => {
           this.globalVars
             .waitForTransaction(res.TxnHashHex)
-            .then((txFound) => {
-              if (!txFound) return;
+            .then(() => {
               this.followCreatorNext();
             })
             .catch(() => this.followCreatorNext());

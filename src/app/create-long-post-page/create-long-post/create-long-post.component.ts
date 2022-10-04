@@ -220,17 +220,14 @@ export class CreateLongPostComponent implements AfterViewInit {
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
 
       if (!this.editPostHashHex) {
-        const txFound = await this.globalVars.waitForTransaction(postTx.TxnHashHex);
-
         // NOTE: this is not ideal, but we need to add the link back to diamond to the post body for nodes that do not
         // yet support long form, so in the case of a newly created post we edit it after it's submitted to include the
         // link back.
-        if (txFound) {
-          await submitPost(
-            `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(submittedPostHashHex)}#blog`,
-            submittedPostHashHex
-          );
-        }
+        await this.globalVars.waitForTransaction(postTx.TxnHashHex);
+        await submitPost(
+          `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(submittedPostHashHex)}#blog`,
+          submittedPostHashHex
+        );
       }
 
       this.toastr.show(

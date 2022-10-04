@@ -1503,7 +1503,7 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  waitForTransaction(waitTxn: string = ""): Promise<boolean> {
+  waitForTransaction(waitTxn: string): Promise<void> {
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
     return new Promise((resolve, reject) => {
@@ -1523,7 +1523,7 @@ export class GlobalVarsService {
               (res: Record<string, any>) => {
                 if (res.TxnFound) {
                   clearInterval(interval);
-                  resolve(true);
+                  resolve();
                 }
               },
               (error) => {
@@ -1534,9 +1534,7 @@ export class GlobalVarsService {
             .add(() => attempts++);
         }, timeoutMillis) as any;
       } else {
-        if (this.pausePolling) {
-          resolve(false);
-        }
+        reject(new Error("No waitTxn was provided."));
       }
     });
   }
