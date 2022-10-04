@@ -8,6 +8,7 @@ import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operat
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -2582,15 +2583,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this post right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same post more than once.";
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }
@@ -2603,34 +2596,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this profile right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same profile more than once.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameExists") >= 0) {
-        errorMessage = "Sorry, someone has already taken this username.";
-      } else if (errorMessage.indexOf("RuleErrorUserDescriptionLen") >= 0) {
-        errorMessage = "Your description is too long.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameTooLong") >= 0) {
-        errorMessage = "Your username is too long.";
-      } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
-        errorMessage =
-          "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
-        errorMessage = "You need more of your own creator coin to give a diamond of this level.";
-      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
-        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
-        errorMessage = "You must own this creator coin before transferring it.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroDeSoAfterFounderReward") >= 0) {
-        errorMessage =
-          "This creator has set their founder's reward to 100%. " +
-          "You cannot buy creators that have set their founder's reward to 100%.";
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }
@@ -2643,15 +2609,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorPrivateMessageSenderPublicKeyEqualsRecipientPublicKey") >= 0) {
-        errorMessage = `You can't message yourself.`;
-      } else if (errorMessage.indexOf("Problem decoding recipient") >= 0) {
-        errorMessage = `The public key you entered is invalid. Check that you copied it in correctly.`;
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }
