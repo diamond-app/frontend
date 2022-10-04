@@ -281,7 +281,6 @@ export class FeedPostDropdownComponent implements OnInit {
     const postExtraData = this.post.PostExtraData;
     postExtraData["BlogPostIsPinned"] = isPinned.toString();
 
-    const updateSuccessCallback = isPinned ? this.updateBlogPostPinnedSuccess : this.updateBlogPostUnpinnedSuccess;
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -302,17 +301,25 @@ export class FeedPostDropdownComponent implements OnInit {
       )
       .toPromise()
       .then((res) => {
-        this.globalVars.waitForTransaction(res.TxnHashHex, updateSuccessCallback, null, this);
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
+        return this.globalVars.waitForTransaction(res.TxnHashHex);
+      })
+      .then((txFound) => {
+        if (!txFound) return;
+        if (isPinned) {
+          this.updateBlogPostPinnedSuccess();
+        } else {
+          this.updateBlogPostUnpinnedSuccess();
+        }
       });
   }
 
-  updateBlogPostPinnedSuccess(comp) {
-    comp.toggleBlogPin.emit({ postHashHex: comp.post.PostHashHex, isPinned: true });
+  updateBlogPostPinnedSuccess() {
+    this.toggleBlogPin.emit({ postHashHex: this.post.PostHashHex, isPinned: true });
   }
 
-  updateBlogPostUnpinnedSuccess(comp) {
-    comp.toggleBlogPin.emit({ postHashHex: comp.post.PostHashHex, isPinned: false });
+  updateBlogPostUnpinnedSuccess() {
+    this.toggleBlogPin.emit({ postHashHex: this.post.PostHashHex, isPinned: false });
   }
 
   hidePinnedPost(event) {

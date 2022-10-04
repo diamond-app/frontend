@@ -1503,45 +1503,43 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  waitForTransaction(
-    waitTxn: string = "",
-    successCallback: (comp: any) => void = () => {},
-    errorCallback: (comp: any) => void = () => {},
-    comp: any = ""
-  ) {
+  waitForTransaction(waitTxn: string = ""): Promise<boolean> {
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
-    if (waitTxn !== "") {
-      let attempts = 0;
-      let numTries = 160;
-      let timeoutMillis = 750;
-      // Set an interval to repeat
-      let interval = setInterval(() => {
-        if (attempts >= numTries) {
-          errorCallback(comp);
-          clearInterval(interval);
-        }
-        this.backendApi
-          .GetTxn(this.localNode, waitTxn)
-          .subscribe(
-            (res: any) => {
-              if (!res.TxnFound) {
-                return;
+    return new Promise((resolve, reject) => {
+      if (waitTxn !== "") {
+        let attempts = 0;
+        let numTries = 160;
+        let timeoutMillis = 750;
+        // Set an interval to repeat
+        let interval = setInterval(() => {
+          if (attempts >= numTries) {
+            reject(new Error("Polling aborted. Reached maximum retries."));
+            clearInterval(interval);
+          }
+          this.backendApi
+            .GetTxn(this.localNode, waitTxn)
+            .subscribe(
+              (res: Record<string, any>) => {
+                if (!res.TxnFound) {
+                  resolve(false);
+                  return;
+                }
+                clearInterval(interval);
+                resolve(true);
+              },
+              (error) => {
+                clearInterval(interval);
+                reject(error);
               }
-              clearInterval(interval);
-              successCallback(comp);
-            },
-            (error) => {
-              clearInterval(interval);
-              errorCallback(comp);
-            }
-          )
-          .add(() => attempts++);
-      }, timeoutMillis) as any;
-    } else {
-      if (this.pausePolling) {
-        return;
+            )
+            .add(() => attempts++);
+        }, timeoutMillis) as any;
+      } else {
+        if (this.pausePolling) {
+          resolve(false);
+        }
       }
-    }
+    });
   }
 }

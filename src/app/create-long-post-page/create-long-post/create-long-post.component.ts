@@ -190,36 +190,58 @@ export class CreateLongPostComponent implements AfterViewInit {
         CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
       };
 
-      await this.backendApi
-        .SubmitPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-          this.editPostHashHex /*PostHashHexToModify*/,
-          "" /*ParentPostHashHex*/,
-          "" /*Title*/,
-          {
-            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\n#blog`,
-            ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
-          } /*BodyObj*/,
-          "" /*RepostedPostHashHex*/,
-          postExtraData /*PostExtraData*/,
-          "" /*Sub*/,
-          false /*IsHidden*/,
-          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-          false
-        )
-        .toPromise()
-        .then((res) => {
-          this.toastr.show(
-            `Blog Post Created<a href="${window.location.origin}/blog/${res.PostEntryResponse?.PostHashHex}" class="toast-link cursor-pointer">View</a>`,
-            undefined,
+      const submitPost = (body: string, postHashHex: string) =>
+        this.backendApi
+          .SubmitPost(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            postHashHex /*PostHashHexToModify*/,
+            "" /*ParentPostHashHex*/,
+            "" /*Title*/,
             {
-              toastClass: "info-toast",
-              enableHtml: true,
-              positionClass: "toast-bottom-center",
-            }
+              Body: body,
+              ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+            } /*BodyObj*/,
+            "" /*RepostedPostHashHex*/,
+            postExtraData /*PostExtraData*/,
+            "" /*Sub*/,
+            false /*IsHidden*/,
+            this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+            false
+          )
+          .toPromise();
+
+      const buildLinkBack = (postHashHex: string) =>
+        postHashHex ? `View this post at https://diamondapp.com/blog/${this.editPostHashHex}\n\n` : "";
+      const postTx = await submitPost(
+        `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(this.editPostHashHex)}#blog`,
+        this.editPostHashHex
+      );
+      const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
+
+      if (!this.editPostHashHex) {
+        const txFound = await this.globalVars.waitForTransaction(postTx.TxnHashHex);
+
+        // NOTE: this is not ideal, but we need to add the link back to diamond to the post body for nodes that do not
+        // yet support long form, so in the case of a newly created post we edit it after it's submitted to include the
+        // link back.
+        if (txFound) {
+          await submitPost(
+            `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(submittedPostHashHex)}#blog`,
+            submittedPostHashHex
           );
-        });
+        }
+      }
+
+      this.toastr.show(
+        `Blog Post Created<a href="${window.location.origin}/blog/${submittedPostHashHex}" class="toast-link cursor-pointer">View</a>`,
+        undefined,
+        {
+          toastClass: "info-toast",
+          enableHtml: true,
+          positionClass: "toast-bottom-center",
+        }
+      );
     } catch (e) {
       this.globalVars._alertError(
         `Whoops, something went wrong...${e?.error?.error ? JSON.stringify(e.error.error) : e.toString()}`

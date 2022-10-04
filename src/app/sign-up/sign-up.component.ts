@@ -1,17 +1,17 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus, User } from "../backend-api.service";
-import { shuffle, isNil } from "lodash";
-import { AppComponent } from "../app.component";
-import Swal from "sweetalert2";
-import { IdentityService } from "../identity.service";
-import { RouteNames } from "../app-routing.module";
-import { environment } from "../../environments/environment";
-import Timer = NodeJS.Timer;
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { isNil, shuffle } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import Swal from "sweetalert2";
+import { environment } from "../../environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { RouteNames } from "../app-routing.module";
+import { AppComponent } from "../app.component";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { IdentityService } from "../identity.service";
 import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: "sign-up",
@@ -199,17 +199,16 @@ export class SignUpComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.waitForTransaction(
-            res.TxnHashHex,
-            this.updateProfileSuccess,
-            this.updateProfileFailure,
-            this
-          );
+          this.globalVars
+            .waitForTransaction(res.TxnHashHex)
+            .then((txFound) => {
+              if (!txFound) return;
+              this.updateProfileSuccess();
+            })
+            .catch((err) => this.updateProfileFailure(err));
         },
-        (error) => {
-          console.log(error);
-          this.updateProfileFailure(this, error?.error?.error);
-        });
+        (err) => this.updateProfileFailure(err)
+      );
   }
 
   followCreatorTransaction() {
@@ -224,59 +223,65 @@ export class SignUpComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.waitForTransaction(res.TxnHashHex, this.followCreatorNext, this.followCreatorNext, this);
+          this.globalVars
+            .waitForTransaction(res.TxnHashHex)
+            .then((txFound) => {
+              if (!txFound) return;
+              this.followCreatorNext();
+            })
+            .catch(() => this.followCreatorNext());
         },
         (error) => {
           // If the follow transaction fails, rather than disrupting the flow and making the user do something else, just ignore it and move on
-          this.followCreatorNext(this);
+          this.followCreatorNext();
         }
       );
   }
 
-  followCreatorNext(comp) {
-    comp.currentTransactionStep += 1;
-    comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
+  followCreatorNext() {
+    this.currentTransactionStep += 1;
+    this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
     // If there are still creators that haven't been followed yet, follow them
-    if (comp.followTransactionIndex + 1 < comp.creatorsFollowed.length) {
-      comp.followTransactionIndex += 1;
+    if (this.followTransactionIndex + 1 < this.creatorsFollowed.length) {
+      this.followTransactionIndex += 1;
       // Skip users the profile already follows
       if (
-        !isNil(comp.globalVars.loggedInUser) &&
-        !comp.globalVars.loggedInUser?.PublicKeysBase58CheckFollowedByUser.includes(
-          comp.creatorsFollowed[comp.followTransactionIndex]
+        !isNil(this.globalVars.loggedInUser) &&
+        !this.globalVars.loggedInUser?.PublicKeysBase58CheckFollowedByUser.includes(
+          this.creatorsFollowed[this.followTransactionIndex]
         )
       ) {
-        comp.followCreatorTransaction();
+        this.followCreatorTransaction();
       } else {
-        comp.followCreatorNext(comp);
+        this.followCreatorNext();
       }
     } else {
-      comp.finishOnboarding();
+      this.finishOnboarding();
     }
   }
 
-  updateProfileSuccess(comp) {
-    comp.currentTransactionStep += 1;
-    comp.transactionProgress = Math.round((comp.currentTransactionStep / comp.totalTransactions) * 100);
-    if (comp.creatorsFollowed.length > 0) {
-      comp.followTransactionIndex = 0;
-      comp.followCreatorTransaction();
+  updateProfileSuccess() {
+    this.currentTransactionStep += 1;
+    this.transactionProgress = Math.round((this.currentTransactionStep / this.totalTransactions) * 100);
+    if (this.creatorsFollowed.length > 0) {
+      this.followTransactionIndex = 0;
+      this.followCreatorTransaction();
     }
   }
 
-  updateProfileFailure(comp, error: string = null) {
+  updateProfileFailure(error?: Error) {
     this.globalVars.logEvent("onboarding : profile : failure");
     let message =
       "Uh oh! We encountered an error saving your profile. Please input your information again and continue.";
     if (!isNil(error)) {
       message = message + " Error details: " + error;
     }
-    comp.backendApi.RemoveStorage("newOnboardingProfile");
-    comp.globalVars.newProfile = null;
+    this.backendApi.RemoveStorage("newOnboardingProfile");
+    this.globalVars.newProfile = null;
     this.processingTransactions = false;
-    comp.stepNum = 1;
+    this.stepNum = 1;
     Swal.fire({
-      target: comp.globalVars.getTargetComponentSelector(),
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Profile Update Failed",
       html: message,
       showConfirmButton: true,
@@ -321,7 +326,9 @@ export class SignUpComponent {
                   this.globalVars.removeOnboardingSettings();
                   this.globalVars.updateEverything().add(() => {
                     const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-                    const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+                    const redirectPath = isNil(signUpRedirect)
+                      ? `/${this.globalVars.RouteNames.BROWSE}`
+                      : signUpRedirect;
                     this.router
                       .navigate([redirectPath], {
                         queryParams: { feedTab: "Following" },
