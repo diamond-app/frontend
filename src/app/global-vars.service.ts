@@ -1521,12 +1521,10 @@ export class GlobalVarsService {
             .GetTxn(this.localNode, waitTxn)
             .subscribe(
               (res: Record<string, any>) => {
-                if (!res.TxnFound) {
-                  resolve(false);
-                  return;
+                if (res.TxnFound) {
+                  clearInterval(interval);
+                  resolve(true);
                 }
-                clearInterval(interval);
-                resolve(true);
               },
               (error) => {
                 clearInterval(interval);
