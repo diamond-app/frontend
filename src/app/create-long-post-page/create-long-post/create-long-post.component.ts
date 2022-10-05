@@ -99,8 +99,6 @@ export class CreateLongPostComponent implements AfterViewInit {
     return this.route.snapshot.params?.postHashHex ?? "";
   }
 
-  private originalTitle = "";
-
   constructor(
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
@@ -121,7 +119,6 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-          this.originalTitle = editPostData.Title;
           Object.assign(this.model, { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) });
         }
       } catch (e) {
@@ -256,19 +253,17 @@ export class CreateLongPostComponent implements AfterViewInit {
       // post, update the user's profile with a mapping from postHashHex to url
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
+        // delete any previous mappings this post may have had in the case that the title is being edited.
+        Object.keys(existingSlugMappings).forEach((slug) => {
+          if (existingSlugMappings[slug] === submittedPostHashHex && titleSlug !== slug) {
+            delete existingSlugMappings[slug];
+          }
+        });
+
         const newSlugMap = {
           ...existingSlugMappings,
           [titleSlug]: submittedPostHashHex,
         };
-
-        // delete any previous mapping this post may have had in the case that the title has been edited.
-        const staleSlugKey =
-          this.originalTitle !== "" &&
-          Object.keys(newSlugMap).find((k) => newSlugMap[k] === submittedPostHashHex && k !== titleSlug);
-
-        if (staleSlugKey) {
-          delete newSlugMap[staleSlugKey];
-        }
 
         const blogSlugMapJSON = JSON.stringify(newSlugMap);
         await this.backendApi
@@ -288,7 +283,6 @@ export class CreateLongPostComponent implements AfterViewInit {
           )
           .toPromise();
         currentUserProfile.ExtraData.BlogSlugMap = blogSlugMapJSON;
-        this.originalTitle = postExtraData.Title;
       }
 
       this.toastr.show(
