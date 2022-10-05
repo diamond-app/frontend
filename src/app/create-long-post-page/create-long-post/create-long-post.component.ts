@@ -225,7 +225,8 @@ export class CreateLongPostComponent implements AfterViewInit {
           )
           .toPromise();
 
-      const backLink = `View this post at https://diamondapp.com/u/${currentUserProfile.Username}/blog/${titleSlug}`;
+      const permalink = `${window.location.origin}/u/${currentUserProfile.Username}/blog/${titleSlug}`;
+      const backLink = `View this post at ${permalink}`;
       const postTx = await submitPost(
         `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${backLink}\n\n#blog`,
         this.editPostHashHex
@@ -281,7 +282,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       }
 
       this.toastr.show(
-        `Blog Post Created<a href="${window.location.origin}/blog/${submittedPostHashHex}" class="toast-link cursor-pointer">View</a>`,
+        `Blog Post Created<a href="${permalink}" class="toast-link cursor-pointer">View</a>`,
         undefined,
         {
           toastClass: "info-toast",
