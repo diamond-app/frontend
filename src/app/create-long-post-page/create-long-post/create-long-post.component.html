@@ -106,7 +106,19 @@
       [(ngModel)]="model.ContentDelta"
       format="object"
       [placeholder]="placeholder | transloco"
-      [formats]="['bold', 'italic', 'list', 'header', 'link']"
+      [formats]="[
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'list',
+        'header',
+        'link',
+        'image',
+        'blockquote',
+        'code-block',
+        'script'
+      ]"
     ></quill-editor>
   </div>
 </div>
