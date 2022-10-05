@@ -50,7 +50,7 @@
             {{ currentPost.ProfileEntryResponse.Username }}
           </a>
           <span class="ml-auto fs-14px text-secondary">
-            Published on {{ globalVars.convertTstampToDateOrTime(currentPost.TimestampNanos) }}
+            Published on {{ getPublishDate(currentPost.TimestampNanos) }}
           </span>
         </div>
       </header>
@@ -97,14 +97,14 @@
                 <h3 class="font-weight-bold fs-14px">{{ recentPost.PostExtraData.Title }}</h3>
                 <p class="text-secondary fs-13px">{{ recentPost.PostExtraData.Description }}</p>
               </div>
-              <p class="ml-auto fs-12px">{{ globalVars.convertTstampToDateOrTime(recentPost.TimestampNanos) }}</p>
+              <p class="ml-auto fs-12px">{{ getPublishDate(recentPost.TimestampNanos) }}</p>
             </header>
           </article>
         </a>
       </div>
     </section>
     <div
-      *ngIf="threadManager.threadCount > 0"
+      *ngIf="threadManager?.threadCount > 0"
       class="post-thread__comment-container article-comments"
       id="comment-scroller"
     >

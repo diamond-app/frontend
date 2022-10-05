@@ -90,6 +90,14 @@ export class BlogDetailComponent {
     });
   }
 
+  getPublishDate(timeStampNanos: number) {
+    return new Date(timeStampNanos / 1000000).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
   getPost(postHashHex: string, commentOffset = 0, commentLimit = 20) {
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
