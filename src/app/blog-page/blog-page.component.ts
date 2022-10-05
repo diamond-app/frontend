@@ -1,7 +1,7 @@
 // @ts-strict
 import { AfterViewInit, Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { BackendApiService, PostEntryResponse } from "src/app/backend-api.service";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
 
@@ -11,28 +11,27 @@ import { GlobalVarsService } from "src/app/global-vars.service";
   styleUrls: ["./blog-page.component.scss"],
 })
 export class BlogPageComponent implements AfterViewInit {
-  private pendingPageData: Promise<[any, PostEntryResponse[]]>;
+  private pendingPageData: Promise<[ProfileEntryResponse, PostEntryResponse[]]>;
   blogPosts: PostEntryResponse[] = [];
-  username: string;
+  profile?: ProfileEntryResponse;
 
   constructor(
-    private backendApi: BackendApiService,
-    private globalVars: GlobalVarsService,
+    public backendApi: BackendApiService,
+    public globalVars: GlobalVarsService,
     private route: ActivatedRoute
   ) {
-    // For not we have no way to fetch only the blog posts. We just fetch the last 1000
+    // For now we have no way to fetch only the blog posts. We just fetch the last 1000
     // items and filter to only blog posts
-    this.username = route.snapshot.params.username;
     this.pendingPageData = Promise.all([
       this.backendApi
-        .GetSingleProfile(this.globalVars.localNode, "", this.username)
+        .GetSingleProfile(this.globalVars.localNode, "", route.snapshot.params.username)
         .toPromise()
         .then(({ Profile }) => Profile),
       this.backendApi
         .GetPostsForPublicKey(
           this.globalVars.localNode,
           "",
-          this.username,
+          route.snapshot.params.username,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
           "",
           1000,
@@ -49,7 +48,13 @@ export class BlogPageComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.pendingPageData.then(([ProfileEntryResponse, posts]) => {
-      this.blogPosts = posts.map((p) => ({ ...p, ProfileEntryResponse }));
+      this.profile = ProfileEntryResponse;
+      const pinnedPostIndex = posts.findIndex((p) => JSON.parse(p.PostExtraData?.BlogPostIsPinned ?? false));
+      const sortedPosts =
+        pinnedPostIndex > 0
+          ? [posts[pinnedPostIndex], ...posts.slice(0, pinnedPostIndex), ...posts.slice(pinnedPostIndex + 1)]
+          : posts;
+      this.blogPosts = sortedPosts.map((p) => ({ ...p, ProfileEntryResponse }));
     });
   }
 }
