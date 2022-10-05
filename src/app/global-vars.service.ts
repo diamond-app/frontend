@@ -32,10 +32,7 @@ import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
-import { LocationStrategy } from "@angular/common";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
-import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
-import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export enum ConfettiSvg {
