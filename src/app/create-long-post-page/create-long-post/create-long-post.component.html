@@ -3,29 +3,9 @@
 </div>
 <div *ngIf="!isLoadingEditModel" class="mt-2">
   <form (submit)="submit($event)" (input)="onFormInput($event)">
-    <div class="d-flex align-items-start p-2">
-      <div [ngStyle]="{ 'flex-grow': 1 }" class="mr-3">
-        <input
-          #titleInput
-          [required]="true"
-          [(ngModel)]="model.Title"
-          name="blogTitle"
-          type="text"
-          placeholder="Headline..."
-          class="mb-2 p-2 rounded font-weight-bold fs-24px border-light"
-          autocomplete="off"
-          autofocus="true"
-        />
-        <input
-          [(ngModel)]="model.Description"
-          name="blogTagline"
-          type="text"
-          placeholder="Description..."
-          class="rounded border-light"
-          autocomplete="off"
-        />
-      </div>
-      <div class="d-flex flex-column">
+    <div class="d-flex flex-row justify-content-between px-4 pt-4">
+      <h3><strong>Create Blog Post</strong></h3>
+      <div>
         <button
           *ngIf="this.editPostHashHex"
           type="button"
@@ -36,17 +16,39 @@
           <span *ngIf="!this.isSubmittingPost">Cancel</span>
         </button>
         <button
-          class="ml-auto btn-primary rounded"
+          class="ml-auto btn-primary rounded editor-publish-button"
           type="submit"
           [disabled]="this.isSubmittingPost"
-          [ngStyle]="{ minWidth: '80px' }"
         >
           <span *ngIf="this.isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
           <span *ngIf="!this.isSubmittingPost">Publish</span>
         </button>
       </div>
     </div>
-    <div class="p-2">
+    <div class="d-flex align-items-start p-4 pb-0" [ngStyle]="{ paddingBottom: 0 }">
+      <div [ngStyle]="{ 'flex-grow': 1 }">
+        <input
+          #titleInput
+          [required]="true"
+          [(ngModel)]="model.Title"
+          name="blogTitle"
+          type="text"
+          placeholder="Headline..."
+          class="mb-2 p-2 px-3 rounded font-weight-bold fs-24px"
+          autocomplete="off"
+          autofocus="true"
+        />
+        <input
+          [(ngModel)]="model.Description"
+          name="blogTagline"
+          type="text"
+          placeholder="Description..."
+          class="rounded p-2 px-3"
+          autocomplete="off"
+        />
+      </div>     
+    </div>
+    <div class="pl-4 pr-4 pb-4" [ngStyle]="{ paddingTop: 0 }">
       <div
         (drop)="onDropImg($event)"
         (dragover)="onDragOver($event)"
@@ -81,7 +83,7 @@
         </div>
         <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
         <span *ngIf="!coverImgSrc">
-          <p class="w-75 mb-2" [ngStyle]="{ margin: '0 auto' }">
+          <p class="w-60 mb-3" [ngStyle]="{ margin: '0 auto' }">
             Add a cover image that compliments your blog post. Drag a file into this area or select a file from your
             computer.
           </p>
@@ -89,7 +91,7 @@
             type="button"
             [ngClass]="{ 'btn-success': isDraggingFileOverDropZone }"
             (click)="onClickSelectFile($event)"
-            class="rounded"
+            class="ml-auto btn-primary rounded editor-publish-button"
           >
             Select File
           </button>
@@ -97,11 +99,13 @@
       </div>
     </div>
   </form>
-  <quill-editor
-    [required]="true"
-    [modules]="quillModules"
-    [(ngModel)]="model.ContentDelta"
-    format="object"
-    [placeholder]="placeholder | transloco"
-  ></quill-editor>
+  <div class="editor-content">
+    <quill-editor
+      [required]="true"
+      [modules]="quillModules"
+      [(ngModel)]="model.ContentDelta"
+      format="object"
+      [placeholder]="placeholder | transloco"
+    ></quill-editor>
+  </div>
 </div>
