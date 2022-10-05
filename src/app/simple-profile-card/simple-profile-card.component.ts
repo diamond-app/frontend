@@ -9,7 +9,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
   selector: "simple-profile-card",
   templateUrl: "./simple-profile-card.component.html",
 })
-export class SimpleProfileCardComponent implements OnInit {
+export class SimpleProfileCardComponent {
   @Input() profile: ProfileEntryResponse;
   @Input() diamondLevel = -1;
   @Input() showHeartIcon = false;
@@ -30,12 +30,6 @@ export class SimpleProfileCardComponent implements OnInit {
   tutorialFollowing = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
-
-  ngOnInit(): void {
-    if (this.inTutorial) {
-      this.tutorialFollowing = this.profile.PublicKeyBase58Check in this.globalVars.onboardingCreatorsToFollow
-    }
-  }
 
   onboardingFollow() {
     this.tutorialFollowing = !this.tutorialFollowing;

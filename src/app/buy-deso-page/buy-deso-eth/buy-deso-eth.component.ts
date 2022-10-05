@@ -136,7 +136,8 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   depositEthTooltip() {
-    return "Send ETH to this address so that you can swap it for DESO in step two below.";
+    return "Send ETH to this address so that you can swap it for DESO in step two below. " +
+      "Do not send WETH or Binance Peg ETH.";
   }
 
   minDepositTooltip() {

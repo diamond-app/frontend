@@ -42,10 +42,10 @@
             <div
               class="notifications__avatar"
               [ngClass]="{
-                nft__avatar: item?.actor?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+                nft__avatar: item?.actor?.ExtraData?.NFTProfilePictureUrl
               }"
               [avatar]="item.actor?.PublicKeyBase58Check"
-              [nftProfileUrl]="item?.actor?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+              [nftProfileUrl]="item?.actor?.ExtraData?.NFTProfilePictureUrl"
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor?.Username]"
             >
               <div *ngIf="item.icon" class="notifications__icon">

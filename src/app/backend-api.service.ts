@@ -8,6 +8,7 @@ import { interval, Observable, of, throwError, zip } from "rxjs";
 import { catchError, concatMap, filter, map, switchMap, take } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { IdentityService } from "./identity.service";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -29,7 +30,9 @@ export class BackendRoutes {
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
+  static GetAllMessagingGroupKeys = "/api/v0/get-all-messaging-group-keys";
   static RoutePathCheckPartyMessagingKeys = "/api/v0/check-party-messaging-keys";
+  static RegisterGroupMessagingKey = "/api/v0/register-messaging-group-key";
   static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
   static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
@@ -427,6 +430,39 @@ type CountryLevelSignUpBonus = {
   KickbackAmountOverrideUSDCents: number;
 };
 
+export type MessagingGroupMember = {
+  GroupMemberPublicKeyBase58Check: string;
+  GroupMemberKeyName: string;
+  EncryptedKey: string;
+};
+
+export type MessagingGroupEntryResponse = {
+  GroupOwnerPublicKeyBase58Check: string;
+  MessagingPublicKeyBase58Check: string;
+  MessagingGroupKeyName: string;
+  MessagingGroupMembers: MessagingGroupMember[];
+  EncryptedKey: string;
+  ExtraData: { [k: string]: string };
+};
+
+export type GetAllMessagingGroupKeysResponse = {
+  MessagingGroupEntries: MessagingGroupEntryResponse[];
+};
+
+export type MessagingGroupMemberResponse = {
+  // GroupMemberPublicKeyBase58Check is the main public key of the group member.
+  GroupMemberPublicKeyBase58Check: string;
+
+  // GroupMemberKeyName is the key name of the member that we encrypt the group messaging public key to. The group
+  // messaging public key should not be confused with the GroupMemberPublicKeyBase58Check, the former is the public
+  // key of the whole group, while the latter is the public key of the group member.
+  GroupMemberKeyName: string;
+
+  // EncryptedKey is the encrypted private key corresponding to the group messaging public key that's encrypted
+  // to the member's registered messaging key labeled with GroupMemberKeyName.
+  EncryptedKey: string;
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -642,8 +678,13 @@ export class BackendApiService {
     FeeRateSatoshisPerKB: number,
     Broadcast: boolean
   ): Observable<any> {
+    // Check if the user is logged in with a derived key and operating as the owner key.
+    const DerivedPublicKeyBase58Check = this.identityService.identityServiceUsers[PublicKeyBase58Check]
+      ?.derivedPublicKeyBase58Check;
+
     let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
+      DerivedPublicKeyBase58Check,
       BurnAmountSatoshis,
       LatestBitcionAPIResponse,
       BTCDepositAddress,
@@ -667,6 +708,7 @@ export class BackendApiService {
         switchMap((res) =>
           this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
             PublicKeyBase58Check,
+            DerivedPublicKeyBase58Check,
             BurnAmountSatoshis,
             LatestBitcionAPIResponse,
             BTCDepositAddress,
@@ -774,6 +816,36 @@ export class BackendApiService {
       })
     );
     return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
+  }
+
+  RegisterGroupMessagingKey(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string,
+    MessagingPublicKeyBase58Check: string,
+    MessagingGroupKeyName: string,
+    MessagingKeySignatureHex: string,
+    MessagingGroupMembers: MessagingGroupMemberResponse[],
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RegisterGroupMessagingKey,
+      {
+        OwnerPublicKeyBase58Check,
+        MessagingPublicKeyBase58Check,
+        MessagingGroupKeyName,
+        MessagingKeySignatureHex,
+        MessagingGroupMembers,
+        ExtraData,
+        MinFeeRateNanosPerKB,
+      }
+    );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      OwnerPublicKeyBase58Check
+    );
   }
 
   // User-related functions.
@@ -1550,6 +1622,28 @@ export class BackendApiService {
     );
 
     return req.pipe(catchError(this._handleError));
+  }
+
+  GetAllMessagingGroupKeys(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string
+  ): Observable<GetAllMessagingGroupKeysResponse> {
+    return this.post(endpoint, BackendRoutes.GetAllMessagingGroupKeys, {
+      OwnerPublicKeyBase58Check,
+    });
+  }
+
+  GetDefaultKey(endpoint: string, publicKeyBase58Check: string): Observable<MessagingGroupEntryResponse | null> {
+    return this.GetAllMessagingGroupKeys(endpoint, publicKeyBase58Check).pipe(
+      map((res) => {
+        const defaultKeys = res.MessagingGroupEntries.filter(
+          (messagingGroup: MessagingGroupEntryResponse) => {
+            return messagingGroup.MessagingGroupKeyName === 'default-key';
+          }
+        );
+        return defaultKeys.length ? defaultKeys[0] : null;
+      })
+    );
   }
 
   CreateLike(
@@ -2497,15 +2591,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this post right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same post more than once.";
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }
@@ -2518,34 +2604,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this profile right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same profile more than once.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameExists") >= 0) {
-        errorMessage = "Sorry, someone has already taken this username.";
-      } else if (errorMessage.indexOf("RuleErrorUserDescriptionLen") >= 0) {
-        errorMessage = "Your description is too long.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameTooLong") >= 0) {
-        errorMessage = "Your username is too long.";
-      } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
-        errorMessage =
-          "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
-        errorMessage = "You need more of your own creator coin to give a diamond of this level.";
-      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
-        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
-        errorMessage = "You must own this creator coin before transferring it.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroDeSoAfterFounderReward") >= 0) {
-        errorMessage =
-          "This creator has set their founder's reward to 100%. " +
-          "You cannot buy creators that have set their founder's reward to 100%.";
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }
@@ -2558,15 +2617,7 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
-        errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorPrivateMessageSenderPublicKeyEqualsRecipientPublicKey") >= 0) {
-        errorMessage = `You can't message yourself.`;
-      } else if (errorMessage.indexOf("Problem decoding recipient") >= 0) {
-        errorMessage = `The public key you entered is invalid. Check that you copied it in correctly.`;
-      }
+      errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
   }

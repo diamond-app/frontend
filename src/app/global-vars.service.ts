@@ -22,6 +22,7 @@ import {
   BackendApiService,
   BalanceEntryResponse,
   DeSoNode,
+  MessagingGroupEntryResponse,
   PostEntryResponse,
   TutorialStatus,
   User,
@@ -31,6 +32,11 @@ import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
+import { LocationStrategy } from "@angular/common";
+import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
+import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -118,6 +124,7 @@ export class GlobalVarsService {
 
   // We track logged-in state
   loggedInUser: User;
+  loggedInUserDefaultKey: MessagingGroupEntryResponse;
   userList: User[] = [];
 
   // Temporarily track tutorial status here until backend it flowing
@@ -241,16 +248,8 @@ export class GlobalVarsService {
   // How many unread notifications the user has
   unreadNotifications: number = 0;
 
-  // Variables that are stored while a user is in between setting up their profile and waiting for the jumio verification callback
-  newProfile: {
-    username: string;
-    profilePicInput: string;
-    highQualityProfilePicUrl: string;
-    coverPhotoUrl: string;
-    profileEmail: string;
-    profileDescription: string;
-  };
-  onboardingCreatorsToFollow: { [key: string]: boolean } = {};
+  // Track when the user is signing up to prevent redirects
+  userSigningUp: boolean = false;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -372,32 +371,6 @@ export class GlobalVarsService {
     });
   }
 
-  initializeOnboardingSettings() {
-    const newProfile = this.backendApi.GetStorage("newOnboardingProfile");
-    const newOnboardingCreatorsToFollow = this.backendApi.GetStorage("newOnboardingCreatorsToFollow");
-    if (!isNil(newProfile)) {
-      this.newProfile = newProfile;
-    }
-    if (!isNil(newOnboardingCreatorsToFollow)) {
-      this.onboardingCreatorsToFollow = newOnboardingCreatorsToFollow;
-    }
-  }
-
-  removeOnboardingSettings() {
-    this.backendApi.RemoveStorage("newOnboardingProfile");
-    this.backendApi.RemoveStorage("newOnboardingCreatorsToFollow");
-  }
-
-  setOnboardingProfile(newOnboardingProfile) {
-    this.backendApi.SetStorage("newOnboardingProfile", newOnboardingProfile);
-    this.newProfile = newOnboardingProfile;
-  }
-
-  setOnboardingCreatorsToFollow(onboardingCreatorsToFollow) {
-    this.backendApi.SetStorage("newOnboardingCreatorsToFollow", onboardingCreatorsToFollow);
-    this.onboardingCreatorsToFollow = onboardingCreatorsToFollow;
-  }
-
   initializeShowPriceSetting() {
     const showPriceOnFeed = this.backendApi.GetStorage("showPriceOnFeed");
     if (!isNil(showPriceOnFeed)) {
@@ -481,7 +454,52 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
+    if (user.BalanceNanos) {
+      this.getLoggedInUserDefaultKey();
+    }
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+  }
+
+  getLoggedInUserDefaultKey() {
+    this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+      if (!res) {
+        SwalHelper.fire({
+          html:
+            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+          showCancelButton: false,
+        }).then(({ isConfirmed }) => {
+          if (isConfirmed) {
+            // Ask user to generate a default key
+            this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+              if (res) {
+                this.backendApi
+                  .RegisterGroupMessagingKey(
+                    this.localNode,
+                    this.loggedInUser.PublicKeyBase58Check,
+                    res.messagingPublicKeyBase58Check,
+                    "default-key",
+                    res.messagingKeySignature,
+                    [],
+                    {},
+                    this.feeRateDeSoPerKB * 1e9
+                  )
+                  .subscribe((res) => {
+                    if (res) {
+                      this.backendApi
+                        .GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+                        .subscribe((messagingGroupEntryResponse) => {
+                          this.loggedInUserDefaultKey = messagingGroupEntryResponse;
+                        });
+                    }
+                  });
+              }
+            });
+          }
+        });
+      } else {
+        this.loggedInUserDefaultKey = res;
+      }
+    });
   }
 
   preventBackButton() {
@@ -868,6 +886,10 @@ export class GlobalVarsService {
   }
 
   _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+    if (err !== `${environment.node.name} is experiencing heavy load. Please try again in one minute.`) {
+      err = parseCleanErrorMsg(err);
+    }
+
     if (err === "Your balance is insufficient.") {
       showBuyDeSo = true;
     }
@@ -1050,6 +1072,7 @@ export class GlobalVarsService {
       })
       .subscribe((res) => {
         this.logEvent(`account : ${event} : success`);
+        this.userSigningUp = res.signedUp;
         this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
         this.updateEverything().add(() => {
           this.flowRedirect(res.signedUp);
@@ -1120,6 +1143,7 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
+      this.userSigningUp = false;
     } else if (this.router.url === RouteNames.LANDING) {
       this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
