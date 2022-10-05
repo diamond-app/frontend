@@ -272,7 +272,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         const blogSlugMapJSON = JSON.stringify(newSlugMap);
         await this.backendApi
           .UpdateProfile(
-            environment.verificationEndpointHostname,
+            this.globalVars.localNode,
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             "",
