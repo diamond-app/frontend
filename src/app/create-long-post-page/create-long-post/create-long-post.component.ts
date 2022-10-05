@@ -257,19 +257,11 @@ export class CreateLongPostComponent implements AfterViewInit {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
         await this.globalVars.waitForTransaction(postTx.TxnHashHex);
 
-        // delete any previous mappings this post may have had in the case that the title is being edited.
-        Object.keys(existingSlugMappings).forEach((slug) => {
-          if (existingSlugMappings[slug] === submittedPostHashHex && titleSlug !== slug) {
-            delete existingSlugMappings[slug];
-          }
-        });
-
-        const newSlugMap = {
+        const blogSlugMapJSON = JSON.stringify({
           ...existingSlugMappings,
           [titleSlug]: submittedPostHashHex,
-        };
+        });
 
-        const blogSlugMapJSON = JSON.stringify(newSlugMap);
         await this.backendApi
           .UpdateProfile(
             this.globalVars.localNode,
