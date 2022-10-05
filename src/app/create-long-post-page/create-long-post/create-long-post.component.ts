@@ -268,6 +268,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           )
           .toPromise();
         currentUserProfile.ExtraData.BlogSlugMap = blogSlugMapJSON;
+        this.originalTitle = postExtraData.Title;
       }
 
       if (!this.editPostHashHex) {
