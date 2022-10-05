@@ -35,6 +35,7 @@ export interface BlogPostExtraData {
   Title: string;
   Description: string;
   BlogDeltaRtfFormat: string;
+  BlogTitleSlug: string;
   CoverImage: string;
 }
 
@@ -98,6 +99,8 @@ export class CreateLongPostComponent implements AfterViewInit {
     return this.route.snapshot.params?.postHashHex ?? "";
   }
 
+  private originalTitle = "";
+
   constructor(
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
@@ -118,6 +121,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
+          this.originalTitle = editPostData.Title;
           Object.assign(this.model, { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) });
         }
       } catch (e) {
@@ -171,6 +175,14 @@ export class CreateLongPostComponent implements AfterViewInit {
       return;
     }
 
+    const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
+    currentUserProfile.ExtraData = currentUserProfile.ExtraData ?? {};
+
+    if (!currentUserProfile) {
+      this.globalVars._alertError("You must have a profile to create a blog post.");
+      return;
+    }
+
     this.model.validate();
 
     if (this.model.hasErrors) {
@@ -183,10 +195,12 @@ export class CreateLongPostComponent implements AfterViewInit {
     try {
       await this.uploadAndReplaceBase64Images();
 
+      const titleSlug = stringToSlug(this.model.Title);
       const postExtraData: BlogPostExtraData = {
         Title: this.model.Title.trim(),
         Description: this.model.Description.trim(),
         BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
+        BlogTitleSlug: titleSlug,
         CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
       };
 
@@ -211,13 +225,49 @@ export class CreateLongPostComponent implements AfterViewInit {
           )
           .toPromise();
 
-      const buildLinkBack = (postHashHex: string) =>
-        postHashHex ? `View this post at https://diamondapp.com/blog/${this.editPostHashHex}\n\n` : "";
+      const backLink = `View this post at https://diamondapp.com/u/${currentUserProfile.Username}/blog/${titleSlug}`;
       const postTx = await submitPost(
-        `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(this.editPostHashHex)}#blog`,
+        `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${backLink}\n\n#blog`,
         this.editPostHashHex
       );
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
+
+      // if this is a new post, or the author updates the title of an existing
+      // post, update the user's profile with a mapping from postHashHex to url
+      // slug
+      if (this.originalTitle === "" || stringToSlug(this.originalTitle) !== titleSlug) {
+        const newSlugMap = {
+          ...JSON.parse(currentUserProfile.ExtraData?.BlogSlugMap ?? "{}"),
+          [titleSlug]: submittedPostHashHex,
+        };
+        // delete any previous mapping this post may have had
+        const staleSlug =
+          this.originalTitle !== "" &&
+          Object.keys(newSlugMap).find((k) => newSlugMap[k] === submittedPostHashHex && k !== titleSlug);
+
+        if (staleSlug) {
+          delete newSlugMap[staleSlug];
+        }
+
+        const blogSlugMapJSON = JSON.stringify(newSlugMap);
+        await this.backendApi
+          .UpdateProfile(
+            environment.verificationEndpointHostname,
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            "",
+            "",
+            "",
+            "",
+            10 * 100,
+            1.25 * 100 * 100,
+            false,
+            this.globalVars.feeRateDeSoPerKB * 1e9,
+            { BlogSlugMap: blogSlugMapJSON }
+          )
+          .toPromise();
+        currentUserProfile.ExtraData.BlogSlugMap = blogSlugMapJSON;
+      }
 
       if (!this.editPostHashHex) {
         // NOTE: this is not ideal, but we need to add the link back to diamond to the post body for nodes that do not
@@ -225,7 +275,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         // link back.
         await this.globalVars.waitForTransaction(postTx.TxnHashHex);
         await submitPost(
-          `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${buildLinkBack(submittedPostHashHex)}#blog`,
+          `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${backLink}\n\n#blog`,
           submittedPostHashHex
         );
       }
@@ -341,3 +391,17 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.model.CoverImage = "";
   }
 }
+
+// Naively copied this from here:
+// https://gist.github.com/codeguy/6684588?permalink_comment_id=3332719#gistcomment-3332719
+// Tested with a few edge cases (special chars, weird spacing, etc) and it did
+// fine. May need to revisit if it doesn't handle some edge case properly.
+const stringToSlug = (str: string) =>
+  str
+    .normalize("NFD") // split an accented letter in the base letter and the acent
+    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+    .trim()
+    .replace(/\s+/g, "-") // replace all spaces with -
+    .replace(/-+/g, "-"); // replace multiple - with a single -

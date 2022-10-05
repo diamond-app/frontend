@@ -181,12 +181,20 @@
             (click)="onPostClicked($event)"
             class="link--unstyled"
             [routerLink]="
-              getRouterLink([
-                '/' + postContent.PostExtraData?.BlogDeltaRtfFormat
-                  ? gobalVars.RouteNames.BLOG
-                  : gobalVars.RouteNames.POSTS,
-                postContent.PostHashHex
-              ])
+              getRouterLink(
+                postContent.PostExtraData?.BlogDeltaRtfFormat
+                  ? [
+                      '/' +
+                        globalVars.RouteNames.USER_PREFIX +
+                        '/' +
+                        postContent.ProfileEntryResponse.Username +
+                        '/' +
+                        globalVars.RouteNames.BLOG +
+                        '/' +
+                        postContent.PostExtraData.BlogTitleSlug
+                    ]
+                  : ['/' + gobalVars.RouteNames.POSTS + '/' + postContent.PostHashHex]
+              )
             "
             queryParamsHandling="merge"
           >

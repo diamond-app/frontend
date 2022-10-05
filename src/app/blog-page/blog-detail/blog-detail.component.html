@@ -73,7 +73,16 @@
       <div class="list-group">
         <a
           *ngFor="let recentPost of recentPosts"
-          [routerLink]="['/' + globalVars.RouteNames.BLOG + '/' + recentPost.PostHashHex]"
+          [routerLink]="[
+            '/' +
+              globalVars.RouteNames.USER_PREFIX +
+              '/' +
+              recentPost.ProfileEntryResponse.Username +
+              '/' +
+              globalVars.RouteNames.BLOG +
+              '/' +
+              recentPost.PostExtraData.BlogTitleSlug
+          ]"
           class="list-group-item link--unstyled"
         >
           <article>

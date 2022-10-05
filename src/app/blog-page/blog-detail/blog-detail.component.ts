@@ -25,7 +25,7 @@ export class BlogDetailComponent {
   threadManager?: ThreadManager;
   isLoadingMoreReplies = false;
   title = "";
-
+  currentPostHashHex = "";
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
       const numThreads = this.threadManager?.threadCount ?? 0;
@@ -35,8 +35,8 @@ export class BlogDetailComponent {
         // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
         const start = index < 0 ? 0 : index;
         success(this.threadManager?.threads.slice(start, index + count) ?? []);
-      } else {
-        this.getPost(this.route.snapshot.params.postHashHex, index, count)?.subscribe(
+      } else if (this.currentPostHashHex) {
+        this.getPost(this.currentPostHashHex, index, count)?.subscribe(
           (res) => {
             // If we got more comments, push them onto the list of comments, increase comment count
             // and determine if we should continue scrolling
@@ -85,8 +85,8 @@ export class BlogDetailComponent {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.route.params.subscribe(({ postHashHex }) => {
-      this._setStateFromActivatedRoute(postHashHex);
+    this.route.params.subscribe((routeParams) => {
+      this._setStateFromActivatedRoute(routeParams as { postHashHex: string; username: string; slug: string });
     });
   }
 
@@ -139,9 +139,6 @@ export class BlogDetailComponent {
         )} Blog Post`;
         this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this._fetchRecentPosts(res.PostFound.ProfileEntryResponse);
-      })
-      .catch((err) => {
-        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
       });
   }
 
@@ -371,12 +368,28 @@ export class BlogDetailComponent {
     });
   }
 
-  _setStateFromActivatedRoute(postHashHex: string) {
+  async _setStateFromActivatedRoute({ postHashHex, username, slug }) {
     this.threadManager?.reset();
     this.isLoading = true;
-    this.refreshPosts(postHashHex).finally(() => {
-      this.isLoading = false;
-    });
+    try {
+      if (username) {
+        const { Profile } = await this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username).toPromise();
+        if (!Profile?.ExtraData?.BlogSlugMap) {
+          throw new Error(`No slug mapping for username ${username}`);
+        }
+        const slugMap = JSON.parse(Profile.ExtraData.BlogSlugMap);
+        this.currentPostHashHex = slugMap[slug];
+      } else {
+        this.currentPostHashHex = postHashHex;
+      }
+
+      await this.refreshPosts(this.currentPostHashHex).finally(() => {
+        this.isLoading = false;
+      });
+    } catch (e) {
+      console.error(e);
+      this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+    }
     this.datasource.adapter.reset();
   }
 

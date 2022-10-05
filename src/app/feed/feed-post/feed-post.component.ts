@@ -376,15 +376,24 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    const postRoute = this.postContent.PostExtraData?.BlogDeltaRtfFormat
-      ? this.globalVars.RouteNames.BLOG
-      : this.globalVars.RouteNames.POSTS;
-    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : postRoute;
+    let postRouteTree = [
+      "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
+      this.postContent.PostHashHex,
+    ];
+
+    if (this.postContent.PostExtraData?.BlogDeltaRtfFormat) {
+      postRouteTree = [
+        "/" + this.globalVars.RouteNames.USER_PREFIX,
+        this.postContent.ProfileEntryResponse.Username,
+        this.globalVars.RouteNames.BLOG,
+        this.postContent.PostExtraData.BlogTitleSlug,
+      ];
+    }
 
     // identify ctrl+click (or) cmd+clik and opens feed in new tab
     if (event.ctrlKey) {
       const url = this.router.serializeUrl(
-        this.router.createUrlTree(["/" + route, this.postContent.PostHashHex], {
+        this.router.createUrlTree(postRouteTree, {
           queryParamsHandling: "merge",
         })
       );
@@ -393,7 +402,7 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    this.router.navigate(["/" + route, this.postContent.PostHashHex], {
+    this.router.navigate(postRouteTree, {
       queryParamsHandling: "merge",
     });
   }

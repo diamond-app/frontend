@@ -276,9 +276,17 @@ export class PostThreadComponent implements AfterViewInit {
           !!res.PostFound.PostExtraData?.BlogDeltaRtfFormat &&
           (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.BLOG)
         ) {
-          this.router.navigate(["/" + this.globalVars.RouteNames.BLOG, this.route.snapshot.params.postHashHex], {
-            queryParamsHandling: "merge",
-          });
+          this.router.navigate(
+            [
+              "/" + this.globalVars.RouteNames.USER_PREFIX,
+              res.PostFound.ProfileEntryResponse.Username,
+              this.globalVars.RouteNames.BLOG,
+              res.PostFound.PostExtraData.BlogTitleSlug,
+            ],
+            {
+              queryParamsHandling: "merge",
+            }
+          );
           return;
         }
 

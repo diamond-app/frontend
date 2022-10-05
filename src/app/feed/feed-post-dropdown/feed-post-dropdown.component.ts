@@ -353,13 +353,21 @@ export class FeedPostDropdownComponent implements OnInit {
   }
 
   _getPostUrl() {
-    const pathArray = [
-      "/" + this.postContent.PostExtraData?.BlogDeltaRtfFormat
-        ? this.globalVars.RouteNames.BLOG
-        : this.globalVars.RouteNames.POSTS,
-      this.postContent.PostHashHex,
-    ];
-
+    const pathArray = this.postContent.PostExtraData?.BlogDeltaRtfFormat
+      ? [
+          "/" +
+            this.globalVars.RouteNames.USER_PREFIX +
+            "/" +
+            this.postContent.ProfileEntryResponse.Username +
+            "/" +
+            this.globalVars.RouteNames.BLOG +
+            "/" +
+            this.postContent.PostExtraData.BlogTitleSlug,
+        ]
+      : [
+          "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
+          this.postContent.PostHashHex,
+        ];
     // need to preserve the curent query params for our dev env to work
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
 

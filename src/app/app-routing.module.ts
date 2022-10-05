@@ -1,7 +1,6 @@
+import { ViewportScroller } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { Router, RouterModule, Routes, Scroll } from "@angular/router";
-
-import { ViewportScroller } from "@angular/common";
 import { filter } from "rxjs/operators";
 import { BlogDetailComponent } from "src/app/blog-page/blog-detail/blog-detail.component";
 import { BlogPageComponent } from "src/app/blog-page/blog-page.component";
@@ -164,6 +163,11 @@ const routes: Routes = [
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG, component: BlogPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG + "/:slug",
+    component: BlogDetailComponent,
+    pathMatch: "full",
+  },
   { path: RouteNames.BLOG + "/:postHashHex", component: BlogDetailComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
