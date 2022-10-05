@@ -3,17 +3,14 @@ import { Component, EventEmitter, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
-import { TradeCreatorModalComponent } from "src/app/trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
-import { FollowService } from "src/lib/services/follow/follow.service";
 
 @Component({
   selector: "app-blog-detail",
@@ -82,12 +79,10 @@ export class BlogDetailComponent {
     private titleService: Title,
     private toastr: ToastrService,
     private transloco: TranslocoService,
-    private modalService: BsModalService,
     public globalVars: GlobalVarsService,
-    public location: Location,
-    public followService: FollowService
+    public location: Location
   ) {
-    // This line forces the component to reload hwhen only a url param changes.  Without this, the UiScroll component
+    // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.route.params.subscribe((routeParams) => {
@@ -100,18 +95,6 @@ export class BlogDetailComponent {
       year: "numeric",
       month: "short",
       day: "numeric",
-    });
-  }
-
-  openBuyCreatorCoinModal(event) {
-    event.stopPropagation();
-    const initialState = {
-      username: this.currentPost.ProfileEntryResponse.Username,
-      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
-    };
-    this.modalService.show(TradeCreatorModalComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
-      initialState,
     });
   }
 

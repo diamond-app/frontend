@@ -33,43 +33,22 @@
         <h1 class="font-weight-bold mb-2 fs-32px">{{ currentPost.PostExtraData.Title }}</h1>
         <p class="text-secondary fs-16px mb-3">{{ currentPost.PostExtraData.Description }}</p>
         <div class="d-flex align-items-center py-2 fs-12px">
-          <div class="feed-post__avatar-container">
-            <a
-              [ngClass]="{
-                nft__avatar: currentPost.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
-              }"
-              class="feed-post__avatar"
-              [avatar]="currentPost.ProfileEntryResponse?.PublicKeyBase58Check"
-              [nftProfileUrl]="currentPost.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
-              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, currentPost.ProfileEntryResponse.Username]"
-              queryParamsHandling="merge"
-            ></a>
-          </div>
-          <div>
-            <div class="mb-2">
-              <!-- Coin price-->
-              <a
-                class="bg-light p-1 rounded"
-                (click)="openBuyCreatorCoinModal($event, currentPost.ProfileEntryResponse.Username)"
-              >
-                <span
-                  class="fc-secondary pl-1"
-                  *ngIf="globalVars.showPriceOnFeed && currentPost.ProfileEntryResponse.CoinPriceDeSoNanos > 0"
-                >
-                  ~{{ globalVars.nanosToUSD(currentPost.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
-                </span>
-                <!-- Buy link -->
-                <span class="p-5px">{{ "feed_post.buy" | transloco }}</span>
-              </a>
-            </div>
-            <follow-button
-              *ngIf="!followService._isLoggedInUserFollowing(currentPost.ProfileEntryResponse?.PublicKeyBase58Check)"
-              class="fs-12px"
-              [displayAsLink]="true"
-              [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
-              [followedPubKeyBase58Check]="currentPost.ProfileEntryResponse?.PublicKeyBase58Check"
-            ></follow-button>
-          </div>
+          <a
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + currentPost.ProfileEntryResponse.Username]"
+            [queryParams]="{ tab: 'blog' }"
+            class="link--unstyled font-weight-bold fs-15px"
+          >
+            <img
+              class="rounded-circle overflow-hidden mr-2"
+              height="40"
+              width="40"
+              [src]="
+                backendApi.GetSingleProfilePictureURL(globalVars.localNode, currentPost.PosterPublicKeyBase58Check)
+              "
+              alt=""
+            />
+            {{ currentPost.ProfileEntryResponse.Username }}
+          </a>
           <span class="ml-auto fs-14px text-secondary">
             Published on {{ getPublishDate(currentPost.TimestampNanos) }}
           </span>
