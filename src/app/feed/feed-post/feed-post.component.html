@@ -266,6 +266,7 @@
                       ? []
                       : ['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]
                   "
+                  [queryParams]="!!postContent.PostExtraData?.BlogDeltaRtfFormat ? { tab: 'blog' } : {}"
                   queryParamsHandling="merge"
                 >
                   <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">Blog /</span>

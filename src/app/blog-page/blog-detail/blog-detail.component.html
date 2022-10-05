@@ -1,4 +1,3 @@
-<!-- TODO: do we want the back button header thing? -->
 <app-page [simpleTopBar]="true" [title]="title" hideSidebar="true">
   <div class="post-thread__container">
     <div
@@ -50,11 +49,16 @@
             />
             {{ currentPost.ProfileEntryResponse.Username }}
           </a>
-          <span class="ml-auto fs-14px text-secondary">Published on {{ globalVars.convertTstampToDateOrTime(currentPost.TimestampNanos) }}</span>
+          <span class="ml-auto fs-14px text-secondary">
+            Published on {{ globalVars.convertTstampToDateOrTime(currentPost.TimestampNanos) }}
+          </span>
         </div>
       </header>
-      <div *ngIf="currentPost.PostExtraData.CoverImage" class="overflow-hidden article-cover-image-wrapper" [ngStyle]="{'background-image': 'url(' + currentPost.PostExtraData.CoverImage + ')'}">
-      </div>
+      <div
+        *ngIf="currentPost.PostExtraData.CoverImage"
+        class="overflow-hidden article-cover-image-wrapper"
+        [ngStyle]="{ 'background-image': 'url(' + currentPost.PostExtraData.CoverImage + ')' }"
+      ></div>
       <div class="article-content">
         <quill-view [content]="currentPost.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
       </div>
@@ -69,7 +73,9 @@
       ></feed-post-icon-row>
     </div>
     <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
-      <h2 class="font-weight-bold mb-3 fs-16px">Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}</h2>
+      <h2 class="font-weight-bold mb-3 fs-16px">
+        Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
+      </h2>
       <div class="list-group">
         <a
           *ngFor="let recentPost of recentPosts"
