@@ -173,12 +173,13 @@ export class CreateLongPostComponent implements AfterViewInit {
     }
 
     const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
-    currentUserProfile.ExtraData = currentUserProfile.ExtraData ?? {};
 
     if (!currentUserProfile) {
       this.globalVars._alertError("You must have a profile to create a blog post.");
       return;
     }
+
+    currentUserProfile.ExtraData = currentUserProfile.ExtraData ?? {};
 
     // check if the user has enough funds to execute the 2 transactions we need to create a blog post:
     // - 1 create the post
