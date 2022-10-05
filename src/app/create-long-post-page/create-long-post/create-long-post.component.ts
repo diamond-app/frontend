@@ -183,6 +183,33 @@ export class CreateLongPostComponent implements AfterViewInit {
       return;
     }
 
+    // check if the user has enough funds to execute the 2 transactions we need to create a blog post:
+    // - 1 create the post
+    // - 2 update the user profile with the slug -> profileHashHex mapping
+    if ((this.globalVars.loggedInUser?.BalanceNanos ?? 0) < this.globalVars.defaultFeeRateNanosPerKB * 2) {
+      this.globalVars._alertError(
+        `You don't have enough $DESO to create a blog post. The minimum amount needed is ${
+          (this.globalVars.defaultFeeRateNanosPerKB * 2) / 1e9
+        } $DESO`
+      );
+      return;
+    }
+
+    const titleSlug = stringToSlug(this.model.Title);
+    const existingSlugMappings = JSON.parse(currentUserProfile.ExtraData?.BlogSlugMap ?? "{}");
+
+    // check that there is not a collision with a previous article slug
+    if (
+      Object.entries(existingSlugMappings).some(
+        ([slug, postHashHex]) => titleSlug === slug && postHashHex !== this.editPostHashHex
+      )
+    ) {
+      this.globalVars._alertError(
+        "This post has a title that conflicts with one of your previous posts! Please give your post a different title."
+      );
+      return;
+    }
+
     this.model.validate();
 
     if (this.model.hasErrors) {
@@ -195,7 +222,6 @@ export class CreateLongPostComponent implements AfterViewInit {
     try {
       await this.uploadAndReplaceBase64Images();
 
-      const titleSlug = stringToSlug(this.model.Title);
       const postExtraData: BlogPostExtraData = {
         Title: this.model.Title.trim(),
         Description: this.model.Description.trim(),
@@ -204,50 +230,44 @@ export class CreateLongPostComponent implements AfterViewInit {
         CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
       };
 
-      const submitPost = (body: string, postHashHex: string) =>
-        this.backendApi
-          .SubmitPost(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            postHashHex /*PostHashHexToModify*/,
-            "" /*ParentPostHashHex*/,
-            "" /*Title*/,
-            {
-              Body: body,
-              ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
-            } /*BodyObj*/,
-            "" /*RepostedPostHashHex*/,
-            postExtraData /*PostExtraData*/,
-            "" /*Sub*/,
-            false /*IsHidden*/,
-            this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-            false
-          )
-          .toPromise();
-
       const permalink = `${window.location.origin}/u/${currentUserProfile.Username}/blog/${titleSlug}`;
-      const backLink = `View this post at ${permalink}`;
-      const postTx = await submitPost(
-        `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${backLink}\n\n#blog`,
-        this.editPostHashHex
-      );
+      const postTx = await this.backendApi
+        .SubmitPost(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.editPostHashHex ?? "" /*PostHashHexToModify*/,
+          "" /*ParentPostHashHex*/,
+          "" /*Title*/,
+          {
+            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}\n\n#blog`,
+            ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+          } /*BodyObj*/,
+          "" /*RepostedPostHashHex*/,
+          postExtraData /*PostExtraData*/,
+          "" /*Sub*/,
+          false /*IsHidden*/,
+          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+          false
+        )
+        .toPromise();
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
 
       // if this is a new post, or the author updates the title of an existing
       // post, update the user's profile with a mapping from postHashHex to url
       // slug
-      if (this.originalTitle === "" || stringToSlug(this.originalTitle) !== titleSlug) {
+      if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         const newSlugMap = {
-          ...JSON.parse(currentUserProfile.ExtraData?.BlogSlugMap ?? "{}"),
+          ...existingSlugMappings,
           [titleSlug]: submittedPostHashHex,
         };
-        // delete any previous mapping this post may have had
-        const staleSlug =
+
+        // delete any previous mapping this post may have had in the case that the title has been edited.
+        const staleSlugKey =
           this.originalTitle !== "" &&
           Object.keys(newSlugMap).find((k) => newSlugMap[k] === submittedPostHashHex && k !== titleSlug);
 
-        if (staleSlug) {
-          delete newSlugMap[staleSlug];
+        if (staleSlugKey) {
+          delete newSlugMap[staleSlugKey];
         }
 
         const blogSlugMapJSON = JSON.stringify(newSlugMap);
@@ -269,17 +289,6 @@ export class CreateLongPostComponent implements AfterViewInit {
           .toPromise();
         currentUserProfile.ExtraData.BlogSlugMap = blogSlugMapJSON;
         this.originalTitle = postExtraData.Title;
-      }
-
-      if (!this.editPostHashHex) {
-        // NOTE: this is not ideal, but we need to add the link back to diamond to the post body for nodes that do not
-        // yet support long form, so in the case of a newly created post we edit it after it's submitted to include the
-        // link back.
-        await this.globalVars.waitForTransaction(postTx.TxnHashHex);
-        await submitPost(
-          `${postExtraData.Title}\n\n${postExtraData.Description}\n\n${backLink}\n\n#blog`,
-          submittedPostHashHex
-        );
       }
 
       this.toastr.show(
