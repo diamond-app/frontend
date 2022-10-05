@@ -50,11 +50,15 @@ export class BlogPageComponent implements AfterViewInit {
     this.pendingPageData.then(([ProfileEntryResponse, posts]) => {
       this.profile = ProfileEntryResponse;
       const pinnedPostIndex = posts.findIndex((p) => JSON.parse(p.PostExtraData?.BlogPostIsPinned ?? false));
-      const sortedPosts =
-        pinnedPostIndex > 0
-          ? [posts[pinnedPostIndex], ...posts.slice(0, pinnedPostIndex), ...posts.slice(pinnedPostIndex + 1)]
-          : posts;
-      this.blogPosts = sortedPosts.map((p) => ({ ...p, ProfileEntryResponse }));
+      const pinnedPost = pinnedPostIndex > 0 ? posts[pinnedPostIndex] : null;
+      const sortedPosts = pinnedPost
+        ? [...posts.slice(0, pinnedPostIndex), ...posts.slice(pinnedPostIndex + 1)]
+        : posts;
+      sortedPosts.sort((a, b) => b.TimestampNanos - a.TimestampNanos);
+      this.blogPosts = (pinnedPost ? [pinnedPost, ...sortedPosts] : sortedPosts).map((p) => ({
+        ...p,
+        ProfileEntryResponse,
+      }));
     });
   }
 }
