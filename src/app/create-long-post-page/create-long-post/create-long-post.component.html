@@ -9,8 +9,7 @@
         <button
           *ngIf="this.editPostHashHex"
           type="button"
-          class="ml-auto btn-secondary rounded mb-1"
-          [ngStyle]="{ minWidth: '80px' }"
+          class="ml-auto btn-secondary mr-2 rounded editor-publish-button"
           (click)="location.back()"
         >
           <span *ngIf="!this.isSubmittingPost">Cancel</span>
