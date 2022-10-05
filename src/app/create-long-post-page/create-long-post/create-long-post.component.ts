@@ -254,6 +254,9 @@ export class CreateLongPostComponent implements AfterViewInit {
       // post, update the user's profile with a mapping from postHashHex to url
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
+        // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
+        await this.globalVars.waitForTransaction(postTx.TxnHashHex);
+
         // delete any previous mappings this post may have had in the case that the title is being edited.
         Object.keys(existingSlugMappings).forEach((slug) => {
           if (existingSlugMappings[slug] === submittedPostHashHex && titleSlug !== slug) {
