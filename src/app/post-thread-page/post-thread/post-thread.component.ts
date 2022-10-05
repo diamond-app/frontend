@@ -244,7 +244,7 @@ export class PostThreadComponent implements AfterViewInit {
       this.globalVars.localNode,
       subCommentPostHashHex ?? this.postHashHexRouteParam /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
-      false,
+      fetchParents,
       commentOffset,
       commentLimit,
       this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
