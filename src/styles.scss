@@ -6301,6 +6301,18 @@ sell-nft-modal {
   margin-top: 12px;
 }
 
+.ql-editor ul > li.ql-indent-1::before {
+  content: '\25AB';
+}
+
+.ql-editor ul > li.ql-indent-2::before {
+  content: '\25AA';
+}
+
+.ql-editor ul > li.ql-indent-3::before {
+  content: '\25E6';
+}
+
 .ql-editor.ql-blank::before {
   left: inherit !important;
   right: inherit !important;
