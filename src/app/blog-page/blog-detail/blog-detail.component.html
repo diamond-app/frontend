@@ -103,7 +103,11 @@
         </a>
       </div>
     </section>
-    <div class="post-thread__comment-container article-comments" id="comment-scroller">
+    <div
+      *ngIf="threadManager.threadCount > 0"
+      class="post-thread__comment-container article-comments"
+      id="comment-scroller"
+    >
       <div #uiScroll *uiScroll="let thread of datasource; let i = index" [attr.data-index]="i">
         <div
           class="post-thread__single-comment"

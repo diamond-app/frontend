@@ -99,7 +99,7 @@
       </div>
     </div>
   </form>
-  <div class="editor-content">
+  <div class="editor-content" [ngStyle]="{ minHeight: '500px' }">
     <quill-editor
       [required]="true"
       [modules]="quillModules"
