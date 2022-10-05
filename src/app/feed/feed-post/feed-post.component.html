@@ -269,8 +269,8 @@
                   [queryParams]="!!postContent.PostExtraData?.BlogDeltaRtfFormat ? { tab: 'blog' } : {}"
                   queryParamsHandling="merge"
                 >
-                  <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">Blog /</span>
                   {{ postContent.ProfileEntryResponse.Username }}
+                  <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">/ blog</span>
                 </a>
 
                 <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
