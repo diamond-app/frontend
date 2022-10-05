@@ -1,5 +1,4 @@
 import { NgModule } from "@angular/core";
-
 import { FeatherModule } from "angular-feather";
 import {
   AlertCircle,
@@ -23,6 +22,8 @@ import {
   Copy,
   CreditCard,
   DollarSign,
+  Edit2,
+  Edit,
   ExternalLink,
   Feather,
   Flag,
@@ -70,9 +71,9 @@ import {
 import {
   BellNotification,
   Bitclout,
-  CreatorCoin,
   Card,
   Coin,
+  CreatorCoin,
   Deso,
   Diamond,
   Frame,
@@ -118,6 +119,7 @@ const icons = {
   Deso,
   DollarSign,
   Diamond,
+  Edit,
   ExternalLink,
   Feather,
   Flag,
@@ -172,6 +174,7 @@ const icons = {
   Video,
   X,
   XSquare,
+  Edit2,
 };
 
 @NgModule({

@@ -1,0 +1,177 @@
+<app-page [simpleTopBar]="true" [title]="title" hideSidebar="true">
+  <div class="post-thread__container">
+    <div
+      class="d-flex align-items-center justify-content-between post-thread__header border-bottom"
+      *ngIf="!globalVars.isMobile()"
+    >
+      <div class="d-flex align-items-center">
+        <span role="button" (click)="location.back()"><i-feather name="arrow-left"></i-feather></span>
+        <span>{{ title }}</span>
+      </div>
+    </div>
+    <div *ngIf="isLoading" class="mt-5">
+      <simple-center-loader [height]="200"></simple-center-loader>
+    </div>
+    <div
+      *ngIf="!isLoading && currentPost && currentPost.IsHidden"
+      class="mt-4 p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px br-10px"
+    >
+      {{ "feed_post.removed_by_author" | transloco }}
+    </div>
+    <article *ngIf="!isLoading && !!currentPost && !currentPost.IsHidden">
+      <header class="article-header position-relative">
+        <feed-post-dropdown
+          style="right: 15px; padding-top: 6px"
+          [disableTooltip]="true"
+          [post]="currentPost"
+          [postContent]="currentPost"
+          [nftEntryResponses]="nftEntryResponses"
+          (postHidden)="hidePost()"
+          (userBlocked)="blockUser()"
+          (toggleGlobalFeed)="_addPostToGlobalFeed()"
+        ></feed-post-dropdown>
+        <h1 class="font-weight-bold mb-2 fs-32px">{{ currentPost.PostExtraData.Title }}</h1>
+        <p class="text-secondary fs-16px mb-3">{{ currentPost.PostExtraData.Description }}</p>
+        <div class="d-flex align-items-center py-2 fs-12px">
+          <a
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + currentPost.ProfileEntryResponse.Username]"
+            [queryParams]="{ tab: 'blog' }"
+            class="link--unstyled font-weight-bold fs-15px"
+          >
+            <img
+              class="rounded-circle overflow-hidden mr-2"
+              height="40"
+              width="40"
+              [src]="
+                backendApi.GetSingleProfilePictureURL(globalVars.localNode, currentPost.PosterPublicKeyBase58Check)
+              "
+              alt=""
+            />
+            {{ currentPost.ProfileEntryResponse.Username }}
+          </a>
+          <span class="ml-auto fs-14px text-secondary">
+            Published on {{ getPublishDate(currentPost.TimestampNanos) }}
+          </span>
+        </div>
+      </header>
+      <div
+        *ngIf="currentPost.PostExtraData.CoverImage"
+        class="overflow-hidden article-cover-image-wrapper"
+        [ngStyle]="{ 'background-image': 'url(' + currentPost.PostExtraData.CoverImage + ')' }"
+      ></div>
+      <div class="article-content">
+        <quill-view [content]="currentPost.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
+      </div>
+    </article>
+    <div *ngIf="!isLoading && !!currentPost" class="article-reactions">
+      <feed-post-icon-row
+        [post]="currentPost"
+        [postContent]="currentPost"
+        [hideNumbers]="false"
+        [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
+        (diamondSent)="diamondSent.emit()"
+      ></feed-post-icon-row>
+    </div>
+    <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
+      <h2 class="font-weight-bold mb-3 fs-16px">
+        Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
+      </h2>
+      <div class="list-group">
+        <a
+          *ngFor="let recentPost of recentPosts"
+          [routerLink]="[
+            '/' +
+              globalVars.RouteNames.USER_PREFIX +
+              '/' +
+              recentPost.ProfileEntryResponse.Username +
+              '/' +
+              globalVars.RouteNames.BLOG +
+              '/' +
+              recentPost.PostExtraData.BlogTitleSlug
+          ]"
+          class="list-group-item link--unstyled"
+        >
+          <article>
+            <header class="d-flex">
+              <div class="w-75">
+                <h3 class="font-weight-bold fs-14px">{{ recentPost.PostExtraData.Title }}</h3>
+                <p class="text-secondary fs-13px">{{ recentPost.PostExtraData.Description }}</p>
+              </div>
+              <p class="ml-auto fs-12px">{{ getPublishDate(recentPost.TimestampNanos) }}</p>
+            </header>
+          </article>
+        </a>
+      </div>
+    </section>
+    <div
+      *ngIf="threadManager?.threadCount > 0"
+      class="post-thread__comment-container article-comments"
+      id="comment-scroller"
+    >
+      <div #uiScroll *uiScroll="let thread of datasource; let i = index" [attr.data-index]="i">
+        <div
+          class="post-thread__single-comment"
+          [ngClass]="{ 'first-item': i === 0, 'last-item': i === threadManager.threadCount - 1 }"
+        >
+          <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
+          <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
+          <feed-post
+            *ngIf="thread.parent.ProfileEntryResponse != null"
+            [includePaddingOnPost]="true"
+            [post]="thread.parent"
+            [parentPost]="currentPost"
+            [contentShouldLinkToThread]="true"
+            [showIconRow]="true"
+            [showReplyingToContent]="true"
+            [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.parent, thread.parent)"
+            [isThreaded]="!!thread.children.length"
+            [hasThreadIndicator]="!!thread.children.length"
+            [isOnThreadPage]="true"
+            [blocked]="isPostBlocked(thread.parent)"
+            (postDeleted)="onThreadParentHidden(thread.parent)"
+            (userBlocked)="afterUserBlocked($event)"
+          ></feed-post>
+
+          <div *ngFor="let subcommentPost of thread.children; let j = index" [attr.data-index]="j">
+            <div class="post-thread__subcomment-container" *ngIf="!isPostBlocked(thread.parent)">
+              <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
+              <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
+              <feed-post
+                *ngIf="subcommentPost.ProfileEntryResponse != null"
+                [includePaddingOnPost]="true"
+                [post]="subcommentPost"
+                [parentPost]="thread.children[j - 1] || thread.parent"
+                [contentShouldLinkToThread]="true"
+                [showIconRow]="true"
+                [showDropdown]="true"
+                [showReplyingToContent]="true"
+                [isThreaded]="true"
+                [hasThreadIndicator]="j !== thread.children.length - 1"
+                [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, thread.children[j], thread.parent)"
+                [isOnThreadPage]="true"
+                [isThreadChild]="true"
+                [blocked]="isPostBlocked(subcommentPost)"
+                (postDeleted)="onSubcommentHidden(subComment, thread.children[j - 1] || thread.parent, thread)"
+                (userBlocked)="afterUserBlocked($event)"
+              >
+                <ng-container *ngIf="j === thread.children.length - 1 && subcommentPost.CommentCount" feed-post-footer>
+                  <div *ngIf="isLoadingMoreReplies" class="post-thread__see-more-loader">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  </div>
+                  <button
+                    *ngIf="!isLoadingMoreReplies"
+                    class="post-thread__see-more-button"
+                    (click)="loadMoreReplies(thread, subcommentPost)"
+                    #seeMoreReplies
+                  >
+                    {{ "post_thread.see_more" | transloco }}
+                  </button>
+                </ng-container>
+              </feed-post>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-page>

@@ -1,0 +1,47 @@
+<app-page hideSidebar="true">
+  <div class="d-flex p-2">
+    <div class="list-group mr-2">
+      <article *ngFor="let post of blogPosts" class="list-group-item">
+        <a
+          [routerLink]="[
+            '/' +
+              globalVars.RouteNames.USER_PREFIX +
+              '/' +
+              post.ProfileEntryResponse.Username +
+              '/' +
+              globalVars.RouteNames.BLOG +
+              '/' +
+              post.PostExtraData.BlogTitleSlug
+          ]"
+          class="d-flex py-2"
+        >
+          <div>
+            <h2 class="fs-20px">{{ post.PostExtraData.Title }}</h2>
+            <p class="text-secondary">{{ post.PostExtraData.Description }}</p>
+            <p class="fs-14px">{{ globalVars.convertTstampToDateOrTime(post.TimestampNanos) }}</p>
+          </div>
+          <div *ngIf="!!post.PostExtraData.CoverImage" class="ml-auto">
+            <img [src]="post.PostExtraData.CoverImage" [alt]="post.PostExtraData.Title" width="112" />
+          </div>
+        </a>
+      </article>
+    </div>
+    <div *ngIf="this.profile" class="ml-auto border p-3 rounded w-25">
+      <a
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + this.profile.Username]"
+        [queryParams]="{ tab: 'blog' }"
+        class="link--unstyled font-weight-bold"
+      >
+        <img
+          class="rounded-circle overflow-hidden border border-dark mr-1"
+          height="24"
+          width="24"
+          [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, profile.PublicKeyBase58Check)"
+          alt=""
+        />
+        {{ profile.Username }}
+      </a>
+      <p *ngIf="profile.Description" class="mt-2 text-secondary">{{ profile.Description }}</p>
+    </div>
+  </div>
+</app-page>

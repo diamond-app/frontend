@@ -34,6 +34,8 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/ngx-toastr/toastr.css",
               "./node_modules/intro.js/introjs.css",
+              "./node_modules/quill/dist/quill.snow.css",
+              "./node_modules/quill/dist/quill.core.css",
               "./node_modules/aos/dist/aos.css",
               "src/styles.scss",
               "src/styles.sass"
@@ -41,6 +43,7 @@
             "scripts": [
               "./node_modules/intro.js/intro.js",
               "./node_modules/aos/dist/aos.js",
+              "./node_modules/quill/dist/quill.core.js",
               "./src/lib/services/stream/cloudflare-stream-embedded.js"
             ]
           },

@@ -1,15 +1,15 @@
-import { Component, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from "@angular/core";
-import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
-import { PopoverDirective } from "ngx-bootstrap/popover";
-import { includes, isNil, round, set } from "lodash";
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { includes, isNil, round, set } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { PopoverDirective } from "ngx-bootstrap/popover";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { SharedDialogs } from "../../../lib/shared-dialogs";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
+import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -432,8 +432,21 @@ export class FeedPostIconRowComponent {
   // but the angular docs say not to use PlatformLocation https://angular.io/api/common/PlatformLocation
   // maybe we should just use window.location.href instead...
   _getPostUrl() {
-    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
-    const pathArray = ["/" + route, this.postContent.PostHashHex];
+    const pathArray = this.postContent.PostExtraData?.BlogDeltaRtfFormat
+      ? [
+          "/" +
+            this.globalVars.RouteNames.USER_PREFIX +
+            "/" +
+            this.postContent.ProfileEntryResponse.Username +
+            "/" +
+            this.globalVars.RouteNames.BLOG +
+            "/" +
+            this.postContent.PostExtraData.BlogTitleSlug,
+        ]
+      : [
+          "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
+          this.postContent.PostHashHex,
+        ];
 
     // need to preserve the curent query params for our dev env to work
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
@@ -621,9 +634,9 @@ export class FeedPostIconRowComponent {
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
-        html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
-          this.diamondSelected
-        )} to @${this.postContent.ProfileEntryResponse?.Username}`,
+        html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(this.diamondSelected)} to @${
+          this.postContent.ProfileEntryResponse?.Username
+        }`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,

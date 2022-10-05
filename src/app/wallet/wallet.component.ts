@@ -1,19 +1,19 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { InfiniteScroller } from "../infinite-scroller";
+import * as introJs from "intro.js/intro";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { document } from "ngx-bootstrap/utils";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BsModalService } from "ngx-bootstrap/modal";
-import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
-import { document } from "ngx-bootstrap/utils";
-import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
+import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
+import { GlobalVarsService } from "../global-vars.service";
+import { InfiniteScroller } from "../infinite-scroller";
 import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
 //import { TranslocoService } from '@ngneat/transloco';
 

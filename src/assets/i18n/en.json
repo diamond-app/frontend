@@ -15,41 +15,41 @@
     "soldcounter_sold": "sold"
   },
   "bid_placed_modal": {
-    "bid_successful" : "Your bid was successful. We will notify you when the auction closes.",
+    "bid_successful": "Your bid was successful. We will notify you when the auction closes.",
     "explore_showcase": "Explore the Showcase"
   },
   "bottom_bar_mobile": {
-    "home" : "Home",
-    "notifications":"Notifications",
-    "messages":"Messages",
-    "wallet":"Wallet"
+    "home": "Home",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "wallet": "Wallet"
   },
-  "buy_deso":{
-    "buy_deso" : "Buy $DESO",
-    "step" : "Step",
+  "buy_deso": {
+    "buy_deso": "Buy $DESO",
+    "step": "Step",
     "send_bitcoin": "Send Bitcoin to this address",
-    "send_eth":"Send ETH to this address",
-    "amount_desposited":"Amount deposited",
-    "loading":"Loading",
-    "minimum_deposit":"Minimum deposit is currently",
-    "goto_next_step":"Go to the next step",
-    "cancel":"Cancel",
-    "bitcoin_balance":"Bitcoin Balance",
-    "eth_balance":"Ethereum Balance",
-    "deso_to_buy":"$DESO to Buy",
-    "max":"Max",
-    "bitcoin_to_swap":"Bitcoin to Swap",
-    "eth_to_swap":"Ethereum to Swap",
-    "bitcoin_network_fee":"Bitcoin network fee",
-    "eth_network_fee":"Ethereum network fee",
-    "total_bitcoin_to_swap":"Total Bitcoin to swap",
-    "total_eth_to_swap":"Total ETH to swap",
-    "back":"Back",
-    "refresh":"Refresh",
-    "copy":"Copy",
-    "buy_complete":"Buy Complete",
-    "new_balance":"New balance",
-    "buy_more_deso":"Buy more DESO",
+    "send_eth": "Send ETH to this address",
+    "amount_desposited": "Amount deposited",
+    "loading": "Loading",
+    "minimum_deposit": "Minimum deposit is currently",
+    "goto_next_step": "Go to the next step",
+    "cancel": "Cancel",
+    "bitcoin_balance": "Bitcoin Balance",
+    "eth_balance": "Ethereum Balance",
+    "deso_to_buy": "$DESO to Buy",
+    "max": "Max",
+    "bitcoin_to_swap": "Bitcoin to Swap",
+    "eth_to_swap": "Ethereum to Swap",
+    "bitcoin_network_fee": "Bitcoin network fee",
+    "eth_network_fee": "Ethereum network fee",
+    "total_bitcoin_to_swap": "Total Bitcoin to swap",
+    "total_eth_to_swap": "Total ETH to swap",
+    "back": "Back",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "buy_complete": "Buy Complete",
+    "new_balance": "New balance",
+    "buy_more_deso": "Buy more DESO",
     "deso_explanation": "$DESO is a cryptocurrency like Bitcoin, only it powers the first decentralized social network.",
     "how_to_get": "How do I get $DESO?",
     "create_anon_account": "Create an anonymous account",
@@ -69,10 +69,10 @@
     "country": "Country"
   },
   "change_account": {
-    "login":"Log In",
-    "signup":"Sign Up",
-    "add_account":"Add account",
-    "logout":"Logout"
+    "login": "Log In",
+    "signup": "Sign Up",
+    "add_account": "Add account",
+    "logout": "Logout"
   },
   "comment_modal": {
     "quoting": "Quoting ",
@@ -130,7 +130,7 @@
     "market_value": "Market Value",
     "received": "Received",
     "reserved": "Reserved",
-    "purchased" : "Purchased"
+    "purchased": "Purchased"
   },
   "creator_profile_nfts": {
     "gallery": "Gallery",
@@ -156,6 +156,10 @@
   },
   "creator_profile_posts": {
     "create_fipo": "Create your first post.",
+    "on_platform_no_posts": "is on the platform but hasn't posted yet."
+  },
+  "creator_profile_blog_posts": {
+    "create_fipo": "Create your first blog post.",
     "on_platform_no_posts": "is on the platform but hasn't posted yet."
   },
   "creator_profile_top_card": {
@@ -191,9 +195,9 @@
     "select_browser": "3. Select browser"
   },
   "feed_create_post": {
-    "video_processing":"Video Processing In Progress",
-    "uploading":"Uploading:",
-    "complete":"Complete",
+    "video_processing": "Video Processing In Progress",
+    "uploading": "Uploading:",
+    "complete": "Complete",
     "multi_post_progress": "Submitting posts:",
     "post": "Post",
     "embed_image": "Link to Arweave image",
@@ -228,33 +232,33 @@
     }
   },
   "feed_post": {
-    "of":"of",
-    "from":"From",
-    "for_sale":"for sale",
-    "unlockable_content":"Unlockable content",
-    "last_price":"Last price",
-    "removed_by_author":"This post was removed by the author.",
-    "this_post_from":"This is a post from",
-    "who_you_have_blocked":"who you have blocked. Click here to visit their profile to unblock them.",
-    "reposted":"reposted",
-    "original_removed":"The original post was removed by its author.",
-    "buy":"Buy",
-    "replying_to":"replying to",
-    "whitelist":"Whitelist",
-    "whitelisted":"Whitelisted",
-    "in_hot_feed":"in Hot Feed",
-    "adding":"Adding...",
-    "removing":"Removing...",
-    "view":"View",
-    "multiplier":"Multiplier",
-    "repost":"Repost",
-    "quote_repost":"Quote Repost",
-    "like":"Like",
-    "diamond":"Diamond",
-    "place_a_bid":"Place a bid",
-    "accept_transfer":"Accept Tranfer",
-    "hide_unlockable":"Hide Unlockable",
-    "show_unlockable":"Show Unlockable"
+    "of": "of",
+    "from": "From",
+    "for_sale": "for sale",
+    "unlockable_content": "Unlockable content",
+    "last_price": "Last price",
+    "removed_by_author": "This post was removed by the author.",
+    "this_post_from": "This is a post from",
+    "who_you_have_blocked": "who you have blocked. Click here to visit their profile to unblock them.",
+    "reposted": "reposted",
+    "original_removed": "The original post was removed by its author.",
+    "buy": "Buy",
+    "replying_to": "replying to",
+    "whitelist": "Whitelist",
+    "whitelisted": "Whitelisted",
+    "in_hot_feed": "in Hot Feed",
+    "adding": "Adding...",
+    "removing": "Removing...",
+    "view": "View",
+    "multiplier": "Multiplier",
+    "repost": "Repost",
+    "quote_repost": "Quote Repost",
+    "like": "Like",
+    "diamond": "Diamond",
+    "place_a_bid": "Place a bid",
+    "accept_transfer": "Accept Tranfer",
+    "hide_unlockable": "Hide Unlockable",
+    "show_unlockable": "Show Unlockable"
   },
   "feed_post_dropdown": {
     "new_post_multiplier": "New post multiplier:",
@@ -276,7 +280,8 @@
     "add_to_feed": "Add To Feed",
     "remove_from_feed": "Remove From Feed",
     "pin_to_feed": "Pin To Feed",
-    "unpin_from_feed": "Unpin From Feed"
+    "unpin_from_feed": "Unpin From Feed",
+    "edit": "Edit"
   },
   "feed_post_icon_row": {
     "loading": "Loading...",
@@ -310,137 +315,137 @@
     "get_starter_deso": "Get Starter $DESO"
   },
   "jumio_status": {
-    "your_free":"your free",
-    "will_arive_in_a_minute":"will arrive in about a minute.",
-    "robot_check_failed":"Your robot check failed. Click here to try again.",
-    "click_here_to_get":"Click here to get",
-    "hide_banner":"Hide banner",
-    "hide_banner_message":"Do you want to hide the free money banner?",
+    "your_free": "your free",
+    "will_arive_in_a_minute": "will arrive in about a minute.",
+    "robot_check_failed": "Your robot check failed. Click here to try again.",
+    "click_here_to_get": "Click here to get",
+    "hide_banner": "Hide banner",
+    "hide_banner_message": "Do you want to hide the free money banner?",
     "yes": "Yes",
     "no": "No"
   },
-  "landing":{
-    "login":"Login",
-    "signup":"Create Account",
-    "signuptoday":"Create Account",
-    "settle":"The home for creators & communities",
-    "fora":"for a",
-    "diamonds":"Diamond is the home for creators and their audience to build engaging communities around content, incentives & ownership."
+  "landing": {
+    "login": "Login",
+    "signup": "Create Account",
+    "signuptoday": "Create Account",
+    "settle": "The home for creators & communities",
+    "fora": "for a",
+    "diamonds": "Diamond is the home for creators and their audience to build engaging communities around content, incentives & ownership."
   },
   "left_bar": {
-    "home":"Home",
-    "buy_creators":"Discover",
-    "buy_deso":"Buy DESO",
-    "buy_deso2":"Buy $DESO",
-    "notifications":"Notifications",
-    "messages":"Messages",
-    "my_profile":"My Profile",
-    "update_profile":"Update Profile",
-    "my_wallet":"My Wallet",
-    "tutorial":"Tutorial",
-    "referrals":"Referrals",
-    "help":"Help",
-    "post":"Post",
-    "admin":"Admin",
-    "buy":"Buy",
-    "logout":"Logout",
-    "settings":"Settings",
-    "more":"More"
+    "home": "Home",
+    "buy_creators": "Discover",
+    "buy_deso": "Buy DESO",
+    "buy_deso2": "Buy $DESO",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "my_profile": "My Profile",
+    "update_profile": "Update Profile",
+    "my_wallet": "My Wallet",
+    "tutorial": "Tutorial",
+    "referrals": "Referrals",
+    "help": "Help",
+    "post": "Post",
+    "admin": "Admin",
+    "buy": "Buy",
+    "logout": "Logout",
+    "settings": "Settings",
+    "more": "More"
   },
-  "loader":{
-    "loading":"Loading"
+  "loader": {
+    "loading": "Loading"
   },
   "messages": {
     "select_creator": "Select Creator",
-    "custom_inbox_settings":"Custom Inbox Settings",
-    "only_show":"Only show",
-    "holders":"Holders",
-    "holdings":"Holdings",
-    "followers":"Followers",
-    "following":"Following",
-    "order_by":"Order By",
-    "most_recent":"Most recent",
-    "most_deso":"Most deso",
-    "most_followed":"Most followed",
-    "largest_holder":"Largest Holder",
-    "update":"Update",
-    "cancel":"Cancel",
+    "custom_inbox_settings": "Custom Inbox Settings",
+    "only_show": "Only show",
+    "holders": "Holders",
+    "holdings": "Holdings",
+    "followers": "Followers",
+    "following": "Following",
+    "order_by": "Order By",
+    "most_recent": "Most recent",
+    "most_deso": "Most deso",
+    "most_followed": "Most followed",
+    "largest_holder": "Largest Holder",
+    "update": "Update",
+    "cancel": "Cancel",
 
-    "loading":"Loading",
-    "load_more":"Load More",
-    "send":"Send",
-    "sending":"Sending",
-    "new_message":"New Message"
+    "loading": "Loading",
+    "load_more": "Load More",
+    "send": "Send",
+    "sending": "Sending",
+    "new_message": "New Message"
   },
-  "place_bid":{
-    "select_an_edition":"Select an edition",
-    "place_a_bid":"Place a bid",
-    "number":"Number",
-    "place_bid":"You are about to place a bid for an NFT auctioned by",
-    "highest_bid":"Highest Bid",
-    "min_bid_amount":"Min Bid Amount",
-    "creator_royalty":"Creator Royalty",
-    "coinholder_royalty":"Coin-holder Royalty",
-    "your_bid":"Your Bid",
-    "placing_bid":"Placing Bid",
-    "buy_deso":"Buy DESO",
-    "multiple_editions":"An NFT can have multiple editions, each with its own unique serial number.",
-    "no_serial_available":"There are no serial numbers available for you to bid on."
+  "place_bid": {
+    "select_an_edition": "Select an edition",
+    "place_a_bid": "Place a bid",
+    "number": "Number",
+    "place_bid": "You are about to place a bid for an NFT auctioned by",
+    "highest_bid": "Highest Bid",
+    "min_bid_amount": "Min Bid Amount",
+    "creator_royalty": "Creator Royalty",
+    "coinholder_royalty": "Coin-holder Royalty",
+    "your_bid": "Your Bid",
+    "placing_bid": "Placing Bid",
+    "buy_deso": "Buy DESO",
+    "multiple_editions": "An NFT can have multiple editions, each with its own unique serial number.",
+    "no_serial_available": "There are no serial numbers available for you to bid on."
   },
   "right_bar": {
-    "creators":{
-      "sent":"Sent",
-      "buy_deso":"Buy $DESO",
-      "deso_price":"$DESO Price",
-      "your_deso":"Your $DESO",
-      "update_your_email":"Update your email",
-      "top_daily_gainers":"Top Daily Gainers",
-      "top_daily_diamond_creators":"Top Daily Diamonded Creators",
-      "hashtags":"Top Daily Hashtags",
-      "top_community_projects":"Top Community Projects",
-      "top_creators_alltime":"Top Creators All Time",
-      "powered_by":"Powered by",
+    "creators": {
+      "sent": "Sent",
+      "buy_deso": "Buy $DESO",
+      "deso_price": "$DESO Price",
+      "your_deso": "Your $DESO",
+      "update_your_email": "Update your email",
+      "top_daily_gainers": "Top Daily Gainers",
+      "top_daily_diamond_creators": "Top Daily Diamonded Creators",
+      "hashtags": "Top Daily Hashtags",
+      "top_community_projects": "Top Community Projects",
+      "top_creators_alltime": "Top Creators All Time",
+      "powered_by": "Powered by",
       "leaderboard": {
         "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
         "verified_account": "This account is verified"
       }
     },
-    "signup":{
-      "welcome_to_deso":"Welcome to DeSo!",
-      "login":"Log In",
-      "signup":"Sign Up"
+    "signup": {
+      "welcome_to_deso": "Welcome to DeSo!",
+      "login": "Log In",
+      "signup": "Sign Up"
     }
   },
   "search_bar": {
-    "loading":"Loading...",
+    "loading": "Loading...",
     "reserved_profile": "This profile is reserved. Click to learn how to claim it.",
     "search": "Search...",
     "search_on_cloutavista": "Search on Cloutavista"
   },
-  "sell_nft":{
-    "back_to_nft":"Back to NFT",
-    "sell_an_nft":"Sell an NFT",
-    "about_to_sell":"You are about to sell your NFT to",
-    "and":"and",
-    "are_you_sure":"Are you sure?",
-    "selling_price":"Selling Price",
-    "number":"Number",
-    "earnings":"Earnings",
-    "creator_royalty":"Creator Royalty",
-    "coinholder_royalty":"Coin-holder Royalty",
-    "select_one_bid":"You must select at least one bid in order to sell this NFT.",
-    "sellling_ntfs":"Selling NFTs",
-    "sell_nfts":"Sell NFTs"
+  "sell_nft": {
+    "back_to_nft": "Back to NFT",
+    "sell_an_nft": "Sell an NFT",
+    "about_to_sell": "You are about to sell your NFT to",
+    "and": "and",
+    "are_you_sure": "Are you sure?",
+    "selling_price": "Selling Price",
+    "number": "Number",
+    "earnings": "Earnings",
+    "creator_royalty": "Creator Royalty",
+    "coinholder_royalty": "Coin-holder Royalty",
+    "select_one_bid": "You must select at least one bid in order to sell this NFT.",
+    "sellling_ntfs": "Selling NFTs",
+    "sell_nfts": "Sell NFTs"
   },
   "settings": {
-    "settings":"Settings",
-    "email":"E-mail",
-    "enter_valid_email":"Please enter a valid email address.",
-    "enter_email":"Enter an email address.",
-    "update_email":"Update Email",
-    "deso_theme":"DeSo Theme",
-    "success":"Success!",
-    "updating":"Updating..."
+    "settings": "Settings",
+    "email": "E-mail",
+    "enter_valid_email": "Please enter a valid email address.",
+    "enter_email": "Enter an email address.",
+    "update_email": "Update Email",
+    "deso_theme": "DeSo Theme",
+    "success": "Success!",
+    "updating": "Updating..."
   },
   "simple_profile": {
     "buy": "Buy"
@@ -459,39 +464,39 @@
     "buy_deso": "Buy $DESO",
     "enter_emailaddress": "Enter an email address."
   },
-  "top_bar" : {
+  "top_bar": {
     "mobile": {
-      "login" : "Log in",
-      "signup" : "Sign Up"
+      "login": "Log in",
+      "signup": "Sign Up"
     }
   },
   "wallet_widget": {
     "wallet_of": "My Creator Coin ",
-    "coins_in_circulation":"Coins in Circulation",
-    "total_usd_locked":"Total USD Locked",
-    "usd_market_cap":"USD Market Cap"
+    "coins_in_circulation": "Coins in Circulation",
+    "total_usd_locked": "Total USD Locked",
+    "usd_market_cap": "USD Market Cap"
   },
   "notifications": {
     "filter": {
-      "select_none":"Select None",
+      "select_none": "Select None",
       "select_all": "Select All",
       "all": "All",
-      "notification_settings":"Notifications Settings",
-      "only_show":"Only show",
-      "likes":"Likes",
-      "diamonds":"Diamonds",
-      "creator_coin":"Creator Coin",
-      "follows":"Follows",
-      "mentions_replies_reposts":"Mentions / Replies / Reposts",
-      "nft":"NFT",
-      "view":"View",
-      "expanded":"Expanded",
-      "update":"Update",
-      "cancel":"Cancel"
+      "notification_settings": "Notifications Settings",
+      "only_show": "Only show",
+      "likes": "Likes",
+      "diamonds": "Diamonds",
+      "creator_coin": "Creator Coin",
+      "follows": "Follows",
+      "mentions_replies_reposts": "Mentions / Replies / Reposts",
+      "nft": "NFT",
+      "view": "View",
+      "expanded": "Expanded",
+      "update": "Update",
+      "cancel": "Cancel"
     },
     "list": {
-      "notifications":"Notifications",
-      "no_notifications":"You don't have any notifications"
+      "notifications": "Notifications",
+      "no_notifications": "You don't have any notifications"
     }
   },
   "wallet": {
@@ -502,9 +507,9 @@
     "buy_deso": "Buy $DESO",
     "send_deso": "Send $DESO",
     "buy_creator_coins": "Buy Creator Coins",
-    "buy":"Buy",
-    "sell":"Sell",
-    "send":"Send",
+    "buy": "Buy",
+    "sell": "Sell",
+    "send": "Send",
     "tutorial_header_text": {
       "step": "Stap",
       "skip": "Overslaan",
@@ -512,75 +517,75 @@
       "invest_in_yourself": "Invest in Yourself"
     }
   },
-  "verify_email" : {
+  "verify_email": {
     "failed_to_verify": "Failed to verify email: ",
     "email_verified_successfully": "Email verified successfully"
   },
   "update_profile": {
     "create_a_profile": "Create a Profile",
     "create_a_profile_cost": "Creating a profile currently costs",
-    "this_helps_prevent_spam" : "This helps prevent spam.",
-    "upload_image" : "Upload Image",
-    "no_image_selected" : "No image selected",
-    "username" : "Username",
-    "please_set_username" : "Please set a username",
-    "is_available" : "is available",
-    "description" : "Description",
-    "description_can_only_be" : "Description can only be",
-    "characters" : "characters",
-    "founder_reward_percentage" : "Founder Reward Percentage",
-    "you_must_purchase_own_coin" : "You must purchase your own coin before lowering your founder reward.",
-    "please_set_founder" : "Please set a founder reward between 0-100.",
-    "email" : "Email",
-    "please_enter_valid_email" : "Please enter a valid email address.",
+    "this_helps_prevent_spam": "This helps prevent spam.",
+    "upload_image": "Upload Image",
+    "no_image_selected": "No image selected",
+    "username": "Username",
+    "please_set_username": "Please set a username",
+    "is_available": "is available",
+    "description": "Description",
+    "description_can_only_be": "Description can only be",
+    "characters": "characters",
+    "founder_reward_percentage": "Founder Reward Percentage",
+    "you_must_purchase_own_coin": "You must purchase your own coin before lowering your founder reward.",
+    "please_set_founder": "Please set a founder reward between 0-100.",
+    "email": "Email",
+    "please_enter_valid_email": "Please enter a valid email address.",
     "theme": "Theme",
     "language": "Language",
-    "show_price_in_feed" : "Show prices in feed",
-    "update_profile" : "Update Profile",
-    "enter_username" : "Enter username",
-    "enter_emailaddress" : "Enter an email address.",
-    "tutorial_instructions" : "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue.",
-    "avatar" : "Avatar",
-    "get_starter_deso" : "Get Starter $DESO",
-    "purchase" : "Purchase",
+    "show_price_in_feed": "Show prices in feed",
+    "update_profile": "Update Profile",
+    "enter_username": "Enter username",
+    "enter_emailaddress": "Enter an email address.",
+    "tutorial_instructions": "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue.",
+    "avatar": "Avatar",
+    "get_starter_deso": "Get Starter $DESO",
+    "purchase": "Purchase",
     "or": "Or",
     "usd_of_deso": "USD of DESO",
     "create_profile_message": {
-      "verify_phone_number":"You need to verify a phone number or purchase DeSo with Bitcoin in order to create a profile.  This helps prevent spam.",
-      "buy_deso" : "You need to buy DeSo with Bitcoin in order to create a profile.  This helps prevent spam."
+      "verify_phone_number": "You need to verify a phone number or purchase DeSo with Bitcoin in order to create a profile.  This helps prevent spam.",
+      "buy_deso": "You need to buy DeSo with Bitcoin in order to create a profile.  This helps prevent spam."
     },
     "create_profile": {
-      "create_your_profile" : "Create Your Profile",
-      "step" : "Step",
-      "select_a_profile_picture" : "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue."
+      "create_your_profile": "Create Your Profile",
+      "step": "Step",
+      "select_a_profile_picture": "Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click \"Update Profile\"</b> to continue."
     }
   },
   "transfer_deso": {
     "send_deso": "Send $DESO",
-    "enter_public_key":"Just enter a public key below and the protocol will handle the rest",
-    "public_key":"Public key or username to pay",
-    "amount_to_send":"Amount to Send",
-    "max":"Max",
-    "deso_network_fee":"DESO network fee",
+    "enter_public_key": "Just enter a public key below and the protocol will handle the rest",
+    "public_key": "Public key or username to pay",
+    "amount_to_send": "Amount to Send",
+    "max": "Max",
+    "deso_network_fee": "DESO network fee",
     "total": "Total",
-    "scan_qr_code":"Scan QR code to send",
+    "scan_qr_code": "Scan QR code to send",
     "working": "Working...",
     "cancel": "Cancel"
   },
-  "trends" : {
-    "trends" : "Trends",
-    "powered_by" : "Powered by"
+  "trends": {
+    "trends": "Trends",
+    "powered_by": "Powered by"
   },
   "tab_selector": {
     "new": "New",
     "all_bids": "All Bids",
-    "my_bids":"My Bids",
-    "my_auction":"My Auction",
-    "owners":"Owners",
-    "thread":"Thread"
+    "my_bids": "My Bids",
+    "my_auction": "My Auction",
+    "owners": "Owners",
+    "thread": "Thread"
   },
-  "Holders":"Holders",
-  "All":"All",
+  "Holders": "Holders",
+  "All": "All",
   "Following": "Following",
   "New": "New",
   "NFT Gallery": "NFT Gallery",

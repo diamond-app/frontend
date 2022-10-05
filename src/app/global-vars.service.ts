@@ -1,4 +1,23 @@
+import { LocationStrategy } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AmplitudeClient } from "amplitude-js";
+import ConfettiGenerator from "confetti-js";
+import { isNil } from "lodash";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { Observable, Observer } from "rxjs";
+import Swal from "sweetalert2";
+import { environment } from "../environments/environment";
+import { SwalHelper } from "../lib/helpers/swal-helper";
+import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
+import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
+import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
   BalanceEntryResponse,
@@ -8,31 +27,12 @@ import {
   TutorialStatus,
   User,
 } from "./backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { RouteNames } from "./app-routing.module";
-import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
-import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
-import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { environment } from "../environments/environment";
-import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer } from "@angular/platform-browser";
-import { IdentityService } from "./identity.service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { HashtagResponse, LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
-import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import { HttpClient } from "@angular/common/http";
-import { FeedComponent } from "./feed/feed.component";
-import { filter, isNil } from "lodash";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import Swal from "sweetalert2";
-import Timer = NodeJS.Timer;
-import { LocationStrategy } from "@angular/common";
-import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
-import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
+import { FeedComponent } from "./feed/feed.component";
+import { IdentityService } from "./identity.service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import Timer = NodeJS.Timer;
+import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export enum ConfettiSvg {
@@ -416,16 +416,16 @@ export class GlobalVarsService {
 
     if (this.loggedInUser) {
       // Fetch referralLinks for the userList before completing the load.
-      this.backendApi
-        .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
-        .subscribe(
-          (res: any) => {
-            this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-          },
-          (err: any) => {
-            console.log(err);
-          }
-        );
+      // this.backendApi
+      //   .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+      //   .subscribe(
+      //     (res: any) => {
+      //       this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+      //     },
+      //     (err: any) => {
+      //       console.log(err);
+      //     }
+      //   );
     }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
@@ -1163,7 +1163,7 @@ export class GlobalVarsService {
       if (environment.production) {
         this.localNode = hostname;
       } else {
-        this.localNode = `${hostname}:17001`;
+        this.localNode = `${hostname}:18001`;
       }
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
@@ -1524,45 +1524,39 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  waitForTransaction(
-    waitTxn: string = "",
-    successCallback: (comp: any) => void = () => {},
-    errorCallback: (comp: any) => void = () => {},
-    comp: any = ""
-  ) {
+  waitForTransaction(waitTxn: string): Promise<void> {
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
-    if (waitTxn !== "") {
-      let attempts = 0;
-      let numTries = 160;
-      let timeoutMillis = 750;
-      // Set an interval to repeat
-      let interval = setInterval(() => {
-        if (attempts >= numTries) {
-          errorCallback(comp);
-          clearInterval(interval);
-        }
-        this.backendApi
-          .GetTxn(this.localNode, waitTxn)
-          .subscribe(
-            (res: any) => {
-              if (!res.TxnFound) {
-                return;
+    return new Promise((resolve, reject) => {
+      if (waitTxn !== "") {
+        let attempts = 0;
+        let numTries = 160;
+        let timeoutMillis = 750;
+        // Set an interval to repeat
+        let interval = setInterval(() => {
+          if (attempts >= numTries) {
+            reject(new Error("Polling aborted. Reached maximum retries."));
+            clearInterval(interval);
+          }
+          this.backendApi
+            .GetTxn(this.localNode, waitTxn)
+            .subscribe(
+              (res: Record<string, any>) => {
+                if (res.TxnFound) {
+                  clearInterval(interval);
+                  resolve();
+                }
+              },
+              (error) => {
+                clearInterval(interval);
+                reject(error);
               }
-              clearInterval(interval);
-              successCallback(comp);
-            },
-            (error) => {
-              clearInterval(interval);
-              errorCallback(comp);
-            }
-          )
-          .add(() => attempts++);
-      }, timeoutMillis) as any;
-    } else {
-      if (this.pausePolling) {
-        return;
+            )
+            .add(() => attempts++);
+        }, timeoutMillis) as any;
+      } else {
+        reject(new Error("No waitTxn was provided."));
       }
-    }
+    });
   }
 }

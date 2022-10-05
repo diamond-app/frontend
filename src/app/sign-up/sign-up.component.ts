@@ -1,17 +1,17 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus, User } from "../backend-api.service";
-import { shuffle, isNil } from "lodash";
-import { AppComponent } from "../app.component";
-import Swal from "sweetalert2";
-import { IdentityService } from "../identity.service";
-import { RouteNames } from "../app-routing.module";
-import { environment } from "../../environments/environment";
-import Timer = NodeJS.Timer;
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { isNil, shuffle } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import Swal from "sweetalert2";
+import { environment } from "../../environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { RouteNames } from "../app-routing.module";
+import { AppComponent } from "../app.component";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { IdentityService } from "../identity.service";
 import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: "sign-up",

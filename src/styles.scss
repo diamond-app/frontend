@@ -4949,7 +4949,7 @@ input {
 	border-color: $buy-button-blue;
 }
 
-.btn-secondary {
+.diamond-btn-secondary {
   background-color: #FFFFFF;
   border-color: var(--border);
 }
@@ -6263,4 +6263,122 @@ sell-nft-modal {
 
 .referral-link-info__blue-border {
   border-left: 5px solid $buy-button-blue !important;
+}
+
+.ql-container {
+  border: none !important;
+}
+
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3 {
+  margin-top: 14px;
+  line-height: 1.5em;
+  margin-bottom: 22px;
+}
+
+.ql-editor h1 {
+  font-size: 26px !important;
+}
+.ql-editor h2 {
+  font-size: 22px !important;
+}
+.ql-editor h3 {
+  font-size: 18px !important;
+}
+
+.ql-editor p,
+.ql-editor ul,
+.ql-editor li {
+  font-size: 16px;
+  line-height: 1.6em;
+}
+
+.ql-toolbar.ql-snow {
+  margin: 0 auto;
+  max-width: 700px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.ql-editor.ql-blank::before {
+  left: inherit !important;
+  right: inherit !important;
+}
+// Editor Classes
+.editor-publish-button {
+  border: 0;
+  padding: 8px 14px;
+}
+.editor-content .ql-editor {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 0;
+  @media (max-width: 992px) {
+    padding: 0 20px;
+  }
+}
+
+// Article Classes
+.article-content .ql-editor {
+  min-height: 300px !important;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 700px;
+  padding: 0;
+  @media (max-width: 992px) {
+    padding: 0 20px;
+  }
+}
+
+.article-header {
+  padding: 40px 0px 10px;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 20px;
+  @media (max-width: 992px) {
+    padding: 40px 20px 10px;
+  }
+}
+.article-cover-image-wrapper {
+  width: 90%;
+  margin: 0 auto 20px;
+  height: 500px;
+  background-position: center center;
+  background-size: cover;
+  border-radius: 12px;
+  @media (max-width: 992px) {
+    height: 300px;
+  }
+}
+.article-reactions {
+  width: 100%;
+  max-width: 700px;
+  margin: 30px auto 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 0 0 12px 0;
+  @media (max-width: 992px) {
+    padding: 0 20px 12px;
+  }
+}
+.article-recent-posts {
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto;
+  @media (max-width: 992px) {
+    padding: 0 20px;
+  }
+}
+.article-comments {
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto 0;
+  border-right: 1px solid #ddd;
+}
+.ql-align-center,
+.ql-align-justify {
+  text-align: left !important;
 }

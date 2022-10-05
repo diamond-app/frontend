@@ -1,19 +1,16 @@
 // @ts-strict
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { Datasource } from "ngx-ui-scroll";
-import { ToastrService } from "ngx-toastr";
-import { Title } from "@angular/platform-browser";
 import { Location } from "@angular/common";
-import { environment } from "src/environments/environment";
-import { Thread, ThreadManager } from "../helpers/thread-manager";
-
-import * as _ from "lodash";
-import { document } from "ngx-bootstrap/utils";
-import { Subscription } from "rxjs";
+import { AfterViewInit, Component, EventEmitter, Input, Output } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { ToastrService } from "ngx-toastr";
+import { Datasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
+import { environment } from "src/environments/environment";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { Thread, ThreadManager } from "../helpers/thread-manager";
 
 @Component({
   selector: "post-thread",
@@ -247,7 +244,7 @@ export class PostThreadComponent implements AfterViewInit {
       this.globalVars.localNode,
       subCommentPostHashHex ?? this.postHashHexRouteParam /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
-      fetchParents,
+      false,
       commentOffset,
       commentLimit,
       this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
@@ -274,6 +271,25 @@ export class PostThreadComponent implements AfterViewInit {
           });
           return;
         }
+        // we've loaded a blog post on the regular post thread page
+        if (
+          !!res.PostFound.PostExtraData?.BlogDeltaRtfFormat &&
+          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.BLOG)
+        ) {
+          this.router.navigate(
+            [
+              "/" + this.globalVars.RouteNames.USER_PREFIX,
+              res.PostFound.ProfileEntryResponse.Username,
+              this.globalVars.RouteNames.BLOG,
+              res.PostFound.PostExtraData.BlogTitleSlug,
+            ],
+            {
+              queryParamsHandling: "merge",
+            }
+          );
+          return;
+        }
+
         // Set current post
         this.currentPost = res.PostFound as PostEntryResponse;
         this.threadManager = new ThreadManager(res.PostFound);

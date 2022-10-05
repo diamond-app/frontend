@@ -1,52 +1,54 @@
+import { ViewportScroller } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule, Router, Scroll } from "@angular/router";
-
-import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
-import { NotFoundPageComponent } from "./not-found-page/not-found-page.component";
+import { Router, RouterModule, Routes, Scroll } from "@angular/router";
+import { filter } from "rxjs/operators";
+import { BlogDetailComponent } from "src/app/blog-page/blog-detail/blog-detail.component";
+import { BlogPageComponent } from "src/app/blog-page/blog-page.component";
+import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
-import { MessagesPageComponent } from "./messages-page/messages-page.component";
-import { SettingsPageComponent } from "./settings-page/settings-page.component";
-import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
-import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
-import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
-import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
-import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
-import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
+import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
-import { TosPageComponent } from "./tos-page/tos-page.component";
-import { AdminPageComponent } from "./admin-page/admin-page.component";
-import { ViewportScroller } from "@angular/common";
-import { filter } from "rxjs/operators";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
-import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { SignUpComponent } from "./sign-up/sign-up.component";
-import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
-import { TrendsPageComponent } from "./trends-page/trends-page.component";
-import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
-import { VerifyEmailComponent } from "./verify-email/verify-email.component";
-import { ReferralsComponent } from "./referrals/referrals.component";
-import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
-import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
-import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
-import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
-import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
-import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
-import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
-import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
-import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
-import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
-import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
-import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
-import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
+import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
-import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
-import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
+import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
+import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
+import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
+import { LandingPageComponent } from "./landing-page/landing-page.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
+import { MessagesPageComponent } from "./messages-page/messages-page.component";
+import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { NftBurnPageComponent } from "./nft-burn/nft-burn-page/nft-burn-page.component";
+import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
+import { NotFoundPageComponent } from "./not-found-page/not-found-page.component";
+import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
+import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
+import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
+import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
+import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
+import { ReferralsComponent } from "./referrals/referrals.component";
+import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
+import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
+import { SettingsPageComponent } from "./settings-page/settings-page.component";
+import { SignUpComponent } from "./sign-up/sign-up.component";
+import { TosPageComponent } from "./tos-page/tos-page.component";
+import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
+import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
+import { TransferNftAcceptPageComponent } from "./transfer-nft-accept/transfer-nft-accept-page/transfer-nft-accept-page.component";
+import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
+import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
+import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
 import { BuyDesoTutorialPageComponent } from "./tutorial/buy-deso-tutorial-page/buy-deso-tutorial-page.component";
+import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
+import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
+import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
+import { VerifyEmailComponent } from "./verify-email/verify-email.component";
+import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -85,6 +87,8 @@ class RouteNames {
   public static SEND_DESO = "send-deso";
   // TODO: how do I make this /posts/new?
   public static CREATE_POST = "posts/new";
+  public static CREATE_LONG_POST = "blog-posts/new";
+  public static EDIT_LONG_POST = "blog-posts/edit";
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
   public static GET_STARTER_DESO = "get-starter-deso";
@@ -103,6 +107,7 @@ class RouteNames {
   public static INVEST = "invest";
   public static TRANSFER_NFT = "transfer-nft";
   public static BURN_NFT = "burn-nft";
+  public static BLOG = "blog";
 }
 
 const routes: Routes = [
@@ -122,7 +127,11 @@ const routes: Routes = [
   { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftPageComponent, pathMatch: "full" },
   { path: RouteNames.SELL_NFT + "/:postHashHex", component: SellNftPageComponent, pathMatch: "full" },
   { path: RouteNames.BID_NFT + "/:postHashHex", component: PlaceBidPageComponent, pathMatch: "full" },
-  { path: RouteNames.TRANSFER_NFT_ACCEPT + "/:postHashHex", component: TransferNftAcceptPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.TRANSFER_NFT_ACCEPT + "/:postHashHex",
+    component: TransferNftAcceptPageComponent,
+    pathMatch: "full",
+  },
   { path: RouteNames.TRANSFER_NFT + "/:postHashHex", component: TransferNftPageComponent, pathMatch: "full" },
   { path: RouteNames.BURN_NFT + "/:postHashHex", component: NftBurnPageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
@@ -130,6 +139,8 @@ const routes: Routes = [
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
+  { path: RouteNames.CREATE_LONG_POST, component: CreateLongPostPageComponent, pathMatch: "full" },
+  { path: RouteNames.EDIT_LONG_POST + "/:postHashHex", component: CreateLongPostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS,
@@ -151,6 +162,13 @@ const routes: Routes = [
     component: DiamondsPageComponent,
     pathMatch: "full",
   },
+  { path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG, component: BlogPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG + "/:slug",
+    component: BlogDetailComponent,
+    pathMatch: "full",
+  },
+  { path: RouteNames.BLOG + "/:postHashHex", component: BlogDetailComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },

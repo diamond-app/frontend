@@ -1,13 +1,46 @@
-<div class="d-flex" dropdown #dropdown="bs-dropdown" (click)="dropdownClicked($event)" container="body" style="align-items: center">
+<div
+  class="d-flex"
+  dropdown
+  #dropdown="bs-dropdown"
+  (click)="dropdownClicked($event)"
+  container="body"
+  style="align-items: center"
+>
   <div class="d-inline-block d-lg-none fs-12px fc-muted pr-5px">
-    <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
-      globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
+    <span
+      *ngIf="!disableTooltip"
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+    >
+      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    </span>
   </div>
   <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
     <i class="fas fa-ellipsis-h"></i>
   </a>
-  <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu fs-15px fc-muted" style="width: 164px" *dropdownMenu>
+  <div
+    class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu fs-15px fc-muted"
+    style="width: 164px"
+    *dropdownMenu
+  >
     <div>
+      <a
+        *ngIf="canPinPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinBlogPostToProfile($event, true)"
+      >
+        Pin blog post
+      </a>
+      <a
+        *ngIf="canUnpinPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinBlogPostToProfile($event, false)"
+      >
+        Unpin blog post
+      </a>
       <a
         *ngIf="post.IsPinned"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
@@ -19,28 +52,42 @@
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="copyPostLinkToClipboard($event)"
       >
-      {{ 'feed_post_dropdown.link_to' | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
+        {{ "feed_post_dropdown.link_to" | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
       </a>
       <a
         *ngIf="showSharePost"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="sharePostUrl($event)"
       >
-      {{ 'feed_post_dropdown.share' | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
+        {{ "feed_post_dropdown.share" | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
       </a>
       <a
-        *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
+        *ngIf="
+          globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
+          !!post.PostExtraData?.BlogDeltaRtfFormat
+        "
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        [routerLink]="['/' + globalVars.RouteNames.EDIT_LONG_POST + '/' + post.PostHashHex]"
+      >
+        {{ "feed_post_dropdown.edit" | transloco }}
+      </a>
+      <a
+        *ngIf="
+          globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
+          !post.IsNFT &&
+          !post.ParentStakeID
+        "
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openMintNftPage($event)"
       >
-      {{ 'feed_post_dropdown.create_nft' | transloco }}
+        {{ "feed_post_dropdown.create_nft" | transloco }}
       </a>
       <a
         *ngIf="showCreateNFTAuction()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openCreateNFTAuctionModal($event)"
       >
-      {{ 'feed_post_dropdown.put_on_sale' | transloco }}
+        {{ "feed_post_dropdown.put_on_sale" | transloco }}
       </a>
       <a
         *ngIf="showMakeNFTProfilePic()"
@@ -54,34 +101,31 @@
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openTransferNFTModal($event)"
       >
-      {{ 'feed_post_dropdown.transfer_nft' | transloco }}
+        {{ "feed_post_dropdown.transfer_nft" | transloco }}
       </a>
       <a
         *ngIf="showBurnNFT()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="openBurnNFTModal($event)"
       >
-      {{ 'feed_post_dropdown.burn_nft' | transloco }}
+        {{ "feed_post_dropdown.burn_nft" | transloco }}
       </a>
       <a
         *ngIf="post.IsNFT && globalVars.showAdminTools()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="dropNFT()"
       >
-      {{ 'feed_post_dropdown.add_nft_to_drop' | transloco }}
+        {{ "feed_post_dropdown.add_nft_to_drop" | transloco }}
       </a>
-      <a
-        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
-        (click)="reportPost()"
-      >
-      {{ 'feed_post_dropdown.report_content' | transloco }}
+      <a class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item" (click)="reportPost()">
+        {{ "feed_post_dropdown.report_content" | transloco }}
       </a>
       <a
         *ngIf="showHidePostDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="hidePost()"
       >
-      {{ 'feed_post_dropdown.hide' | transloco }}
+        {{ "feed_post_dropdown.hide" | transloco }}
       </a>
       <a
         *ngIf="showUnfollowUser"
@@ -95,42 +139,42 @@
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="blockUser()"
       >
-      {{ 'feed_post_dropdown.block_user' | transloco }}
+        {{ "feed_post_dropdown.block_user" | transloco }}
       </a>
       <a
         *ngIf="globalVars.showSuperAdminTools()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="addMultiplier()"
       >
-      {{ 'feed_post_dropdown.add_multiplier' | transloco }}
+        {{ "feed_post_dropdown.add_multiplier" | transloco }}
       </a>
       <a
         *ngIf="showAddToGlobalFeedDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
-      {{ 'feed_post_dropdown.add_to_feed' | transloco }}
+        {{ "feed_post_dropdown.add_to_feed" | transloco }}
       </a>
       <a
         *ngIf="showRemoveFromGlobalFeedDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
-      {{ 'feed_post_dropdown.remove_from_feed' | transloco }}
+        {{ "feed_post_dropdown.remove_from_feed" | transloco }}
       </a>
       <a
         *ngIf="showPinPostToGlobalFeedDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
-      {{ 'feed_post_dropdown.pin_to_feed' | transloco }}
+        {{ "feed_post_dropdown.pin_to_feed" | transloco }}
       </a>
       <a
         *ngIf="showUnpinPostFromGlobalFeedDropdownItem()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
-      {{ 'feed_post_dropdown.unpin_from_feed' | transloco }}
+        {{ "feed_post_dropdown.unpin_from_feed" | transloco }}
       </a>
     </div>
   </div>

@@ -2,12 +2,12 @@
 // needs the seed phrase) needs the {withCredentials: true} option. It may also needed to
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { interval, Observable, of, throwError, zip } from "rxjs";
-import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { IdentityService } from "./identity.service";
+import { catchError, concatMap, filter, map, switchMap, take } from "rxjs/operators";
 import { environment } from "src/environments/environment";
+import { IdentityService } from "./identity.service";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export class BackendRoutes {
@@ -249,6 +249,10 @@ export class User {
   CreatorPurchasedInTutorialUsername?: string;
   CreatorCoinsPurchasedInTutorial: number;
   MustCompleteTutorial: boolean;
+}
+
+export class GetSinglePostResponse {
+  PostFound: PostEntryResponse;
 }
 
 export class PostEntryResponse {
@@ -1395,7 +1399,11 @@ export class BackendApiService {
   GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
     return this._makeRequestURL(
       endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
+      BackendRoutes.RoutePathGetSingleProfilePicture +
+        "/" +
+        PublicKeyBase58Check +
+        "?" +
+        (fallback ?? this.GetDefaultProfilePictureURL(endpoint))
     );
   }
   GetDefaultProfilePictureURL(endpoint: string): string {

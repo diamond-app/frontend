@@ -11,11 +11,7 @@
               [routerLink]="homeLink()"
               queryParamsHandling="merge"
             >
-              <img
-                [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
-                class="deso"
-                style="height: 27px"
-              />
+              <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 27px" />
             </a>
             <i-feather name="x" class="feather-large cursor-pointer fs-0px" (click)="closeMobile.emit()"></i-feather>
           </div>
@@ -35,7 +31,11 @@
             [isUnread]="globalVars.unreadNotifications > 0"
             [iconName]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           ></left-bar-button>
-          <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="t('left_bar.buy_creators')" [iconName]="'users'"></left-bar-button>
+          <left-bar-button
+            [link]="'/' + globalVars.RouteNames.CREATORS"
+            [buttonLabel]="t('left_bar.buy_creators')"
+            [iconName]="'users'"
+          ></left-bar-button>
           <left-bar-button
             [link]="'/' + globalVars.RouteNames.BUY_DESO"
             [buttonLabel]="t('left_bar.buy_deso')"
@@ -55,7 +55,7 @@
           <left-bar-button
             *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
             [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
-            [queryParams]="{ 'tab':'posts' }"
+            [queryParams]="{ tab: 'posts' }"
             [buttonLabel]="t('left_bar.my_profile')"
             [iconName]="'user'"
           ></left-bar-button>
@@ -65,39 +65,54 @@
             [buttonLabel]="t('left_bar.update_profile')"
             [iconName]="'user'"
           ></left-bar-button>
-          <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="t('left_bar.my_wallet')" [iconName]="'diamond'"></left-bar-button>
+          <left-bar-button
+            [link]="'/' + globalVars.RouteNames.WALLET"
+            [buttonLabel]="t('left_bar.my_wallet')"
+            [iconName]="'diamond'"
+          ></left-bar-button>
           <a
             class="cursor-pointer w-100 d-flex align-items-center fc-default left-bar-link"
             style="height: 36px"
             (click)="displayMore($event)"
           >
             <i-feather name="more-horizontal" class="feather-medium fs-0px"></i-feather>
-            <a class="fs-17px fc-default font-weight-bold" style="margin-left: 23px">{{ 'left_bar.more' | transloco }}</a>
+            <a class="fs-17px fc-default font-weight-bold" style="margin-left: 23px">
+              {{ "left_bar.more" | transloco }}
+            </a>
           </a>
           <div class="position-relative">
             <left-bar-more (closeMore)="hideMore()" *ngIf="showMore"></left-bar-more>
           </div>
-          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">{{ 'left_bar.post' | transloco }}</button>
+          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">
+            {{ "left_bar.post" | transloco }}
+          </button>
+          <a
+            *ngIf="!globalVars.isMobile()"
+            [routerLink]="['/' + globalVars.RouteNames.CREATE_LONG_POST]"
+            class="btn btn-outline-dark p-2 mt-2 w-80"
+          >
+            Blog Post
+          </a>
         </div>
       </div>
       <div *ngIf="isMobile">
-<!--        <div-->
-<!--          *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"-->
-<!--          class="px-16px mb-16px"-->
-<!--        >-->
-<!--          <jumio-status [message]="'Get'"></jumio-status>-->
-<!--        </div>-->
+        <!--        <div-->
+        <!--          *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"-->
+        <!--          class="px-16px mb-16px"-->
+        <!--        >-->
+        <!--          <jumio-status [message]="'Get'"></jumio-status>-->
+        <!--        </div>-->
         <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
           <div class="d-flex align-items-center">
-            <img src="assets/diamond/desologo.svg" width="14px" height="14px"/>
+            <img src="assets/diamond/desologo.svg" width="14px" height="14px" />
             <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
           </div>
-          <a href="/buy-deso" class="fc-blue fs-15px font-weight-bold">{{ 'left_bar.buy' | transloco }}</a>
+          <a href="/buy-deso" class="fc-blue fs-15px font-weight-bold">{{ "left_bar.buy" | transloco }}</a>
         </div>
         <div class="w-100 border-bottom"></div>
         <div class="fc-default cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
           <i-feather name="power" class="feather-medium"></i-feather>
-          <span class="fc-17px font-weight-bold ml-10px">{{ 'left_bar.logout' | transloco }}</span>
+          <span class="fc-17px font-weight-bold ml-10px">{{ "left_bar.logout" | transloco }}</span>
         </div>
       </div>
     </div>
@@ -105,7 +120,11 @@
     <!-- Logged-out Left Bar -->
     <div *ngIf="globalVars.loggedInUser == null" class="global__nav__inner">
       <div class="pt-20px"></div>
-      <div *ngIf="isMobile" class="d-flex w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px" style="height: 80px">
+      <div
+        *ngIf="isMobile"
+        class="d-flex w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px"
+        style="height: 80px"
+      >
         <div class="flex-grow-1 d-flex justify-content-between">
           <a
             class="link--unstyled d-flex align-items-center"
@@ -113,11 +132,7 @@
             [routerLink]="homeLink()"
             queryParamsHandling="merge"
           >
-            <img
-              [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
-              class="deso"
-              style="height: 27px"
-            />
+            <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 27px" />
           </a>
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
@@ -127,14 +142,17 @@
       <div class="left-desktop-selector" [ngClass]="{ 'ml-20px': globalVars.isMobile() }">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
-        <left-bar-button [link]="'/' + globalVars.RouteNames.CREATORS" [buttonLabel]="'Creators'" [iconName]="'users'"></left-bar-button>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.CREATORS"
+          [buttonLabel]="'Creators'"
+          [iconName]="'users'"
+        ></left-bar-button>
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BUY_DESO"
           [buttonLabel]="t('left_bar.buy_deso2')"
           [iconName]="'dollar-sign'"
         ></left-bar-button>
       </div>
-
     </div>
   </div>
 </div>

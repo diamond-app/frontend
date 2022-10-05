@@ -1,25 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
-import { BackendApiService } from "../../backend-api.service";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import RouteNamesService from "src/app/route-names.service";
-import { PostMultiplierComponent } from "./post-multiplier/post-multiplier.component";
-
-// RPH Modals
-import { MintNftComponent } from "../../mint-nft/mint-nft.component";
-import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
-import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
-import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
-import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
-import { FollowService } from "../../../lib/services/follow/follow.service";
-import { environment } from "../../../environments/environment";
+import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import RouteNamesService from "src/app/route-names.service";
+import { environment } from "../../../environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { FollowService } from "../../../lib/services/follow/follow.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
+import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
+import { PostMultiplierComponent } from "./post-multiplier/post-multiplier.component";
 
 const RouteNames = RouteNamesService;
 @Component({
@@ -27,15 +22,16 @@ const RouteNames = RouteNamesService;
   templateUrl: "./feed-post-dropdown.component.html",
   styleUrls: ["./feed-post-dropdown.component.sass"],
 })
-export class FeedPostDropdownComponent implements OnInit{
+export class FeedPostDropdownComponent implements OnInit {
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
-
+  @Input() disableTooltip?: boolean;
   @Output() postHidden = new EventEmitter();
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
+  @Output() toggleBlogPin = new EventEmitter();
   @Output() pauseVideos = new EventEmitter();
 
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
@@ -52,7 +48,7 @@ export class FeedPostDropdownComponent implements OnInit{
     private platformLocation: PlatformLocation,
     public ref: ChangeDetectorRef,
     private followService: FollowService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
@@ -60,7 +56,9 @@ export class FeedPostDropdownComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.showUnfollowUser = this.followService._isLoggedInUserFollowing(this.postContent.ProfileEntryResponse.PublicKeyBase58Check);
+    this.showUnfollowUser = this.followService._isLoggedInUserFollowing(
+      this.postContent.ProfileEntryResponse.PublicKeyBase58Check
+    );
   }
 
   reportPost(): void {
@@ -263,6 +261,66 @@ export class FeedPostDropdownComponent implements OnInit{
     this.dropdown.hide();
   }
 
+  canPinPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.PostExtraData?.BlogDeltaRtfFormat !== "" &&
+      (!this.post?.PostExtraData?.BlogPostIsPinned || this.post?.PostExtraData?.BlogPostIsPinned === "false")
+    );
+  }
+
+  canUnpinPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.PostExtraData?.BlogPostIsPinned === "true"
+    );
+  }
+
+  pinBlogPostToProfile(event: any, isPinned: boolean) {
+    event.stopPropagation();
+    const postExtraData = this.post.PostExtraData;
+    postExtraData["BlogPostIsPinned"] = isPinned.toString();
+
+    this.backendApi
+      .SubmitPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.post.PostHashHex /*PostHashHexToModify*/,
+        "" /*ParentPostHashHex*/,
+        "" /*Title*/,
+        {
+          Body: this.post.Body,
+          ImageURLs: this.post.ImageURLs ? this.post.ImageURLs : [],
+        } /*BodyObj*/,
+        "" /*RepostedPostHashHex*/,
+        postExtraData /*PostExtraData*/,
+        "" /*Sub*/,
+        false /*IsHidden*/,
+        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+        false
+      )
+      .toPromise()
+      .then((res) => {
+        this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
+        return this.globalVars.waitForTransaction(res.TxnHashHex);
+      })
+      .then(() => {
+        if (isPinned) {
+          this.updateBlogPostPinnedSuccess();
+        } else {
+          this.updateBlogPostUnpinnedSuccess();
+        }
+      });
+  }
+
+  updateBlogPostPinnedSuccess() {
+    this.toggleBlogPin.emit({ postHashHex: this.post.PostHashHex, isPinned: true });
+  }
+
+  updateBlogPostUnpinnedSuccess() {
+    this.toggleBlogPin.emit({ postHashHex: this.post.PostHashHex, isPinned: false });
+  }
+
   hidePinnedPost(event) {
     event.stopPropagation();
     this.backendApi.SetStorage("dismissedPinnedPostHashHex", this.post.PostHashHex);
@@ -295,8 +353,21 @@ export class FeedPostDropdownComponent implements OnInit{
   }
 
   _getPostUrl() {
-    const pathArray = ["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex];
-
+    const pathArray = this.postContent.PostExtraData?.BlogDeltaRtfFormat
+      ? [
+          "/" +
+            this.globalVars.RouteNames.USER_PREFIX +
+            "/" +
+            this.postContent.ProfileEntryResponse.Username +
+            "/" +
+            this.globalVars.RouteNames.BLOG +
+            "/" +
+            this.postContent.PostExtraData.BlogTitleSlug,
+        ]
+      : [
+          "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
+          this.postContent.PostHashHex,
+        ];
     // need to preserve the curent query params for our dev env to work
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
 
@@ -407,6 +478,5 @@ export class FeedPostDropdownComponent implements OnInit{
         },
       });
     }
-
   }
 }
