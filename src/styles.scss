@@ -6265,6 +6265,25 @@ sell-nft-modal {
   border-left: 5px solid $buy-button-blue !important;
 }
 
+.create-long-post__form-container {
+  padding-top: 50px;
+}
+
+.create-long-post__form-header {
+  display: flex;
+  padding: 24px 24px 0 24px;
+  justify-content: space-between;
+  @media (max-width: 992px) {
+    flex-direction: column-reverse;
+  }
+}
+
+.create-long-post__primary-actions {
+  @media (max-width: 992px) {
+    align-self: flex-end;
+  }
+}
+
 .ql-container {
   border: none !important;
 }
@@ -6296,9 +6315,19 @@ sell-nft-modal {
 
 .ql-toolbar.ql-snow {
   margin: 0 auto;
-  max-width: 700px;
-  width: 100%;
+  width: 973px;
   margin-top: 12px;
+  background-color: white;
+  z-index: 100;
+  top: 50px;
+  border-left: none;
+  border-right: none;
+  position: fixed;
+
+  @media (max-width: 992px) {
+    top: 47px;
+    width: 100%;
+  }
 }
 
 .ql-editor ul > li.ql-indent-1::before {
