@@ -338,7 +338,8 @@ export class GlobalVarsService {
         this.messagesRequestsHoldingsOnly,
         this.messagesRequestsFollowersOnly,
         this.messagesRequestsFollowedOnly,
-        this.messagesSortAlgorithm
+        this.messagesSortAlgorithm,
+        this.feeRateDeSoPerKB * 1e9
       )
       .subscribe(
         (res) => {
@@ -469,6 +470,10 @@ export class GlobalVarsService {
             // Ask user to generate a default key
             this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
               if (res) {
+                this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
+                  this.loggedInUser.PublicKeyBase58Check,
+                  res.encryptedMessagingKeyRandomness
+                );
                 this.backendApi
                   .RegisterGroupMessagingKey(
                     this.localNode,
