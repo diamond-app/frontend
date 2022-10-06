@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center p-16px fc-muted">
+<div *ngIf="post" class="d-flex justify-content-between align-items-center p-16px fc-muted">
   <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
     <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openRepostsPage($event)" class="interaction-detail">
       {{ globalVars.abbreviateNumber(post.RepostCount, 0) }}
