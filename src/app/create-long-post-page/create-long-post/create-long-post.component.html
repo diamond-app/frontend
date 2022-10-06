@@ -1,11 +1,11 @@
 <div *ngIf="isLoadingEditModel" class="mt-5">
   <simple-center-loader [height]="200"></simple-center-loader>
 </div>
-<div *ngIf="!isLoadingEditModel" class="mt-2">
+<div *ngIf="!isLoadingEditModel" class="create-long-post__form-container">
   <form (submit)="submit($event)" (input)="onFormInput($event)">
-    <div class="d-flex flex-row justify-content-between px-4 pt-4">
+    <div class="create-long-post__form-header">
       <h3><strong>Create Blog Post</strong></h3>
-      <div>
+      <div class="create-long-post__primary-actions">
         <button
           *ngIf="this.editPostHashHex"
           type="button"
