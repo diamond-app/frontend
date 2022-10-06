@@ -72,6 +72,7 @@
         (diamondSent)="diamondSent.emit()"
       ></feed-post-icon-row>
     </div>
+    <post-interaction-details [post]="currentPost"></post-interaction-details>
     <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
       <h2 class="font-weight-bold mb-3 fs-16px">
         Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
