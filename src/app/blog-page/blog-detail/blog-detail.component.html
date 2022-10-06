@@ -18,18 +18,25 @@
     >
       {{ "feed_post.removed_by_author" | transloco }}
     </div>
-    <article *ngIf="!isLoading && !!currentPost && !currentPost.IsHidden">
+    <article *ngIf="!isLoading && !!currentPost && !currentPost.IsHidden" class="position-relative">
+      <feed-post-dropdown
+        style="right: 15px; padding-top: 6px"
+        [disableTooltip]="true"
+        [post]="currentPost"
+        [postContent]="currentPost"
+        [nftEntryResponses]="nftEntryResponses"
+        (postHidden)="hidePost()"
+        (userBlocked)="blockUser()"
+        (toggleGlobalFeed)="_addPostToGlobalFeed()"
+      ></feed-post-dropdown>
+      <a
+        *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check"
+        class="mt-2 ml-2 btn btn-primary"
+        [routerLink]="['/' + globalVars.RouteNames.EDIT_LONG_POST + '/' + currentPost.PostHashHex]"
+      >
+        {{ "feed_post_dropdown.edit" | transloco }}
+      </a>
       <header class="article-header position-relative">
-        <feed-post-dropdown
-          style="right: 15px; padding-top: 6px"
-          [disableTooltip]="true"
-          [post]="currentPost"
-          [postContent]="currentPost"
-          [nftEntryResponses]="nftEntryResponses"
-          (postHidden)="hidePost()"
-          (userBlocked)="blockUser()"
-          (toggleGlobalFeed)="_addPostToGlobalFeed()"
-        ></feed-post-dropdown>
         <h1 class="font-weight-bold mb-2 fs-32px">{{ currentPost.PostExtraData.Title }}</h1>
         <p class="text-secondary fs-16px mb-3">{{ currentPost.PostExtraData.Description }}</p>
         <div class="d-flex align-items-center py-2 fs-12px">
