@@ -850,6 +850,7 @@ export class FeedPostComponent implements OnInit {
   }
 
   openPlaceBidModal(event: any) {
+    event.stopPropagation();
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
       if (_.isNil(this.globalVars.loggedInUser)) {
         this.backendApi.SetStorage(
@@ -860,7 +861,6 @@ export class FeedPostComponent implements OnInit {
       SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "buy this NFT", this.globalVars);
       return;
     }
-    event.stopPropagation();
     if (!this.globalVars.isMobile()) {
       const modalDetails = this.modalService.show(PlaceBidModalComponent, {
         class: "modal-dialog-centered modal-lg",

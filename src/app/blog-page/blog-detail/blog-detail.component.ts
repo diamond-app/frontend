@@ -121,16 +121,6 @@ export class BlogDetailComponent {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
-        // we've loaded an NFT post on the blog detail page
-        if (
-          res.PostFound.IsNFT &&
-          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
-        ) {
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.route.snapshot.params.postHashHex], {
-            queryParamsHandling: "merge",
-          });
-          return;
-        }
         // we've loaded a regular post on the blog detail page
         if (!res.PostFound.PostExtraData?.BlogDeltaRtfFormat) {
           this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.route.snapshot.params.postHashHex], {
