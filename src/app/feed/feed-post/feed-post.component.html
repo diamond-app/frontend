@@ -337,13 +337,13 @@
                     [innerHTML]="
                       !!postContent.PostExtraData?.BlogDeltaRtfFormat
                         ? postContent.PostExtraData?.Description
-                        : (postContent.Body | sanitizeAndAutoLink)
+                        : (postContentBodyFn() | sanitizeAndAutoLink)
                     "
                     queryParamsHandling="merge"
                   ></span>
                   <a
-                    *ngIf="!postContent.PostExtraData?.BlogDeltaRtfFormat && showReadMoreRollup"
-                    [routerLink]="getRouterLink('/' + this.globalVars.RouteNames.POSTS + '/' + postContent.PostHashHex)"
+                    *ngIf="!postContent.PostExtraData?.BlogDeltaRtfFormat && showReadMoreRollup && !showRestOfPost"
+                    (click)="toggleShowRestOfPost($event)"
                     queryParamsHandling="merge"
                     class="link--unstyled"
                   >
