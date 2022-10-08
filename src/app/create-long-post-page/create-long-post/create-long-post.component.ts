@@ -271,7 +271,7 @@ export class CreateLongPostComponent implements AfterViewInit {
             "",
             "",
             "",
-            10 * 100,
+            this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
             1.25 * 100 * 100,
             false,
             this.globalVars.feeRateDeSoPerKB * 1e9,
