@@ -215,6 +215,7 @@ export class FeedPostComponent implements OnInit {
   decryptableNFTEntryResponses: NFTEntryResponse[];
   isFollowing: boolean;
   showReadMoreRollup = false;
+  showRestOfPost = false;
   videoURL: string;
   showVideoControls = false;
   // Height of video window, used for overlay to be clicked on to disable autoplay, enable controls and volume
@@ -304,6 +305,35 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
+  postContentBodyFn() {
+    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
+    // a read more link to the detail.
+    if (
+      !this.showRestOfPost &&
+      this.hasReadMoreRollup &&
+      this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH
+    ) {
+      // NOTE: We first spread the string into an array since this will account
+      // for unicode multi-codepoint characters like emojis. Just using
+      // substring will potentially break a string in the middle of a
+      // "surrogate-pair" and render something unexpected in its place. This is
+      // still a relatively naive approach, but it should do the right thing in
+      // almost all cases.
+      // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
+      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
+      this.showReadMoreRollup = true;
+      return `${chars.join("")}...`;
+    } else {
+      return this.postContent.Body;
+    }
+  }
+
+  toggleShowRestOfPost(event) {
+    event.stopPropagation();
+    this.showRestOfPost = true;
+    this.ref.detectChanges();
+  }
+
   ngOnInit() {
     if (!this.post.RepostCount) {
       this.post.RepostCount = 0;
@@ -316,20 +346,6 @@ export class FeedPostComponent implements OnInit {
     this.isFollowing = this.followService._isLoggedInUserFollowing(
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
-    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
-    // a read more link to the detail.
-    if (this.hasReadMoreRollup && this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH) {
-      // NOTE: We first spread the string into an array since this will account
-      // for unicode multi-codepoint characters like emojis. Just using
-      // substring will potentially break a string in the middle of a
-      // "surrogate-pair" and render something unexpected in its place. This is
-      // still a relatively naive approach, but it should do the right thing in
-      // almost all cases.
-      // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
-      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
-      this.postContent.Body = `${chars.join("")}...`;
-      this.showReadMoreRollup = true;
-    }
   }
 
   imageLoadedEvent() {
