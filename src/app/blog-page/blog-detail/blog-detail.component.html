@@ -30,7 +30,7 @@
         (toggleGlobalFeed)="_addPostToGlobalFeed()"
       ></feed-post-dropdown>
       <a
-        *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check"
+        *ngIf="globalVars.loggedInUser?.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check"
         class="mt-2 ml-2 btn btn-primary"
         [routerLink]="['/' + globalVars.RouteNames.EDIT_LONG_POST + '/' + currentPost.PostHashHex]"
       >
