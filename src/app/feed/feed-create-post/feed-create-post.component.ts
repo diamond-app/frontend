@@ -113,6 +113,7 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() isQuote = false;
   @Input() inTutorial = false;
   @Input() inModal = false;
+  @Input() onCreateBlog?: () => void;
   @Output() postUpdated = new EventEmitter<boolean>();
   @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
@@ -555,6 +556,10 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     this.postModels.splice(index, 1);
+  }
+
+  onNavigateToCreateBlog() {
+    this.onCreateBlog?.();
   }
 
   private autoFocusTextArea() {

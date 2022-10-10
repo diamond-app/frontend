@@ -7,6 +7,7 @@
 <feed-create-post
   numberOfRowsInTextArea="3"
   [inModal]="true"
+  [onCreateBlog]="closeModal.bind(this)"
   (postCreated)="onPostCreated($event)"
   (postCreated)="bsModalRef.hide()"
   (postUpdated)="postUpdated($event)"
