@@ -3,6 +3,7 @@ import { Component, EventEmitter, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
@@ -11,6 +12,8 @@ import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
+import { FollowService } from "src/lib/services/follow/follow.service";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "app-blog-detail",
@@ -26,6 +29,8 @@ export class BlogDetailComponent {
   isLoadingMoreReplies = false;
   title = "";
   currentPostHashHex = "";
+  isFollowing: boolean;
+
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
       const numThreads = this.threadManager?.threadCount ?? 0;
@@ -79,6 +84,8 @@ export class BlogDetailComponent {
     private titleService: Title,
     private toastr: ToastrService,
     private transloco: TranslocoService,
+    private modalService: BsModalService,
+    private followService: FollowService,
     public globalVars: GlobalVarsService,
     public location: Location
   ) {
@@ -87,6 +94,15 @@ export class BlogDetailComponent {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.route.params.subscribe((routeParams) => {
       this._setStateFromActivatedRoute(routeParams as { postHashHex: string; username: string; slug: string });
+    });
+  }
+
+  openBuyCreatorCoinModal(event, username: string) {
+    event.stopPropagation();
+    const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorModalComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState,
     });
   }
 
@@ -137,6 +153,9 @@ export class BlogDetailComponent {
         )} Blog Post`;
         this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this._fetchRecentPosts(res.PostFound.ProfileEntryResponse);
+        this.isFollowing = this.followService._isLoggedInUserFollowing(
+          res.PostFound.ProfileEntryResponse?.PublicKeyBase58Check
+        );
       });
   }
 

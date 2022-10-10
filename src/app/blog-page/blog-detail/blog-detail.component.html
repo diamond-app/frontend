@@ -38,7 +38,8 @@
       </a>
       <header class="article-header position-relative">
         <h1 class="font-weight-bold mb-2 fs-32px">{{ currentPost.PostExtraData.Title }}</h1>
-        <p class="text-secondary fs-16px mb-3">{{ currentPost.PostExtraData.Description }}</p>
+        <p class="text-secondary fs-16px mb-2">{{ currentPost.PostExtraData.Description }}</p>
+        <p class="fs-14px text-secondary mb-3">Published on {{ getPublishDate(currentPost.TimestampNanos) }}</p>
         <div class="d-flex align-items-center py-2 fs-12px">
           <a
             [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX + '/' + currentPost.ProfileEntryResponse.Username]"
@@ -46,7 +47,7 @@
             class="link--unstyled font-weight-bold fs-15px"
           >
             <img
-              class="rounded-circle overflow-hidden mr-2"
+              class="rounded-circle overflow-hidden"
               height="40"
               width="40"
               [src]="
@@ -56,10 +57,31 @@
             />
             {{ currentPost.ProfileEntryResponse.Username }}
           </a>
-          <span class="ml-auto fs-14px text-secondary">
-            Published on {{ getPublishDate(currentPost.TimestampNanos) }}
-          </span>
+          <div class="d-flex ml-2">
+            <a
+              role="button"
+              class="feed-post__coin-price-holder"
+              (click)="openBuyCreatorCoinModal($event, currentPost.ProfileEntryResponse.Username)"
+            >
+              <span
+                class="fc-secondary pl-5px"
+                *ngIf="globalVars.showPriceOnFeed && currentPost.ProfileEntryResponse.CoinPriceDeSoNanos > 0"
+              >
+                ~{{ globalVars.nanosToUSD(currentPost.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+              </span>
+              <!-- Buy link -->
+              <span class="p-5px">{{ "feed_post.buy" | transloco }}</span>
+            </a>
+            <follow-button
+              *ngIf="!isFollowing"
+              class="fs-12px ml-2"
+              [displayAsLink]="true"
+              [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
+              [followedPubKeyBase58Check]="currentPost.ProfileEntryResponse?.PublicKeyBase58Check"
+            ></follow-button>
+          </div>
         </div>
+        <post-interaction-details [post]="currentPost"></post-interaction-details>
       </header>
       <div
         *ngIf="currentPost.PostExtraData.CoverImage"
@@ -79,7 +101,6 @@
         (diamondSent)="diamondSent.emit()"
       ></feed-post-icon-row>
     </div>
-    <post-interaction-details [post]="currentPost"></post-interaction-details>
     <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
       <h2 class="font-weight-bold mb-3 fs-16px">
         Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
@@ -184,5 +205,5 @@
   </div>
   <!-- Bottom spacer for PWA apps-->
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
-  <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
+  <div *ngIf="globalVars.isMobile()" class="blog-detail__mobile-bottom-spacer"></div>
 </app-page>
