@@ -93,7 +93,8 @@ const cleanErrorMessages = [
   },
   {
     searchString: "token contains an invalid number of segments",
-    errorMessage: "There was a problem validating your transaction. Please log out and log back in to continue.",
+    errorMessage:
+      "There was a problem validating your transaction. If you are using Brave, please disable Shields. Otherwise, please log out and log back in to continue.",
   },
   {
     searchString: "RuleErrorExistingStakeExceedsMaxAllowed",
