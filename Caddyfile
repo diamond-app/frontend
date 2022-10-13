@@ -67,6 +67,7 @@ header @html Content-Security-Policy "
     data:
     i.imgur.com
     images.deso.org
+    node.deso.org
     images.bitclout.com
     quickchart.io
     arweave.net
