@@ -116,6 +116,10 @@
         </div>
       </div>
     </div>
+    <div *ngIf="isLoadingMoreTopLevelComments" class="p-5 text-center">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <p class="text-secondary fs-14px">Loading more comments...</p>
+    </div>
   </div>
   <!-- Bottom spacer for PWA apps-->
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
