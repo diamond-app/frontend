@@ -26,6 +26,7 @@ export class PostThreadComponent implements AfterViewInit {
   subscriptions = new Subscription();
   threadManager: ThreadManager | undefined;
   isLoadingMoreReplies = false;
+  isLoadingMoreTopLevelComments = false;
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
       const numThreads = this.threadManager?.threadCount ?? 0;
@@ -36,6 +37,7 @@ export class PostThreadComponent implements AfterViewInit {
         const start = index < 0 ? 0 : index;
         success(this.threadManager?.threads.slice(start, index + count) ?? []);
       } else {
+        this.isLoadingMoreTopLevelComments = true;
         this.getPost(false, index, count)?.subscribe(
           (res) => {
             // If we got more comments, push them onto the list of comments, increase comment count
@@ -46,8 +48,10 @@ export class PostThreadComponent implements AfterViewInit {
               }
               this.threadManager?.addThreads(res.PostFound.Comments);
               success(this.threadManager?.threads.slice(index, index + count) ?? []);
+              this.isLoadingMoreTopLevelComments = false;
             } else {
               // If there are no more comments, we should stop scrolling
+              this.isLoadingMoreTopLevelComments = false;
               this.scrollingDisabled = true;
               success([]);
             }
