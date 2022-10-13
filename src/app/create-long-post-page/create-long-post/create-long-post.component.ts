@@ -80,6 +80,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   isSubmittingPost = false;
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
+  quillContentObject?: any;
   quillModules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -166,6 +167,10 @@ export class CreateLongPostComponent implements AfterViewInit {
     );
   }
 
+  onContentChange(content: any) {
+    this.quillContentObject = content;
+  }
+
   async submit(ev: Event) {
     ev.preventDefault();
     if (this.isSubmittingPost) {
@@ -220,6 +225,31 @@ export class CreateLongPostComponent implements AfterViewInit {
     try {
       await this.uploadAndReplaceBase64Images();
 
+      const twitter = require("../../../vendor/twitter-text-3.1.0.js");
+      const entities = Array.from(
+        new Set(
+          twitter
+            .extractEntitiesWithIndices(this.quillContentObject?.text, {
+              extractUrlsWithoutProtocol: false,
+            })
+            .filter((entity: any) => entity.screenName || entity.cashtag || entity.hashtag)
+            .map((entity: any) => {
+              if (entity.screenName) {
+                return `@${entity.screenName}`;
+              }
+              if (entity.cashtag) {
+                return `$${entity.cashtag}`;
+              }
+              if (entity.hashtag) {
+                return `#${entity.hashtag}`;
+              }
+            })
+        )
+      )
+        .sort()
+        .reverse()
+        .join(" ");
+
       const postExtraData: BlogPostExtraData = {
         Title: this.model.Title.trim(),
         Description: this.model.Description.trim(),
@@ -237,7 +267,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           "" /*ParentPostHashHex*/,
           "" /*Title*/,
           {
-            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}\n\n#blog`,
+            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}\n\n${entities}\n\n#blog`,
             ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
           } /*BodyObj*/,
           "" /*RepostedPostHashHex*/,

@@ -105,6 +105,7 @@
       [(ngModel)]="model.ContentDelta"
       format="object"
       [placeholder]="placeholder | transloco"
+      (onContentChanged)="onContentChange($event)"
       [formats]="[
         'bold',
         'italic',
