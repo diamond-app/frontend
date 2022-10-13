@@ -94,7 +94,7 @@ const cleanErrorMessages = [
   {
     searchString: "token contains an invalid number of segments",
     errorMessage:
-      "There was a problem validating your transaction. If you are using Brave, please disable Shields. Otherwise, please log out and log back in to continue.",
+      "DeSo identity could not generate a secure jwt token. Your session may have expired and you'll need to log out and log back in. If you are using Brave Browser, this can typically be resolved by disabling shields.",
   },
   {
     searchString: "RuleErrorExistingStakeExceedsMaxAllowed",
