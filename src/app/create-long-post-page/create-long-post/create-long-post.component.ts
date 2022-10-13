@@ -80,6 +80,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   isSubmittingPost = false;
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
+  contentAsPlainText?: string;
   quillModules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -119,7 +120,12 @@ export class CreateLongPostComponent implements AfterViewInit {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
           const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
-          Object.assign(this.model, { ...editPostData, ContentDelta: JSON.parse(editPostData.BlogDeltaRtfFormat) });
+          const contentDelta = JSON.parse(editPostData.BlogDeltaRtfFormat);
+          Object.assign(this.model, { ...editPostData, ContentDelta: contentDelta });
+          this.contentAsPlainText = contentDelta.ops.reduce(
+            (text: string, op: any) => `${text}${typeof op.insert === "string" ? op.insert : ""}`,
+            ""
+          );
         }
       } catch (e) {
         // This is assuming 404 which might hide other types of errors, but this is currently what the
@@ -164,6 +170,10 @@ export class CreateLongPostComponent implements AfterViewInit {
         }
       })
     );
+  }
+
+  onContentChange(content: any) {
+    this.contentAsPlainText = content.text;
   }
 
   async submit(ev: Event) {
@@ -220,6 +230,31 @@ export class CreateLongPostComponent implements AfterViewInit {
     try {
       await this.uploadAndReplaceBase64Images();
 
+      const twitter = require("../../../vendor/twitter-text-3.1.0.js");
+      const entities = Array.from(
+        new Set(
+          twitter
+            .extractEntitiesWithIndices(this.contentAsPlainText, {
+              extractUrlsWithoutProtocol: false,
+            })
+            .filter((entity: any) => entity.screenName || entity.cashtag || entity.hashtag)
+            .map((entity: any) => {
+              if (entity.screenName) {
+                return `@${entity.screenName}`;
+              }
+              if (entity.cashtag) {
+                return `$${entity.cashtag}`;
+              }
+              if (entity.hashtag) {
+                return `#${entity.hashtag}`;
+              }
+            })
+        )
+      )
+        .sort()
+        .reverse()
+        .join(" ");
+
       const postExtraData: BlogPostExtraData = {
         Title: this.model.Title.trim(),
         Description: this.model.Description.trim(),
@@ -237,7 +272,9 @@ export class CreateLongPostComponent implements AfterViewInit {
           "" /*ParentPostHashHex*/,
           "" /*Title*/,
           {
-            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}\n\n#blog`,
+            Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}${
+              entities ? `\n\nMentions: ${entities}` : ""
+            }\n\n#blog`,
             ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
           } /*BodyObj*/,
           "" /*RepostedPostHashHex*/,
