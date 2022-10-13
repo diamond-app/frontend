@@ -92,7 +92,7 @@ const cleanErrorMessages = [
     errorMessage: "There was a problem validating your transaction. Please log out and log back in to continue.",
   },
   {
-    searchString: "Invalid token: token contains an invalid number of segments",
+    searchString: "token contains an invalid number of segments",
     errorMessage: "There was a problem validating your transaction. Please log out and log back in to continue.",
   },
   {
