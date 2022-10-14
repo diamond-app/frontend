@@ -3,8 +3,7 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
-import { has } from "lodash";
+import { escape, has } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import "quill-mention";
 import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
@@ -114,17 +113,15 @@ export class CreateLongPostComponent implements AfterViewInit {
       },
       renderItem: (item: MentionRenderItem) => {
         const profile = this.profilesByPublicKey[item.id];
-        const profPicURL = _.escape(
-          this.backendApi.GetSingleProfilePictureURL(
-            this.globalVars.localNode,
-            profile.PublicKeyBase58Check ?? "",
-            `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`
-          )
+        const profPicURL = this.backendApi.GetSingleProfilePictureURL(
+          this.globalVars.localNode,
+          profile.PublicKeyBase58Check ?? "",
+          `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`
         );
         return `<div class="menu-item">
           <div class="d-flex align-items-center">
-            <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
-            <p>${_.escape(profile.Username)}</p>
+            <img src="${escape(profPicURL)}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
+            <p>${escape(profile.Username)}</p>
             ${profile.IsVerified ? `<i class="fas fa-check-circle fa-md ml-5px fc-blue"></i>` : ""}
           </div>
         </div>`;
