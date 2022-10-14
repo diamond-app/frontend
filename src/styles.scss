@@ -6422,3 +6422,25 @@ sell-nft-modal {
 .ql-align-justify {
   text-align: left !important;
 }
+
+.ql-mention-list {
+  list-style-type: none;
+  padding: 0;
+  border: 1px solid var(--border);
+}
+
+.ql-mention-list-container {
+  padding-left: 40px;
+}
+
+.ql-mention-list-item {
+  font-size: medium;
+  padding: 8px;
+  &.selected {
+    background: var(--tile-secondary-bg);
+  }
+}
+
+.ql-editor .mention {
+  color: var(--link);
+}
