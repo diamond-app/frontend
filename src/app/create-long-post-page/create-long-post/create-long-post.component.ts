@@ -215,9 +215,9 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.contentAsPlainText = content.text;
   }
 
-  async postProcessDelta(delta: { ops: any[] }): Promise<{ ops: any[] }> {
-    const res = await Promise.all(
-      delta.ops.map(async (op: any) => {
+  async postProcessDelta({ ops }: { ops: any[] }): Promise<{ ops: any[] }> {
+    const processedOps = await Promise.all(
+      ops.map(async (op: any) => {
         // convert any images from base64 to a File object, upload them, and then replace
         // that image in the Delta object with the link to the uploaded image.
         // This is done to drastically reduce on-chain file size.
@@ -245,7 +245,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       })
     );
 
-    return { ops: res };
+    return { ops: processedOps };
   }
 
   async submit(ev: Event) {
