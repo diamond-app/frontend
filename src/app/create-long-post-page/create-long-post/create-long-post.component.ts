@@ -3,9 +3,10 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { has } from "lodash";
+import { escape, has } from "lodash";
 import { ToastrService } from "ngx-toastr";
-import { BackendApiService, GetSinglePostResponse } from "src/app/backend-api.service";
+import "quill-mention";
+import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
@@ -64,6 +65,11 @@ class FormModel {
   }
 }
 
+interface MentionRenderItem {
+  id: string;
+  value: string;
+}
+
 @Component({
   selector: "create-long-post",
   templateUrl: "./create-long-post.component.html",
@@ -81,6 +87,8 @@ export class CreateLongPostComponent implements AfterViewInit {
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   contentAsPlainText?: string;
+  private profilesByPublicKey: Record<string, ProfileEntryResponse> = {};
+
   quillModules = {
     toolbar: [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -90,6 +98,35 @@ export class CreateLongPostComponent implements AfterViewInit {
       [{ header: [1, 2, 3, false] }],
       ["link", "image"],
     ],
+    mention: {
+      allowedChars: /^[\w]*$/,
+      mentionDenotationChars: ["@", "$"],
+      source: async (searchTerm: string, renderList: (values: any, searchTerm: string) => void) => {
+        if (searchTerm.length === 0) return;
+        const profiles = await this.getUsersFromMentionPrefix(searchTerm);
+        const renderItems: MentionRenderItem[] = [];
+        profiles.forEach((p) => {
+          this.profilesByPublicKey[p.PublicKeyBase58Check!] = p;
+          renderItems.push({ id: p.PublicKeyBase58Check!, value: p.Username });
+        });
+        renderList(renderItems, searchTerm);
+      },
+      renderItem: (item: MentionRenderItem) => {
+        const profile = this.profilesByPublicKey[item.id];
+        const profPicURL = this.backendApi.GetSingleProfilePictureURL(
+          this.globalVars.localNode,
+          profile.PublicKeyBase58Check ?? "",
+          `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`
+        );
+        return `<div class="menu-item">
+          <div class="d-flex align-items-center">
+            <img src="${escape(profPicURL)}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
+            <p>${escape(profile.Username)}</p>
+            ${profile.IsVerified ? `<i class="fas fa-check-circle fa-md ml-5px fc-blue"></i>` : ""}
+          </div>
+        </div>`;
+      },
+    },
   };
 
   get coverImgSrc() {
@@ -138,6 +175,25 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.titleInput?.nativeElement?.focus();
   }
 
+  async getUsersFromMentionPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
+    const profiles = await this.backendApi
+      .GetProfiles(
+        this.globalVars.localNode,
+        "" /*PublicKeyBase58Check*/,
+        "" /*Username*/,
+        prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
+        "" /*Description*/,
+        "influencer_coin_price" /*Order by*/,
+        5 /*NumToFetch*/,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
+        "" /*ModerationType*/,
+        false /*FetchUsersThatHODL*/,
+        false /*AddGlobalFeedBool*/
+      )
+      .toPromise();
+    return profiles.ProfilesFound as ProfileEntryResponse[];
+  }
+
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
     return this.backendApi
       .GetSinglePost(
@@ -155,12 +211,16 @@ export class CreateLongPostComponent implements AfterViewInit {
       .toPromise();
   }
 
-  // Loop through all ops in the Delta, convert any images from base64 to a File object, upload them, and then replace
-  // that image in the Delta object with the link to the uploaded image.
-  // This is done to drastically reduce on-chain file size.
-  async uploadAndReplaceBase64Images() {
-    await Promise.all(
-      this.model.ContentDelta.ops.map(async (op: any) => {
+  onContentChange(content: any) {
+    this.contentAsPlainText = content.text;
+  }
+
+  async postProcessDelta({ ops }: { ops: any[] }): Promise<{ ops: any[] }> {
+    const processedOps = await Promise.all(
+      ops.map(async (op: any) => {
+        // convert any images from base64 to a File object, upload them, and then replace
+        // that image in the Delta object with the link to the uploaded image.
+        // This is done to drastically reduce on-chain file size.
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
@@ -168,19 +228,29 @@ export class CreateLongPostComponent implements AfterViewInit {
             .toPromise();
           op.insert.image = res.ImageURL;
         }
+
+        // convert mentions to regular links, since mention operations are a
+        // custom op added by the quill mention plugin. On the output side, any
+        // app can modify the link if needed but we've chose a widely used
+        // convention of `/u/<username>` as the default.
+        if (!!op.insert?.mention) {
+          const { value, denotationChar } = op.insert.mention;
+          return {
+            attributes: { link: `/u/${value}` },
+            insert: `${denotationChar}${value}`,
+          };
+        }
+
+        return op;
       })
     );
-  }
 
-  onContentChange(content: any) {
-    this.contentAsPlainText = content.text;
+    return { ops: processedOps };
   }
 
   async submit(ev: Event) {
     ev.preventDefault();
-    if (this.isSubmittingPost) {
-      return;
-    }
+    if (this.isSubmittingPost) return;
 
     const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
 
@@ -228,7 +298,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.isSubmittingPost = true;
 
     try {
-      await this.uploadAndReplaceBase64Images();
+      this.model.ContentDelta = await this.postProcessDelta(this.model.ContentDelta);
 
       const twitter = require("../../../vendor/twitter-text-3.1.0.js");
       const entities = Array.from(
