@@ -231,7 +231,7 @@ export class CreateLongPostComponent implements AfterViewInit {
 
         // convert mentions to regular links, since mention operations are a
         // custom op added by the quill mention plugin. On the output side, any
-        // app can modify the think if needed but we've chose a widely used
+        // app can modify the link if needed but we've chose a widely used
         // convention of `/u/<username>` as the default.
         if (!!op.insert?.mention) {
           const { value, denotationChar } = op.insert.mention;
