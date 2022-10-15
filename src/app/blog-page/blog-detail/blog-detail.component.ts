@@ -436,6 +436,15 @@ export class BlogDetailComponent {
           ...p,
           ProfileEntryResponse: profile,
         }));
+      })
+      .then(() => {
+        // We need to do this here since the recent posts changes the layout of the page.
+        const queryParams = new URLSearchParams(window.location.search);
+        if (queryParams.get("section") === "comments") {
+          const socialReactionsEl = document.getElementById("article-social-reactions");
+          console.log(socialReactionsEl);
+          socialReactionsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
   }
 }

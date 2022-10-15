@@ -1,12 +1,10 @@
-import { Component, OnInit, Input, OnChanges, AfterViewInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { AfterViewInit, Component, Input } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { Title } from "@angular/platform-browser";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -29,6 +27,7 @@ export type ProfileUpdateErrors = {
 export class FeedCreatePostModalComponent implements AfterViewInit {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
+  @Input() postToEdit?: PostEntryResponse;
 
   updateProfileBeingCalled: boolean = false;
   descriptionInput: string;

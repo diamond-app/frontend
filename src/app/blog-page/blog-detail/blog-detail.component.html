@@ -92,15 +92,6 @@
         <quill-view [content]="currentPost.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
       </div>
     </article>
-    <div *ngIf="!isLoading && !!currentPost" class="article-reactions">
-      <feed-post-icon-row
-        [post]="currentPost"
-        [postContent]="currentPost"
-        [hideNumbers]="false"
-        [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
-        (diamondSent)="diamondSent.emit()"
-      ></feed-post-icon-row>
-    </div>
     <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
       <h2 class="font-weight-bold mb-3 fs-16px">
         Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
@@ -132,6 +123,15 @@
         </a>
       </div>
     </section>
+    <div *ngIf="!isLoading && !!currentPost" class="article-reactions" id="article-social-reactions">
+      <feed-post-icon-row
+        [post]="currentPost"
+        [postContent]="currentPost"
+        [hideNumbers]="false"
+        [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
+        (diamondSent)="diamondSent.emit()"
+      ></feed-post-icon-row>
+    </div>
     <div
       *ngIf="threadManager?.threadCount > 0"
       class="post-thread__comment-container article-comments"

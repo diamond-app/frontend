@@ -56,10 +56,22 @@ class PostModel {
   isMentionified = false;
   placeHolderText: string;
   isUploadingMedia = false;
-
+  editPostHashHex = "";
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
-  constructor() {
+  /**
+   * @param post optional initial post data (used for editing posts)
+   */
+  constructor(post?: PostEntryResponse) {
+    if (post) {
+      this.text = post.Body;
+      this.postImageSrc = post.ImageURLs?.[0] ?? "";
+      this.postVideoSrc = post.VideoURLs?.[0] ?? "";
+      this.constructedEmbedURL = post.PostExtraData.EmbedVideoURL ?? "";
+      this.embedURL = this.constructedEmbedURL;
+      this.editPostHashHex = post.PostHashHex;
+    }
+
     this.placeHolderText = this.getRandomMoveQuote();
   }
 
@@ -114,6 +126,7 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() inTutorial = false;
   @Input() inModal = false;
   @Input() onCreateBlog?: () => void;
+  @Input() postToEdit?: PostEntryResponse;
   @Output() postUpdated = new EventEmitter<boolean>();
   @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
@@ -131,7 +144,6 @@ export class FeedCreatePostComponent implements OnInit {
     private translocoService: TranslocoService
   ) {
     this.globalVars = appData;
-    this.postModels.push(this.currentPostModel);
   }
 
   // Functions for the mention autofill component
@@ -202,6 +214,9 @@ export class FeedCreatePostComponent implements OnInit {
     if (this.isReply) {
       this.autoFocusTextArea();
     }
+
+    this.currentPostModel = new PostModel(this.postToEdit);
+    this.postModels.push(this.currentPostModel);
   }
 
   /**
@@ -301,7 +316,7 @@ export class FeedCreatePostComponent implements OnInit {
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        "" /*PostHashHexToModify*/,
+        post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
