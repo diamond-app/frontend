@@ -356,7 +356,7 @@ export class FeedPostDropdownComponent implements OnInit {
   editPost(event) {
     event.preventDefault();
     this.globalVars.logEvent("post : edit");
-    if (!!this.post.PostExtraData?.BlogDeltaRtfFormat) {
+    if (this.post.PostExtraData?.BlogDeltaRtfFormat) {
       this.router.navigate(["/" + this.globalVars.RouteNames.EDIT_LONG_POST + "/" + this.post.PostHashHex], {
         queryParamsHandling: "merge",
       });
