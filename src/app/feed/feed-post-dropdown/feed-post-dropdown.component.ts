@@ -37,6 +37,7 @@ export class FeedPostDropdownComponent implements OnInit {
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
   showSharePost: boolean = false;
+  showembedPost: boolean = false;
   showUnfollowUser: boolean = false;
 
   constructor(
@@ -52,6 +53,7 @@ export class FeedPostDropdownComponent implements OnInit {
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
+      this.showembedPost = true;
     }
   }
 
@@ -347,6 +349,19 @@ export class FeedPostDropdownComponent implements OnInit {
 
     try {
       navigator.share({ url: this._getPostUrl() });
+    } catch (err) {
+      console.error("Share failed:", err.message);
+    }
+  }
+
+  embedPostUrl(event): void {
+    this.globalVars.logEvent("post : webapiemnbed");
+
+    // Prevent the post from navigating.
+    event.stopPropagation();
+
+    try {
+      window.open('https://embed.withdeso.com/?url='+this._getPostUrl(), "_blank");
     } catch (err) {
       console.error("Share failed:", err.message);
     }

@@ -61,6 +61,10 @@
       >
         {{ "feed_post_dropdown.share" | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
       </a>
+      <a *ngIf="showEmbedPost" class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="embedPostUrl($event)">
+        {{ "feed_post_dropdown.embed" | transloco }} {{ this.post.IsNFT ? "NFT" : "Post" }}
+      </a>
       <a
         *ngIf="
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
