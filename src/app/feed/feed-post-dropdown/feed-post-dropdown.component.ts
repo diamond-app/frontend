@@ -37,7 +37,7 @@ export class FeedPostDropdownComponent implements OnInit {
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
   showSharePost: boolean = false;
-  showembedPost: boolean = false;
+  showEmbedPost: boolean = true;
   showUnfollowUser: boolean = false;
 
   constructor(
@@ -53,7 +53,6 @@ export class FeedPostDropdownComponent implements OnInit {
   ) {
     if (!!navigator.share) {
       this.showSharePost = true;
-      this.showembedPost = true;
     }
   }
 
@@ -363,7 +362,7 @@ export class FeedPostDropdownComponent implements OnInit {
     try {
       window.open('https://embed.withdeso.com/?url='+this._getPostUrl(), "_blank");
     } catch (err) {
-      console.error("Share failed:", err.message);
+      console.error("Embed failed:", err.message);
     }
   }
 
