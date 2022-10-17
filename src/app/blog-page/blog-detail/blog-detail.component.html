@@ -1,5 +1,8 @@
 <app-page [simpleTopBar]="true" [title]="title" hideSidebar="true">
   <div class="post-thread__container">
+    <button *ngIf="this.isScrollingUp" class="blog-detail__scroll-to-top btn btn-secondary" (click)="scrollToTop()">
+      <i-feather name="arrow-up"></i-feather>
+    </button>
     <div
       class="d-flex align-items-center justify-content-between post-thread__header border-bottom"
       *ngIf="!globalVars.isMobile()"
