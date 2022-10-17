@@ -438,7 +438,7 @@ export class BlogDetailComponent {
         }));
       })
       .then(() => {
-        // We need to do this here since the recent posts changes the layout of the page.
+        // We need to do this here since the recent posts are loaded lazily and changes the length of the page.
         const queryParams = new URLSearchParams(window.location.search);
         if (queryParams.get("section") === "comments") {
           const socialReactionsEl = document.getElementById("comment-scroller");
