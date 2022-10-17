@@ -215,13 +215,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.profileUpdateErrors.usernameError = false;
     }
 
-    if (this.descriptionInput.length > 180) {
-      this.profileUpdateErrors.descriptionError = true;
-      hasErrors = true;
-    } else {
-      this.profileUpdateErrors.descriptionError = false;
-    }
-
     if (
       this.profilePicInput == null ||
       this.profilePicInput.length == 0 ||

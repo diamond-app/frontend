@@ -441,7 +441,7 @@ export class BlogDetailComponent {
         // We need to do this here since the recent posts changes the layout of the page.
         const queryParams = new URLSearchParams(window.location.search);
         if (queryParams.get("section") === "comments") {
-          const socialReactionsEl = document.getElementById("article-social-reactions");
+          const socialReactionsEl = document.getElementById("comment-scroller");
           socialReactionsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
