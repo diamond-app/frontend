@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
@@ -20,7 +20,7 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
   templateUrl: "./blog-detail.component.html",
   styleUrls: ["./blog-detail.component.scss"],
 })
-export class BlogDetailComponent {
+export class BlogDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   currentPost: PostEntryResponse;
   recentPosts: PostEntryResponse[] = [];
@@ -29,7 +29,10 @@ export class BlogDetailComponent {
   isLoadingMoreReplies = false;
   title = "";
   currentPostHashHex = "";
-  isFollowing: boolean;
+  isFollowing?: boolean;
+  isScrollingUp: boolean = false;
+  previousPageYOffset = 0;
+  boundDetectScrollDirection?: () => void;
 
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
@@ -95,6 +98,21 @@ export class BlogDetailComponent {
     this.route.params.subscribe((routeParams) => {
       this._setStateFromActivatedRoute(routeParams as { postHashHex: string; username: string; slug: string });
     });
+  }
+
+  ngOnInit() {
+    this.boundDetectScrollDirection = this.detectScrollDirection.bind(this);
+    window.addEventListener("scroll", this.detectScrollDirection.bind(this));
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener("scroll", this.boundDetectScrollDirection);
+  }
+
+  detectScrollDirection() {
+    const offset = window.pageYOffset;
+    this.isScrollingUp = offset < this.previousPageYOffset;
+    this.previousPageYOffset = offset;
   }
 
   openBuyCreatorCoinModal(event, username: string) {
@@ -385,6 +403,11 @@ export class BlogDetailComponent {
     });
   }
 
+  scrollToTop() {
+    window.scrollTo(0, 0);
+    this.isScrollingUp = false;
+  }
+
   async _setStateFromActivatedRoute({ postHashHex, username, slug }) {
     this.threadManager?.reset();
     this.isLoading = true;
@@ -436,6 +459,19 @@ export class BlogDetailComponent {
           ...p,
           ProfileEntryResponse: profile,
         }));
+      })
+      .then(() => {
+        // We need to do this here since the recent posts are loaded lazily and changes the length of the page.
+        const queryParams = new URLSearchParams(window.location.search);
+        if (queryParams.get("section") === "comments") {
+          const socialReactionsEl = document.getElementById("comment-scroller");
+          socialReactionsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+          // After scrolling to the comments section, remove the section query
+          // param to prevent unwanted behavior when reloading the page or
+          // sharing a link to the article
+          this.location.replaceState(this.router.url.split("?")[0]);
+        }
       });
   }
 }
