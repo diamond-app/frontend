@@ -354,7 +354,6 @@ export class FeedPostDropdownComponent implements OnInit {
     }
   }
 
-<<<<<<< HEAD
   embedPostUrl(event): void {
     this.globalVars.logEvent("post : withdesoembed");
 
@@ -367,7 +366,6 @@ export class FeedPostDropdownComponent implements OnInit {
       console.error("Embed failed:", err.message);
     }
   }
-=======
   editPost(event) {
     event.preventDefault();
     this.globalVars.logEvent("post : edit");
@@ -381,7 +379,6 @@ export class FeedPostDropdownComponent implements OnInit {
         ignoreBackdropClick: true,
         initialState: { postToEdit: this.post },
       });
->>>>>>> a729ad2d05e428ca4c6d1fdc1caca2a907a699a1
     }
   }
 
