@@ -6441,6 +6441,12 @@ sell-nft-modal {
   }
 }
 
-.ql-editor .mention {
-  color: var(--link);
+.ql-snow .ql-editor {
+  & .mention, & a, & a em {
+    color: var(--link);
+    text-decoration: none;
+  }
+  & em {
+    color: var(--text-secondary);
+  }
 }

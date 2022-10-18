@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { FeedCreatePostModalComponent } from "src/app/feed/feed-create-post-modal/feed-create-post-modal.component";
 import RouteNamesService from "src/app/route-names.service";
 import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -349,6 +350,22 @@ export class FeedPostDropdownComponent implements OnInit {
       navigator.share({ url: this._getPostUrl() });
     } catch (err) {
       console.error("Share failed:", err.message);
+    }
+  }
+
+  editPost(event) {
+    event.preventDefault();
+    this.globalVars.logEvent("post : edit");
+    if (this.post.PostExtraData?.BlogDeltaRtfFormat) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.EDIT_LONG_POST + "/" + this.post.PostHashHex], {
+        queryParamsHandling: "merge",
+      });
+    } else {
+      this.modalService.show(FeedCreatePostModalComponent, {
+        class: "modal-dialog-centered",
+        ignoreBackdropClick: true,
+        initialState: { postToEdit: this.post },
+      });
     }
   }
 

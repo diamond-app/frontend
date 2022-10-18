@@ -351,7 +351,21 @@
                     <strong>Read more</strong>
                   </a>
                   <div *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat" class="py-1">
-                    <span class="text-underline">Read more</span>
+                    <strong>...Read more</strong>
+                    <div class="mt-2">
+                      <a
+                        *ngIf="postContent.CommentCount"
+                        [routerLink]="[
+                          '/' + this.globalVars.RouteNames.USER_PREFIX,
+                          postContent.ProfileEntryResponse.Username,
+                          globalVars.RouteNames.BLOG,
+                          postContent.PostExtraData.BlogTitleSlug
+                        ]"
+                        [queryParams]="{ section: 'comments' }"
+                      >
+                        View comments
+                      </a>
+                    </div>
                   </div>
                 </div>
 

@@ -1,5 +1,8 @@
 <app-page [simpleTopBar]="true" [title]="title" hideSidebar="true">
   <div class="post-thread__container">
+    <button *ngIf="this.isScrollingUp" class="blog-detail__scroll-to-top btn btn-secondary" (click)="scrollToTop()">
+      <i-feather name="arrow-up"></i-feather>
+    </button>
     <div
       class="d-flex align-items-center justify-content-between post-thread__header border-bottom"
       *ngIf="!globalVars.isMobile()"
@@ -92,15 +95,6 @@
         <quill-view [content]="currentPost.PostExtraData.BlogDeltaRtfFormat" format="json" theme="snow"></quill-view>
       </div>
     </article>
-    <div *ngIf="!isLoading && !!currentPost" class="article-reactions">
-      <feed-post-icon-row
-        [post]="currentPost"
-        [postContent]="currentPost"
-        [hideNumbers]="false"
-        [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
-        (diamondSent)="diamondSent.emit()"
-      ></feed-post-icon-row>
-    </div>
     <section *ngIf="recentPosts.length > 0" class="article-recent-posts">
       <h2 class="font-weight-bold mb-3 fs-16px">
         Recent Articles from @{{ currentPost.ProfileEntryResponse.Username }}
@@ -132,6 +126,15 @@
         </a>
       </div>
     </section>
+    <div *ngIf="!isLoading && !!currentPost" class="article-reactions">
+      <feed-post-icon-row
+        [post]="currentPost"
+        [postContent]="currentPost"
+        [hideNumbers]="false"
+        [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
+        (diamondSent)="diamondSent.emit()"
+      ></feed-post-icon-row>
+    </div>
     <div
       *ngIf="threadManager?.threadCount > 0"
       class="post-thread__comment-container article-comments"
