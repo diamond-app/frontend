@@ -356,7 +356,7 @@ export class FeedPostDropdownComponent implements OnInit {
 
 <<<<<<< HEAD
   embedPostUrl(event): void {
-    this.globalVars.logEvent("post : webapiemnbed");
+    this.globalVars.logEvent("post : withdesoembed");
 
     // Prevent the post from navigating.
     event.stopPropagation();
