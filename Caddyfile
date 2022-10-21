@@ -73,7 +73,7 @@ header @html Content-Security-Policy "
     arweave.net
     *.arweave.net
     entre-app-media-dev.s3.us-east-2.amazonaws.com
-    s3.amazonaws.com/appforest_uf/*
+    s3.amazonaws.com/appforest_uf
     *.pearl.app
     *.twimg.com
     cloudflare-ipfs.com
