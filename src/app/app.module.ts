@@ -208,6 +208,7 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { PostInteractionDetailsComponent } from './post-interaction-details/post-interaction-details.component';
+import { BuyDeSoMegaSwapComponent } from "./buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -241,6 +242,7 @@ export function playerFactory() {
     CreatorsLeaderboardAppPageComponent,
     BuyDeSoPageComponent,
     BuyDesoModalComponent,
+    BuyDeSoMegaSwapComponent,
     DirectToNativeBrowserModalComponent,
     WalletComponent,
     WalletWidgetComponent,
