@@ -452,7 +452,7 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (user.BalanceNanos) {
+    if (user?.BalanceNanos) {
       this.getLoggedInUserDefaultKey();
     }
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
