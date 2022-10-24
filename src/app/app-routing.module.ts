@@ -118,6 +118,7 @@ const routes: Routes = [
   { path: RouteNames.USER_PREFIX + "/:username", component: CreatorProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.SETTINGS, component: SettingsPageComponent, pathMatch: "full" },
   { path: RouteNames.BUY_DESO, component: BuyDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.BUY_DESO + "/:ticker", component: BuyDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },

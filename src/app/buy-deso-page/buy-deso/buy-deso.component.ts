@@ -43,14 +43,16 @@ export class BuyDeSoComponent implements OnInit {
 
   BuyDeSoComponent = BuyDeSoComponent;
 
+
+  static BUY_WITH_MEGASWAP = "Buy with Crypto";
   static BUY_WITH_USD = "Buy with fiat";
-  static BUY_WITH_BTC = "Buy with Bitcoin";
+  static BUY_WITH_BTC = "Buy with BTC";
   static BUY_WITH_ETH = "Buy with ETH";
   static BUY_ON_CB = "Buy on Coinbase";
   static CB_LINK = "https://www.coinbase.com/price/decentralized-social";
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
-  activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP];
+  activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
   linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
 
   constructor(
@@ -526,14 +528,18 @@ export class BuyDeSoComponent implements OnInit {
     window.scroll(0, 0);
 
     // Add extra tabs
-    if (this.globalVars.showBuyWithUSD) {
-      this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_USD);
-      this.activeTab = BuyDeSoComponent.BUY_WITH_USD;
-    }
-
-    if (this.globalVars.showBuyWithETH) {
-      this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
-    }
+    this.route.params.subscribe((params) => {
+      const ticker = (params.ticker || '').toUpperCase();
+      if (ticker === 'BTC') {
+        this.buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
+        this.activeTab = BuyDeSoComponent.BUY_WITH_BTC
+      } else if (ticker === 'ETH' && this.globalVars.showBuyWithETH) {
+        this.buyTabs = [BuyDeSoComponent.BUY_WITH_ETH];
+        this.activeTab = BuyDeSoComponent.BUY_WITH_ETH;
+      } else if (this.globalVars.showBuyWithUSD) {
+        this.buyTabs.push(BuyDeSoComponent.BUY_WITH_USD);
+      }
+    });
 
     this.buyTabs.push(BuyDeSoComponent.BUY_ON_CB);
 
