@@ -5,11 +5,11 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { from, interval, Observable, of, throwError, zip } from "rxjs";
-import { catchError, concatMap, filter, map, switchMap, take, timeout, tap } from "rxjs/operators";
+import { catchError, concatMap, filter, map, switchMap, take, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { IdentityMessagingResponse, IdentityService } from "./identity.service";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
+import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -157,9 +157,6 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
-
-  // Onboarding routes
-  static RoutePathSubscribeToOnboardingEmails = "/api-internal/v0/onboarding-email-subscription";
 }
 
 export class Transaction {
@@ -2816,11 +2813,5 @@ export class BackendApiService {
       errorMessage = parseCleanErrorMsg(errorMessage);
     }
     return errorMessage;
-  }
-
-  OnboardingEmailSubscribe(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubscribeToOnboardingEmails, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-    });
   }
 }
