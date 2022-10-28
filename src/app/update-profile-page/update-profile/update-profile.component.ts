@@ -297,23 +297,29 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           throw err;
         }),
         switchMap((appUser) => {
-          const createOrUdpateAppUserObs = appUser
-            ? this.apiInternal.updateAppUser({
-                Username: this.usernameInput,
-                ...appUser,
-              })
-            : this.apiInternal.createAppUser({
-                PublicKeyBase58check: this.loggedInUser.PublicKeyBase58Check,
-                Username: this.usernameInput,
-                ...NEW_APP_USER_DEFAULTS,
-              });
+          let createOrUdpateAppUserObs: Observable<any>;
+
+          // if the app user exists and the username has not changed, we don't need to update anything
+          if (appUser && appUser.Username !== this.usernameInput) {
+            createOrUdpateAppUserObs = this.apiInternal.updateAppUser({
+              ...appUser,
+              Username: this.usernameInput,
+            });
+            // if the app user is null, it means we need to create a new one
+          } else if (appUser === null) {
+            createOrUdpateAppUserObs = this.apiInternal.createAppUser({
+              ...NEW_APP_USER_DEFAULTS,
+              PublicKeyBase58check: this.loggedInUser.PublicKeyBase58Check,
+              Username: this.usernameInput,
+            });
+          }
 
           // run api calls to the internal api and the node backend api in parallel
-          return forkJoin([createOrUdpateAppUserObs, this._callBackendUpdateProfile()]);
+          return forkJoin([this._callBackendUpdateProfile(), createOrUdpateAppUserObs ?? of(null)]);
         })
       )
       .subscribe(
-        ([_, updateProfileResponse]) => {
+        ([updateProfileResponse]) => {
           this.globalVars.profileUpdateTimestamp = Date.now();
           this.globalVars.logEvent("profile : update");
           // TODO: create or update app user record here
