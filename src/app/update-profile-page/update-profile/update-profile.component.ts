@@ -6,7 +6,7 @@ import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService, NEW_APP_USER_DEFAULTS } from "src/app/api-internal.service";
+import { ApiInternalService } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
@@ -307,11 +307,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             });
             // if the app user is null, it means we need to create a new one
           } else if (appUser === null) {
-            createOrUdpateAppUserObs = this.apiInternal.createAppUser({
-              ...NEW_APP_USER_DEFAULTS,
-              PublicKeyBase58check: this.loggedInUser.PublicKeyBase58Check,
-              Username: this.usernameInput,
-            });
+            createOrUdpateAppUserObs = this.apiInternal.createAppUser(
+              this.loggedInUser.PublicKeyBase58Check,
+              this.usernameInput
+            );
           }
 
           // run api calls to the internal api and the node backend api in parallel

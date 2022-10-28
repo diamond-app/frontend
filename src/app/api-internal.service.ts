@@ -14,7 +14,7 @@ const ENDPOINTS = Object.freeze({
 
 const buildUrl = (endpoint: string) => `${environment.apiInternalHostname}/api-internal/v0/${endpoint}`;
 
-interface CreateOrUpdateAppUserPayload {
+interface UpdateAppUserPayload {
   PublicKeyBase58check: string;
   Username: string;
   NotificationFrequency: number;
@@ -72,13 +72,18 @@ export class ApiInternalService {
     );
   }
 
-  createAppUser(payload: CreateOrUpdateAppUserPayload) {
+  createAppUser(PublicKeyBase58check: string, Username: string) {
+    const payload = {
+      ...NEW_APP_USER_DEFAULTS,
+      PublicKeyBase58check,
+      Username,
+    };
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))
     );
   }
 
-  updateAppUser(payload: CreateOrUpdateAppUserPayload) {
+  updateAppUser(payload: UpdateAppUserPayload) {
     return this.getAuthHeaders().pipe(
       switchMap((headers) =>
         this.httpClient.put<any>(buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}`), payload, { headers })
