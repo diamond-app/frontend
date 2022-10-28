@@ -18,7 +18,41 @@ interface CreateOrUpdateAppUserPayload {
   PublicKeyBase58check: string;
   Username: string;
   NotificationFrequency: number;
+  ReceiveEarningsDigestNotif: boolean;
+  ReceiveTxDigestNotif: boolean;
+  ReceiveCoinPurchaseNotif: boolean;
+  ReceiveFollowNotif: boolean;
+  ReceiveBasicTransferNotif: boolean;
+  ReceiveLikeNotif: boolean;
+  ReceiveCommentNotif: boolean;
+  ReceiveDiamondNotif: boolean;
+  ReceiveRepostNotif: boolean;
+  ReceiveQuoteRepostNotif: boolean;
+  ReceiveMentionNotif: boolean;
+  ReceiveNftBidNotif: boolean;
+  ReceiveNftPurchaseNotif: boolean;
+  ReceiveNftBidAcceptedNotif: boolean;
+  ReceiveNftRoyaltyNotif: boolean;
 }
+
+export const NEW_APP_USER_DEFAULTS = {
+  NotificationFrequency: 1,
+  ReceiveLikeNotif: false,
+  ReceiveEarningsDigestNotif: true,
+  ReceiveTxDigestNotif: true,
+  ReceiveCoinPurchaseNotif: true,
+  ReceiveFollowNotif: true,
+  ReceiveBasicTransferNotif: true,
+  ReceiveCommentNotif: true,
+  ReceiveDiamondNotif: true,
+  ReceiveRepostNotif: true,
+  ReceiveQuoteRepostNotif: true,
+  ReceiveMentionNotif: true,
+  ReceiveNftBidNotif: true,
+  ReceiveNftPurchaseNotif: true,
+  ReceiveNftBidAcceptedNotif: true,
+  ReceiveNftRoyaltyNotif: true,
+};
 
 @Injectable({
   providedIn: "root",
@@ -46,7 +80,9 @@ export class ApiInternalService {
 
   updateAppUser(payload: CreateOrUpdateAppUserPayload) {
     return this.getAuthHeaders().pipe(
-      switchMap((headers) => this.httpClient.put<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))
+      switchMap((headers) =>
+        this.httpClient.put<any>(buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}`), payload, { headers })
+      )
     );
   }
 
