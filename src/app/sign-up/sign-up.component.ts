@@ -134,15 +134,11 @@ export class SignUpComponent {
   }
 
   finishOnboarding() {
-    // this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(
-    //   () => {
-    //     // TODO: use email response to show a "check your email toast"? not sure
-    //     // what we want to do with it
-    //   },
-    //   () => {
-    //     // TODO: error handling
-    //   }
-    // );
+    // sends a welcome email.
+    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(() => {
+      // TODO: use email response to show a "check your email" UI toast? not sure
+      // what we want to do with it, if anything.
+    });
 
     this.backendApi
       .UpdateTutorialStatus(
