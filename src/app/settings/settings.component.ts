@@ -86,8 +86,9 @@ export class SettingsComponent implements OnInit {
                 );
               }
 
-              // TODO: If the user has a profile and we *DO NOT* have their email
-              // address, we prompt them for it.
+              // If the user has a profile and we *DO NOT* have their email
+              // address, we prompt them for it. This can happen if the user
+              // created their profile on a different app.
               this.showEmailPrompt = true;
             }
 
