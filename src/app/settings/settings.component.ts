@@ -1,11 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
 import { Title } from "@angular/platform-browser";
-import { ThemeService } from "../theme/theme.service";
-import { environment } from "src/environments/environment";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { TranslocoService } from "@ngneat/transloco";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { forkJoin, of } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { ApiInternalService, AppUser } from "src/app/api-internal.service";
+import { environment } from "src/environments/environment";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { ThemeService } from "../theme/theme.service";
 
 @Component({
   selector: "settings",
@@ -13,11 +16,35 @@ import { TranslocoService } from "@ngneat/transloco";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-  loading = false;
   emailAddress = "";
-  invalidEmailEntered = false;
+  showEmailPrompt: boolean = false;
   environment = environment;
   selectedLanguage: string;
+  appUser: AppUser | null;
+  isSelectEmailsDropdownOpen: boolean = false;
+  isValidEmail: boolean = true;
+  isSavingEmail: boolean = false;
+  digestFrequencies = [
+    { duration: 1, text: "Daily" },
+    { duration: 7, text: "Weekly" },
+    { duration: 30, text: "Monthly" },
+    { duration: 0, text: "Never" },
+  ];
+  txEmailSettings = [
+    { field: "ReceiveLikeNotif", text: "Like" },
+    { field: "ReceiveCoinPurchaseNotif", text: "Creator coin purchase" },
+    { field: "ReceiveFollowNotif", text: "Follow" },
+    { field: "ReceiveBasicTransferNotif", text: "Received DESO" },
+    { field: "ReceiveCommentNotif", text: "Post comment" },
+    { field: "ReceiveDiamondNotif", text: "Received diamonds" },
+    { field: "ReceiveRepostNotif", text: "Repost" },
+    { field: "ReceiveQuoteRepostNotif", text: "Quote repost" },
+    { field: "ReceiveMentionNotif", text: "@Mentioned" },
+    { field: "ReceiveNftBidNotif", text: "NFT bid" },
+    { field: "ReceiveNftPurchaseNotif", text: "NFT purchased" },
+    { field: "ReceiveNftBidAcceptedNotif", text: "NFT bid accepted" },
+    { field: "ReceiveNftRoyaltyNotif", text: "Received NFT royalty" },
+  ];
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -25,8 +52,58 @@ export class SettingsComponent implements OnInit {
     private titleService: Title,
     private bsModalService: BsModalService,
     public themeService: ThemeService,
-    private translocoService: TranslocoService
-  ) {}
+    private translocoService: TranslocoService,
+    private apiInternal: ApiInternalService
+  ) {
+    const loggedInUser = this.globalVars.loggedInUser;
+    if (loggedInUser?.ProfileEntryResponse) {
+      const getAppUserObs = this.apiInternal.getAppUser(this.globalVars.loggedInUser.PublicKeyBase58Check).pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            return of(null);
+          }
+          throw err;
+        })
+      );
+      const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(
+        this.globalVars.localNode,
+        loggedInUser.PublicKeyBase58Check
+      );
+
+      forkJoin([getAppUserObs, getUserMetadataObs])
+        .pipe(
+          switchMap(([appUser, userMetadata]) => {
+            if (appUser === null && loggedInUser?.ProfileEntryResponse) {
+              if (userMetadata.Email.length > 0) {
+                // This case should only happen if there was an error when creating
+                // the app user during a profile update, but if we don't have a
+                // corresponding app user record for the currently logged in user,
+                // but somehow we *DO* have their email address, we create an app
+                // user record with default email settings.
+                return this.apiInternal.createAppUser(
+                  this.globalVars.loggedInUser.PublicKeyBase58Check,
+                  this.globalVars.loggedInUser.ProfileEntryResponse.Username
+                );
+              }
+
+              // TODO: If the user has a profile and we *DO NOT* have their email
+              // address, we prompt them for it.
+              this.showEmailPrompt = true;
+            }
+
+            return of(appUser);
+          })
+        )
+        .subscribe((appUser) => {
+          this.appUser = appUser;
+        });
+    }
+  }
+
+  ngOnInit() {
+    this.titleService.setTitle(`Settings - ${environment.node.name}`);
+    this.selectedLanguage = this.translocoService.getActiveLang();
+  }
 
   closeModal() {
     this.bsModalService.hide();
@@ -47,8 +124,97 @@ export class SettingsComponent implements OnInit {
     this.globalVars.updateEverything();
   }
 
-  ngOnInit() {
-    this.titleService.setTitle(`Settings - ${environment.node.name}`);
-    this.selectedLanguage = this.translocoService.getActiveLang();
+  toggleEmailDropdown() {
+    this.isSelectEmailsDropdownOpen = !this.isSelectEmailsDropdownOpen;
+  }
+
+  updateActivityDigestFrequency(ev) {
+    const originalValue = this.appUser.ActivityDigestFrequency;
+    this.appUser = { ...this.appUser, ActivityDigestFrequency: Number(ev.target.value) };
+    this.apiInternal.updateAppUser(this.appUser).subscribe(
+      () => {},
+      (err) => {
+        this.appUser = {
+          ...this.appUser,
+          ActivityDigestFrequency: originalValue,
+        };
+      }
+    );
+  }
+
+  updateEarningsDigestFrequency(ev) {
+    const originalValue = this.appUser.EarningsDigestFrequency;
+    this.appUser = { ...this.appUser, EarningsDigestFrequency: Number(ev.target.value) };
+    this.apiInternal.updateAppUser(this.appUser).subscribe(
+      () => {},
+      (err) => {
+        this.appUser = {
+          ...this.appUser,
+          EarningsDigestFrequency: originalValue,
+        };
+      }
+    );
+  }
+
+  updateTxEmailSetting(ev) {
+    const fieldName = ev.target.name;
+    if (typeof this.appUser[fieldName] === "undefined") {
+      throw new Error(`invalid email setting: ${fieldName}`);
+    }
+    const originalValue = this.appUser[fieldName];
+    this.appUser = { ...this.appUser, [fieldName]: ev.target.checked };
+    this.apiInternal.updateAppUser(this.appUser).subscribe(
+      () => {},
+      (err) => {
+        this.appUser = {
+          ...this.appUser,
+          EarningsDigestFrequency: originalValue,
+        };
+      }
+    );
+  }
+
+  onEmailChange() {
+    console.log("email was changed!");
+    this.isValidEmail = true;
+  }
+
+  onEmailSubmit(ev) {
+    ev.preventDefault();
+    if (this.isSavingEmail) {
+      return;
+    }
+
+    if (!this.globalVars.emailRegExp.test(this.emailAddress)) {
+      this.isValidEmail = false;
+      return;
+    }
+
+    this.isSavingEmail = true;
+    this.backendApi
+      .UpdateUserGlobalMetadata(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.emailAddress /*EmailAddress*/,
+        null /*MessageReadStateUpdatesByContact*/
+      )
+      .pipe(
+        switchMap((res) => {
+          return this.apiInternal.createAppUser(
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser.ProfileEntryResponse.Username
+          );
+        })
+      )
+      .subscribe(
+        (appUser) => {
+          this.showEmailPrompt = false;
+          this.appUser = appUser;
+          this.isSavingEmail = false;
+        },
+        (err) => {
+          this.isSavingEmail = false;
+        }
+      );
   }
 }
