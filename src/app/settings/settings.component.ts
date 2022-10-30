@@ -176,7 +176,6 @@ export class SettingsComponent implements OnInit {
   }
 
   onEmailChange() {
-    console.log("email was changed!");
     this.isValidEmail = true;
   }
 
