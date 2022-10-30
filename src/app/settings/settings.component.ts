@@ -1,3 +1,4 @@
+// @ts-strict
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { TranslocoService } from "@ngneat/transloco";
@@ -19,8 +20,8 @@ export class SettingsComponent implements OnInit {
   emailAddress = "";
   showEmailPrompt: boolean = false;
   environment = environment;
-  selectedLanguage: string;
-  appUser: AppUser | null;
+  selectedLanguage?: string;
+  appUser?: AppUser | null;
   isSelectEmailsDropdownOpen: boolean = false;
   isValidEmail: boolean = true;
   isSavingEmail: boolean = false;
@@ -129,12 +130,22 @@ export class SettingsComponent implements OnInit {
     this.isSelectEmailsDropdownOpen = !this.isSelectEmailsDropdownOpen;
   }
 
-  updateActivityDigestFrequency(ev) {
-    const originalValue = this.appUser.ActivityDigestFrequency;
-    this.appUser = { ...this.appUser, ActivityDigestFrequency: Number(ev.target.value) };
+  updateDigestFrequency(ev: Event) {
+    if (!this.appUser || !ev?.target) return;
+    const inputEl = ev.target as HTMLInputElement;
+    const digestSetting = inputEl.name as "ActivityDigestFrequency" | "EarningsDigestFrequency";
+    const originalValue = this.appUser[digestSetting];
+
+    if (typeof originalValue === "undefined") {
+      throw new Error(`invalid digest setting: ${digestSetting}`);
+    }
+
+    this.appUser = { ...this.appUser, [digestSetting]: Number(inputEl.value) };
+
     this.apiInternal.updateAppUser(this.appUser).subscribe(
       () => {},
       (err) => {
+        if (!this.appUser) return;
         this.appUser = {
           ...this.appUser,
           ActivityDigestFrequency: originalValue,
@@ -143,33 +154,24 @@ export class SettingsComponent implements OnInit {
     );
   }
 
-  updateEarningsDigestFrequency(ev) {
-    const originalValue = this.appUser.EarningsDigestFrequency;
-    this.appUser = { ...this.appUser, EarningsDigestFrequency: Number(ev.target.value) };
-    this.apiInternal.updateAppUser(this.appUser).subscribe(
-      () => {},
-      (err) => {
-        this.appUser = {
-          ...this.appUser,
-          EarningsDigestFrequency: originalValue,
-        };
-      }
-    );
-  }
+  updateTxEmailSetting(ev: Event) {
+    if (!this.appUser || !ev?.target) return;
+    const inputEl = ev.target as HTMLInputElement;
+    const fieldName = inputEl.name as keyof AppUser;
+    const originalValue = this.appUser[fieldName];
 
-  updateTxEmailSetting(ev) {
-    const fieldName = ev.target.name;
-    if (typeof this.appUser[fieldName] === "undefined") {
+    if (typeof originalValue === "undefined") {
       throw new Error(`invalid email setting: ${fieldName}`);
     }
-    const originalValue = this.appUser[fieldName];
-    this.appUser = { ...this.appUser, [fieldName]: ev.target.checked };
+
+    this.appUser = { ...this.appUser, [fieldName]: inputEl.checked };
     this.apiInternal.updateAppUser(this.appUser).subscribe(
       () => {},
       (err) => {
+        if (!this.appUser) return;
         this.appUser = {
           ...this.appUser,
-          EarningsDigestFrequency: originalValue,
+          [fieldName]: originalValue,
         };
       }
     );
@@ -179,7 +181,7 @@ export class SettingsComponent implements OnInit {
     this.isValidEmail = true;
   }
 
-  onEmailSubmit(ev) {
+  onEmailSubmit(ev: Event) {
     ev.preventDefault();
     if (this.isSavingEmail) {
       return;

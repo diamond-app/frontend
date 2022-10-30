@@ -97,7 +97,8 @@
     <label for="activity_digest_frequency" class="update-profile__title">Activity digest email frequency?</label>
     <select
       id="activity_digest_frequency"
-      (change)="updateActivityDigestFrequency($event)"
+      name="ActivityDigestFrequency"
+      (change)="updateDigestFrequency($event)"
       style="padding: 6px 12px"
       class="form-control selector"
     >
@@ -112,7 +113,7 @@
     <label for="earnings_digest_frequency" class="update-profile__title">Earnings digest email frequency?</label>
     <select
       id="earnings_digest_frequency"
-      (change)="updateEarningsDigestFrequency($event)"
+      (change)="updateDigestFrequency($event)"
       style="padding: 6px 12px"
       class="form-control selector"
     >
