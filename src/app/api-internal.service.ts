@@ -70,11 +70,12 @@ export class ApiInternalService {
     );
   }
 
-  createAppUser(PublicKeyBase58check: string, Username: string) {
+  createAppUser(PublicKeyBase58check: string, Username: string, lastNotificationScannedIndex: number) {
     const payload = {
       ...NEW_APP_USER_DEFAULTS,
       PublicKeyBase58check,
       Username,
+      LastNotificationScannedIndex: lastNotificationScannedIndex
     };
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))

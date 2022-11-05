@@ -83,7 +83,8 @@ export class SettingsComponent implements OnInit {
                 // user record with default email settings.
                 return this.apiInternal.createAppUser(
                   this.globalVars.loggedInUser.PublicKeyBase58Check,
-                  this.globalVars.loggedInUser.ProfileEntryResponse.Username
+                  this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+                  this.globalVars.lastSeenNotificationIdx
                 );
               }
 
@@ -204,7 +205,8 @@ export class SettingsComponent implements OnInit {
         switchMap((res) => {
           return this.apiInternal.createAppUser(
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.globalVars.loggedInUser.ProfileEntryResponse.Username
+            this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+            this.globalVars.lastSeenNotificationIdx
           );
         })
       )
