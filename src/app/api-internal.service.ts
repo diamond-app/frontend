@@ -75,7 +75,7 @@ export class ApiInternalService {
       ...NEW_APP_USER_DEFAULTS,
       PublicKeyBase58check,
       Username,
-      LastNotificationScannedIndex: lastNotificationScannedIndex
+      LastNotificationScannedIndex: lastNotificationScannedIndex,
     };
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))

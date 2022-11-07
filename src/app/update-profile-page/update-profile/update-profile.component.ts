@@ -309,7 +309,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           } else if (appUser === null) {
             createOrUdpateAppUserObs = this.apiInternal.createAppUser(
               this.loggedInUser.PublicKeyBase58Check,
-              this.usernameInput
+              this.usernameInput,
+              this.globalVars.lastSeenNotificationIdx,
             );
           }
 
