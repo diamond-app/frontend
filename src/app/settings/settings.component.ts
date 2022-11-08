@@ -166,7 +166,7 @@ export class SettingsComponent implements OnInit {
   updateTxEmailSetting(ev: Event) {
     if (!this.appUser || !ev?.target) return;
     const inputEl = ev.target as HTMLInputElement;
-    const fieldName = inputEl.name;
+    const fieldName = inputEl.name as keyof AppUser;
     const originalValue = this.appUser[fieldName];
 
     if (typeof originalValue === "undefined") {
