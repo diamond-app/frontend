@@ -245,6 +245,8 @@ export class GlobalVarsService {
   // How many unread notifications the user has
   unreadNotifications: number = 0;
 
+  lastSeenNotificationIdx: number = 0;
+
   // Track when the user is signing up to prevent redirects
   userSigningUp: boolean = false;
 
@@ -286,6 +288,7 @@ export class GlobalVarsService {
         .then(
           (res) => {
             this.unreadNotifications = res.NotificationsCount;
+            this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
             if (res.UpdateMetadata) {
               this.backendApi
                 .SetNotificationsMetadata(
