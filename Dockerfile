@@ -1,12 +1,9 @@
-FROM node:14.15.5-alpine3.13 AS frontend
+FROM node:16.18.0-alpine3.15 AS frontend
 
 WORKDIR /frontend
 
 # install git
 RUN apk add git
-
-# use yarn to upgrade npm
-RUN yarn global add npm@7
 
 COPY ./package.json .
 COPY ./package-lock.json .
