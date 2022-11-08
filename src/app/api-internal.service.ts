@@ -35,8 +35,8 @@ export interface AppUser {
 }
 
 export const NEW_APP_USER_DEFAULTS = {
-  ActivityDigestFrequency: 1,
-  EarningsDigestFrequency: 7,
+  ActivityDigestFrequency: 0,
+  EarningsDigestFrequency: 0,
   ReceiveLikeNotif: false,
   ReceiveCoinPurchaseNotif: false,
   ReceiveFollowNotif: false,
