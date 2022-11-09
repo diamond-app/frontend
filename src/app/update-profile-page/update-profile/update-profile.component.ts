@@ -1,17 +1,19 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
-import { ThemeService } from "../../theme/theme.service";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
+import { forkJoin, Observable, of } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { ApiInternalService, AppUser } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
-import { Observable } from "rxjs";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { RouteNames } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { ThemeService } from "../../theme/theme.service";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -76,7 +78,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     private router: Router,
     private titleService: Title,
     public themeService: ThemeService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private apiInternal: ApiInternalService
   ) {}
 
   ngOnInit() {
@@ -283,39 +286,77 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this._updateEmail();
     }
     this._setProfileUpdates();
-    this._callBackendUpdateProfile().subscribe(
-      (res) => {
-        this.globalVars.profileUpdateTimestamp = Date.now();
-        this.globalVars.logEvent("profile : update");
-        // This updates things like the username that shows up in the dropdown.
-        this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
-      },
-      (err) => {
-        const parsedError = this.backendApi.parseProfileError(err);
-        const lowBalance = parsedError.indexOf("insufficient");
-        this.globalVars.logEvent("profile : update : error", { parsedError, lowBalance });
-        this.updateProfileBeingCalled = false;
-        SwalHelper.fire({
-          target: this.globalVars.getTargetComponentSelector(),
-          icon: "error",
-          title: `An Error Occurred`,
-          html: parsedError,
-          showConfirmButton: !this.inTutorial,
-          focusConfirm: true,
-          customClass: {
-            confirmButton: "btn btn-light",
-            cancelButton: "btn btn-light no",
-          },
-          confirmButtonText: lowBalance ? "Buy $DESO" : null,
-          cancelButtonText: lowBalance ? "Later" : null,
-          showCancelButton: !!lowBalance,
-        }).then((res) => {
-          if (lowBalance && res.isConfirmed) {
-            this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+
+    this.apiInternal
+      .getAppUser(this.loggedInUser.PublicKeyBase58Check)
+      .pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            return of(null);
           }
-        });
-      }
-    );
+          throw err;
+        }),
+        switchMap((appUser: AppUser) => {
+          let createOrUdpateAppUserObs: Observable<any>;
+
+          // if the app user exists and the username has not changed, we don't need to update anything
+          if (appUser && appUser.Username !== this.usernameInput) {
+            createOrUdpateAppUserObs = this.apiInternal.updateAppUser({
+              ...appUser,
+              Username: this.usernameInput,
+            });
+            // if the app user is null, it means we need to create a new one
+          } else if (appUser === null) {
+            createOrUdpateAppUserObs = this.apiInternal.createAppUser(
+              this.loggedInUser.PublicKeyBase58Check,
+              this.usernameInput,
+              this.globalVars.lastSeenNotificationIdx,
+            );
+          }
+
+          // run api calls to the internal api and the node backend api in parallel
+          return forkJoin([this._callBackendUpdateProfile(), createOrUdpateAppUserObs ?? of(null)]);
+        })
+      )
+      .subscribe(
+        ([updateProfileResponse]) => {
+          this.globalVars.profileUpdateTimestamp = Date.now();
+          this.globalVars.logEvent("profile : update");
+          // TODO: create or update app user record here
+          // This updates things like the username that shows up in the dropdown.
+          this.globalVars.updateEverything(
+            updateProfileResponse.TxnHashHex,
+            this._updateProfileSuccess,
+            this._updateProfileFailure,
+            this
+          );
+        },
+        (err) => {
+          const parsedError = this.backendApi.parseProfileError(err);
+          const lowBalance = parsedError.indexOf("insufficient");
+          this.globalVars.logEvent("profile : update : error", { parsedError, lowBalance });
+          this.updateProfileBeingCalled = false;
+          SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
+            icon: "error",
+            title: `An Error Occurred`,
+            html: parsedError,
+            showConfirmButton: !this.inTutorial,
+            focusConfirm: true,
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+            confirmButtonText: lowBalance ? "Buy $DESO" : null,
+            cancelButtonText: lowBalance ? "Later" : null,
+            showCancelButton: !!lowBalance,
+          }).then((res) => {
+            if (lowBalance && res.isConfirmed) {
+              this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+            }
+          });
+        }
+      );
   }
 
   _updateProfileSuccess(comp: UpdateProfileComponent) {

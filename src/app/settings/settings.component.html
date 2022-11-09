@@ -3,6 +3,7 @@
     <i-feather name="x"></i-feather>
   </div>
 </div>
+
 <div class="buy-deso__container p-16px">
   <div class="mint-nft__title">Settings</div>
   <div class="update-profile__title">{{ environment.node.name }} {{ "update_profile.theme" | transloco }}</div>
@@ -11,13 +12,13 @@
     id="theme"
     (change)="selectChangeHandler($event)"
     style="padding: 6px 12px"
-    class="form-control selector">
-    <option
-      *ngFor="let theme of themeService.themes"
-      [value]="theme.key"
-      [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
+    class="form-control selector"
+  >
+    <option *ngFor="let theme of themeService.themes" [value]="theme.key" [selected]="theme.key === themeService.theme">
+      {{ theme.name }}
+    </option>
   </select>
-  <div class="update-profile__title">{{ 'update_profile.language' | transloco }}</div>
+  <div class="update-profile__title">{{ "update_profile.language" | transloco }}</div>
   <select
     name="language"
     id="language"
@@ -30,7 +31,7 @@
     <option value="fr" [selected]="'fr' === selectedLanguage">Franse</option>
   </select>
   <div class="d-flex align-items-center">
-    <div class="update-profile__title mr-16px">{{ 'update_profile.show_price_in_feed' | transloco }}</div>
+    <div class="update-profile__title mr-16px">{{ "update_profile.show_price_in_feed" | transloco }}</div>
     <button
       class="checkbox-circle mt-12px"
       [ngClass]="{ checked: globalVars.showPriceOnFeed }"
@@ -39,4 +40,115 @@
       <i-feather name="check"></i-feather>
     </button>
   </div>
+  <form (submit)="onEmailSubmit($event)" *ngIf="showEmailPrompt">
+    <label for="email-prompt" class="update-profile__title">
+      Enter your email to receive earnings and activity digests
+    </label>
+    <input
+      id="email-prompt"
+      class="form-control"
+      type="email"
+      name="email-address"
+      [(ngModel)]="this.emailAddress"
+      (input)="onEmailChange()"
+    />
+    <div class="d-flex mt-1">
+      <button type="submit" class="ml-auto btn btn-primary">
+        <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+        <span *ngIf="!this.isSavingEmail">Save email</span>
+      </button>
+    </div>
+    <span *ngIf="!this.isValidEmail" class="text-danger">Please enter a valid email address.</span>
+  </form>
+  <section *ngIf="!!appUser" class="mt-2">
+    <div class="btn-group w-100" dropdown>
+      <button
+        id="button-basic"
+        type="button"
+        class="btn btn-primary dropdown-toggle"
+        aria-controls="dropdown-basic"
+        (click)="toggleEmailDropdown()"
+      >
+        Select engagement emails
+        <span class="caret"></span>
+      </button>
+      <ul
+        id="dropdown-basic"
+        class="dropdown-menu w-100 settings__email-dropdown"
+        role="menu"
+        aria-labelledby="button-basic"
+        [ngStyle]="{ display: this.isSelectEmailsDropdownOpen ? 'block' : 'none' }"
+      >
+        <li role="menuitem">
+          <span class="dropdown-item">
+            <input
+              id="select-all-tx-emails"
+              type="checkbox"
+              [checked]="allTxSettingsSelected"
+              class="w-auto mr-2"
+              (change)="toggleSelectAllTxEmailSettings(true)"
+            />
+            <label for="select-all-tx-emails">Receive all</label>
+          </span>
+        </li>
+        <li role="menuitem">
+          <span class="dropdown-item">
+            <input
+              id="unselect-all-tx-emails"
+              type="checkbox"
+              [checked]="allTxSettingsUnselected"
+              class="w-auto mr-2"
+              (change)="toggleSelectAllTxEmailSettings(false)"
+            />
+            <label for="unselect-all-tx-emails">Receive none</label>
+          </span>
+        </li>
+        <li role="menuitem" *ngFor="let setting of txEmailSettings">
+          <span class="dropdown-item">
+            <input
+              [id]="setting.field"
+              [name]="setting.field"
+              type="checkbox"
+              [checked]="appUser[setting.field]"
+              class="w-auto mr-2"
+              (change)="updateTxEmailSetting($event)"
+            />
+            <label [for]="setting.field">{{ setting.text }}</label>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <label for="activity_digest_frequency" class="update-profile__title">Activity digest email frequency?</label>
+    <select
+      id="activity_digest_frequency"
+      name="ActivityDigestFrequency"
+      (change)="updateDigestFrequency($event)"
+      style="padding: 6px 12px"
+      class="form-control selector"
+    >
+      <option
+        *ngFor="let f of digestFrequencies"
+        [value]="f.duration"
+        [selected]="f.duration === appUser.ActivityDigestFrequency"
+      >
+        {{ f.text }}
+      </option>
+    </select>
+    <label for="earnings_digest_frequency" class="update-profile__title">Earnings digest email frequency?</label>
+    <select
+      id="earnings_digest_frequency"
+      name="EarningsDigestFrequency"
+      (change)="updateDigestFrequency($event)"
+      style="padding: 6px 12px"
+      class="form-control selector"
+    >
+      <option
+        *ngFor="let f of digestFrequencies"
+        [value]="f.duration"
+        [selected]="f.duration === appUser.EarningsDigestFrequency"
+      >
+        {{ f.text }}
+      </option>
+    </select>
+  </section>
 </div>

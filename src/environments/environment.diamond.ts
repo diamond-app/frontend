@@ -2,6 +2,7 @@ export const environment = {
   production: true,
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
+  apiInternalHostname: "https://test.diamondapp.com",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "help@diamondapp.com",
@@ -21,5 +22,5 @@ export const environment = {
     url: "https://diamondapp.com",
     logoAssetDir: "/assets/diamond/",
   },
-  megaswapURL: 'https://megaswap.xyz',
+  megaswapURL: "https://megaswap.xyz",
 };
