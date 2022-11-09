@@ -47,6 +47,14 @@ export class SettingsComponent implements OnInit {
     { field: "ReceiveNftRoyaltyNotif", text: "Received NFT royalty" },
   ];
 
+  get allTxSettingsSelected() {
+    return !!this.appUser && !this.txEmailSettings.find(({ field }) => !this.appUser[field]);
+  }
+
+  get allTxSettingsUnselected() {
+    return !this.appUser || !this.txEmailSettings.find(({ field }) => this.appUser[field]);
+  }
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -145,7 +153,7 @@ export class SettingsComponent implements OnInit {
 
     this.apiInternal.updateAppUser(this.appUser).subscribe(
       () => {},
-      (err) => {
+      () => {
         if (!this.appUser) return;
         this.appUser = {
           ...this.appUser,
@@ -168,12 +176,31 @@ export class SettingsComponent implements OnInit {
     this.appUser = { ...this.appUser, [fieldName]: inputEl.checked };
     this.apiInternal.updateAppUser(this.appUser).subscribe(
       () => {},
-      (err) => {
+      () => {
         if (!this.appUser) return;
         this.appUser = {
           ...this.appUser,
           [fieldName]: originalValue,
         };
+      }
+    );
+  }
+
+  toggleSelectAllTxEmailSettings(select: boolean) {
+    if (!this.appUser) return;
+    const originalAppUser = { ...this.appUser };
+    const settings = this.txEmailSettings.reduce((res, { field }) => {
+      res[field] = select;
+      return res;
+    }, {} as Record<string, boolean>);
+
+    this.appUser = { ...this.appUser, ...settings };
+
+    this.apiInternal.updateAppUser(this.appUser).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser = originalAppUser;
       }
     );
   }

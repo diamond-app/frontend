@@ -32,24 +32,25 @@ export interface AppUser {
   ReceiveNftPurchaseNotif: boolean;
   ReceiveNftBidAcceptedNotif: boolean;
   ReceiveNftRoyaltyNotif: boolean;
+  LastNotificationScannedIndex: number;
 }
 
 export const NEW_APP_USER_DEFAULTS = {
-  ActivityDigestFrequency: 1,
-  EarningsDigestFrequency: 7,
+  ActivityDigestFrequency: 0,
+  EarningsDigestFrequency: 0,
   ReceiveLikeNotif: false,
-  ReceiveCoinPurchaseNotif: true,
-  ReceiveFollowNotif: true,
-  ReceiveBasicTransferNotif: true,
-  ReceiveCommentNotif: true,
-  ReceiveDiamondNotif: true,
-  ReceiveRepostNotif: true,
-  ReceiveQuoteRepostNotif: true,
-  ReceiveMentionNotif: true,
-  ReceiveNftBidNotif: true,
-  ReceiveNftPurchaseNotif: true,
-  ReceiveNftBidAcceptedNotif: true,
-  ReceiveNftRoyaltyNotif: true,
+  ReceiveCoinPurchaseNotif: false,
+  ReceiveFollowNotif: false,
+  ReceiveBasicTransferNotif: false,
+  ReceiveCommentNotif: false,
+  ReceiveDiamondNotif: false,
+  ReceiveRepostNotif: false,
+  ReceiveQuoteRepostNotif: false,
+  ReceiveMentionNotif: false,
+  ReceiveNftBidNotif: false,
+  ReceiveNftPurchaseNotif: false,
+  ReceiveNftBidAcceptedNotif: false,
+  ReceiveNftRoyaltyNotif: false,
 };
 
 @Injectable({
@@ -70,12 +71,12 @@ export class ApiInternalService {
     );
   }
 
-  createAppUser(PublicKeyBase58check: string, Username: string, lastNotificationScannedIndex: number) {
+  createAppUser(PublicKeyBase58check: string, Username: string, LastNotificationScannedIndex: number) {
     const payload = {
       ...NEW_APP_USER_DEFAULTS,
       PublicKeyBase58check,
       Username,
-      LastNotificationScannedIndex: lastNotificationScannedIndex,
+      LastNotificationScannedIndex,
     };
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))

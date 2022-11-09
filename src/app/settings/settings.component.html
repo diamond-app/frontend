@@ -79,6 +79,30 @@
         aria-labelledby="button-basic"
         [ngStyle]="{ display: this.isSelectEmailsDropdownOpen ? 'block' : 'none' }"
       >
+        <li role="menuitem">
+          <span class="dropdown-item">
+            <input
+              id="select-all-tx-emails"
+              type="checkbox"
+              [checked]="allTxSettingsSelected"
+              class="w-auto mr-2"
+              (change)="toggleSelectAllTxEmailSettings(true)"
+            />
+            <label for="select-all-tx-emails">Receive all</label>
+          </span>
+        </li>
+        <li role="menuitem">
+          <span class="dropdown-item">
+            <input
+              id="unselect-all-tx-emails"
+              type="checkbox"
+              [checked]="allTxSettingsUnselected"
+              class="w-auto mr-2"
+              (change)="toggleSelectAllTxEmailSettings(false)"
+            />
+            <label for="unselect-all-tx-emails">Receive none</label>
+          </span>
+        </li>
         <li role="menuitem" *ngFor="let setting of txEmailSettings">
           <span class="dropdown-item">
             <input
@@ -113,6 +137,7 @@
     <label for="earnings_digest_frequency" class="update-profile__title">Earnings digest email frequency?</label>
     <select
       id="earnings_digest_frequency"
+      name="EarningsDigestFrequency"
       (change)="updateDigestFrequency($event)"
       style="padding: 6px 12px"
       class="form-control selector"

@@ -6,7 +6,7 @@ import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService } from "src/app/api-internal.service";
+import { ApiInternalService, AppUser } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
@@ -296,7 +296,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           }
           throw err;
         }),
-        switchMap((appUser) => {
+        switchMap((appUser: AppUser) => {
           let createOrUdpateAppUserObs: Observable<any>;
 
           // if the app user exists and the username has not changed, we don't need to update anything
