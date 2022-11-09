@@ -246,8 +246,6 @@ export class GlobalVarsService {
   unreadNotifications: number = 0;
   lastSeenNotificationIdx: number = 0;
 
-  lastSeenNotificationIdx: number = 0;
-
   // Track when the user is signing up to prevent redirects
   userSigningUp: boolean = false;
 
