@@ -5,22 +5,13 @@ import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import {
   CreateAddrsResponse,
+  DepositEvent,
   DestinationAmountForDepositAmount,
   MegaswapService,
   Ticker,
 } from "src/app/megaswap.service";
 
 const LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY = "lastUsedMegaswapCashOutAddresses";
-
-const rightPad = (str: string, pad: string, count: number) =>
-  str.length < count ? `${str}${pad.repeat(count - str.length)}` : str;
-
-const formatFloat = (floatString: string) => {
-  const toFixed = parseFloat(floatString).toFixed(9);
-  const [whole, decimal] = toFixed.split(".");
-  const decimalWithTrimmedZeros = decimal.replace(/0+$/, "");
-  return `${Number(whole).toLocaleString()}.${rightPad(decimalWithTrimmedZeros, "0", 2)}`;
-};
 
 @Component({
   selector: "cashout",
@@ -33,20 +24,28 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   destinationAmountForDepositAmount?: DestinationAmountForDepositAmount;
   createAddrsErrorMessage = "";
   cashOutErrorMessage = "";
+  cashOutAmountErrorMessage = "";
   destinationAddressInputValue = "";
   amountToCashOutInputValue: number | null = 0;
   isLoading = true;
   isPendingCashOut = false;
   isDestroyed = false;
   destinationTicker: Ticker = "USDC";
+  cashOutHistory?: DepositEvent[];
+  isRefreshingHistory: boolean = false;
 
   get isCashOutButtonDisabled() {
     return (
       typeof this.amountToCashOutInputValue !== "number" ||
       this.amountToCashOutInputValue <= 0 ||
       this.createAddrsErrorMessage.length > 0 ||
+      this.cashOutAmountErrorMessage.length > 0 ||
       !this.depositAddresses?.DestinationAddress
     );
+  }
+
+  get isRefreshButtonDisabled() {
+    return this.isRefreshingHistory || !(this.depositTicker && this.depositAddress);
   }
 
   get defaultDestinationAddress() {
@@ -54,11 +53,13 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   }
 
   get conversionRate() {
-    return formatFloat(this.destinationAmountForDepositAmount?.SwapRateDestinationTickerPerDepositTicker ?? "0");
+    return this.megaswap.formatFloat(
+      this.destinationAmountForDepositAmount?.SwapRateDestinationTickerPerDepositTicker ?? "0"
+    );
   }
 
   get destinationAmount() {
-    return formatFloat(this.destinationAmountForDepositAmount?.DestinationAmount ?? "0");
+    return this.megaswap.formatFloat(this.destinationAmountForDepositAmount?.DestinationAmount ?? "0");
   }
 
   get feeDeducted() {
@@ -69,33 +70,23 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       return null;
     }
 
-    if (this.depositTicker === "DESO") {
-      const desoFee = parseFloat(this.destinationAmountForDepositAmount.DepositFeeDeducted);
-      const usdPerDeso = parseFloat(this.destinationAmountForDepositAmount.SwapRateDestinationTickerPerDepositTicker);
-      return formatFloat((desoFee * usdPerDeso).toString());
-    }
-
-    if (this.depositTicker === "DUSD") {
-      return formatFloat(this.destinationAmountForDepositAmount.DepositFeeDeducted);
-    }
-
-    return null;
+    return parseFloat(this.destinationAmountForDepositAmount.DepositFeeDeducted);
   }
 
   get availableBalance() {
     if (!this.globalVars.loggedInUser) return 0;
     if (this.depositTicker === "DESO") {
-      return formatFloat((this.globalVars.loggedInUser.BalanceNanos / 1e9).toString());
+      return this.globalVars.loggedInUser.BalanceNanos / 1e9;
     }
+    // TODO: fetch usd balance in constructor
   }
 
-  get formattedDepositTicker() {
-    if (this.depositTicker === "DUSD") return "USD";
-    return this.depositTicker;
+  get depositAddress() {
+    return this.depositAddresses?.DepositAddresses[this.depositTicker];
   }
 
   constructor(
-    private megaswap: MegaswapService,
+    public megaswap: MegaswapService,
     private backend: BackendApiService,
     private globalVars: GlobalVarsService
   ) {
@@ -116,6 +107,21 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         DestinationAmount: "0",
       };
     });
+
+    if (this.depositAddresses) {
+      this.megaswap
+        .getDeposits({
+          DepositTicker: this.depositTicker,
+          DepositAddress: this.depositAddresses.DepositAddresses[this.depositTicker],
+        })
+        .pipe(
+          first(),
+          takeWhile(() => !this.isDestroyed)
+        )
+        .subscribe((res) => {
+          this.cashOutHistory = res.Deposits;
+        });
+    }
   }
 
   ngOnDestroy() {
@@ -136,6 +142,9 @@ export class CashoutComponent implements OnDestroy, OnChanges {
 
   onAmountToCashOutChange() {
     if (typeof this.amountToCashOutInputValue === "number" && this.amountToCashOutInputValue > 0) {
+      if (this.availableBalance && this.amountToCashOutInputValue > this.availableBalance) {
+        this.cashOutAmountErrorMessage = `${this.amountToCashOutInputValue.toLocaleString()} exceeds your available balance of ${this.availableBalance.toLocaleString()}`;
+      }
       this.getDestinationAmountForDepositAmount(this.amountToCashOutInputValue).subscribe((res) => {
         this.destinationAmountForDepositAmount = res;
       });
@@ -188,7 +197,8 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   }
 
   onCashOut() {
-    if (!this.depositAddresses?.DestinationAddress) {
+    const DepositAddress = this.depositAddress;
+    if (!(this.depositAddresses?.DestinationAddress && DepositAddress)) {
       this.cashOutErrorMessage =
         "An unexpected network error occurred. No transfer was executed. Try reloading the page.";
       return;
@@ -202,12 +212,18 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       this.cashOutErrorMessage = "Please enter a non-zero amount to cash out.";
       return;
     }
-    if (Number(this.destinationAmount) <= 0) {
-      this.cashOutErrorMessage = "Unable to cash out. You'll receive $0.00 after network fees.";
+    if (
+      typeof this.amountToCashOutInputValue === "number" &&
+      this.availableBalance &&
+      this.amountToCashOutInputValue > this.availableBalance
+    ) {
+      this.cashOutErrorMessage = `${this.amountToCashOutInputValue.toLocaleString()} exceeds your available balance of ${this.availableBalance.toLocaleString()}`;
       return;
     }
-
-    const DepositAddress = this.depositAddresses.DepositAddresses[this.depositTicker];
+    if (Number(this.destinationAmount) <= 0) {
+      this.cashOutErrorMessage = "Cash out canceled. You'll receive $0.00 after network fees.";
+      return;
+    }
 
     this.isPendingCashOut = true;
     this.backend
@@ -220,20 +236,44 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       )
       .pipe(
         switchMap(() => this.megaswap.pollNewDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
-        switchMap((confirmedDeposit) =>
-          this.megaswap.pollConfirmedDeposit(confirmedDeposit.DepositTxId, {
-            DepositTicker: this.depositTicker,
-            DepositAddress,
-          })
-        ),
+        switchMap(() => this.megaswap.getDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
         first(),
         takeWhile(() => !this.isDestroyed)
       )
       .subscribe(
         (res) => {
-          console.log("confirmed transfer!!", res);
+          this.cashOutHistory = res.Deposits;
         },
-        (err) => {}
+        (err) => {
+          // TODO: error handling
+        }
       );
+  }
+
+  refreshCashOutHistory() {
+    if (this.isRefreshingHistory) return;
+    if (!this.depositTicker) {
+      throw new Error("depositTicker is a required component argument.");
+    }
+    if (!this.depositAddress) {
+      throw new Error("depositAddress is a required component argument.");
+    }
+    this.isRefreshingHistory = true;
+    this.megaswap
+      .getDeposits({ DepositAddress: this.depositAddress, DepositTicker: this.depositTicker })
+      .pipe(
+        takeWhile(() => !this.isDestroyed),
+        first(),
+        finalize(() => (this.isRefreshingHistory = false))
+      )
+      .subscribe((res) => {
+        this.cashOutHistory = res.Deposits;
+      });
+  }
+
+  desoToUSD(desoAmount: number) {
+    if (!this.destinationAmountForDepositAmount) return 0;
+    const usdPerDeso = parseFloat(this.destinationAmountForDepositAmount.SwapRateDestinationTickerPerDepositTicker);
+    return desoAmount * usdPerDeso;
   }
 }

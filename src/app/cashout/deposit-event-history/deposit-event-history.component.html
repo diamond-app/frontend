@@ -1,0 +1,52 @@
+<ul
+  *ngIf="!this.isLoading"
+  class="fs-14px p-0"
+  [ngStyle]="{ maxHeight: '100px', overflowY: 'auto', listStyleType: 'none' }"
+>
+  <li *ngFor="let event of events" [ngSwitch]="event.DepositStatus">
+    <ng-template ngSwitchCase="DEPOSIT_PENDING">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} is pending.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CONFIRMATION_FAILED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} could not be confirmed.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CANCELLED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} was cancelled.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CONFIRMED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} is starting.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_RUNNING">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is running.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_FAILED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} has failed.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_TERMINATED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} was terminated.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CONFIRMATION_FAILED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} could not be confirmed.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_RETRIED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is running.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CANCELLED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} was cancelled.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_PENDING">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is pending.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CONFIRMED">
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} succeeded!
+    </ng-template>
+  </li>
+</ul>

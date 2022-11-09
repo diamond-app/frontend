@@ -7,7 +7,7 @@ import { environment } from "src/environments/environment";
 
 const buildUrl = (endpoint: string) => `${environment.megaswapAPI}/api/v1/${endpoint}`;
 
-export type Ticker = "DESO" | "BTC" | "SOL" | "USDC" | "ETH" | "DUSD";
+export type Ticker = "DESO" | "BTC" | "SOL" | "USDC" | "ETH" | "DUSD" | "USD";
 export interface CreateAddrsResponse {
   DepositAddresses: Record<Ticker, string>;
   DestinationAddress?: string;
@@ -48,8 +48,12 @@ export interface DepositEvent {
   UpdatedAt: string;
   CreatedAt: string;
 }
+interface CreateAddrsParams {
+  DestinationTicker: Ticker;
+  DestinationAddress: string;
+}
 interface GetDepositsParams {
-  DepositTicker: string;
+  DepositTicker: Ticker;
   DepositAddress: string;
 }
 interface GetDepositsResponse {
@@ -62,18 +66,16 @@ interface GetDepositsResponse {
 export class MegaswapService {
   constructor(private httpClient: HttpClient) {}
 
-  createDepositAddresses(postParams: { DestinationTicker: string; DestinationAddress: string }) {
+  createDepositAddresses(postParams: CreateAddrsParams) {
     return this.httpClient.post<CreateAddrsResponse>(buildUrl("addrs"), postParams);
   }
 
-  getNewDeposits(endpointParams: GetDepositsParams): Observable<GetDepositsResponse> {
-    return this.httpClient.get<{ Deposits: DepositEvent[] }>(
-      buildUrl(`new-deposits/${Object.values(endpointParams).join("/")}`)
-    );
+  getNewDeposits({ DepositTicker, DepositAddress }: GetDepositsParams): Observable<GetDepositsResponse> {
+    return this.httpClient.get<GetDepositsResponse>(buildUrl(`new-deposits/${DepositTicker}/${DepositAddress}`));
   }
 
-  getDeposits(endpointParams: GetDepositsParams): Observable<GetDepositsResponse> {
-    return this.httpClient.get<GetDepositsResponse>(buildUrl(`deposits/${Object.values(endpointParams).join("/")}`));
+  getDeposits({ DepositTicker, DepositAddress }: GetDepositsParams): Observable<GetDepositsResponse> {
+    return this.httpClient.get<GetDepositsResponse>(buildUrl(`deposits/${DepositTicker}/${DepositAddress}?order=DESC`));
   }
 
   pollNewDeposits(endpointParams: GetDepositsParams): Observable<DepositEvent> {
@@ -134,5 +136,30 @@ export class MegaswapService {
     return this.httpClient.get<DestinationAmountForDepositAmount>(
       buildUrl(`destination-amount-for-deposit-amount/${depositTicker}/${destinationTicker}/${depositAmount}`)
     );
+  }
+
+  // formatters for UI presentation
+  formatFloat(float: string | number, ticker?: Ticker) {
+    const isUSD = ticker && ["USD", "DUSD", "USDC"].includes(ticker);
+    return (typeof float === "string" ? parseFloat(float) : float).toLocaleString("en-US", {
+      maximumFractionDigits: 5,
+      minimumFractionDigits: isUSD ? 2 : 0,
+      style: isUSD ? "currency" : "decimal",
+      currency: isUSD ? "USD" : undefined,
+    });
+  }
+
+  formatTicker(ticker: Ticker) {
+    return ticker === "DUSD" ? "USD" : ticker;
+  }
+
+  formatDepositEvent(event: DepositEvent) {
+    return {
+      ...event,
+      DepositTicker: this.formatTicker(event.DepositTicker),
+      DepositAmount: this.formatFloat(event.DepositAmount, event.DepositTicker),
+      DestinationTicker: this.formatTicker(event.DestinationTicker),
+      DestinationAmount: this.formatFloat(event.DestinationAmount, event.DestinationTicker),
+    };
   }
 }
