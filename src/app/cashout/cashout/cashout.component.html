@@ -1,0 +1,64 @@
+<div class="buy-deso__container p-4">
+  <div class="mb-4">
+    <label for="amount-to-cashout-input" class="font-weight-bold">
+      ${{ formattedDepositTicker }} Amount to cash out
+    </label>
+    <div class="d-flex">
+      <div class="d-flex" container="body" style="align-items: center">
+        <div class="mint-nft__dropdown-btn">{{ formattedDepositTicker }}</div>
+      </div>
+      <div class="position-relative w-100">
+        <input
+          id="amount-to-cashout-input"
+          [(ngModel)]="amountToCashOutInputValue"
+          (input)="onAmountToCashOutChange()"
+          style="border-radius: 0px 6px 6px 0px"
+          aria-describedby="usd-label"
+          class="mint-nft__input"
+          type="number"
+          min="0"
+          placeholder="0"
+        />
+        <span class="mint-nft__floating-span">
+          <a class="fc-blue" (click)="clickMax()">{{ "transfer_deso.max" | transloco }}</a>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="mb-4">
+    <label for="usdc-address" class="font-weight-bold">USDC withdrawal address</label>
+    <input
+      id="usdc-address"
+      type="text"
+      class="form-control"
+      (input)="onDestinationAddressChange($event)"
+      [defaultValue]="defaultDestinationAddress"
+    />
+    <p class="text-secondary fs-14px mt-1">This is your deposit address on an exchange like Coinbase</p>
+    <p *ngIf="createAddrsErrorMessage.length > 0" class="text-danger">{{ createAddrsErrorMessage }}</p>
+  </div>
+  <div *ngIf="!isLoading">
+    <dl class="container fs-14px p-0">
+      <div class="row">
+        <dt class="font-weight-normal col">Available Balance:</dt>
+        <dd class="col">{{ availableBalance }}</dd>
+      </div>
+      <div class="row">
+        <dt class="font-weight-normal col">Conversion Rate:</dt>
+        <dd class="col">{{ conversionRate }} ${{ destinationTicker }} per ${{ formattedDepositTicker }}</dd>
+      </div>
+      <div class="row" *ngIf="feeDeducted">
+        <dt class="font-weight-normal col">Network fee:</dt>
+        <dd class="col">${{ feeDeducted }} USD</dd>
+      </div>
+      <div class="row">
+        <dt class="font-weight-normal col">${{ destinationTicker }} you'll receive:</dt>
+        <dd class="col font-weight-bold">${{ destinationAmount }} $USDC</dd>
+      </div>
+    </dl>
+  </div>
+  <div class="d-flex">
+    <button class="btn btn-success ml-auto" (click)="onCashOut()" [disabled]="isCashOutButtonDisabled">Cash Out</button>
+  </div>
+  <p *ngIf="cashOutErrorMessage.length > 0" class="text-danger">{{ cashOutErrorMessage }}</p>
+</div>

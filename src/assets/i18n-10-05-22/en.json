@@ -510,6 +510,7 @@
     "buy": "Buy",
     "sell": "Sell",
     "send": "Send",
+    "cash_out": "Cash Out",
     "tutorial_header_text": {
       "step": "Stap",
       "skip": "Overslaan",

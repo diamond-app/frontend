@@ -209,6 +209,8 @@ import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.comp
 import { WalletComponent } from "./wallet/wallet.component";
 import { PostInteractionDetailsComponent } from './post-interaction-details/post-interaction-details.component';
 import { BuyDeSoMegaSwapComponent } from "./buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component";
+import { CashoutModalComponent } from './cashout/cashout-modal/cashout-modal.component';
+import { CashoutComponent } from './cashout/cashout/cashout.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -397,6 +399,8 @@ export function playerFactory() {
     BlogDetailComponent,
     CreatorProfileBlogPostsComponent,
     PostInteractionDetailsComponent,
+    CashoutModalComponent,
+    CashoutComponent,
   ],
   imports: [
     BrowserModule,
