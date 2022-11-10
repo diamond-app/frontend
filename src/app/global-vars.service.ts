@@ -330,7 +330,7 @@ export class GlobalVarsService {
       return;
     }
 
-    this.backendApi
+    return this.backendApi
       .GetMessages(
         this.localNode,
         this.loggedInUser.PublicKeyBase58Check,
