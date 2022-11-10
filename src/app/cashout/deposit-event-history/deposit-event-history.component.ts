@@ -18,7 +18,7 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
   events?: DepositEvent[];
   depositsSubscription?: Subscription;
 
-  constructor(private megaswap: MegaswapService) {}
+  constructor(public megaswap: MegaswapService) {}
 
   ngOnChanges() {
     if (!this.depositTicker) {

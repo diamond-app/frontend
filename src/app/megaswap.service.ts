@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError, timer } from "rxjs";
 import { delay, map, mergeMap, repeatWhen, retryWhen, takeWhile } from "rxjs/operators";
+import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
 
 const buildUrl = (endpoint: string) => `${environment.megaswapAPI}/api/v1/${endpoint}`;
@@ -67,11 +68,32 @@ interface GetDepositsResponse {
   Deposits: DepositEvent[];
 }
 
+const desoExplorerTypeConversion = {
+  tx: "transaction-id",
+  address: "public-key",
+};
+
+const MAINNET_EXPLORER_URLS = {
+  blockcypher: "https://live.blockcypher.com/btc",
+  deso: "https://node.deso.org",
+  etherscan: "https://etherscan.io",
+  megaswap: "https://megaswap.dev",
+  solana: "https://explorer.solana.com",
+};
+
+export const TESTNET_EXPLORER_URLS = {
+  blockcypher: "https://live.blockcypher.com/btc-testnet",
+  deso: "https://test.deso.org",
+  etherscan: "https://goerli.etherscan.io",
+  megaswap: "https://dev.megaswap.dev",
+  solana: "https://explorer.solana.com?cluster=devnet",
+};
+
 @Injectable({
   providedIn: "root",
 })
 export class MegaswapService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private globalVars: GlobalVarsService) {}
 
   createDepositAddresses(postParams: CreateAddrsParams) {
     return this.httpClient.post<CreateAddrsResponse>(buildUrl("addrs"), postParams);
@@ -134,6 +156,28 @@ export class MegaswapService {
     return this.httpClient.get<DestinationAmountForDepositAmount>(
       buildUrl(`destination-amount-for-deposit-amount/${depositTicker}/${destinationTicker}/${depositAmount}`)
     );
+  }
+
+  getExplorerLink(ticker: Ticker, value: string, type: "tx" | "address") {
+    const explorerUrls = this.globalVars.isTestnet ? TESTNET_EXPLORER_URLS : MAINNET_EXPLORER_URLS;
+
+    switch (ticker) {
+      case "ETH":
+        return `${explorerUrls.etherscan}/${type}/${value}`;
+      case "BTC":
+        return `${explorerUrls.blockcypher}/${type}/${value}`;
+      case "SOL":
+        const { origin, search } = new URL(explorerUrls.solana);
+        return `${origin}/${type}/${value}${search}`;
+      case "DESO":
+        return `https://explorer.deso.org/?query-node=${explorerUrls.deso}&${desoExplorerTypeConversion[type]}=${value}`;
+      case "DUSD":
+        return `https://explorer.deso.org/?query-node=${explorerUrls.deso}&${desoExplorerTypeConversion[type]}=${value}`;
+      case "USDC":
+        return `${explorerUrls.etherscan}/${type}/${value}`;
+      default:
+        throw new Error("Unsupported ticker");
+    }
   }
 
   // formatters for UI presentation
