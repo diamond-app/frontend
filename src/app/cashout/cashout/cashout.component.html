@@ -60,12 +60,8 @@
         <dt class="font-weight-normal col">Network fee:</dt>
         <dd class="col">
           <span>
-            {{ megaswap.formatFloat(feeDeducted, this.depositTicker === "DUSD" ? "USD" : undefined) }} ${{
-              megaswap.formatTicker(depositTicker)
-            }}
-          </span>
-          <span *ngIf="depositTicker === 'DESO'" class="text-secondary text-nowrap">
-            ({{ megaswap.formatFloat(desoToUSD(feeDeducted), "USD") }} $USD)
+            {{ megaswap.formatFloat(depositTicker === "DESO" ? desoToUSD(feeDeducted) : feeDeducted, "USD") }}
+            $USD
           </span>
         </dd>
       </div>
