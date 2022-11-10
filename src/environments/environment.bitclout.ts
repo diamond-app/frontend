@@ -22,4 +22,5 @@ export const environment = {
     logoAssetDir: "/assets/bitclout/",
   },
   megaswapURL: "https://megaswap.xyz",
+  megaswapAPI: "https://megaswap.dev",
 };

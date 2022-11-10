@@ -1,0 +1,98 @@
+<div class="buy-deso__container p-4">
+  <h1 class="font-weight-bold fs-20px mb-4">Cash Out</h1>
+  <div class="mb-4">
+    <label for="amount-to-cashout-input" class="font-weight-bold">
+      ${{ megaswap.formatTicker(depositTicker) }} Amount to cash out
+    </label>
+    <div class="d-flex">
+      <div class="d-flex" container="body" style="align-items: center">
+        <div class="mint-nft__dropdown-btn">{{ megaswap.formatTicker(depositTicker) }}</div>
+      </div>
+      <div class="position-relative w-100">
+        <input
+          id="amount-to-cashout-input"
+          [(ngModel)]="amountToCashOutInputValue"
+          (input)="onAmountToCashOutChange()"
+          style="border-radius: 0px 6px 6px 0px"
+          aria-describedby="usd-label"
+          class="mint-nft__input"
+          type="number"
+          min="0"
+          placeholder="0"
+        />
+        <span class="mint-nft__floating-span">
+          <a class="fc-blue" (click)="clickMax()">{{ "transfer_deso.max" | transloco }}</a>
+        </span>
+      </div>
+    </div>
+    <p *ngIf="cashOutAmountErrorMessage.length > 0" class="text-danger fs-14px mt-1">{{ cashOutAmountErrorMessage }}</p>
+  </div>
+  <div class="mb-4">
+    <label for="usdc-address" class="font-weight-bold">USDC withdrawal address</label>
+    <input
+      id="usdc-address"
+      type="text"
+      class="form-control"
+      (input)="onDestinationAddressChange($event)"
+      [defaultValue]="defaultDestinationAddress"
+    />
+    <p class="text-secondary fs-14px mt-1">
+      This is your deposit address on an exchange like Coinbase. We'll remember the last address you've sent funds to.
+    </p>
+    <p *ngIf="createAddrsErrorMessage.length > 0" class="text-danger">{{ createAddrsErrorMessage }}</p>
+  </div>
+  <div *ngIf="!isLoading">
+    <dl class="container fs-14px p-0">
+      <div class="row">
+        <dt class="font-weight-normal col">Available Balance:</dt>
+        <dd class="col">
+          <span>{{ megaswap.formatFloat(availableBalance) }} $DESO</span>
+          <span *ngIf="depositTicker === 'DESO'" class="text-secondary text-nowrap">
+            ({{ megaswap.formatFloat(desoToUSD(availableBalance), "USD") }} $USD)
+          </span>
+        </dd>
+      </div>
+      <div class="row">
+        <dt class="font-weight-normal col">Conversion Rate:</dt>
+        <dd class="col">
+          ${{ conversionRate }} ${{ destinationTicker }} per ${{ megaswap.formatTicker(depositTicker) }}
+        </dd>
+      </div>
+      <div class="row" *ngIf="feeDeducted">
+        <dt class="font-weight-normal col">Network fee:</dt>
+        <dd class="col">
+          <span>
+            {{ megaswap.formatFloat(depositTicker === "DESO" ? desoToUSD(feeDeducted) : feeDeducted, "USD") }}
+            $USD
+          </span>
+        </dd>
+      </div>
+      <div class="row">
+        <dt class="font-weight-normal col">${{ destinationTicker }} you'll receive:</dt>
+        <dd class="col font-weight-bold">{{ megaswap.formatFloat(destinationAmount, destinationTicker) }} $USDC</dd>
+      </div>
+    </dl>
+  </div>
+  <p *ngIf="cashOutErrorMessage.length > 0" class="text-danger p-14px font-weight-bold text-right mb-2">
+    {{ cashOutErrorMessage }}
+  </p>
+  <div class="d-flex">
+    <button class="btn btn-secondary ml-auto text-center" (click)="refreshCashOutHistory()">
+      <span *ngIf="!isRefreshingHistory">Refresh</span>
+      <span *ngIf="isRefreshingHistory"><i class="fas fa-spinner fa-spin px-3"></i></span>
+    </button>
+    <button class="btn btn-success ml-2" (click)="onCashOut()" [disabled]="isCashOutButtonDisabled">
+      <span *ngIf="!isPendingCashOut">Cash Out</span>
+      <span *ngIf="isPendingCashOut"><i class="fas fa-spinner fa-spin px-3"></i></span>
+    </button>
+  </div>
+  <section>
+    <h2 class="font-weight-bold fs-16px">Cash Out History</h2>
+    <deposit-event-history
+      *ngIf="depositAddress && depositTicker"
+      [depositTicker]="depositTicker"
+      [depositAddress]="depositAddress"
+      [depositEvents]="cashOutHistory"
+    ></deposit-event-history>
+  </section>
+</div>

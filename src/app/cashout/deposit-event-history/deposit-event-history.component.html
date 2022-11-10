@@ -1,0 +1,131 @@
+<div *ngIf="isLoading" class="py-2">
+  <span class="fas fa-spinner fa-spin px-3"></span>
+</div>
+<ul
+  *ngIf="!isLoading"
+  class="fs-14px p-0 text-nowrap overflow-x-auto"
+  [ngStyle]="{ maxHeight: '100px', overflowY: 'auto', listStyleType: 'none' }"
+>
+  <li *ngFor="let event of events" [ngSwitch]="event.DepositStatus" class="py-1">
+    <ng-template ngSwitchCase="DEPOSIT_PENDING">
+      <span class="fas fa-spinner fa-spin"></span>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} is pending.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CONFIRMATION_FAILED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} could not be confirmed.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CANCELLED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} was cancelled.
+    </ng-template>
+    <ng-template ngSwitchCase="DEPOSIT_CONFIRMED">
+      <span class="fas fa-spinner fa-spin"></span>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} is starting.
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_RUNNING">
+      <span class="fas fa-spinner fa-spin"></span>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is running.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_FAILED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} has failed.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_TERMINATED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} was terminated.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CONFIRMATION_FAILED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} could not be confirmed.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_RETRIED">
+      <span class="fas fa-spinner fa-spin"></span>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is running.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CANCELLED">
+      <i-feather name="alert-circle" class="feather-small fc-red"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} was cancelled.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_PENDING">
+      <span class="fas fa-spinner fa-spin"></span>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} is pending.
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+    <ng-template ngSwitchCase="DESTINATION_TRANSFER_CONFIRMED">
+      <i-feather name="check" class="feather-small fc-green"></i-feather>
+      Swap of {{ event.DepositAmount }} {{ event.DepositTicker }} to {{ event.DestinationAmount }}
+      {{ event.DestinationTicker }} succeeded!
+      <a
+        target="_blank"
+        rel="noopener"
+        [href]="megaswap.getExplorerLink(event.DestinationTicker, event.DestinationTxId, 'tx')"
+        [ngStyle]="{ position: 'relative', top: '-2px' }"
+      >
+        <i-feather name="external-link" class="feather-small"></i-feather>
+      </a>
+    </ng-template>
+  </li>
+</ul>

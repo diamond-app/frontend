@@ -26,5 +26,6 @@ export const environment = {
     url: "https://diamondapp.com",
     logoAssetDir: "/assets/diamond/",
   },
-  megaswapURL: 'https://megaswap.xyz',
+  megaswapURL: "https://megaswap.xyz",
+  megaswapAPI: "https://megaswap.dev",
 };
