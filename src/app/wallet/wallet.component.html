@@ -100,14 +100,17 @@
         </div>
       </div>
       <!--Buy/send DESO-->
-      <div class="d-flex" [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }">
-        <button (click)="openSendDeSoModal()" class="btn btn-outline-secondary font-weight-bold">
+      <div
+        class="d-flex wallet__action-buttons"
+        [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }"
+      >
+        <button (click)="openSendDeSoModal()" class="btn btn-outline-secondary font-weight-bold wallet__action-button">
           {{ "wallet.send_deso" | transloco }}
         </button>
-        <button (click)="openBuyDeSoModal()" class="btn btn-primary font-weight-bold ml-3">
+        <button (click)="openBuyDeSoModal()" class="btn btn-primary font-weight-bold wallet__action-button">
           {{ "wallet.buy_deso" | transloco }}
         </button>
-        <button (click)="openCashOutModal('DESO')" class="btn btn-success font-weight-bold ml-3">
+        <button (click)="openCashOutModal('DESO')" class="btn btn-success font-weight-bold wallet__action-button">
           {{ "wallet.cash_out" | transloco }}
         </button>
       </div>

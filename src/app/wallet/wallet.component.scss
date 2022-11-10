@@ -1,0 +1,17 @@
+.wallet__action-buttons {
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 992px) {
+    flex-direction: row;
+  }
+}
+
+.wallet__action-button {
+  margin-bottom: 8px;
+  @media (min-width: 992px) {
+    margin-bottom: 0;
+    &:not(:last-of-type) {
+      margin-right: 8px;
+    }
+  }
+}

@@ -36,7 +36,9 @@
       (input)="onDestinationAddressChange($event)"
       [defaultValue]="defaultDestinationAddress"
     />
-    <p class="text-secondary fs-14px mt-1">This is your deposit address on an exchange like Coinbase</p>
+    <p class="text-secondary fs-14px mt-1">
+      This is your deposit address on an exchange like Coinbase. We'll remember the last address you've sent funds to.
+    </p>
     <p *ngIf="createAddrsErrorMessage.length > 0" class="text-danger">{{ createAddrsErrorMessage }}</p>
   </div>
   <div *ngIf="!isLoading">

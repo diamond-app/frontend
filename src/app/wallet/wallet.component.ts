@@ -21,6 +21,7 @@ import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
+  styleUrls: ["./wallet.component.scss"],
 })
 export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   //constructor(private translocoService: TranslocoService) {}

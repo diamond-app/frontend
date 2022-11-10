@@ -1,7 +1,7 @@
 //@ts-strict
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
-import { takeWhile } from "rxjs/operators";
+import { finalize, takeWhile } from "rxjs/operators";
 import { DepositEvent, MegaswapService, Ticker } from "src/app/megaswap.service";
 
 @Component({
@@ -17,6 +17,7 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
   isDestroyed: boolean = false;
   events?: DepositEvent[];
   depositsSubscription?: Subscription;
+  isLoading: boolean = false;
 
   constructor(public megaswap: MegaswapService) {}
 
@@ -32,12 +33,18 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
       this.depositsSubscription.unsubscribe();
     }
 
+    this.isLoading = true;
     this.depositsSubscription = this.megaswap
       .pollPendingDeposits(this.depositEvents ?? [], {
         DepositAddress: this.depositAddress,
         DepositTicker: this.depositTicker,
       })
-      .pipe(takeWhile(() => !this.isDestroyed))
+      .pipe(
+        takeWhile(() => !this.isDestroyed),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
       .subscribe((res) => {
         this.events = res.Deposits.map((e) => this.megaswap.formatDepositEvent(e));
       });
