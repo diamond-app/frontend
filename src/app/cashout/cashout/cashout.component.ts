@@ -192,7 +192,8 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   }
 
   clickMax() {
-    this.amountToCashOutInputValue = this.globalVars.loggedInUser?.BalanceNanos / 1e9;
+    this.amountToCashOutInputValue =
+      (this.globalVars.loggedInUser?.BalanceNanos - this.globalVars.feeRateDeSoPerKB * 1e9) / 1e9;
     this.onAmountToCashOutChange();
   }
 

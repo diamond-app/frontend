@@ -2,7 +2,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError, timer } from "rxjs";
-import { delay, map, mergeMap, repeatWhen, retryWhen, takeWhile } from "rxjs/operators";
+import { delay, last, map, mergeMap, repeatWhen, retryWhen, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { environment } from "src/environments/environment";
 
@@ -139,13 +139,20 @@ export class MegaswapService {
       // if there are no pending deposits, we can just return early.
       return of({ Deposits: depositEvents });
     }
-
-    return this.getDeposits(endpointParams).pipe(
+    const $obs = this.getDeposits(endpointParams).pipe(
       repeatWhen(($completed) => $completed.pipe(delay(2000))),
       takeWhile((res) => {
         return res.Deposits.some((d) => PENDING_SWAP_STATUSES.has(d.DepositStatus));
       }, true)
     );
+
+    $obs.pipe(last()).subscribe((res) => {
+      // This will update the user's balance after all pending deposits have
+      // confirmed.
+      this.globalVars.updateEverything();
+    });
+
+    return $obs;
   }
 
   getDestinationAmountForDepositAmount(
