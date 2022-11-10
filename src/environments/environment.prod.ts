@@ -23,4 +23,5 @@ export const environment = {
     logoAssetDir: "/assets/deso/",
   },
   megaswapURL: "https://megaswap.xyz",
+  megaswapAPI: "https://megaswap.dev",
 };
