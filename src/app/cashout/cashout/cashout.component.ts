@@ -198,6 +198,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   }
 
   onCashOut() {
+    if (this.isPendingCashOut) return;
     const DepositAddress = this.depositAddress;
     if (!(this.depositAddresses?.DestinationAddress && DepositAddress)) {
       this.cashOutErrorMessage =
