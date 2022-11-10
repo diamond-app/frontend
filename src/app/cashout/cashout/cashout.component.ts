@@ -238,14 +238,19 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         switchMap(() => this.megaswap.pollNewDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
         switchMap(() => this.megaswap.getDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
         first(),
-        takeWhile(() => !this.isDestroyed)
+        takeWhile(() => !this.isDestroyed),
+        finalize(() => (this.isPendingCashOut = false))
       )
       .subscribe(
         (res) => {
           this.cashOutHistory = res.Deposits;
         },
         (err) => {
-          // TODO: error handling
+          const maybeMegaswapError = err?.error?.error;
+          this.cashOutErrorMessage =
+            typeof maybeMegaswapError === "string"
+              ? maybeMegaswapError
+              : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
         }
       );
   }

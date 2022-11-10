@@ -1,11 +1,18 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, throwError, timer } from "rxjs";
-import { map, mergeMap, retryWhen } from "rxjs/operators";
+import { Observable, of, throwError, timer } from "rxjs";
+import { delay, map, mergeMap, repeatWhen, retryWhen, takeWhile } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 const buildUrl = (endpoint: string) => `${environment.megaswapAPI}/api/v1/${endpoint}`;
+const PENDING_SWAP_STATUSES = new Set([
+  "DEPOSIT_PENDING",
+  "DEPOSIT_CONFIRMED",
+  "DESTINATION_TRANSFER_RUNNING",
+  "DESTINATION_TRANSFER_PENDING",
+  "DESTINATION_TRANSFER_RETRIED",
+]);
 
 export type Ticker = "DESO" | "BTC" | "SOL" | "USDC" | "ETH" | "DUSD" | "USD";
 export interface CreateAddrsResponse {
@@ -102,29 +109,20 @@ export class MegaswapService {
     );
   }
 
-  pollConfirmedDeposit(txId: string, endpointParams: GetDepositsParams): Observable<DepositEvent> {
+  pollPendingDeposits(
+    depositEvents: DepositEvent[],
+    endpointParams: GetDepositsParams
+  ): Observable<GetDepositsResponse> {
+    if (!depositEvents.some((d) => PENDING_SWAP_STATUSES.has(d.DepositStatus))) {
+      // if there are no pending deposits, we can just return early.
+      return of({ Deposits: depositEvents });
+    }
+
     return this.getDeposits(endpointParams).pipe(
-      map((res) => {
-        const confirmed = res.Deposits.find(
-          ({ DepositStatus, DepositTxId }) => DepositTxId === txId && DepositStatus === "DESTINATION_TRANSFER_CONFIRMED"
-        );
-
-        if (!confirmed) {
-          throw new Error("RETRY");
-        }
-
-        return confirmed;
-      }),
-      retryWhen((e$) =>
-        e$.pipe(
-          mergeMap((e) => {
-            if (e.message !== "RETRY") {
-              return throwError(e);
-            }
-            return timer(2000);
-          })
-        )
-      )
+      repeatWhen(($completed) => $completed.pipe(delay(2000))),
+      takeWhile((res) => {
+        return res.Deposits.some((d) => PENDING_SWAP_STATUSES.has(d.DepositStatus));
+      }, true)
     );
   }
 

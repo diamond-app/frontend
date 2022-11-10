@@ -1,6 +1,7 @@
 //@ts-strict
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
-import { finalize, first, takeWhile } from "rxjs/operators";
+import { Subscription } from "rxjs";
+import { takeWhile } from "rxjs/operators";
 import { DepositEvent, MegaswapService, Ticker } from "src/app/megaswap.service";
 
 @Component({
@@ -13,18 +14,13 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
   @Input() depositAddress?: string;
   @Input() depositEvents?: DepositEvent[];
 
-  isLoading: boolean = false;
   isDestroyed: boolean = false;
   events?: DepositEvent[];
+  depositsSubscription?: Subscription;
 
   constructor(private megaswap: MegaswapService) {}
 
   ngOnChanges() {
-    if (this.depositEvents && this.depositEvents.length > 0) {
-      this.events = this.depositEvents.map((e) => this.megaswap.formatDepositEvent(e));
-      return;
-    }
-
     if (!this.depositTicker) {
       throw new Error("depositTicker is a required component argument.");
     }
@@ -32,14 +28,16 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
       throw new Error("depositAddress is a required component argument.");
     }
 
-    this.isLoading = true;
-    this.megaswap
-      .getDeposits({ DepositAddress: this.depositAddress, DepositTicker: this.depositTicker })
-      .pipe(
-        takeWhile(() => !this.isDestroyed),
-        first(),
-        finalize(() => (this.isLoading = false))
-      )
+    if (this.depositsSubscription) {
+      this.depositsSubscription.unsubscribe();
+    }
+
+    this.depositsSubscription = this.megaswap
+      .pollPendingDeposits(this.depositEvents ?? [], {
+        DepositAddress: this.depositAddress,
+        DepositTicker: this.depositTicker,
+      })
+      .pipe(takeWhile(() => !this.isDestroyed))
       .subscribe((res) => {
         this.events = res.Deposits.map((e) => this.megaswap.formatDepositEvent(e));
       });
