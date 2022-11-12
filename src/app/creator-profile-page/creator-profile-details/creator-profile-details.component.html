@@ -16,7 +16,7 @@
   ></wallet-widget>
   <!-- Feed Selector -->
   <tab-selector
-    [tabs]="['Posts', 'Blog', 'Creator Coin', 'Diamonds', 'NFTs']"
+    [tabs]="['Posts', 'Posts & replies', 'Blog', 'Creator Coin', 'Diamonds', 'NFTs']"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
@@ -72,6 +72,25 @@
   <div *ngIf="profile && activeTab == 'Posts' && !loading">
     <creator-profile-posts
       [profile]="profile"
+      [showProfileAsReserved]="showProfileAsReserved()"
+      (blockUser)="userBlocked()"
+    ></creator-profile-posts>
+    <div *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)" class="w-100 d-flex p-15px">
+      <span>
+        {{ "creator_profile_details.you_blocked_0" | transloco }} {{ profile.Username
+        }}{{ "creator_profile_details.you_blocked_1" | transloco }}
+        <a (click)="unblock()">{{ "creator_profile_details.unblock_0" | transloco }}</a>
+        {{ "creator_profile_details.unblock_1" | transloco }}
+      </span>
+    </div>
+  </div>
+
+
+  <!-- Posts & replies -->
+  <div *ngIf="profile && activeTab == 'Posts & replise' && !loading">
+    <creator-profile-posts
+      [profile]="profile"
+      [includeComments]="true"
       [showProfileAsReserved]="showProfileAsReserved()"
       (blockUser)="userBlocked()"
     ></creator-profile-posts>
