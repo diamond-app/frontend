@@ -243,18 +243,13 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         takeWhile(() => !this.isDestroyed),
         finalize(() => (this.isPendingCashOut = false))
       )
-      .subscribe(
-        (res) => {
-          this.cashOutHistory = res.Deposits;
-        },
-        (err) => {
-          const maybeMegaswapError = err?.error?.error;
-          this.cashOutErrorMessage =
-            typeof maybeMegaswapError === "string"
-              ? maybeMegaswapError
-              : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
-        }
-      );
+      .subscribe(this._onDepositEventsFetched.bind(this), (err) => {
+        const maybeMegaswapError = err?.error?.error;
+        this.cashOutErrorMessage =
+          typeof maybeMegaswapError === "string"
+            ? maybeMegaswapError
+            : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
+      });
   }
 
   refreshCashOutHistory() {
@@ -273,14 +268,19 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         first(),
         finalize(() => (this.isRefreshingHistory = false))
       )
-      .subscribe((res) => {
-        this.cashOutHistory = res.Deposits;
-      });
+      .subscribe(this._onDepositEventsFetched.bind(this));
   }
 
   desoToUSD(desoAmount: number) {
     if (!this.destinationAmountForDepositAmount) return 0;
     const usdPerDeso = parseFloat(this.destinationAmountForDepositAmount.SwapRateDestinationTickerPerDepositTicker);
     return desoAmount * usdPerDeso;
+  }
+
+  private _onDepositEventsFetched(res: { Deposits: DepositEvent[] }) {
+    this.cashOutHistory = res.Deposits;
+    if (this.globalVars.isMobile()) {
+      document.getElementById("cash-out-tx-history")?.scrollIntoView({ behavior: "smooth" });
+    }
   }
 }

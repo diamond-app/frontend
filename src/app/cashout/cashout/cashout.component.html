@@ -1,4 +1,4 @@
-<div class="buy-deso__container p-4">
+<div class="buy-deso__container p-4 fc-default border">
   <h1 class="font-weight-bold fs-20px mb-4">Cash Out</h1>
   <div class="mb-4">
     <label for="amount-to-cashout-input" class="font-weight-bold">
@@ -36,7 +36,7 @@
       (input)="onDestinationAddressChange($event)"
       [defaultValue]="defaultDestinationAddress"
     />
-    <p class="text-secondary fs-14px mt-1">
+    <p class="fc-muted fs-14px mt-1">
       This is your deposit address on an exchange like Coinbase. We'll remember the last address you've sent funds to.
     </p>
     <p *ngIf="createAddrsErrorMessage.length > 0" class="text-danger">{{ createAddrsErrorMessage }}</p>
@@ -47,7 +47,7 @@
         <dt class="font-weight-normal col">Available Balance:</dt>
         <dd class="col">
           <span>{{ megaswap.formatFloat(availableBalance) }} $DESO</span>
-          <span *ngIf="depositTicker === 'DESO'" class="text-secondary text-nowrap">
+          <span *ngIf="depositTicker === 'DESO'" class="fc-muted text-nowrap">
             ({{ megaswap.formatFloat(desoToUSD(availableBalance), "USD") }} $USD)
           </span>
         </dd>
@@ -86,7 +86,7 @@
       <span *ngIf="isPendingCashOut"><i class="fas fa-spinner fa-spin px-3"></i></span>
     </button>
   </div>
-  <section>
+  <section id="cash-out-tx-history">
     <h2 class="font-weight-bold fs-16px">Cash Out History</h2>
     <deposit-event-history
       *ngIf="depositAddress && depositTicker"

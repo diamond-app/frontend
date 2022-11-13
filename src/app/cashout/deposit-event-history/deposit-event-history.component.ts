@@ -33,7 +33,7 @@ export class DepositEventHistoryComponent implements OnChanges, OnDestroy {
       this.depositsSubscription.unsubscribe();
     }
 
-    this.isLoading = true;
+    this.isLoading = !this.depositEvents?.length;
     this.depositsSubscription = this.megaswap
       .pollPendingDeposits(this.depositEvents ?? [], {
         DepositAddress: this.depositAddress,
