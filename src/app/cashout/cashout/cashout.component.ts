@@ -246,6 +246,9 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       .subscribe(
         (res) => {
           this.cashOutHistory = res.Deposits;
+          if (this.globalVars.isMobile()) {
+            document.getElementById("cash-out-tx-history")?.scrollIntoView({ behavior: "smooth" });
+          }
         },
         (err) => {
           const maybeMegaswapError = err?.error?.error;
@@ -275,6 +278,9 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       )
       .subscribe((res) => {
         this.cashOutHistory = res.Deposits;
+        if (this.globalVars.isMobile()) {
+          document.getElementById("cash-out-tx-history")?.scrollIntoView({ behavior: "smooth" });
+        }
       });
   }
 
