@@ -150,7 +150,7 @@ import { RightBarSignupComponent } from "./right-bar-signup/right-bar-signup.com
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
 import { SellNftComponent } from "./sell-nft/sell-nft.component";
-import { SettingsPageComponent } from "./settings-page/settings-page.component";
+import { SettingsPageComponent } from "./settings/settings-page/settings-page.component";
 import { SettingsComponent } from "./settings/settings.component";
 import { SignUpGetStarterDeSoComponent } from "./sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component";
 import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-module/sign-up-transfer-deso.component";
