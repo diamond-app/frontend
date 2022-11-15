@@ -1,5 +1,5 @@
 // @ts-strict
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -10,6 +10,7 @@ import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "settings",
@@ -25,6 +26,9 @@ export class SettingsComponent implements OnInit {
   isSelectEmailsDropdownOpen: boolean = false;
   isValidEmail: boolean = true;
   isSavingEmail: boolean = false;
+  onlyShowEmailSettings: boolean = false;
+  emailJwt: string = "";
+  userPublicKeyBase58Check: string = "";
   digestFrequencies = [
     { duration: 1, text: "Daily" },
     { duration: 7, text: "Weekly" },
@@ -55,6 +59,8 @@ export class SettingsComponent implements OnInit {
     return !this.appUser || !this.txEmailSettings.find(({ field }) => this.appUser[field]);
   }
 
+  @Input() isModal: boolean = true;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -62,11 +68,30 @@ export class SettingsComponent implements OnInit {
     private bsModalService: BsModalService,
     public themeService: ThemeService,
     private translocoService: TranslocoService,
-    private apiInternal: ApiInternalService
+    private apiInternal: ApiInternalService,
+    private route: ActivatedRoute
   ) {
+    this.route.queryParams.subscribe((queryParams) => {
+      if (queryParams?.emailSettings && queryParams?.emailSettings === "true") {
+        this.onlyShowEmailSettings = true;
+      }
+      if (queryParams?.jwt) {
+        this.emailJwt = queryParams.jwt;
+      }
+      if (queryParams?.publicKey) {
+        this.userPublicKeyBase58Check = queryParams.publicKey;
+      }
+      this.initializeAppUser();
+    });
+  }
+
+  initializeAppUser() {
     const loggedInUser = this.globalVars.loggedInUser;
-    if (loggedInUser?.ProfileEntryResponse) {
-      const getAppUserObs = this.apiInternal.getAppUser(this.globalVars.loggedInUser.PublicKeyBase58Check).pipe(
+    const userPublicKey =
+      this.userPublicKeyBase58Check !== "" ? this.userPublicKeyBase58Check : loggedInUser?.PublicKeyBase58Check;
+
+    if (userPublicKey) {
+      const getAppUserObs = this.apiInternal.getAppUser(userPublicKey, this.emailJwt).pipe(
         catchError((err) => {
           if (err.status === 404) {
             return of(null);
@@ -74,40 +99,42 @@ export class SettingsComponent implements OnInit {
           throw err;
         })
       );
-      const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(
-        this.globalVars.localNode,
-        loggedInUser.PublicKeyBase58Check
-      );
+      if (!!loggedInUser?.ProfileEntryResponse) {
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey);
+        forkJoin([getAppUserObs, getUserMetadataObs])
+          .pipe(
+            switchMap(([appUser, userMetadata]) => {
+              if (appUser === null && loggedInUser?.ProfileEntryResponse) {
+                if (userMetadata.Email.length > 0) {
+                  // This case should only happen if there was an error when creating
+                  // the app user during a profile update, but if we don't have a
+                  // corresponding app user record for the currently logged in user,
+                  // but somehow we *DO* have their email address, we create an app
+                  // user record with default email settings.
+                  return this.apiInternal.createAppUser(
+                    this.globalVars.loggedInUser.PublicKeyBase58Check,
+                    this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+                    this.globalVars.lastSeenNotificationIdx
+                  );
+                }
 
-      forkJoin([getAppUserObs, getUserMetadataObs])
-        .pipe(
-          switchMap(([appUser, userMetadata]) => {
-            if (appUser === null && loggedInUser?.ProfileEntryResponse) {
-              if (userMetadata.Email.length > 0) {
-                // This case should only happen if there was an error when creating
-                // the app user during a profile update, but if we don't have a
-                // corresponding app user record for the currently logged in user,
-                // but somehow we *DO* have their email address, we create an app
-                // user record with default email settings.
-                return this.apiInternal.createAppUser(
-                  this.globalVars.loggedInUser.PublicKeyBase58Check,
-                  this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-                  this.globalVars.lastSeenNotificationIdx
-                );
+                // If the user has a profile and we *DO NOT* have their email
+                // address, we prompt them for it. This can happen if the user
+                // created their profile on a different app.
+                this.showEmailPrompt = true;
               }
 
-              // If the user has a profile and we *DO NOT* have their email
-              // address, we prompt them for it. This can happen if the user
-              // created their profile on a different app.
-              this.showEmailPrompt = true;
-            }
-
-            return of(appUser);
-          })
-        )
-        .subscribe((appUser) => {
+              return of(appUser);
+            })
+          )
+          .subscribe((appUser) => {
+            this.appUser = appUser;
+          });
+      } else {
+        getAppUserObs.subscribe((appUser) => {
           this.appUser = appUser;
         });
+      }
     }
   }
 
@@ -151,7 +178,7 @@ export class SettingsComponent implements OnInit {
 
     this.appUser = { ...this.appUser, [digestSetting]: Number(inputEl.value) };
 
-    this.apiInternal.updateAppUser(this.appUser).subscribe(
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
       () => {},
       () => {
         if (!this.appUser) return;
@@ -174,7 +201,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.appUser = { ...this.appUser, [fieldName]: inputEl.checked };
-    this.apiInternal.updateAppUser(this.appUser).subscribe(
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
       () => {},
       () => {
         if (!this.appUser) return;
@@ -196,7 +223,7 @@ export class SettingsComponent implements OnInit {
 
     this.appUser = { ...this.appUser, ...settings };
 
-    this.apiInternal.updateAppUser(this.appUser).subscribe(
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
       () => {},
       () => {
         if (!this.appUser) return;

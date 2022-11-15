@@ -65,9 +65,10 @@ export class ApiInternalService {
     private backendAPI: BackendApiService
   ) {}
 
-  getAppUser(publickey: string): Observable<any> {
-    return this.getAuthHeaders().pipe(
-      switchMap((headers) => this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publickey}`), { headers }))
+  getAppUser(publicKey: string, emailJwt: string = ""): Observable<any> {
+    const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
+    return this.getAuthHeaders(emailJwt, publicKey).pipe(
+      switchMap((headers) => this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publicKey}${queryParams}`), { headers }))
     );
   }
 
@@ -83,10 +84,11 @@ export class ApiInternalService {
     );
   }
 
-  updateAppUser(payload: AppUser) {
-    return this.getAuthHeaders().pipe(
+  updateAppUser(payload: AppUser, emailJwt: string = "") {
+    const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
+    return this.getAuthHeaders(emailJwt, payload.PublicKeyBase58check).pipe(
       switchMap((headers) =>
-        this.httpClient.put<any>(buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}`), payload, { headers })
+        this.httpClient.put<any>(buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}${queryParams}`), payload, { headers })
       )
     );
   }
@@ -99,9 +101,22 @@ export class ApiInternalService {
     );
   }
 
-  private getAuthHeaders(): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
-    const loggedInUserKey = this.backendAPI.GetStorage(this.backendAPI.LastLoggedInUserKey);
+  private getAuthHeaders(
+    emailJwt: string = "",
+    publicKey: string = ""
+  ): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
 
+    if (emailJwt !== "") {
+      return new Observable((observer) => {
+        observer.next({
+          Authorization: `Bearer ${emailJwt}`,
+          "Diamond-Public-Key-Base58-Check": publicKey,
+        });
+        observer.complete();
+      });
+    }
+
+    const loggedInUserKey = this.backendAPI.GetStorage(this.backendAPI.LastLoggedInUserKey);
     return this.identity
       .jwt({
         ...this.identity.identityServiceParamsForKey(loggedInUserKey),

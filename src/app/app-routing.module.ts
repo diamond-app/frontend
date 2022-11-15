@@ -30,7 +30,7 @@ import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts
 import { ReferralsComponent } from "./referrals/referrals.component";
 import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
 import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
-import { SettingsPageComponent } from "./settings-page/settings-page.component";
+import { SettingsPageComponent } from "./settings/settings-page/settings-page.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { TosPageComponent } from "./tos-page/tos-page.component";
 import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-page.component";
