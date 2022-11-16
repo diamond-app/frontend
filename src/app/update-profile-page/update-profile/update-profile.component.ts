@@ -6,7 +6,12 @@ import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService, AppUser } from "src/app/api-internal.service";
+import {
+  ApiInternalService,
+  AppUser,
+  NEW_APP_USER_DEFAULTS,
+  SUBSCRIBED_APP_USER_DEFAULTS
+} from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
@@ -67,6 +72,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   };
   profileUpdated = false;
   emailAddress: string = "";
+  subscribeToEmailNotifs: boolean = false;
   initialEmailAddress = "";
   invalidEmailEntered = false;
   usernameValidationError: string = null;
@@ -307,10 +313,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             });
             // if the app user is null, it means we need to create a new one
           } else if (appUser === null) {
+            const userNotifPreferences = this.subscribeToEmailNotifs
+              ? SUBSCRIBED_APP_USER_DEFAULTS
+              : NEW_APP_USER_DEFAULTS;
             createOrUdpateAppUserObs = this.apiInternal.createAppUser(
               this.loggedInUser.PublicKeyBase58Check,
               this.usernameInput,
               this.globalVars.lastSeenNotificationIdx,
+              userNotifPreferences
             );
           }
 

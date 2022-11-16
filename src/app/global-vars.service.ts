@@ -7,7 +7,7 @@ import { AmplitudeClient } from "amplitude-js";
 import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { Observable, Observer } from "rxjs";
+import { forkJoin, Observable, Observer, of, Subscription } from "rxjs";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -17,6 +17,7 @@ import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
@@ -34,6 +35,8 @@ import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right
 import Timer = NodeJS.Timer;
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
+import { catchError, switchMap } from "rxjs/operators";
+import { ApiInternalService } from "./api-internal.service";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -68,6 +71,7 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
+    private apiInternal: ApiInternalService,
     private locationStrategy: LocationStrategy,
     private modalService: BsModalService
   ) {}
@@ -454,14 +458,69 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
+    // TODO: Only trigger this after user sign up.
     if (user?.BalanceNanos) {
-      this.getLoggedInUserDefaultKey();
+      this.getLoggedInUserDefaultKey().add(async () => {
+        if (
+          !isNil(this.loggedInUserDefaultKey) &&
+          this.backendApi.GetStorage(this.backendApi.EmailNotificationsDismissalKey) === null
+        ) {
+          console.log("Here");
+          const missingField = await this.appUserMissingField();
+          console.log("Here2: ", missingField);
+          if (missingField !== "") {
+            this.modalService.show(EmailSubscribeComponent, {
+              class: "modal-dialog-centered buy-deso-modal",
+              initialState: {
+                missingField,
+              },
+            });
+          }
+        }
+      });
     }
+
+    // Only trigger this if the user has set their default key (prevent multiple consecutive modals).
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
-  getLoggedInUserDefaultKey() {
-    this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+  // Check to see if the app user has created an email, and subsequently created a user in the diamond backend.
+  // The 3 possible return options are "" (email and user are both created), "email" (email has not been created), and
+  // "user" (email has been created, app user has not)
+  async appUserMissingField(): Promise<string> {
+    if (!this.loggedInUser?.ProfileEntryResponse) {
+      return "";
+    }
+    const getUserMetadataPromise = this.backendApi
+      .GetUserGlobalMetadata(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+      .toPromise();
+
+    const getAppUserPromise = this.apiInternal
+      .getAppUser(this.loggedInUser.PublicKeyBase58Check)
+      .pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            return of(null);
+          }
+          throw err;
+        })
+      )
+      .toPromise();
+
+    const [userMetadata, appUser] = await Promise.all([getUserMetadataPromise, getAppUserPromise]);
+    console.log("Here is the app user: ", appUser);
+    console.log("Here is the user metadata: ", userMetadata);
+    if (userMetadata.Email.length === 0) {
+      return "email";
+    }
+    if (appUser === null) {
+      return "user";
+    }
+    return "";
+  }
+
+  getLoggedInUserDefaultKey(): Subscription {
+    return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
       if (!res) {
         SwalHelper.fire({
           html:

@@ -1,0 +1,38 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="closeModal()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+
+<div class="buy-deso__container p-16px">
+  <div class="d-flex flex-column align-items-center">
+    <div class="fs-24px font-weight-bold fc-default pt-2">Diamond has email notifications!</div>
+    <div class="fs-18px font-weight-bold fc-muted pt-1">Stay up-to-date on all of your creator activity & earnings!</div>
+    <form (submit)="onEmailSubmit($event)" *ngIf="showEmailPrompt" class="w-80 pt-4">
+      <div class="d-flex w-100">
+        <input
+          id="email-prompt"
+          class="form-control w-80"
+          type="email"
+          name="email-address"
+          placeholder="Enter an email address."
+          [(ngModel)]="this.emailAddress"
+          (input)="onEmailChange()"
+        />
+        <button type="submit" class="ml-auto btn btn-primary w-20">
+          <span *ngIf="this.isProcessing"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+          <span *ngIf="!this.isProcessing">Submit</span>
+        </button>
+      </div>
+      <span *ngIf="!this.isValidEmail" class="text-danger">Please enter a valid email address.</span>
+    </form>
+    <div *ngIf="!showEmailPrompt" class="d-flex w-100 align-items-center justify-content-center pt-4">
+      <div>
+        <button (click)="addUserToEmailDigest()" class="ml-auto btn btn-primary w-100">
+          <span *ngIf="this.isProcessing"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+          <span *ngIf="!this.isProcessing">Subscribe to Email Notifications</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
