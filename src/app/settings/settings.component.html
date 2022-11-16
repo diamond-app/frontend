@@ -100,7 +100,7 @@
     <div class="btn-group w-100">
       <ul class="w-100 p-0" role="menu" aria-labelledby="button-basic" style="list-style: none">
         <li role="menuitem">
-          <span class="dropdown-item">
+          <span class="dropdown-item fc-secondary">
             <input
               id="select-all-tx-emails"
               type="checkbox"
@@ -112,7 +112,7 @@
           </span>
         </li>
         <li role="menuitem">
-          <span class="dropdown-item">
+          <span class="dropdown-item fc-secondary">
             <input
               id="unselect-all-tx-emails"
               type="checkbox"
@@ -124,7 +124,7 @@
           </span>
         </li>
         <li role="menuitem" *ngFor="let setting of txEmailSettings">
-          <span class="dropdown-item">
+          <span class="dropdown-item fc-secondary">
             <input
               [id]="setting.field"
               [name]="setting.field"

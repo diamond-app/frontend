@@ -493,6 +493,9 @@ export class BackendApiService {
   // Messaging V3 default key name.
   DefaultKey = "default-key";
 
+  // Store whether user has dismissed email notifications in localStorage
+  EmailNotificationsDismissalKey = "emailNotificationsDismissedAt";
+
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";
   LegacySeedListKey = "seedList";

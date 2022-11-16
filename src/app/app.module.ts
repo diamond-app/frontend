@@ -212,6 +212,7 @@ import { BuyDeSoMegaSwapComponent } from "./buy-deso-page/buy-deso-megaswap/buy-
 import { CashoutModalComponent } from './cashout/cashout-modal/cashout-modal.component';
 import { CashoutComponent } from './cashout/cashout/cashout.component';
 import { DepositEventHistoryComponent } from './cashout/deposit-event-history/deposit-event-history.component';
+import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -296,6 +297,7 @@ export function playerFactory() {
     TopBarMobileHeaderComponent,
     BottomBarMobileTabComponent,
     NotFoundComponent,
+    EmailSubscribeComponent,
     CreatePostPageComponent,
     CreatePostFormComponent,
     TopBarMobileLogInOrSignUpComponent,

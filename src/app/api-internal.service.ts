@@ -53,6 +53,24 @@ export const NEW_APP_USER_DEFAULTS = {
   ReceiveNftRoyaltyNotif: false,
 };
 
+export const SUBSCRIBED_APP_USER_DEFAULTS = {
+  ActivityDigestFrequency: 1,
+  EarningsDigestFrequency: 1,
+  ReceiveLikeNotif: false,
+  ReceiveCoinPurchaseNotif: true,
+  ReceiveFollowNotif: false,
+  ReceiveBasicTransferNotif: true,
+  ReceiveCommentNotif: true,
+  ReceiveDiamondNotif: true,
+  ReceiveRepostNotif: false,
+  ReceiveQuoteRepostNotif: false,
+  ReceiveMentionNotif: true,
+  ReceiveNftBidNotif: true,
+  ReceiveNftPurchaseNotif: true,
+  ReceiveNftBidAcceptedNotif: true,
+  ReceiveNftRoyaltyNotif: true,
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -72,9 +90,14 @@ export class ApiInternalService {
     );
   }
 
-  createAppUser(PublicKeyBase58check: string, Username: string, LastNotificationScannedIndex: number) {
+  createAppUser(
+    PublicKeyBase58check: string,
+    Username: string,
+    LastNotificationScannedIndex: number,
+    notificationSettings: {} = NEW_APP_USER_DEFAULTS
+  ) {
     const payload = {
-      ...NEW_APP_USER_DEFAULTS,
+      ...notificationSettings,
       PublicKeyBase58check,
       Username,
       LastNotificationScannedIndex,
