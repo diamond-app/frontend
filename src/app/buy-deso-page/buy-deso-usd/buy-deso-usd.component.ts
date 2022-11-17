@@ -1,15 +1,15 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
 import { HttpClient } from "@angular/common/http";
-import { WyreService } from "../../../lib/services/wyre/wyre";
-import { IdentityService } from "../../identity.service";
-import { BackendApiService } from "../../backend-api.service";
+import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import currencyToSymbolMap from "currency-symbol-map/map";
 import * as _ from "lodash";
 import Swal from "sweetalert2";
-import { ActivatedRoute, Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { WyreService } from "../../../lib/services/wyre/wyre";
+import { BackendApiService } from "../../backend-api.service";
 import { FeedComponent } from "../../feed/feed.component";
-import currencyToSymbolMap from "currency-symbol-map/map";
+import { GlobalVarsService } from "../../global-vars.service";
+import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
 
 @Component({
@@ -91,6 +91,9 @@ export class BuyDeSoUSDComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Force an update of the exchange rate when loading the Buy DeSo page to ensure our computations are using the
+    // latest rates.
+    this.globalVars._updateDeSoExchangeRate();
     this._refreshQuotation();
   }
 
@@ -187,5 +190,11 @@ export class BuyDeSoUSDComponent implements OnInit {
 
   getUSDEquivalent(quotation: any) {
     return quotation.equivalencies.USD;
+  }
+
+  cancel() {
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+      queryParams: { feedTab: FeedComponent.FOLLOWING_TAB },
+    });
   }
 }

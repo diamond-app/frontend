@@ -1,19 +1,17 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
+import { Router } from "@angular/router";
 import { GlobalVarsService } from "../global-vars.service";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
 
 @Component({
   selector: "buy-deso-page",
   templateUrl: "./buy-deso-page.component.html",
   styleUrls: ["./buy-deso-page.component.scss"],
 })
-export class BuyDeSoPageComponent implements OnInit {
+export class BuyDeSoPageComponent {
   isLeftBarMobileOpen: boolean = false;
+  constructor(public globalVars: GlobalVarsService, private router: Router) {}
 
-  ngOnInit() {
-    this.titleService.setTitle(`Buy $DESO - ${environment.node.name}`);
-  }
-
-  constructor(public globalVars: GlobalVarsService, private titleService: Title) {}
+  // ngOnInit() {
+  //   this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO], { skipLocationChange: true });
+  // }
 }
