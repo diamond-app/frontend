@@ -91,8 +91,6 @@ export class BuyDeSoUSDComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Force an update of the exchange rate when loading the Buy DeSo page to ensure our computations are using the
-    // latest rates.
     this.globalVars._updateDeSoExchangeRate();
     this._refreshQuotation();
   }
