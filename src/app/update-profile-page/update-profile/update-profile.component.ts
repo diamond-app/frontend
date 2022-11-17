@@ -72,7 +72,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   };
   profileUpdated = false;
   emailAddress: string = "";
-  subscribeToEmailNotifs: boolean = false;
+  subscribeToEmailNotifs: boolean = true;
   initialEmailAddress = "";
   invalidEmailEntered = false;
   usernameValidationError: string = null;
