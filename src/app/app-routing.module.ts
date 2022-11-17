@@ -4,6 +4,7 @@ import { Router, RouterModule, Routes, Scroll } from "@angular/router";
 import { filter } from "rxjs/operators";
 import { BlogDetailComponent } from "src/app/blog-page/blog-detail/blog-detail.component";
 import { BlogPageComponent } from "src/app/blog-page/blog-page.component";
+import { TwitterSyncPageComponent } from "src/app/twitter-sync-page/twitter-sync-page.component";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
@@ -108,6 +109,7 @@ class RouteNames {
   public static TRANSFER_NFT = "transfer-nft";
   public static BURN_NFT = "burn-nft";
   public static BLOG = "blog";
+  public static TWITTER_SYNC = "twitter-sync";
 }
 
 const routes: Routes = [
@@ -123,6 +125,7 @@ const routes: Routes = [
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
+  { path: RouteNames.TWITTER_SYNC, component: TwitterSyncPageComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftPageComponent, pathMatch: "full" },
