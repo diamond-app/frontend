@@ -9,7 +9,7 @@ import { environment } from "src/environments/environment";
 
 const buildURL = (endpoint: string) => `${environment.setuAPI}/${endpoint}`;
 
-type SubscriptionType = "all_tweets" | "include_hashtags" | "exclude_hashtags";
+export type SubscriptionType = "all_tweets" | "include_hashtags" | "exclude_hashtags";
 
 interface SubscriptionParams {
   public_key: string; // deso public key
@@ -25,7 +25,7 @@ export type GetCurrentSubscriptionsResponse = {
 } & Omit<SubscriptionParams, "public_key">;
 
 export interface GetDerivedKeyStatusResponse {
-  is_expired: false;
+  is_expired: boolean;
   status: string;
 }
 
@@ -82,6 +82,9 @@ export class SetuService {
     );
   }
 
+  // NOTE: this should only get called if no subscription exists.
+  // setu allows creating up to 3 subscriptions per twitter account.
+  // maybe we limit it to 1.
   createSubscription(
     params: SubscriptionParams & { username_deso: string; twitter_username: string }
   ): Observable<GetCurrentSubscriptionsResponse> {

@@ -68,7 +68,7 @@ export class SignUpComponent {
 
   setStep() {
     // If user has completed onboarding, redirect to follow feed
-    if (false /* !isNil(this.globalVars.loggedInUser?.ProfileEntryResponse?.Username) */) {
+    if (!isNil(this.globalVars.loggedInUser?.ProfileEntryResponse?.Username)) {
       const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
       const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
       this.router.navigate([redirectPath], {
@@ -151,10 +151,9 @@ export class SignUpComponent {
       .subscribe(() => {
         this.globalVars.updateEverything().add(() => {
           const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
+          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.TWITTER_SYNC}` : signUpRedirect;
           this.router
             .navigate([redirectPath], {
-              queryParams: { feedTab: "Hot" },
               queryParamsHandling: "merge",
             })
             .then(() => {

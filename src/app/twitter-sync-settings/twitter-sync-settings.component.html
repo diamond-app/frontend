@@ -1,5 +1,13 @@
 <p>twitter-sync-settings works!</p>
-<button (click)="loginWithTwitter()">Setu Login</button>
 
-<!-- NOTE: only show this if the derived key is expired or doesn't exist -->
-<button (click)="updateDerivedKey()">Subscribe</button>
+<button *ngIf="!this.globalVars.loggedInUser" (click)="this.globalVars.launchLoginFlow()">Login with DeSo</button>
+
+<ng-template *ngIf="this.globalVars.loggedInUser.ProfileEntryResponse">
+  <button (click)="loginWithTwitter()">Login with twitter</button>
+
+  <!-- NOTE: only show this if the derived key is expired or doesn't exist -->
+  <button (click)="syncAllTweets()">Subscribe</button>
+
+  <!-- NOTE: give some option to update this stuff later -->
+  <a [routerLink]="['/' + 'browse']">Skip</a>
+</ng-template>

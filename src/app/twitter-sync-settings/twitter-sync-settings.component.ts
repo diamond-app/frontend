@@ -1,10 +1,16 @@
 //@ts-strict
 import { Component, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
 import { forkJoin } from "rxjs";
 import { first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { IdentityService, TransactionSpendingLimitResponse } from "src/app/identity.service";
-import { GetCurrentSubscriptionsResponse, GetDerivedKeyStatusResponse, SetuService } from "src/app/setu.service";
+import {
+  GetCurrentSubscriptionsResponse,
+  GetDerivedKeyStatusResponse,
+  SetuService,
+  SubscriptionType,
+} from "src/app/setu.service";
 
 interface TwitterUserData {
   twitter_user_id: string;
@@ -26,7 +32,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   setuSubscriptions?: GetCurrentSubscriptionsResponse;
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
 
-  constructor(private setu: SetuService, private globalVars: GlobalVarsService, private identity: IdentityService) {
+  constructor(
+    public globalVars: GlobalVarsService,
+    private setu: SetuService,
+    private identity: IdentityService,
+    private router: Router
+  ) {
     this.updateTwitterUserData();
   }
 
@@ -51,7 +62,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       throw new Error("cannot generate a derived key without a logged in user");
     }
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    this.identity
+    return this.identity
       .launchDerive(
         publicKey,
         {
@@ -90,10 +101,40 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         }),
         takeWhile(() => !this.isDestroyed),
         first()
+      );
+  }
+
+  syncAllTweets() {
+    if (!(this.globalVars.loggedInUser?.ProfileEntryResponse && this.twitterUserData)) {
+      throw new Error("cannot sync tweets without a profile");
+    }
+
+    const params = {
+      username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
+      public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      twitter_username: this.twitterUserData.twitter_username,
+      twitter_user_id: this.twitterUserData.twitter_user_id,
+      subscription_type: "all_tweets" as SubscriptionType,
+      include_retweets: false,
+      include_quote_tweets: false,
+      hashtags: "",
+    };
+
+    this.updateDerivedKey()
+      .pipe(
+        switchMap(() => {
+          return this.setu.createSubscription(params);
+        })
       )
-      .subscribe((res) => {
-        console.log("it works!", res);
-      });
+      .subscribe(
+        (res) => {
+          // TODO: show some success thing and redirect to the browse page.
+          console.log(res);
+        },
+        (err) => {
+          this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
+        }
+      );
   }
 
   ngOnDestroy() {
