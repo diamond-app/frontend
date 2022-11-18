@@ -1787,16 +1787,14 @@ app-landing-page {
 .global__sidebar__fixed {
   top: 64px;
   height: calc(100% - 64px);
+  padding: 20px 0 20px 20px;
   position: fixed;
   overflow-y: scroll;
   border-left: 1px solid var(--border);
 }
 
 .global__sidebar__inner {
-  margin-top: 20px;
   width: $global__sidebar__width;
-  height: calc(100% - 20px);
-  padding-left: 20px;
 }
 
 .global__center__width {
@@ -2341,6 +2339,7 @@ sign-up {
     height: 16px;
     width: 16px;
     color: var(--text);
+    margin: 0px 12px;
     svg {
       position: relative;
       top: -7px;
@@ -2925,9 +2924,7 @@ bs-dropdown-container {
   }
   change-account-selector {
     position: relative;
-    top: 2px;
     width: 164px;
-    height: 48px;
   }
 }
 
@@ -5224,11 +5221,12 @@ input {
 
 .feed__tag-container-mobile {
   position: fixed !important;
-  top: 65px;
+  margin-left: 10px;
+  top: 68px;
   left: 205px;
   z-index: 1;
   &.logged-out {
-    top: 96px;
+    top: 99px;
   }
 }
 
