@@ -3,6 +3,7 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TranslocoService } from "@ngneat/transloco";
 import { escape, has } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import "quill-mention";
@@ -38,6 +39,8 @@ export interface BlogPostExtraData {
   BlogDeltaRtfFormat: string;
   BlogTitleSlug: string;
   CoverImage: string;
+  Node?: string;
+  Language?: string;
 }
 
 class FormModel {
@@ -144,7 +147,8 @@ export class CreateLongPostComponent implements AfterViewInit {
     private router: Router,
     private titleService: Title,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private translocoService: TranslocoService
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
   }
@@ -325,13 +329,21 @@ export class CreateLongPostComponent implements AfterViewInit {
         .reverse()
         .join(" ");
 
-      const postExtraData: BlogPostExtraData = {
+      let postExtraData: BlogPostExtraData = {
         Title: this.model.Title.trim(),
         Description: this.model.Description.trim(),
         BlogDeltaRtfFormat: JSON.stringify(this.model.ContentDelta),
         BlogTitleSlug: titleSlug,
         CoverImage: (this.coverImageFile && (await this.uploadImage(this.coverImageFile))) ?? this.model.CoverImage,
       };
+
+      if (environment.node.id) {
+        postExtraData.Node = environment.node.id.toString();
+      }
+
+      if (this.translocoService.getActiveLang()) {
+        postExtraData.Language = this.translocoService.getActiveLang();
+      }
 
       const permalink = `${window.location.origin}/u/${currentUserProfile.Username}/blog/${titleSlug}`;
       const postTx = await this.backendApi
