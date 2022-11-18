@@ -62,10 +62,10 @@
           <button
             *ngIf="item.icon === 'send' && item.category === 'nft' && item.nftEntryResponses?.length > 0"
             class="secondary-button"
-            style="width: 120px; height: 40px"
+            style="height: 40px"
             (click)="acceptTransfer($event, item)"
           >
-            Accept NFT
+            <span class="mr-16px">Accept NFT</span>
           </button>
         </div>
       </div>
