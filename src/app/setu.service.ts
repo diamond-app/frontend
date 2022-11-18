@@ -42,35 +42,35 @@ export class SetuService {
   }
 
   updateDerivedKey(params: {
-    publicKey: string;
     derivedSeedHex: string;
     derivedPublicKey: string;
-    btcDepositAddress: string;
-    ethDepositAddress: string;
+    publicKeyBase58Check: string;
     expirationBlock: number;
-    network: string;
     accessSignature: string;
-  }): Observable<{ status: string }> {
+    jwt: string;
+    derivedJwt: string;
+    transactionSpendingLimitHex: string;
+  }): Observable<{ TransactionHex: string }> {
+    return this.http.post<{ TransactionHex: string }>(buildURL("real-time-sync/derived-cred-callback"), params);
+  }
+
+  // Q: when would we ever set this to anything other than 1?
+  changeSignedStatus(params: { public_key: string; is_signed?: 1 | 0 }): Observable<{ status: string }> {
     return this.getJwt().pipe(
       switchMap((jwt) => {
-        return this.http.post<{ status: string }>(buildURL("real-time-sync/derived-cred-callback"), {
+        return this.http.post<{ status: string }>(buildURL("real-time-sync/change-sign-status"), {
           ...params,
+          is_signed: typeof params.is_signed === "undefined" ? 1 : params.is_signed,
           jwt,
         });
       })
     );
   }
 
-  // Q: when would we ever set this to anything other than 1?
-  changeSignedStatus(params: { public_key: string; is_signed: 1 | 0 }): Observable<{ status: string }> {
-    return this.getJwt().pipe(
-      switchMap((jwt) => {
-        return this.http.post<{ status: string }>(buildURL("real-time-sync/change-sign-status"), {
-          ...params,
-          jwt,
-        });
-      })
-    );
+  submitTx(signed_transaction_hex: string): Observable<GetDerivedKeyStatusResponse> {
+    return this.http.post<GetDerivedKeyStatusResponse>(buildURL("tweets/submit-transaction"), {
+      signed_transaction_hex,
+    });
   }
 
   getCurrentSubscription(

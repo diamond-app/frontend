@@ -1,8 +1,9 @@
 //@ts-strict
 import { Component, OnDestroy } from "@angular/core";
 import { forkJoin } from "rxjs";
-import { first } from "rxjs/operators";
+import { first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { IdentityService, TransactionSpendingLimitResponse } from "src/app/identity.service";
 import { GetCurrentSubscriptionsResponse, GetDerivedKeyStatusResponse, SetuService } from "src/app/setu.service";
 
 interface TwitterUserData {
@@ -25,7 +26,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   setuSubscriptions?: GetCurrentSubscriptionsResponse;
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
 
-  constructor(private setu: SetuService, private globalVars: GlobalVarsService) {
+  constructor(private setu: SetuService, private globalVars: GlobalVarsService, private identity: IdentityService) {
     this.updateTwitterUserData();
   }
 
@@ -43,6 +44,56 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       "SetuTwitterLoginWindow",
       `toolbar=no, width=${w}, height=${h}, top=${y}, left=${x}`
     );
+  }
+
+  updateDerivedKey() {
+    if (!this.globalVars.loggedInUser) {
+      throw new Error("cannot generate a derived key without a logged in user");
+    }
+    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    this.identity
+      .launchDerive(
+        publicKey,
+        {
+          GlobalDESOLimit: 1e9,
+          TransactionCountLimitMap: {
+            SUBMIT_POST: 1e6,
+            AUTHORIZE_DERIVED_KEY: 1,
+          },
+        } as TransactionSpendingLimitResponse,
+        365 * 10
+      )
+      .pipe(
+        switchMap((derivedKeyPayload) => {
+          return this.setu.updateDerivedKey({
+            derivedSeedHex: derivedKeyPayload.derivedSeedHex,
+            derivedPublicKey: derivedKeyPayload.derivedPublicKeyBase58Check,
+            publicKeyBase58Check: derivedKeyPayload.publicKeyBase58Check,
+            expirationBlock: derivedKeyPayload.expirationBlock,
+            accessSignature: derivedKeyPayload.accessSignature,
+            jwt: derivedKeyPayload.jwt,
+            derivedJwt: derivedKeyPayload.derivedJwt,
+            transactionSpendingLimitHex: derivedKeyPayload.transactionSpendingLimitHex,
+          });
+        }),
+        switchMap(({ TransactionHex }) => {
+          return this.identity.sign({
+            transactionHex: TransactionHex,
+            ...this.identity.identityServiceParamsForKey(publicKey),
+          });
+        }),
+        switchMap(({ signedTransactionHex }) => {
+          return this.setu.submitTx(signedTransactionHex);
+        }),
+        switchMap(() => {
+          return this.setu.changeSignedStatus({ public_key: publicKey });
+        }),
+        takeWhile(() => !this.isDestroyed),
+        first()
+      )
+      .subscribe((res) => {
+        console.log("it works!", res);
+      });
   }
 
   ngOnDestroy() {
