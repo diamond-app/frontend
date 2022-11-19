@@ -6,7 +6,10 @@
     <span class="fas fa-spinner fa-spin"></span>
     <div class="fs-14px">Calculating latest earnings...</div>
   </div>
-  <ng-container *ngIf="!this.isLoading && this.earningsDetail">
+  <div *ngIf="!this.isLoading && this.apiError" class="text-center">
+    {{ this.apiError }}
+  </div>
+  <ng-container *ngIf="!this.isLoading && !this.apiError && this.earningsDetail">
     <div class="d-flex mb-2">
       <div>Total Earnings</div>
       <div class="ml-auto">≈ {{ this.globalVars.nanosToUSD(this.totalEarningsNanos) }}</div>

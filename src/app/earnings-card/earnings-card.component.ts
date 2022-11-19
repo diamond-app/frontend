@@ -16,6 +16,7 @@ export class EarningsCardComponent implements OnChanges, OnDestroy {
   isDestroyed: boolean = false;
   earningsDetail?: OpenProsperEarningsDetail;
   isLoading: boolean = false;
+  apiError: string = "";
   isNftEarningsBreakdownOpen: boolean = false;
 
   get totalEarningsNanos() {
@@ -49,9 +50,16 @@ export class EarningsCardComponent implements OnChanges, OnDestroy {
         first(),
         finalize(() => (this.isLoading = false))
       )
-      .subscribe((earnings) => {
-        this.earningsDetail = earnings;
-      });
+      .subscribe(
+        (earnings) => {
+          this.earningsDetail = earnings;
+          this.apiError = "";
+        },
+        (err) => {
+          this.earningsDetail = undefined;
+          this.apiError = "Whoops, something went wrong. Try reloading the page.";
+        }
+      );
   }
 
   ngOnDestroy() {
