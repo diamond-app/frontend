@@ -186,7 +186,7 @@ export class ProfileEntryResponse {
   };
   CoinPriceDeSoNanos?: number;
   StakeMultipleBasisPoints?: number;
-  PublicKeyBase58Check?: string;
+  PublicKeyBase58Check: string;
   UsersThatHODL?: any;
   Posts?: PostEntryResponse[];
   IsReserved?: boolean;
