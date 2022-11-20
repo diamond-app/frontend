@@ -183,9 +183,6 @@ export class GlobalVarsService {
   // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
 
-  // Buy DESO with ETH
-  showBuyWithETH = false;
-
   // Whether or not to show the Jumio verification flow.
   showJumio = false;
 
@@ -1357,7 +1354,7 @@ export class GlobalVarsService {
 
         // DESO
         this.NanosSold = res.NanosSold;
-        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoCoinbase;
         this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
         this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
 

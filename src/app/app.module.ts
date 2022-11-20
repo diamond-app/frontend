@@ -44,12 +44,15 @@ import { BottomBarMobileTabComponent } from "./bottom-bar-mobile/bottom-bar-mobi
 import { BottomBarMobileComponent } from "./bottom-bar-mobile/bottom-bar-mobile.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { BuyDeSoCompleteComponent } from "./buy-deso-page/buy-deso-complete/buy-deso-complete.component";
-import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 import { BuyDeSoLoggedOutComponent } from "./buy-deso-page/buy-deso-logged-out/buy-deso-logged-out.component";
+import { BuyDeSoMegaSwapComponent } from "./buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component";
 import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { BuyDeSoUSDComponent } from "./buy-deso-page/buy-deso-usd/buy-deso-usd.component";
 import { BuyDeSoComponent } from "./buy-deso-page/buy-deso/buy-deso.component";
+import { CashoutModalComponent } from "./cashout/cashout-modal/cashout-modal.component";
+import { CashoutComponent } from "./cashout/cashout/cashout.component";
+import { DepositEventHistoryComponent } from "./cashout/deposit-event-history/deposit-event-history.component";
 import { ChangeAccountSelectorComponent } from "./change-account-selector/change-account-selector.component";
 import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
 import { CommentModalComponent } from "./comment-modal/comment-modal.component";
@@ -78,6 +81,7 @@ import { DiamondsModalComponent } from "./diamonds-details/diamonds-modal/diamon
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { UploadDirective } from "./directives/upload.directive";
+import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
 import { FeedCreatePostComponent } from "./feed/feed-create-post/feed-create-post.component";
 import { FeedPostDropdownComponent } from "./feed/feed-post-dropdown/feed-post-dropdown.component";
@@ -134,6 +138,7 @@ import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/bu
 import { PlaceBidModalComponent } from "./place-bid/place-bid-modal/place-bid-modal.component";
 import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
 import { PlaceBidComponent } from "./place-bid/place-bid.component";
+import { PostInteractionDetailsComponent } from "./post-interaction-details/post-interaction-details.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
 import { PostThreadComponent } from "./post-thread-page/post-thread/post-thread.component";
 import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
@@ -207,12 +212,6 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
-import { PostInteractionDetailsComponent } from './post-interaction-details/post-interaction-details.component';
-import { BuyDeSoMegaSwapComponent } from "./buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component";
-import { CashoutModalComponent } from './cashout/cashout-modal/cashout-modal.component';
-import { CashoutComponent } from './cashout/cashout/cashout.component';
-import { DepositEventHistoryComponent } from './cashout/deposit-event-history/deposit-event-history.component';
-import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { EarningsCardComponent } from './earnings-card/earnings-card.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
@@ -390,7 +389,6 @@ export function playerFactory() {
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
-    BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
     PostMultiplierComponent,
     TransferNftModalComponent,

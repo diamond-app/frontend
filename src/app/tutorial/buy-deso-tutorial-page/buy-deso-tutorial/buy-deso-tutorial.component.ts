@@ -1,17 +1,16 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
-import { Title } from "@angular/platform-browser";
-import * as introJs from "intro.js/intro.js";
-import { includes, shuffle } from "lodash";
 import { LocationStrategy } from "@angular/common";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
-import { map } from "rxjs/operators";
-import { BuyDesoModalComponent } from "../../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import * as introJs from "intro.js/intro.js";
+import { includes } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
+import { environment } from "src/environments/environment";
+import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { BuyDesoModalComponent } from "../../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { GlobalVarsService } from "../../../global-vars.service";
 
 @Component({
   selector: "buy-deso-tutorial",
@@ -59,7 +58,7 @@ export class BuyDesoTutorialComponent implements OnInit {
 
   openBuyDeSoModal(isFiat: boolean) {
     const initialState = {
-      activeTabInput: isFiat ? this.BuyDeSoComponent.BUY_WITH_USD : this.BuyDeSoComponent.BUY_WITH_BTC,
+      activeTabInput: isFiat ? BuyDeSoComponent.BUY_WITH_USD : BuyDeSoComponent.BUY_WITH_MEGASWAP,
     };
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
@@ -78,8 +77,7 @@ export class BuyDesoTutorialComponent implements OnInit {
     setTimeout(() => {
       if (this.followCreators) {
         this.followCreatorsIntro();
-      }
-      else if (!this.investInYourself) {
+      } else if (!this.investInYourself) {
         this.investInOthersIntro();
       } else {
         this.investInYourselfIntro();

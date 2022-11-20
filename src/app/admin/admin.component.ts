@@ -1,12 +1,12 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { sprintf } from "sprintf-js";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import * as _ from "lodash";
+import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
+import * as _ from "lodash";
+import { sprintf } from "sprintf-js";
 import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -764,7 +764,7 @@ export class AdminComponent implements OnInit {
 
   _loadUSDToDeSoReserveExchangeRate(): void {
     this.backendApi.GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode).subscribe(
-      (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
+      (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSoCoinbase / 100),
       (err) => console.log(err)
     );
   }
@@ -1106,7 +1106,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSo / 100)
+                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSoCoinbase / 100)
               );
             },
             (err: any) => {
@@ -1143,7 +1143,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSo / 100)
+                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSoCoinbase / 100)
               );
             },
             (err: any) => {
