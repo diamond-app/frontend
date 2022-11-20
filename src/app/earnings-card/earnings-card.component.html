@@ -1,6 +1,14 @@
 <div class="right-bar-creators__wallet-container">
-  <header class="mb-4">
+  <header class="mb-3">
     <h2 class="fs-16px font-weight-bold">@{{ this.profile.Username }} Creator Earnings</h2>
+    <a
+      target="_blank"
+      class="fs-12px font-weight-normal mt-5px fc-secondary"
+      [href]="'https://openprosper.com/u/' + this.profile.Username"
+    >
+      <i class="fas fa-external-link-alt pr-5px"></i>
+      Powered by OpenProsper
+    </a>
   </header>
   <div *ngIf="this.isLoading" class="text-center py-4">
     <span class="fas fa-spinner fa-spin"></span>
