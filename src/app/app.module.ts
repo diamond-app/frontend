@@ -212,7 +212,7 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
-import { EarningsCardComponent } from './earnings-card/earnings-card.component';
+import { EarningsCardComponent } from "./earnings-card/earnings-card.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
