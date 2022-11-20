@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
 import { RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
+import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "sign-up-transfer-deso",
@@ -49,7 +49,7 @@ export class SignUpTransferDesoComponent implements OnInit {
     this.showModal = false;
     this.modalReappear = false;
     const initialState = {
-      activeTabInput: isFiat ? this.BuyDeSoComponent.BUY_WITH_USD : this.BuyDeSoComponent.BUY_WITH_BTC,
+      activeTabInput: isFiat ? BuyDeSoComponent.BUY_WITH_USD : BuyDeSoComponent.BUY_WITH_MEGASWAP,
     };
     const modalDetails = this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",

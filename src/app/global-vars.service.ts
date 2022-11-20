@@ -7,9 +7,11 @@ import { AmplitudeClient } from "amplitude-js";
 import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { forkJoin, Observable, Observer, of, Subscription } from "rxjs";
+import { Observable, Observer, of, Subscription } from "rxjs";
+import { catchError } from "rxjs/operators";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
@@ -17,7 +19,7 @@ import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
-import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
+import { ApiInternalService } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
@@ -29,14 +31,11 @@ import {
   User,
 } from "./backend-api.service";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
+import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
-import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
-import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
-import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService } from "./api-internal.service";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -183,9 +182,6 @@ export class GlobalVarsService {
 
   // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
-
-  // Buy DESO with ETH
-  showBuyWithETH = false;
 
   // Whether or not to show the Jumio verification flow.
   showJumio = false;
@@ -1358,7 +1354,7 @@ export class GlobalVarsService {
 
         // DESO
         this.NanosSold = res.NanosSold;
-        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoCoinbase;
         this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
         this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
 

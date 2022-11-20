@@ -1,15 +1,15 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { BackendApiService, User } from "./backend-api.service";
-import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { IdentityService } from "./identity.service";
-import * as _ from "lodash";
 import * as introJs from "intro.js/intro.js";
-import { environment } from "../environments/environment";
-import { ThemeService } from "./theme/theme.service";
+import * as _ from "lodash";
+import { isNil } from "lodash";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { isNil } from "lodash";
+import { environment } from "../environments/environment";
+import { BackendApiService, User } from "./backend-api.service";
+import { GlobalVarsService } from "./global-vars.service";
+import { IdentityService } from "./identity.service";
+import { ThemeService } from "./theme/theme.service";
 
 @Component({
   selector: "app-root",
@@ -118,11 +118,11 @@ export class AppComponent implements OnInit {
       this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
         ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
-          catchError((err) => {
-            console.error(err);
-            return of(null);
-          })
-        )
+            catchError((err) => {
+              console.error(err);
+              return of(null);
+            })
+          )
         : of(null)
     ).subscribe(
       ([res, userMetadata]) => {
@@ -204,7 +204,6 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         this.globalVars.isTestnet = res.IsTestnet;
