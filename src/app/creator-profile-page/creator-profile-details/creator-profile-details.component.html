@@ -11,9 +11,7 @@
     (userUnblocked)="unblockUser()"
     (userBlocked)="blockUser()"
   ></creator-profile-top-card>
-  <wallet-widget
-    *ngIf="globalVars.isMobile() && profile.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
-  ></wallet-widget>
+  <app-earnings-card *ngIf="globalVars.isMobile()" [profile]="profile"></app-earnings-card>
   <!-- Feed Selector -->
   <tab-selector
     [tabs]="['Posts', 'Blog', 'Creator Coin', 'Diamonds', 'NFTs']"
