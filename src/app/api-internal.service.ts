@@ -22,6 +22,7 @@ export interface AppUser {
   ReceiveCoinPurchaseNotif: boolean;
   ReceiveFollowNotif: boolean;
   ReceiveBasicTransferNotif: boolean;
+  ReceiveDmNotif: boolean;
   ReceiveLikeNotif: boolean;
   ReceiveCommentNotif: boolean;
   ReceiveDiamondNotif: boolean;
@@ -42,6 +43,7 @@ export const NEW_APP_USER_DEFAULTS = {
   ReceiveCoinPurchaseNotif: false,
   ReceiveFollowNotif: false,
   ReceiveBasicTransferNotif: false,
+  ReceiveDmNotif: false,
   ReceiveCommentNotif: false,
   ReceiveDiamondNotif: false,
   ReceiveRepostNotif: false,
@@ -60,6 +62,7 @@ export const SUBSCRIBED_APP_USER_DEFAULTS = {
   ReceiveCoinPurchaseNotif: true,
   ReceiveFollowNotif: false,
   ReceiveBasicTransferNotif: true,
+  ReceiveDmNotif: true,
   ReceiveCommentNotif: true,
   ReceiveDiamondNotif: true,
   ReceiveRepostNotif: false,
