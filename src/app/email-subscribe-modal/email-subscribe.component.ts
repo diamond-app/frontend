@@ -13,7 +13,7 @@ import { ThemeService } from "../theme/theme.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: "settings",
+  selector: "email-subscribe",
   templateUrl: "./email-subscribe.component.html",
   styleUrls: ["./email-subscribe.component.scss"],
 })
