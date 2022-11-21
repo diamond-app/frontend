@@ -132,7 +132,7 @@
       <a
         class="btn creator-profile-top-card__buy-btn"
         (click)="openBuyCreatorCoinModal($event)"
-        *ngIf="!globalVars.isMobile() && getFoundersRewardPercent() < 100"
+        *ngIf="!globalVars.isMobile() && (getFoundersRewardPercent() < 100 || profile.PublicKeyBase58Check === globalVars?.loggedInUser?.PublicKeyBase58Check)"
       >
         {{ 'creator_profile_top_card.buy' | transloco }}
       </a>
