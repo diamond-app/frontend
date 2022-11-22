@@ -126,11 +126,15 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       )
       .subscribe(
         (res) => {
-          this.globalVars._alertSuccess("Great, your all set up!", undefined, () => {
-            this.router.navigate(["/browse"], {
-              queryParamsHandling: "merge",
-            });
-          });
+          this.globalVars._alertSuccess(
+            "Great, you're all set up! Tweets posted on twitter.com will sync to the Deso blockchain.",
+            undefined,
+            () => {
+              this.router.navigate(["/browse"], {
+                queryParamsHandling: "merge",
+              });
+            }
+          );
         },
         (err) => {
           this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
