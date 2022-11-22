@@ -11,6 +11,7 @@ import {
   SetuService,
   SubscriptionType,
 } from "src/app/setu.service";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 interface TwitterUserData {
   twitter_user_id: string;
@@ -157,6 +158,44 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
         }
       );
+  }
+
+  unsubscribe() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      icon: "warning",
+      title: "Warning",
+      html: "Are you sure you want to stop syncing your tweets to the DeSo blockchain?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      focusConfirm: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+    }).then((res: any) => {
+      console.log(res);
+      if (!(this.twitterUserData && this.globalVars.loggedInUser)) {
+        this.globalVars._alertError("Something went wrong! Please try reloading the page.");
+        return;
+      }
+
+      this.setu
+        .unsubscribe({
+          twitter_user_id: this.twitterUserData.twitter_user_id,
+          public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+        })
+        .subscribe(
+          (res) => {
+            if (res.status === "success") {
+              this.setuSubscriptions = undefined;
+            }
+          },
+          (err) => {
+            this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
+          }
+        );
+    });
   }
 
   ngOnDestroy() {

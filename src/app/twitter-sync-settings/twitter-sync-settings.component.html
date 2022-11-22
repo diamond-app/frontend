@@ -49,17 +49,20 @@ create one, which will bring them back here to do the twitter sync after they fi
           </button>
         </div>
 
-        <p class="mb-2 py-3" *ngIf="this.hasActiveSubscription">
-          You're all set up! Tweets posted by @{{ this.twitterUserData?.twitter_username }} on
-          <a
-            [href]="'https://twitter.com/' + this.twitterUserData?.twitter_username"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Twitter
-          </a>
-          will sync to the Deso blockchain.
-        </p>
+        <div *ngIf="this.hasActiveSubscription">
+          <p class="mb-2 py-3">
+            You're all set up! Tweets posted by @{{ this.twitterUserData?.twitter_username }} on
+            <a
+              [href]="'https://twitter.com/' + this.twitterUserData?.twitter_username"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Twitter
+            </a>
+            will sync to the Deso blockchain.
+          </p>
+          <button (click)="unsubscribe()">Unsubscribe</button>
+        </div>
       </ng-container>
     </div>
   </div>
