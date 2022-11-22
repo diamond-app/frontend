@@ -101,6 +101,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       );
   }
 
+  /**
+   * First we create a derived key that the setu twitter bot can use to make posts on the users behalf.
+   * We send this key to setu and then update the users setu subscription with a reasonable default:
+   * sync all tweets except reposts and quote reposts.
+   *
+   */
   syncAllTweets() {
     if (!(this.globalVars.loggedInUser?.ProfileEntryResponse && this.twitterUserData)) {
       throw new Error("cannot sync tweets without a profile");
