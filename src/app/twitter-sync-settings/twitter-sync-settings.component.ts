@@ -30,6 +30,16 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   setuSubscriptions?: GetCurrentSubscriptionsResponse;
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
   isProcessingSubscription: boolean = false;
+  isLoggingInWithTwitter: boolean = false;
+
+  get hasActiveSubscription() {
+    return (
+      !!this.twitterUserData &&
+      !this.derivedKeyStatus?.is_expired &&
+      this.derivedKeyStatus?.status === "success" &&
+      !!this.setuSubscriptions
+    );
+  }
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -39,6 +49,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   ) {}
 
   loginWithTwitter() {
+    this.isLoggingInWithTwitter = true;
     this.boundPostMessageListener = this.postMessageListener.bind(this);
     window.addEventListener("message", this.boundPostMessageListener);
 
@@ -161,7 +172,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       throw new Error("twitter user data missing");
     }
 
-    this.twitterUserData = event.data as TwitterUserData;
+    const twitterUserData = event.data as TwitterUserData;
+    this.twitterUserData = twitterUserData;
+
     if (this.globalVars.loggedInUser && this.twitterUserData) {
       forkJoin([
         this.setu.getCurrentSubscription({
@@ -170,14 +183,18 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         }),
         this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check),
       ])
-        .pipe(first())
+        .pipe(
+          first(),
+          finalize(() => (this.isLoggingInWithTwitter = false))
+        )
         .subscribe(
           ([subscription, derivedKeyStatus]) => {
             this.setuSubscriptions = subscription;
             this.derivedKeyStatus = derivedKeyStatus;
           },
           (err) => {
-            // TODO: error handling
+            this.setuSubscriptions = undefined;
+            this.derivedKeyStatus = undefined;
           }
         );
     }

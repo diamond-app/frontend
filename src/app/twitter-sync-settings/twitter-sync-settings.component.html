@@ -1,7 +1,10 @@
 <section class="text-center p-5">
   <header>
     <h1 class="font-weight-bold fs-24px">Link your twitter on-chain</h1>
-    <p class="fc-secondary">Store your tweets on a decentralized blockchain so you have access to it forever!</p>
+    <p class="fc-secondary">
+      By syncing your tweets with the DeSo blockchain, all of your content will become fully censorship-resistant and
+      open to monetization so you can earn directly from the content you create!
+    </p>
   </header>
   <div class="twitter-sync-settings__content">
     <!-- if viewing this component in a logged out state, we need the user to log in -->
@@ -22,7 +25,7 @@ create one, which will bring them back here to do the twitter sync after they fi
     </div>
 
     <div *ngIf="this.globalVars.loggedInUser?.ProfileEntryResponse && !this.isProcessingSubscription">
-      <p *ngIf="!!this.twitterUserData">
+      <p *ngIf="!!this.twitterUserData" class="mb-1">
         You are logged in as
         <a
           [href]="'https://twitter.com/' + this.twitterUserData.twitter_username"
@@ -39,24 +42,36 @@ create one, which will bring them back here to do the twitter sync after they fi
         </button>
       </div>
 
-      <div class="mb-2">
-        <button *ngIf="!!this.twitterUserData" class="btn btn-primary w-100" (click)="syncAllTweets()">
-          Sync my tweets
-        </button>
-      </div>
+      <ng-container *ngIf="!this.isLoggingInWithTwitter">
+        <div class="mb-2" *ngIf="!this.hasActiveSubscription">
+          <button *ngIf="!!this.twitterUserData" class="btn btn-primary w-100" (click)="syncAllTweets()">
+            Sync my tweets
+          </button>
+        </div>
 
-      <a [routerLink]="['/' + 'browse']">Skip</a>
+        <p class="mb-2 py-3" *ngIf="this.hasActiveSubscription">
+          You're all set up! Tweets posted by @{{ this.twitterUserData?.twitter_username }} on
+          <a
+            [href]="'https://twitter.com/' + this.twitterUserData?.twitter_username"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Twitter
+          </a>
+          will sync to the Deso blockchain.
+        </p>
+      </ng-container>
     </div>
   </div>
 
-  <p class="mb-4 fc-secondary">Earn free diamonds for the first 100 tweets you sync</p>
-
-  <footer class="fs-14px">
-    <p>
+  <footer>
+    <p class="fc-secondary">Earn free diamonds for the first 100 tweets you sync</p>
+    <p class="fs-14px mb-4">
       Powered by
       <a href="https://web3setu.com" target="_blank" rel="noopener noreferrer">
         <img src="/assets/img/setu-logo.png" alt="https://web3setu.com" height="24" />
       </a>
     </p>
+    <a [routerLink]="['/' + 'browse']" class="fs-14px">Take me to the Feed</a>
   </footer>
 </section>
