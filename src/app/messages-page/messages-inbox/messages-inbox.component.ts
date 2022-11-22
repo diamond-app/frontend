@@ -43,6 +43,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private route: ActivatedRoute,
     private router: Router
   ) {
+
+  }
+
+  initializeRouteParams() {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
       let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
@@ -50,8 +54,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
           ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
           : storedTab
-          ? storedTab
-          : MessagesInboxComponent.QUERYTOTAB.all;
+            ? storedTab
+            : MessagesInboxComponent.QUERYTOTAB.all;
 
       // Set the default active tab if there's nothing saved in local storage
       if (this.activeTab === null) {
@@ -81,9 +85,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if (!this.isMobile) {
-      this._setSelectedThreadBasedOnDefaultThread();
-    }
+    this.globalVars.LoadInitialMessages().add(() => {
+      this.initializeRouteParams();
+      if (!this.isMobile) {
+        this._setSelectedThreadBasedOnDefaultThread();
+      }
+    })
   }
 
   ngOnChanges(changes: any) {

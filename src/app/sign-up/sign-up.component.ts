@@ -1,13 +1,12 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { isNil, shuffle } from "lodash";
+import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
-import Swal from "sweetalert2";
-import { environment } from "../../environments/environment";
+import { ApiInternalService } from "src/app/api-internal.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { RouteNames } from "../app-routing.module";
 import { AppComponent } from "../app.component";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
 import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
@@ -30,7 +29,8 @@ export class SignUpComponent {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private identityService: IdentityService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private apiInternal: ApiInternalService
   ) {
     this.globalVars.isLeftBarMobileOpen = false;
     this.setStep();
@@ -134,9 +134,12 @@ export class SignUpComponent {
   }
 
   finishOnboarding() {
-    // this.backendApi
-    //   .OnboardingEmailSubscribe(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-    //   .subscribe(() => {
+    // sends a welcome email.
+    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(() => {
+      // TODO: use email response to show a "check your email" UI toast? not sure
+      // what we want to do with it, if anything.
+    });
+
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
@@ -159,7 +162,6 @@ export class SignUpComponent {
             });
         });
       });
-    // });
   }
 
   launchTutorial() {

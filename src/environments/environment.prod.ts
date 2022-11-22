@@ -3,6 +3,7 @@ export const environment = {
   nodeApi: "node.deso.org",
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
+  apiInternalHostname: "https://diamondapp.com",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
@@ -22,4 +23,6 @@ export const environment = {
     url: "https://deso.org",
     logoAssetDir: "/assets/deso/",
   },
+  megaswapURL: "https://megaswap.xyz",
+  megaswapAPI: "https://megaswap.dev",
 };

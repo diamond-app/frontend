@@ -7,9 +7,11 @@ import { AmplitudeClient } from "amplitude-js";
 import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { Observable, Observer } from "rxjs";
+import { Observable, Observer, of, Subscription } from "rxjs";
+import { catchError } from "rxjs/operators";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
+import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
@@ -17,6 +19,7 @@ import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { ApiInternalService } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
@@ -28,12 +31,11 @@ import {
   User,
 } from "./backend-api.service";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
+import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
-import { BuyDesoModalComponent } from "./buy-deso-page/buy-deso-modal/buy-deso-modal.component";
-import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -68,6 +70,7 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
+    private apiInternal: ApiInternalService,
     private locationStrategy: LocationStrategy,
     private modalService: BsModalService
   ) {}
@@ -180,9 +183,6 @@ export class GlobalVarsService {
   // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
 
-  // Buy DESO with ETH
-  showBuyWithETH = false;
-
   // Whether or not to show the Jumio verification flow.
   showJumio = false;
 
@@ -244,6 +244,7 @@ export class GlobalVarsService {
 
   // How many unread notifications the user has
   unreadNotifications: number = 0;
+  lastSeenNotificationIdx: number = 0;
 
   // Track when the user is signing up to prevent redirects
   userSigningUp: boolean = false;
@@ -286,6 +287,7 @@ export class GlobalVarsService {
         .then(
           (res) => {
             this.unreadNotifications = res.NotificationsCount;
+            this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
             if (res.UpdateMetadata) {
               this.backendApi
                 .SetNotificationsMetadata(
@@ -328,7 +330,7 @@ export class GlobalVarsService {
       return;
     }
 
-    this.backendApi
+    return this.backendApi
       .GetMessages(
         this.localNode,
         this.loggedInUser.PublicKeyBase58Check,
@@ -452,14 +454,69 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (user.BalanceNanos) {
-      this.getLoggedInUserDefaultKey();
+    // TODO: Only trigger this after user sign up.
+    if (user?.BalanceNanos) {
+      this.getLoggedInUserDefaultKey().add(async () => {
+        if (
+          !isNil(this.loggedInUserDefaultKey) &&
+          this.backendApi.GetStorage(this.backendApi.EmailNotificationsDismissalKey) === null
+        ) {
+          console.log("Here");
+          const missingField = await this.appUserMissingField();
+          console.log("Here2: ", missingField);
+          if (missingField !== "") {
+            this.modalService.show(EmailSubscribeComponent, {
+              class: "modal-dialog-centered buy-deso-modal",
+              initialState: {
+                missingField,
+              },
+            });
+          }
+        }
+      });
     }
+
+    // Only trigger this if the user has set their default key (prevent multiple consecutive modals).
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
-  getLoggedInUserDefaultKey() {
-    this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
+  // Check to see if the app user has created an email, and subsequently created a user in the diamond backend.
+  // The 3 possible return options are "" (email and user are both created), "email" (email has not been created), and
+  // "user" (email has been created, app user has not)
+  async appUserMissingField(): Promise<string> {
+    if (!this.loggedInUser?.ProfileEntryResponse) {
+      return "";
+    }
+    const getUserMetadataPromise = this.backendApi
+      .GetUserGlobalMetadata(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+      .toPromise();
+
+    const getAppUserPromise = this.apiInternal
+      .getAppUser(this.loggedInUser.PublicKeyBase58Check)
+      .pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            return of(null);
+          }
+          throw err;
+        })
+      )
+      .toPromise();
+
+    const [userMetadata, appUser] = await Promise.all([getUserMetadataPromise, getAppUserPromise]);
+    console.log("Here is the app user: ", appUser);
+    console.log("Here is the user metadata: ", userMetadata);
+    if (userMetadata.Email.length === 0) {
+      return "email";
+    }
+    if (appUser === null) {
+      return "user";
+    }
+    return "";
+  }
+
+  getLoggedInUserDefaultKey(): Subscription {
+    return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
       if (!res) {
         SwalHelper.fire({
           html:
@@ -1301,7 +1358,7 @@ export class GlobalVarsService {
 
         // DESO
         this.NanosSold = res.NanosSold;
-        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoCoinbase;
         this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
         this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
 

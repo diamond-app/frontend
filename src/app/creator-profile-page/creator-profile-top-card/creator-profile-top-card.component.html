@@ -42,7 +42,7 @@
           <i-feather name="check-circle" class="feather-medium"></i-feather>
         </div>
       </div>
-      <div style="whitespace: nowrap" class="d-flex">
+      <div *ngIf="profile.CoinPriceDeSoNanos > 0" style="whitespace: nowrap" class="d-flex">
         <div class="font-weight-bold" style="display: inline">
           ≈{{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
           <span class="fc-muted font-weight-normal">{{ 'creator_profile_top_card.coin_price' | transloco }}</span>
@@ -129,11 +129,10 @@
           ></follow-button>
         </ng-template>
       </div>
-
       <a
         class="btn creator-profile-top-card__buy-btn"
         (click)="openBuyCreatorCoinModal($event)"
-        *ngIf="!globalVars.isMobile()"
+        *ngIf="!globalVars.isMobile() && (getFoundersRewardPercent() < 100 || profile.PublicKeyBase58Check === globalVars?.loggedInUser?.PublicKeyBase58Check)"
       >
         {{ 'creator_profile_top_card.buy' | transloco }}
       </a>

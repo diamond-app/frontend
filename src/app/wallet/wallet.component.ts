@@ -6,6 +6,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { document } from "ngx-bootstrap/utils";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
+import { CashoutModalComponent } from "src/app/cashout/cashout-modal/cashout-modal.component";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
@@ -20,6 +21,7 @@ import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
+  styleUrls: ["./wallet.component.scss"],
 })
 export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   //constructor(private translocoService: TranslocoService) {}
@@ -206,6 +208,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
       backdrop: "static",
+    });
+  }
+
+  openCashOutModal(depositTicker: "DESO" | "DUSD") {
+    this.modalService.show(CashoutModalComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      backdrop: "static",
+      initialState: { depositTicker },
     });
   }
 

@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { of } from "rxjs";
+import { map, switchMap, takeWhile } from "rxjs/operators";
 import { environment } from "../../environments/environment";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { GlobalVarsService } from "../global-vars.service";
 
 export class RightBarTabOption {
   name: string;
@@ -22,13 +24,40 @@ export class RightBarTabOption {
 })
 export class RightBarCreatorsComponent implements OnInit {
   @Input() inTutorial: boolean = false;
+  isDestroyed: boolean = false;
+  earningsProfile?: ProfileEntryResponse;
 
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
+    private route: ActivatedRoute,
     private modalService: BsModalService
-  ) {}
+  ) {
+    route.params
+      .pipe(
+        takeWhile(() => !this.isDestroyed),
+        switchMap(({ username }) => {
+          // NOTE: If we are viewing another profile we show earnings for that
+          // profile. Otherwise, we show earnings for the currently logged in
+          // user (or nothing in case there is no logged in user)
+          if (
+            username &&
+            router.url.startsWith(`/u/${username}`) &&
+            username !== this.globalVars.loggedInUser?.ProfileEntryResponse.Username
+          ) {
+            return this.backendApi
+              .GetSingleProfile(this.globalVars.localNode, "", username)
+              .pipe(map((res) => res.Profile));
+          } else {
+            return of(this.globalVars.loggedInUser?.ProfileEntryResponse);
+          }
+        })
+      )
+      .subscribe((profile) => {
+        this.earningsProfile = profile;
+      });
+  }
 
   activeTab: string;
   selectedOptionWidth: string;
@@ -97,5 +126,9 @@ export class RightBarCreatorsComponent implements OnInit {
       class: "modal-dialog-centered buy-deso-modal",
       backdrop: "static",
     });
+  }
+
+  ngOnDestroy() {
+    this.isDestroyed = true;
   }
 }

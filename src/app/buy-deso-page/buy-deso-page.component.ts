@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
 import { Title } from "@angular/platform-browser";
 import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "buy-deso-page",

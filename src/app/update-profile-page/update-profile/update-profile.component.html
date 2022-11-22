@@ -162,6 +162,16 @@
               />
               <div class="fc-red fs-13px font-italic mt-5px" *ngIf="invalidEmailEntered">{{ 'update_profile.please_enter_valid_email' | transloco }}</div>
             </div>
+            <div class="update-profile__title">Subscribe to email notifications?</div>
+            <div class="custom-control custom-switch custom-switch-lg">
+              <input
+                [(ngModel)]="subscribeToEmailNotifs"
+                type="checkbox"
+                class="custom-control-input"
+                id="buyNowCheckbox"
+              />
+              <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
+            </div>
           </div>
           <div class="update-profile__title">{{ 'update_profile.description' | transloco }}</div>
 

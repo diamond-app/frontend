@@ -6,9 +6,10 @@ export const environment = {
   production: false,
   nodeApi: "node.deso.org",
   uploadImageHostname: "node.deso.org",
-  verificationEndpointHostname: "http://localhost:18001",
+  verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
+  apiInternalHostname: "http://localhost:8080",
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
@@ -26,4 +27,6 @@ export const environment = {
     url: "https://diamondapp.com",
     logoAssetDir: "/assets/diamond/",
   },
+  megaswapURL: "https://megaswap.xyz",
+  megaswapAPI: "https://megaswap.dev",
 };

@@ -1,15 +1,15 @@
 <div id="wallet-container">
-  <div
-    class="border"
-    style="border-radius: 10px 10px 0 0"
-    *ngIf="inTutorial"
-  >
+  <div class="border" style="border-radius: 10px 10px 0 0" *ngIf="inTutorial">
     <div class="tutorial-header">
       <div class="d-flex justify-content-between">
         <div class="tutorial-title">{{ tutorialHeaderText }}</div>
         <div class="d-flex align-items-center">
-          <div class="fc-secondary fs-15px">{{ 'wallet.tutorial_header_text.step' | transloco }} {{ tutorialStepNumber }}/4</div>
-          <button *ngIf="tutorialSkippable" class="tutorial-skip-button" (click)="skipTutorialStep()">{{ 'wallet.tutorial_header_text.skip' | transloco }}</button>
+          <div class="fc-secondary fs-15px">
+            {{ "wallet.tutorial_header_text.step" | transloco }} {{ tutorialStepNumber }}/4
+          </div>
+          <button *ngIf="tutorialSkippable" class="tutorial-skip-button" (click)="skipTutorialStep()">
+            {{ "wallet.tutorial_header_text.skip" | transloco }}
+          </button>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
           <!--Balance-->
           <div class="fs-15px">
             {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}
-            <span class="text-muted font-weight-normal">&nbsp;{{ 'wallet.total_balance' | transloco }}</span>
+            <span class="text-muted font-weight-normal">&nbsp;{{ "wallet.total_balance" | transloco }}</span>
           </div>
         </div>
       </div>
@@ -90,38 +90,50 @@
         <!--Clout in USD-->
         <div class="text-muted fs-15px">
           <span class="mr-5px">{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
-<!--          <a-->
-<!--            *ngIf="!globalVars.loggedInUser.JumioFinishedTime"-->
-<!--            (click)="globalVars.launchGetFreeDESOFlow(true)"-->
-<!--            class="fc-blue"-->
-<!--          >-->
-<!--            {{ 'wallet.claim_your_free' | transloco }} {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰-->
-<!--          </a>-->
+          <!--          <a-->
+          <!--            *ngIf="!globalVars.loggedInUser.JumioFinishedTime"-->
+          <!--            (click)="globalVars.launchGetFreeDESOFlow(true)"-->
+          <!--            class="fc-blue"-->
+          <!--          >-->
+          <!--            {{ 'wallet.claim_your_free' | transloco }} {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰-->
+          <!--          </a>-->
         </div>
       </div>
       <!--Buy/send DESO-->
-      <div class="d-flex" [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }">
-        <a (click)="openSendDeSoModal()">
-          <button class="plain-button mr-20px font-weight-bold wallet__buy-button">{{ 'wallet.send_deso' | transloco}}</button>
-        </a>
-        <a (click)="openBuyDeSoModal()">
-          <button class="primary-button font-weight-bold wallet__buy-button">{{ 'wallet.buy_deso' | transloco}}</button>
-        </a>
+      <div
+        class="d-flex wallet__action-buttons"
+        [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }"
+      >
+        <button (click)="openSendDeSoModal()" class="btn btn-outline-secondary font-weight-bold wallet__action-button">
+          {{ "wallet.send_deso" | transloco }}
+        </button>
+        <button (click)="openBuyDeSoModal()" class="btn btn-primary font-weight-bold wallet__action-button">
+          {{ "wallet.buy_deso" | transloco }}
+        </button>
+        <button (click)="openCashOutModal('DESO')" class="btn btn-success font-weight-bold wallet__action-button">
+          {{ "wallet.cash_out" | transloco }}
+        </button>
       </div>
     </div>
     <!--Third row-->
     <div class="d-flex justify-content-between feed-post__nft-footer align-items-center">
       <!--Creator coin balance-->
       <div class="d-flex flex-column">
-        <div class="fs-17px mb-5px font-weight-bold">{{ globalVars.loggedInUser.UsersYouHODL?.length }} Creator Coin{{ globalVars.loggedInUser.UsersYouHODL?.length > 1 ? "s" : "" }}</div>
-        <div class="fs-15px text-muted">{{ globalVars.nanosToDeSo(totalValue(), 0) }}&nbsp;$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+        <div class="fs-17px mb-5px font-weight-bold">
+          {{ globalVars.loggedInUser.UsersYouHODL?.length }} Creator Coin{{
+            globalVars.loggedInUser.UsersYouHODL?.length > 1 ? "s" : ""
+          }}
+        </div>
+        <div class="fs-15px text-muted">
+          {{ globalVars.nanosToDeSo(totalValue(), 0) }}&nbsp;$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}
+        </div>
       </div>
       <!--Purchase creator coins-->
       <div class="nft-bid-btn d-flex align-items-center">
         <a (click)="openBuyCreatorCoinsModal()">
           <button style="width: 165px">
             <i-feather name="user-plus" class="feather-small mr-10px"></i-feather>
-            <span class="fs-13px">{{ 'wallet.buy_creator_coins' | transloco }}</span>
+            <span class="fs-13px">{{ "wallet.buy_creator_coins" | transloco }}</span>
           </button>
         </a>
       </div>
@@ -131,22 +143,33 @@
   <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
     <div style="flex-grow: 1" class="wallet__table">
       <div class="global__mobile-scrollable-section disable-scrollbars">
-        <tab-selector [buttonSelector]="false" [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+        <tab-selector
+          [buttonSelector]="false"
+          [tabs]="tabs"
+          [activeTab]="activeTab"
+          (tabClick)="_handleTabClick($event)"
+        ></tab-selector>
 
         <div class="fs-15px" id="#wallet-rows">
-          <div
-            class="row no-gutters d-flex align-items-center p-16px fs-15px"
-          >
-            <div class="col-lg-5 col-7 mb-0 cursor-pointer fc-muted text-link_hover wallet-column" (click)="sortWallet('username')">
+          <div class="row no-gutters d-flex align-items-center p-16px fs-15px">
+            <div
+              class="col-lg-5 col-7 mb-0 cursor-pointer fc-muted text-link_hover wallet-column"
+              (click)="sortWallet('username')"
+            >
               <i-feather
                 class="feather-small position-relative"
                 *ngIf="sortedUsernameFromHighToLow !== 0"
                 name="{{ sortedUsernameFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
-                style="top: -2px"ac
+                style="top: -2px"
+                ac
               ></i-feather>
               Username
             </div>
-            <div class="wallet-column col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end" (click)="sortWallet('price')">
+            <div
+              class="wallet-column col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover"
+              style="text-align: end"
+              (click)="sortWallet('price')"
+            >
               <i-feather
                 class="feather-small position-relative"
                 *ngIf="sortedPriceFromHighToLow !== 0"
@@ -166,10 +189,11 @@
                 Value
               </span>
             </div>
-            <div class="wallet-column col-lg-2 col-2 cursor-pointer fc-muted text-link_hover" style="text-align: end; margin-bottom: 0px">
-              <span>
-                Actions
-              </span>
+            <div
+              class="wallet-column col-lg-2 col-2 cursor-pointer fc-muted text-link_hover"
+              style="text-align: end; margin-bottom: 0px"
+            >
+              <span>Actions</span>
             </div>
             <div class="col-lg-1 col-2 d-block mb-0"></div>
           </div>
@@ -183,12 +207,11 @@
           <div
             id="wallet-scroller"
             #walletScroller
-            [ngStyle]="{ 'max-height': (showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0 ? '0px' : 'unset' }"
+            [ngStyle]="{
+              'max-height': (showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0 ? '0px' : 'unset'
+            }"
           >
-            <div
-              #uiScroll
-              *uiScroll="let creator of datasource"
-            >
+            <div #uiScroll *uiScroll="let creator of datasource">
               <!-- Screen out zero balances -->
               <!-- How do we want to "highlight" the balance entry in the tutorial -->
               <div
@@ -202,9 +225,11 @@
                 <!-- Name-->
                 <a
                   class="wallet-column col-lg-5 col-7 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
-                  [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
+                  [routerLink]="
+                    inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]
+                  "
                   queryParamsHandling="merge"
-                  [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
+                  [ngStyle]="{ cursor: inTutorial ? 'auto' : 'pointer' }"
                 >
                   <div
                     [ngClass]="{
@@ -281,7 +306,9 @@
                       [inTutorial]="inTutorial"
                       [isHighlightedCreator]="isHighlightedCreator(creator)"
                       *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                      [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
+                      [ngClass]="{
+                        wiggle: inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle
+                      }"
                       (isSelling)="exitTutorial()"
                     ></wallet-actions-dropdown>
                   </div>

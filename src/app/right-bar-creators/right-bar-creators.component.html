@@ -9,19 +9,21 @@
       <div class="d-flex">
         <div class="w-100 deso-metrics">
           <div class="d-flex justify-content-between">
-            <div>{{ t('right_bar.creators.deso_price') }}</div>
+            <div>{{ t("right_bar.creators.deso_price") }}</div>
             <div>
               <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
           <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-            <div class="d-flex" style="min-width: 130px">{{ t('right_bar.creators.your_deso') }}</div>
+            <div class="d-flex" style="min-width: 130px">{{ t("right_bar.creators.your_deso") }}</div>
             <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
                 {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }}
-                <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
+                <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">
+                  ≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}
+                </span>
               </div>
               <!-- Amount in USD-->
               <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
@@ -33,14 +35,17 @@
       <a (click)="openBuyCloutModal()">
         <div class="d-flex justify-content-center cursor-pointer">
           <div class="buy-deso">
-            <span>{{ t('right_bar.creators.buy_deso') }}</span>
+            <span>{{ t("right_bar.creators.buy_deso") }}</span>
           </div>
         </div>
       </a>
     </div>
   </div>
 
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-20px fs-13px">
+  <div
+    *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial"
+    class="bg-light mb-20px fs-13px"
+  >
     <div class="jumio-status">
       <div class="cursor-pointer">
         <div *ngIf="globalVars.loggedInUser.HasEmail">
@@ -51,26 +56,27 @@
           </a>
           <div *ngIf="globalVars.resentVerifyEmail">
             <i-feather name="check"></i-feather>
-            <span>{{ t('right_bar.creators.sent') }}</span>
+            <span>{{ t("right_bar.creators.sent") }}</span>
           </div>
         </div>
-        <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.UPDATE_PROFILE" class="font-weight-bold">
+        <a
+          *ngIf="!globalVars.loggedInUser.HasEmail"
+          [routerLink]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
+          class="font-weight-bold"
+        >
           <i-feather name="mail"></i-feather>
-          <span>{{ t('right_bar.creators.update_your_email') }}</span>
+          <span>{{ t("right_bar.creators.update_your_email") }}</span>
           <i-feather name="chevron-right" class="right-20px"></i-feather>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- Creator Coin Info -->
-  <wallet-widget *ngIf="!inTutorial"></wallet-widget>
+  <app-earnings-card *ngIf="this.earningsProfile" [profile]="this.earningsProfile"></app-earnings-card>
 
   <div class="trend-box" *ngIf="!inTutorial">
     <!-- Title -->
-    <div
-      class="trend-title"
-    >
+    <div class="trend-title">
       <div class="d-flex">
         <span>{{ t(activeTab) }}</span>
         <!-- Dropdown -->
@@ -92,11 +98,7 @@
               <i class="fas fa-ellipsis-h"></i>
             </a>
           </div>
-          <div
-            class="dropdown-menu feed-post__dropdown-menu-item-repost"
-            style="min-width: 6rem"
-            *dropdownMenu
-          >
+          <div class="dropdown-menu feed-post__dropdown-menu-item-repost" style="min-width: 6rem" *dropdownMenu>
             <div>
               <a
                 *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
@@ -122,7 +124,7 @@
       <div class="d-flex" *ngIf="activeRightTabOption.poweredBy">
         <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
           <i class="fas fa-external-link-alt pr-5px"></i>
-          {{ t('right_bar.creators.powered_by')}} {{ activeRightTabOption.poweredBy.name }}
+          {{ t("right_bar.creators.powered_by") }} {{ activeRightTabOption.poweredBy.name }}
         </a>
       </div>
     </div>

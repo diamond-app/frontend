@@ -1,0 +1,11 @@
+<div class="vh-75">
+  <iframe *ngIf="iframeURL; else elseBlockIframe" [src]="iframeURL" class="border-0 rounded w-100 h-100"></iframe>
+  <ng-template #elseBlockIframe>
+    <p class="fs-8 text-danger text-center">
+      <i class="fas fa-exclamation-triangle"></i>
+      Unable to render iFrame.
+      <br />
+      Invalid MegaSwap URL.
+    </p>
+  </ng-template>
+</div>
