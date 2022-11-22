@@ -1,13 +1,63 @@
-<p>twitter-sync-settings works!</p>
+<section class="text-center p-5">
+  <header>
+    <h1 class="font-weight-bold fs-24px">Link your twitter on-chain</h1>
+    <p class="fc-secondary">Store your tweets on a decentralized blockchain so you have access to it forever!</p>
+  </header>
 
-<button *ngIf="!this.globalVars.loggedInUser" (click)="this.globalVars.launchLoginFlow()">Login with DeSo</button>
+  <!-- if viewing this component in a logged out state, we need the user to log in -->
+  <button *ngIf="!this.globalVars.loggedInUser" (click)="this.globalVars.launchLoginFlow()">Login with DeSo</button>
 
-<ng-container *ngIf="this.globalVars.loggedInUser?.ProfileEntryResponse">
-  <button (click)="loginWithTwitter()">Login with twitter</button>
+  <!-- if the logged in user doesn't have a profile yet, we kick them to signup to
+create one, which will bring them back here to do the twitter sync after they finish -->
+  <a
+    *ngIf="!!this.globalVars.loggedInUser && !this.globalVars.loggedInUser?.ProfileEntryResponse"
+    [routerLink]="['/sign-up']"
+  >
+    Get started by creating a DeSo profile
+  </a>
 
-  <!-- NOTE: only show this if the derived key is expired or doesn't exist -->
-  <button (click)="syncAllTweets()">Subscribe</button>
+  <div *ngIf="this.isProcessingSubscription">
+    <simple-center-loader></simple-center-loader>
+  </div>
 
-  <!-- NOTE: give some option to update this stuff later -->
-  <a [routerLink]="['/' + 'browse']">Skip</a>
-</ng-container>
+  <div
+    *ngIf="this.globalVars.loggedInUser?.ProfileEntryResponse && !this.isProcessingSubscription"
+    class="twitter-sync-settings__content"
+  >
+    <p *ngIf="!!this.twitterUserData">
+      You are logged in as
+      <a
+        [href]="'https://twitter.com/' + this.twitterUserData.twitter_username"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        @{{ this.twitterUserData.twitter_username }}
+      </a>
+    </p>
+    <div class="mb-2">
+      <button (click)="loginWithTwitter()" class="btn btn-outline-dark w-100">
+        <img src="/assets/img/twitter-logo.svg" alt="Twitter Logo" height="24" width="24" />
+        {{ this.twitterUserData ? "Use another account" : "Login with twitter" }}
+      </button>
+    </div>
+
+    <div class="mb-2">
+      <button *ngIf="!!this.twitterUserData" class="btn btn-primary w-100" (click)="syncAllTweets()">
+        Sync my tweets
+      </button>
+    </div>
+
+    <a [routerLink]="['/' + 'browse']">Skip</a>
+  </div>
+
+  <p class="mb-4 fc-secondary">Earn free diamonds for the first 100 tweets you sync</p>
+
+  <footer class="fs-14px">
+    <p>
+      Powered by
+      <a href="https://web3setu.com" target="_blank" rel="noopener noreferrer">
+        <img src="/assets/img/setu-logo.png" alt="https://web3setu.com" height="24" />
+      </a>
+    </p>
+  </footer>
+</section>

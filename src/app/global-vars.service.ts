@@ -504,8 +504,7 @@ export class GlobalVarsService {
       .toPromise();
 
     const [userMetadata, appUser] = await Promise.all([getUserMetadataPromise, getAppUserPromise]);
-    console.log("Here is the app user: ", appUser);
-    console.log("Here is the user metadata: ", userMetadata);
+
     if (userMetadata.Email.length === 0) {
       return "email";
     }
