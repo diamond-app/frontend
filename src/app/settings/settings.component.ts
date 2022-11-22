@@ -41,6 +41,7 @@ export class SettingsComponent implements OnInit {
     { field: "ReceiveFollowNotif", text: "Follow" },
     { field: "ReceiveBasicTransferNotif", text: "Received DESO" },
     { field: "ReceiveCommentNotif", text: "Post comment" },
+    { field: "ReceiveDmNotif", text: "Received message" },
     { field: "ReceiveDiamondNotif", text: "Received diamonds" },
     { field: "ReceiveRepostNotif", text: "Repost" },
     { field: "ReceiveQuoteRepostNotif", text: "Quote repost" },
