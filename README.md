@@ -17,19 +17,20 @@ docs should give you everything you need to get started:
 
 # Start Coding
 
-The quickest way to contribute changes to DiamondApp is the following these steps:
+[![Deploy on Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/jsonpreet/diamond-frontend)
 
-1. Open frontend repo in Gitpod
+BitFlare is an easy frontend for BitClout that you can host on CloudFlare Pages.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/diamond-app/frontend)
+* Click to Deploy
+* No need to install the Node backend
+* No waiting around for 24 hour sync of Blockchain
 
-You can use any repo / branch URL and just prepend `https://gitpod.io/#` to it.
 
-2. If needed, login to your github account
+# About BitClout
+BitClout is a blockchain built from the ground up to support a fully-featured
+social network. Its architecture is similar to Bitcoin, only it supports complex
+social network data like profiles, posts, follows, creator coin transactions, and
+more.
 
-3. Set the correct `lastLocalNodeV2`  to `"https://api.tijn.club"` in your browser Local Storage for the gitpod preview URL
-
-4. Create a new branch to start working
-
-To commit / submit a pull reqest from gitpod, you will need to give gitpod additional permissions to your github account: `public_repo, read:org, read:user, repo, user:email, workflow` which you can do on the [GitPod Integrations page](https://gitpod.io/integrations).
+[Read about BitClout](https://docs.bitclout.com/)
 
