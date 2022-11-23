@@ -26,8 +26,10 @@
         [cardStyle]="true"
         [showNFTDetails]="true"
         [videoPaused]="pauseVideos"
+        [showLeftSelectedBorder]="isPinnedPost(post)"
         (userBlocked)="userBlocked()"
         (pauseAllVideos)="pauseAllVideos($event)"
+        (toggleBlogPin)="updatePinnedPosts($event)"
       ></feed-post>
     </div>
     <!-- Spacer for PWA Apps -->
