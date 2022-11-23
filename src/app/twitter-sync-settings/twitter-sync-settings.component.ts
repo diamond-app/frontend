@@ -33,7 +33,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   setuSubscriptions?: GetCurrentSubscriptionsResponse;
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
   isProcessingSubscription: boolean = false;
-  isLoggingInWithTwitter: boolean = false;
+  isUpdatingSubscriptionStatus: boolean = false;
 
   get hasActiveSubscription() {
     return (
@@ -57,14 +57,13 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
       if (storedTwitterUserData) {
         this.twitterUserData = JSON.parse(storedTwitterUserData);
-        this.isLoggingInWithTwitter = true;
+        this.isUpdatingSubscriptionStatus = true;
         this.updateSubscriptionStatus();
       }
     }
   }
 
   loginWithTwitter() {
-    this.isLoggingInWithTwitter = true;
     this.boundPostMessageListener = this.postMessageListener.bind(this);
     window.addEventListener("message", this.boundPostMessageListener);
 
@@ -245,6 +244,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         JSON.stringify(this.twitterUserData)
       );
 
+      this.isUpdatingSubscriptionStatus;
       forkJoin([
         this.setu
           .getCurrentSubscription({
@@ -256,7 +256,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       ])
         .pipe(
           first(),
-          finalize(() => (this.isLoggingInWithTwitter = false))
+          finalize(() => (this.isUpdatingSubscriptionStatus = false))
         )
         .subscribe(
           ([subscription, derivedKeyStatus]) => {

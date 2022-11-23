@@ -21,7 +21,7 @@ create one, which will bring them back here to do the twitter sync after they fi
       <a class="btn btn-primary" [routerLink]="['/sign-up']">Create a profile</a>
     </div>
 
-    <div *ngIf="this.isProcessingSubscription || this.isLoggingInWithTwitter">
+    <div *ngIf="this.isProcessingSubscription || this.isUpdatingSubscriptionStatus">
       <simple-center-loader></simple-center-loader>
     </div>
 
@@ -43,7 +43,7 @@ create one, which will bring them back here to do the twitter sync after they fi
         </button>
       </div>
 
-      <ng-container *ngIf="!this.isLoggingInWithTwitter">
+      <ng-container *ngIf="!this.isUpdatingSubscriptionStatus">
         <div class="mb-2" *ngIf="!this.hasActiveSubscription">
           <button *ngIf="!!this.twitterUserData" class="btn btn-primary w-100" (click)="syncAllTweets()">
             Sync my tweets
