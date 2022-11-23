@@ -1,4 +1,4 @@
-![DeSo Logo](src/assets/diamond/camelcase_logo.svg)
+[Vercel](https://diamond-frontend-theta.vercel.app/)
 
 # About DeSo
 DeSo is a blockchain built from the ground up to support a fully-featured
@@ -16,6 +16,9 @@ docs should give you everything you need to get started:
 * [Making Your First Changes](https://docs.deso.org/code/making-your-first-changes)
 
 # Start Coding
+
+For Deploy on Vercel Change NodeJs Version to 16
+
 
 [![Deploy on Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/jsonpreet/diamond-frontend)
 
