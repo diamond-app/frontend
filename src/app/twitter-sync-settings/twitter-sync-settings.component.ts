@@ -19,6 +19,8 @@ interface TwitterUserData {
   twitter_username: string;
 }
 
+const buildLocalStorageKey = (publicKey: string) => `connectedTwitterAccount_${publicKey}`;
+
 @Component({
   selector: "app-twitter-sync-settings",
   templateUrl: "./twitter-sync-settings.component.html",
@@ -50,7 +52,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   ) {
     if (this.globalVars.loggedInUser) {
       const storedTwitterUserData = window.localStorage.getItem(
-        `connectedTwitterAccount_${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+        buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check)
       );
 
       if (storedTwitterUserData) {
@@ -207,6 +209,8 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           (res) => {
             if (res.status === "success") {
               this.setuSubscriptions = undefined;
+              this.twitterUserData = undefined;
+              window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check));
             }
           },
           (err) => {
@@ -237,7 +241,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   private updateSubscriptionStatus() {
     if (this.globalVars.loggedInUser && this.twitterUserData) {
       window.localStorage.setItem(
-        `connectedTwitterAccount_${this.globalVars.loggedInUser.PublicKeyBase58Check}`,
+        buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
         JSON.stringify(this.twitterUserData)
       );
 
