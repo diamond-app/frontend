@@ -9,6 +9,7 @@ $landing-page-highlight: #00faff;
 @import 'variables.scss';
 @import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import "bootstrap-overrides";
 
 // regular style toast
 @import '~ngx-toastr/toastr';

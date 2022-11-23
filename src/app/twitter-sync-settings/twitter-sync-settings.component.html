@@ -20,7 +20,7 @@ create one, which will bring them back here to do the twitter sync after they fi
       <a class="btn btn-primary" [routerLink]="['/sign-up']">Create a profile</a>
     </div>
 
-    <div *ngIf="this.isProcessingSubscription">
+    <div *ngIf="this.isProcessingSubscription || this.isLoggingInWithTwitter">
       <simple-center-loader></simple-center-loader>
     </div>
 
@@ -38,7 +38,7 @@ create one, which will bring them back here to do the twitter sync after they fi
       <div class="mb-2">
         <button (click)="loginWithTwitter()" class="btn btn-outline-dark w-100">
           <img src="/assets/img/twitter-logo.svg" alt="Twitter Logo" height="24" width="24" />
-          {{ this.twitterUserData ? "Use another account" : "Login with twitter" }}
+          {{ this.twitterUserData ? "Connect another account" : "Connect with twitter" }}
         </button>
       </div>
 
@@ -61,7 +61,7 @@ create one, which will bring them back here to do the twitter sync after they fi
             </a>
             will sync to the Deso blockchain.
           </p>
-          <button (click)="unsubscribe()">Unsubscribe</button>
+          <button class="fs-14px" (click)="unsubscribe()">Unsubscribe</button>
         </div>
       </ng-container>
     </div>
@@ -71,8 +71,9 @@ create one, which will bring them back here to do the twitter sync after they fi
     <p class="fc-secondary">Earn free diamonds for the first 100 tweets you sync</p>
     <p class="fs-14px mb-4">
       Powered by
-      <a href="https://web3setu.com" target="_blank" rel="noopener noreferrer">
+      <a href="https://web3setu.com" target="_blank" rel="noopener noreferrer" class="link--unstyled">
         <img src="/assets/img/setu-logo.png" alt="https://web3setu.com" height="24" />
+        Setu
       </a>
     </p>
     <a [routerLink]="['/' + 'browse']" class="fs-14px">Take me to the Feed</a>

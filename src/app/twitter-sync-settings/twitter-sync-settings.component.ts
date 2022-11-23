@@ -1,8 +1,8 @@
 //@ts-strict
 import { Component, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
-import { forkJoin } from "rxjs";
-import { finalize, first, switchMap, takeWhile } from "rxjs/operators";
+import { forkJoin, Observable, of } from "rxjs";
+import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { IdentityService, TransactionSpendingLimitResponse } from "src/app/identity.service";
 import {
@@ -47,7 +47,19 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     private setu: SetuService,
     private identity: IdentityService,
     private router: Router
-  ) {}
+  ) {
+    if (this.globalVars.loggedInUser) {
+      const storedTwitterUserData = window.localStorage.getItem(
+        `connectedTwitterAccount_${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+      );
+
+      if (storedTwitterUserData) {
+        this.twitterUserData = JSON.parse(storedTwitterUserData);
+        this.isLoggingInWithTwitter = true;
+        this.updateSubscriptionStatus();
+      }
+    }
+  }
 
   loginWithTwitter() {
     this.isLoggingInWithTwitter = true;
@@ -135,29 +147,35 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       hashtags: "",
     };
     this.isProcessingSubscription = true;
-    this.updateDerivedKey()
-      .pipe(
+
+    let obs$: Observable<GetCurrentSubscriptionsResponse>;
+    if (!this.derivedKeyStatus || this.derivedKeyStatus?.is_expired || this.derivedKeyStatus.status !== "success") {
+      obs$ = this.updateDerivedKey().pipe(
         switchMap(() => {
           return this.setuSubscriptions ? this.setu.changeSubscription(params) : this.setu.createSubscription(params);
-        }),
-        finalize(() => (this.isProcessingSubscription = false))
-      )
-      .subscribe(
-        (res) => {
-          this.globalVars._alertSuccess(
-            "Great, you're all set up! Tweets posted on twitter.com will sync to the Deso blockchain.",
-            undefined,
-            () => {
-              this.router.navigate(["/browse"], {
-                queryParamsHandling: "merge",
-              });
-            }
-          );
-        },
-        (err) => {
-          this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
-        }
+        })
       );
+    } else {
+      obs$ = this.setuSubscriptions ? this.setu.changeSubscription(params) : this.setu.createSubscription(params);
+    }
+
+    obs$.pipe(finalize(() => (this.isProcessingSubscription = false))).subscribe(
+      (res) => {
+        this.setuSubscriptions = res;
+        this.globalVars._alertSuccess(
+          "Great, you're all set up! Tweets posted on twitter.com will sync to the Deso blockchain.",
+          undefined,
+          () => {
+            this.router.navigate(["/browse"], {
+              queryParamsHandling: "merge",
+            });
+          }
+        );
+      },
+      (err) => {
+        this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
+      }
+    );
   }
 
   unsubscribe() {
@@ -173,18 +191,18 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-    }).then((res: any) => {
-      console.log(res);
+    }).then(() => {
       if (!(this.twitterUserData && this.globalVars.loggedInUser)) {
         this.globalVars._alertError("Something went wrong! Please try reloading the page.");
         return;
       }
-
+      this.isProcessingSubscription = true;
       this.setu
         .unsubscribe({
           twitter_user_id: this.twitterUserData.twitter_user_id,
           public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
         })
+        .pipe(finalize(() => (this.isProcessingSubscription = false)))
         .subscribe(
           (res) => {
             if (res.status === "success") {
@@ -213,13 +231,23 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     const twitterUserData = event.data as TwitterUserData;
     this.twitterUserData = twitterUserData;
+    this.updateSubscriptionStatus();
+  }
 
+  private updateSubscriptionStatus() {
     if (this.globalVars.loggedInUser && this.twitterUserData) {
+      window.localStorage.setItem(
+        `connectedTwitterAccount_${this.globalVars.loggedInUser.PublicKeyBase58Check}`,
+        JSON.stringify(this.twitterUserData)
+      );
+
       forkJoin([
-        this.setu.getCurrentSubscription({
-          public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
-          twitter_user_id: this.twitterUserData.twitter_user_id,
-        }),
+        this.setu
+          .getCurrentSubscription({
+            public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+            twitter_user_id: this.twitterUserData.twitter_user_id,
+          })
+          .pipe(catchError((err: any) => of(undefined))),
         this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check),
       ])
         .pipe(
