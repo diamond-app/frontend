@@ -2,7 +2,7 @@
 
 [https://diamond-frontend-theta.vercel.app/](https://diamond-frontend-theta.vercel.app/)
 
-[![Deploy on Vercel]](https://vercel.com/new/clone?repository-url=https://github.com/jsonpreet/diamond-frontend)
+[Deploy on Vercel](https://vercel.com/new/clone?repository-url=https://github.com/jsonpreet/diamond-frontend)
 
 # Start Coding
 
