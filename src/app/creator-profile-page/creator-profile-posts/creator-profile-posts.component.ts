@@ -108,7 +108,7 @@ export class CreatorProfilePostsComponent {
         const posts: PostEntryResponse[] = _.filter(res.Posts, (post) => {
           return post.PostHashHex !== this.profile?.ExtraData?.PinnedPostHashHex;
         });
-        if (this.userHasPinnedPost()) {
+        if (this.userHasPinnedPost() && page === 0) {
           const pinnedPost = await this.getPinnedPost(this.profile.ExtraData["PinnedPostHashHex"]);
           posts.unshift(pinnedPost.PostFound);
         }
