@@ -292,7 +292,49 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this._updateEmail();
     }
     this._setProfileUpdates();
-
+this._callBackendUpdateProfile().subscribe(
+      (res) => {
+        this.globalVars.profileUpdateTimestamp = Date.now();
+        this.globalVars.logEvent('profile : update');
+        // This updates things like the username that shows up in the dropdown.
+        this.globalVars.updateEverything(
+          res.TxnHashHex,
+          this._updateProfileSuccess,
+          this._updateProfileFailure,
+          this
+        );
+      },
+      (err) => {
+        const parsedError = this.backendApi.parseProfileError(err);
+        const lowBalance = parsedError.indexOf('insufficient');
+        this.globalVars.logEvent('profile : update : error', {
+          parsedError,
+          lowBalance,
+        });
+        this.updateProfileBeingCalled = false;
+        SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          icon: 'error',
+          title: `An Error Occurred`,
+          html: parsedError,
+          showConfirmButton: true,
+          focusConfirm: true,
+          customClass: {
+            confirmButton: 'btn btn-light',
+            cancelButton: 'btn btn-light no',
+          },
+          confirmButtonText: lowBalance ? 'Buy $DESO' : null,
+          cancelButtonText: lowBalance ? 'Later' : null,
+          showCancelButton: !!lowBalance,
+        }).then((res) => {
+          if (lowBalance && res.isConfirmed) {
+            this.router.navigate([RouteNames.BUY_DESO], {
+              queryParamsHandling: 'merge',
+            });
+          }
+        });
+      }
+    );
 //     this.apiInternal
 //       .getAppUser(this.loggedInUser.PublicKeyBase58Check)
 //       .pipe(
