@@ -279,10 +279,13 @@
                 <div class="desktop-creator-coin-info">
                   <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
                 </div>
+                <div class="ml-2 fc-secondary fs-14px">
+                  &bull;
+                  <span class="ml-1">{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
+                </div>
 
                 <feed-post-dropdown
                   *ngIf="showDropdown && !reposterProfile"
-                  class="ml-auto"
                   [post]="post"
                   [postContent]="postContent"
                   [nftEntryResponses]="nftEntryResponses"
@@ -455,31 +458,23 @@
                   [cardStyle]="true"
                 ></feed-post>
 
-                <div
-                  *ngIf="showInteractionDetails"
-                  class="feed-post__container d-flex justify-content-left w-100"
-                  [ngClass]="{
-                    'feed-post__container--is-threaded': isThreaded,
-                    'feed-post__container--is-thread-child': isThreadChild
-                  }"
-                >
-                  <div class="w-100">
-                    <feed-post-icon-row
-                      class="mt-2px"
-                      *ngIf="showIconRow"
-                      [post]="post"
-                      [postContent]="postContent"
-                      [parentPost]="parentPost"
-                      [hideNumbers]="true"
-                      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-                      [afterRepostCreatedCallback]="afterRepostCreatedCallback"
-                      (diamondSent)="diamondSent.emit()"
-                    ></feed-post-icon-row>
-                  </div>
-                </div>
-
                 <!-- Bottom Buttons -->
-                <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
+                <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder mt-15px">
+                  <div class="fc-secondary fs-13px mt-4 mb-2">
+                    {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
+                    &bull;
+                    {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
+                    <ng-container *ngIf="this.attribution">&bull; via</ng-container>
+                    <a
+                      *ngIf="this.attribution"
+                      [href]="this.attribution.link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="link--unstyled"
+                    >
+                      {{ this.attribution.text }}
+                    </a>
+                  </div>
                   <!-- Like, Comment, Repost, Share Buttons -->
                   <feed-post-icon-row
                     *ngIf="showIconRow"
@@ -557,41 +552,104 @@
           <div *ngIf="hasThreadIndicator" class="feed-post__thread-indicator"></div>
         </div>
       </a>
-      <post-interaction-details
-        class="border-top"
-        *ngIf="showInteractionDetails"
-        [post]="postContent"
-      ></post-interaction-details>
-    </div>
-  </div>
 
-  <div
-    *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
-    class="fs-15px w-100 feed-post__nft-footer"
-    [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 0 0' : '' }"
-    (click)="onPostClicked($event)"
-    [ngClass]="{ 'cursor-pointer': contentShouldLinkToThread }"
-  >
-    <div class="d-flex justify-content-between h-100">
-      <div class="d-flex flex-column justify-content-between">
-        <div class="d-flex">
-          <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
-          <div
-            *ngIf="!showAvailableSerialNumbers"
-            class="cursor-pointer"
-            (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            (mouseenter)="tooltipDetectChanges()"
-            (mouseleave)="tooltipDetectChanges()"
-            [matTooltip]="mOfNNFTTooltip"
-            #NFTMOfNTooltip="matTooltip"
+      <ng-container *ngIf="showInteractionDetails">
+        <div class="fc-secondary fs-13px mt-4 mb-2 px-40px">
+          {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
+          &bull;
+          {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
+          <ng-container *ngIf="this.attribution">&bull; via</ng-container>
+          <a
+            *ngIf="this.attribution"
+            [href]="this.attribution.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link--unstyled"
           >
-            {{ postContent.NumNFTCopiesForSale }} {{ "feed_post.of" | transloco }} {{ postContent.NumNFTCopies }}
-            {{ "feed_post.for_sale" | transloco }}
+            {{ this.attribution.text }}
+          </a>
+        </div>
+        <post-interaction-details class="border-top" [post]="postContent"></post-interaction-details>
+        <feed-post-icon-row
+          class="border-top"
+          style="padding: 12px 40px"
+          *ngIf="showIconRow"
+          [post]="post"
+          [postContent]="postContent"
+          [parentPost]="parentPost"
+          [hideNumbers]="true"
+          [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+          [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+          (diamondSent)="diamondSent.emit()"
+        ></feed-post-icon-row>
+      </ng-container>
+    </div>
+
+    <div
+      *ngIf="showNFTDetails && postContent.IsNFT && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
+      class="fs-15px w-100 feed-post__nft-footer"
+      [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 0 0' : '' }"
+      (click)="onPostClicked($event)"
+      [ngClass]="{ 'cursor-pointer': contentShouldLinkToThread }"
+    >
+      <div class="d-flex justify-content-between h-100">
+        <div class="d-flex flex-column justify-content-between">
+          <div class="d-flex">
+            <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
+            <div
+              *ngIf="!showAvailableSerialNumbers"
+              class="cursor-pointer"
+              (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              (mouseenter)="tooltipDetectChanges()"
+              (mouseleave)="tooltipDetectChanges()"
+              [matTooltip]="mOfNNFTTooltip"
+              #NFTMOfNTooltip="matTooltip"
+            >
+              {{ postContent.NumNFTCopiesForSale }} {{ "feed_post.of" | transloco }} {{ postContent.NumNFTCopies }}
+              {{ "feed_post.for_sale" | transloco }}
+            </div>
+            <span
+              *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
+              class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content"
+              (click)="tooltip.toggle(); toggleShowUnlockableContent()"
+              (mouseenter)="tooltipDetectChanges()"
+              (mouseleave)="tooltipDetectChanges()"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="unlockableTooltip"
+              #tooltip="matTooltip"
+            >
+              <i-feather name="Lock"></i-feather>
+              {{ showUnlockableText() }}
+            </span>
           </div>
+          <div
+            *ngIf="
+              lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0 && (lowBid > 0 || !nftBuyNowPriceNanos)
+            "
+          >
+            {{ "feed_post.from" | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}
+          </div>
+          <div
+            *ngIf="
+              nftLastAcceptedBidAmountNanos !== undefined &&
+              postContent.NumNFTCopiesForSale === 0 &&
+              nftLastAcceptedBidAmountNanos !== 0
+            "
+          >
+            {{ "feed_post.last_price" | transloco }}: ≈{{ globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2) }}
+          </div>
+          <div *ngIf="postContent.NumNFTCopiesForSale !== 0 && nftBuyNowPriceNanos">
+            Buy Now Price: {{ globalVars.nanosToUSD(nftBuyNowPriceNanos, 2) }}
+          </div>
+        </div>
+        <div
+          class="d-flex flex-column justify-content-center align-items-end"
+          [ngClass]="{ 'justify-content-between': postContent.HasUnlockable && globalVars.isMobile() }"
+        >
           <span
-            *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
-            class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content"
+            *ngIf="postContent.HasUnlockable && globalVars.isMobile()"
+            class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content mb-8px"
             (click)="tooltip.toggle(); toggleShowUnlockableContent()"
             (mouseenter)="tooltipDetectChanges()"
             (mouseleave)="tooltipDetectChanges()"
@@ -600,81 +658,46 @@
             #tooltip="matTooltip"
           >
             <i-feather name="Lock"></i-feather>
-            {{ showUnlockableText() }}
+            {{
+              decryptableNFTEntryResponses?.length
+                ? showUnlockableContent
+                  ? "Hide Unlockable"
+                  : "Show Unlockable"
+                : "Unlockable Content"
+            }}
           </span>
-        </div>
-        <div
-          *ngIf="lowBid !== undefined && postContent.NumNFTCopiesForSale !== 0 && (lowBid > 0 || !nftBuyNowPriceNanos)"
-        >
-          {{ "feed_post.from" | transloco }}: ≈{{ globalVars.nanosToUSD(lowBid, 2) }}
-        </div>
-        <div
-          *ngIf="
-            nftLastAcceptedBidAmountNanos !== undefined &&
-            postContent.NumNFTCopiesForSale === 0 &&
-            nftLastAcceptedBidAmountNanos !== 0
-          "
-        >
-          {{ "feed_post.last_price" | transloco }}: ≈{{ globalVars.nanosToUSD(nftLastAcceptedBidAmountNanos, 2) }}
-        </div>
-        <div *ngIf="postContent.NumNFTCopiesForSale !== 0 && nftBuyNowPriceNanos">
-          Buy Now Price: {{ globalVars.nanosToUSD(nftBuyNowPriceNanos, 2) }}
+          <div class="nft-bid-btn">
+            <button
+              style="height: 32px"
+              [ngClass]="{ 'mt-15px': isQuotedContent }"
+              (click)="openPlaceBidModal($event)"
+              *ngIf="showPlaceABid && !acceptNFT"
+            >
+              <span class="d-flex align-items-center justify-content-center">
+                <i-feather name="dollar-sign" class="fs-0px"></i-feather>
+                Buy NFT
+              </span>
+            </button>
+            <button
+              style="height: 32px"
+              [ngClass]="{ 'mt-15px': isQuotedContent }"
+              (click)="acceptTransfer($event)"
+              *ngIf="acceptNFT"
+            >
+              <span class="d-flex align-items-center justify-content-center fs-12px">
+                {{ "feed_post.accept_transfer" | transloco }}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
-      <div
-        class="d-flex flex-column justify-content-center align-items-end"
-        [ngClass]="{ 'justify-content-between': postContent.HasUnlockable && globalVars.isMobile() }"
-      >
-        <span
-          *ngIf="postContent.HasUnlockable && globalVars.isMobile()"
-          class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content mb-8px"
-          (click)="tooltip.toggle(); toggleShowUnlockableContent()"
-          (mouseenter)="tooltipDetectChanges()"
-          (mouseleave)="tooltipDetectChanges()"
-          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-          [matTooltip]="unlockableTooltip"
-          #tooltip="matTooltip"
-        >
-          <i-feather name="Lock"></i-feather>
-          {{
-            decryptableNFTEntryResponses?.length
-              ? showUnlockableContent
-                ? "Hide Unlockable"
-                : "Show Unlockable"
-              : "Unlockable Content"
-          }}
-        </span>
-        <div class="nft-bid-btn">
-          <button
-            style="height: 32px"
-            [ngClass]="{ 'mt-15px': isQuotedContent }"
-            (click)="openPlaceBidModal($event)"
-            *ngIf="showPlaceABid && !acceptNFT"
-          >
-            <span class="d-flex align-items-center justify-content-center">
-              <i-feather name="dollar-sign" class="fs-0px"></i-feather>
-              Buy NFT
-            </span>
-          </button>
-          <button
-            style="height: 32px"
-            [ngClass]="{ 'mt-15px': isQuotedContent }"
-            (click)="acceptTransfer($event)"
-            *ngIf="acceptNFT"
-          >
-            <span class="d-flex align-items-center justify-content-center fs-12px">
-              {{ "feed_post.accept_transfer" | transloco }}
-            </span>
-          </button>
+      <div *ngIf="showUnlockableContent">
+        <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
+          <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
+          <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
         </div>
       </div>
     </div>
-    <div *ngIf="showUnlockableContent">
-      <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
-        <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
-        <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
-      </div>
-    </div>
+    <ng-content select="[feed-post-footer]"></ng-content>
   </div>
-  <ng-content select="[feed-post-footer]"></ng-content>
 </div>

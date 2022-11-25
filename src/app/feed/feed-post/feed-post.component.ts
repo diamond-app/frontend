@@ -235,6 +235,8 @@ export class FeedPostComponent implements OnInit {
   mOfNNFTTooltip =
     "Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.";
 
+  attribution: { link: string; text: string };
+
   getNFTEntries() {
     this.backendApi
       .GetNFTEntriesForNFTPost(
@@ -306,13 +308,37 @@ export class FeedPostComponent implements OnInit {
   }
 
   postContentBodyFn() {
-    // We only allow showing long form content on the post detail page. We truncate it everywhere else with
-    // a read more link to the detail.
-    if (
-      !this.showRestOfPost &&
-      this.hasReadMoreRollup &&
-      this.postContent.Body.length > GlobalVarsService.MAX_POST_LENGTH
-    ) {
+    let postBody = this.postContent.Body;
+
+    // The ideal way to add attribution for a post is to have the node specified in the get-app-state nodes
+    // list, and reference the node by its display name in the Node field of PostExtraData
+    if (this.postContent.PostExtraData?.Node && this.globalVars.nodes[this.postContent.PostExtraData?.Node]) {
+      const node = this.globalVars.nodes[this.postContent.PostExtraData?.Node];
+      this.attribution = {
+        text: node.Name,
+        link: node.URL,
+      };
+    }
+
+    const lines = postBody.split("\n");
+    const attributionSearchText = "Posted via @";
+    if (lines[lines.length - 1].startsWith(attributionSearchText)) {
+      // remove attribution text from the end of the post body, if it exists.
+      postBody = lines.slice(0, lines.length - 2).join("\n");
+
+      // In the case where we have an attribution added to the end of a post, and we did not find
+      // a node in the recognized nodes list, we fallback to using the @mention text and linking it
+      // to the corresponding profile page.
+      const attributionText = lines[lines.length - 1].slice(attributionSearchText.length);
+      if (!this.attribution) {
+        this.attribution = {
+          link: `/u/${attributionText}`,
+          text: attributionText,
+        };
+      }
+    }
+
+    if (!this.showRestOfPost && this.hasReadMoreRollup && postBody > GlobalVarsService.MAX_POST_LENGTH) {
       // NOTE: We first spread the string into an array since this will account
       // for unicode multi-codepoint characters like emojis. Just using
       // substring will potentially break a string in the middle of a
@@ -320,11 +346,11 @@ export class FeedPostComponent implements OnInit {
       // still a relatively naive approach, but it should do the right thing in
       // almost all cases.
       // https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#length-and-surrogate-pairs
-      const chars = [...this.postContent.Body].slice(0, GlobalVarsService.MAX_POST_LENGTH);
+      const chars = [...postBody].slice(0, GlobalVarsService.MAX_POST_LENGTH);
       this.showReadMoreRollup = true;
       return `${chars.join("")}...`;
     } else {
-      return this.postContent.Body;
+      return postBody;
     }
   }
 

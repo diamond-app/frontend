@@ -1,6 +1,4 @@
-<div
-  class="mt-15px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable"
->
+<div class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable">
   <div
     class="cursor-pointer d-flex align-items-center"
     (click)="openModal($event)"
@@ -43,11 +41,8 @@
       aria-labelledby="repostActionsButton"
     >
       <div>
-        <a
-          *ngIf="sendingRepostRequest; else repostOptions"
-          class="dropdown-menu-item d-block p-5px"
-        >
-          <div class="fc-muted">{{ 'feed_post_icon_row.loading' | transloco }}</div>
+        <a *ngIf="sendingRepostRequest; else repostOptions" class="dropdown-menu-item d-block p-5px">
+          <div class="fc-muted">{{ "feed_post_icon_row.loading" | transloco }}</div>
         </a>
       </div>
       <ng-template #repostOptions>
@@ -61,7 +56,7 @@
             class="feed-post-icon-row__icon repost-icon position-relative"
             style="right: 5px"
           ></i-feather>
-          {{ 'feed_post_icon_row.hide' | transloco }}
+          {{ "feed_post_icon_row.hide" | transloco }}
         </a>
         <ng-template #repostElseBlock>
           <a
@@ -69,7 +64,7 @@
             (click)="_repost($event)"
           >
             <i-feather name="repeat" class="feed-post-icon-row__icon-repost-option"></i-feather>
-            {{ 'feed_post_icon_row.repost' | transloco }}
+            {{ "feed_post_icon_row.repost" | transloco }}
           </a>
         </ng-template>
         <a
@@ -77,7 +72,7 @@
           (click)="openModal($event, true)"
         >
           <i-feather name="quote" class="feed-post-icon-row__icon-repost-option"></i-feather>
-          {{ 'feed_post_icon_row.quote' | transloco }}
+          {{ "feed_post_icon_row.quote" | transloco }}
         </a>
       </ng-template>
     </div>
@@ -104,9 +99,9 @@
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
         <div class="mb-4" style="font-size: 11.25px">
-          {{ 'feed_post_icon_row.give_diamond' | transloco }}
+          {{ "feed_post_icon_row.give_diamond" | transloco }}
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
-          {{ 'feed_post_icon_row.will_receive' | transloco }}
+          {{ "feed_post_icon_row.will_receive" | transloco }}
         </div>
       </div>
     </div>
@@ -142,11 +137,11 @@
         <div
           class="reaction-box"
           [ngStyle]="{
-              height:
-                !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
-                  ? '121px'
-                  : '55px'
-            }"
+            height:
+              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                ? '121px'
+                : '55px'
+          }"
         >
           <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
             <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
@@ -165,13 +160,13 @@
                 name="diamond"
                 class="diamond-reaction"
                 [ngStyle]="{
-                    color:
-                      diamondIndex < getCurrentDiamondLevel() ||
-                      diamondIndex <= this.diamondHovered ||
-                      diamondIndex <= this.diamondIdxDraggedTo
-                        ? 'var(--cblue)'
-                        : 'var(--grey)'
-                  }"
+                  color:
+                    diamondIndex < getCurrentDiamondLevel() ||
+                    diamondIndex <= this.diamondHovered ||
+                    diamondIndex <= this.diamondIdxDraggedTo
+                      ? 'var(--cblue)'
+                      : 'var(--grey)'
+                }"
               ></i-feather>
             </div>
             <div
@@ -185,7 +180,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
     <div
@@ -282,7 +276,9 @@
         cdkDrag
       ></div>
     </div>
-    <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">{{ postContent.DiamondCount }}</span>
+    <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">
+      {{ postContent.DiamondCount }}
+    </span>
   </div>
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
     <i-feather
@@ -290,17 +286,5 @@
       class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
       (click)="copyPostLinkToClipboard($event)"
     ></i-feather>
-    <span
-      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
-      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-      mat-raised-button
-      #tooltip="matTooltip"
-      (mouseenter)="tooltipDetectChanges()"
-      (mouseleave)="tooltipDetectChanges()"
-      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
-      (auxclick)="onTimestampClickHandler($event)"
-    >
-      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-    </span>
   </div>
 </div>
