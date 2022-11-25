@@ -458,23 +458,25 @@
                   [cardStyle]="true"
                 ></feed-post>
 
+                <!-- timestamp and attribution -->
+                <div class="fc-secondary fs-13px mt-4 mb-2" *ngIf="!isQuotedContent">
+                  {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
+                  &bull;
+                  {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
+                  <ng-container *ngIf="this.attribution">&bull; via</ng-container>
+                  <a
+                    *ngIf="this.attribution"
+                    [href]="this.attribution.link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link--unstyled"
+                  >
+                    {{ this.attribution.text }}
+                  </a>
+                </div>
+
                 <!-- Bottom Buttons -->
                 <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder mt-15px">
-                  <div class="fc-secondary fs-13px mt-4 mb-2">
-                    {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
-                    &bull;
-                    {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
-                    <ng-container *ngIf="this.attribution">&bull; via</ng-container>
-                    <a
-                      *ngIf="this.attribution"
-                      [href]="this.attribution.link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="link--unstyled"
-                    >
-                      {{ this.attribution.text }}
-                    </a>
-                  </div>
                   <!-- Like, Comment, Repost, Share Buttons -->
                   <feed-post-icon-row
                     *ngIf="showIconRow"
@@ -554,21 +556,6 @@
       </a>
 
       <ng-container *ngIf="showInteractionDetails">
-        <div class="fc-secondary fs-13px mt-4 mb-2 px-40px">
-          {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
-          &bull;
-          {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
-          <ng-container *ngIf="this.attribution">&bull; via</ng-container>
-          <a
-            *ngIf="this.attribution"
-            [href]="this.attribution.link"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="link--unstyled"
-          >
-            {{ this.attribution.text }}
-          </a>
-        </div>
         <post-interaction-details class="border-top" [post]="postContent"></post-interaction-details>
         <feed-post-icon-row
           class="border-top"
