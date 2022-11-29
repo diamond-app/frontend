@@ -52,6 +52,41 @@ export class CreatorProfilePostsComponent {
     private location: Location
   ) {}
 
+  getPinnedPost(postHashHex: string): Promise<any> {
+    return this.backendApi.GetSinglePost(
+        this.globalVars.localNode,
+        postHashHex,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
+        false /*FetchParents */,
+        0,
+        0,
+        this.globalVars.showAdminTools() /*AddGlobalFeedBool*/,
+        0 /*ThreadLevelLimit*/,
+        0 /*ThreadLeafLimit*/,
+        false /*LoadAuthorThread*/
+      )
+      .toPromise();
+  }
+
+  userHasPinnedPost(): boolean {
+    return (
+      this.profile.ExtraData &&
+      "PinnedPostHashHex" in this.profile.ExtraData &&
+      this.profile.ExtraData["PinnedPostHashHex"] !== undefined && this.profile.ExtraData["PinnedPostHashHex"] !== "")
+  }
+
+  isPinnedPost(post: PostEntryResponse) {
+    return this.userHasPinnedPost() && this.profile.ExtraData["PinnedPostHashHex"] === post.PostHashHex;
+  }
+
+  // If the user pins a post,
+  updatePinnedPosts(pinnedMetadata: { postHashHex: string; isPinned: boolean }): void {
+    this.profile.ExtraData.PinnedPostHashHex = pinnedMetadata.postHashHex;
+    this.datasource.adapter.reset();
+    this.getPage(0);
+    this.cdr.detectChanges();
+  }
+
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
@@ -69,8 +104,14 @@ export class CreatorProfilePostsComponent {
         false /*MediaRequired*/
       )
       .toPromise()
-      .then((res) => {
-        const posts: PostEntryResponse[] = res.Posts;
+      .then(async (res) => {
+        const posts: PostEntryResponse[] = _.filter(res.Posts, (post) => {
+          return post.PostHashHex !== this.profile?.ExtraData?.PinnedPostHashHex;
+        });
+        if (this.userHasPinnedPost() && page === 0) {
+          const pinnedPost = await this.getPinnedPost(this.profile.ExtraData["PinnedPostHashHex"]);
+          posts.unshift(pinnedPost.PostFound);
+        }
         this.pagedKeys[page + 1] = res.LastPostHashHex || "";
         if (!posts || posts.length < CreatorProfilePostsComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
           this.lastPage = page;

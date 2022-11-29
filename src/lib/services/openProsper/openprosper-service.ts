@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
 
-interface OpenProsperAPIResult<T> {
+export interface OpenProsperAPIResult<T> {
   ok: boolean;
   value: T;
 }
@@ -59,10 +59,6 @@ const API_HEADERS = {
   providedIn: "root",
 })
 export class OpenProsperService {
-  /**
-   * Map of public key to creator earnings
-   */
-  private creatorEarningsCache: Record<string, OpenProsperEarningsDetail> = {};
 
   constructor(private httpClient: HttpClient) {}
 
@@ -78,28 +74,5 @@ export class OpenProsperService {
         headers: API_HEADERS,
       })
       .pipe(map((r) => r.value));
-  }
-
-  /**
-   * NOTE: this api call is *slow*, so we cache it so there aren't lots of long
-   * loading states when fetching the same profile for a given session.
-   */
-  getEarningsDetail(PublicKeyBase58: string): Observable<OpenProsperEarningsDetail> {
-    if (this.creatorEarningsCache[PublicKeyBase58]) {
-      return of(this.creatorEarningsCache[PublicKeyBase58]);
-    }
-
-    return this.httpClient
-      .post<OpenProsperAPIResult<OpenProsperEarningsDetail>>(
-        buildURL("p/economic/account-earnings"),
-        { PublicKeyBase58 },
-        { headers: API_HEADERS }
-      )
-      .pipe(
-        map((r) => {
-          this.creatorEarningsCache[PublicKeyBase58] = r.value;
-          return r.value;
-        })
-      );
   }
 }
