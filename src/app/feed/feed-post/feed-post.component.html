@@ -459,7 +459,7 @@
                 ></feed-post>
 
                 <!-- timestamp and attribution -->
-                <div class="fc-secondary fs-13px mt-4 mb-2" *ngIf="!isQuotedContent">
+                <div class="fc-secondary fs-13px mt-4 mb-2" *ngIf="!isQuotedContent && showInteractionDetails">
                   {{ globalVars.getTimeStampTime(postContent.TimestampNanos) }}
                   &bull;
                   {{ globalVars.getTimeStampDate(postContent.TimestampNanos) }}
