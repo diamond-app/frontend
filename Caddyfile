@@ -57,8 +57,8 @@ header @html Content-Security-Policy "
     api.testwyre.com
     api.sendwyre.com
     https://videodelivery.net
-    https://upload.videodelivery.net;
-    https://web3setu.co.in
+    https://upload.videodelivery.net
+    https://web3setu.co.in;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
     https://ka-f.fontawesome.com/;
