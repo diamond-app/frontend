@@ -192,7 +192,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-    }).then(() => {
+    }).then(({ isConfirmed }) => {
+      if (!isConfirmed) return;
+
       if (!(this.twitterUserData && this.globalVars.loggedInUser)) {
         this.globalVars._alertError("Something went wrong! Please try reloading the page.");
         return;
