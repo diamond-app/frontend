@@ -15,7 +15,6 @@ import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/crea
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
@@ -113,7 +112,7 @@ class RouteNames {
 }
 
 const routes: Routes = [
-  { path: "", component: LandingPageComponent, pathMatch: "full" },
+  { path: "", redirectTo: RouteNames.BROWSE, pathMatch: "full" },
   { path: RouteNames.BROWSE, component: BrowsePageComponent, pathMatch: "full" },
   { path: RouteNames.BROWSE + "/" + RouteNames.TAG + "/:tag", component: BrowsePageComponent, pathMatch: "full" },
   { path: RouteNames.CREATORS, component: CreatorsLeaderboardAppPageComponent, pathMatch: "full" },
