@@ -98,7 +98,6 @@ import { GlobalVarsService } from "./global-vars.service";
 import { IconsModule } from "./icons/icons.module";
 import { IdentityService } from "./identity.service";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
@@ -315,7 +314,6 @@ export function playerFactory() {
     SettingsComponent,
     NotificationsListComponent,
     PageComponent,
-    LandingPageComponent,
     SignUpComponent,
     SignUpTransferDesoComponent,
     SignUpGetStarterDeSoComponent,
