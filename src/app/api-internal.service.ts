@@ -1,11 +1,12 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "src/app/backend-api.service";
 import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
+import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services/openProsper/openprosper-service";
 
 const ENDPOINTS = Object.freeze({
   appUser: "app-user",
@@ -80,6 +81,11 @@ export const SUBSCRIBED_APP_USER_DEFAULTS = {
 export class ApiInternalService {
   appUser: any;
 
+  /**
+   * Map of public key to creator earnings
+   */
+  private creatorEarningsCache: Record<string, OpenProsperEarningsDetail> = {};
+
   constructor(
     private httpClient: HttpClient,
     private identity: IdentityService,
@@ -89,7 +95,9 @@ export class ApiInternalService {
   getAppUser(publicKey: string, emailJwt: string = ""): Observable<any> {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
     return this.getAuthHeaders(emailJwt, publicKey).pipe(
-      switchMap((headers) => this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publicKey}${queryParams}`), { headers }))
+      switchMap((headers) =>
+        this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publicKey}${queryParams}`), { headers })
+      )
     );
   }
 
@@ -114,7 +122,11 @@ export class ApiInternalService {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
     return this.getAuthHeaders(emailJwt, payload.PublicKeyBase58check).pipe(
       switchMap((headers) =>
-        this.httpClient.put<any>(buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}${queryParams}`), payload, { headers })
+        this.httpClient.put<any>(
+          buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}${queryParams}`),
+          payload,
+          { headers }
+        )
       )
     );
   }
@@ -131,7 +143,6 @@ export class ApiInternalService {
     emailJwt: string = "",
     publicKey: string = ""
   ): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
-
     if (emailJwt !== "") {
       return new Observable((observer) => {
         observer.next({
@@ -152,6 +163,25 @@ export class ApiInternalService {
           Authorization: `Bearer ${jwt}`,
           "Diamond-Public-Key-Base58-Check": loggedInUserKey,
         }))
+      );
+  }
+
+  /**
+   * NOTE: this api call is *slow*, so we cache it so there aren't lots of long
+   * loading states when fetching the same profile for a given session.
+   */
+  getEarningsDetail(PublicKeyBase58: string): Observable<OpenProsperEarningsDetail> {
+    if (this.creatorEarningsCache[PublicKeyBase58]) {
+      return of(this.creatorEarningsCache[PublicKeyBase58]);
+    }
+
+    return this.httpClient
+      .get<OpenProsperAPIResult<OpenProsperEarningsDetail>>(buildUrl(`creator-earnings/${PublicKeyBase58}`))
+      .pipe(
+        map((r) => {
+          this.creatorEarningsCache[PublicKeyBase58] = r.value;
+          return r.value;
+        })
       );
   }
 }
