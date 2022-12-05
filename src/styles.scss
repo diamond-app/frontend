@@ -637,6 +637,7 @@ i-feather[name="check-circle"] {
     tab-selector {
       .tab-selector__container {
         position: fixed;
+        top: $global__top-bar__height;
         background: var(--tile-bg);
         z-index: 1;
         border-bottom: 1px solid var(--border);
