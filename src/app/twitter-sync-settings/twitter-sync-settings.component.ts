@@ -119,7 +119,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           return this.setu.submitTx(signedTransactionHex);
         }),
         switchMap(() => {
-          return this.setu.changeSignedStatus({ public_key: publicKey });
+          return this.setu.changeSignedStatus({
+            public_key: publicKey,
+            derived_public_key: this.identity.identityServiceParamsForKey(
+              this.globalVars.loggedInUser.PublicKeyBase58Check
+            )?.derivedPublicKeyBase58Check,
+          });
         }),
         takeWhile(() => !this.isDestroyed),
         first()
@@ -140,6 +145,8 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
       public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      derived_public_key: this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check)
+        ?.derivedPublicKeyBase58Check,
       twitter_username: this.twitterUserData.twitter_username,
       twitter_user_id: this.twitterUserData.twitter_user_id,
       subscription_type: "all_tweets" as SubscriptionType,
@@ -204,6 +211,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         .unsubscribe({
           twitter_user_id: this.twitterUserData.twitter_user_id,
           public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+          derived_public_key: this.identity.identityServiceParamsForKey(
+            this.globalVars.loggedInUser.PublicKeyBase58Check
+          )?.derivedPublicKeyBase58Check,
         })
         .pipe(finalize(() => (this.isProcessingSubscription = false)))
         .subscribe(

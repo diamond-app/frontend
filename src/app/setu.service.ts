@@ -13,6 +13,7 @@ export type SubscriptionType = "all_tweets" | "include_hashtags" | "exclude_hash
 
 interface SubscriptionParams {
   public_key: string; // deso public key
+  derived_public_key?: string; // derived public key (only needed for metamask users),
   twitter_user_id: string;
   subscription_type: SubscriptionType;
   hashtags: string; // comma delimited string: "#web3,#deso,#setu"
@@ -55,7 +56,11 @@ export class SetuService {
   }
 
   // Q: when would we ever set this to anything other than 1?
-  changeSignedStatus(params: { public_key: string; is_signed?: 1 | 0 }): Observable<{ status: string }> {
+  changeSignedStatus(params: {
+    public_key: string;
+    derived_public_key?: string;
+    is_signed?: 1 | 0;
+  }): Observable<{ status: string }> {
     return this.getJwt().pipe(
       switchMap((jwt) => {
         return this.http.post<{ status: string }>(buildURL("real-time-sync/change-sign-status"), {
@@ -109,7 +114,9 @@ export class SetuService {
     );
   }
 
-  unsubscribe(params: Pick<SubscriptionParams, "public_key" | "twitter_user_id">): Observable<{ status: string }> {
+  unsubscribe(
+    params: Pick<SubscriptionParams, "public_key" | "derived_public_key" | "twitter_user_id">
+  ): Observable<{ status: string }> {
     return this.getJwt().pipe(
       switchMap((jwt) => {
         return this.http.post<{ status: string }>(buildURL("real-time-sync/unsubscribe"), {
