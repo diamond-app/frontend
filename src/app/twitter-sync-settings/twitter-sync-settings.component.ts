@@ -33,7 +33,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   setuSubscriptions?: GetCurrentSubscriptionsResponse;
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
   isProcessingSubscription: boolean = false;
-  isUpdatingSubscriptionStatus: boolean = false;
+  isFetchingSubscriptionStatus: boolean = false;
 
   get hasActiveSubscription() {
     return (
@@ -57,8 +57,17 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
       if (storedTwitterUserData) {
         this.twitterUserData = JSON.parse(storedTwitterUserData);
-        this.isUpdatingSubscriptionStatus = true;
-        this.updateSubscriptionStatus();
+        this.isFetchingSubscriptionStatus = true;
+        this.getSubscriptionStatus().subscribe(
+          ([subscription, derivedKeyStatus]) => {
+            this.setuSubscriptions = subscription;
+            this.derivedKeyStatus = derivedKeyStatus;
+          },
+          (err) => {
+            this.setuSubscriptions = undefined;
+            this.derivedKeyStatus = undefined;
+          }
+        );
       }
     }
   }
@@ -171,7 +180,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       (res) => {
         this.setuSubscriptions = res;
         this.globalVars._alertSuccess(
-          "Great, you're all set up! Tweets posted on twitter.com will sync to the Deso blockchain.",
+          "Great, you're all set up! Tweets posted on Twitter will sync to the DeSo blockchain.",
           undefined,
           () => {
             this.router.navigate(["/browse"], {
@@ -246,18 +255,49 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     const twitterUserData = event.data as TwitterUserData;
     this.twitterUserData = twitterUserData;
-    this.updateSubscriptionStatus();
+    this.getSubscriptionStatus().subscribe(
+      ([subscription, derivedKeyStatus]) => {
+        this.setuSubscriptions = subscription;
+        this.derivedKeyStatus = derivedKeyStatus;
+        if (!this.hasActiveSubscription) {
+          SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
+            icon: "info",
+            title: "Sync your Tweets",
+            html: "Are you ready to start syncing your tweets to the DeSo blockchain?",
+            showConfirmButton: true,
+            showCancelButton: true,
+            focusConfirm: true,
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+          }).then(({ isConfirmed }) => {
+            if (isConfirmed) {
+              this.syncAllTweets();
+            }
+          });
+        }
+      },
+      (err) => {
+        this.setuSubscriptions = undefined;
+        this.derivedKeyStatus = undefined;
+      }
+    );
   }
 
-  private updateSubscriptionStatus() {
+  private getSubscriptionStatus(): Observable<
+    [GetCurrentSubscriptionsResponse | undefined, GetDerivedKeyStatusResponse | undefined]
+  > {
     if (this.globalVars.loggedInUser && this.twitterUserData) {
       window.localStorage.setItem(
         buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
         JSON.stringify(this.twitterUserData)
       );
 
-      this.isUpdatingSubscriptionStatus;
-      forkJoin([
+      this.isFetchingSubscriptionStatus;
+
+      return forkJoin([
         this.setu
           .getCurrentSubscription({
             public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
@@ -265,21 +305,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           })
           .pipe(catchError((err: any) => of(undefined))),
         this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check),
-      ])
-        .pipe(
-          first(),
-          finalize(() => (this.isUpdatingSubscriptionStatus = false))
-        )
-        .subscribe(
-          ([subscription, derivedKeyStatus]) => {
-            this.setuSubscriptions = subscription;
-            this.derivedKeyStatus = derivedKeyStatus;
-          },
-          (err) => {
-            this.setuSubscriptions = undefined;
-            this.derivedKeyStatus = undefined;
-          }
-        );
+      ]).pipe(
+        first(),
+        finalize(() => (this.isFetchingSubscriptionStatus = false))
+      );
+    } else {
+      return of([undefined, undefined]);
     }
   }
 }

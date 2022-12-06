@@ -1,16 +1,16 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
-import { IdentityService } from "../identity.service";
-import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { filter, get } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
+import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
+import { GlobalVarsService } from "../global-vars.service";
+import { IdentityService } from "../identity.service";
+import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
 
 @Component({
   selector: "left-bar",
@@ -68,7 +68,7 @@ export class LeftBarComponent {
   }
 
   hideMore() {
-    this.showMore = false
+    this.showMore = false;
   }
 
   getHelpMailToAttr(): string {
@@ -95,7 +95,7 @@ export class LeftBarComponent {
       if (!res?.users) {
         this.globalVars.userList = [];
       }
-      let loggedInUser = get(Object.keys(res?.users),"[0]");
+      let loggedInUser = get(Object.keys(res?.users), "[0]");
       if (this.globalVars.userList.length === 0) {
         loggedInUser = null;
         this.globalVars.setLoggedInUser(null);
@@ -112,6 +112,11 @@ export class LeftBarComponent {
       class: "modal-dialog-centered buy-deso-modal",
       backdrop: "static",
     });
+  }
+
+  closeLeftBar() {
+    const closeBtn = document.querySelector("#close-mobile-left-bar") as HTMLButtonElement;
+    closeBtn?.click();
   }
 
   startTutorial(): void {

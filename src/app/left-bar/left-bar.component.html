@@ -13,7 +13,12 @@
             >
               <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 27px" />
             </a>
-            <i-feather name="x" class="feather-large cursor-pointer fs-0px" (click)="closeMobile.emit()"></i-feather>
+            <i-feather
+              id="close-mobile-left-bar"
+              name="x"
+              class="feather-large cursor-pointer fs-0px"
+              (click)="this.closeMobile.emit()"
+            ></i-feather>
           </div>
           <div class="pt-20px"></div>
           <change-account-selector></change-account-selector>
@@ -81,7 +86,7 @@
             </a>
           </a>
           <div class="position-relative">
-            <left-bar-more (closeMore)="hideMore()" *ngIf="showMore"></left-bar-more>
+            <left-bar-more (closeMore)="hideMore()" [closeLeftBar]="closeLeftBar" *ngIf="showMore"></left-bar-more>
           </div>
           <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">
             {{ "left_bar.post" | transloco }}

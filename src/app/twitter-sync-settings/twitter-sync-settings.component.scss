@@ -1,7 +1,15 @@
 .twitter-sync-settings__content {
-  padding: 3rem 2rem;
+  padding: 1rem 0rem;
 
   @media (min-width: 992px) {
-    padding: 3rem 6rem;
+    padding: 1rem 6rem 3rem;
+  }
+}
+
+.twitter-sync-settings__subheading {
+  text-align: left;
+
+  @media (min-width: 992px) {
+    padding: 0 7rem;
   }
 }

@@ -2,10 +2,17 @@
   <header>
     <h1 class="font-weight-bold fs-24px mb-4">Sync your Twitter with the DeSo Blockchain</h1>
     <p class="font-weight-bold mb-2 fs-20px">Why store your content on-chain?</p>
-    <p class="fc-secondary">
-      By syncing your tweets with the DeSo blockchain, all of your content will become fully censorship-resistant and
-      open to monetization so you can earn directly from the content you create!
-    </p>
+    <ul class="twitter-sync-settings__subheading fs-14px">
+      <li class="mb-2">
+        You can
+        <strong>earn income for every Tweet</strong>
+        you post via DeSo tips, and much more…
+      </li>
+      <li>
+        Your content becomes censorship-resistant, meaning
+        <strong>you can’t be de-platformed!</strong>
+      </li>
+    </ul>
   </header>
   <div class="twitter-sync-settings__content">
     <!-- if viewing this component in a logged out state, we need the user to log in -->
@@ -17,17 +24,17 @@
     <!-- if the logged in user doesn't have a profile yet, we kick them to signup to
 create one, which will bring them back here to do the twitter sync after they finish -->
     <div *ngIf="!!this.globalVars.loggedInUser && !this.globalVars.loggedInUser?.ProfileEntryResponse">
-      <p class="mb-2">To sync your tweets, you'll need a DeSo profile</p>
+      <p class="mb-2">To sync your Tweets, you'll need a DeSo profile</p>
       <a class="btn btn-primary" [routerLink]="['/sign-up']">Create a profile</a>
     </div>
 
-    <div *ngIf="this.isProcessingSubscription || this.isUpdatingSubscriptionStatus">
+    <div *ngIf="this.isProcessingSubscription || this.isFetchingSubscriptionStatus">
       <simple-center-loader></simple-center-loader>
     </div>
 
     <div *ngIf="this.globalVars.loggedInUser?.ProfileEntryResponse && !this.isProcessingSubscription">
       <p *ngIf="!!this.twitterUserData" class="mb-1">
-        You connected twitter account
+        You connected Twitter account
         <a
           [href]="'https://twitter.com/' + this.twitterUserData.twitter_username"
           target="_blank"
@@ -39,28 +46,28 @@ create one, which will bring them back here to do the twitter sync after they fi
       <div class="mb-2">
         <button (click)="loginWithTwitter()" class="btn btn-outline-dark w-100">
           <img src="/assets/img/twitter-logo.svg" alt="Twitter Logo" height="24" width="24" />
-          {{ this.twitterUserData ? "Connect a different account" : "Connect with twitter" }}
+          {{ this.twitterUserData ? "Connect a different account" : "Connect with Twitter" }}
         </button>
       </div>
 
-      <ng-container *ngIf="!this.isUpdatingSubscriptionStatus">
+      <ng-container *ngIf="!this.isFetchingSubscriptionStatus">
         <div class="mb-2" *ngIf="!this.hasActiveSubscription">
           <button *ngIf="!!this.twitterUserData" class="btn btn-primary w-100" (click)="syncAllTweets()">
-            Sync my tweets
+            Sync my Tweets
           </button>
         </div>
 
         <div *ngIf="this.hasActiveSubscription">
           <p class="mb-2 py-3">
-            You're all set up! Tweets posted by @{{ this.twitterUserData?.twitter_username }} on
+            You're all set up! Tweets posted by
             <a
               [href]="'https://twitter.com/' + this.twitterUserData?.twitter_username"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Twitter
+              @{{ this.twitterUserData?.twitter_username }}
             </a>
-            will sync to the DeSo blockchain.
+            on Twitter will sync to the DeSo blockchain.
           </p>
           <button class="fs-14px" (click)="unsubscribe()">Unsubscribe</button>
         </div>
@@ -69,7 +76,7 @@ create one, which will bring them back here to do the twitter sync after they fi
   </div>
 
   <footer>
-    <p class="fc-secondary">Earn free diamonds for the first 100 tweets you sync</p>
+    <p class="fc-secondary">Earn tips for the first 100 Tweets you sync!</p>
     <p class="fs-14px mb-4">
       Powered by
       <a href="https://web3setu.com" target="_blank" rel="noopener noreferrer" class="link--unstyled">
