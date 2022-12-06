@@ -22,8 +22,8 @@ import {
   Copy,
   CreditCard,
   DollarSign,
-  Edit2,
   Edit,
+  Edit2,
   ExternalLink,
   Feather,
   Flag,
@@ -60,6 +60,7 @@ import {
   ThumbsUp,
   Trash2,
   TrendingUp,
+  Twitter,
   User,
   UserPlus,
   Users,
@@ -175,6 +176,7 @@ const icons = {
   X,
   XSquare,
   Edit2,
+  Twitter,
 };
 
 @NgModule({

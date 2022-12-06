@@ -24,4 +24,5 @@ export const environment = {
   },
   megaswapURL: "https://megaswap.xyz",
   megaswapAPI: "https://megaswap.dev",
+  setuAPI: "https://web3setu.co.in",
 };
