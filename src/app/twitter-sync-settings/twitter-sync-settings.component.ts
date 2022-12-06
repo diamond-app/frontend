@@ -1,7 +1,7 @@
 //@ts-strict
 import { Component, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
-import { forkJoin, Observable, of } from "rxjs";
+import { forkJoin, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { IdentityService, TransactionSpendingLimitResponse } from "src/app/identity.service";
@@ -11,7 +11,7 @@ import {
   SetuService,
   SubscriptionType,
 } from "src/app/setu.service";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { SwalHelper } from "src/lib/helpers/swal-helper";
 
 interface TwitterUserData {
   twitter_user_id: string;
@@ -200,7 +200,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       target: this.globalVars.getTargetComponentSelector(),
       icon: "warning",
       title: "Warning",
-      html: "Are you sure you want to stop syncing your tweets to the DeSo blockchain?",
+      html: this.setuSubscriptions
+        ? "Are you sure you want to stop syncing your tweets to the DeSo blockchain?"
+        : "Are you sure you want to disconnect your Twitter account?",
       showConfirmButton: true,
       showCancelButton: true,
       focusConfirm: true,
@@ -215,6 +217,13 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         this.globalVars._alertError("Something went wrong! Please try reloading the page.");
         return;
       }
+
+      if (!this.setuSubscriptions) {
+        this.twitterUserData = undefined;
+        window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check));
+        return;
+      }
+
       this.isProcessingSubscription = true;
       this.setu
         .unsubscribe({
@@ -280,6 +289,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         }
       },
       (err) => {
+        this.globalVars._alertError(err.error?.error ?? "Something went wrong! Try reloading the page.");
         this.setuSubscriptions = undefined;
         this.derivedKeyStatus = undefined;
       }
@@ -296,15 +306,18 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       );
 
       this.isFetchingSubscriptionStatus;
-
+      // setu uses a 400 status code to indicate that the user has no
+      // subscription and/or has no derived key. It should be 404 but it's
+      // not...
+      const handleError = (err: any) => (err?.status === 400 ? of(undefined) : throwError(err));
       return forkJoin([
         this.setu
           .getCurrentSubscription({
             public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
             twitter_user_id: this.twitterUserData.twitter_user_id,
           })
-          .pipe(catchError((err: any) => of(undefined))),
-        this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check),
+          .pipe(catchError(handleError)),
+        this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check).pipe(catchError(handleError)),
       ]).pipe(
         first(),
         finalize(() => (this.isFetchingSubscriptionStatus = false))

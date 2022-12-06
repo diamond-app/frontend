@@ -44,9 +44,13 @@ create one, which will bring them back here to do the twitter sync after they fi
         </a>
       </p>
       <div class="mb-2">
-        <button (click)="loginWithTwitter()" class="btn btn-outline-dark w-100">
+        <button (click)="loginWithTwitter()" class="btn btn-outline-dark w-100" *ngIf="!this.twitterUserData">
           <img src="/assets/img/twitter-logo.svg" alt="Twitter Logo" height="24" width="24" />
-          {{ this.twitterUserData ? "Connect a different account" : "Connect with Twitter" }}
+          Connect with Twitter
+        </button>
+        <button (click)="unsubscribe()" class="btn btn-outline-dark w-100" *ngIf="this.twitterUserData">
+          <img src="/assets/img/twitter-logo.svg" alt="Twitter Logo" height="24" width="24" />
+          Disconnect from Twitter
         </button>
       </div>
 
