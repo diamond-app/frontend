@@ -7,9 +7,11 @@
   class="p-15px"
 >
   <div class="d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">{{ 'creator_profile_posts.create_fipo' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">
+      {{ "creator_profile_posts.create_fipo" | transloco }}
+    </span>
     <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} {{ 'creator_profile_posts.on_platform_no_posts' | transloco }}</span>
+      <span>@{{ profile.Username }} {{ "creator_profile_posts.on_platform_no_posts" | transloco }}</span>
     </ng-template>
   </div>
 </div>
@@ -17,7 +19,10 @@
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div #uiScroll *uiScroll="let post of datasource; let index = index">
       <feed-post
-        *ngIf="post.ProfileEntryResponse"
+        *ngIf="
+          post.ProfileEntryResponse &&
+          ((userHasPinnedPost() && index === 0) || post.PostHashHex !== this.profile?.ExtraData?.PinnedPostHashHex)
+        "
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
         [post]="post"
