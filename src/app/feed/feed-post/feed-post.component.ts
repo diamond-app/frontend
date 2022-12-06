@@ -312,7 +312,10 @@ export class FeedPostComponent implements OnInit {
 
     // The ideal way to add attribution for a post is to have the node specified in the get-app-state nodes
     // list, and reference the node by its display name in the Node field of PostExtraData
-    if (this.postContent.PostExtraData?.Node && this.globalVars.nodes[this.postContent.PostExtraData?.Node]) {
+    if (
+      typeof this.postContent.PostExtraData?.Node !== "undefined" &&
+      this.globalVars.nodes[this.postContent.PostExtraData?.Node]
+    ) {
       const node = this.globalVars.nodes[this.postContent.PostExtraData?.Node];
       this.attribution = {
         text: node.Name,
