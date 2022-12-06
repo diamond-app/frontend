@@ -115,8 +115,7 @@ export class LeftBarComponent {
   }
 
   closeLeftBar() {
-    const closeBtn = document.querySelector("#close-mobile-left-bar") as HTMLButtonElement;
-    closeBtn?.click();
+    this.closeMobile.emit(true);
   }
 
   startTutorial(): void {
