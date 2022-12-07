@@ -8,8 +8,12 @@
 .welcome-modal__header {
   font-weight: bold;
   margin: 1rem 0 4rem;
-  padding: 0 10rem;
   font-size: 1.75rem;
+  padding: 0 1rem;
+
+  @media (min-width: 992px) {
+    padding: 0 10rem;
+  }
 }
 
 .welcome-modal__login-section {
@@ -44,20 +48,31 @@
   align-items: center;
   justify-content: center;
   min-height: 275px;
-  max-width: 50%;
   margin: 0 auto;
   position: relative;
   top: 12%;
+  max-width: 75%;
+
+  @media (min-width: 992px) {
+    max-width: 50%;
+  }
 }
 
 .welcome-modal__callout-container {
   margin-top: 50px;
   display: flex;
-  padding: 0 1.5rem;
+
+  @media (min-width: 992px) {
+    padding: 0 1.5rem;
+  }
 }
 
 .welcome-modal__callout {
-  padding: 0 3rem 1rem;
+  padding: 0 1rem 1rem;
+
+  @media (min-width: 992px) {
+    padding: 0 3rem 1rem;
+  }
 }
 
 .welcome-modal__callout-divider {
@@ -65,6 +80,14 @@
   border-radius: 6px;
   background-color: #E8E7E7;
   transform: rotateY(0deg) rotate(5deg);
+}
+
+.welcome-modal__footer {
+  padding: 1rem;
+
+  @media (min-width: 992px) {
+    padding: 3rem;
+  }
 }
 
 .welcome-modal__new-banner {
