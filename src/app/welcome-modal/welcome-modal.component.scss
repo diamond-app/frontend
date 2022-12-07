@@ -5,33 +5,66 @@
   overflow: hidden;
 }
 
+.welcome-modal__header {
+  font-weight: bold;
+  margin: 1rem 0 4rem;
+  padding: 0 10rem;
+  font-size: 1.75rem;
+}
+
 .welcome-modal__login-section {
   background-color: #000;
   transform: rotateY(0deg) rotate(-5deg);
   width: 110%;
   margin-left: -5%;
+  height: 300px;
   margin-top: 50px;
+  overflow: hidden;
+}
+
+.welcome-modal__bg-container {
+  transform: rotateY(0deg) rotate(5deg);
+  background: url('/assets/diamond/diamonds-pattern.png');
+  position: relative;
+  height: 120%;
+  top: -10%;
+}
+
+.welcome-modal__bg-mask {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  opacity: 0.85;
+  background-color: #000;
 }
 
 .welcome-modal__login-section-inner {
   color: #fff;
-  transform: rotateY(0deg) rotate(5deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 275px;
+  min-height: 275px;
   max-width: 50%;
   margin: 0 auto;
-  background-image: url('/assets/diamond/diamond-pattern.png');
+  position: relative;
+  top: 12%;
 }
 
 .welcome-modal__callout-container {
   margin-top: 50px;
   display: flex;
+  padding: 0 1.5rem;
 }
 
 .welcome-modal__callout {
   padding: 0 3rem 1rem;
+}
+
+.welcome-modal__callout-divider {
+  width: 0.5rem;
+  border-radius: 6px;
+  background-color: #E8E7E7;
+  transform: rotateY(0deg) rotate(5deg);
 }
 
 .welcome-modal__new-banner {
