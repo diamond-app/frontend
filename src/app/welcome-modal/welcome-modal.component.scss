@@ -1,0 +1,41 @@
+.welcome-modal {
+  border-radius: 6px;
+  background-color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+.welcome-modal__login-section {
+  background-color: #000;
+  transform: rotateY(0deg) rotate(-5deg);
+  width: 110%;
+  margin-left: -5%;
+  margin-top: 50px;
+}
+
+.welcome-modal__login-section-inner {
+  color: #fff;
+  transform: rotateY(0deg) rotate(5deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 275px;
+  max-width: 50%;
+  margin: 0 auto;
+  background-image: url('/assets/diamond/diamond-pattern.png');
+}
+
+.welcome-modal__callout-container {
+  margin-top: 50px;
+  display: flex;
+}
+
+.welcome-modal__callout {
+  padding: 0 3rem 1rem;
+}
+
+.welcome-modal__new-banner {
+  background-color: #FFF7CF;
+  padding: 0.75rem 0;
+  border-radius: 8px;
+}

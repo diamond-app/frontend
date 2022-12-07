@@ -14,6 +14,8 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
+import { GlobalVarsService } from "src/app/global-vars.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
@@ -21,8 +23,8 @@ import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
 import Timer = NodeJS.Timer;
+import { BsModalService } from "ngx-bootstrap/modal";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -141,7 +143,8 @@ export class FeedCreatePostComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
     private streamService: CloudflareStreamService,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private modalService: BsModalService
   ) {
     this.globalVars = appData;
   }
@@ -390,7 +393,9 @@ export class FeedCreatePostComponent implements OnInit {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {
       this.globalVars.logEvent("alert : post : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
+      this.modalService.show(WelcomeModalComponent, {
+        class: "modal-dialog-centered",
+      });
       return;
     }
 

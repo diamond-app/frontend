@@ -5,6 +5,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
@@ -176,26 +177,30 @@ export class FeedPostIconRowComponent {
   _preventNonLoggedInUserActions(action: string) {
     this.globalVars.logEvent(`alert : ${action} : account`);
 
-    return SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      icon: "info",
-      title: `Create an account to ${action}`,
-      html: `It's totally anonymous and takes under a minute`,
-      showCancelButton: true,
-      showConfirmButton: true,
-      focusConfirm: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      confirmButtonText: "Create an account",
-      cancelButtonText: "Nevermind",
-      reverseButtons: true,
-    }).then((res: any) => {
-      if (res.isConfirmed) {
-        this.globalVars.launchSignupFlow();
-      }
+    this.modalService.show(WelcomeModalComponent, {
+      class: "modal-dialog-centered",
     });
+
+    // return SwalHelper.fire({
+    //   target: this.globalVars.getTargetComponentSelector(),
+    //   icon: "info",
+    //   title: `Create an account to ${action}`,
+    //   html: `It's totally anonymous and takes under a minute`,
+    //   showCancelButton: true,
+    //   showConfirmButton: true,
+    //   focusConfirm: true,
+    //   customClass: {
+    //     confirmButton: "btn btn-light",
+    //     cancelButton: "btn btn-light no",
+    //   },
+    //   confirmButtonText: "Create an account",
+    //   cancelButtonText: "Nevermind",
+    //   reverseButtons: true,
+    // }).then((res: any) => {
+    //   if (res.isConfirmed) {
+    //     this.globalVars.launchSignupFlow();
+    //   }
+    // });
   }
 
   userHasReposted(): boolean {
