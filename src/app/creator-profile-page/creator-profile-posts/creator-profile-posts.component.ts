@@ -1,21 +1,10 @@
-import {
-  ChangeDetectorRef,
-  Component, ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output, QueryList,
-  ViewChild,
-  ViewChildren
-} from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { ActivatedRoute } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import * as _ from "lodash";
-import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 
 @Component({
   selector: "creator-profile-posts",
@@ -47,13 +36,12 @@ export class CreatorProfilePostsComponent {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private location: Location
+    private cdr: ChangeDetectorRef
   ) {}
 
   getPinnedPost(postHashHex: string): Promise<any> {
-    return this.backendApi.GetSinglePost(
+    return this.backendApi
+      .GetSinglePost(
         this.globalVars.localNode,
         postHashHex,
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
@@ -72,7 +60,9 @@ export class CreatorProfilePostsComponent {
     return (
       this.profile.ExtraData &&
       "PinnedPostHashHex" in this.profile.ExtraData &&
-      this.profile.ExtraData["PinnedPostHashHex"] !== undefined && this.profile.ExtraData["PinnedPostHashHex"] !== "")
+      this.profile.ExtraData["PinnedPostHashHex"] !== undefined &&
+      this.profile.ExtraData["PinnedPostHashHex"] !== ""
+    );
   }
 
   isPinnedPost(post: PostEntryResponse) {
@@ -105,9 +95,7 @@ export class CreatorProfilePostsComponent {
       )
       .toPromise()
       .then(async (res) => {
-        const posts: PostEntryResponse[] = _.filter(res.Posts, (post) => {
-          return post.PostHashHex !== this.profile?.ExtraData?.PinnedPostHashHex;
-        });
+        const posts: PostEntryResponse[] = res.Posts;
         if (this.userHasPinnedPost() && page === 0) {
           const pinnedPost = await this.getPinnedPost(this.profile.ExtraData["PinnedPostHashHex"]);
           posts.unshift(pinnedPost.PostFound);
@@ -117,8 +105,10 @@ export class CreatorProfilePostsComponent {
           this.lastPage = page;
         }
 
-        posts.map((post) => (post.ProfileEntryResponse = this.profile));
-        return posts;
+        return posts.map((post) => ({
+          ...post,
+          ProfileEntryResponse: this.profile,
+        }));
       })
       .finally(() => {
         this.loadingFirstPage = false;
