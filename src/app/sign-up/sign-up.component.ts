@@ -3,8 +3,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ApiInternalService } from "src/app/api-internal.service";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { RouteNames } from "../app-routing.module";
 import { AppComponent } from "../app.component";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -151,53 +149,11 @@ export class SignUpComponent {
       .subscribe(() => {
         this.globalVars.updateEverything().add(() => {
           const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.BROWSE}` : signUpRedirect;
-          this.router
-            .navigate([redirectPath], {
-              queryParams: { feedTab: "Hot" },
-              queryParamsHandling: "merge",
-            })
-            .then(() => {
-              this.launchTutorial();
-            });
+          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.TWITTER_SYNC}` : signUpRedirect;
+          this.router.navigate([redirectPath], {
+            queryParamsHandling: "merge",
+          });
         });
       });
-  }
-
-  launchTutorial() {
-    SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      title: "Introduction to Diamond",
-      html: `Learn how to buy $DESO, the social currency that powers Diamond and how to use it for investing in your favorite creators.`,
-      showConfirmButton: true,
-      // Only show skip option to admins and users who do not need to complete tutorial
-      showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-      confirmButtonText: "Take the tutorial",
-      cancelButtonText: "Cancel",
-    }).then((res) => {
-      this.backendApi
-        .StartOrSkipTutorial(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
-        )
-        .subscribe((response) => {
-          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
-          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-          this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
-            ? TutorialStatus.STARTED
-            : TutorialStatus.SKIPPED;
-          if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_DESO]);
-          } else {
-            this.backendApi.RemoveStorage("signUpRedirect");
-          }
-        });
-    });
   }
 }

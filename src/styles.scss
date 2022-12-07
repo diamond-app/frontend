@@ -9,6 +9,7 @@ $landing-page-highlight: #00faff;
 @import 'variables.scss';
 @import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import "bootstrap-overrides";
 
 // regular style toast
 @import '~ngx-toastr/toastr';
@@ -636,6 +637,7 @@ i-feather[name="check-circle"] {
     tab-selector {
       .tab-selector__container {
         position: fixed;
+        top: $global__top-bar__height;
         background: var(--tile-bg);
         z-index: 1;
         border-bottom: 1px solid var(--border);

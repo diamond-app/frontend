@@ -1,24 +1,13 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostBinding,
-  HostListener,
-  Input,
-  Output,
-  Renderer2,
-  ViewChild,
-} from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { IdentityService } from "../../identity.service";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
+import { AfterViewInit, Component, EventEmitter, Input, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { IdentityService } from "../../identity.service";
 import { SettingsComponent } from "../../settings/settings.component";
 
 @Component({
@@ -32,6 +21,7 @@ export class LeftBarMoreComponent implements AfterViewInit {
   TutorialStatus = TutorialStatus;
 
   @Input() inTutorial: boolean = false;
+  @Input() closeLeftBar?: () => void;
   @Output() closeMore = new EventEmitter();
   @ViewChild("more") more;
   currentRoute: string;

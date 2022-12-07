@@ -266,16 +266,64 @@ export class FeedPostDropdownComponent implements OnInit {
   canPinPost() {
     return (
       this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
-      this.post?.PostExtraData?.BlogDeltaRtfFormat !== "" &&
-      (!this.post?.PostExtraData?.BlogPostIsPinned || this.post?.PostExtraData?.BlogPostIsPinned === "false")
+      (!this.post?.ProfileEntryResponse?.ExtraData?.PinnedPostHashHex ||
+        this.post?.ProfileEntryResponse?.ExtraData?.PinnedPostHashHex != this.post.PostHashHex)
     );
   }
 
   canUnpinPost() {
     return (
       this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.ProfileEntryResponse?.ExtraData?.PinnedPostHashHex !== undefined &&
+      this.post?.ProfileEntryResponse?.ExtraData?.PinnedPostHashHex === this.post.PostHashHex
+    );
+  }
+
+  canPinBlogPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      this.post?.PostExtraData?.BlogDeltaRtfFormat !== "" &&
+      this.post?.PostExtraData?.BlogDeltaRtfFormat !== undefined &&
+      (!this.post?.PostExtraData?.BlogPostIsPinned || this.post?.PostExtraData?.BlogPostIsPinned === "false")
+    );
+  }
+
+  canUnpinBlogPost() {
+    return (
+      this.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
       this.post?.PostExtraData?.BlogPostIsPinned === "true"
     );
+  }
+
+  pinPostToProfile(event: any, isPinned: boolean) {
+    event.stopPropagation();
+    this.backendApi
+      .UpdateProfile(
+        this.globalVars.localNode,
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        "",
+        "",
+        "",
+        "",
+        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
+        1.25 * 100 * 100,
+        false,
+        this.globalVars.feeRateDeSoPerKB * 1e9,
+        { PinnedPostHashHex: isPinned ? this.post.PostHashHex : "" }
+      )
+      .toPromise()
+      .then((res) => {
+        this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
+        return this.globalVars.waitForTransaction(res.TxnHashHex);
+      })
+      .then(() => {
+        if (isPinned) {
+          this.updateBlogPostPinnedSuccess();
+        } else {
+          this.updateBlogPostUnpinnedSuccess();
+        }
+      });
   }
 
   pinBlogPostToProfile(event: any, isPinned: boolean) {

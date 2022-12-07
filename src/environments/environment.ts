@@ -9,7 +9,7 @@ export const environment = {
   verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
-  apiInternalHostname: "http://localhost:8080",
+  apiInternalHostname: "https://diamondapp.com",
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
@@ -29,4 +29,5 @@ export const environment = {
   },
   megaswapURL: "https://megaswap.xyz",
   megaswapAPI: "https://megaswap.dev",
+  setuAPI: "https://web3setu.co.in",
 };

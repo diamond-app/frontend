@@ -4,6 +4,7 @@ import { finalize, first, takeWhile } from "rxjs/operators";
 import { ProfileEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { OpenProsperEarningsDetail, OpenProsperService } from "src/lib/services/openProsper/openprosper-service";
+import { ApiInternalService } from "../api-internal.service";
 
 @Component({
   selector: "app-earnings-card",
@@ -35,7 +36,7 @@ export class EarningsCardComponent implements OnChanges, OnDestroy {
     return NFTPrimarySaleNanos + NFTBuyNowNanos;
   }
 
-  constructor(private openProsper: OpenProsperService, public globalVars: GlobalVarsService) {}
+  constructor(private apiInternal: ApiInternalService, public globalVars: GlobalVarsService) {}
 
   ngOnChanges() {
     if (!this.profile) {
@@ -43,7 +44,7 @@ export class EarningsCardComponent implements OnChanges, OnDestroy {
     }
 
     this.isLoading = true;
-    this.openProsper
+    this.apiInternal
       .getEarningsDetail(this.profile.PublicKeyBase58Check)
       .pipe(
         takeWhile(() => !this.isDestroyed),

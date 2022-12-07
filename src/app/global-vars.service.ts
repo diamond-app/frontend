@@ -504,8 +504,7 @@ export class GlobalVarsService {
       .toPromise();
 
     const [userMetadata, appUser] = await Promise.all([getUserMetadataPromise, getAppUserPromise]);
-    console.log("Here is the app user: ", appUser);
-    console.log("Here is the user metadata: ", userMetadata);
+
     if (userMetadata.Email.length === 0) {
       return "email";
     }
@@ -858,6 +857,18 @@ export class GlobalVarsService {
     }
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+
+  getTimeStampTime(ts: number) {
+    return new Date(ts / 1e6).toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+
+  getTimeStampDate(ts: number) {
+    return new Date(ts / 1e6).toLocaleString("default", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 
   doesLoggedInUserHaveProfile() {

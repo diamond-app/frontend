@@ -30,12 +30,26 @@
       <a
         *ngIf="canPinPost()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinPostToProfile($event, true)"
+      >
+        Pin post
+      </a>
+      <a
+        *ngIf="canUnpinPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="pinPostToProfile($event, false)"
+      >
+        Unpin post
+      </a>
+      <a
+        *ngIf="canPinBlogPost()"
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="pinBlogPostToProfile($event, true)"
       >
         Pin blog post
       </a>
       <a
-        *ngIf="canUnpinPost()"
+        *ngIf="canUnpinBlogPost()"
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
         (click)="pinBlogPostToProfile($event, false)"
       >

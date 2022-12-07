@@ -81,6 +81,7 @@ import { DiamondsModalComponent } from "./diamonds-details/diamonds-modal/diamon
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { UploadDirective } from "./directives/upload.directive";
+import { EarningsCardComponent } from "./earnings-card/earnings-card.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
 import { FeedCreatePostComponent } from "./feed/feed-create-post/feed-create-post.component";
@@ -203,6 +204,8 @@ import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/d
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
+import { TwitterSyncPageComponent } from "./twitter-sync-page/twitter-sync-page.component";
+import { TwitterSyncSettingsComponent } from "./twitter-sync-settings/twitter-sync-settings.component";
 import { UpdateProfileGetStarterDeSoComponent } from "./update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component";
 import { UpdateProfileModalComponent } from "./update-profile-page/update-profile-modal/update-profile-modal.component";
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
@@ -212,7 +215,6 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
-import { EarningsCardComponent } from "./earnings-card/earnings-card.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -405,6 +407,8 @@ export function playerFactory() {
     CashoutComponent,
     DepositEventHistoryComponent,
     EarningsCardComponent,
+    TwitterSyncSettingsComponent,
+    TwitterSyncPageComponent,
   ],
   imports: [
     BrowserModule,
