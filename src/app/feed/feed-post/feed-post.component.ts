@@ -341,7 +341,7 @@ export class FeedPostComponent implements OnInit {
       }
     }
 
-    if (!this.showRestOfPost && this.hasReadMoreRollup && postBody > GlobalVarsService.MAX_POST_LENGTH) {
+    if (!this.showRestOfPost && this.hasReadMoreRollup && postBody.length > GlobalVarsService.MAX_POST_LENGTH) {
       // NOTE: We first spread the string into an array since this will account
       // for unicode multi-codepoint characters like emojis. Just using
       // substring will potentially break a string in the middle of a
