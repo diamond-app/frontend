@@ -215,7 +215,7 @@ export class FeedPostIconRowComponent {
     event.stopPropagation();
 
     // If the user isn't logged in, alert them.
-    if (this.globalVars.loggedInUser == null) {
+    if (!this.globalVars.loggedInUser) {
       return this._preventNonLoggedInUserActions("repost");
     } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : repost : profile");
@@ -376,9 +376,9 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      // Check if the user has an account.
-      this.globalVars.logEvent("alert : reply : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
+      this.modalService.show(WelcomeModalComponent, {
+        class: "modal-dialog-centered",
+      });
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.globalVars.logEvent("alert : reply : profile");
@@ -604,8 +604,10 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      this.globalVars._alertError("Must be logged in to send diamonds");
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, {
+        class: "modal-dialog-centered",
+      });
       return;
     }
     // Disable diamond selection if diamonds are being sent

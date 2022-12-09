@@ -1,6 +1,7 @@
 //@ts-strict
 import { Component } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
+import { first } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 
 @Component({
@@ -12,6 +13,11 @@ export class WelcomeModalComponent {
   constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService) {}
 
   login() {
-    this.globalVars.launchLoginFlow();
+    this.globalVars
+      .launchLoginFlow()
+      .pipe(first())
+      .subscribe((res) => {
+        this.bsModalRef.hide();
+      });
   }
 }

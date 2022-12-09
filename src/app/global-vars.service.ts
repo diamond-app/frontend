@@ -1132,22 +1132,24 @@ export class GlobalVarsService {
       });
   }
 
-  launchIdentityFlow(event: string): void {
+  launchIdentityFlow(event: string): Observable<any> {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService
-      .launch("/log-in", {
-        accessLevelRequest: "4",
-        // referralCode: this.referralCode(),
-        hideJumio: true,
-      })
-      .subscribe((res) => {
-        this.logEvent(`account : ${event} : success`);
-        this.userSigningUp = res.signedUp;
-        this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-        this.updateEverything().add(() => {
-          this.flowRedirect(res.signedUp);
-        });
+    const obs$ = this.identityService.launch("/log-in", {
+      accessLevelRequest: "4",
+      // referralCode: this.referralCode(),
+      hideJumio: true,
+    });
+
+    obs$.subscribe((res) => {
+      this.logEvent(`account : ${event} : success`);
+      this.userSigningUp = res.signedUp;
+      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
+      this.updateEverything().add(() => {
+        this.flowRedirect(res.signedUp);
       });
+    });
+
+    return obs$;
   }
 
   checkForInAppBrowser(): string {
@@ -1182,11 +1184,12 @@ export class GlobalVarsService {
     }
   }
 
-  launchLoginFlow() {
+  launchLoginFlow(): Observable<any> {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
-      this.launchIdentityFlow("login");
+      return this.launchIdentityFlow("login");
     } else {
+      return of(null);
       this.modalService.show(DirectToNativeBrowserModalComponent, {
         class: "modal-dialog-centered buy-deso-modal",
         initialState: { deviceType: inAppBrowser },

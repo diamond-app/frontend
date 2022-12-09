@@ -90,11 +90,7 @@
         <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">
           {{ "left_bar.post" | transloco }}
         </button>
-        <a
-          *ngIf="!globalVars.isMobile()"
-          [routerLink]="['/' + globalVars.RouteNames.CREATE_LONG_POST]"
-          class="btn btn-outline-dark p-2 mt-2 w-80"
-        >
+        <a *ngIf="!globalVars.isMobile()" (click)="this.onCreateBlogPost()" class="btn btn-outline-dark p-2 mt-2 w-80">
           Blog Post
         </a>
       </div>

@@ -689,7 +689,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.activeTab = tab;
       let commands = [];
       if (tab !== FeedComponent.TAG_TAB) {
-        this.backendApi.SetStorage("mostRecentFeedTab", tab);
+        if (this.globalVars.loggedInUser) {
+          // only store the selected tab if the user is logged in
+          // logged out users will always see the hot feed
+          this.backendApi.SetStorage("mostRecentFeedTab", tab);
+        }
         this.tag = null;
         this.expandTagSelector = false;
         commands = ["/" + this.globalVars.RouteNames.BROWSE];

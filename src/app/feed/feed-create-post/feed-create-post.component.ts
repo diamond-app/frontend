@@ -14,6 +14,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import * as tus from "tus-js-client";
@@ -24,7 +25,6 @@ import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import Timer = NodeJS.Timer;
-import { BsModalService } from "ngx-bootstrap/modal";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -129,6 +129,7 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() inModal = false;
   @Input() onCreateBlog?: () => void;
   @Input() postToEdit?: PostEntryResponse;
+  @Input() modalRef?: BsModalRef;
   @Output() postUpdated = new EventEmitter<boolean>();
   @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
@@ -392,6 +393,7 @@ export class FeedCreatePostComponent implements OnInit {
   _createPost() {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {
+      this.modalRef?.hide();
       this.globalVars.logEvent("alert : post : account");
       this.modalService.show(WelcomeModalComponent, {
         class: "modal-dialog-centered",
@@ -401,6 +403,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     // Check if the user has a profile.
     if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
+      this.modalRef?.hide();
       this.globalVars.logEvent("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
