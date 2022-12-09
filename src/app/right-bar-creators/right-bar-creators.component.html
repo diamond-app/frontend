@@ -4,7 +4,7 @@
     <right-bar-signup></right-bar-signup>
   </div>
   <!-- DESO Price / Balance -->
-  <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
+  <div class="right-bar-creators__balance-box" *ngIf="this.globalVars.loggedInUser">
     <div>
       <div class="d-flex">
         <div class="w-100 deso-metrics">

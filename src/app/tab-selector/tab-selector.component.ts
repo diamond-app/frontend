@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
@@ -23,12 +22,14 @@ export class TabSelectorComponent {
       window.open(this.linkTabs[tab], "_blank");
     } else {
       this.tabClick.emit(tab);
-      if (this.deadTabs.has(tab)) {return}
+      if (this.deadTabs.has(tab)) {
+        return;
+      }
       this.activeTab = tab;
     }
   }
 
   isLink(tabName: string) {
-    return tabName in this.linkTabs
+    return tabName in this.linkTabs;
   }
 }

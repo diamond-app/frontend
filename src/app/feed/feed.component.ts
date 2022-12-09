@@ -213,7 +213,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   _initializeFeeds() {
-    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB];
+    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB];
+    if (this.globalVars.loggedInUser) {
+      this.feedTabs.push(FeedComponent.GLOBAL_TAB);
+    }
     if (this.globalVars.postsToShow.length === 0) {
       // Get some posts to show the user.
       this.loadingFirstBatchOfGlobalFeedPosts = true;
@@ -655,8 +658,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   _afterLoadingFollowingOnPageLoad() {
     this.isLoadingFollowingOnPageLoad = false;
 
-    // defaultActiveTab is "Following" if the user is following anybody. Otherwise
-    // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
 
     if (!this.activeTab) {
@@ -685,10 +686,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (tab === FeedComponent.SHOWCASE_TAB) {
       window.open("https://polygram.cc", "_blank");
     } else {
-      this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;
       let commands = [];
       if (tab !== FeedComponent.TAG_TAB) {
+        this.backendApi.SetStorage("mostRecentFeedTab", tab);
         this.tag = null;
         this.expandTagSelector = false;
         commands = ["/" + this.globalVars.RouteNames.BROWSE];

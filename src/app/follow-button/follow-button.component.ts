@@ -5,14 +5,15 @@
 // if you're following someone who follows you.
 // TODO: fix this ^^
 
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { Input } from "@angular/core";
-import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { Subscription } from "rxjs";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
+import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
 import { FollowService } from "../../lib/services/follow/follow.service";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "follow-button",
@@ -52,12 +53,21 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
 
   follow(event) {
     event.stopPropagation();
+    if (!this.appData.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, {
+        class: "modal-dialog-centered",
+      });
+      return;
+    }
+
     this._makeFollowTransaction(event, true);
   }
 
   canLoggedInUserFollowTargetPublicKey() {
     if (!this.appData.loggedInUser) {
-      return false;
+      // if the user isn't logged in, we show the follow button and have it
+      // trigger a sign up modal
+      return true;
     }
 
     return CanPublicKeyFollowTargetPublicKeyHelper.execute(
@@ -96,7 +106,8 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
     private globalVars: GlobalVarsService,
     private _changeRef: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private followService: FollowService
+    private followService: FollowService,
+    private modalService: BsModalService
   ) {
     this.appData = globalVars;
     this.changeRef = _changeRef;

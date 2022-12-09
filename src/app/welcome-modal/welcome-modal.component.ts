@@ -12,6 +12,6 @@ export class WelcomeModalComponent {
   constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService) {}
 
   login() {
-    alert("login");
+    this.globalVars.launchLoginFlow();
   }
 }
