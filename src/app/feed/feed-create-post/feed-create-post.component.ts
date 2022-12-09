@@ -581,8 +581,16 @@ export class FeedCreatePostComponent implements OnInit {
     this.postModels.splice(index, 1);
   }
 
-  onNavigateToCreateBlog() {
+  onNavigateToCreateBlog(ev: Event) {
     this.onCreateBlog?.();
+    if (!this.globalVars.loggedInUser) {
+      ev.preventDefault();
+      this.modalService.show(WelcomeModalComponent, {
+        class: "modal-dialog-centered",
+      });
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
+    }
   }
 
   private autoFocusTextArea() {
