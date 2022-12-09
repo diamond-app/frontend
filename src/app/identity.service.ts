@@ -173,6 +173,7 @@ export class IdentityService {
       updatedMembersKeyNames?: string[];
       hideJumio?: boolean;
       expirationDays?: number;
+      getFreeDeso?: boolean;
     }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
@@ -246,6 +247,10 @@ export class IdentityService {
 
     if (params?.expirationDays) {
       httpParams = httpParams.append("expirationDays", params.expirationDays.toString());
+    }
+
+    if (typeof params?.getFreeDeso !== "undefined") {
+      httpParams = httpParams.append("getFreeDeso", params.getFreeDeso.toString());
     }
 
     const paramsStr = httpParams.toString();

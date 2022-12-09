@@ -10,7 +10,7 @@ import {
   ApiInternalService,
   AppUser,
   NEW_APP_USER_DEFAULTS,
-  SUBSCRIBED_APP_USER_DEFAULTS
+  SUBSCRIBED_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -272,7 +272,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfile() {
-    this._saveProfileUpdates();
+    if (!this.globalVars.loggedInUserDefaultKey) {
+      this.globalVars.launchIdentityMessagingKey().subscribe(() => {
+        this._saveProfileUpdates();
+      });
+    }
   }
 
   _saveProfileUpdates() {
@@ -516,7 +520,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   removeExtraDataFields(type: string) {
-    let fieldsToRemove: { [key: string]: null }
+    let fieldsToRemove: { [key: string]: null };
     if (type === "nft") {
       fieldsToRemove = {
         NFTProfilePicturePostHashHex: null,
@@ -540,7 +544,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         1.25 * 100 * 100,
         false,
         this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
-        fieldsToRemove,
+        fieldsToRemove
       )
       .subscribe(() => {
         this.globalVars.updateEverything();
