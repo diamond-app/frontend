@@ -1,0 +1,12 @@
+<div class="logged-out-empty-state">
+  <div>
+    <img [src]="this.imgSrc" alt="" width="100%" />
+  </div>
+
+  <header class="my-5">
+    <h1 class="fs-24px mb-3">{{ this.headingText }}</h1>
+    <p class="fs-14px">{{ this.subheadingText }}</p>
+  </header>
+
+  <button class="btn btn-dark" (click)="this.login()">{{ this.buttonText }}</button>
+</div>

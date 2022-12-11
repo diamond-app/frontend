@@ -1139,11 +1139,13 @@ export class GlobalVarsService {
     });
 
     obs$.subscribe((res) => {
+      // TODO: add tracking for whether the user signed up or not.
+      // Q: do we also want to track if the user verified their phone number.
       this.logEvent(`account : ${event} : success`);
       this.userSigningUp = res.signedUp;
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
-        this.flowRedirect(res.signedUp);
+        this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
       });
     });
 

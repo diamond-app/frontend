@@ -60,10 +60,11 @@
         <left-bar-button
           *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
           [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
-          [buttonLabel]="t('left_bar.update_profile')"
+          [buttonLabel]="t('left_bar.my_profile')"
           [iconName]="'user'"
         ></left-bar-button>
         <left-bar-button
+          *ngIf="this.globalVars.loggedInUser"
           [link]="'/' + globalVars.RouteNames.WALLET"
           [buttonLabel]="t('left_bar.my_wallet')"
           [iconName]="'diamond'"

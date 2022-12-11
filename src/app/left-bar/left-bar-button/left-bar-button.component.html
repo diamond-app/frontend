@@ -2,15 +2,11 @@
   <div
     class="left-bar-active-indicator"
     [routerLink]="[link]"
-    routerLinkActive
-    #rla="routerLinkActive"
-    [ngClass]="{ 'left-bar-active-indicator-active': rla.isActive }"
+    routerLinkActive="left-bar-active-indicator-active"
   ></div>
   <div
     [routerLink]="[link]"
-    routerLinkActive
-    #rla="routerLinkActive"
-    [ngClass]="{ 'left-bar-active': rla.isActive }"
+    routerLinkActive="left-bar-active"
     queryParamsHandling="merge"
     class="d-flex justify-content-center align-items-center left-bar-button left-bar-link"
   >
