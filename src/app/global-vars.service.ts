@@ -8,7 +8,7 @@ import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Observer, of, Subscription } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { catchError, first, share, switchMap } from "rxjs/operators";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -499,7 +499,6 @@ export class GlobalVarsService {
 
   getLoggedInUserDefaultKey(): Subscription {
     return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-      console.log("default key resp", res);
       // NOTE: We only trigger the prompt if the user is not in the sign-up flow.
       if (!res && !(this.userSigningUp || this.router.url === "/sign-up")) {
         SwalHelper.fire({
@@ -521,12 +520,10 @@ export class GlobalVarsService {
     const obs$ = this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).pipe(
       switchMap((res) => {
         if (!res) return of(null);
-
         this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
           this.loggedInUser.PublicKeyBase58Check,
           res.encryptedMessagingKeyRandomness
         );
-
         return this.backendApi
           .RegisterGroupMessagingKey(
             this.localNode,
@@ -544,12 +541,15 @@ export class GlobalVarsService {
               return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check);
             })
           );
-      })
+      }),
+      first(),
+      share()
     );
 
     // TODO: error handling
     obs$.subscribe((messagingGroupEntryResponse) => {
       if (messagingGroupEntryResponse) {
+        console.log("setting messaging key", messagingGroupEntryResponse);
         this.loggedInUserDefaultKey = messagingGroupEntryResponse;
       }
     });

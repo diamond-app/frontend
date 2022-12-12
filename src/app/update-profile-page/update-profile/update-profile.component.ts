@@ -5,7 +5,7 @@ import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, Observable, of } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { catchError, first, switchMap } from "rxjs/operators";
 import {
   ApiInternalService,
   AppUser,
@@ -273,9 +273,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateProfile() {
     if (!this.globalVars.loggedInUserDefaultKey) {
-      this.globalVars.launchIdentityMessagingKey().subscribe(() => {
-        this._saveProfileUpdates();
-      });
+      this.globalVars
+        .launchIdentityMessagingKey()
+        .pipe(first())
+        .subscribe(() => {
+          this._saveProfileUpdates();
+        });
+    } else {
+      this._saveProfileUpdates();
     }
   }
 
