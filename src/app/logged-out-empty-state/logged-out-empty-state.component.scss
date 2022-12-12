@@ -6,3 +6,12 @@
     padding: 5rem 7rem;
   }
 }
+
+.btn-dark {
+  @media(prefers-color-scheme: light) {
+    background-color: #000;
+    &:hover {
+      background-color: #333;
+    }
+  }
+}
