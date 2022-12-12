@@ -258,9 +258,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
 
     if (!currentUserProfile) {
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
 

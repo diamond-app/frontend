@@ -54,9 +54,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   follow(event) {
     event.stopPropagation();
     if (!this.appData.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
 

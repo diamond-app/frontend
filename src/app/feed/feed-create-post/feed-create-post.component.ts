@@ -395,9 +395,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (!this.globalVars?.loggedInUser) {
       this.modalRef?.hide();
       this.globalVars.logEvent("alert : post : account");
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
 
@@ -585,9 +583,7 @@ export class FeedCreatePostComponent implements OnInit {
     this.onCreateBlog?.();
     if (!this.globalVars.loggedInUser) {
       ev.preventDefault();
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }

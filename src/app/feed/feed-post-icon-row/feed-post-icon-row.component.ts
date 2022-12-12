@@ -176,31 +176,7 @@ export class FeedPostIconRowComponent {
 
   _preventNonLoggedInUserActions(action: string) {
     this.globalVars.logEvent(`alert : ${action} : account`);
-
-    this.modalService.show(WelcomeModalComponent, {
-      class: "modal-dialog-centered",
-    });
-
-    // return SwalHelper.fire({
-    //   target: this.globalVars.getTargetComponentSelector(),
-    //   icon: "info",
-    //   title: `Create an account to ${action}`,
-    //   html: `It's totally anonymous and takes under a minute`,
-    //   showCancelButton: true,
-    //   showConfirmButton: true,
-    //   focusConfirm: true,
-    //   customClass: {
-    //     confirmButton: "btn btn-light",
-    //     cancelButton: "btn btn-light no",
-    //   },
-    //   confirmButtonText: "Create an account",
-    //   cancelButtonText: "Nevermind",
-    //   reverseButtons: true,
-    // }).then((res: any) => {
-    //   if (res.isConfirmed) {
-    //     this.globalVars.launchSignupFlow();
-    //   }
-    // });
+    this.modalService.show(WelcomeModalComponent);
   }
 
   userHasReposted(): boolean {
@@ -376,9 +352,7 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.globalVars.logEvent("alert : reply : profile");
@@ -605,9 +579,7 @@ export class FeedPostIconRowComponent {
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent, {
-        class: "modal-dialog-centered",
-      });
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
     // Disable diamond selection if diamonds are being sent

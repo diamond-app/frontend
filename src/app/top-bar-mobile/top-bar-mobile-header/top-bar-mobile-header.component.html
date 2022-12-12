@@ -16,13 +16,11 @@
         [routerLink]="homeLink()"
         queryParamsHandling="merge"
       >
-        <img
-          [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
-          class="deso"
-          style="height: 30px"
-        />
+        <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 30px" />
       </a>
-      <span class="fc-muted fs-15px font-weight-normal ml-10px position-relative">≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
+      <span *ngIf="this.globalVars.loggedInUser" class="fc-muted fs-15px font-weight-normal ml-10px position-relative">
+        ≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD
+      </span>
     </div>
 
     <i-feather
@@ -64,11 +62,8 @@
   </div>
 
   <!-- Mobile login row-->
-  <div
-    *ngIf="!this.globalVars.loggedInUser"
-    class="d-lg-none p-5px background-color-secondary font-weight-bold"
-  >
-    <a class="pl-10px" (click)="globalVars.launchLoginFlow()">{{ 'top_bar.mobile.login' | transloco }}</a>
-    <a class="pl-15px" (click)="globalVars.launchSignupFlow()">{{ 'top_bar.mobile.signup' | transloco }}</a>
+  <div *ngIf="!this.globalVars.loggedInUser" class="d-lg-none p-5px background-color-secondary font-weight-bold">
+    <a class="pl-10px" (click)="globalVars.launchLoginFlow()">{{ "top_bar.mobile.login" | transloco }}</a>
+    <a class="pl-15px" (click)="globalVars.launchSignupFlow()">{{ "top_bar.mobile.signup" | transloco }}</a>
   </div>
 </div>
