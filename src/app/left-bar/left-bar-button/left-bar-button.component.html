@@ -1,12 +1,8 @@
 <div class="w-100 d-flex">
   <div
-    class="left-bar-active-indicator"
     [routerLink]="[link]"
-    routerLinkActive="left-bar-active-indicator-active"
-  ></div>
-  <div
-    [routerLink]="[link]"
-    routerLinkActive="left-bar-active"
+    [routerLinkActive]="['left-bar-active']"
+    [routerLinkActiveOptions]="{ exact: true }"
     queryParamsHandling="merge"
     class="d-flex justify-content-center align-items-center left-bar-button left-bar-link"
   >

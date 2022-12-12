@@ -6,7 +6,7 @@
           <a
             class="link--unstyled d-flex align-items-center"
             (click)="globalVars.isLeftBarMobileOpen = false"
-            [routerLink]="homeLink()"
+            [routerLink]="'/' + globalVars.RouteNames.BROWSE"
             queryParamsHandling="merge"
           >
             <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 27px" />
@@ -19,7 +19,11 @@
 
       <!-- Left Bar Buttons -->
       <div [ngClass]="{ 'ml-20px': globalVars.isMobile() }" class="left-desktop-selector pt-20px">
-        <left-bar-button [link]="homeLink()" [buttonLabel]="t('left_bar.home')" [iconName]="'home'"></left-bar-button>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.BROWSE"
+          [buttonLabel]="t('left_bar.home')"
+          [iconName]="'home'"
+        ></left-bar-button>
         <left-bar-button
           [hasNotifications]="true"
           [notificationType]="'notifications'"

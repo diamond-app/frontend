@@ -19,7 +19,7 @@
         <a
           class="link--unstyled d-flex align-items-center ml-15px"
           (click)="globalVars.isLeftBarMobileOpen = false"
-          [routerLink]="homeLink()"
+          [routerLink]="'/' + globalVars.RouteNames.BROWSE"
           queryParamsHandling="merge"
         >
           <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 30px" />
