@@ -1,7 +1,7 @@
 <div
   class="d-flex w-100 tab-selector__container"
   style="cursor: pointer; height: 50px"
-  [ngClass]="{ 'tab-selector-links': !buttonSelector }"
+  [ngClass]="{ 'tab-selector-links': !buttonSelector, 'tab-selector__container--logged-out': !globalVars.loggedInUser }"
 >
   <div
     *ngFor="let tab of tabs"
@@ -27,4 +27,5 @@
       </div>
     </div>
   </div>
+  <ng-content></ng-content>
 </div>

@@ -642,10 +642,10 @@ i-feather[name="check-circle"] {
         z-index: 1;
         border-bottom: 1px solid var(--border);
       }
+      .tab-selector__container--logged-out {
+        top: $global__top-bar__height + 34px;
+      }
     }
-  }
-  .mobile-scroll {
-    // padding: 0px 8px;
   }
   browse-page {
     top-bar-mobile-header {
@@ -5218,17 +5218,6 @@ input {
   }
 }
 
-.feed__tag-container-mobile {
-  position: fixed !important;
-  margin-left: 10px;
-  top: 68px;
-  left: 205px;
-  z-index: 1;
-  &.logged-out {
-    top: 99px;
-  }
-}
-
 .feed__tag-container-background {
   background: var(--tile-secondary-bg);
   position: relative;
@@ -5249,8 +5238,8 @@ input {
 .feed__tag-input {
   z-index: 2;
   width: 100px;
-  top: 0px;
-  left: 0px;
+  top: 9px;
+  left: 16px;
   height: 32px;
   color: var(--text-secondary);
   border: none;
