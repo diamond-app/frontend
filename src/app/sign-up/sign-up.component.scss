@@ -1,0 +1,11 @@
+.sign-up__content {
+  min-height: 100vh;
+  margin: 0 auto;
+  width: 100%;
+  padding: 8px;
+
+  @media (min-width: 992px) {
+    width: 975px;
+    padding: 20px;
+  }
+}
