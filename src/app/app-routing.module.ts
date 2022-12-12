@@ -92,7 +92,6 @@ class RouteNames {
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
   public static GET_STARTER_DESO = "get-starter-deso";
-  public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
   public static QUOTE_REPOSTS = "quote-reposts";

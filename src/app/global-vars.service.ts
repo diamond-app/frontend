@@ -1216,8 +1216,6 @@ export class GlobalVarsService {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
       this.userSigningUp = false;
-    } else if (this.router.url === RouteNames.LANDING) {
-      this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
   }
 
@@ -1340,9 +1338,6 @@ export class GlobalVarsService {
   static getTargetComponentSelectorFromRouter(router: Router): string {
     if (router.url.startsWith("/" + RouteNames.BROWSE)) {
       return "browse-page";
-    }
-    if (router.url.startsWith("/" + RouteNames.LANDING)) {
-      return "landing-page";
     }
     if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
       return "messages-page";
