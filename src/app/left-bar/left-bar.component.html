@@ -1,6 +1,6 @@
 <div class="global__nav__width">
-  <div class="global__nav__fixed" *transloco="let t">
-    <div class="global__nav__inner d-flex flex-column justify-content-between">
+  <div [ngClass]="{ global__nav__fixed: !isMobile, 'pt-20px h-100': globalVars.isMobile() }" *transloco="let t">
+    <div class="global__nav__inner d-flex flex-column">
       <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
         <div class="d-flex justify-content-between fc-default">
           <a
@@ -14,11 +14,11 @@
           <i-feather name="x" class="feather-large cursor-pointer fs-0px" (click)="this.closeMobile.emit()"></i-feather>
         </div>
         <div class="pt-20px"></div>
-        <change-account-selector></change-account-selector>
+        <change-account-selector *ngIf="this.globalVars.loggedInUser"></change-account-selector>
       </div>
 
       <!-- Left Bar Buttons -->
-      <div [ngClass]="{ 'ml-20px': globalVars.isMobile() }" class="left-desktop-selector pt-20px">
+      <div [ngClass]="{ 'ml-20px mt-20px': globalVars.isMobile() }" class="left-desktop-selector pt-20px">
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BROWSE"
           [buttonLabel]="t('left_bar.home')"
@@ -99,11 +99,13 @@
           Blog Post
         </a>
       </div>
-      <div *ngIf="isMobile">
-        <div
-          *ngIf="this.globalVars.loggedInUser"
-          class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px"
-        >
+      <change-account-selector
+        *ngIf="!this.globalVars.loggedInUser && isMobile"
+        class="mr-20px mb-20px"
+        style="margin-top: auto"
+      ></change-account-selector>
+      <div *ngIf="this.globalVars.loggedInUser && isMobile" style="margin-top: auto">
+        <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
           <div class="d-flex align-items-center">
             <img src="assets/diamond/desologo.svg" width="14px" height="14px" />
             <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
@@ -111,7 +113,7 @@
           <a href="/buy-deso" class="fc-blue fs-15px font-weight-bold">{{ "left_bar.buy" | transloco }}</a>
         </div>
         <div class="w-100 border-bottom"></div>
-        <div class="fc-default cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
+        <div class="fc-default cursor-pointer p-16px ml-4px" (click)="launchLogoutFlow()">
           <i-feather name="power" class="feather-medium"></i-feather>
           <span class="fc-17px font-weight-bold ml-10px">{{ "left_bar.logout" | transloco }}</span>
         </div>

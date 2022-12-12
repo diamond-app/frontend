@@ -1727,6 +1727,7 @@ app-landing-page {
   background: var(--tile-bg);
   @media (max-width: 992px) {
     width: 100%;
+    height: 100%;
   }
 }
 
@@ -1734,9 +1735,6 @@ app-landing-page {
   top: 64px;
   border-right: 1px solid var(--border);
   background: var(--tile-bg);
-  @media (max-width: 992px) {
-    top: 42px;
-  }
   height: 100%;
   position: fixed;
 }
@@ -1746,7 +1744,7 @@ app-landing-page {
   overflow-y: auto;
   height: 100%;
   @media (max-width: 992px) {
-    height: calc(100vh - 42px);
+    height: 100%;
     width: 75vw;
     max-width: 280px;
     min-width: 245px;
