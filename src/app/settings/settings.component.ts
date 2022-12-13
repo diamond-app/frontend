@@ -141,7 +141,9 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
-    this.initializeAppUser();
+    this.globalVars.updateEverything().add(() => {
+      this.initializeAppUser();
+    });
   }
 
   closeModal() {
