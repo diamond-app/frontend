@@ -82,7 +82,6 @@ export class SettingsComponent implements OnInit {
       if (queryParams?.publicKey) {
         this.userPublicKeyBase58Check = queryParams.publicKey;
       }
-      this.initializeAppUser();
     });
   }
 
@@ -142,6 +141,9 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
+    this.globalVars.updateEverything().add(() => {
+      this.initializeAppUser();
+    });
   }
 
   closeModal() {
