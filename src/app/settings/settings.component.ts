@@ -99,7 +99,7 @@ export class SettingsComponent implements OnInit {
           throw err;
         })
       );
-      if (!!loggedInUser?.ProfileEntryResponse || true) {
+      if (!!loggedInUser?.ProfileEntryResponse) {
         const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey);
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
