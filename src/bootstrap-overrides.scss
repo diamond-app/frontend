@@ -1,3 +1,9 @@
 .btn-outline-dark {
   color: var(--text);
 }
+
+.list-group-item {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
