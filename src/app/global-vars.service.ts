@@ -549,7 +549,6 @@ export class GlobalVarsService {
     // TODO: error handling
     obs$.subscribe((messagingGroupEntryResponse) => {
       if (messagingGroupEntryResponse) {
-        console.log("setting messaging key", messagingGroupEntryResponse);
         this.loggedInUserDefaultKey = messagingGroupEntryResponse;
       }
     });

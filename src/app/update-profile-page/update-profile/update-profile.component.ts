@@ -273,12 +273,20 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateProfile() {
     if (!this.globalVars.loggedInUserDefaultKey) {
+      this.globalVars.logEvent("profile : create-messaging-key : start");
       this.globalVars
         .launchIdentityMessagingKey()
         .pipe(first())
-        .subscribe(() => {
-          this._saveProfileUpdates();
-        });
+        .subscribe(
+          () => {
+            this.globalVars.logEvent("profile : create-messaging-key : success");
+            this._saveProfileUpdates();
+          },
+          (err) => {
+            this.globalVars._alertError(err);
+            this.globalVars.logEvent("profile : create-messaging-key : error", err);
+          }
+        );
     } else {
       this._saveProfileUpdates();
     }
