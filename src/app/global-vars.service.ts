@@ -1131,12 +1131,14 @@ export class GlobalVarsService {
 
   launchIdentityFlow(event: string): Observable<any> {
     this.logEvent(`account : ${event} : launch`);
-    const obs$ = this.identityService.launch("/log-in", {
-      accessLevelRequest: "4",
-      // referralCode: this.referralCode(),
-      hideJumio: true,
-      getFreeDeso: true,
-    });
+    const obs$ = this.identityService
+      .launch("/log-in", {
+        accessLevelRequest: "4",
+        // referralCode: this.referralCode(),
+        hideJumio: true,
+        getFreeDeso: true,
+      })
+      .pipe(share());
 
     obs$.subscribe((res) => {
       // TODO: add tracking for whether the user signed up or not.
