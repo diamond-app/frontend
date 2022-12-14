@@ -100,7 +100,11 @@ export class SettingsComponent implements OnInit {
         })
       );
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey);
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+          catchError((err) => {
+            return of(null);
+          })
+        );
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
             switchMap(([appUser, userMetadata]) => {
