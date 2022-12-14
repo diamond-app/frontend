@@ -1,5 +1,5 @@
 //@ts-strict
-import { AfterViewInit, Component } from "@angular/core";
+import { AfterViewInit, Component, OnDestroy } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { first } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -9,14 +9,23 @@ import { GlobalVarsService } from "src/app/global-vars.service";
   templateUrl: "./welcome-modal.component.html",
   styleUrls: ["./welcome-modal.component.scss"],
 })
-export class WelcomeModalComponent implements AfterViewInit {
+export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
+  private didLaunchIdentityFlow: boolean = false;
+
   constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService) {}
 
   ngAfterViewInit() {
     this.globalVars.logEvent("onboarding : open");
   }
 
+  ngOnDestroy() {
+    if (!this.didLaunchIdentityFlow) {
+      this.globalVars.logEvent("onboarding : close : no-identity");
+    }
+  }
+
   login() {
+    this.didLaunchIdentityFlow = true;
     this.globalVars.logEvent("onboarding : identity");
     this.globalVars
       .launchLoginFlow()
