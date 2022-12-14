@@ -3,7 +3,7 @@
   class="global__top-bar d-flex justify-content-between align-items-center fs-18px font-weight-bold pl-15px border-bottom w-100"
   style="z-index: 1"
 >
-  <span>{{ 'notifications.list.notifications' | transloco }}</span>
+  <span>{{ "notifications.list.notifications" | transloco }}</span>
   <i-feather
     name="more-horizontal"
     class="feather-medium mr-10px cursor-pointer fs-0px"
@@ -14,6 +14,7 @@
   <notifications-filter-menu
     [filteredOutSetInput]="filteredOutSet"
     [expandNotificationsInput]="expandNotifications"
+    [filteredOutOptions]="filteredOutOptions"
     (closeFilter)="closeFilterMenu()"
     (updateSettingsEvent)="updateSettings($event)"
   ></notifications-filter-menu>
@@ -22,18 +23,15 @@
   <simple-center-loader></simple-center-loader>
 </div>
 <div *ngIf="(!totalItems || totalItems === 0) && !loadingFirstPage" class="d-flex justify-content-center mt-30px">
-  <span>{{ 'notifications.list.no_notifications' | transloco }}</span>
+  <span>{{ "notifications.list.no_notifications" | transloco }}</span>
 </div>
 <div class="notifications__list-container" id="notification-scroller">
-  <div
-    #uiScroll
-    *uiScroll="let item of datasource; let index = index"
-  >
+  <div #uiScroll *uiScroll="let item of datasource; let index = index">
     <div
       class="notifications__list-item"
       [ngClass]="{
         'last-item': index === totalItems - 1,
-        'border-none': (!item.action && !expandNotifications)
+        'border-none': !item.action && !expandNotifications
       }"
     >
       <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
@@ -49,7 +47,7 @@
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor?.Username]"
             >
               <div *ngIf="item.icon" class="notifications__icon">
-                <i-feather name="{{item.icon}}" class="fs-0px {{item.iconClass}}"></i-feather>
+                <i-feather name="{{ item.icon }}" class="fs-0px {{ item.iconClass }}"></i-feather>
               </div>
             </div>
             <div

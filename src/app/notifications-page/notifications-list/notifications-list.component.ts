@@ -6,10 +6,10 @@ import * as _ from "lodash";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { Subscription } from "rxjs";
-import { document } from "ngx-bootstrap/utils";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { difference, isEmpty } from "lodash";
 
 @Component({
   selector: "app-notifications-list",
@@ -25,7 +25,8 @@ export class NotificationsListComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   // stores a mapping of page number to notification index
@@ -52,8 +53,15 @@ export class NotificationsListComponent implements OnInit {
   filteredOutSet = {};
   pauseVideos = false;
 
+  readonly filteredOutOptions = ["like", "diamond", "transfer", "follow", "post", "nft"];
+  readonly noFiltersSelectedOption = "none";
+
   ngOnInit() {
-    const savedNotificationFilterPreferences = this.backendApi.GetStorage("notificationFilterPreferences");
+    const filterOutParamsFromQuery = this.queryToFilterOutParams(this.route.snapshot.queryParams.filter || "");
+    const savedNotificationFilterPreferences = isEmpty(filterOutParamsFromQuery)
+      ? this.backendApi.GetStorage("notificationFilterPreferences")
+      : filterOutParamsFromQuery;
+
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
     this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
@@ -61,11 +69,27 @@ export class NotificationsListComponent implements OnInit {
     this.globalVars.unreadNotifications = 0;
   }
 
+  ngOnDestroy() {
+    // reset query params before leaving the page
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+    });
+  }
+
   updateSettings(settings) {
     this.filteredOutSet = settings.filteredOutSet;
     this.expandNotifications = settings.expandNotifications;
     this.backendApi.SetStorage("notificationFilterPreferences", this.filteredOutSet);
     this.backendApi.SetStorage("notificationViewPreference", this.expandNotifications);
+
+    const filterQuery = this.filterOutParamsToQuery(settings.filteredOutSet);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: filterQuery === "" ? {} : { filter: filterQuery },
+    });
+
     this.scrollerReset();
   }
 
@@ -691,6 +715,37 @@ export class NotificationsListComponent implements OnInit {
         return true;
       },
     });
+  }
+
+  private filterOutParamsToQuery(filterOutSet: { [notificationType: string]: boolean }) {
+    const keys = Object.keys(filterOutSet);
+    const diff = difference(this.filteredOutOptions, keys);
+
+    if (diff.length === 0) {
+      // no filters selected
+      return this.noFiltersSelectedOption;
+    }
+
+    if (diff.length === this.filteredOutOptions.length) {
+      // all filters selected, returning empty string to omit the query param
+      return "";
+    }
+
+    // return only selected filters
+    return difference(this.filteredOutOptions, keys).join(",");
+  }
+
+  private queryToFilterOutParams(routeQuery: string) {
+    const selectedFilters = routeQuery.split(",");
+    const diff = difference(this.filteredOutOptions, selectedFilters);
+
+    if (diff.length === this.filteredOutOptions.length && routeQuery !== this.noFiltersSelectedOption) {
+      // no specific filters defined in route query (no param at all, or all filters are enabled)
+      return {};
+    }
+
+    // return only non-selected filters
+    return diff.reduce((acc, key) => ({ ...acc, [key]: true }), {});
   }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(
