@@ -8,7 +8,7 @@ import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Observer, of, Subscription } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError, first, share, switchMap } from "rxjs/operators";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -417,20 +417,6 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
-    if (this.loggedInUser) {
-      // Fetch referralLinks for the userList before completing the load.
-      // this.backendApi
-      //   .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
-      //   .subscribe(
-      //     (res: any) => {
-      //       this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-      //     },
-      //     (err: any) => {
-      //       console.log(err);
-      //     }
-      //   );
-    }
-
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
       this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
@@ -454,16 +440,13 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    // TODO: Only trigger this after user sign up.
     if (user?.BalanceNanos) {
       this.getLoggedInUserDefaultKey().add(async () => {
         if (
           !isNil(this.loggedInUserDefaultKey) &&
           this.backendApi.GetStorage(this.backendApi.EmailNotificationsDismissalKey) === null
         ) {
-          console.log("Here");
           const missingField = await this.appUserMissingField();
-          console.log("Here2: ", missingField);
           if (missingField !== "") {
             this.modalService.show(EmailSubscribeComponent, {
               class: "modal-dialog-centered buy-deso-modal",
@@ -516,48 +499,61 @@ export class GlobalVarsService {
 
   getLoggedInUserDefaultKey(): Subscription {
     return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-      if (!res) {
+      // NOTE: We only trigger the prompt if the user is not in the sign-up flow.
+      if (!res && !(this.userSigningUp || this.router.url === "/sign-up")) {
         SwalHelper.fire({
           html:
             "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
           showCancelButton: false,
         }).then(({ isConfirmed }) => {
           if (isConfirmed) {
-            // Ask user to generate a default key
-            this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-              if (res) {
-                this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
-                  this.loggedInUser.PublicKeyBase58Check,
-                  res.encryptedMessagingKeyRandomness
-                );
-                this.backendApi
-                  .RegisterGroupMessagingKey(
-                    this.localNode,
-                    this.loggedInUser.PublicKeyBase58Check,
-                    res.messagingPublicKeyBase58Check,
-                    "default-key",
-                    res.messagingKeySignature,
-                    [],
-                    {},
-                    this.feeRateDeSoPerKB * 1e9
-                  )
-                  .subscribe((res) => {
-                    if (res) {
-                      this.backendApi
-                        .GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check)
-                        .subscribe((messagingGroupEntryResponse) => {
-                          this.loggedInUserDefaultKey = messagingGroupEntryResponse;
-                        });
-                    }
-                  });
-              }
-            });
+            this.launchIdentityMessagingKey();
           }
         });
       } else {
         this.loggedInUserDefaultKey = res;
       }
     });
+  }
+
+  launchIdentityMessagingKey(): Observable<any> {
+    const obs$ = this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).pipe(
+      switchMap((res) => {
+        if (!res) return of(null);
+        this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
+          this.loggedInUser.PublicKeyBase58Check,
+          res.encryptedMessagingKeyRandomness
+        );
+        return this.backendApi
+          .RegisterGroupMessagingKey(
+            this.localNode,
+            this.loggedInUser.PublicKeyBase58Check,
+            res.messagingPublicKeyBase58Check,
+            "default-key",
+            res.messagingKeySignature,
+            [],
+            {},
+            this.feeRateDeSoPerKB * 1e9
+          )
+          .pipe(
+            switchMap((res) => {
+              if (!res) return of(null);
+              return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check);
+            })
+          );
+      }),
+      first(),
+      share()
+    );
+
+    // TODO: error handling
+    obs$.subscribe((messagingGroupEntryResponse) => {
+      if (messagingGroupEntryResponse) {
+        this.loggedInUserDefaultKey = messagingGroupEntryResponse;
+      }
+    });
+
+    return obs$;
   }
 
   preventBackButton() {
@@ -1132,22 +1128,29 @@ export class GlobalVarsService {
       });
   }
 
-  launchIdentityFlow(event: string): void {
+  launchIdentityFlow(event: string): Observable<any> {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService
+    const obs$ = this.identityService
       .launch("/log-in", {
         accessLevelRequest: "4",
         // referralCode: this.referralCode(),
         hideJumio: true,
+        getFreeDeso: true,
       })
-      .subscribe((res) => {
-        this.logEvent(`account : ${event} : success`);
-        this.userSigningUp = res.signedUp;
-        this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-        this.updateEverything().add(() => {
-          this.flowRedirect(res.signedUp);
-        });
+      .pipe(share());
+
+    obs$.subscribe((res) => {
+      // TODO: add tracking for whether the user signed up or not.
+      // Q: do we also want to track if the user verified their phone number.
+      this.logEvent(`account : ${event} : success`);
+      this.userSigningUp = res.signedUp;
+      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
+      this.updateEverything().add(() => {
+        this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
       });
+    });
+
+    return obs$;
   }
 
   checkForInAppBrowser(): string {
@@ -1182,10 +1185,10 @@ export class GlobalVarsService {
     }
   }
 
-  launchLoginFlow() {
+  launchLoginFlow(): Observable<any> {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
-      this.launchIdentityFlow("login");
+      return this.launchIdentityFlow("login");
     } else {
       this.modalService.show(DirectToNativeBrowserModalComponent, {
         class: "modal-dialog-centered buy-deso-modal",
@@ -1214,8 +1217,6 @@ export class GlobalVarsService {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
       this.userSigningUp = false;
-    } else if (this.router.url === RouteNames.LANDING) {
-      this.router.navigate(["/" + this.RouteNames.BROWSE]);
     }
   }
 
@@ -1338,9 +1339,6 @@ export class GlobalVarsService {
   static getTargetComponentSelectorFromRouter(router: Router): string {
     if (router.url.startsWith("/" + RouteNames.BROWSE)) {
       return "browse-page";
-    }
-    if (router.url.startsWith("/" + RouteNames.LANDING)) {
-      return "landing-page";
     }
     if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
       return "messages-page";

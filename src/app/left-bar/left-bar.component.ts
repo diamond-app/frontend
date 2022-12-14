@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/co
 import { Router } from "@angular/router";
 import { filter, get } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
@@ -43,23 +44,23 @@ export class LeftBarComponent {
     private router: Router
   ) {}
 
-  // send logged out users to the landing page
-  // send logged in users to browse
-  homeLink(): string | string[] {
-    if (this.inTutorial) {
-      return [];
+  openCreatePostModal() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+    } else {
+      this.modalService.show(FeedCreatePostModalComponent, {
+        class: "modal-dialog-centered",
+        ignoreBackdropClick: true,
+      });
     }
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
-  openCreatePostModal() {
-    this.modalService.show(FeedCreatePostModalComponent, {
-      class: "modal-dialog-centered",
-      ignoreBackdropClick: true,
-    });
+  onCreateBlogPost() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
+    }
   }
 
   displayMore(event: any) {

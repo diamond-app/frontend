@@ -4,10 +4,12 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { escape, has } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import "quill-mention";
 import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
 
@@ -144,7 +146,8 @@ export class CreateLongPostComponent implements AfterViewInit {
     private router: Router,
     private titleService: Title,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private modalService: BsModalService
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
   }
@@ -255,7 +258,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
 
     if (!currentUserProfile) {
-      this.globalVars._alertError("You must have a profile to create a blog post.");
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
 

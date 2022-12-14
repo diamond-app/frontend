@@ -188,8 +188,7 @@
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
-      (click)="onNavigateToCreateBlog()"
-      [routerLink]="['/' + globalVars.RouteNames.CREATE_LONG_POST]"
+      (click)="onNavigateToCreateBlog($event)"
     >
       <i-feather name="edit"></i-feather>
     </button>

@@ -98,7 +98,6 @@ import { GlobalVarsService } from "./global-vars.service";
 import { IconsModule } from "./icons/icons.module";
 import { IdentityService } from "./identity.service";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
@@ -215,6 +214,8 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
+import { WelcomeModalComponent } from './welcome-modal/welcome-modal.component';
+import { LoggedOutEmptyStateComponent } from './logged-out-empty-state/logged-out-empty-state.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -315,7 +316,6 @@ export function playerFactory() {
     SettingsComponent,
     NotificationsListComponent,
     PageComponent,
-    LandingPageComponent,
     SignUpComponent,
     SignUpTransferDesoComponent,
     SignUpGetStarterDeSoComponent,
@@ -409,6 +409,8 @@ export function playerFactory() {
     EarningsCardComponent,
     TwitterSyncSettingsComponent,
     TwitterSyncPageComponent,
+    WelcomeModalComponent,
+    LoggedOutEmptyStateComponent,
   ],
   imports: [
     BrowserModule,

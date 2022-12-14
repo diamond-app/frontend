@@ -8,17 +8,13 @@
       <a
         class="link--unstyled d-flex align-items-center ml-15px"
         (click)="globalVars.isLeftBarMobileOpen = false"
-        [routerLink]="homeLink()"
+        [routerLink]="'/' + globalVars.RouteNames.BROWSE"
         queryParamsHandling="merge"
       >
-        <img
-          [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
-          class="deso"
-          style="height: 30px"
-        />
+        <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 30px" />
       </a>
       <div class="d-flex align-items-center">
-        <div *ngIf="!inTutorial" class="position-relative mr-15px" style="width: 343px; height: 48px">
+        <div class="position-relative mr-15px" style="width: 343px; height: 48px">
           <search-bar [resultsUnderBar]="true"></search-bar>
         </div>
         <change-account-selector></change-account-selector>
@@ -31,8 +27,13 @@
     [simpleTopBar]="simpleTopBar"
     [title]="title"
   ></top-bar-mobile-header>
-  <div class="d-flex" id="header-content-spacer" [ngClass]="{ 'logged-out': !globalVars.loggedInUser }" style="margin-top: 60px">
-    <left-bar *ngIf="!mobile && !onlyContent" [inTutorial]="inTutorial"></left-bar>
+  <div
+    class="d-flex"
+    id="header-content-spacer"
+    [ngClass]="{ 'logged-out': !globalVars.loggedInUser }"
+    style="margin-top: 60px"
+  >
+    <left-bar *ngIf="!mobile && !onlyContent"></left-bar>
     <div *ngIf="onlyContent" class="global__nav__flex">
       <div class="global__nav__fixed">
         <div class="global__nav__inner"></div>
@@ -46,16 +47,18 @@
         </div>
       </div>
       <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar && !onlyContent">
-        <right-bar-creators [inTutorial]="inTutorial" class="global__sidebar__fixed disable-scrollbars"></right-bar-creators>
+        <right-bar-creators
+          [inTutorial]="inTutorial"
+          class="global__sidebar__fixed disable-scrollbars"
+        ></right-bar-creators>
       </div>
 
       <bottom-bar-mobile
         [ngClass]="{ 'pwa-bottom-bar-mobile': globalVars.windowIsPWA() && globalVars.isMobile() }"
-        *ngIf="mobile && !inTutorial && showBottomBar"
+        *ngIf="mobile && showBottomBar"
         class="global__bottom-bar-mobile"
         [showPostButton]="showPostButton"
       ></bottom-bar-mobile>
     </div>
-
   </div>
 </div>

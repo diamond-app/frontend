@@ -1,8 +1,7 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { environment } from "src/environments/environment";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { SettingsComponent } from "../settings/settings.component";
+import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "app-page",
@@ -28,18 +27,6 @@ export class PageComponent implements OnInit {
 
   ngOnInit() {
     this.setMobileBasedOnViewport();
-  }
-
-  // send logged out users to the landing page
-  // send logged in users to browse
-  homeLink(): string | string[] {
-    if (this.inTutorial) {
-      return [];
-    }
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   setMobileBasedOnViewport() {
