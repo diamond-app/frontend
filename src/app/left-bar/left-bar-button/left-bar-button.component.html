@@ -1,7 +1,16 @@
 <div class="w-100 d-flex">
   <div
+    class="left-bar-active-indicator"
     [routerLink]="[link]"
-    [routerLinkActive]="['left-bar-active']"
+    routerLinkActive
+    #rla="routerLinkActive"
+    [ngClass]="{ 'left-bar-active-indicator-active': rla.isActive }"
+  ></div>
+  <div
+    [routerLink]="[link]"
+    routerLinkActive
+    #rla="routerLinkActive"
+    [ngClass]="{ 'left-bar-active': rla.isActive }"
     queryParamsHandling="merge"
     class="d-flex justify-content-center align-items-center left-bar-button left-bar-link"
   >
