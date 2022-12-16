@@ -340,7 +340,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
               this.usernameInput,
               this.globalVars.lastSeenNotificationIdx,
               utcOffset,
-              20,
+              20 - utcOffset,
               userNotifPreferences
             );
           }

@@ -122,7 +122,7 @@ export class SettingsComponent implements OnInit {
                     this.globalVars.loggedInUser.ProfileEntryResponse.Username,
                     this.globalVars.lastSeenNotificationIdx,
                     utcOffset,
-                    20
+                    20 - utcOffset
                   );
                 }
 
@@ -274,7 +274,7 @@ export class SettingsComponent implements OnInit {
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
-            20
+            20 - utcOffset
           );
         })
       )
