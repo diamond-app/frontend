@@ -19,6 +19,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ThemeService } from "../../theme/theme.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
+import { getUTCOffset } from "../../../lib/helpers/date-helpers";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -333,10 +334,13 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             const userNotifPreferences = this.subscribeToEmailNotifs
               ? SUBSCRIBED_APP_USER_DEFAULTS
               : NEW_APP_USER_DEFAULTS;
+            const utcOffset = getUTCOffset();
             createOrUdpateAppUserObs = this.apiInternal.createAppUser(
               this.loggedInUser.PublicKeyBase58Check,
               this.usernameInput,
               this.globalVars.lastSeenNotificationIdx,
+              utcOffset,
+              20,
               userNotifPreferences
             );
           }
