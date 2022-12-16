@@ -152,7 +152,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             const percentToBuy = 0.1;
             const nanosSimulatedBought = balance * percentToBuy;
             this.balanceEntryToHighlight = {
-              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
               CreatorPublicKeyBase58Check: res.Profile.PublicKeyBase58Check,
               HasPurchased: true,
               BalanceNanos: nanosSimulatedBought,
@@ -220,7 +220,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   _copyPublicKey() {
-    this.globalVars._copyText(this.globalVars.loggedInUser.PublicKeyBase58Check);
+    this.globalVars._copyText(this.globalVars.loggedInUser?.PublicKeyBase58Check);
     this.publicKeyIsCopied = true;
     setInterval(() => {
       this.publicKeyIsCopied = false;
@@ -411,7 +411,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
               .UpdateProfile(
                 environment.verificationEndpointHostname,
                 this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 "",
                 "",
                 "",
@@ -607,12 +607,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getBlockExplorerLink() {
-    return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
+    return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser?.PublicKeyBase58Check}`;
   }
 
   getOpenProsperLink() {
     return this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
       ? `https://openprosper.com/u/${this.globalVars.loggedInUser.ProfileEntryResponse.Username}/transactions`
-      : `https://openprosper.com/pk/${this.globalVars.loggedInUser.PublicKeyBase58Check}/transactions`;
+      : `https://openprosper.com/pk/${this.globalVars.loggedInUser?.PublicKeyBase58Check}/transactions`;
   }
 }

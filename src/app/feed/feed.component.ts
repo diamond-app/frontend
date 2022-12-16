@@ -11,9 +11,11 @@ import {
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
 import PullToRefresh from "pulltorefreshjs";
 import { Subscription } from "rxjs";
 import { finalize, first, tap } from "rxjs/operators";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -102,7 +104,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private titleService: Title
+    private titleService: Title,
+    private modalService: BsModalService
   ) {
     this.globalVars = appData;
 
@@ -163,7 +166,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.backendApi
         .GetReferralInfoForUser(
           environment.verificationEndpointHostname,
-          this.globalVars.loggedInUser.PublicKeyBase58Check
+          this.globalVars.loggedInUser?.PublicKeyBase58Check
         )
         .subscribe(
           (res: any) => {
@@ -374,6 +377,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   loadMorePosts() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       this._loadFollowFeedPosts();
     } else if (this.activeTab === FeedComponent.HOT_TAB) {
@@ -411,7 +419,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
@@ -498,7 +506,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
@@ -562,7 +570,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
@@ -612,7 +620,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");

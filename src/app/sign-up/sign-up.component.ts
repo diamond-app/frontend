@@ -133,7 +133,7 @@ export class SignUpComponent {
 
   finishOnboarding() {
     // sends a welcome email.
-    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(() => {
+    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser?.PublicKeyBase58Check).subscribe(() => {
       // TODO: use email response to show a "check your email" UI toast? not sure
       // what we want to do with it, if anything.
     });
@@ -141,9 +141,9 @@ export class SignUpComponent {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.COMPLETE,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         true
       )
       .subscribe(() => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
@@ -22,9 +22,11 @@ export class LeftBarButtonComponent {
     if (this.queryParams) {
       return this.queryParams;
     }
+
     if (link.includes(this.globalVars.RouteNames.BROWSE)) {
       return { stepNum: null, adminTab: null };
     }
+
     return { stepNum: null, adminTab: null, feedTab: null };
   }
 }

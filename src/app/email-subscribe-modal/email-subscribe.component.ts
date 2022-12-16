@@ -1,17 +1,12 @@
 // @ts-strict
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { forkJoin, of } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 import { ApiInternalService, AppUser, SUBSCRIBED_APP_USER_DEFAULTS } from "src/app/api-internal.service";
-import { environment } from "src/environments/environment";
+import { getUTCOffset } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { ThemeService } from "../theme/theme.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { getUTCOffset } from "../../lib/helpers/date-helpers";
 
 @Component({
   selector: "email-subscribe",
@@ -67,14 +62,14 @@ export class EmailSubscribeComponent implements OnInit {
     this.backendApi
       .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
       )
       .pipe(
         switchMap((res) => {
           return this.apiInternal.createAppUser(
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
@@ -102,7 +97,7 @@ export class EmailSubscribeComponent implements OnInit {
     const utcOffset = getUTCOffset();
     this.apiInternal
       .createAppUser(
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.globalVars.loggedInUser.ProfileEntryResponse.Username,
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,

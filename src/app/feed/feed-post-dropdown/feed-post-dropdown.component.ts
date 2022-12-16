@@ -77,7 +77,7 @@ export class FeedPostDropdownComponent implements OnInit {
   dropNFT() {
     // Get the latest drop so that we can update it.
     this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, -1 /*DropNumber*/)
       .subscribe(
         (res: any) => {
           if (res.DropEntry.DropTstampNanos == 0) {
@@ -122,7 +122,7 @@ export class FeedPostDropdownComponent implements OnInit {
     this.backendApi
       .AdminUpdateNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         latestDrop.DropNumber,
         latestDrop.DropTstampNanos,
         latestDrop.IsActive /*IsActive*/,
@@ -157,9 +157,10 @@ export class FeedPostDropdownComponent implements OnInit {
     }
 
     const loggedInUserPostedThis =
-      this.globalVars.loggedInUser.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
+      this.globalVars.loggedInUser?.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
     const loggedInUserIsParamUpdater =
-      this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
+      this.globalVars.paramUpdaters &&
+      this.globalVars.paramUpdaters[this.globalVars.loggedInUser?.PublicKeyBase58Check];
 
     return loggedInUserPostedThis || loggedInUserIsParamUpdater;
   }
@@ -300,7 +301,7 @@ export class FeedPostDropdownComponent implements OnInit {
       .UpdateProfile(
         this.globalVars.localNode,
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
         "",
@@ -333,7 +334,7 @@ export class FeedPostDropdownComponent implements OnInit {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -466,7 +467,7 @@ export class FeedPostDropdownComponent implements OnInit {
       .UpdateProfile(
         environment.verificationEndpointHostname,
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
         "",

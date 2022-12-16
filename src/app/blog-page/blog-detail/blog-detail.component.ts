@@ -337,7 +337,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         this.backendApi
           .SubmitPost(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
@@ -383,7 +383,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         this.backendApi
           .BlockPublicKey(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PosterPublicKeyBase58Check
           )
           .subscribe(

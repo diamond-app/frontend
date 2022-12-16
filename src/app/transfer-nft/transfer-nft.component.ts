@@ -1,13 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../backend-api.service";
-import * as _ from "lodash";
-import { Router } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { Location } from "@angular/common";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Router } from "@angular/router";
+import * as _ from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { ToastrService } from "ngx-toastr";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "transfer-nft",
@@ -51,7 +50,7 @@ export class TransferNftComponent implements OnInit {
     this.backendApi
       .GetNFTEntriesForNFTPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex
       )
       .subscribe((res) => {

@@ -1,13 +1,11 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import * as _ from "lodash";
+import { Location } from "@angular/common";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { isNumber } from "lodash";
-import { ToastrService } from "ngx-toastr";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { Location } from "@angular/common";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { ToastrService } from "ngx-toastr";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "transfer-nft-accept",
@@ -55,7 +53,7 @@ export class TransferNftAcceptComponent {
     this.backendApi
       .AcceptNFTTransfer(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
         this.globalVars.defaultFeeRateNanosPerKB

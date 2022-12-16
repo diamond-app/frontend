@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { InfiniteScroller } from "../infinite-scroller";
 
 @Component({
   selector: "nft-drop-mgr",
@@ -55,7 +55,7 @@ export class NftDropMgrComponent implements OnInit {
     // Get the latest NFT drop
     this.loading = true;
     this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, -1 /*DropNumber*/)
       .subscribe(
         (res: any) => {
           this.dropEntry = res.DropEntry;
@@ -148,7 +148,7 @@ export class NftDropMgrComponent implements OnInit {
     this.backendApi
       .AdminGetNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         nextDropNumber /*DropNumber*/
       )
       .subscribe(
@@ -177,7 +177,7 @@ export class NftDropMgrComponent implements OnInit {
     this.backendApi
       .AdminGetNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         prevDropNumber /*DropNumber*/
       )
       .subscribe(
@@ -202,7 +202,7 @@ export class NftDropMgrComponent implements OnInit {
     this.backendApi
       .AdminUpdateNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropNumber,
         this.dropTime.getTime() * 1e6,
         false /*IsActive*/,
@@ -234,7 +234,7 @@ export class NftDropMgrComponent implements OnInit {
     this.backendApi
       .AdminUpdateNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropEntry.DropNumber,
         this.dropEntry.DropTstampNanos,
         !this.dropEntry.IsActive /*IsActive*/,
@@ -263,7 +263,7 @@ export class NftDropMgrComponent implements OnInit {
     this.backendApi
       .AdminUpdateNFTDrop(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropEntry.DropNumber,
         this.dropEntry.DropTstampNanos,
         this.dropEntry.IsActive /*IsActive*/,
@@ -307,7 +307,7 @@ export class NftDropMgrComponent implements OnInit {
         this.backendApi
           .AdminUpdateNFTDrop(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.dropEntry.DropNumber,
             this.dropEntry.DropTstampNanos,
             this.dropEntry.IsActive /*IsActive*/,

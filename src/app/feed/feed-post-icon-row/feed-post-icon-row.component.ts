@@ -207,7 +207,7 @@ export class FeedPostIconRowComponent {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -259,7 +259,7 @@ export class FeedPostIconRowComponent {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -325,7 +325,7 @@ export class FeedPostIconRowComponent {
     this.backendApi
       .CreateLike(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostHashHex,
         isUnlike,
         this.globalVars.feeRateDeSoPerKB * 1e9
@@ -447,7 +447,7 @@ export class FeedPostIconRowComponent {
     return this.backendApi
       .SendDiamonds(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
         diamonds,
@@ -460,7 +460,7 @@ export class FeedPostIconRowComponent {
           this.sendingDiamonds = false;
           this.diamondSent.emit();
           this.globalVars.logEvent("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+            SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
             ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
             DiamondPostHashHex: this.postContent.PostHashHex,
             DiamondLevel: diamonds,
@@ -501,7 +501,7 @@ export class FeedPostIconRowComponent {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,

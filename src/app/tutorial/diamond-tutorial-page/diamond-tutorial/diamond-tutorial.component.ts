@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
+import { RouteNames } from "../../../app-routing.module";
+import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { GlobalVarsService } from "../../../global-vars.service";
 
 @Component({
   selector: "diamond-tutorial",
@@ -35,7 +35,7 @@ export class DiamondTutorialComponent implements OnInit {
       .GetSinglePost(
         this.globalVars.localNode,
         this.postHashHex,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         false,
         0,
         0,

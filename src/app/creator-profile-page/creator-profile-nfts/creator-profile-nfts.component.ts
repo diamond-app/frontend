@@ -1,13 +1,19 @@
+import { Location } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnInit,
-  Output, QueryList,
-  ViewChild, ViewChildren
+  Output,
+  QueryList,
+  ViewChildren,
 } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import * as _ from "lodash";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { of, Subscription } from "rxjs";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import {
   BackendApiService,
   NFTBidEntryResponse,
@@ -15,15 +21,9 @@ import {
   PostEntryResponse,
   ProfileEntryResponse,
 } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import * as _ from "lodash";
-import { InfiniteScroller } from "../../infinite-scroller";
-import { of, Subscription } from "rxjs";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { InfiniteScroller } from "../../infinite-scroller";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -313,7 +313,7 @@ export class CreatorProfileNftsComponent implements OnInit {
         this.backendApi
           .CreateNFTBid(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             bidEntry.PostEntryResponse.PostHashHex,
             bidEntry.SerialNumber,
             0,

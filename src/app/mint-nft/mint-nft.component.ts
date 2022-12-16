@@ -1,11 +1,11 @@
-import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
+import { Location } from "@angular/common";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { isNumber } from "lodash";
-import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 type AdditionalRoyalty = {
   PublicKeyBase58Check?: string;
@@ -65,7 +65,7 @@ export class MintNftComponent {
     });
     this.globalVars = _globalVars;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res) => {
         this.createNFTFeeNanos = res.CreateNFTFeeNanos;
         this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
@@ -317,7 +317,7 @@ export class MintNftComponent {
     this.backendApi
       .CreateNft(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postHashHex,
         numCopiesToMint,
         creatorRoyaltyBasisPoints,

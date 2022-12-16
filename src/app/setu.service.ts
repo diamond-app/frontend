@@ -134,7 +134,7 @@ export class SetuService {
 
     return this.identity
       .jwt({
-        ...this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
+        ...this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check),
       })
       .pipe(map(({ jwt }) => jwt));
   }

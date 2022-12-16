@@ -1,14 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
-import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 import { environment } from "src/environments/environment";
+import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
+import { AppRoutingModule } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "creators-leaderboard",
@@ -58,7 +58,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     const fetchPubKey = this.pagedKeys[page];
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     this.isLoadingMore = true;
 

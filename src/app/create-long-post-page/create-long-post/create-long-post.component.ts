@@ -188,7 +188,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         "" /*Description*/,
         "influencer_coin_price" /*Order by*/,
         5 /*NumToFetch*/,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
         "" /*ModerationType*/,
         false /*FetchUsersThatHODL*/,
         false /*AddGlobalFeedBool*/
@@ -227,7 +227,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
-            .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, newFile)
+            .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, newFile)
             .toPromise();
           op.insert.image = res.ImageURL;
         }
@@ -340,7 +340,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       const postTx = await this.backendApi
         .SubmitPost(
           this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
           this.editPostHashHex ?? "" /*PostHashHexToModify*/,
           "" /*ParentPostHashHex*/,
           "" /*Title*/,
@@ -376,7 +376,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           .UpdateProfile(
             this.globalVars.localNode,
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             "",
             "",
             "",
@@ -424,7 +424,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     }
 
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => res.ImageURL)
       .catch((err) => {

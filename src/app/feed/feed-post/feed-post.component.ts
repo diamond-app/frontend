@@ -562,7 +562,7 @@ export class FeedPostComponent implements OnInit {
         this.backendApi
           .SubmitPost(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
@@ -605,7 +605,7 @@ export class FeedPostComponent implements OnInit {
         this.backendApi
           .BlockPublicKey(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.post.PosterPublicKeyBase58Check
           )
           .subscribe(
@@ -677,7 +677,7 @@ export class FeedPostComponent implements OnInit {
     this.backendApi
       .AdminUpdateGlobalFeed(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         postHashHex,
         inGlobalFeed /*RemoveFromGlobalFeed*/
       )
@@ -712,7 +712,7 @@ export class FeedPostComponent implements OnInit {
     this.backendApi
       .AdminPinPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         postHashHex,
         isPostPinned
       )
@@ -885,7 +885,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
-        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
         nftEntryResponse.IsPending
       );
     });

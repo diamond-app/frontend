@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { concatMap, last, map } from "rxjs/operators";
-import { of } from "rxjs";
 import { Router } from "@angular/router";
-import { filter, isNumber } from "lodash";
 import { TranslocoService } from "@ngneat/transloco";
+import { filter, isNumber } from "lodash";
+import { BsModalRef } from "ngx-bootstrap/modal";
+import { of } from "rxjs";
+import { concatMap, last, map } from "rxjs/operators";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "create-nft-auction",
@@ -117,7 +117,7 @@ export class CreateNftAuctionModalComponent implements OnInit {
             return this.backendApi
               .UpdateNFT(
                 this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 this.post.PostHashHex,
                 val + 1,
                 true,

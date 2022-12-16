@@ -28,7 +28,7 @@ export class SignUpTransferDesoComponent implements OnInit {
   ) {}
 
   _copyPublicKey() {
-    this.globalVars._copyText(this.globalVars.loggedInUser.PublicKeyBase58Check);
+    this.globalVars._copyText(this.globalVars.loggedInUser?.PublicKeyBase58Check);
     this.publicKeyIsCopied = true;
     setInterval(() => {
       this.publicKeyIsCopied = false;
@@ -37,7 +37,7 @@ export class SignUpTransferDesoComponent implements OnInit {
 
   ngOnInit() {
     this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
-      this.globalVars.loggedInUser.PublicKeyBase58Check
+      this.globalVars.loggedInUser?.PublicKeyBase58Check
     }`;
   }
 
