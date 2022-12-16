@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
@@ -412,7 +413,8 @@ export class FeedPostComponent implements OnInit {
   }
 
   onPostClicked(event) {
-    if (this.inTutorial) {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
     if (this.containerModalRef !== null) {
