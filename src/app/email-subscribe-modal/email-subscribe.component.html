@@ -9,7 +9,7 @@
     <div class="fs-24px font-weight-bold fc-default pt-2">Diamond has email notifications!</div>
     <div class="fs-18px font-weight-bold fc-muted pt-1">Stay up-to-date on all of your creator activity & earnings!</div>
     <form (submit)="onEmailSubmit($event)" *ngIf="showEmailPrompt" class="w-80 pt-4">
-      <div class="d-flex w-100">
+      <div class="d-flex w-100 flex-gap">
         <input
           id="email-prompt"
           class="form-control w-80"
@@ -19,7 +19,7 @@
           [(ngModel)]="this.emailAddress"
           (input)="onEmailChange()"
         />
-        <button type="submit" class="ml-auto btn btn-primary w-35">
+        <button type="submit" class="ml-auto btn btn-primary w-29">
           <span *ngIf="this.isProcessing"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
           <span *ngIf="!this.isProcessing">Submit</span>
         </button>

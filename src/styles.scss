@@ -234,6 +234,8 @@ $green-font-color: #19B028;
 .font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
+// Flex Gaps
+.flex-gap { gap: 4px }
 
 // Widths
 .w-10 { width: 10% }
@@ -241,7 +243,7 @@ $green-font-color: #19B028;
 .w-20 { width: 20% }
 //why w-30 is 10%? cc @zordon @jacksondean
 .w-30 { width: 10% }
-.w-35 { width: 35% }
+.w-29 { width: 29% }
 .w-40 { width: 40% }
 .w-50 { width: 50% }
 .w-60 { width: 60% }
