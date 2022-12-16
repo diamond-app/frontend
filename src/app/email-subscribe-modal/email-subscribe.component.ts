@@ -78,7 +78,7 @@ export class EmailSubscribeComponent implements OnInit {
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
-            20,
+            20 - utcOffset,
             SUBSCRIBED_APP_USER_DEFAULTS
           );
         })
@@ -106,7 +106,7 @@ export class EmailSubscribeComponent implements OnInit {
         this.globalVars.loggedInUser.ProfileEntryResponse.Username,
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,
-        20,
+        20 - utcOffset,
         SUBSCRIBED_APP_USER_DEFAULTS
       )
       .subscribe(() => {
