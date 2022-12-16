@@ -405,6 +405,12 @@ export class FeedPostComponent implements OnInit {
 
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
@@ -413,8 +419,7 @@ export class FeedPostComponent implements OnInit {
   }
 
   onPostClicked(event) {
-    if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+    if (this.inTutorial) {
       return;
     }
     if (this.containerModalRef !== null) {

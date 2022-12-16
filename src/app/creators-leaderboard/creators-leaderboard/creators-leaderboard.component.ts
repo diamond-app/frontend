@@ -3,6 +3,7 @@ import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { AppRoutingModule } from "../../app-routing.module";
@@ -106,6 +107,12 @@ export class CreatorsLeaderboardComponent implements OnInit {
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
     this.closeModal.emit();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
