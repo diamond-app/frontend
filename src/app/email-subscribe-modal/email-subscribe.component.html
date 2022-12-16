@@ -19,7 +19,7 @@
           [(ngModel)]="this.emailAddress"
           (input)="onEmailChange()"
         />
-        <button type="submit" class="ml-auto btn btn-primary w-20">
+        <button type="submit" class="ml-auto btn btn-primary w-35">
           <span *ngIf="this.isProcessing"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
           <span *ngIf="!this.isProcessing">Submit</span>
         </button>
