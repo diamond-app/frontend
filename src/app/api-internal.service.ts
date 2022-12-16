@@ -35,6 +35,8 @@ export interface AppUser {
   ReceiveNftBidAcceptedNotif: boolean;
   ReceiveNftRoyaltyNotif: boolean;
   LastNotificationScannedIndex: number;
+  DigestSendAtHourLocalTime: number;
+  UserTimezoneUtcOffset: number;
 }
 
 export const NEW_APP_USER_DEFAULTS = {
@@ -105,6 +107,8 @@ export class ApiInternalService {
     PublicKeyBase58check: string,
     Username: string,
     LastNotificationScannedIndex: number,
+    UserTimezoneUtcOffset: number,
+    DigestSendAtHourLocalTime: number,
     notificationSettings: {} = NEW_APP_USER_DEFAULTS
   ) {
     const payload = {
@@ -112,6 +116,8 @@ export class ApiInternalService {
       PublicKeyBase58check,
       Username,
       LastNotificationScannedIndex,
+      DigestSendAtHourLocalTime,
+      UserTimezoneUtcOffset,
     };
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))

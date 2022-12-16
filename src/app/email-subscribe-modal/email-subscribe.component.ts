@@ -11,6 +11,7 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { getUTCOffset } from "../../lib/helpers/date-helpers";
 
 @Component({
   selector: "email-subscribe",
@@ -61,6 +62,7 @@ export class EmailSubscribeComponent implements OnInit {
       return;
     }
 
+    const utcOffset = getUTCOffset();
     this.isProcessing = true;
     this.backendApi
       .UpdateUserGlobalMetadata(
@@ -75,6 +77,8 @@ export class EmailSubscribeComponent implements OnInit {
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
+            utcOffset,
+            20,
             SUBSCRIBED_APP_USER_DEFAULTS
           );
         })
@@ -95,11 +99,14 @@ export class EmailSubscribeComponent implements OnInit {
 
   addUserToEmailDigest() {
     this.isProcessing = true;
+    const utcOffset = getUTCOffset();
     this.apiInternal
       .createAppUser(
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.globalVars.loggedInUser.ProfileEntryResponse.Username,
         this.globalVars.lastSeenNotificationIdx,
+        utcOffset,
+        20,
         SUBSCRIBED_APP_USER_DEFAULTS
       )
       .subscribe(() => {
