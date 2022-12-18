@@ -9,6 +9,7 @@
   [inModal]="true"
   [onCreateBlog]="closeModal.bind(this)"
   [postToEdit]="postToEdit"
+  [modalRef]="this.bsModalRef"
   (postCreated)="onPostCreated($event)"
   (postCreated)="bsModalRef.hide()"
   (postUpdated)="postUpdated($event)"

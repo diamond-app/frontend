@@ -1,4 +1,8 @@
-<div class="d-flex w-100 tab-selector__container" style="cursor: pointer; height: 50px" [ngClass]="{ 'tab-selector-links': !buttonSelector }">
+<div
+  class="d-flex w-100 tab-selector__container"
+  style="cursor: pointer; height: 50px"
+  [ngClass]="{ 'tab-selector-links': !buttonSelector, 'tab-selector__container--logged-out': !globalVars.loggedInUser }"
+>
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
@@ -12,17 +16,16 @@
       >
         {{ tab | transloco }}
       </div>
-      <button
-        *ngIf="tab === activeTab && buttonSelector"
-      >
+      <button *ngIf="tab === activeTab && buttonSelector">
         <span>{{ tab | transloco }}</span>
       </button>
       <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== activeTab">
-        <span>{{ 'tab_selector.new' | transloco }}</span>
+        <span>{{ "tab_selector.new" | transloco }}</span>
       </div>
       <div *ngIf="isLink(tab) && !globalVars.isMobile()" class="d-flex align-items-center ml-5px">
         <i-feather class="feather-small fs-0px" name="external-link"></i-feather>
       </div>
     </div>
   </div>
+  <ng-content></ng-content>
 </div>

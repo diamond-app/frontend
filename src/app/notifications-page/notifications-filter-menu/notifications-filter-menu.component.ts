@@ -12,13 +12,14 @@ export class NotificationsFilterMenuComponent implements OnInit {
   @Output() updateSettingsEvent = new EventEmitter();
 
   @Input() filteredOutSetInput: {};
+  @Input() filteredOutOptions: string[]; // all allowed options
   @Input() expandNotificationsInput: boolean;
 
   filteredOutSet: {};
   expandNotifications: boolean;
 
   ngOnInit() {
-    this.filteredOutSet = {...this.filteredOutSetInput};
+    this.filteredOutSet = { ...this.filteredOutSetInput };
     this.expandNotifications = this.expandNotificationsInput;
   }
 
@@ -27,14 +28,7 @@ export class NotificationsFilterMenuComponent implements OnInit {
   }
 
   selectNone() {
-    this.filteredOutSet = {
-      like: true,
-      diamond: true,
-      transfer: true,
-      follow: true,
-      post: true,
-      nft: true,
-    };
+    this.filteredOutSet = this.filteredOutOptions.reduce((acc, key) => ({ ...acc, [key]: true }), {});
   }
 
   allSelected(): boolean {
@@ -59,14 +53,13 @@ export class NotificationsFilterMenuComponent implements OnInit {
   updateSettings() {
     const settings = {
       filteredOutSet: this.filteredOutSet,
-      expandNotifications: this.expandNotifications
-    }
+      expandNotifications: this.expandNotifications,
+    };
     this.updateSettingsEvent.emit(settings);
     this.closeFilter.emit();
   }
 
   updateCompactView() {
-    this.expandNotifications = !this.expandNotifications
+    this.expandNotifications = !this.expandNotifications;
   }
-
 }

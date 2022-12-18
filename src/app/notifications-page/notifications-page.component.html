@@ -1,3 +1,14 @@
 <app-page>
-  <app-notifications-list></app-notifications-list>
+  <app-logged-out-empty-state
+    *ngIf="!this.globalVars.loggedInUser; else notifications"
+    [headingText]="'See who\'s mentioning you, or simply just giving you money.'"
+    [subheadingText]="
+      'On Diamond, you can easily view and manage your notifications for all types of on-chain activity, ranging from NFT buys, diamond tips, mentions, replies, and more.'
+    "
+    [buttonText]="'Sign up on Diamond'"
+    [imgSrc]="'/assets/diamond/notifications-teaser.png'"
+  ></app-logged-out-empty-state>
+  <ng-template #notifications>
+    <app-notifications-list></app-notifications-list>
+  </ng-template>
 </app-page>

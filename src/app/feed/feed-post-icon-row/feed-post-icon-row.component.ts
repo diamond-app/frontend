@@ -5,6 +5,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
@@ -175,27 +176,7 @@ export class FeedPostIconRowComponent {
 
   _preventNonLoggedInUserActions(action: string) {
     this.globalVars.logEvent(`alert : ${action} : account`);
-
-    return SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      icon: "info",
-      title: `Create an account to ${action}`,
-      html: `It's totally anonymous and takes under a minute`,
-      showCancelButton: true,
-      showConfirmButton: true,
-      focusConfirm: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      confirmButtonText: "Create an account",
-      cancelButtonText: "Nevermind",
-      reverseButtons: true,
-    }).then((res: any) => {
-      if (res.isConfirmed) {
-        this.globalVars.launchSignupFlow();
-      }
-    });
+    this.modalService.show(WelcomeModalComponent);
   }
 
   userHasReposted(): boolean {
@@ -210,7 +191,7 @@ export class FeedPostIconRowComponent {
     event.stopPropagation();
 
     // If the user isn't logged in, alert them.
-    if (this.globalVars.loggedInUser == null) {
+    if (!this.globalVars.loggedInUser) {
       return this._preventNonLoggedInUserActions("repost");
     } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : repost : profile");
@@ -371,9 +352,7 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      // Check if the user has an account.
-      this.globalVars.logEvent("alert : reply : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
+      this.modalService.show(WelcomeModalComponent);
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.globalVars.logEvent("alert : reply : profile");
@@ -599,8 +578,8 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      this.globalVars._alertError("Must be logged in to send diamonds");
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
       return;
     }
     // Disable diamond selection if diamonds are being sent

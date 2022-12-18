@@ -1,3 +1,14 @@
 <app-page>
-  <update-profile [loggedInUser]="globalVars.loggedInUser"></update-profile>
+  <app-logged-out-empty-state
+    *ngIf="!this.globalVars.loggedInUser; else updateProfile"
+    [headingText]="'Finally, a decentralized social identity to escape the craziness of web2.'"
+    [subheadingText]="
+      'Enjoy maximum freedom by creating a decentralized social identity on the censorship-resistant DeSo blockchain. Take your content & social graph with you everywhere.'
+    "
+    [buttonText]="'Claim your Username'"
+    [imgSrc]="'/assets/diamond/profile-teaser.png'"
+  ></app-logged-out-empty-state>
+  <ng-template #updateProfile>
+    <update-profile [loggedInUser]="globalVars.loggedInUser"></update-profile>
+  </ng-template>
 </app-page>

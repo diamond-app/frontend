@@ -11,6 +11,7 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { getUTCOffset } from "../../lib/helpers/date-helpers";
 
 @Component({
   selector: "settings",
@@ -82,7 +83,6 @@ export class SettingsComponent implements OnInit {
       if (queryParams?.publicKey) {
         this.userPublicKeyBase58Check = queryParams.publicKey;
       }
-      this.initializeAppUser();
     });
   }
 
@@ -100,8 +100,13 @@ export class SettingsComponent implements OnInit {
           throw err;
         })
       );
+      const utcOffset = getUTCOffset();
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey);
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+          catchError((err) => {
+            return of(null);
+          })
+        );
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
             switchMap(([appUser, userMetadata]) => {
@@ -115,7 +120,9 @@ export class SettingsComponent implements OnInit {
                   return this.apiInternal.createAppUser(
                     this.globalVars.loggedInUser.PublicKeyBase58Check,
                     this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-                    this.globalVars.lastSeenNotificationIdx
+                    this.globalVars.lastSeenNotificationIdx,
+                    utcOffset,
+                    20 - utcOffset
                   );
                 }
 
@@ -142,6 +149,9 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
+    this.globalVars.updateEverything().add(() => {
+      this.initializeAppUser();
+    });
   }
 
   closeModal() {
@@ -249,6 +259,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.isSavingEmail = true;
+    const utcOffset = getUTCOffset();
     this.backendApi
       .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
@@ -261,7 +272,9 @@ export class SettingsComponent implements OnInit {
           return this.apiInternal.createAppUser(
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-            this.globalVars.lastSeenNotificationIdx
+            this.globalVars.lastSeenNotificationIdx,
+            utcOffset,
+            20 - utcOffset
           );
         })
       )

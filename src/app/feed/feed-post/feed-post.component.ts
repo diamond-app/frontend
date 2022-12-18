@@ -34,6 +34,21 @@ import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/trans
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 
+/**
+ * NOTE: This was previously handled by updating the node list in the core repo,
+ * but that approach was deprecated and there is not currently an interim
+ * solution. This is a temporary solution for the setu team and should not be
+ * used by other teams.  Once a new solution is available we should remove this
+ * and migrate to whatever that ends up being.
+ * @deprecated
+ */
+const DEPRECATED_CUSTOM_ATTRIBUTIONS = {
+  setu_deso: {
+    text: "Setu Deso",
+    link: "https://web3setu.com",
+  },
+};
+
 @Component({
   selector: "feed-post",
   templateUrl: "./feed-post.component.html",
@@ -334,14 +349,14 @@ export class FeedPostComponent implements OnInit {
       // to the corresponding profile page.
       const attributionText = lines[lines.length - 1].slice(attributionSearchText.length);
       if (!this.attribution) {
-        this.attribution = {
+        this.attribution = DEPRECATED_CUSTOM_ATTRIBUTIONS[attributionText] ?? {
           link: `/u/${attributionText}`,
           text: attributionText,
         };
       }
     }
 
-    if (!this.showRestOfPost && this.hasReadMoreRollup && postBody > GlobalVarsService.MAX_POST_LENGTH) {
+    if (!this.showRestOfPost && this.hasReadMoreRollup && postBody.length > GlobalVarsService.MAX_POST_LENGTH) {
       // NOTE: We first spread the string into an array since this will account
       // for unicode multi-codepoint characters like emojis. Just using
       // substring will potentially break a string in the middle of a

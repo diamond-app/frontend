@@ -1,0 +1,106 @@
+.welcome-modal {
+  border-radius: 6px;
+  text-align: center;
+  overflow: hidden;
+  background: #fff;
+
+  @media(prefers-color-scheme: dark) {
+    background-color: #222;
+  }
+}
+
+.welcome-modal__header {
+  font-weight: bold;
+  margin: 1rem 0 4rem;
+  font-size: 1.75rem;
+  padding: 0 1rem;
+
+  @media (min-width: 992px) {
+    padding: 0 10rem;
+  }
+}
+
+.welcome-modal__login-section {
+  transform: rotateY(0deg) rotate(-5deg);
+  width: 110%;
+  margin-left: -5%;
+  height: 300px;
+  margin-top: 50px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.welcome-modal__bg-container {
+  transform: rotateY(0deg) rotate(5deg);
+  background: url('/assets/diamond/diamonds-pattern.png');
+  position: relative;
+  height: 120%;
+  top: -10%;
+}
+
+.welcome-modal__bg-mask {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  opacity: 0.85;
+  background-color: #000;
+}
+
+.welcome-modal__login-section-inner {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 275px;
+  margin: 0 auto;
+  position: relative;
+  top: 12%;
+  max-width: 75%;
+
+  @media (min-width: 992px) {
+    max-width: 50%;
+  }
+}
+
+.welcome-modal__callout-container {
+  margin-top: 50px;
+  display: flex;
+
+  @media (min-width: 992px) {
+    padding: 0 1.5rem;
+  }
+}
+
+.welcome-modal__callout {
+  padding: 0 1rem 1rem;
+
+  @media (min-width: 992px) {
+    padding: 0 3rem 1rem;
+  }
+}
+
+.welcome-modal__callout-divider {
+  width: 0.5rem;
+  border-radius: 6px;
+  transform: rotateY(0deg) rotate(5deg);
+  background-color: #E8E7E7;
+
+  @media(prefers-color-scheme: dark) {
+    background-color: #666;
+  }
+}
+
+.welcome-modal__footer {
+  padding: 1rem;
+
+  @media (min-width: 992px) {
+    padding: 3rem;
+  }
+}
+
+.welcome-modal__new-banner {
+  background-color: #FFF7CF;
+  padding: 0.75rem 0;
+  border-radius: 8px;
+  color: #000;
+}
