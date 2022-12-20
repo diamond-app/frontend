@@ -3,9 +3,11 @@
   margin: 0 auto;
   width: 100%;
   padding: 8px;
+  margin-top: 64px;
 
   @media (min-width: 992px) {
     width: 975px;
     padding: 20px;
+    margin-top: 100px;
   }
 }

@@ -17,6 +17,7 @@ export class TopBarMobileHeaderComponent {
   @Input() title: string = null;
   @Input() publicKeyBase58Check: string = null;
   @Input() profileEntryResponse: ProfileEntryResponse = null;
+  @Input() hideSearch: boolean = false;
   @Input() backButtonFn = () => {
     this.location.back();
   };

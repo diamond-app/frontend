@@ -23,19 +23,22 @@
       </span>
     </div>
 
-    <i-feather
-      *ngIf="!simpleTopBar && !isSearching && !inTutorial"
-      name="search"
-      class="feather-medium cursor-pointer position-relative"
-      style="top: -3px"
-      (click)="initiateSearch()"
-    ></i-feather>
-    <div *ngIf="!simpleTopBar && isSearching" class="d-flex justify-content-center align-items-center w-100">
-      <div class="position-relative" style="width: calc(100vw - 59px); height: 36.5px">
-        <search-bar class="w-100"></search-bar>
+    <ng-container *ngIf="!hideSearch">
+      <i-feather
+        *ngIf="!simpleTopBar && !isSearching"
+        name="search"
+        class="feather-medium cursor-pointer position-relative"
+        style="top: -3px"
+        (click)="initiateSearch()"
+      ></i-feather>
+      <div *ngIf="!simpleTopBar && isSearching" class="d-flex justify-content-center align-items-center w-100">
+        <div class="position-relative" style="width: calc(100vw - 59px); height: 36.5px">
+          <search-bar class="w-100"></search-bar>
+        </div>
+        <i-feather name="x" class="feather-large cursor-pointer ml-5px" (click)="isSearching = false"></i-feather>
       </div>
-      <i-feather name="x" class="feather-large cursor-pointer ml-5px" (click)="isSearching = false"></i-feather>
-    </div>
+    </ng-container>
+
     <div *ngIf="simpleTopBar" class="d-flex flex-column justify-content-end w-100 px-15px">
       <div class="d-flex justify-content-between w-100">
         <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="backButtonFn()"></i-feather>
