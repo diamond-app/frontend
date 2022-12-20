@@ -249,6 +249,8 @@ export class GlobalVarsService {
   // Track when the user is signing up to prevent redirects
   userSigningUp: boolean = false;
 
+  identityInfoResponse?: any;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -1129,15 +1131,41 @@ export class GlobalVarsService {
   }
 
   launchIdentityFlow(event: string): Observable<any> {
+    let obs$: Observable<any>;
+
+    if (
+      !(
+        this.identityInfoResponse &&
+        this.identityInfoResponse.hasStorageAccess &&
+        this.identityInfoResponse.browserSupported
+      )
+    ) {
+      this.requestingStorageAccess = true;
+      obs$ = this.identityService.storageGranted.pipe(share());
+
+      obs$.subscribe(() => {
+        // TODO: make sure we actually use the status returned from the tap to unlock response.
+        this.identityInfoResponse.hasStorageAccess = true;
+        this.requestingStorageAccess = false;
+      });
+    }
+
     this.logEvent(`account : ${event} : launch`);
-    const obs$ = this.identityService
-      .launch("/log-in", {
-        accessLevelRequest: "4",
-        // referralCode: this.referralCode(),
-        hideJumio: true,
-        getFreeDeso: true,
-      })
-      .pipe(share());
+
+    obs$ = obs$
+      ? obs$.pipe(
+          switchMap(() =>
+            this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
+          ),
+          share()
+        )
+      : this.identityService
+          .launch("/log-in", {
+            accessLevelRequest: "4",
+            hideJumio: true,
+            getFreeDeso: true,
+          })
+          .pipe(share());
 
     obs$.subscribe((res) => {
       // TODO: add tracking for whether the user signed up or not.
