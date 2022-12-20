@@ -27,6 +27,7 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   login() {
     this.didLaunchIdentityFlow = true;
     this.globalVars.logEvent("onboarding : identity");
+    this.bsModalRef.hide();
     this.globalVars
       .launchLoginFlow()
       .pipe(first())
@@ -36,8 +37,6 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
         } else {
           this.globalVars.logEvent(`onboarding : login${res.phoneNumberSuccess ? " : phoneSuccess" : ""}`);
         }
-
-        this.bsModalRef.hide();
       });
   }
 }
