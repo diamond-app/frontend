@@ -16,7 +16,6 @@ import { SwalHelper } from "../lib/helpers/swal-helper";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 import { ApiInternalService } from "./api-internal.service";
@@ -119,8 +118,6 @@ export class GlobalVarsService {
   topGainerLeaderboard: LeaderboardResponse[] = [];
   hashtagLeaderboard: HashtagResponse[] = [];
   topDiamondedLeaderboard: LeaderboardResponse[] = [];
-  allCommunityProjectsLeaderboard: CommunityProject[] = [];
-  topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
   loggedInUser: User;
@@ -1315,14 +1312,6 @@ export class GlobalVarsService {
     }
     if (this.hashtagLeaderboard.length === 0 || forceRefresh) {
       openProsperService.getTrendingHashtagsPage().subscribe((res) => (this.hashtagLeaderboard = res));
-    }
-
-    if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
-      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
-      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
-        this.allCommunityProjectsLeaderboard = res;
-        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
-      });
     }
 
     if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {

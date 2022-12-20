@@ -46,7 +46,6 @@ export class TrendsComponent implements OnInit {
     RightBarCreatorsComponent.GAINERS.name,
     RightBarCreatorsComponent.HASHTAGS.name,
     RightBarCreatorsComponent.DIAMONDS.name,
-    RightBarCreatorsComponent.COMMUNITY.name,
   ];
 
   // FIME: Replace with real value
@@ -158,13 +157,6 @@ export class TrendsComponent implements OnInit {
           // We successfully loaded some profiles, so we're no longer loading for the first time
           this.isLoadingProfilesForFirstTime = false;
         });
-    } else if (this.activeTab === RightBarCreatorsComponent.COMMUNITY.name) {
-      const start = TrendsComponent.PAGE_SIZE * page;
-      let end = start + TrendsComponent.PAGE_SIZE;
-      if (end > this.globalVars.allCommunityProjectsLeaderboard.length) {
-        end = this.globalVars.allCommunityProjectsLeaderboard.length;
-      }
-      return this.globalVars.allCommunityProjectsLeaderboard.slice(TrendsComponent.PAGE_SIZE * page, end);
     }
   }
 

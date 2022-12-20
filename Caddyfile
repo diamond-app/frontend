@@ -33,11 +33,9 @@ header @html Content-Security-Policy "
   connect-src 'self'
     node.deso.org
     amp.deso.org
-    bithunt.deso.org
     pulse.deso.org
     bitclout.com:*
     api.bitclout.com
-    bithunt.bitclout.com
     pulse.bitclout.com
     https://altumbase.com
     https://openprosperapi.xyz
