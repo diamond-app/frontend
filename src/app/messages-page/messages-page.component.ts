@@ -90,7 +90,7 @@ export class MessagesPageComponent implements OnInit {
 
     // Send an update back to the server noting that we want to mark all threads read.
     this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
           this.globalVars.logEvent("user : all-message-read");

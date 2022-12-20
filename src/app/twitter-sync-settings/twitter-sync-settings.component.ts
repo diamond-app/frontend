@@ -52,7 +52,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   ) {
     if (this.globalVars.loggedInUser) {
       const storedTwitterUserData = window.localStorage.getItem(
-        buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check)
+        buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check)
       );
 
       if (storedTwitterUserData) {
@@ -92,7 +92,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     if (!this.globalVars.loggedInUser) {
       throw new Error("cannot generate a derived key without a logged in user");
     }
-    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     return this.identity
       .launchDerive(
         publicKey,
@@ -131,7 +131,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           return this.setu.changeSignedStatus({
             public_key: publicKey,
             derived_public_key: this.identity.identityServiceParamsForKey(
-              this.globalVars.loggedInUser.PublicKeyBase58Check
+              this.globalVars.loggedInUser?.PublicKeyBase58Check
             )?.derivedPublicKeyBase58Check,
           });
         }),
@@ -153,8 +153,8 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
-      public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
-      derived_public_key: this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check)
+      public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      derived_public_key: this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check)
         ?.derivedPublicKeyBase58Check,
       twitter_username: this.twitterUserData.twitter_username,
       twitter_user_id: this.twitterUserData.twitter_user_id,
@@ -220,7 +220,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
       if (!this.setuSubscriptions) {
         this.twitterUserData = undefined;
-        window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check));
+        window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check));
         return;
       }
 
@@ -228,9 +228,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       this.setu
         .unsubscribe({
           twitter_user_id: this.twitterUserData.twitter_user_id,
-          public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+          public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
           derived_public_key: this.identity.identityServiceParamsForKey(
-            this.globalVars.loggedInUser.PublicKeyBase58Check
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
           )?.derivedPublicKeyBase58Check,
         })
         .pipe(finalize(() => (this.isProcessingSubscription = false)))
@@ -239,7 +239,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
             if (res.status === "success") {
               this.setuSubscriptions = undefined;
               this.twitterUserData = undefined;
-              window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check));
+              window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check));
             }
           },
           (err) => {
@@ -301,7 +301,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   > {
     if (this.globalVars.loggedInUser && this.twitterUserData) {
       window.localStorage.setItem(
-        buildLocalStorageKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
+        buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check),
         JSON.stringify(this.twitterUserData)
       );
 
@@ -313,11 +313,11 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       return forkJoin([
         this.setu
           .getCurrentSubscription({
-            public_key: this.globalVars.loggedInUser.PublicKeyBase58Check,
+            public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
             twitter_user_id: this.twitterUserData.twitter_user_id,
           })
           .pipe(catchError(handleError)),
-        this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser.PublicKeyBase58Check).pipe(catchError(handleError)),
+        this.setu.getDerivedKeyStatus(this.globalVars.loggedInUser?.PublicKeyBase58Check).pipe(catchError(handleError)),
       ]).pipe(
         first(),
         finalize(() => (this.isFetchingSubscriptionStatus = false))

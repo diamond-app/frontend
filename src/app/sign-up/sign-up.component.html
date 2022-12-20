@@ -1,4 +1,21 @@
 <div [class]="this.globalVars.isMobile() ? 'global__mobile' : 'global__desktop'">
+  <!-- Top Bar -->
+  <div *ngIf="!this.globalVars.isMobile()" class="desktop-top-bar">
+    <div class="d-flex justify-content-between align-items-center w-100 h-100 desktop-top-bar-width">
+      <a
+        class="link--unstyled d-flex align-items-center ml-15px"
+        (click)="this.globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="'/' + this.globalVars.RouteNames.BROWSE"
+        queryParamsHandling="merge"
+      >
+        <img src="/assets/diamond/camelcase_logo_new.svg" class="deso" style="height: 30px" />
+      </a>
+      <div class="d-flex align-items-center">
+        <change-account-selector></change-account-selector>
+      </div>
+    </div>
+  </div>
+  <top-bar-mobile-header *ngIf="this.globalVars.isMobile()" [hideSearch]="true"></top-bar-mobile-header>
   <div class="global__content__flex">
     <div class="sign-up__content">
       <div class="w-100 px-15px py-15px border">

@@ -1,16 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, OnDestroy } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { Subscription, zip } from "rxjs";
-import { map } from "rxjs/operators";
-import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
-import { AppRoutingModule } from "../../app-routing.module";
-import { FollowButtonComponent } from "../../follow-button/follow-button.component";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { Subscription, zip } from "rxjs";
+import { map } from "rxjs/operators";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
+import { AppRoutingModule } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
+import { FollowButtonComponent } from "../../follow-button/follow-button.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { UpdateProfileModalComponent } from "../../update-profile-page/update-profile-modal/update-profile-modal.component";
-import {CreatorsLeaderboardComponent} from "../../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
-import {TradeCreatorModalComponent} from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "creator-profile-top-card",
@@ -113,7 +113,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     this.backendApi
       .AdminUpdateTutorialCreators(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.profile.PublicKeyBase58Check,
         isRemoval,
         isWellKnown
@@ -171,6 +171,12 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   openBuyCreatorCoinModal(event) {
     event.stopPropagation();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",

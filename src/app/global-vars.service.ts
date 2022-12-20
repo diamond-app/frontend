@@ -16,7 +16,6 @@ import { SwalHelper } from "../lib/helpers/swal-helper";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 import { ApiInternalService } from "./api-internal.service";
@@ -119,8 +118,6 @@ export class GlobalVarsService {
   topGainerLeaderboard: LeaderboardResponse[] = [];
   hashtagLeaderboard: HashtagResponse[] = [];
   topDiamondedLeaderboard: LeaderboardResponse[] = [];
-  allCommunityProjectsLeaderboard: CommunityProject[] = [];
-  topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
   loggedInUser: User;
@@ -248,6 +245,8 @@ export class GlobalVarsService {
 
   // Track when the user is signing up to prevent redirects
   userSigningUp: boolean = false;
+
+  identityInfoResponse?: any;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -1129,15 +1128,41 @@ export class GlobalVarsService {
   }
 
   launchIdentityFlow(event: string): Observable<any> {
+    let obs$: Observable<any>;
+
+    if (
+      !(
+        this.identityInfoResponse &&
+        this.identityInfoResponse.hasStorageAccess &&
+        this.identityInfoResponse.browserSupported
+      )
+    ) {
+      this.requestingStorageAccess = true;
+      obs$ = this.identityService.storageGranted.pipe(share());
+
+      obs$.subscribe(() => {
+        // TODO: make sure we actually use the status returned from the tap to unlock response.
+        this.identityInfoResponse.hasStorageAccess = true;
+        this.requestingStorageAccess = false;
+      });
+    }
+
     this.logEvent(`account : ${event} : launch`);
-    const obs$ = this.identityService
-      .launch("/log-in", {
-        accessLevelRequest: "4",
-        // referralCode: this.referralCode(),
-        hideJumio: true,
-        getFreeDeso: true,
-      })
-      .pipe(share());
+
+    obs$ = obs$
+      ? obs$.pipe(
+          switchMap(() =>
+            this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
+          ),
+          share()
+        )
+      : this.identityService
+          .launch("/log-in", {
+            accessLevelRequest: "4",
+            hideJumio: true,
+            getFreeDeso: true,
+          })
+          .pipe(share());
 
     obs$.subscribe((res) => {
       // TODO: add tracking for whether the user signed up or not.
@@ -1287,14 +1312,6 @@ export class GlobalVarsService {
     }
     if (this.hashtagLeaderboard.length === 0 || forceRefresh) {
       openProsperService.getTrendingHashtagsPage().subscribe((res) => (this.hashtagLeaderboard = res));
-    }
-
-    if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
-      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
-      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
-        this.allCommunityProjectsLeaderboard = res;
-        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
-      });
     }
 
     if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {

@@ -1,8 +1,8 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
 import * as _ from "lodash";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -56,7 +56,7 @@ export class SearchBarComponent implements OnInit {
     let requestedSearchText = this.searchText;
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // If we are searching for a public key, call get single profile with the public key.

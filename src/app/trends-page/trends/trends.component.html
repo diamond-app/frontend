@@ -2,20 +2,17 @@
   <div class="buy-deso__container">
     <div class="px-16px pb-16px">
       <div class="d-flex w-100 justify-content-between">
-        <div class="mint-nft__title">{{ 'trends.trends' | transloco }}</div>
+        <div class="mint-nft__title">{{ "trends.trends" | transloco }}</div>
         <div class="d-flex flex-column align-items-end">
-          <div
-            class="d-flex"
-            dropdown
-            (click)="$event.stopPropagation()"
-            container="body"
-            style="align-items: center"
-          >
+          <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
             <button class="trend-dropdown-button d-flex align-content-between" role="button" dropdownToggle>
               <span>{{ activeTab | transloco }}</span>
               <i-feather name="chevron-down" class="feather-small"></i-feather>
             </button>
-            <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu buy-deso__currency-dropdown" *dropdownMenu>
+            <div
+              class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu buy-deso__currency-dropdown"
+              *dropdownMenu
+            >
               <div>
                 <a
                   *ngFor="let tab of availableTabs"
@@ -30,7 +27,7 @@
           <div *ngIf="activeRightTabOption.poweredBy" class="py-10px text-grey5">
             <a class="link--unstyled fs-14px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
               <i class="fas fa-external-link-alt"></i>
-              {{ 'trends.powered_by' | transloco }} {{ activeRightTabOption.poweredBy.name }}
+              {{ "trends.powered_by" | transloco }} {{ activeRightTabOption.poweredBy.name }}
             </a>
           </div>
         </div>
@@ -65,9 +62,18 @@
           </a>
         </div>
         <div *ngIf="activeTab !== RightBarCreatorsComponent.HASHTAGS.name">
-          <div #uiScroll *uiScroll="let profileEntryResponse of datasource" class="row no-gutters px-15px border-bottom fs-15px">
-            <div class="row no-gutters px-15px border-bottom fs-15px w-100"
-                 *ngIf="profileEntryResponse.Profile && !profileEntryResponse.User.IsBlacklisted && !profileEntryResponse.User.IsGraylisted"
+          <div
+            #uiScroll
+            *uiScroll="let profileEntryResponse of datasource"
+            class="row no-gutters px-15px border-bottom fs-15px"
+          >
+            <div
+              class="row no-gutters px-15px border-bottom fs-15px w-100"
+              *ngIf="
+                profileEntryResponse.Profile &&
+                !profileEntryResponse.User.IsBlacklisted &&
+                !profileEntryResponse.User.IsGraylisted
+              "
             >
               <a
                 [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
@@ -91,8 +97,8 @@
                     matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                     [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
                   >
-              <i class="far fa-clock fa-md"></i>
-            </span>
+                    <i class="far fa-clock fa-md"></i>
+                  </span>
                   <span
                     *ngIf="profileEntryResponse.Profile.IsVerified"
                     (click)="tooltip.toggle()"
@@ -101,14 +107,14 @@
                     [matTooltip]="'This account is verified'"
                     #tooltip="matTooltip"
                   >
-              <i class="fas fa-check-circle fa-md"></i>
-            </span>
+                    <i class="fas fa-check-circle fa-md"></i>
+                  </span>
                 </div>
 
                 <div class="d-flex flex-column" style="align-items: flex-end">
                   <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
                     +${{
-                    globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.DeSoLockedGained), 2)
+                      globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.DeSoLockedGained), 2)
                     }}
                   </div>
                   <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
@@ -117,27 +123,14 @@
                   </div>
                   <div
                     [ngClass]="{
-                'text-grey7':
-                  activeTab !== RightBarCreatorsComponent.COMMUNITY.name &&
-                  activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
-                'text-grey5':
-                  activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
-                  activeTab === RightBarCreatorsComponent.ALL_TIME.name
-              }"
+                      'text-grey7': activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
+                      'text-grey5': activeTab === RightBarCreatorsComponent.ALL_TIME.name
+                    }"
                     [ngStyle]="{
-                'font-size':
-                  activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
-                  activeTab === RightBarCreatorsComponent.ALL_TIME.name
-                    ? '15px'
-                    : '10px'
-              }"
+                      'font-size': activeTab === RightBarCreatorsComponent.ALL_TIME.name ? '15px' : '10px'
+                    }"
                   >
                     ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceDeSoNanos, 2) }}
-                    <i
-                      class="fas fa-external-link-alt"
-                      *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
-                      [href]="profileEntryResponse.BithuntProject.website_url"
-                    ></i>
                   </div>
                 </div>
               </a>

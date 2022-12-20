@@ -236,7 +236,7 @@ export class PostThreadComponent implements AfterViewInit {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     if (!this.postHashHexRouteParam) {

@@ -163,7 +163,7 @@ export class FeedCreatePostComponent implements OnInit {
         "" /*Description*/,
         "influencer_coin_price" /*Order by*/,
         5 /*NumToFetch*/,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
         "" /*ModerationType*/,
         false /*FetchUsersThatHODL*/,
         false /*AddGlobalFeedBool*/
@@ -319,7 +319,7 @@ export class FeedCreatePostComponent implements OnInit {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -448,7 +448,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         this.currentPostModel.postImageSrc = res.ImageURL;

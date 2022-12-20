@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
 import { concatMap, last, map } from "rxjs/operators";
@@ -33,7 +33,7 @@ export class CloseNftAuctionModalComponent {
           return this.backendApi
             .UpdateNFT(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.post.PostHashHex,
               nftEntry.SerialNumber,
               false,

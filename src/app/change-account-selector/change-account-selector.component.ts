@@ -1,8 +1,8 @@
 import { Component, Renderer2 } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BackendApiService, User } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
 
 @Component({
@@ -27,7 +27,7 @@ export class ChangeAccountSelectorComponent {
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
 
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       const users = Object.keys(res?.users || {});

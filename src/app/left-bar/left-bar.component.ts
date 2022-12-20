@@ -88,7 +88,7 @@ export class LeftBarComponent {
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
         return res?.users && user?.PublicKeyBase58Check in res?.users;

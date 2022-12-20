@@ -5,21 +5,21 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import * as introJs from "intro.js/intro.js";
+import { isNil } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { Observable, Subscription } from "rxjs";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { RouteNames } from "../../app-routing.module";
-import { Observable, Subscription } from "rxjs";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
-import * as introJs from "intro.js/intro.js";
-import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
-import { isNil } from "lodash";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
+import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
 
 @Component({
   selector: "trade-creator",
@@ -109,9 +109,9 @@ export class TradeCreatorComponent implements OnInit {
         this.backendApi
           .UpdateTutorialStatus(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             TutorialStatus.COMPLETE,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             true
           )
           .subscribe(() => {
@@ -192,7 +192,7 @@ export class TradeCreatorComponent implements OnInit {
   _getCreatorProfile(creatorUsername): Subscription {
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
       (response) => {
@@ -320,7 +320,7 @@ export class TradeCreatorComponent implements OnInit {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.INVEST_OTHERS_BUY,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
         true
@@ -342,7 +342,7 @@ export class TradeCreatorComponent implements OnInit {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.INVEST_OTHERS_SELL,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
         true

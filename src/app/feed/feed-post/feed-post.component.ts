@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
@@ -404,6 +405,12 @@ export class FeedPostComponent implements OnInit {
 
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",
@@ -562,7 +569,7 @@ export class FeedPostComponent implements OnInit {
         this.backendApi
           .SubmitPost(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
@@ -605,7 +612,7 @@ export class FeedPostComponent implements OnInit {
         this.backendApi
           .BlockPublicKey(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.post.PosterPublicKeyBase58Check
           )
           .subscribe(
@@ -677,7 +684,7 @@ export class FeedPostComponent implements OnInit {
     this.backendApi
       .AdminUpdateGlobalFeed(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         postHashHex,
         inGlobalFeed /*RemoveFromGlobalFeed*/
       )
@@ -712,7 +719,7 @@ export class FeedPostComponent implements OnInit {
     this.backendApi
       .AdminPinPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         postHashHex,
         isPostPinned
       )
@@ -885,7 +892,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
-        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
         nftEntryResponse.IsPending
       );
     });

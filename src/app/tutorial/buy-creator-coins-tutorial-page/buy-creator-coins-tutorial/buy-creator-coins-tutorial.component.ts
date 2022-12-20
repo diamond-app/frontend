@@ -1,16 +1,15 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
-import { Title } from "@angular/platform-browser";
-import * as introJs from "intro.js/intro.js";
-import { includes, isNil, shuffle } from "lodash";
 import { LocationStrategy } from "@angular/common";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
-import { map } from "rxjs/operators";
+import * as introJs from "intro.js/intro.js";
+import { isNil } from "lodash";
+import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../../lib/helpers/swal-helper";
+import { AppRoutingModule } from "../../../app-routing.module";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
 import { FeedComponent } from "../../../feed/feed.component";
+import { GlobalVarsService } from "../../../global-vars.service";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -78,9 +77,9 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       this.backendApi
         .UpdateTutorialStatus(
           this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
           TutorialStatus.COMPLETE,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
           true
         )
         .subscribe(() => {

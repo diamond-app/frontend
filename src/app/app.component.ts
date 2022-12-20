@@ -301,13 +301,9 @@ export class AppComponent implements OnInit {
     this.loadApp();
 
     this.identityService.info().subscribe((res) => {
-      // If the browser is not supported, display the browser not supported screen.
-      if (!res.browserSupported) {
-        this.globalVars.requestingStorageAccess = true;
-        return;
-      }
-
+      this.globalVars.identityInfoResponse = res;
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
+      // If the browser is not supported, display the browser not supported screen.
       if (!res.hasStorageAccess && isLoggedIn) {
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {

@@ -1,13 +1,12 @@
-import { Component, OnInit, Input, ViewChild } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { of } from "rxjs";
-import { concatMap, filter, last, map, take } from "rxjs/operators";
-import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
-import { GlobalVarsService } from "../global-vars.service";
-import {ToastrService} from "ngx-toastr";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { TranslocoService } from "@ngneat/transloco";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { ToastrService } from "ngx-toastr";
+import { of } from "rxjs";
+import { concatMap, last, map } from "rxjs/operators";
+import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "add-unlockable-modal",
@@ -52,7 +51,7 @@ export class AddUnlockableModalComponent implements OnInit {
           return this.backendApi
             .AcceptNFTBid(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.post.PostHashHex,
               bidEntry.SerialNumber,
               bidEntry.PublicKeyBase58Check,

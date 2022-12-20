@@ -162,7 +162,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.backendApi
       .GetUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
       )
       .subscribe(
         (res) => {
@@ -187,7 +187,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.backendApi
       .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
       )
@@ -254,7 +254,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     return this.backendApi.UpdateProfile(
       environment.verificationEndpointHostname,
       this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
       // Start params
       this.profileUpdates.usernameUpdate /*NewUsername*/,
@@ -501,7 +501,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         if (fileType === "profile") {
@@ -552,7 +552,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       .UpdateProfile(
         environment.verificationEndpointHostname,
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
         "",

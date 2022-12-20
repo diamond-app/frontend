@@ -1,6 +1,14 @@
+import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
+import * as _ from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { ToastrService } from "ngx-toastr";
+import { Subscription } from "rxjs";
+import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { RouteNames } from "../../app-routing.module";
 import {
   BackendApiService,
   NFTBidData,
@@ -8,17 +16,9 @@ import {
   NFTEntryResponse,
   PostEntryResponse,
 } from "../../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
-import { Location } from "@angular/common";
-import * as _ from "lodash";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
-import { Subscription } from "rxjs";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
-import { ToastrService } from "ngx-toastr";
-import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "nft-post",
@@ -90,7 +90,7 @@ export class NftPostComponent {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
@@ -291,7 +291,7 @@ export class NftPostComponent {
   }
 
   userOwnsSerialNumber(serialNumber: number): boolean {
-    const loggedInPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const loggedInPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     return !!this.nftBidData.NFTEntryResponses.filter(
       (nftEntryResponse) =>
         nftEntryResponse.SerialNumber === serialNumber && nftEntryResponse.OwnerPublicKeyBase58Check === loggedInPubKey
@@ -465,7 +465,7 @@ export class NftPostComponent {
         this.backendApi
           .CreateNFTBid(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.nftPost.PostHashHex,
             bidEntry.SerialNumber,
             0,

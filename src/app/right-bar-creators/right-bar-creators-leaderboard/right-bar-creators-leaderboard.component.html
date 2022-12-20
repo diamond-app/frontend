@@ -6,8 +6,6 @@
           ? globalVars.topGainerLeaderboard
           : activeTab === RightBarCreatorsComponent.DIAMONDS.name
           ? globalVars.topDiamondedLeaderboard
-          : activeTab === RightBarCreatorsComponent.COMMUNITY.name
-          ? globalVars.topCommunityProjectsLeaderboard
           : activeTab === RightBarCreatorsComponent.ALL_TIME.name
           ? globalVars.topCreatorsAllTimeLeaderboard
           : []
@@ -65,27 +63,14 @@
           </div>
           <div
             [ngClass]="{
-              'text-grey7':
-                activeTab !== RightBarCreatorsComponent.COMMUNITY.name &&
-                activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
-              'text-grey5':
-                activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
-                activeTab === RightBarCreatorsComponent.ALL_TIME.name
+              'text-grey7': activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
+              'text-grey5': activeTab === RightBarCreatorsComponent.ALL_TIME.name
             }"
             [ngStyle]="{
-              'font-size':
-                activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
-                activeTab === RightBarCreatorsComponent.ALL_TIME.name
-                  ? '15px'
-                  : '10px'
+              'font-size': activeTab === RightBarCreatorsComponent.ALL_TIME.name ? '15px' : '10px'
             }"
           >
             ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceDeSoNanos, 2) }}
-            <i
-              class="fas fa-external-link-alt"
-              *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
-              [href]="profileEntryResponse.BithuntProject.website_url"
-            ></i>
           </div>
         </div>
       </div>

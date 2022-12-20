@@ -231,7 +231,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
     this.backend
       .SendDeSo(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.depositAddresses.DepositAddresses[this.depositTicker],
         this.amountToCashOutInputValue * 1e9,
         this.globalVars.feeRateDeSoPerKB * 1e9

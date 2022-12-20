@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import * as _ from "lodash";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import { Subscription } from "rxjs";
-import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BsModalService } from "ngx-bootstrap/modal";
+import * as _ from "lodash";
 import { difference, isEmpty } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
+import { InfiniteScroller } from "src/app/infinite-scroller";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "app-notifications-list",
@@ -115,7 +115,7 @@ export class NotificationsListComponent implements OnInit {
     return this.backendApi
       .GetNotifications(
         "https://node.deso.org",
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
         this.filteredOutSet
@@ -130,7 +130,7 @@ export class NotificationsListComponent implements OnInit {
             this.backendApi
               .SetNotificationsMetadata(
                 "https://node.deso.org",
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,
                 0

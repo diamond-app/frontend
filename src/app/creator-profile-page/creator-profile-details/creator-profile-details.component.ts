@@ -111,7 +111,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
         this.backendApi
           .BlockPublicKey(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.profile.PublicKeyBase58Check,
             true /* unblock */
           )
@@ -156,7 +156,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
           this.backendApi
             .BlockPublicKey(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.profile.PublicKeyBase58Check
             )
             .subscribe(
@@ -184,7 +184,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     this.loading = true;
@@ -219,7 +219,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       `Claiming my account on ${environment.node.url.replace("https://", "")} 💎🙌\n\n${environment.node.url}/u/${
         this.userName
-      }?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}\n\n@desoprotocol #deso`
+      }?public_key=${this.globalVars.loggedInUser?.PublicKeyBase58Check}\n\n@desoprotocol #deso`
     )}`;
   }
 

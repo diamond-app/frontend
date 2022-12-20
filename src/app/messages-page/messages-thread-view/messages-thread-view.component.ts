@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { Component, Input, ViewChild } from "@angular/core";
 import { AppRoutingModule } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "messages-thread-view",
@@ -76,7 +76,7 @@ export class MessagesThreadViewComponent {
 
     // Immediately add the message to the list  to make it feel instant.
     const messageObj: any = {
-      SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
       RecipientPublicKeyBase58Check: this.messageThread.PublicKeyBase58Check,
       DecryptedText: this.messageText,
       IsSender: true,
@@ -116,7 +116,7 @@ export class MessagesThreadViewComponent {
     this.backendApi
       .SendMessage(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.messageThread.PublicKeyBase58Check,
         textToSend,
         this.globalVars.feeRateDeSoPerKB * 1e9
@@ -127,7 +127,7 @@ export class MessagesThreadViewComponent {
 
           this.sendMessageBeingCalled = false;
           this.globalVars.messageMeta.decryptedMessgesMap[
-            this.globalVars.loggedInUser.PublicKeyBase58Check + "" + res.TstampNanos
+            this.globalVars.loggedInUser?.PublicKeyBase58Check + "" + res.TstampNanos
           ] = messageObj;
           this.backendApi.SetStorage(this.backendApi.MessageMetaKey, this.globalVars.messageMeta);
           // Set the timestamp in this case since it's normally set by the BE.
@@ -135,7 +135,7 @@ export class MessagesThreadViewComponent {
 
           // Increment the notification map.
           this.globalVars.messageMeta.notificationMap[
-            this.globalVars.loggedInUser.PublicKeyBase58Check + this.messageThread.PublicKeyBase58Check
+            this.globalVars.loggedInUser?.PublicKeyBase58Check + this.messageThread.PublicKeyBase58Check
           ]++;
         },
         (error) => {

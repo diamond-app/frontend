@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { ProfileEntryResponse } from "../backend-api.service";
-import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "simple-profile-card",
@@ -92,6 +93,12 @@ export class SimpleProfileCardComponent {
     this.exitTutorial.emit();
     this.globalVars.logEvent("buy : creator : select");
     event.stopPropagation();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent);
+      return;
+    }
+
     const initialState = {
       username: this.profile.Username,
       tradeType: this.globalVars.RouteNames.BUY_CREATOR,
