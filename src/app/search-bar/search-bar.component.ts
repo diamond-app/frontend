@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import * as _ from "lodash";
+import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -34,7 +35,8 @@ export class SearchBarComponent implements OnInit {
     private appData: GlobalVarsService,
     private router: Router,
     private backendApi: BackendApiService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
     this.searchText = "";
@@ -63,7 +65,7 @@ export class SearchBarComponent implements OnInit {
     if (this.globalVars.isMaybePublicKey(requestedSearchText)) {
       return this.backendApi.GetSingleProfile(this.globalVars.localNode, requestedSearchText, "").subscribe(
         (res) => {
-          this.globalVars.logEvent("search : creators : public-key");
+          this.tracking.log("search : creators : public-key");
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
             if (res.IsBlacklisted) {
@@ -115,7 +117,7 @@ export class SearchBarComponent implements OnInit {
           // only process this response if it came from
           // the request for the current search text
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
-            this.globalVars.logEvent("search : creators : username");
+            this.tracking.log("search : creators : username");
             this.loading = false;
             this.creators = response.ProfilesFound;
             this.searchUpdated.emit(this.creators?.length > 0);
@@ -161,7 +163,7 @@ export class SearchBarComponent implements OnInit {
   // This search bar is used for more than just navigating to a user profile. It is also
   // used for finding users to message.  We handle both cases here.
   _handleCreatorSelect(creator: any) {
-    this.globalVars.logEvent("search : creators : select");
+    this.tracking.log("search : creators : select");
     if (creator && creator != "") {
       if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendDESO) {
         this.creatorToMessage.emit(creator);

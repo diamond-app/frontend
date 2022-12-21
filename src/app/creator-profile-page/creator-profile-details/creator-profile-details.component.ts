@@ -2,6 +2,7 @@ import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
@@ -48,7 +49,8 @@ export class CreatorProfileDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location,
-    private titleService: Title
+    private titleService: Title,
+    private tracking: TrackingService
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
@@ -117,12 +119,12 @@ export class CreatorProfileDetailsComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.globalVars.logEvent("user : unblock");
+              this.tracking.log("user : unblock");
             },
             (err) => {
               console.log(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.globalVars.logEvent("user : unblock : error", { parsedError });
+              this.tracking.log("user : unblock : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -161,12 +163,12 @@ export class CreatorProfileDetailsComponent implements OnInit {
             )
             .subscribe(
               () => {
-                this.globalVars.logEvent("user : block");
+                this.tracking.log("user : block");
               },
               (err) => {
                 console.error(err);
                 const parsedError = this.backendApi.stringifyError(err);
-                this.globalVars.logEvent("user : block : error", { parsedError });
+                this.tracking.log("user : block : error", { parsedError });
                 this.globalVars._alertError(parsedError);
               }
             ),

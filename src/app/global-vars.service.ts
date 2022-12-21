@@ -571,7 +571,7 @@ export class GlobalVarsService {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
-        this.logEvent(ampEvent);
+        this.tracking.log(ampEvent);
         this.updateEverything().add(() => {
           this.navigateToCurrentStepInTutorial(this.loggedInUser);
           if (finalStep) {
@@ -1047,50 +1047,10 @@ export class GlobalVarsService {
     return post;
   }
 
-  // Log an event to amplitude
-  //
-  // Please follow the event format:
-  //    singular object : present tense verb : extra context
-  //
-  // For example:
-  //    bitpop : buy
-  //    account : create : step1
-  //    profile : update
-  //    profile : update : error
-  //
-  // Use the data object to store extra event metadata. Don't use
-  // the metadata to differentiate two events with the same name.
-  // Instead, just create two (or more) events with better names.
-  logEvent(event: string, data?: any) {
-    console.log("globalVars.logEvent is deprecated!");
-    // if (!this.amplitude) {
-    //   return;
-    // }
-    // // If the user is in the tutorial, add the "tutorial : " prefix.
-    // if (this.userInTutorial(this.loggedInUser)) {
-    //   event = "tutorial : " + event;
-    // }
-
-    // if (!data) {
-    //   data = {};
-    // }
-
-    // // Attach node name
-    // data.node = environment.node.name;
-
-    // // Attach referralCode
-    // const referralCode = this.referralCode();
-    // if (referralCode) {
-    //   data.referralCode = referralCode;
-    // }
-
-    // this.amplitude.logEvent(event, data);
-  }
-
   // Helper to launch the get free deso flow in identity.
   launchGetFreeDESOFlow(showPrompt: boolean) {
     if (showPrompt) {
-      this.logEvent("identity : jumio : prompt");
+      this.tracking.log("identity : jumio : prompt");
       SwalHelper.fire({
         target: this.getTargetComponentSelector(),
         title: "",
@@ -1116,14 +1076,14 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.logEvent("identity : jumio : launch");
+    this.tracking.log("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         // referralCode: this.referralCode(),
       })
       .subscribe(() => {
-        this.logEvent("identity : jumio : success");
+        this.tracking.log("identity : jumio : success");
         this.updateEverything();
       });
   }
@@ -1148,7 +1108,7 @@ export class GlobalVarsService {
       });
     }
 
-    this.logEvent(`account : ${event} : launch`);
+    this.tracking.log(`account : ${event} : launch`);
 
     obs$ = obs$
       ? obs$.pipe(
@@ -1168,7 +1128,7 @@ export class GlobalVarsService {
     obs$.subscribe((res) => {
       // TODO: add tracking for whether the user signed up or not.
       // Q: do we also want to track if the user verified their phone number.
-      this.logEvent(`account : ${event} : success`);
+      this.tracking.log(`account : ${event} : success`);
       this.userSigningUp = res.signedUp;
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
@@ -1440,7 +1400,7 @@ export class GlobalVarsService {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
@@ -1503,7 +1463,7 @@ export class GlobalVarsService {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
           (response) => {
-            this.logEvent(`tutorial : skip`);
+            this.tracking.log(`tutorial : skip`);
             // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
             this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
             this.router.navigate([RouteNames.BROWSE]);

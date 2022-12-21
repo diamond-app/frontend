@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/co
 import { Router } from "@angular/router";
 import { filter, get } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
@@ -41,7 +42,8 @@ export class LeftBarComponent {
     private modalService: BsModalService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
   openCreatePostModal() {
@@ -84,7 +86,7 @@ export class LeftBarComponent {
   }
 
   logHelp(): void {
-    this.globalVars.logEvent("help : click");
+    this.tracking.log("help : click");
   }
 
   launchLogoutFlow() {
@@ -170,7 +172,7 @@ export class LeftBarComponent {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
             ? TutorialStatus.STARTED

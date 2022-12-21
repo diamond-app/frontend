@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ApiInternalService } from "src/app/api-internal.service";
+import { TrackingService } from "src/app/tracking.service";
 import { AppComponent } from "../app.component";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -28,7 +29,8 @@ export class SignUpComponent {
     private backendApi: BackendApiService,
     private identityService: IdentityService,
     private modalService: BsModalService,
-    private apiInternal: ApiInternalService
+    private apiInternal: ApiInternalService,
+    private tracking: TrackingService
   ) {
     this.globalVars.isLeftBarMobileOpen = false;
     this.setStep();
@@ -85,14 +87,14 @@ export class SignUpComponent {
   }
 
   launchJumioVerification() {
-    this.globalVars.logEvent("identity : jumio : launch");
+    this.tracking.log("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
         referralCode: this.globalVars.referralCode(),
       })
       .subscribe(() => {
-        this.globalVars.logEvent("identity : jumio : success");
+        this.tracking.log("identity : jumio : success");
         this.globalVars.updateEverything().add(() => {
           this.stepNum = 1;
         });

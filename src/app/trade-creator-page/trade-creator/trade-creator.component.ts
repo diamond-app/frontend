@@ -11,6 +11,7 @@ import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Subscription } from "rxjs";
+import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { RouteNames } from "../../app-routing.module";
@@ -216,7 +217,8 @@ export class TradeCreatorComponent implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.appData = globalVars;
     this.router = _router;
@@ -326,7 +328,7 @@ export class TradeCreatorComponent implements OnInit {
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("buy : creator : select");
+        this.tracking.log("buy : creator : select");
         this.globalVars.updateEverything().add(() => {
           this.hideModal.emit();
           this.router.navigate([
@@ -348,7 +350,7 @@ export class TradeCreatorComponent implements OnInit {
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("invest : others : sell : next");
+        this.tracking.log("invest : others : sell : next");
         this.globalVars.updateEverything().add(() => {
           this.hideModal.emit();
           this.router.navigate([

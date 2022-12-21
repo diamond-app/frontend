@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { AppRoutingModule } from "../app-routing.module";
 import { BackendApiService } from "../backend-api.service";
@@ -35,7 +36,8 @@ export class MessagesPageComponent implements OnInit {
     private backendApi: BackendApiService,
     private router: Router,
     private titleService: Title,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit() {
@@ -93,12 +95,12 @@ export class MessagesPageComponent implements OnInit {
       .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.globalVars.logEvent("user : all-message-read");
+          this.tracking.log("user : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.tracking.log("user : all-message-read : error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
       );

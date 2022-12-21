@@ -17,14 +17,14 @@ export const environment = {
     endpoint: "https://diamondapp.com/js/",
   },
   amplitude: {
-    key: "ba127556985bcf271b9bb1eee6834918",
-    domain: "amp.diamondapp.com",
+    key: "",
+    domain: "",
   },
   heap: {
-    appId: "1382101420",
+    appId: "",
   },
   hotjar: {
-    hjid: "3289168",
+    hjid: "",
   },
   node: {
     id: 3,

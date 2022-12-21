@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
+import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 
@@ -41,7 +42,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
   initializeRouteParams() {
@@ -254,12 +256,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.globalVars.logEvent("user : all-message-read");
+          this.tracking.log("user : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.tracking.log("user : all-message-read : error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -335,12 +337,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         )
         .subscribe(
           () => {
-            this.globalVars.logEvent("user : message-read");
+            this.tracking.log("user : message-read");
           },
           (err) => {
             console.log(err);
             const parsedError = this.backendApi.stringifyError(err);
-            this.globalVars.logEvent("user : message-read : error", { parsedError });
+            this.tracking.log("user : message-read : error", { parsedError });
             this.globalVars._alertError(parsedError);
           }
         );

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import * as introJs from "intro.js/intro";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { RouteNames } from "../../../app-routing.module";
 import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
@@ -17,7 +18,8 @@ export class DiamondTutorialComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
   introJS = introJs();
@@ -53,7 +55,7 @@ export class DiamondTutorialComponent implements OnInit {
     setTimeout(() => {
       this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.DIAMOND;
       this.globalVars.loggedInUser.MustCompleteTutorial = false;
-      this.globalVars.logEvent("diamond : send : next");
+      this.tracking.log("diamond : send : next");
       this.router.navigate([RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST]);
     }, 6000);
   }

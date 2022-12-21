@@ -1,4 +1,5 @@
 import { Component, Input, ViewChild } from "@angular/core";
+import { TrackingService } from "src/app/tracking.service";
 import { AppRoutingModule } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
@@ -15,7 +16,11 @@ export class MessagesThreadViewComponent {
   sendMessageBeingCalled = false;
   AppRoutingModule = AppRoutingModule;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private tracking: TrackingService
+  ) {}
 
   // Update the scroll when the messageContainer element is rendered.
   @ViewChild("messagesContainer") set userContent(element) {
@@ -123,7 +128,7 @@ export class MessagesThreadViewComponent {
       )
       .subscribe(
         (res: any) => {
-          this.globalVars.logEvent("message : send");
+          this.tracking.log("message : send");
 
           this.sendMessageBeingCalled = false;
           this.globalVars.messageMeta.decryptedMessgesMap[
@@ -139,7 +144,7 @@ export class MessagesThreadViewComponent {
           ]++;
         },
         (error) => {
-          this.globalVars.logEvent("message : send : error");
+          this.tracking.log("message : send : error");
 
           // Remove the previous message since it didn't actually post and reset
           // the text area to the old message.

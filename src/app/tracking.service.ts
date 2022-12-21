@@ -6,7 +6,7 @@ import {
   setUserId,
   track as amplitudeTrack,
 } from "@amplitude/analytics-browser";
-import { Injectable } from "@angular/core";
+import { Injectable, isDevMode } from "@angular/core";
 import { environment } from "src/environments/environment";
 
 @Injectable({
@@ -16,6 +16,8 @@ export class TrackingService {
   private _window: Window & { heap: any; hj: any; hjLoad: (opts: any) => void } = window as any;
 
   constructor() {
+    if (isDevMode()) return;
+
     amplitudeInit(environment.amplitude.key, undefined, {
       domain: environment.amplitude.domain,
     });
@@ -24,12 +26,22 @@ export class TrackingService {
   }
 
   log(event: string, properties: Record<string, any> = {}) {
+    if (isDevMode()) {
+      console.log("trackingLogEvent->", event, properties);
+      return;
+    }
+
     Object.assign(properties, { path: window.location.pathname });
     amplitudeTrack(event, properties);
     this._window.heap.track(event, properties);
   }
 
   identityUser(publicKey: string, properties: Record<string, any> = {}) {
+    if (isDevMode()) {
+      console.log("trackingIdentityUser->", publicKey, properties);
+      return;
+    }
+
     const user = new Identify();
     Object.keys(properties ?? {}).forEach((key) => user.set(key, properties[key]));
     identify(user);

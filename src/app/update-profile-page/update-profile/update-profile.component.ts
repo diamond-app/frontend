@@ -12,14 +12,15 @@ import {
   NEW_APP_USER_DEFAULTS,
   SUBSCRIBED_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
+import { getUTCOffset } from "../../../lib/helpers/date-helpers";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ThemeService } from "../../theme/theme.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { getUTCOffset } from "../../../lib/helpers/date-helpers";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -86,7 +87,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     private titleService: Title,
     public themeService: ThemeService,
     private modalService: BsModalService,
-    private apiInternal: ApiInternalService
+    private apiInternal: ApiInternalService,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit() {
@@ -195,7 +197,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         (res) => {},
         (err) => {
           console.log(err);
-          this.globalVars.logEvent("profile : update : error", { err });
+          this.tracking.log("profile : update : error", { err });
         }
       );
   }
@@ -274,18 +276,18 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateProfile() {
     if (!this.globalVars.loggedInUserDefaultKey) {
-      this.globalVars.logEvent("profile : create-messaging-key : start");
+      this.tracking.log("profile : create-messaging-key : start");
       this.globalVars
         .launchIdentityMessagingKey()
         .pipe(first())
         .subscribe(
           () => {
-            this.globalVars.logEvent("profile : create-messaging-key : success");
+            this.tracking.log("profile : create-messaging-key : success");
             this._saveProfileUpdates();
           },
           (err) => {
             this.globalVars._alertError(err);
-            this.globalVars.logEvent("profile : create-messaging-key : error", err);
+            this.tracking.log("profile : create-messaging-key : error", err);
           }
         );
     } else {
@@ -301,7 +303,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     // TODO: Add errors for emails
     const hasErrors = this._setProfileErrors();
     if (hasErrors) {
-      this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
+      this.tracking.log("profile : update : has-errors", this.profileUpdateErrors);
       return;
     }
 
@@ -352,7 +354,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       .subscribe(
         ([updateProfileResponse]) => {
           this.globalVars.profileUpdateTimestamp = Date.now();
-          this.globalVars.logEvent("profile : update");
+          this.tracking.log("profile : update");
           // TODO: create or update app user record here
           // This updates things like the username that shows up in the dropdown.
           this.globalVars.updateEverything(
@@ -365,7 +367,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         (err) => {
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
-          this.globalVars.logEvent("profile : update : error", { parsedError, lowBalance });
+          this.tracking.log("profile : update : error", { parsedError, lowBalance });
           this.updateProfileBeingCalled = false;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),
