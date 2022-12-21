@@ -3,12 +3,12 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AmplitudeClient } from "amplitude-js";
 import ConfettiGenerator from "confetti-js";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Observer, of, Subscription } from "rxjs";
 import { catchError, first, share, switchMap } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -71,7 +71,8 @@ export class GlobalVarsService {
     private httpClient: HttpClient,
     private apiInternal: ApiInternalService,
     private locationStrategy: LocationStrategy,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {}
 
   static MAX_POST_LENGTH = 560;
@@ -214,8 +215,6 @@ export class GlobalVarsService {
   confetti: any;
   canvasCount = 0;
   minSatoshisBurnedForProfileCreation: number;
-
-  amplitude: AmplitudeClient;
 
   // Price of DeSo values
   ExchangeUSDCentsPerDeSo: number;
@@ -425,8 +424,9 @@ export class GlobalVarsService {
       // Store the user in localStorage
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
 
-      // Identify the user in amplitude
-      this.amplitude?.setUserId(user?.PublicKeyBase58Check);
+      this.tracking.identityUser(user.PublicKeyBase58Check, {
+        Username: user.ProfileEntryResponse.Username,
+      });
 
       // Clear out the message inbox and BitcoinAPI
       this.messageResponse = null;
@@ -1062,28 +1062,29 @@ export class GlobalVarsService {
   // the metadata to differentiate two events with the same name.
   // Instead, just create two (or more) events with better names.
   logEvent(event: string, data?: any) {
-    if (!this.amplitude) {
-      return;
-    }
-    // If the user is in the tutorial, add the "tutorial : " prefix.
-    if (this.userInTutorial(this.loggedInUser)) {
-      event = "tutorial : " + event;
-    }
+    console.log("globalVars.logEvent is deprecated!");
+    // if (!this.amplitude) {
+    //   return;
+    // }
+    // // If the user is in the tutorial, add the "tutorial : " prefix.
+    // if (this.userInTutorial(this.loggedInUser)) {
+    //   event = "tutorial : " + event;
+    // }
 
-    if (!data) {
-      data = {};
-    }
+    // if (!data) {
+    //   data = {};
+    // }
 
-    // Attach node name
-    data.node = environment.node.name;
+    // // Attach node name
+    // data.node = environment.node.name;
 
-    // Attach referralCode
-    const referralCode = this.referralCode();
-    if (referralCode) {
-      data.referralCode = referralCode;
-    }
+    // // Attach referralCode
+    // const referralCode = this.referralCode();
+    // if (referralCode) {
+    //   data.referralCode = referralCode;
+    // }
 
-    this.amplitude.logEvent(event, data);
+    // this.amplitude.logEvent(event, data);
   }
 
   // Helper to launch the get free deso flow in identity.
