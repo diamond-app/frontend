@@ -16,6 +16,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
@@ -145,7 +146,8 @@ export class FeedCreatePostComponent implements OnInit {
     private appData: GlobalVarsService,
     private streamService: CloudflareStreamService,
     private translocoService: TranslocoService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
   }
@@ -335,7 +337,7 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .toPromise()
       .then((response) => {
-        this.globalVars.logEvent(`post : ${postType}`);
+        this.tracking.log(`post : ${postType}`);
 
         this.submittingPost = false;
 
@@ -379,7 +381,7 @@ export class FeedCreatePostComponent implements OnInit {
       .catch((err) => {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
-        this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
+        this.tracking.log(`post : ${postType} : error`, { parsedError });
         this.submittingPost = false;
 
         this.changeRef.detectChanges();
@@ -394,7 +396,7 @@ export class FeedCreatePostComponent implements OnInit {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {
       this.modalRef?.hide();
-      this.globalVars.logEvent("alert : post : account");
+      this.tracking.log("alert : post : account");
       this.modalService.show(WelcomeModalComponent);
       return;
     }
@@ -402,7 +404,7 @@ export class FeedCreatePostComponent implements OnInit {
     // Check if the user has a profile.
     if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
       this.modalRef?.hide();
-      this.globalVars.logEvent("alert : post : profile");
+      this.tracking.log("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { sprintf } from "sprintf-js";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { RouteNames } from "../app-routing.module";
@@ -48,7 +49,8 @@ export class TransferDeSoComponent implements OnInit {
     private backendApi: BackendApiService,
     private globalVarsService: GlobalVarsService,
     private titleService: Title,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tracking: TrackingService
   ) {
     this.globalVars = globalVarsService;
     this.route.queryParams.subscribe((queryParams) => {
@@ -191,12 +193,12 @@ export class TransferDeSoComponent implements OnInit {
                   } = res;
 
                   if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                    this.globalVars.logEvent("bitpop : send : error");
+                    this.tracking.log("bitpop : send : error");
                     this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
                     return null;
                   }
 
-                  this.globalVars.logEvent("bitpop : send", {
+                  this.tracking.log("bitpop : send", {
                     TotalInputNanos,
                     SpendAmountNanos,
                     ChangeAmountNanos,
@@ -215,7 +217,7 @@ export class TransferDeSoComponent implements OnInit {
                   this.sendingDeSo = false;
                   console.error(error);
                   this.transferDeSoError = this._extractError(error);
-                  this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDeSoError });
+                  this.tracking.log("bitpop : send : error", { parsedError: this.transferDeSoError });
                   this.globalVars._alertError(
                     this.transferDeSoError,
                     false,

@@ -4,15 +4,21 @@
     <meta charset="utf-8" />
     <meta name="referrer" content="no-referrer" />
     <title>Welcome to DeSo</title>
-    <meta name="description" content="Don't settle for a like. Get diamonds and invest in creators like never before." />
-    <meta name="theme-color" content="#eeeeee" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <meta
+      name="description"
+      content="Don't settle for a like. Get diamonds and invest in creators like never before."
+    />
+    <meta name="theme-color" content="#eeeeee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://diamondapp.com/assets/diamond/camelcase_logo_og.jpg" />
     <meta property="og:title" content="Welcome to DeSo" />
-    <meta property="og:description" content="Don't settle for a like. Get diamonds and invest in creators like never before." />
+    <meta
+      property="og:description"
+      content="Don't settle for a like. Get diamonds and invest in creators like never before."
+    />
     <meta property="og:site_name" content="DeSo" />
-    <meta property='og:image' name="image" content="https://diamondapp.com/assets/diamond/camelcase_logo_og.jpg" />
+    <meta property="og:image" name="image" content="https://diamondapp.com/assets/diamond/camelcase_logo_og.jpg" />
     <meta property="og:image:secure_url" content="diamondapp.com/assets/diamond/camelcase_logo_og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -40,6 +46,63 @@
     <link rel="icon" type="image/png" href="/assets/diamond/logo-192.png" sizes="192x192" />
     <link rel="apple-touch-icon" sizes="192x192" href="/assets/diamond/logo-192.png" type="image/png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/assets/diamond/logo-512.png" type="image/png" />
+
+    <!-- Heap analytics tracking -->
+    <script type="text/javascript">
+      (window.heap = window.heap || []),
+        (window.heap.load = function (e, t) {
+          (window.heap.appid = e), (window.heap.config = t = t || {});
+          var r = document.createElement("script");
+          (r.type = "text/javascript"), (r.async = !0), (r.src = "https://cdn.heapanalytics.com/js/heap-" + e + ".js");
+          var a = document.getElementsByTagName("script")[0];
+          a.parentNode.insertBefore(r, a);
+          for (
+            var n = function (e) {
+                return function () {
+                  heap.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+                };
+              },
+              p = [
+                "addEventProperties",
+                "addUserProperties",
+                "clearEventProperties",
+                "identify",
+                "resetIdentity",
+                "removeEventProperty",
+                "setEventProperties",
+                "track",
+                "unsetEventProperty",
+              ],
+              o = 0;
+            o < p.length;
+            o++
+          )
+            heap[p[o]] = n(p[o]);
+        });
+    </script>
+    <!-- Hotjar Tracking Code for diamondapp.com -->
+    <script type="text/javascript">
+      window.hjLoad = function ({
+        hjid,
+        h = window,
+        o = document,
+        t = "https://static.hotjar.com/c/hotjar-",
+        j = ".js?sv=",
+        hjsv = 6,
+      } = {}) {
+        h.hj =
+          h.hj ||
+          function () {
+            (h.hj.q = h.hj.q || []).push(arguments);
+          };
+        h._hjSettings = { hjid, hjsv };
+        a = o.getElementsByTagName("head")[0];
+        r = o.createElement("script");
+        r.async = 1;
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a.appendChild(r);
+      };
+    </script>
   </head>
   <body app-theme>
     <app-root></app-root>

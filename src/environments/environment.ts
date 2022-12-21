@@ -20,6 +20,12 @@ export const environment = {
     key: "",
     domain: "",
   },
+  heap: {
+    appId: "",
+  },
+  hotjar: {
+    hjid: "",
+  },
   node: {
     id: 3,
     name: "Diamond",

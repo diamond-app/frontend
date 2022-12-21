@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Subscription, zip } from "rxjs";
 import { map } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
@@ -40,7 +41,8 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     private _globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = _globalVars;
 
@@ -83,7 +85,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   reportUser(): void {
-    this.globalVars.logEvent("post : report-user");
+    this.tracking.log("post : report-user");
     window.open(
       `https://desoreporting.aidaform.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}&ReportedAccountUsername=${this.profile.Username}`
     );

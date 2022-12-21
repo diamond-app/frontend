@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
@@ -34,7 +35,8 @@ export class LeftBarMoreComponent implements AfterViewInit {
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
   ngAfterViewInit() {
@@ -81,7 +83,7 @@ export class LeftBarMoreComponent implements AfterViewInit {
   }
 
   logHelp(): void {
-    this.globalVars.logEvent("help : click");
+    this.tracking.log("help : click");
   }
 
   openBuyDeSoModal() {
@@ -142,7 +144,7 @@ export class LeftBarMoreComponent implements AfterViewInit {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
             ? TutorialStatus.STARTED

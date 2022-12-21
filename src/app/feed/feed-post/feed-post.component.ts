@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -111,7 +112,8 @@ export class FeedPostComponent implements OnInit {
     private toastr: ToastrService,
     private followService: FollowService,
     private translocoService: TranslocoService,
-    private streamService: CloudflareStreamService
+    private streamService: CloudflareStreamService,
+    private tracking: TrackingService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -582,13 +584,13 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             (response) => {
-              this.globalVars.logEvent("post : hide");
+              this.tracking.log("post : hide");
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.globalVars.logEvent("post : hide : error", { parsedError });
+              this.tracking.log("post : hide : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -617,14 +619,14 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.globalVars.logEvent("user : block");
+              this.tracking.log("user : block");
               this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.globalVars.logEvent("user : block : error", { parsedError });
+              this.tracking.log("user : block : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -692,7 +694,7 @@ export class FeedPostComponent implements OnInit {
         (res) => {
           this.post.InGlobalFeed = !this.post.InGlobalFeed;
           this.post.InHotFeed = !this.post.InHotFeed;
-          this.globalVars.logEvent("admin: add-post-to-global-feed", {
+          this.tracking.log("admin: add-post-to-global-feed", {
             postHashHex,
             userPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
             username: this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
@@ -726,7 +728,7 @@ export class FeedPostComponent implements OnInit {
       .subscribe(
         (res) => {
           this._post.IsPinned = isPostPinned;
-          this.globalVars.logEvent("admin: pin-post-to-global-feed", {
+          this.tracking.log("admin: pin-post-to-global-feed", {
             postHashHex,
             userPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
             username: this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,

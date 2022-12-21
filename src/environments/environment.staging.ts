@@ -16,6 +16,12 @@ export const environment = {
     key: "ba127556985bcf271b9bb1eee6834918",
     domain: "amp.diamondapp.com",
   },
+  heap: {
+    appId: "1382101420",
+  },
+  hotjar: {
+    hjid: "3289168",
+  },
   node: {
     id: 3,
     name: "Diamond",
