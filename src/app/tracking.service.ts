@@ -26,12 +26,13 @@ export class TrackingService {
   }
 
   log(event: string, properties: Record<string, any> = {}) {
+    Object.assign(properties, { path: window.location.pathname });
+
     if (isDevMode()) {
       console.log("trackingLogEvent->", event, properties);
       return;
     }
 
-    Object.assign(properties, { path: window.location.pathname });
     amplitudeTrack(event, properties);
     this._window.heap.track(event, properties);
   }
