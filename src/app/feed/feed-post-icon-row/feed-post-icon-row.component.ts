@@ -372,6 +372,7 @@ export class FeedPostIconRowComponent {
         class: "modal-dialog-centered",
         initialState,
         ignoreBackdropClick: true,
+        keyboard: false,
       });
     }
   }
