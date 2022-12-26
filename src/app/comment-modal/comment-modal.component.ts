@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from "@angular/core";
+import { AfterViewInit, Component, HostListener, Input } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { GlobalVarsService } from "../global-vars.service";
@@ -15,7 +15,16 @@ export class CommentModalComponent implements AfterViewInit {
   @Input() isQuote = false;
 
   warnBeforeClose: boolean = false;
-  constructor(public bsModalRef: BsModalRef, private globalVars: GlobalVarsService, private translocoService: TranslocoService) {}
+
+  @HostListener("document:keydown.escape") onEscPressed() {
+    this.closeModal();
+  }
+
+  constructor(
+    public bsModalRef: BsModalRef,
+    private globalVars: GlobalVarsService,
+    private translocoService: TranslocoService
+  ) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
