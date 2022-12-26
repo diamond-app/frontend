@@ -20,18 +20,18 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   ngAfterViewInit() {
-    this.tracking.log("onboarding : open");
+    this.tracking.log("onboarding-modal : open");
   }
 
   ngOnDestroy() {
     if (!this.didLaunchIdentityFlow) {
-      this.tracking.log("onboarding : close : no-identity");
+      this.tracking.log("onboarding-modal : dismiss");
     }
   }
 
   login() {
     this.didLaunchIdentityFlow = true;
-    this.tracking.log("onboarding : identity");
+    this.tracking.log("onboarding-modal-identity-cta : click");
     this.bsModalRef.hide();
     this.globalVars
       .launchLoginFlow()

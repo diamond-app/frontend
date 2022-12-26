@@ -307,8 +307,10 @@ export class AppComponent implements OnInit {
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
       // If the browser is not supported, display the browser not supported screen.
       if (!res.hasStorageAccess && isLoggedIn) {
+        this.tracking.log("storage-access : request");
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
+          this.tracking.log("storage-access : grant");
           this.globalVars.requestingStorageAccess = false;
           this.loadApp();
         });
@@ -322,6 +324,8 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
+    this.tracking.log("page : load");
+
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
     // Filter out invalid public keys
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
@@ -336,7 +340,6 @@ export class AppComponent implements OnInit {
       if (!_.isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];
       }
-      this.tracking.log("page : load");
       this.globalVars.updateEverything();
     });
 

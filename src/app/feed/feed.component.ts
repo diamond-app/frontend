@@ -15,6 +15,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import PullToRefresh from "pulltorefreshjs";
 import { Subscription } from "rxjs";
 import { finalize, first, tap } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
@@ -105,7 +106,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
 
@@ -314,6 +316,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateTag() {
+    this.tracking.log("hashtag-input : change", { hashtag: this.tag });
     this.activeTab = FeedComponent.TAG_TAB;
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, this.tag], {
       queryParamsHandling: "merge",
@@ -679,7 +682,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       }
     }
-    this._handleTabClick(this.activeTab, true);
+    this.switchTab(this.activeTab, true);
+  }
+
+  handleTabClick(feedTab: string) {
+    this.tracking.log("feed-tab : click", { feedTab });
+    this.switchTab(feedTab, false);
   }
 
   /**
@@ -690,7 +698,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
    * navigation event, but this initial navigation event should not add a new
    * history entry
    */
-  _handleTabClick(tab: string, replaceUrl: boolean = false) {
+  private switchTab(tab: string, replaceUrl: boolean = false) {
     if (tab === FeedComponent.SHOWCASE_TAB) {
       window.open("https://polygram.cc", "_blank");
     } else {
@@ -709,10 +717,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       this.router.navigate(commands, {
         relativeTo: this.route,
-        queryParams: { feedTab: this.activeTab },
+        // queryParams: { feedTab: this.activeTab },
         queryParamsHandling: "merge",
         replaceUrl,
       });
+
       this._onTabSwitch();
     }
   }
