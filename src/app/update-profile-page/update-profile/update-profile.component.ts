@@ -14,7 +14,7 @@ import {
 } from "src/app/api-internal.service";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
-import { getUTCOffset } from "../../../lib/helpers/date-helpers";
+import { getUTCOffset, localHourToUtcHour } from "../../../lib/helpers/date-helpers";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
@@ -342,7 +342,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
               this.usernameInput,
               this.globalVars.lastSeenNotificationIdx,
               utcOffset,
-              20 - utcOffset,
+              localHourToUtcHour(20),
               userNotifPreferences
             );
           }
