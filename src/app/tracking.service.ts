@@ -14,10 +14,6 @@ export class TrackingService {
     if (environment.amplitude.key) {
       init(environment.amplitude.key, window.localStorage.getItem("lastLoggedInUser") ?? undefined, {
         domain: environment.amplitude.domain,
-
-        // NOTE: uncomment to see detailed logs for each event that is fired in the console
-        logLevel: 4,
-
         pageViewTracking: {
           trackHistoryChanges: "pathOnly",
         },
