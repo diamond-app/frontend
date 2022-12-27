@@ -119,5 +119,9 @@
     "typescript-strict-plugin": "^1.1.2",
     "webpack-cli": "^3.3.10"
   },
-  "main": "main.js"
+  "main": "main.js",
+  "volta": {
+    "node": "16.19.0",
+    "npm": "7.24.2"
+  }
 }
