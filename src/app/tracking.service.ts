@@ -15,13 +15,15 @@ import { environment } from "src/environments/environment";
 export class TrackingService {
   private _window: Window & { heap: any; hj: any; hjLoad: (opts: any) => void } = window as any;
 
+
   constructor() {
     if (isDevMode()) return;
-
     amplitudeInit(environment.amplitude.key, undefined, {
       domain: environment.amplitude.domain,
     });
-    this._window.hjLoad({ hjid: environment.hotjar.hjid });
+    const hotjar = require("../vendor/hotjar-load.js")
+    hotjar.hjLoad({ hjid: environment.hotjar.hjid });
+    // this.hjLoad({ hjid: environment.hotjar.hjid });
     this._window.heap.load(environment.heap.appId);
   }
 
