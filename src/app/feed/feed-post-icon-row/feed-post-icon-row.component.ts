@@ -223,7 +223,7 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.tracking.log("post : repost");
+          this.tracking.log("post : repost", { status: "success" });
           // Only set the RepostPostHashHex if this is the first time a user is reposting a post.
           if (!this.postContent.PostEntryReaderState.RepostPostHashHex) {
             this.postContent.PostEntryReaderState.RepostPostHashHex = response.PostHashHex;
@@ -237,7 +237,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.tracking.log("post : repost : error", { parsedError });
+          this.tracking.log("post : repost", { status: "error" });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }
@@ -275,7 +275,7 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.tracking.log("post : unrepost");
+          this.tracking.log("post : unrepost", { status: "success" });
           this.postContent.RepostCount--;
           this.postContent.PostEntryReaderState.RepostedByReader = false;
           this.sendingRepostRequest = false;
@@ -285,7 +285,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.tracking.log("post : unrepost : error", { parsedError });
+          this.tracking.log("post : unrepost", { status: "error", error: parsedError });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }

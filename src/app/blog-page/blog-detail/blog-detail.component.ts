@@ -362,13 +362,13 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             (response) => {
-              this.tracking.log("post : hide");
+              this.tracking.log("post : hide", { status: "success" });
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.tracking.log("post : hide : error", { parsedError });
+              this.tracking.log("post : hide", { status: "error", error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -397,14 +397,14 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             () => {
-              this.tracking.log("user : block");
+              this.tracking.log("profile : block");
               this.globalVars.loggedInUser.BlockedPubKeys[this.currentPost.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.currentPost.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("user : block : error", { parsedError });
+              this.tracking.log("profile : block : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );

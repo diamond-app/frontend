@@ -2,7 +2,6 @@
 import { identify, Identify, init, setUserId, track } from "@amplitude/marketing-analytics-browser";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
-import { parseQueryParams } from "src/lib/helpers/query-param-helpers";
 
 @Injectable({
   providedIn: "root",
@@ -37,12 +36,17 @@ export class TrackingService {
    * log here.
    */
   log(event: string, properties: Record<string, any> = {}) {
-    const payload = {
+    const payload: Record<string, any> = {
+      // common props we log with every event
       isLoggedIn: !!localStorage.getItem("lastLoggedInUser"),
       path: window.location.pathname,
-      ...parseQueryParams(),
       ...properties,
     };
+
+    // capture the currently selected feed tab if on the browse page.
+    if (window.location.pathname.startsWith("/browse")) {
+      payload.feedTab = new URLSearchParams(window.location.search).get("feedTab");
+    }
 
     track(event, payload);
     this._window.heap.track(event, payload);

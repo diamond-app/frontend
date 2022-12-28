@@ -28,6 +28,13 @@
         [nftProfileUrl]="postContent?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
         queryParamsHandling="merge"
+        (click)="
+          this.tracking.log('profile : click', {
+            IsVerified: postContent.ProfileEntryResponse.IsVerified,
+            Username: postContent.ProfileEntryResponse.Username,
+            PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+          })
+        "
       ></a>
     </div>
     <div class="creator-profile-nfts__list-body d-flex flex-column">
@@ -253,6 +260,13 @@
                       ])
                 "
                 queryParamsHandling="merge"
+                (click)="
+                  this.tracking.log('profile : click', {
+                    IsVerified: postContent.ProfileEntryResponse.IsVerified,
+                    Username: postContent.ProfileEntryResponse.Username,
+                    PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                  })
+                "
               ></a>
             </div>
 
@@ -268,6 +282,13 @@
                   "
                   [queryParams]="!!postContent.PostExtraData?.BlogDeltaRtfFormat ? { tab: 'blog' } : {}"
                   queryParamsHandling="merge"
+                  (click)="
+                    this.tracking.log('profile : click', {
+                      IsVerified: postContent.ProfileEntryResponse.IsVerified,
+                      Username: postContent.ProfileEntryResponse.Username,
+                      PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                    })
+                  "
                 >
                   {{ postContent.ProfileEntryResponse.Username }}
                   <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">/ blog</span>

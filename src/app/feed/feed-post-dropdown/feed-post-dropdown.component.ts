@@ -65,7 +65,11 @@ export class FeedPostDropdownComponent implements OnInit {
   }
 
   reportPost(): void {
-    this.tracking.log("post : report-content");
+    this.tracking.log("post : report", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse.PublicKeyBase58Check,
+    });
     window.open(
       `https://desoreporting.aidaform.com/content?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
     );
@@ -381,7 +385,9 @@ export class FeedPostDropdownComponent implements OnInit {
   }
 
   copyPostLinkToClipboard(event) {
-    this.tracking.log("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.post.PostHashHex,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -406,7 +412,9 @@ export class FeedPostDropdownComponent implements OnInit {
 
   editPost(event) {
     event.preventDefault();
-    this.tracking.log("post : edit");
+    this.tracking.log("post : edit", {
+      postHashHex: this.post.PostHashHex,
+    });
     if (this.post.PostExtraData?.BlogDeltaRtfFormat) {
       this.router.navigate(["/" + this.globalVars.RouteNames.EDIT_LONG_POST + "/" + this.post.PostHashHex], {
         queryParamsHandling: "merge",

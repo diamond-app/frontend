@@ -83,7 +83,7 @@ export class FollowService {
   }
 
   _handleSuccessfulFollow(followedPubKeyBase58Check: string) {
-    this.tracking.log("user : follow");
+    this.tracking.log("profile : follow", { followedPublicKey: followedPubKeyBase58Check });
 
     // add to the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
@@ -103,7 +103,7 @@ export class FollowService {
   }
 
   _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
-    this.tracking.log("user : unfollow");
+    this.tracking.log("profile : unfollow");
 
     // remove from the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;

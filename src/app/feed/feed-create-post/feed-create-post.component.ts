@@ -312,12 +312,12 @@ export class FeedCreatePostComponent implements OnInit {
 
     const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
-    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "create";
+    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "post";
 
     if (this.postModels.length > 1 && !this.postSubmitPercentage) {
       this.postSubmitPercentage = "0";
     }
-
+    const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -337,7 +337,14 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .toPromise()
       .then((response) => {
-        this.tracking.log(`post : ${postType}`);
+        this.tracking.log(`post : ${action}`, {
+          type: postType,
+          status: "success",
+          hasText: bodyObj.Body.length > 0,
+          hasImage: bodyObj.ImageURLs.length > 0,
+          hasVideo: bodyObj.VideoURLs.length > 0,
+          hasEmbed: !!postExtraData.EmbedVideoURL,
+        });
 
         this.submittingPost = false;
 
@@ -381,7 +388,10 @@ export class FeedCreatePostComponent implements OnInit {
       .catch((err) => {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
-        this.tracking.log(`post : ${postType} : error`, { parsedError });
+        this.tracking.log(`post : ${action}`, {
+          status: "error",
+          error: parsedError,
+        });
         this.submittingPost = false;
 
         this.changeRef.detectChanges();

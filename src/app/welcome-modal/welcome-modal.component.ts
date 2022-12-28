@@ -30,8 +30,8 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   }
 
   login() {
+    this.tracking.log("onboarding-modal-identity-button : click");
     this.didLaunchIdentityFlow = true;
-    this.tracking.log("onboarding-modal-identity-cta : click");
     this.bsModalRef.hide();
     this.globalVars
       .launchLoginFlow()

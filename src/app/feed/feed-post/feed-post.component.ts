@@ -113,7 +113,7 @@ export class FeedPostComponent implements OnInit {
     private followService: FollowService,
     private translocoService: TranslocoService,
     private streamService: CloudflareStreamService,
-    private tracking: TrackingService
+    public tracking: TrackingService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -445,6 +445,14 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
+    this.tracking.log("post : click", {
+      isAuthorVerified: this.postContent.ProfileEntryResponse.IsVerified,
+      authorUsername: this.postContent.ProfileEntryResponse.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse.PublicKeyBase58Check,
+      isReply: !!this.parentPost,
+      postHashHex: this.postContent.PostHashHex,
+    });
+
     let postRouteTree = [
       "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
       this.postContent.PostHashHex,
@@ -584,13 +592,13 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             (response) => {
-              this.tracking.log("post : hide");
+              this.tracking.log("post : hide", { status: "success" });
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.tracking.log("post : hide : error", { parsedError });
+              this.tracking.log("post : hide", { status: "error", error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -619,14 +627,14 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.tracking.log("user : block");
+              this.tracking.log("profile : block");
               this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("user : block : error", { parsedError });
+              this.tracking.log("profile : block : error", { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );

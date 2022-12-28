@@ -95,12 +95,12 @@ export class MessagesPageComponent implements OnInit {
       .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.tracking.log("user : all-message-read");
+          this.tracking.log("profile : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("user : all-message-read : error", { parsedError });
+          this.tracking.log("profile : all-message-read : error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
