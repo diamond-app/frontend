@@ -22,7 +22,7 @@ export class TrackingService {
       domain: environment.amplitude.domain,
     });
     const hotjar = require("../vendor/hotjar-load.js")
-    hotjar.hjLoad({ hjid: environment.hotjar.hjid });
+    hotjar.load({ hjid: environment.hotjar.hjid });
     // this.hjLoad({ hjid: environment.hotjar.hjid });
     this._window.heap.load(environment.heap.appId);
   }
