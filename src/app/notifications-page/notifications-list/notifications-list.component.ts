@@ -647,47 +647,56 @@ export class NotificationsListComponent implements OnInit {
         return result;
       }
     } else if (txnMeta.TxnType === "DAO_COIN") {
-      const daoCoinMeta = txnMeta.DAOCoinTxindexMetadata;
-      if (!daoCoinMeta) {
+      const coinMeta = txnMeta.DAOCoinTxindexMetadata;
+      if (!coinMeta) {
         return null;
       }
-      switch (daoCoinMeta.OperationType) {
+      switch (coinMeta.OperationType) {
         case "mint": {
-          result.action = `minted ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToMintNanos)} ${
-            daoCoinMeta.CreatorUsername
-          } DAO coin`;
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToMintNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `minted ${amountFormatted} ${coinMeta.CreatorUsername} ${this.globalVars.pluralize(
+            amount,
+            "coin"
+          )}`;
           result.icon = "fas fa-coins fc-green";
           return result;
         }
         case "burn": {
-          result.action = `${actorName} burned ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToBurnNanos)} ${
-            daoCoinMeta.CreatorUsername
-          } DAO coin`;
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToBurnNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `${actorName} burned ${amountFormatted} ${
+            coinMeta.CreatorUsername
+          } ${this.globalVars.pluralize(amount, "coin")}`;
           result.icon = "fa fa-fire fc-red";
           return result;
         }
         case "disable_minting": {
-          result.action = `${actorName} disabled minting for ${daoCoinMeta.CreatorUsername} DAO coin`;
+          result.action = `${actorName} disabled minting for ${coinMeta.CreatorUsername} coin`;
           result.icon = "fas fa-minus-circle fc-red";
           return result;
         }
         case "update_transfer_restriction_status": {
-          result.action = `${actorName} updated the transfer restriction status of ${daoCoinMeta.CreatorUsername} DAO coin to ${daoCoinMeta.TransferRestrictionStatus}`;
+          result.action = `${actorName} updated the transfer restriction status of ${coinMeta.CreatorUsername} coin to ${coinMeta.TransferRestrictionStatus}`;
           result.icon = "fas fa-pen-fancy";
           return result;
         }
       }
       return null;
     } else if (txnMeta.TxnType === "DAO_COIN_TRANSFER") {
-      const daoCoinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
-      if (!daoCoinTransferMeta) {
+      const coinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
+      const amount = this.globalVars.hexNanosToStandardUnit(coinTransferMeta.DAOCoinToTransferNanos);
+      const amountFormatted = this.globalVars.abbreviateNumber(amount, 6, false);
+
+      if (!coinTransferMeta) {
         return null;
       }
       result.icon = "fas fa-money-bill-wave fc-blue";
-      result.action = `${actorName} sent you <b>${this.globalVars.hexNanosToUnitString(
-        daoCoinTransferMeta.DAOCoinToTransferNanos,
-        6
-      )} ${daoCoinTransferMeta.CreatorUsername} coin`;
+      result.action = `${actorName} sent you <b>${amountFormatted} ${
+        coinTransferMeta.CreatorUsername
+      } ${this.globalVars.pluralize(amount, "coin")}`;
       return result;
     }
 

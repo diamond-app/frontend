@@ -742,9 +742,9 @@ export class GlobalVarsService {
   }
 
   // Used to convert uint256 Hex balances for DAO coins to standard units.
-  hexNanosToUnitString(hexNanos: Hex, decimal: number = 4): string {
+  hexNanosToStandardUnit(hexNanos: Hex): number {
     const result = fromWei(toBN(hexNanos), "ether").toString();
-    return this.abbreviateNumber(parseFloat(result), decimal, false);
+    return parseFloat(result);
   }
 
   isMobile(): boolean {
@@ -1545,6 +1545,10 @@ export class GlobalVarsService {
     } else {
       return `${input}'s`;
     }
+  }
+
+  pluralize(count: number, noun: string, suffix = "s") {
+    return `${noun}${count !== 1 ? suffix : ""}`;
   }
 
   getFreeDESOMessage(): string {
