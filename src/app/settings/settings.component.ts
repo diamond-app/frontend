@@ -8,10 +8,11 @@ import { forkJoin, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { ApiInternalService, AppUser } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
-import { getUTCOffset } from "../../lib/helpers/date-helpers";
+import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
+import { range } from "lodash";
 
 @Component({
   selector: "settings",
@@ -36,6 +37,10 @@ export class SettingsComponent implements OnInit {
     { duration: 30, text: "Monthly" },
     { duration: 0, text: "Never" },
   ];
+  digestSendAtTime = range(0, 24).map((localHour) => ({
+    value: localHour,
+    text: `${localHour.toString().padStart(2, "0")}:00`,
+  }));
   txEmailSettings = [
     { field: "ReceiveLikeNotif", text: "Like" },
     { field: "ReceiveCoinPurchaseNotif", text: "Creator coin purchase" },
@@ -122,7 +127,7 @@ export class SettingsComponent implements OnInit {
                     this.globalVars.loggedInUser.ProfileEntryResponse.Username,
                     this.globalVars.lastSeenNotificationIdx,
                     utcOffset,
-                    20 - utcOffset
+                    localHourToUtcHour(20)
                   );
                 }
 
@@ -201,6 +206,34 @@ export class SettingsComponent implements OnInit {
     );
   }
 
+  updateDigestSendAtTime(ev: Event) {
+    if (!this.appUser || !ev?.target) return;
+    const inputEl = ev.target as HTMLInputElement;
+    const digestSetting = inputEl.name as "DigestSendAtHourLocalTime";
+    const originalValue = this.appUser.DigestSendAtHourLocalTime;
+
+    if (typeof originalValue === "undefined") {
+      throw new Error(`invalid digest send at time setting: ${digestSetting}`);
+    }
+
+    this.appUser = {
+      ...this.appUser,
+      DigestSendAtHourLocalTime: Number(inputEl.value),
+      UserTimezoneUtcOffset: getUTCOffset(),
+    };
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser = {
+          ...this.appUser,
+          DigestSendAtHourLocalTime: originalValue,
+        };
+      }
+    );
+  }
+
   updateTxEmailSetting(ev: Event) {
     if (!this.appUser || !ev?.target) return;
     const inputEl = ev.target as HTMLInputElement;
@@ -243,6 +276,13 @@ export class SettingsComponent implements OnInit {
     );
   }
 
+  isDigestSendAtTimeSelected(localHour: number) {
+    return (
+      localHourToUtcHour(this.appUser.DigestSendAtHourLocalTime, this.appUser.UserTimezoneUtcOffset * 60) ===
+      localHourToUtcHour(localHour)
+    );
+  }
+
   onEmailChange() {
     this.isValidEmail = true;
   }
@@ -268,13 +308,13 @@ export class SettingsComponent implements OnInit {
         null /*MessageReadStateUpdatesByContact*/
       )
       .pipe(
-        switchMap((res) => {
+        switchMap(() => {
           return this.apiInternal.createAppUser(
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
-            20 - utcOffset
+            localHourToUtcHour(20)
           );
         })
       )
