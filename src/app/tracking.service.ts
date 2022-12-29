@@ -17,14 +17,16 @@ export class TrackingService {
 
 
   constructor() {
-    if (isDevMode()) return;
+    // if (isDevMode()) return;
     amplitudeInit(environment.amplitude.key, undefined, {
       domain: environment.amplitude.domain,
     });
     const hotjar = require("../vendor/hotjar-load.js")
+    console.log("Here is hotjar: ", hotjar);
     hotjar.load({ hjid: environment.hotjar.hjid });
     // this.hjLoad({ hjid: environment.hotjar.hjid });
-    this._window.heap.load(environment.heap.appId);
+    const heap = require("../vendor/heap-load.js")
+    heap.load(environment.heap.appId);
   }
 
   log(event: string, properties: Record<string, any> = {}) {
