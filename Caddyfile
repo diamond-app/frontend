@@ -59,6 +59,7 @@ header @html Content-Security-Policy "
     https://web3setu.co.in
     https://api2.amplitude.com/2/httpapi
     https://heapanalytics.com:*
+    https://in.hotjar.com:*
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
