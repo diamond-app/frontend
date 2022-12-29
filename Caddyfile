@@ -60,7 +60,8 @@ header @html Content-Security-Policy "
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
-    https://ka-f.fontawesome.com/;
+    https://ka-f.fontawesome.com/
+    https://static.hotjar.com/c/hotjar-3289168.js?sv=6;
   style-src 'self'
     'unsafe-inline'
     https://fonts.googleapis.com
