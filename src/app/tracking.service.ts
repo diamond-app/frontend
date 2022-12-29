@@ -17,7 +17,7 @@ export class TrackingService {
 
 
   constructor() {
-    // if (isDevMode()) return;
+    if (isDevMode()) return;
     amplitudeInit(environment.amplitude.key, undefined, {
       domain: environment.amplitude.domain,
     });

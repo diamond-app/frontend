@@ -1,5 +1,5 @@
-export function load (e, t) {
-  (window.heap.appid = e), (window.heap.config = t = t || {});
+export function load (e, t, h = window) {
+  (h.heap.appid = e), (h.heap.config = t = t || {});
   var r = document.createElement("script");
   (r.type = "text/javascript"), (r.async = !0), (r.src = "https://cdn.heapanalytics.com/js/heap-" + e + ".js");
   var a = document.getElementsByTagName("script")[0];
