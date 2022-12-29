@@ -57,6 +57,7 @@ header @html Content-Security-Policy "
     https://videodelivery.net
     https://upload.videodelivery.net
     https://web3setu.co.in
+    https://api2.amplitude.com/2/httpapi
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
