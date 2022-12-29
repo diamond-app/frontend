@@ -61,6 +61,7 @@ header @html Content-Security-Policy "
     https://heapanalytics.com:*
     https://in.hotjar.com:*
     wss://ws48.hotjar.com:*
+    https://ws48.hotjar.com:*
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js

@@ -27,5 +27,4 @@ export function load (e, t, h = window) {
     o++
   )
   heap[p[o]] = n(p[o]);
-  console.log("End of heap load");
 };

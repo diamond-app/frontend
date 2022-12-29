@@ -17,5 +17,4 @@ export function load ({
   r.async = 1;
   r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
   a.appendChild(r);
-  console.log("Got to end of load function");
 }
