@@ -59,6 +59,7 @@ header @html Content-Security-Policy "
     https://web3setu.co.in
     https://api2.amplitude.com/2/httpapi
     https://heapanalytics.com/h
+    https://heapanalytics.com
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
@@ -66,6 +67,8 @@ header @html Content-Security-Policy "
     https://script.hotjar.com/modules.352fddba5b21bbfc3a08.js
     https://cdn.heapanalytics.com/js/heap-1382101420.js
     https://cdn.heapanalytics.com/js/heap-3027241133.js
+    https://heapanalytics.com/h
+    https://heapanalytics.com
     https://static.hotjar.com/c/hotjar-3289168.js;
   style-src 'self'
     'unsafe-inline'
