@@ -57,10 +57,19 @@ header @html Content-Security-Policy "
     https://videodelivery.net
     https://upload.videodelivery.net
     https://web3setu.co.in
+    https://api2.amplitude.com/2/httpapi
+    https://heapanalytics.com:*
+    https://in.hotjar.com:*
+    wss://ws48.hotjar.com:*
+    https://ws48.hotjar.com:*
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
-    https://ka-f.fontawesome.com/;
+    https://ka-f.fontawesome.com/
+    https://script.hotjar.com/modules.352fddba5b21bbfc3a08.js
+    https://cdn.heapanalytics.com/js/heap-1382101420.js
+    https://cdn.heapanalytics.com/js/heap-3027241133.js
+    https://static.hotjar.com/c/hotjar-3289168.js;
   style-src 'self'
     'unsafe-inline'
     https://fonts.googleapis.com
@@ -79,6 +88,7 @@ header @html Content-Security-Policy "
     *.pearl.app
     *.twimg.com
     cloudflare-ipfs.com
+    https://heapanalytics.com/h
     *.mypinata.cloud;
   font-src 'self'
     https://fonts.googleapis.com
@@ -109,5 +119,6 @@ header @html Content-Security-Policy "
     https://mousai.stream
     pay.testwyre.com
     pay.sendwyre.com
+    https://vars.hotjar.com/
     https://iframe.videodelivery.net;
   frame-ancestors 'self';"
