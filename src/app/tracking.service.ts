@@ -20,11 +20,13 @@ export class TrackingService {
     }
 
     if (environment.hotjar.hjid) {
-      this._window.hjLoad({ hjid: environment.hotjar.hjid });
+      const hotjar = require("../vendor/hotjar-load.js");
+      hotjar.load({ hjid: environment.hotjar.hjid });
     }
 
     if (environment.heap.appId) {
-      this._window.heap.load(environment.heap.appId);
+      const heap = require("../vendor/heap-load.js");
+      heap.load(environment.heap.appId);
     }
   }
 

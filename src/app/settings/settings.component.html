@@ -15,7 +15,11 @@
       style="padding: 6px 12px"
       class="form-control selector"
     >
-      <option *ngFor="let theme of themeService.themes" [value]="theme.key" [selected]="theme.key === themeService.theme">
+      <option
+        *ngFor="let theme of themeService.themes"
+        [value]="theme.key"
+        [selected]="theme.key === themeService.theme"
+      >
         {{ theme.name }}
       </option>
     </select>
@@ -88,11 +92,19 @@
       style="padding: 6px 12px"
       class="form-control selector"
     >
-      <option
-        *ngFor="let f of digestFrequencies"
-        [value]="f.duration"
-        [selected]="f.duration === appUser.EarningsDigestFrequency"
-      >
+      <option *ngFor="let f of digestFrequencies" [value]="f.duration">
+        {{ f.text }}
+      </option>
+    </select>
+    <label for="digest_send_at_time" class="update-profile__title">Digest send time?</label>
+    <select
+      id="digest_send_at_time"
+      name="DigestSendAtHourLocalTime"
+      (change)="updateDigestSendAtTime($event)"
+      style="padding: 6px 12px"
+      class="form-control selector"
+    >
+      <option *ngFor="let f of digestSendAtTime" [value]="f.value" [selected]="isDigestSendAtTimeSelected(f.value)">
         {{ f.text }}
       </option>
     </select>

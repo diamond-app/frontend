@@ -4,7 +4,7 @@ import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { switchMap } from "rxjs/operators";
 import { ApiInternalService, AppUser, SUBSCRIBED_APP_USER_DEFAULTS } from "src/app/api-internal.service";
-import { getUTCOffset } from "../../lib/helpers/date-helpers";
+import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -73,7 +73,7 @@ export class EmailSubscribeComponent implements OnInit {
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
-            20 - utcOffset,
+            localHourToUtcHour(20),
             SUBSCRIBED_APP_USER_DEFAULTS
           );
         })
@@ -101,7 +101,7 @@ export class EmailSubscribeComponent implements OnInit {
         this.globalVars.loggedInUser.ProfileEntryResponse.Username,
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,
-        20 - utcOffset,
+        localHourToUtcHour(20),
         SUBSCRIBED_APP_USER_DEFAULTS
       )
       .subscribe(() => {
