@@ -62,6 +62,9 @@ header @html Content-Security-Policy "
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
     https://ka-f.fontawesome.com/
+    https://script.hotjar.com/modules.352fddba5b21bbfc3a08.js
+    https://cdn.heapanalytics.com/js/heap-1382101420.js
+    https://cdn.heapanalytics.com/js/heap-3027241133.js
     https://static.hotjar.com/c/hotjar-3289168.js;
   style-src 'self'
     'unsafe-inline'
