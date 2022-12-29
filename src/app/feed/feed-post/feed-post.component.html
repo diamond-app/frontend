@@ -29,10 +29,10 @@
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
         queryParamsHandling="merge"
         (click)="
-          this.tracking.log('profile : click', {
-            IsVerified: postContent.ProfileEntryResponse.IsVerified,
-            Username: postContent.ProfileEntryResponse.Username,
-            PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+          this.tracking.log('post-profile-link : click', {
+            isVerified: this.postContent.ProfileEntryResponse?.IsVerified,
+            username: this.postContent.ProfileEntryResponse?.Username,
+            publicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
           })
         "
       ></a>
@@ -261,10 +261,10 @@
                 "
                 queryParamsHandling="merge"
                 (click)="
-                  this.tracking.log('profile : click', {
-                    IsVerified: postContent.ProfileEntryResponse.IsVerified,
-                    Username: postContent.ProfileEntryResponse.Username,
-                    PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                  this.tracking.log('post-profile-link : click', {
+                    isVerified: postContent.ProfileEntryResponse.IsVerified,
+                    username: postContent.ProfileEntryResponse.Username,
+                    publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
                   })
                 "
               ></a>
@@ -283,10 +283,10 @@
                   [queryParams]="!!postContent.PostExtraData?.BlogDeltaRtfFormat ? { tab: 'blog' } : {}"
                   queryParamsHandling="merge"
                   (click)="
-                    this.tracking.log('profile : click', {
-                      IsVerified: postContent.ProfileEntryResponse.IsVerified,
-                      Username: postContent.ProfileEntryResponse.Username,
-                      PublicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                    this.tracking.log('post-profile-link : click', {
+                      isVerified: postContent.ProfileEntryResponse.IsVerified,
+                      username: postContent.ProfileEntryResponse.Username,
+                      publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
                     })
                   "
                 >

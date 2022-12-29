@@ -397,14 +397,19 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             () => {
-              this.tracking.log("profile : block");
+              this.tracking.log("profile : block", {
+                status: "success",
+                username: this.currentPost.ProfileEntryResponse.Username,
+                publicKey: this.currentPost.PosterPublicKeyBase58Check,
+                isVerified: this.currentPost.ProfileEntryResponse.IsVerified,
+              });
               this.globalVars.loggedInUser.BlockedPubKeys[this.currentPost.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.currentPost.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("profile : block : error", { parsedError });
+              this.tracking.log("profile : block", { status: "error", error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );

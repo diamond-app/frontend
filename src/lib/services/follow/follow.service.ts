@@ -103,7 +103,7 @@ export class FollowService {
   }
 
   _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
-    this.tracking.log("profile : unfollow");
+    this.tracking.log("profile : unfollow", { targetPublicKey: followedPubKeyBase58Check });
 
     // remove from the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;

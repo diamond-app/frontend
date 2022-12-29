@@ -386,7 +386,9 @@ export class FeedPostDropdownComponent implements OnInit {
 
   copyPostLinkToClipboard(event) {
     this.tracking.log("post : share", {
-      postHashHex: this.post.PostHashHex,
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
     });
 
     // Prevent the post from navigating.

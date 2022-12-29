@@ -627,14 +627,19 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.tracking.log("profile : block");
+              this.tracking.log("profile : block", {
+                status: "success",
+                username: this.post.ProfileEntryResponse.Username,
+                publicKey: this.post.PosterPublicKeyBase58Check,
+                isVerified: this.post.ProfileEntryResponse.IsVerified,
+              });
               this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("profile : block : error", { parsedError });
+              this.tracking.log("profile : block", { status: "error", error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -928,6 +933,7 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     event.stopPropagation();
+    this.tracking.log("buy-nft-button : click", { postHashHex: this.postContent.PostHashHex });
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
       if (_.isNil(this.globalVars.loggedInUser)) {
         this.backendApi.SetStorage(

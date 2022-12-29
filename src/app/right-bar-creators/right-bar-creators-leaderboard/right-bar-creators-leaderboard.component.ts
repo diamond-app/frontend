@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TrackingService } from "src/app/tracking.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { RightBarCreatorsComponent } from "../right-bar-creators.component";
 
@@ -14,7 +15,12 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
 
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
-  constructor(public globalVars: GlobalVarsService, private route: ActivatedRoute, private _router: Router) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private route: ActivatedRoute,
+    private _router: Router,
+    private tracking: TrackingService
+  ) {}
 
   ngOnInit() {
     this.globalVars.updateLeaderboard();
@@ -24,6 +30,9 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
   }
 
   navigateToHashtag(hashtag: string) {
+    this.tracking.log("right-rail-hashtag : click", {
+      hashtag: hashtag,
+    });
     this._router.navigate(
       ["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, hashtag.substring(1)],
       {

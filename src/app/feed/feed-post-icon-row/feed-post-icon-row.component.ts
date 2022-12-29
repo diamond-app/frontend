@@ -334,10 +334,18 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (res) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`);
+          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
+            status: "success",
+            postHashHex: this.postContent.PostHashHex,
+            authorUsername: this.postContent.ProfileEntryResponse?.Username,
+            authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+          });
         },
         (err) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"} : error`);
+          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
+            status: "error",
+            error: err.error?.error,
+          });
           console.error(err);
         }
       );
@@ -378,7 +386,11 @@ export class FeedPostIconRowComponent {
   }
 
   copyPostLinkToClipboard(event) {
-    this.tracking.log("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -396,7 +408,11 @@ export class FeedPostIconRowComponent {
     if (this.inTutorial) {
       return;
     }
-    this.tracking.log("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -463,10 +479,11 @@ export class FeedPostIconRowComponent {
           this.sendingDiamonds = false;
           this.diamondSent.emit();
           this.tracking.log("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
-            DiamondPostHashHex: this.postContent.PostHashHex,
-            DiamondLevel: diamonds,
+            status: "success",
+            postHashHex: this.postContent.PostHashHex,
+            authorUsername: this.postContent.ProfileEntryResponse?.Username,
+            authorPublicKey: this.postContent.PosterPublicKeyBase58Check,
+            diamondLevel: diamonds,
           });
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
@@ -484,7 +501,7 @@ export class FeedPostIconRowComponent {
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
-          this.tracking.log("diamonds: send: error", { parsedError });
+          this.tracking.log("diamonds: send: error", { status: "error", error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
