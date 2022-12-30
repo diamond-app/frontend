@@ -425,7 +425,8 @@ export class GlobalVarsService {
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
 
       this.tracking.identityUser(user?.PublicKeyBase58Check, {
-        Username: user?.ProfileEntryResponse?.Username ?? "",
+        username: user?.ProfileEntryResponse?.Username ?? "",
+        isVerified: user?.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI

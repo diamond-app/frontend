@@ -83,8 +83,11 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
   loginWithTwitter() {
     this.tracking.log("twitter-sync-twitter-login-button : click", { isOnboarding: this.isSigningUp });
-    this.boundPostMessageListener = this.postMessageListener.bind(this);
-    window.addEventListener("message", this.boundPostMessageListener);
+
+    if (!this.boundPostMessageListener) {
+      this.boundPostMessageListener = this.postMessageListener.bind(this);
+      window.addEventListener("message", this.boundPostMessageListener);
+    }
 
     const h = 1000;
     const w = 800;

@@ -59,7 +59,7 @@ export class BuyDeSoUSDComponent implements OnInit {
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
-        this.tracking.log("wyre : buy : success", { ...queryParams });
+        this.tracking.log("fiat : buy", { ...queryParams, service: "wyre" });
         const btcPurchased = queryParams.destAmount;
         this.globalVars.celebrate();
         SwalHelper.fire({
@@ -118,8 +118,13 @@ export class BuyDeSoUSDComponent implements OnInit {
             },
             reverseButtons: true,
           }).then((res: any) => {
+            this.tracking.log(`fiat-confirmation-modal : ${res.isConfirmed ? "confirm" : "cancel"}`, {
+              currency: this.selectedFiatCurrency,
+              amount: this.amount,
+              amountDESO: this.desoReceived,
+              service: "wyre",
+            });
             if (res.isConfirmed) {
-              this.tracking.log("wyre : buy", { amount: this.amount });
               window.open(wyreUrl);
             }
           });
