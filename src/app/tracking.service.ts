@@ -46,7 +46,7 @@ export class TrackingService {
       ...properties,
     };
 
-    data.status = data.status ?? !!data.error ? "error" : "success";
+    data.status = data.status ?? (!!data.error ? "error" : "success");
 
     // capture the currently selected feed tab if on the browse page.
     if (window.location.pathname.startsWith("/browse")) {

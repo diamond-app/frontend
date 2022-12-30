@@ -717,7 +717,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       this.router.navigate(commands, {
         relativeTo: this.route,
-        // queryParams: { feedTab: this.activeTab },
+        queryParams: { feedTab: this.activeTab },
         queryParamsHandling: "merge",
         replaceUrl,
       });
