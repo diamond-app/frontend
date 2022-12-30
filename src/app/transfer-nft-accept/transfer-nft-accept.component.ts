@@ -63,7 +63,6 @@ export class TransferNftAcceptComponent {
       .subscribe(
         (res) => {
           this.tracking.log("nft : accept", {
-            status: "success",
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -87,7 +86,6 @@ export class TransferNftAcceptComponent {
         (err) => {
           console.error(err);
           this.tracking.log("nft : accept", {
-            status: "error",
             error: err.error?.error,
           });
         }

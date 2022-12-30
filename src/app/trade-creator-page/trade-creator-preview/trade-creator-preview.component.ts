@@ -114,7 +114,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
             FeeNanos,
           } = response;
           this.tracking.log(`creator-coin : ${operationType}`, {
-            status: "success",
             username: this.creatorCoinTrade.creatorProfile.Username,
             publicKey: this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
             operationType,
@@ -181,7 +180,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
         (response) => {
           const { SpendAmountNanos, TotalInputNanos, ChangeAmountNanos, FeeNanos } = response;
           this.tracking.log("creator-coin : transfer", {
-            status: "success",
             username: this.creatorCoinTrade.creatorProfile.Username,
             receiverPublicKey: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
             amountToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
@@ -216,7 +214,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
       errorMessage.includes(this.CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR);
 
     this.tracking.log(`creator-coin : ${this.creatorCoinTrade.tradeType.toLocaleLowerCase()}`, {
-      status: "error",
       error: parsedError,
       hasSlippageError,
     });

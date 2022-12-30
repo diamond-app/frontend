@@ -164,7 +164,6 @@ export class PlaceBidComponent implements OnInit {
       .subscribe(
         (res) => {
           this.tracking.log("nft-place-bid : submit", {
-            status: "success",
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -186,7 +185,7 @@ export class PlaceBidComponent implements OnInit {
           console.error(err);
           const parsedError = this.backendApi.parseMessageError(err);
           this.globalVars._alertError(parsedError);
-          this.tracking.log("nft-place-bid : submit", { status: "error", error: parsedError });
+          this.tracking.log("nft-place-bid : submit", { error: parsedError });
         }
       )
       .add(() => {

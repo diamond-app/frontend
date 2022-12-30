@@ -70,7 +70,6 @@ export class BuyNowConfirmationComponent {
       .subscribe(
         (res) => {
           this.tracking.log("nft-buy-now : submit", {
-            status: "success",
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -92,7 +91,7 @@ export class BuyNowConfirmationComponent {
           console.error(err);
           const parsedError = this.backendApi.parseMessageError(err);
           this.globalVars._alertError(parsedError);
-          this.tracking.log("nft-buy-now : submit", { status: "error", error: parsedError });
+          this.tracking.log("nft-buy-now : submit", { error: parsedError });
         }
       )
       .add(() => {

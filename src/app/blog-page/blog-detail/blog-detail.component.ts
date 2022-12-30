@@ -362,13 +362,13 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             (response) => {
-              this.tracking.log("post : hide", { status: "success" });
+              this.tracking.log("post : hide");
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.tracking.log("post : hide", { status: "error", error: parsedError });
+              this.tracking.log("post : hide", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -398,7 +398,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           .subscribe(
             () => {
               this.tracking.log("profile : block", {
-                status: "success",
                 username: this.currentPost.ProfileEntryResponse.Username,
                 publicKey: this.currentPost.PosterPublicKeyBase58Check,
                 isVerified: this.currentPost.ProfileEntryResponse.IsVerified,
@@ -409,7 +408,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("profile : block", { status: "error", error: parsedError });
+              this.tracking.log("profile : block", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );

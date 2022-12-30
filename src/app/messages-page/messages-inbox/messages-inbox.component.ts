@@ -261,7 +261,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("profile : all-message-read", { status: "error", error: parsedError });
+          this.tracking.log("profile : all-message-read", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -342,7 +342,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
           (err) => {
             console.log(err);
             const parsedError = this.backendApi.stringifyError(err);
-            this.tracking.log("profile : message-read", { status: "error", error: parsedError });
+            this.tracking.log("profile : message-read", { error: parsedError });
             this.globalVars._alertError(parsedError);
           }
         );

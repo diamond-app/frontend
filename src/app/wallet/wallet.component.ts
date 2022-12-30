@@ -424,12 +424,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
               )
               .subscribe(
                 () => {
-                  this.tracking.log("set : founder-reward", { status: "success" });
+                  this.tracking.log("set : founder-reward");
                 },
                 (err) => {
                   console.error(err);
                   const parsedError = this.backendApi.stringifyError(err);
-                  this.tracking.log("set : founder-reward", { status: "error", error: parsedError });
+                  this.tracking.log("set : founder-reward", { error: parsedError });
                 }
               );
           } else {

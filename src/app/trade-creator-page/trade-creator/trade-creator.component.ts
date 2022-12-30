@@ -211,7 +211,6 @@ export class TradeCreatorComponent implements OnInit {
         this.creatorCoinTrade.creatorProfile = profile;
         this.creatorProfile = profile;
         this.tracking.log("creator-coin-trade-modal : open", {
-          status: "success",
           username: profile.Username,
           publicKey: profile.PublicKeyBase58Check,
           isVerified: profile.IsVerified,
@@ -221,7 +220,7 @@ export class TradeCreatorComponent implements OnInit {
       (err) => {
         console.error(err);
         console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
-        this.tracking.log("creator-coin-trade-modal : open", { status: "error", error: err.error?.error });
+        this.tracking.log("creator-coin-trade-modal : open", { error: err.error?.error });
       }
     );
   }

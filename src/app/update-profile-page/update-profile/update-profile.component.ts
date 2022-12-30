@@ -195,13 +195,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       )
       .subscribe(
         (res) => {
-          this.tracking.log("profile-global-metadata : update", {
-            status: "success",
-          });
+          this.tracking.log("profile-global-metadata : update");
         },
         (err) => {
           console.log(err);
-          this.tracking.log("profile-global-metadata : update", { status: "error", error: err });
+          this.tracking.log("profile-global-metadata : update", { error: err });
         }
       );
   }
@@ -357,7 +355,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       .subscribe(
         ([updateProfileResponse]) => {
           this.globalVars.profileUpdateTimestamp = Date.now();
-          this.tracking.log("profile : update", { status: "success" });
+          this.tracking.log("profile : update");
           // TODO: create or update app user record here
           // This updates things like the username that shows up in the dropdown.
           this.globalVars.updateEverything(
@@ -370,7 +368,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         (err) => {
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
-          this.tracking.log("profile : update", { status: "error", error: parsedError, lowBalance });
+          this.tracking.log("profile : update", { error: parsedError, lowBalance });
           this.updateProfileBeingCalled = false;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),

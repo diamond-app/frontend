@@ -99,7 +99,6 @@ export class NftBurnComponent implements OnInit {
           .subscribe(
             (res) => {
               this.tracking.log("nft : burn", {
-                status: "success",
                 postHashHex: this.post.PostHashHex,
                 authorUsername: this.post.ProfileEntryResponse?.Username,
                 authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -123,7 +122,6 @@ export class NftBurnComponent implements OnInit {
             (err) => {
               console.error(err);
               this.tracking.log("nft : burn", {
-                status: "error",
                 error: err.error?.error,
               });
             }

@@ -193,7 +193,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     obs$.pipe(finalize(() => (this.isProcessingSubscription = false))).subscribe(
       (res) => {
-        this.tracking.log("twitter-sync : create-subscription", { status: "success", isOnboarding: this.isSigningUp });
+        this.tracking.log("twitter-sync : create-subscription", { isOnboarding: this.isSigningUp });
         this.setuSubscriptions = res;
         this.globalVars._alertSuccess(
           "Great, you're all set up! Tweets posted on Twitter will sync to the DeSo blockchain.",
@@ -207,7 +207,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       },
       (err) => {
         this.tracking.log("twitter-sync : create-subscription", {
-          status: "error",
           error: err.error?.error,
           isOnboarding: this.isSigningUp,
         });
@@ -269,7 +268,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           },
           (err) => {
             this.tracking.log("twitter-sync : unsubscribe", {
-              status: "error",
               error: err.error?.error,
               isOnboarding: this.isSigningUp,
               twitterHandle: this.twitterUserData.twitter_username,

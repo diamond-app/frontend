@@ -194,7 +194,7 @@ export class TransferDeSoComponent implements OnInit {
                   } = res;
 
                   if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                    this.tracking.log("deso : send", { status: "error", error: Messages.CONNECTION_PROBLEM });
+                    this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
                     this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
                     return null;
                   }
@@ -219,7 +219,7 @@ export class TransferDeSoComponent implements OnInit {
                   this.sendingDeSo = false;
                   console.error(error);
                   this.transferDeSoError = this._extractError(error);
-                  this.tracking.log("bitpop : send", { status: "error", error: this.transferDeSoError });
+                  this.tracking.log("bitpop : send", { error: this.transferDeSoError });
                   this.globalVars._alertError(
                     this.transferDeSoError,
                     false,

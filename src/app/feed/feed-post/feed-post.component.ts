@@ -592,13 +592,13 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             (response) => {
-              this.tracking.log("post : hide", { status: "success" });
+              this.tracking.log("post : hide");
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.tracking.log("post : hide", { status: "error", error: parsedError });
+              this.tracking.log("post : hide", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -628,7 +628,6 @@ export class FeedPostComponent implements OnInit {
           .subscribe(
             () => {
               this.tracking.log("profile : block", {
-                status: "success",
                 username: this.post.ProfileEntryResponse.Username,
                 publicKey: this.post.PosterPublicKeyBase58Check,
                 isVerified: this.post.ProfileEntryResponse.IsVerified,
@@ -639,7 +638,7 @@ export class FeedPostComponent implements OnInit {
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("profile : block", { status: "error", error: parsedError });
+              this.tracking.log("profile : block", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );

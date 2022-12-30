@@ -339,7 +339,6 @@ export class FeedCreatePostComponent implements OnInit {
       .then((response) => {
         this.tracking.log(`post : ${action}`, {
           type: postType,
-          status: "success",
           hasText: bodyObj.Body.length > 0,
           hasImage: bodyObj.ImageURLs.length > 0,
           hasVideo: bodyObj.VideoURLs.length > 0,
@@ -389,7 +388,6 @@ export class FeedCreatePostComponent implements OnInit {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
         this.tracking.log(`post : ${action}`, {
-          status: "error",
           error: parsedError,
         });
         this.submittingPost = false;

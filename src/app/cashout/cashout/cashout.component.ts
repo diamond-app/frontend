@@ -250,7 +250,6 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       .subscribe(
         (res) => {
           this.tracking.log("cash-out : submit", {
-            status: "success",
             amountNanos,
             depositTicker: this.depositTicker,
             depositAddress,
@@ -262,7 +261,6 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         },
         (err) => {
           this.tracking.log("cash-out : submit", {
-            status: "error",
             error: err,
             amountNanos,
             depositTicker: this.depositTicker,

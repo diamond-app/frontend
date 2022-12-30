@@ -56,7 +56,6 @@ export class CloseNftAuctionModalComponent {
       .subscribe(
         (res) => {
           this.tracking.log("nft-auction : close", {
-            status: "success",
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -75,7 +74,6 @@ export class CloseNftAuctionModalComponent {
           const parsedError = this.backendApi.parseMessageError(err);
           this.globalVars._alertError(this.backendApi.parseMessageError(err));
           this.tracking.log("nft-auction : close", {
-            status: "error",
             error: parsedError,
           });
         }

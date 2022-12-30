@@ -132,7 +132,6 @@ export class SellNftComponent implements OnInit {
       .subscribe(
         (res) => {
           this.tracking.log("nft : sell", {
-            status: "success",
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
@@ -154,7 +153,7 @@ export class SellNftComponent implements OnInit {
           console.error(err);
           const parsedError = this.backendApi.parseMessageError(err);
           this.globalVars._alertError(parsedError);
-          this.tracking.log("nft : sell", { status: "error", error: parsedError });
+          this.tracking.log("nft : sell", { error: parsedError });
         }
       )
       .add(() => {

@@ -33,28 +33,26 @@ export class TrackingService {
   /**
    * @param event should be in the format of <noun (object/category)> : <present-tense-verb>
    * e.g. "post : like", "signup-button : click", "onboarding-modal : open"
-   * @param properties by default we log the current url path, and if the user
-   * is onboarding. You can pass any additional properties you may want to log
-   * here. if status is not explicitly set, we default to "error" if
-   * properties.error is set, and default to success if not.
+   * @param properties by default we log the current url path. You can pass any
+   * additional properties you may want to log here. if status is not explicitly
+   * set, we default to "error" if properties.error is set, and default to
+   * success if not.
    */
   log(event: string, properties: Record<string, any> = {}) {
     const data: Record<string, any> = {
-      // common props we log with every event
       path: window.location.pathname,
-      // isOnboarding: this.globalVars.userSigningUp,
       ...properties,
     };
-
-    data.status = data.status ?? (!!data.error ? "error" : "success");
 
     // capture the currently selected feed tab if on the browse page.
     if (window.location.pathname.startsWith("/browse")) {
       data.feedTab = window.localStorage.getItem("mostRecentFeedTab");
     }
 
-    track(event, data);
-    this._window.heap.track(event, data);
+    // if the properties object has an error key, we assume the event is an error.
+    const eventName = `${event}${typeof data.error !== "undefined" ? " : error" : ""}`;
+    track(eventName, data);
+    this._window.heap.track(eventName, data);
   }
 
   identityUser(publicKey?: string, properties: Record<string, any> = {}) {

@@ -338,7 +338,6 @@ export class MintNftComponent {
       .subscribe(
         (res) => {
           this.tracking.log("nft : create", {
-            status: "success",
             postHashHex: this.postHashHex,
             numCopies: numCopiesToMint,
             creatorRoyaltyBasisPoints,
@@ -354,7 +353,7 @@ export class MintNftComponent {
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
-          this.tracking.log("nft : create", { status: "error", error: err.error.error });
+          this.tracking.log("nft : create", { error: err.error.error });
           this.minting = false;
         }
       );
