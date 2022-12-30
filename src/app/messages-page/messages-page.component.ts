@@ -100,7 +100,7 @@ export class MessagesPageComponent implements OnInit {
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("profile : all-message-read : error", { parsedError });
+          this.tracking.log("profile : all-message-read", { status: "error", error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );

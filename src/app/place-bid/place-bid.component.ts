@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { isNumber } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
@@ -62,7 +63,8 @@ export class PlaceBidComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private location: Location,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit(): void {
@@ -161,6 +163,17 @@ export class PlaceBidComponent implements OnInit {
       )
       .subscribe(
         (res) => {
+          this.tracking.log("nft-place-bid : submit", {
+            status: "success",
+            postHashHex: this.post.PostHashHex,
+            authorUsername: this.post.ProfileEntryResponse?.Username,
+            authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
+          });
           if (!this.globalVars.isMobile()) {
             // Hide this modal and open the next one.
             this.closeModal.emit("bid placed");
@@ -171,7 +184,9 @@ export class PlaceBidComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
+          const parsedError = this.backendApi.parseMessageError(err);
+          this.globalVars._alertError(parsedError);
+          this.tracking.log("nft-place-bid : submit", { status: "error", error: parsedError });
         }
       )
       .add(() => {

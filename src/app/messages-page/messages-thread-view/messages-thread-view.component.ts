@@ -128,7 +128,9 @@ export class MessagesThreadViewComponent {
       )
       .subscribe(
         (res: any) => {
-          this.tracking.log("message : send");
+          this.tracking.log("message : send", {
+            status: "success",
+          });
 
           this.sendMessageBeingCalled = false;
           this.globalVars.messageMeta.decryptedMessgesMap[
@@ -144,7 +146,9 @@ export class MessagesThreadViewComponent {
           ]++;
         },
         (error) => {
-          this.tracking.log("message : send : error");
+          this.tracking.log("message : send", {
+            status: "error",
+          });
 
           // Remove the previous message since it didn't actually post and reset
           // the text area to the old message.

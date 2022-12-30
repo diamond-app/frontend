@@ -457,12 +457,14 @@ export class FeedPostDropdownComponent implements OnInit {
 
   openMintNftPage(event, component): void {
     event.stopPropagation();
+    this.tracking.log("create-nft-button : click");
     this.router.navigate(["/" + RouteNames.MINT_NFT + "/" + this.postContent.PostHashHex], {
       queryParamsHandling: "merge",
     });
   }
 
   openCreateNFTAuctionModal(event): void {
+    this.tracking.log("nft-put-on-sale-button : click");
     const modalDetails = this.modalService.show(CreateNftAuctionModalComponent, {
       class: "modal-dialog-centered",
       initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
@@ -502,6 +504,16 @@ export class FeedPostDropdownComponent implements OnInit {
   }
 
   openTransferNFTModal(event): void {
+    this.tracking.log("nft-transfer-button : click", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+      hasText: this.postContent.Body.length > 0,
+      hasImage: (this.postContent.ImageURLs?.length ?? 0) > 0,
+      hasVideo: (this.postContent.VideoURLs?.length ?? 0) > 0,
+      hasEmbed: !!this.postContent.PostExtraData?.EmbedVideoURL,
+      hasUnlockable: this.postContent.HasUnlockable,
+    });
     if (!this.globalVars.isMobile()) {
       this.pauseVideos.emit(true);
       const modalDetails = this.modalService.show(TransferNftModalComponent, {
@@ -528,6 +540,7 @@ export class FeedPostDropdownComponent implements OnInit {
 
   openBurnNFTModal(event): void {
     this.pauseVideos.emit(true);
+    this.tracking.log("nft-burn-button : click");
     const burnNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
         !nftEntryResponse.IsForSale &&

@@ -324,7 +324,7 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
-    this.tracking.log("page : load");
+    this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
 
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
     // Filter out invalid public keys

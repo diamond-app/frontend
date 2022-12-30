@@ -194,10 +194,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         null /*MessageReadStateUpdatesByContact*/
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.tracking.log("profile-global-metadata : update", {
+            status: "success",
+          });
+        },
         (err) => {
           console.log(err);
-          this.tracking.log("profile : update : error", { err });
+          this.tracking.log("profile-global-metadata : update", { status: "error", error: err });
         }
       );
   }
@@ -276,18 +280,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateProfile() {
     if (!this.globalVars.loggedInUserDefaultKey) {
-      this.tracking.log("profile : create-messaging-key : start");
       this.globalVars
         .launchIdentityMessagingKey()
         .pipe(first())
         .subscribe(
           () => {
-            this.tracking.log("profile : create-messaging-key : success");
+            this.tracking.log("profile : create-messaging-key");
             this._saveProfileUpdates();
           },
           (err) => {
             this.globalVars._alertError(err);
-            this.tracking.log("profile : create-messaging-key : error", err);
+            this.tracking.log("profile : create-messaging-key", { error: err });
           }
         );
     } else {
@@ -354,7 +357,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       .subscribe(
         ([updateProfileResponse]) => {
           this.globalVars.profileUpdateTimestamp = Date.now();
-          this.tracking.log("profile : update");
+          this.tracking.log("profile : update", { status: "success" });
           // TODO: create or update app user record here
           // This updates things like the username that shows up in the dropdown.
           this.globalVars.updateEverything(
@@ -367,7 +370,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         (err) => {
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
-          this.tracking.log("profile : update : error", { parsedError, lowBalance });
+          this.tracking.log("profile : update", { status: "error", error: parsedError, lowBalance });
           this.updateProfileBeingCalled = false;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),

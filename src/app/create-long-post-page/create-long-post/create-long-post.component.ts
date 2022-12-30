@@ -258,7 +258,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     const currentUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
 
     if (!currentUserProfile) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "blog-post" } });
       return;
     }
 

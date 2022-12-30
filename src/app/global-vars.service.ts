@@ -1123,8 +1123,7 @@ export class GlobalVarsService {
 
     obs$.subscribe((res) => {
       this.userSigningUp = res.signedUp;
-      this.tracking.log("identity : log-in : success", {
-        signedUp: res.signedUp,
+      this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
         ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
           phoneNumberSuccess: res.phoneNumberSuccess,
         }),
@@ -1201,7 +1200,6 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
-      this.userSigningUp = false;
     }
   }
 

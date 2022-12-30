@@ -85,6 +85,12 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   _onPreviewClicked() {
+    this.tracking.log("creator-coin-trade-review-button : click", {
+      username: this.creatorProfile?.Username,
+      publicKey: this.creatorProfile?.PublicKeyBase58Check,
+      isVerified: this.creatorProfile?.IsVerified,
+      operationType: this.tradeType,
+    });
     this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
     this.creatorCoinTrade.showSlippageError = false;
   }
@@ -204,10 +210,18 @@ export class TradeCreatorComponent implements OnInit {
         let profile = response.Profile;
         this.creatorCoinTrade.creatorProfile = profile;
         this.creatorProfile = profile;
+        this.tracking.log("creator-coin-trade-modal : open", {
+          status: "success",
+          username: profile.Username,
+          publicKey: profile.PublicKeyBase58Check,
+          isVerified: profile.IsVerified,
+          operationType: this.tradeType,
+        });
       },
       (err) => {
         console.error(err);
         console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+        this.tracking.log("creator-coin-trade-modal : open", { status: "error", error: err.error?.error });
       }
     );
   }
@@ -235,26 +249,9 @@ export class TradeCreatorComponent implements OnInit {
 
   ngOnInit() {
     this.creatorCoinTrade = new CreatorCoinTrade(this.appData);
-    if (!this.inTutorial) {
+    this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(this.route);
-      this.route.params.subscribe((params) => {
-        this._setStateFromActivatedRoute(this.route);
-      });
-    } else {
-      // this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
-      this.creatorCoinTrade.isBuyingCreatorCoin = true;
-      this.creatorCoinTrade.tradeType = CreatorCoinTrade.BUY_VERB;
-      this._getCreatorProfile(this.username).add(() => {
-        this.investInYourself =
-          this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
-          this.creatorCoinTrade.creatorProfile?.Username;
-        if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-          this.setUpBuyTutorial();
-        } else {
-          this.setUpSellTutorial();
-        }
-      });
-    }
+    });
   }
 
   setUpBuyTutorial(): void {

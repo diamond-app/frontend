@@ -54,7 +54,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   follow(event) {
     event.stopPropagation();
     if (!this.appData.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "follow" } });
       return;
     }
 

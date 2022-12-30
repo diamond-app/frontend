@@ -381,7 +381,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   loadMorePosts() {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "load-more-posts" } });
       return;
     }
 

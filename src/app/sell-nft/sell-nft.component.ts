@@ -6,6 +6,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { of } from "rxjs";
 import { concatMap, last, map } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
 import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
 import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -36,7 +37,8 @@ export class SellNftComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     public location: Location,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    private tracking: TrackingService
   ) {}
 
   // TODO: compute service fee.
@@ -129,6 +131,18 @@ export class SellNftComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
+          this.tracking.log("nft : sell", {
+            status: "success",
+            postHashHex: this.post.PostHashHex,
+            authorUsername: this.post.ProfileEntryResponse?.Username,
+            authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
+            buyerPublicKey: this.selectedBidEntries[0]?.PublicKeyBase58Check,
+          });
           this.toastr.show("Your nft was sold", null, {
             toastClass: "info-toast",
             positionClass: "toast-bottom-center",
@@ -138,7 +152,9 @@ export class SellNftComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
+          const parsedError = this.backendApi.parseMessageError(err);
+          this.globalVars._alertError(parsedError);
+          this.tracking.log("nft : sell", { status: "error", error: parsedError });
         }
       )
       .add(() => {

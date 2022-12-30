@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { isNumber } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -44,7 +45,8 @@ export class TransferNftAcceptComponent {
     private modalService: BsModalService,
     private router: Router,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private tracking: TrackingService
   ) {}
 
   acceptTransfer() {
@@ -60,6 +62,17 @@ export class TransferNftAcceptComponent {
       )
       .subscribe(
         (res) => {
+          this.tracking.log("nft : accept", {
+            status: "success",
+            postHashHex: this.post.PostHashHex,
+            authorUsername: this.post.ProfileEntryResponse?.Username,
+            authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
+          });
           if (!this.globalVars.isMobile()) {
             // Hide this modal and open the next one.
             this.closeModal.emit("transfer accepted");
@@ -73,6 +86,10 @@ export class TransferNftAcceptComponent {
         },
         (err) => {
           console.error(err);
+          this.tracking.log("nft : accept", {
+            status: "error",
+            error: err.error?.error,
+          });
         }
       )
       .add(() => {

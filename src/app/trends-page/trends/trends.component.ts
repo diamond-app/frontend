@@ -165,7 +165,7 @@ export class TrendsComponent implements OnInit {
     this.closeModal.emit();
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "buy-cc" } });
       return;
     }
 

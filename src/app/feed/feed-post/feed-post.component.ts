@@ -409,7 +409,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "buy-cc" } });
       return;
     }
 
@@ -933,7 +933,7 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     event.stopPropagation();
-    this.tracking.log("buy-nft-button : click", { postHashHex: this.postContent.PostHashHex });
+    this.tracking.log("nft-buy-button : click");
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
       if (_.isNil(this.globalVars.loggedInUser)) {
         this.backendApi.SetStorage(

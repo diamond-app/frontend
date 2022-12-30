@@ -74,6 +74,11 @@ export class BuyNowConfirmationComponent {
             postHashHex: this.post.PostHashHex,
             authorUsername: this.post.ProfileEntryResponse?.Username,
             authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
           });
           if (!this.globalVars.isMobile()) {
             // Hide this modal and open the next one.

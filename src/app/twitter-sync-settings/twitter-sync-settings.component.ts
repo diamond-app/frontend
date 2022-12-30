@@ -11,6 +11,7 @@ import {
   SetuService,
   SubscriptionType,
 } from "src/app/setu.service";
+import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 
 interface TwitterUserData {
@@ -34,6 +35,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
   isProcessingSubscription: boolean = false;
   isFetchingSubscriptionStatus: boolean = false;
+  isSigningUp: boolean = false;
 
   get hasActiveSubscription() {
     return (
@@ -48,8 +50,10 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     public globalVars: GlobalVarsService,
     private setu: SetuService,
     private identity: IdentityService,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {
+    this.isSigningUp = !!this.router.getCurrentNavigation()?.extras.state?.isSigningUp;
     if (this.globalVars.loggedInUser) {
       const storedTwitterUserData = window.localStorage.getItem(
         buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check)
@@ -72,7 +76,13 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     }
   }
 
+  desoLogin() {
+    this.tracking.log("twitter-sync-deso-login-button : click", { isOnboarding: this.isSigningUp });
+    this.globalVars.launchLoginFlow();
+  }
+
   loginWithTwitter() {
+    this.tracking.log("twitter-sync-twitter-login-button : click", { isOnboarding: this.isSigningUp });
     this.boundPostMessageListener = this.postMessageListener.bind(this);
     window.addEventListener("message", this.boundPostMessageListener);
 
@@ -163,12 +173,14 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       include_quote_tweets: false,
       hashtags: "",
     };
+
     this.isProcessingSubscription = true;
 
     let obs$: Observable<GetCurrentSubscriptionsResponse>;
     if (!this.derivedKeyStatus || this.derivedKeyStatus?.is_expired || this.derivedKeyStatus.status !== "success") {
       obs$ = this.updateDerivedKey().pipe(
         switchMap(() => {
+          this.tracking.log("twitter-sync : update-derived-key", { isOnboarding: this.isSigningUp });
           return this.setuSubscriptions ? this.setu.changeSubscription(params) : this.setu.createSubscription(params);
         })
       );
@@ -178,6 +190,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     obs$.pipe(finalize(() => (this.isProcessingSubscription = false))).subscribe(
       (res) => {
+        this.tracking.log("twitter-sync : create-subscription", { status: "success", isOnboarding: this.isSigningUp });
         this.setuSubscriptions = res;
         this.globalVars._alertSuccess(
           "Great, you're all set up! Tweets posted on Twitter will sync to the DeSo blockchain.",
@@ -190,6 +203,11 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         );
       },
       (err) => {
+        this.tracking.log("twitter-sync : create-subscription", {
+          status: "error",
+          error: err.error?.error,
+          isOnboarding: this.isSigningUp,
+        });
         this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
       }
     );
@@ -237,12 +255,22 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         .subscribe(
           (res) => {
             if (res.status === "success") {
+              this.tracking.log("twitter-sync : unsubscribe", {
+                isOnboarding: this.isSigningUp,
+                twitterHandle: this.twitterUserData.twitter_username,
+              });
               this.setuSubscriptions = undefined;
               this.twitterUserData = undefined;
               window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check));
             }
           },
           (err) => {
+            this.tracking.log("twitter-sync : unsubscribe", {
+              status: "error",
+              error: err.error?.error,
+              isOnboarding: this.isSigningUp,
+              twitterHandle: this.twitterUserData.twitter_username,
+            });
             this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
           }
         );
@@ -251,6 +279,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.isDestroyed = true;
+    if (this.globalVars.userSigningUp) {
+      this.globalVars.userSigningUp = false;
+    }
     if (this.boundPostMessageListener) {
       window.removeEventListener("message", this.boundPostMessageListener);
     }
@@ -283,12 +314,33 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
             },
           }).then(({ isConfirmed }) => {
             if (isConfirmed) {
+              this.tracking.log("twitter-sync : connect", {
+                isOnboarding: this.isSigningUp,
+                hasActiveSubscription: this.hasActiveSubscription,
+                setuSubscription: this.setuSubscriptions,
+                isDerivedKeyValid: !this.derivedKeyStatus.is_expired && this.derivedKeyStatus.status === "success",
+                twitterHandle: twitterUserData.twitter_username,
+              });
               this.syncAllTweets();
+            } else {
+              this.tracking.log("twitter-sync : cancel", {
+                isOnboarding: this.isSigningUp,
+                twitterHandle: twitterUserData.twitter_username,
+              });
             }
+          });
+        } else {
+          this.tracking.log("twitter-sync : connect", {
+            isOnboarding: this.isSigningUp,
+            hasActiveSubscription: this.hasActiveSubscription,
+            setuSubscription: this.setuSubscriptions,
+            isDerivedKeyValid: !this.derivedKeyStatus.is_expired && this.derivedKeyStatus.status === "success",
+            twitterHandle: twitterUserData.twitter_username,
           });
         }
       },
       (err) => {
+        this.tracking.log("twitter-sync : get-subscription-error", { error: err.error?.error });
         this.globalVars._alertError(err.error?.error ?? "Something went wrong! Try reloading the page.");
         this.setuSubscriptions = undefined;
         this.derivedKeyStatus = undefined;

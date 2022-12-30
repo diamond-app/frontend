@@ -1,5 +1,5 @@
 //@ts-strict
-import { AfterViewInit, Component, OnDestroy } from "@angular/core";
+import { AfterViewInit, Component, Input, OnDestroy } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { first } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -13,6 +13,8 @@ import { TrackingService } from "src/app/tracking.service";
 export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   private didLaunchIdentityFlow: boolean = false;
 
+  @Input() triggerAction: string = "";
+
   constructor(
     public bsModalRef: BsModalRef,
     private globalVars: GlobalVarsService,
@@ -20,11 +22,13 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   ngAfterViewInit() {
-    this.tracking.log("onboarding-modal : open");
+    this.tracking.log("onboarding-modal : open", { triggerAction: this.triggerAction });
   }
 
   ngOnDestroy() {
     if (!this.didLaunchIdentityFlow) {
+      // this can happen if the user clicks outside the modal, clicks the close
+      // button, or presses the escape key
       this.tracking.log("onboarding-modal : dismiss");
     }
   }
@@ -32,16 +36,16 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   login() {
     this.tracking.log("onboarding-modal-identity-button : click");
     this.didLaunchIdentityFlow = true;
-    this.bsModalRef.hide();
+
     this.globalVars
       .launchLoginFlow()
       .pipe(first())
       .subscribe((res) => {
-        if (res.signedUp || res.phoneNumberSuccess) {
-          this.tracking.log(`onboarding : signup${res.phoneNumberSuccess ? " : phoneSuccess" : ""}`);
-        } else {
-          this.tracking.log(`onboarding : login${res.phoneNumberSuccess ? " : phoneSuccess" : ""}`);
-        }
+        this.tracking.log(`onboarding : ${res.signedUp ? "signup" : "login"}`, {
+          phoneNumberSuccess: res.phoneNumberSuccess,
+        });
       });
+
+    this.bsModalRef.hide();
   }
 }

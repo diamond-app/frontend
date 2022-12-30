@@ -7,7 +7,7 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class TrackingService {
-  private _window: Window & { heap: any; hj: any; hjLoad: (opts: any) => void } = window as any;
+  private _window: Window & { heap: any; hj: any } = window as any;
 
   constructor() {
     if (environment.amplitude.key) {
@@ -33,25 +33,28 @@ export class TrackingService {
   /**
    * @param event should be in the format of <noun (object/category)> : <present-tense-verb>
    * e.g. "post : like", "signup-button : click", "onboarding-modal : open"
-   * @param properties by default we log the current url path, query params, and
-   * if the user is logged in. Pass any context specific properties you may want to
-   * log here.
+   * @param properties by default we log the current url path, and if the user
+   * is onboarding. You can pass any additional properties you may want to log
+   * here. if status is not explicitly set, we default to "error" if
+   * properties.error is set, and default to success if not.
    */
   log(event: string, properties: Record<string, any> = {}) {
-    const payload: Record<string, any> = {
+    const data: Record<string, any> = {
       // common props we log with every event
-      isLoggedIn: !!localStorage.getItem("lastLoggedInUser"),
       path: window.location.pathname,
+      // isOnboarding: this.globalVars.userSigningUp,
       ...properties,
     };
 
+    data.status = data.status ?? !!data.error ? "error" : "success";
+
     // capture the currently selected feed tab if on the browse page.
     if (window.location.pathname.startsWith("/browse")) {
-      payload.feedTab = new URLSearchParams(window.location.search).get("feedTab");
+      data.feedTab = window.localStorage.getItem("mostRecentFeedTab");
     }
 
-    track(event, payload);
-    this._window.heap.track(event, payload);
+    track(event, data);
+    this._window.heap.track(event, data);
   }
 
   identityUser(publicKey?: string, properties: Record<string, any> = {}) {

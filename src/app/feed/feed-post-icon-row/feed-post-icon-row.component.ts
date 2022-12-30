@@ -177,8 +177,12 @@ export class FeedPostIconRowComponent {
   }
 
   _preventNonLoggedInUserActions(action: string) {
-    this.tracking.log(`alert : ${action} : account`);
-    this.modalService.show(WelcomeModalComponent);
+    this.tracking.log(`post : ${action}`, {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
+    this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: action } });
   }
 
   userHasReposted(): boolean {
@@ -362,7 +366,7 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "comment" } });
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.tracking.log("alert : reply : profile");
@@ -501,7 +505,7 @@ export class FeedPostIconRowComponent {
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
-          this.tracking.log("diamonds: send: error", { status: "error", error: parsedError });
+          this.tracking.log("diamonds: send", { status: "error", error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -599,7 +603,7 @@ export class FeedPostIconRowComponent {
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "diamond" } });
       return;
     }
     // Disable diamond selection if diamonds are being sent

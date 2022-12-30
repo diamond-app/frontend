@@ -101,7 +101,7 @@ export class SimpleProfileCardComponent {
     event.stopPropagation();
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "buy-cc" } });
       return;
     }
 

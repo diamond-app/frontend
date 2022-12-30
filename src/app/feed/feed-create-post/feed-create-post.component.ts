@@ -407,7 +407,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (!this.globalVars?.loggedInUser) {
       this.modalRef?.hide();
       this.tracking.log("alert : post : account");
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "post" } });
       return;
     }
 
@@ -595,7 +595,9 @@ export class FeedCreatePostComponent implements OnInit {
     this.onCreateBlog?.();
     if (!this.globalVars.loggedInUser) {
       ev.preventDefault();
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, {
+        initialState: { triggerAction: "feed-create-post-blog-post-button" },
+      });
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }

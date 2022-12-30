@@ -16,7 +16,7 @@
   </header>
   <div class="twitter-sync-settings__content">
     <!-- if viewing this component in a logged out state, we need the user to log in -->
-    <button *ngIf="!this.globalVars.loggedInUser" class="btn btn-primary" (click)="this.globalVars.launchLoginFlow()">
+    <button *ngIf="!this.globalVars.loggedInUser" class="btn btn-primary" (click)="this.desoLogin()">
       Login with
       <img src="/assets/img/logo-deso.svg" alt="DeSo identity" height="24" />
     </button>
