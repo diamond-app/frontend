@@ -45,8 +45,8 @@ export class TrackingService {
     };
 
     // capture the currently selected feed tab if on the browse page.
-    if (window.location.pathname.startsWith("/browse")) {
-      data.feedTab = window.localStorage.getItem("mostRecentFeedTab");
+    if (window.location.pathname.startsWith("/browse") && typeof data.feedTab === "undefined") {
+      data.feedTab = new URLSearchParams(window.location.search).get("feedTab");
     }
 
     // if the properties object has an error key, we assume the event is an error.
