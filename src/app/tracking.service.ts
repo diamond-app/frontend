@@ -49,8 +49,15 @@ export class TrackingService {
       data.feedTab = new URLSearchParams(window.location.search).get("feedTab");
     }
 
-    // if the properties object has an error key, we assume the event is an error.
-    const eventName = `${event}${typeof data.error !== "undefined" ? " : error" : ""}`;
+    // If the properties object has an error key, we assume the event is an
+    // error and we add an `: error` suffix unless it has been added explicitly.
+    // This is to make it easier to disambiguate between error and success
+    // events in Amplitude.
+    let eventName = event;
+    if (typeof data.error !== "undefined" && !eventName.endsWith(" : error")) {
+      eventName = `${eventName} : error`;
+    }
+
     track(eventName, data);
     this._window.heap.track(eventName, data);
   }
