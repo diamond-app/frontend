@@ -424,7 +424,7 @@ export class GlobalVarsService {
       // Store the user in localStorage
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
 
-      this.tracking.identityUser(user?.PublicKeyBase58Check, {
+      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
         username: user?.ProfileEntryResponse?.Username ?? "",
         isVerified: user?.ProfileEntryResponse?.IsVerified,
       });
