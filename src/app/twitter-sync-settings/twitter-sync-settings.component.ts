@@ -77,8 +77,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   }
 
   desoLogin() {
-    this.tracking.log("twitter-sync-deso-login-button : click", { isOnboarding: this.isSigningUp });
-    this.globalVars.launchLoginFlow();
+    this.globalVars.launchLoginFlow("twitter-sync-deso-login-button");
   }
 
   loginWithTwitter() {

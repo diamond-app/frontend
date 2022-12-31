@@ -34,11 +34,10 @@ export class WelcomeModalComponent implements AfterViewInit, OnDestroy {
   }
 
   login() {
-    this.tracking.log("onboarding-modal-identity-button : click");
     this.didLaunchIdentityFlow = true;
 
     this.globalVars
-      .launchLoginFlow()
+      .launchLoginFlow("onboarding-modal-identity-button")
       .pipe(first())
       .subscribe((res) => {
         this.tracking.log(`onboarding : ${res.signedUp ? "signup" : "login"}`, {
