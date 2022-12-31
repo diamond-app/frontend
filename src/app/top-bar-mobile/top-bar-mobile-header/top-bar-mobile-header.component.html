@@ -66,7 +66,11 @@
 
   <!-- Mobile login row-->
   <div *ngIf="!this.globalVars.loggedInUser" class="d-lg-none p-5px background-color-secondary font-weight-bold">
-    <a class="pl-10px" (click)="globalVars.launchLoginFlow()">{{ "top_bar.mobile.login" | transloco }}</a>
-    <a class="pl-15px" (click)="globalVars.launchSignupFlow()">{{ "top_bar.mobile.signup" | transloco }}</a>
+    <a class="pl-10px" (click)="globalVars.launchLoginFlow('top-bar-mobile-login-button')">
+      {{ "top_bar.mobile.login" | transloco }}
+    </a>
+    <a class="pl-15px" (click)="globalVars.launchLoginFlow('top-bar-mobile-signup-button')">
+      {{ "top_bar.mobile.signup" | transloco }}
+    </a>
   </div>
 </div>

@@ -1,6 +1,7 @@
 //@ts-strict
 import { Component, Input } from "@angular/core";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { TrackingService } from "src/app/tracking.service";
 
 @Component({
   selector: "app-logged-out-empty-state",
@@ -13,9 +14,9 @@ export class LoggedOutEmptyStateComponent {
   @Input() subheadingText?: string;
   @Input() imgSrc?: string;
 
-  constructor(private globalVars: GlobalVarsService) {}
+  constructor(private globalVars: GlobalVarsService, private tracking: TrackingService) {}
 
   login() {
-    this.globalVars.launchLoginFlow();
+    this.globalVars.launchLoginFlow("logged-out-empty-state-identity-button");
   }
 }

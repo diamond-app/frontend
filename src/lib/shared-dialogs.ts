@@ -1,8 +1,8 @@
-import RouteNamesService from "../app/route-names.service";
-import { SwalHelper } from "./helpers/swal-helper";
-import { GlobalVarsService } from "../app/global-vars.service";
 import { Router } from "@angular/router";
 import { isNil } from "lodash";
+import { GlobalVarsService } from "../app/global-vars.service";
+import RouteNamesService from "../app/route-names.service";
+import { SwalHelper } from "./helpers/swal-helper";
 
 const RouteNames = RouteNamesService;
 export class SharedDialogs {
@@ -24,7 +24,7 @@ export class SharedDialogs {
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        globalVars.launchSignupFlow();
+        globalVars.launchLoginFlow("create-account-to-post-login-button");
       }
     });
   }
@@ -77,7 +77,7 @@ export class SharedDialogs {
         if (hasUser) {
           router.navigate(["/" + RouteNames.UPDATE_PROFILE], { queryParamsHandling: "merge" });
         } else {
-          globalVarsService.launchSignupFlow();
+          globalVarsService.launchLoginFlow("create-profile-to-perform-action-login-button");
         }
       }
     });

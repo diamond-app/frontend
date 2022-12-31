@@ -1,16 +1,19 @@
 <div class="d-flex flex-column justify-content-center align-items-center" *transloco="let t">
-  <div class="fs-18px fc-default font-weight-bold mb-5px">{{ t('right_bar.signup.welcome_to_deso') }}</div>
+  <div class="fs-18px fc-default font-weight-bold mb-5px">{{ t("right_bar.signup.welcome_to_deso") }}</div>
   <div class="d-flex align-items-center">
     <a
-      (click)="globalVars.launchSignupFlow()"
+      (click)="globalVars.launchLoginFlow('right-bar-signup-button')"
       class="btn btn-primary font-weight-bold fs-15px d-flex justify-content-center align-items-center br-12px"
       style="height: 36px; 75px;
                  line-height: 15px;"
     >
-      {{ t('right_bar.signup.signup') }}
+      {{ t("right_bar.signup.signup") }}
     </a>
-    <div (click)="globalVars.launchLoginFlow()" class="fs-15px fc-blue font-weight-bold cursor-pointer pl-30px">
-      {{ t('right_bar.signup.login') }}
+    <div
+      (click)="globalVars.launchLoginFlow('right-bar-login-button')"
+      class="fs-15px fc-blue font-weight-bold cursor-pointer pl-30px"
+    >
+      {{ t("right_bar.signup.login") }}
     </div>
   </div>
 </div>

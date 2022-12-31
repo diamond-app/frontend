@@ -13,9 +13,11 @@
 
   <!--CTA-->
   <div class="text-center px-20px not-found__content-container" style="margin-top: 16px">
-    <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
+    <a (click)="globalVars.launchLoginFlow('trade-creator-signup-button')" class="font-weight-bold">
+      Create an account
+    </a>
     or
-    <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
+    <a (click)="globalVars.launchLoginFlow('trade-creator-login-button')" class="font-weight-bold">log in</a>
     <br />
     to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
   </div>

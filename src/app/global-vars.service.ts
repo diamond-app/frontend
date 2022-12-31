@@ -1085,7 +1085,7 @@ export class GlobalVarsService {
       });
   }
 
-  launchIdentityFlow(event: string): Observable<any> {
+  launchIdentityFlow(): Observable<any> {
     let obs$: Observable<any>;
 
     if (
@@ -1170,22 +1170,18 @@ export class GlobalVarsService {
     }
   }
 
-  launchLoginFlow(): Observable<any> {
-    const inAppBrowser = this.checkForInAppBrowser();
-    if (!inAppBrowser) {
-      return this.launchIdentityFlow("login");
-    } else {
-      this.modalService.show(DirectToNativeBrowserModalComponent, {
-        class: "modal-dialog-centered buy-deso-modal",
-        initialState: { deviceType: inAppBrowser },
-      });
+  /**
+   * @param eventObject - The event object that triggered the signup flow.
+   * Should be a string that identifies the UI element that triggered the signup
+   * flow.
+   */
+  launchLoginFlow(eventObject?: string): Observable<any> {
+    if (eventObject) {
+      this.tracking.log(`${eventObject} : click`);
     }
-  }
-
-  launchSignupFlow() {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
-      this.launchIdentityFlow("create");
+      return this.launchIdentityFlow();
     } else {
       this.modalService.show(DirectToNativeBrowserModalComponent, {
         class: "modal-dialog-centered buy-deso-modal",
@@ -1398,7 +1394,6 @@ export class GlobalVarsService {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
@@ -1461,7 +1456,6 @@ export class GlobalVarsService {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
           (response) => {
-            this.tracking.log(`tutorial : skip`);
             // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
             this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
             this.router.navigate([RouteNames.BROWSE]);
