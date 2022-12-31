@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import * as _ from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -43,7 +44,8 @@ export class TransferNftComponent implements OnInit {
     private modalService: BsModalService,
     private router: Router,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +102,18 @@ export class TransferNftComponent implements OnInit {
           )
           .subscribe(
             (res) => {
+              this.tracking.log("nft : transfer", {
+                postHashHex: this.post.PostHashHex,
+                authorUsername: this.post.ProfileEntryResponse?.Username,
+                authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+                hasText: this.post.Body.length > 0,
+                hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+                hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+                hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+                receiverPublicKey: this.selectedCreator?.PublicKeyBase58Check,
+                receiverUsername: this.selectedCreator?.Username,
+                hasUnlockable: this.post.HasUnlockable,
+              });
               if (!this.globalVars.isMobile()) {
                 // Hide this modal and open the next one.
                 this.closeModal.emit("nft transferred");
@@ -110,7 +124,9 @@ export class TransferNftComponent implements OnInit {
             },
             (err) => {
               console.error(err);
-              this.globalVars._alertError(this.backendApi.parseMessageError(err));
+              const parsedError = this.backendApi.parseMessageError(err);
+              this.globalVars._alertError(parsedError);
+              this.tracking.log("nft : transfer", { error: parsedError });
             }
           )
           .add(() => {

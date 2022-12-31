@@ -86,13 +86,13 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.showHighLoadWarning = true;
       }
     }, 20000);
-
+    const operationType = this.creatorCoinTrade.operationType();
     this.backendApi
       .BuyOrSellCreatorCoin(
         this.appData.localNode,
         this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-        this.creatorCoinTrade.operationType() /*OperationType*/,
+        operationType /*OperationType*/,
         this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
         this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
         0 /*DeSoToAddNanos*/,
@@ -113,9 +113,10 @@ export class TradeCreatorPreviewComponent implements OnInit {
             ChangeAmountNanos,
             FeeNanos,
           } = response;
-          this.tracking.log("coins : trade", {
-            Creator: this.creatorCoinTrade.creatorProfile.Username,
-            Operation: this.creatorCoinTrade.operationType(),
+          this.tracking.log(`creator-coin : ${operationType}`, {
+            username: this.creatorCoinTrade.creatorProfile.Username,
+            publicKey: this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
+            operationType,
             ExpectedDeSoReturnedNanos,
             ExpectedCreatorCoinReturnedNanos,
             SpendAmountNanos,
@@ -178,11 +179,10 @@ export class TradeCreatorPreviewComponent implements OnInit {
       .subscribe(
         (response) => {
           const { SpendAmountNanos, TotalInputNanos, ChangeAmountNanos, FeeNanos } = response;
-          this.tracking.log("coins : transfer", {
-            Creator: this.creatorCoinTrade.creatorProfile.Username,
-            SenderPublicKeyBase58Check: this.appData.loggedInUser.PublicKeyBase58Check,
-            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
-            CreatorCoinToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
+          this.tracking.log("creator-coin : transfer", {
+            username: this.creatorCoinTrade.creatorProfile.Username,
+            receiverPublicKey: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
+            amountToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
             SpendAmountNanos,
             TotalInputNanos,
             ChangeAmountNanos,
@@ -213,7 +213,10 @@ export class TradeCreatorPreviewComponent implements OnInit {
       errorMessage.includes(this.DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR) ||
       errorMessage.includes(this.CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR);
 
-    this.tracking.log("coins : trade : error", { parsedError, hasSlippageError });
+    this.tracking.log(`creator-coin : ${this.creatorCoinTrade.tradeType.toLocaleLowerCase()}`, {
+      error: parsedError,
+      hasSlippageError,
+    });
 
     if (hasSlippageError) {
       this.slippageError.emit();

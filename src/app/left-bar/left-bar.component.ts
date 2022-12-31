@@ -48,7 +48,7 @@ export class LeftBarComponent {
 
   openCreatePostModal() {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "left-rail-create-post" } });
     } else {
       this.modalService.show(FeedCreatePostModalComponent, {
         class: "modal-dialog-centered",
@@ -59,7 +59,7 @@ export class LeftBarComponent {
 
   onCreateBlogPost() {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "left-rail-create-blog-post" } });
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }

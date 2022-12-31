@@ -113,7 +113,7 @@ export class FeedPostComponent implements OnInit {
     private followService: FollowService,
     private translocoService: TranslocoService,
     private streamService: CloudflareStreamService,
-    private tracking: TrackingService
+    public tracking: TrackingService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
     // the computation manually with ref.detectChanges().
@@ -409,7 +409,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "buy-cc" } });
       return;
     }
 
@@ -444,6 +444,14 @@ export class FeedPostComponent implements OnInit {
     if (event.target.tagName.toLowerCase() === "a") {
       return true;
     }
+
+    this.tracking.log("post : click", {
+      isAuthorVerified: this.postContent.ProfileEntryResponse.IsVerified,
+      authorUsername: this.postContent.ProfileEntryResponse.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse.PublicKeyBase58Check,
+      isReply: !!this.parentPost,
+      postHashHex: this.postContent.PostHashHex,
+    });
 
     let postRouteTree = [
       "/" + (this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS),
@@ -590,7 +598,7 @@ export class FeedPostComponent implements OnInit {
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.tracking.log("post : hide : error", { parsedError });
+              this.tracking.log("post : hide", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -619,14 +627,18 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.tracking.log("user : block");
+              this.tracking.log("profile : block", {
+                username: this.post.ProfileEntryResponse.Username,
+                publicKey: this.post.PosterPublicKeyBase58Check,
+                isVerified: this.post.ProfileEntryResponse.IsVerified,
+              });
               this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("user : block : error", { parsedError });
+              this.tracking.log("profile : block", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -920,6 +932,7 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     event.stopPropagation();
+    this.tracking.log("nft-buy-button : click");
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
       if (_.isNil(this.globalVars.loggedInUser)) {
         this.backendApi.SetStorage(

@@ -119,12 +119,16 @@ export class CreatorProfileDetailsComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.tracking.log("user : unblock");
+              this.tracking.log("profile : unblock", {
+                username: this.profile.Username,
+                publicKey: this.profile.PublicKeyBase58Check,
+                isVerified: this.profile.IsVerified,
+              });
             },
             (err) => {
               console.log(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("user : unblock : error", { parsedError });
+              this.tracking.log("profile : unblock", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -163,12 +167,16 @@ export class CreatorProfileDetailsComponent implements OnInit {
             )
             .subscribe(
               () => {
-                this.tracking.log("user : block");
+                this.tracking.log("profile : block", {
+                  username: this.profile.Username,
+                  publicKey: this.profile.PublicKeyBase58Check,
+                  isVerified: this.profile.IsVerified,
+                });
               },
               (err) => {
                 console.error(err);
                 const parsedError = this.backendApi.stringifyError(err);
-                this.tracking.log("user : block : error", { parsedError });
+                this.tracking.log("profile : block", { error: parsedError });
                 this.globalVars._alertError(parsedError);
               }
             ),

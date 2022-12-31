@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { TrackingService } from "src/app/tracking.service";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
@@ -14,10 +15,12 @@ export class TabSelectorComponent {
   @Input() linkTabs: {} = {};
   @Input() buttonSelector: boolean = true;
   @Input() deadTabs: Set<string> = new Set(); // A set of tabs that can't be clicked.
+  @Input() onTabClick?: (tab: string) => void = () => {};
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private tracking: TrackingService) {}
 
   _tabClicked(tab: string) {
+    this.onTabClick?.(tab);
     if (tab in this.linkTabs) {
       window.open(this.linkTabs[tab], "_blank");
     } else {

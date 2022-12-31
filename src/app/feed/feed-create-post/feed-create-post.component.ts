@@ -312,12 +312,12 @@ export class FeedCreatePostComponent implements OnInit {
 
     const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
-    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "create";
+    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "post";
 
     if (this.postModels.length > 1 && !this.postSubmitPercentage) {
       this.postSubmitPercentage = "0";
     }
-
+    const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -337,7 +337,13 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .toPromise()
       .then((response) => {
-        this.tracking.log(`post : ${postType}`);
+        this.tracking.log(`post : ${action}`, {
+          type: postType,
+          hasText: bodyObj.Body.length > 0,
+          hasImage: bodyObj.ImageURLs.length > 0,
+          hasVideo: bodyObj.VideoURLs.length > 0,
+          hasEmbed: !!postExtraData.EmbedVideoURL,
+        });
 
         this.submittingPost = false;
 
@@ -381,7 +387,9 @@ export class FeedCreatePostComponent implements OnInit {
       .catch((err) => {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
-        this.tracking.log(`post : ${postType} : error`, { parsedError });
+        this.tracking.log(`post : ${action}`, {
+          error: parsedError,
+        });
         this.submittingPost = false;
 
         this.changeRef.detectChanges();
@@ -397,7 +405,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (!this.globalVars?.loggedInUser) {
       this.modalRef?.hide();
       this.tracking.log("alert : post : account");
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "post" } });
       return;
     }
 
@@ -585,7 +593,9 @@ export class FeedCreatePostComponent implements OnInit {
     this.onCreateBlog?.();
     if (!this.globalVars.loggedInUser) {
       ev.preventDefault();
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, {
+        initialState: { triggerAction: "feed-create-post-blog-post-button" },
+      });
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }

@@ -1,6 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
+import { TrackingService } from "src/app/tracking.service";
 import { v4 as uuid } from "uuid";
 
 export enum MessagingGroupOperation {
@@ -150,7 +151,7 @@ export class IdentityService {
   // Using testnet or mainnet
   isTestnet = false;
 
-  constructor() {
+  constructor(private tracking: TrackingService) {
     window.addEventListener("message", (event) => this.handleMessage(event));
   }
 
@@ -176,6 +177,8 @@ export class IdentityService {
       getFreeDeso?: boolean;
     }
   ): Observable<any> {
+    this.tracking.log("identity : launch", { identityPath: path, ...params });
+
     let url = this.identityServiceURL as string;
     if (path) {
       url += path;

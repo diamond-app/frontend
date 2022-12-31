@@ -174,12 +174,13 @@ export class TransferDeSoComponent implements OnInit {
           reverseButtons: true,
         }).then((res: any) => {
           if (res.isConfirmed) {
+            const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9;
             this.backendApi
               .SendDeSo(
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 this.payToPublicKey,
-                this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9,
+                amountToSend,
                 Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
               )
               .subscribe(
@@ -193,14 +194,15 @@ export class TransferDeSoComponent implements OnInit {
                   } = res;
 
                   if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                    this.tracking.log("bitpop : send : error");
+                    this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
                     this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
                     return null;
                   }
 
-                  this.tracking.log("bitpop : send", {
+                  this.tracking.log("deso : send", {
+                    amountToSend,
+                    receiverPublicKey: this.payToPublicKey,
                     TotalInputNanos,
-                    SpendAmountNanos,
                     ChangeAmountNanos,
                     FeeNanos,
                   });
@@ -217,7 +219,7 @@ export class TransferDeSoComponent implements OnInit {
                   this.sendingDeSo = false;
                   console.error(error);
                   this.transferDeSoError = this._extractError(error);
-                  this.tracking.log("bitpop : send : error", { parsedError: this.transferDeSoError });
+                  this.tracking.log("bitpop : send", { error: this.transferDeSoError });
                   this.globalVars._alertError(
                     this.transferDeSoError,
                     false,

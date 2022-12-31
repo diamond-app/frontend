@@ -256,12 +256,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.tracking.log("user : all-message-read");
+          this.tracking.log("profile : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("user : all-message-read : error", { parsedError });
+          this.tracking.log("profile : all-message-read", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -337,12 +337,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         )
         .subscribe(
           () => {
-            this.tracking.log("user : message-read");
+            this.tracking.log("profile : message-read");
           },
           (err) => {
             console.log(err);
             const parsedError = this.backendApi.stringifyError(err);
-            this.tracking.log("user : message-read : error", { parsedError });
+            this.tracking.log("profile : message-read", { error: parsedError });
             this.globalVars._alertError(parsedError);
           }
         );

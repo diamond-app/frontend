@@ -64,7 +64,7 @@ export class FollowService {
             // TODO: RuleErrorInputSpendsNonexistentUtxo is a problem ... we need a lock in the server endpoint
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(error);
-            this.tracking.log(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
+            this.tracking.log(`profile : ${isFollow ? "follow" : "unfollow"}`, { error: parsedError });
             this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
           }
         }
@@ -83,7 +83,7 @@ export class FollowService {
   }
 
   _handleSuccessfulFollow(followedPubKeyBase58Check: string) {
-    this.tracking.log("user : follow");
+    this.tracking.log("profile : follow", { targetPublicKey: followedPubKeyBase58Check });
 
     // add to the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
@@ -103,7 +103,7 @@ export class FollowService {
   }
 
   _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
-    this.tracking.log("user : unfollow");
+    this.tracking.log("profile : unfollow", { targetPublicKey: followedPubKeyBase58Check });
 
     // remove from the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;

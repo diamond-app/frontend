@@ -144,7 +144,7 @@ export class MessagesThreadViewComponent {
           ]++;
         },
         (error) => {
-          this.tracking.log("message : send : error");
+          this.tracking.log("message : send");
 
           // Remove the previous message since it didn't actually post and reset
           // the text area to the old message.

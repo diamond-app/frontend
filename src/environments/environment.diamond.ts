@@ -13,7 +13,7 @@ export const environment = {
     endpoint: "https://diamondapp.com/js/",
   },
   amplitude: {
-    key: "26d4aa5c3210ab69cfb76b7951030db5",
+    key: "9aa641acfccd48c9d9b2e34a456a77aa",
     domain: "amp.diamondapp.com",
   },
   heap: {

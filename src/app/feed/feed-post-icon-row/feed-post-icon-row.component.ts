@@ -177,8 +177,12 @@ export class FeedPostIconRowComponent {
   }
 
   _preventNonLoggedInUserActions(action: string) {
-    this.tracking.log(`alert : ${action} : account`);
-    this.modalService.show(WelcomeModalComponent);
+    this.tracking.log(`post : ${action}`, {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
+    this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: action } });
   }
 
   userHasReposted(): boolean {
@@ -237,7 +241,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.tracking.log("post : repost : error", { parsedError });
+          this.tracking.log("post : repost", { error: err });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }
@@ -285,7 +289,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.tracking.log("post : unrepost : error", { parsedError });
+          this.tracking.log("post : unrepost", { error: parsedError });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }
@@ -334,10 +338,16 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (res) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`);
+          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
+            postHashHex: this.postContent.PostHashHex,
+            authorUsername: this.postContent.ProfileEntryResponse?.Username,
+            authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+          });
         },
         (err) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"} : error`);
+          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
+            error: err.error?.error,
+          });
           console.error(err);
         }
       );
@@ -354,7 +364,7 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "comment" } });
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.tracking.log("alert : reply : profile");
@@ -378,7 +388,11 @@ export class FeedPostIconRowComponent {
   }
 
   copyPostLinkToClipboard(event) {
-    this.tracking.log("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -396,7 +410,11 @@ export class FeedPostIconRowComponent {
     if (this.inTutorial) {
       return;
     }
-    this.tracking.log("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -463,10 +481,10 @@ export class FeedPostIconRowComponent {
           this.sendingDiamonds = false;
           this.diamondSent.emit();
           this.tracking.log("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
-            DiamondPostHashHex: this.postContent.PostHashHex,
-            DiamondLevel: diamonds,
+            postHashHex: this.postContent.PostHashHex,
+            authorUsername: this.postContent.ProfileEntryResponse?.Username,
+            authorPublicKey: this.postContent.PosterPublicKeyBase58Check,
+            diamondLevel: diamonds,
           });
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
@@ -484,7 +502,7 @@ export class FeedPostIconRowComponent {
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
-          this.tracking.log("diamonds: send: error", { parsedError });
+          this.tracking.log("diamonds: send", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -582,7 +600,7 @@ export class FeedPostIconRowComponent {
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "diamond" } });
       return;
     }
     // Disable diamond selection if diamonds are being sent

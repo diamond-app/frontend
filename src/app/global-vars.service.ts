@@ -424,8 +424,9 @@ export class GlobalVarsService {
       // Store the user in localStorage
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
 
-      this.tracking.identityUser(user.PublicKeyBase58Check, {
-        Username: user?.ProfileEntryResponse?.Username,
+      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
+        username: user?.ProfileEntryResponse?.Username ?? "",
+        isVerified: user?.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI
@@ -571,7 +572,6 @@ export class GlobalVarsService {
     this.backendApi
       .UpdateTutorialStatus(this.localNode, this.loggedInUser.PublicKeyBase58Check, status)
       .subscribe(() => {
-        this.tracking.log(ampEvent);
         this.updateEverything().add(() => {
           this.navigateToCurrentStepInTutorial(this.loggedInUser);
           if (finalStep) {
@@ -1050,7 +1050,6 @@ export class GlobalVarsService {
   // Helper to launch the get free deso flow in identity.
   launchGetFreeDESOFlow(showPrompt: boolean) {
     if (showPrompt) {
-      this.tracking.log("identity : jumio : prompt");
       SwalHelper.fire({
         target: this.getTargetComponentSelector(),
         title: "",
@@ -1076,19 +1075,17 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.tracking.log("identity : jumio : launch");
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         // referralCode: this.referralCode(),
       })
       .subscribe(() => {
-        this.tracking.log("identity : jumio : success");
         this.updateEverything();
       });
   }
 
-  launchIdentityFlow(event: string): Observable<any> {
+  launchIdentityFlow(): Observable<any> {
     let obs$: Observable<any>;
 
     if (
@@ -1098,17 +1095,17 @@ export class GlobalVarsService {
         this.identityInfoResponse.browserSupported
       )
     ) {
+      this.tracking.log("storage-access : request");
       this.requestingStorageAccess = true;
       obs$ = this.identityService.storageGranted.pipe(share());
 
       obs$.subscribe(() => {
+        this.tracking.log("storage-access : grant");
         // TODO: make sure we actually use the status returned from the tap to unlock response.
         this.identityInfoResponse.hasStorageAccess = true;
         this.requestingStorageAccess = false;
       });
     }
-
-    this.tracking.log(`account : ${event} : launch`);
 
     obs$ = obs$
       ? obs$.pipe(
@@ -1126,10 +1123,12 @@ export class GlobalVarsService {
           .pipe(share());
 
     obs$.subscribe((res) => {
-      // TODO: add tracking for whether the user signed up or not.
-      // Q: do we also want to track if the user verified their phone number.
-      this.tracking.log(`account : ${event} : success`);
       this.userSigningUp = res.signedUp;
+      this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
+        ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
+          phoneNumberSuccess: res.phoneNumberSuccess,
+        }),
+      });
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
@@ -1171,22 +1170,18 @@ export class GlobalVarsService {
     }
   }
 
-  launchLoginFlow(): Observable<any> {
-    const inAppBrowser = this.checkForInAppBrowser();
-    if (!inAppBrowser) {
-      return this.launchIdentityFlow("login");
-    } else {
-      this.modalService.show(DirectToNativeBrowserModalComponent, {
-        class: "modal-dialog-centered buy-deso-modal",
-        initialState: { deviceType: inAppBrowser },
-      });
+  /**
+   * @param eventObject - The event object that triggered the signup flow.
+   * Should be a string that identifies the UI element that triggered the signup
+   * flow.
+   */
+  launchLoginFlow(eventObject?: string): Observable<any> {
+    if (eventObject) {
+      this.tracking.log(`${eventObject} : click`);
     }
-  }
-
-  launchSignupFlow() {
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
-      this.launchIdentityFlow("create");
+      return this.launchIdentityFlow();
     } else {
       this.modalService.show(DirectToNativeBrowserModalComponent, {
         class: "modal-dialog-centered buy-deso-modal",
@@ -1202,7 +1197,6 @@ export class GlobalVarsService {
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       this.router.navigate(["/" + this.RouteNames.SIGN_UP]);
-      this.userSigningUp = false;
     }
   }
 
@@ -1400,7 +1394,6 @@ export class GlobalVarsService {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
@@ -1463,7 +1456,6 @@ export class GlobalVarsService {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
           (response) => {
-            this.tracking.log(`tutorial : skip`);
             // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
             this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
             this.router.navigate([RouteNames.BROWSE]);

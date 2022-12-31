@@ -2,6 +2,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Ticker } from "src/app/megaswap.service";
+import { TrackingService } from "src/app/tracking.service";
+import { environment } from "src/environments/environment";
 import { GlobalVarsService } from "../../global-vars.service";
 
 const SUPPORTED_DEPOSIT_TICKERS = ["BTC", "SOL", "USDC", "ETH", "DUSD"];
@@ -30,7 +32,7 @@ export class BuyDeSoComponent implements OnInit {
   activeTab?: string;
   linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
 
-  constructor(public globalVars: GlobalVarsService, private route: ActivatedRoute) {}
+  constructor(public globalVars: GlobalVarsService, private route: ActivatedRoute, private tracking: TrackingService) {}
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -43,5 +45,14 @@ export class BuyDeSoComponent implements OnInit {
     });
 
     this.activeTab = this.activeTabInput ?? BuyDeSoComponent.BUY_WITH_MEGASWAP;
+
+    window.addEventListener("message", (event: MessageEvent) => {
+      if (event.origin !== environment.megaswapURL) return;
+      this.tracking.log("megaswap-iframe : message", event.data);
+    });
+  }
+
+  onTabClick(tab: string) {
+    this.tracking.log("buy-deso-tab : click", { tab });
   }
 }

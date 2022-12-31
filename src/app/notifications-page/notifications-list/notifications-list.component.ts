@@ -6,6 +6,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { TrackingService } from "src/app/tracking.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
@@ -26,7 +27,8 @@ export class NotificationsListComponent implements OnInit {
     private backendApi: BackendApiService,
     private modalService: BsModalService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tracking: TrackingService
   ) {}
 
   // stores a mapping of page number to notification index
@@ -666,6 +668,7 @@ export class NotificationsListComponent implements OnInit {
 
   acceptTransfer(event, notification) {
     event.stopPropagation();
+    this.tracking.log("nft-accept-button : click");
     if (!this.globalVars.isMobile()) {
       this.pauseAllVideos(true);
       const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {

@@ -10,6 +10,7 @@ import {
   MegaswapService,
   Ticker,
 } from "src/app/megaswap.service";
+import { TrackingService } from "src/app/tracking.service";
 
 const LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY = "lastUsedMegaswapCashOutAddresses";
 
@@ -88,7 +89,8 @@ export class CashoutComponent implements OnDestroy, OnChanges {
   constructor(
     public megaswap: MegaswapService,
     private backend: BackendApiService,
-    private globalVars: GlobalVarsService
+    private globalVars: GlobalVarsService,
+    private tracking: TrackingService
   ) {
     const maybeStoredAddresses = window.localStorage.getItem(LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY);
     if (maybeStoredAddresses) {
@@ -228,12 +230,14 @@ export class CashoutComponent implements OnDestroy, OnChanges {
     }
 
     this.isPendingCashOut = true;
+    const amountNanos = this.amountToCashOutInputValue * 1e9;
+    const depositAddress = this.depositAddresses.DepositAddresses[this.depositTicker];
     this.backend
       .SendDeSo(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.depositAddresses.DepositAddresses[this.depositTicker],
-        this.amountToCashOutInputValue * 1e9,
+        depositAddress,
+        amountNanos,
         this.globalVars.feeRateDeSoPerKB * 1e9
       )
       .pipe(
@@ -243,13 +247,35 @@ export class CashoutComponent implements OnDestroy, OnChanges {
         takeWhile(() => !this.isDestroyed),
         finalize(() => (this.isPendingCashOut = false))
       )
-      .subscribe(this._onDepositEventsFetched.bind(this), (err) => {
-        const maybeMegaswapError = err?.error?.error;
-        this.cashOutErrorMessage =
-          typeof maybeMegaswapError === "string"
-            ? maybeMegaswapError
-            : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
-      });
+      .subscribe(
+        (res) => {
+          this.tracking.log("cash-out : submit", {
+            amountNanos,
+            depositTicker: this.depositTicker,
+            depositAddress,
+            destinationTicker: this.destinationTicker,
+            destinationAddress: this.depositAddresses.DestinationAddress,
+          });
+
+          this._onDepositEventsFetched(res);
+        },
+        (err) => {
+          this.tracking.log("cash-out : submit", {
+            error: err,
+            amountNanos,
+            depositTicker: this.depositTicker,
+            depositAddress,
+            destinationTicker: this.destinationTicker,
+            destinationAddress: this.depositAddresses.DestinationAddress,
+          });
+
+          const maybeMegaswapError = err?.error?.error;
+          this.cashOutErrorMessage =
+            typeof maybeMegaswapError === "string"
+              ? maybeMegaswapError
+              : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
+        }
+      );
   }
 
   refreshCashOutHistory() {

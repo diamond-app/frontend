@@ -194,10 +194,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         null /*MessageReadStateUpdatesByContact*/
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.tracking.log("profile-global-metadata : update");
+        },
         (err) => {
           console.log(err);
-          this.tracking.log("profile : update : error", { err });
+          this.tracking.log("profile-global-metadata : update", { error: err });
         }
       );
   }
@@ -276,18 +278,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateProfile() {
     if (!this.globalVars.loggedInUserDefaultKey) {
-      this.tracking.log("profile : create-messaging-key : start");
       this.globalVars
         .launchIdentityMessagingKey()
         .pipe(first())
         .subscribe(
           () => {
-            this.tracking.log("profile : create-messaging-key : success");
+            this.tracking.log("profile : create-messaging-key");
             this._saveProfileUpdates();
           },
           (err) => {
             this.globalVars._alertError(err);
-            this.tracking.log("profile : create-messaging-key : error", err);
+            this.tracking.log("profile : create-messaging-key", { error: err });
           }
         );
     } else {
@@ -367,7 +368,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         (err) => {
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
-          this.tracking.log("profile : update : error", { parsedError, lowBalance });
+          this.tracking.log("profile : update", { error: parsedError, lowBalance });
           this.updateProfileBeingCalled = false;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),

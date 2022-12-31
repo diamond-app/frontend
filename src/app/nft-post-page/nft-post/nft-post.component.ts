@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Subscription } from "rxjs";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
@@ -75,7 +76,8 @@ export class NftPostComponent {
     private modalService: BsModalService,
     private titleService: Title,
     private location: Location,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private tracking: TrackingService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -270,6 +272,7 @@ export class NftPostComponent {
   }
 
   closeAuction(): void {
+    this.tracking.log("nft-close-auction-button : click");
     const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
       class: "modal-dialog-centered modal-dialog-thin",
       initialState: {

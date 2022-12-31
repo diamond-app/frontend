@@ -1,56 +1,74 @@
 //@ts-strict
-import {
-  Identify,
-  identify,
-  init as amplitudeInit,
-  setUserId,
-  track as amplitudeTrack,
-} from "@amplitude/analytics-browser";
-import { Injectable, isDevMode } from "@angular/core";
+import { identify, Identify, init, setUserId, track } from "@amplitude/marketing-analytics-browser";
+import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class TrackingService {
-  private _window: Window & { heap: any; hj: any; hjLoad: (opts: any) => void } = window as any;
-
+  private _window: Window & { heap: any; hj: any } = window as any;
 
   constructor() {
-    if (isDevMode()) return;
-    amplitudeInit(environment.amplitude.key, undefined, {
-      domain: environment.amplitude.domain,
-    });
-    const hotjar = require("../vendor/hotjar-load.js")
-    hotjar.load({ hjid: environment.hotjar.hjid });
-    const heap = require("../vendor/heap-load.js")
-    heap.load(environment.heap.appId);
+    if (environment.amplitude.key) {
+      init(environment.amplitude.key, window.localStorage.getItem("lastLoggedInUser") ?? undefined, {
+        domain: environment.amplitude.domain,
+        pageViewTracking: {
+          trackHistoryChanges: "pathOnly",
+        },
+      });
+    }
+
+    if (environment.hotjar.hjid) {
+      const hotjar = require("../vendor/hotjar-load.js");
+      hotjar.load({ hjid: environment.hotjar.hjid });
+    }
+
+    if (environment.heap.appId) {
+      const heap = require("../vendor/heap-load.js");
+      heap.load(environment.heap.appId);
+    }
   }
 
+  /**
+   * @param event should be in the format of <noun (object/category)> : <present-tense-verb>
+   * e.g. "post : like", "signup-button : click", "onboarding-modal : open"
+   * @param properties by default we log the current url path. You can pass any
+   * additional properties you may want to log here. if status is not explicitly
+   * set, we default to "error" if properties.error is set, and default to
+   * success if not.
+   */
   log(event: string, properties: Record<string, any> = {}) {
-    Object.assign(properties, { path: window.location.pathname });
+    const data: Record<string, any> = {
+      path: window.location.pathname,
+      ...properties,
+    };
 
-    if (isDevMode()) {
-      console.log("trackingLogEvent->", event, properties);
-      return;
+    // capture the currently selected feed tab if on the browse page.
+    if (window.location.pathname.startsWith("/browse") && typeof data.feedTab === "undefined") {
+      data.feedTab = new URLSearchParams(window.location.search).get("feedTab");
     }
 
-    amplitudeTrack(event, properties);
-    this._window.heap.track(event, properties);
+    // if the properties object has an error key, we assume the event is an error.
+    const eventName = `${event}${typeof data.error !== "undefined" ? " : error" : ""}`;
+    track(eventName, data);
+    this._window.heap.track(eventName, data);
   }
 
-  identityUser(publicKey: string, properties: Record<string, any> = {}) {
-    if (isDevMode()) {
-      console.log("trackingIdentityUser->", publicKey, properties);
-      return;
-    }
-
+  identifyUser(publicKey?: string, properties: Record<string, any> = {}) {
+    debugger;
     const user = new Identify();
     Object.keys(properties ?? {}).forEach((key) => user.set(key, properties[key]));
     identify(user);
-    this._window.heap.addUserProperties(properties);
-    this._window.heap.identify(publicKey);
     setUserId(publicKey);
-    this._window.hj("identify", publicKey, properties);
+
+    if (this._window.heap) {
+      this._window.heap.addUserProperties(properties);
+      this._window.heap.identify(publicKey);
+    }
+
+    if (this._window.hj) {
+      this._window.hj("identify", publicKey, properties);
+    }
   }
 }

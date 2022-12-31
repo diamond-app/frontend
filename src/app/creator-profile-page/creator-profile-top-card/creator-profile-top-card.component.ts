@@ -85,7 +85,10 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   reportUser(): void {
-    this.tracking.log("post : report-user");
+    this.tracking.log("profile : report", {
+      username: this.profile.Username,
+      publicKey: this.profile.PublicKeyBase58Check,
+    });
     window.open(
       `https://desoreporting.aidaform.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}&ReportedAccountUsername=${this.profile.Username}`
     );
@@ -175,7 +178,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     event.stopPropagation();
 
     if (!this.globalVars.loggedInUser) {
-      this.modalService.show(WelcomeModalComponent);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "cc-buy" } });
       return;
     }
 
