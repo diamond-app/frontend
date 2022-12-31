@@ -56,7 +56,6 @@ export class TrackingService {
   }
 
   identifyUser(publicKey?: string, properties: Record<string, any> = {}) {
-    debugger;
     const user = new Identify();
     Object.keys(properties ?? {}).forEach((key) => user.set(key, properties[key]));
     identify(user);
