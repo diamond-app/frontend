@@ -1171,13 +1171,12 @@ export class GlobalVarsService {
   }
 
   /**
-   * @param eventObject - The event object that triggered the signup flow.
-   * Should be a string that identifies the UI element that triggered the signup
-   * flow.
+   * @param actionTrigger - The object that triggered the login/signup flow.
+   * Should be a string that identifies the UI element that triggered the flow.
    */
-  launchLoginFlow(eventObject?: string): Observable<any> {
-    if (eventObject) {
-      this.tracking.log(`${eventObject} : click`);
+  launchLoginFlow(actionTrigger?: string): Observable<any> {
+    if (actionTrigger) {
+      this.tracking.log(`login-flow : start`, { actionTrigger });
     }
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
