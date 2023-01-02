@@ -1174,10 +1174,8 @@ export class GlobalVarsService {
    * @param actionTrigger - The object that triggered the login/signup flow.
    * Should be a string that identifies the UI element that triggered the flow.
    */
-  launchLoginFlow(actionTrigger?: string): Observable<any> {
-    if (actionTrigger) {
-      this.tracking.log(`login-flow : start`, { actionTrigger });
-    }
+  launchLoginFlow(actionTrigger: string): Observable<any> {
+    this.tracking.log(`login-flow : start`, { actionTrigger });
     const inAppBrowser = this.checkForInAppBrowser();
     if (!inAppBrowser) {
       return this.launchIdentityFlow();

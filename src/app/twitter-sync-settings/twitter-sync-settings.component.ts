@@ -318,7 +318,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
                 isOnboarding: this.isSigningUp,
                 hasActiveSubscription: this.hasActiveSubscription,
                 setuSubscription: this.setuSubscriptions,
-                isDerivedKeyValid: !this.derivedKeyStatus.is_expired && this.derivedKeyStatus.status === "success",
+                isDerivedKeyValid: !this.derivedKeyStatus?.is_expired && this.derivedKeyStatus?.status === "success",
                 twitterHandle: twitterUserData.twitter_username,
               });
               this.syncAllTweets();
@@ -334,7 +334,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
             isOnboarding: this.isSigningUp,
             hasActiveSubscription: this.hasActiveSubscription,
             setuSubscription: this.setuSubscriptions,
-            isDerivedKeyValid: !this.derivedKeyStatus.is_expired && this.derivedKeyStatus.status === "success",
+            isDerivedKeyValid: !this.derivedKeyStatus?.is_expired && this.derivedKeyStatus.status === "success",
             twitterHandle: twitterUserData.twitter_username,
           });
         }
