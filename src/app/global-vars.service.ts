@@ -269,6 +269,7 @@ export class GlobalVarsService {
 
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
+    console.log("Calling load initial messages from global vars: ", this.loadingMessages);
     this.LoadInitialMessages();
   }
 
