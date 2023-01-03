@@ -19,7 +19,6 @@ export class SignUpComponent implements OnDestroy {
   stepNum: number;
   loading: boolean = false;
   verifiedInterval: number = null;
-  redirectedToTwitterSync: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -139,7 +138,6 @@ export class SignUpComponent implements OnDestroy {
           const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
           const twitterSyncPath = `/${this.globalVars.RouteNames.TWITTER_SYNC}`;
           const redirectPath = isNil(signUpRedirect) ? twitterSyncPath : signUpRedirect;
-          this.redirectedToTwitterSync = redirectPath === twitterSyncPath;
           this.router.navigate([redirectPath], {
             queryParamsHandling: "merge",
             state: { fromSignUp: true },
@@ -149,8 +147,6 @@ export class SignUpComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (!this.redirectedToTwitterSync) {
-      this.globalVars.userSigningUp = false;
-    }
+    this.globalVars.userSigningUp = false;
   }
 }

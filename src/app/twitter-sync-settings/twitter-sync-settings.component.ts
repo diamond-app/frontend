@@ -35,7 +35,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   derivedKeyStatus?: GetDerivedKeyStatusResponse;
   isProcessingSubscription: boolean = false;
   isFetchingSubscriptionStatus: boolean = false;
-  isSigningUp: boolean = false;
+  isOnboarding: boolean = false;
 
   get hasActiveSubscription() {
     return (
@@ -53,7 +53,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     private router: Router,
     private tracking: TrackingService
   ) {
-    this.isSigningUp = !!this.router.getCurrentNavigation()?.extras.state?.isSigningUp;
+    this.isOnboarding = !!this.router.getCurrentNavigation()?.extras.state?.fromSignUp;
     if (this.globalVars.loggedInUser) {
       const storedTwitterUserData = window.localStorage.getItem(
         buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check)
@@ -81,7 +81,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   }
 
   loginWithTwitter() {
-    this.tracking.log("twitter-sync-twitter-login-button : click", { isOnboarding: this.isSigningUp });
+    this.tracking.log("twitter-sync-twitter-login-button : click", { isOnboarding: this.isOnboarding });
 
     if (!this.boundPostMessageListener) {
       this.boundPostMessageListener = this.postMessageListener.bind(this);
@@ -182,7 +182,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     if (!this.derivedKeyStatus || this.derivedKeyStatus?.is_expired || this.derivedKeyStatus.status !== "success") {
       obs$ = this.updateDerivedKey().pipe(
         switchMap(() => {
-          this.tracking.log("twitter-sync : update-derived-key", { isOnboarding: this.isSigningUp });
+          this.tracking.log("twitter-sync : update-derived-key", { isOnboarding: this.isOnboarding });
           return this.setuSubscriptions ? this.setu.changeSubscription(params) : this.setu.createSubscription(params);
         })
       );
@@ -192,7 +192,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
     obs$.pipe(finalize(() => (this.isProcessingSubscription = false))).subscribe(
       (res) => {
-        this.tracking.log("twitter-sync : create-subscription", { isOnboarding: this.isSigningUp });
+        this.tracking.log("twitter-sync : create-subscription", { isOnboarding: this.isOnboarding });
         this.setuSubscriptions = res;
         this.globalVars._alertSuccess(
           "Great, you're all set up! Tweets posted on Twitter will sync to the DeSo blockchain.",
@@ -207,7 +207,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       (err) => {
         this.tracking.log("twitter-sync : create-subscription", {
           error: err.error?.error,
-          isOnboarding: this.isSigningUp,
+          isOnboarding: this.isOnboarding,
         });
         this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
       }
@@ -257,7 +257,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           (res) => {
             if (res.status === "success") {
               this.tracking.log("twitter-sync : unsubscribe", {
-                isOnboarding: this.isSigningUp,
+                isOnboarding: this.isOnboarding,
                 twitterHandle: this.twitterUserData.twitter_username,
               });
               this.setuSubscriptions = undefined;
@@ -268,7 +268,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           (err) => {
             this.tracking.log("twitter-sync : unsubscribe", {
               error: err.error?.error,
-              isOnboarding: this.isSigningUp,
+              isOnboarding: this.isOnboarding,
               twitterHandle: this.twitterUserData.twitter_username,
             });
             this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
@@ -279,9 +279,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.isDestroyed = true;
-    if (this.globalVars.userSigningUp) {
-      this.globalVars.userSigningUp = false;
-    }
     if (this.boundPostMessageListener) {
       window.removeEventListener("message", this.boundPostMessageListener);
     }
@@ -315,7 +312,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           }).then(({ isConfirmed }) => {
             if (isConfirmed) {
               this.tracking.log("twitter-sync : connect", {
-                isOnboarding: this.isSigningUp,
+                isOnboarding: this.isOnboarding,
                 hasActiveSubscription: this.hasActiveSubscription,
                 setuSubscription: this.setuSubscriptions,
                 isDerivedKeyValid: !this.derivedKeyStatus?.is_expired && this.derivedKeyStatus?.status === "success",
@@ -324,14 +321,14 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
               this.syncAllTweets();
             } else {
               this.tracking.log("twitter-sync : cancel", {
-                isOnboarding: this.isSigningUp,
+                isOnboarding: this.isOnboarding,
                 twitterHandle: twitterUserData.twitter_username,
               });
             }
           });
         } else {
           this.tracking.log("twitter-sync : connect", {
-            isOnboarding: this.isSigningUp,
+            isOnboarding: this.isOnboarding,
             hasActiveSubscription: this.hasActiveSubscription,
             setuSubscription: this.setuSubscriptions,
             isDerivedKeyValid: !this.derivedKeyStatus?.is_expired && this.derivedKeyStatus.status === "success",
