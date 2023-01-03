@@ -73,6 +73,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
             }
             let profile = response.Profile;
             this._handleCreatorSelectedInSearch(profile);
+            this._setSelectedThreadBasedOnDefaultThread(profile);
           },
           (err) => {
             console.error(err);
@@ -80,17 +81,20 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
           }
         );
         this.startingSearchText = params.username;
+      } else if (!this.isMobile) {
+        this._setSelectedThreadBasedOnDefaultThread(null);
       }
     });
   }
 
   ngOnInit() {
-    this.globalVars.LoadInitialMessages().add(() => {
+    if (!this.globalVars.messageResponse && !this.globalVars.loadingMessages) {
+      this.globalVars.LoadInitialMessages().add(() => {
+        this.initializeRouteParams();
+      });
+    } else {
       this.initializeRouteParams();
-      if (!this.isMobile) {
-        this._setSelectedThreadBasedOnDefaultThread();
-      }
-    });
+    }
   }
 
   ngOnChanges(changes: any) {
@@ -212,7 +216,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
-  _setSelectedThreadBasedOnDefaultThread() {
+  _setSelectedThreadBasedOnDefaultThread(profile) {
     // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
     // so we set an interval and repeat until we get it. It might be better to use
     // an explicit subscription, but this is less cruft, so not sure.
@@ -237,7 +241,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         defaultThread = orderedContactsWithMessages[0];
       }
 
-      if (!this.selectedThread) {
+      if (profile !== null) {
+        this._handleCreatorSelectedInSearch(profile);
+      } else if (!this.selectedThread) {
         this._handleMessagesThreadClick(defaultThread);
       }
 

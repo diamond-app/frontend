@@ -137,6 +137,7 @@ export class GlobalVarsService {
   hotFeedPosts = [];
   tagFeedPosts = [];
   messageResponse = null;
+  loadingMessages = false;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
     decryptedMessgesMap: {},
@@ -325,6 +326,7 @@ export class GlobalVarsService {
   }
 
   LoadInitialMessages() {
+    this.loadingMessages = true;
     if (!this.loggedInUser) {
       return;
     }
@@ -354,9 +356,11 @@ export class GlobalVarsService {
             // Update the number of new messages so we know when to stop scrolling
             this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
           }
+          this.loadingMessages = false;
         },
         (err) => {
           console.error(this.backendApi.stringifyError(err));
+          this.loadingMessages = false;
         }
       );
   }
