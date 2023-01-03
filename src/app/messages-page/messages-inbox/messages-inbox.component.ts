@@ -89,10 +89,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     if (!this.globalVars.messageResponse && !this.globalVars.loadingMessages) {
+      console.log("loading initial messages");
       this.globalVars.LoadInitialMessages().add(() => {
         this.initializeRouteParams();
       });
     } else {
+      console.log("skipping load");
       this.initializeRouteParams();
     }
   }
@@ -217,6 +219,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
   _setSelectedThreadBasedOnDefaultThread(profile) {
+    console.log("Set selected based on profile: ", profile);
     // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
     // so we set an interval and repeat until we get it. It might be better to use
     // an explicit subscription, but this is less cruft, so not sure.
