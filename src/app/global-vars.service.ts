@@ -327,10 +327,11 @@ export class GlobalVarsService {
   }
 
   LoadInitialMessages() {
-    this.loadingMessages = true;
-    if (!this.loggedInUser) {
+    if (!this.loggedInUser || this.loadingMessages) {
+      console.log("Bailing from loading messages: ", this.loggedInUser, this.loadingMessages);
       return;
     }
+    this.loadingMessages = true;
 
     return this.backendApi
       .GetMessages(
