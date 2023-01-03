@@ -213,7 +213,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
   _setSelectedThreadBasedOnDefaultThread(profile) {
-    console.log("Set selected based on profile: ", profile);
     // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
     // so we set an interval and repeat until we get it. It might be better to use
     // an explicit subscription, but this is less cruft, so not sure.
