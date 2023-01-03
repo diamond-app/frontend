@@ -35,6 +35,7 @@ import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
+import { fromWei, Hex, toBN } from "web3-utils";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -738,6 +739,12 @@ export class GlobalVarsService {
       decimal = 4;
     }
     return this.formatUSD(this.nanosToUSDNumber(nanos), decimal);
+  }
+
+  // Used to convert uint256 Hex balances for DAO coins to standard units.
+  hexNanosToStandardUnit(hexNanos: Hex): number {
+    const result = fromWei(toBN(hexNanos), "ether").toString();
+    return parseFloat(result);
   }
 
   isMobile(): boolean {
@@ -1527,6 +1534,10 @@ export class GlobalVarsService {
     } else {
       return `${input}'s`;
     }
+  }
+
+  pluralize(count: number, noun: string, suffix = "s") {
+    return `${noun}${count !== 1 ? suffix : ""}`;
   }
 
   getFreeDESOMessage(): string {

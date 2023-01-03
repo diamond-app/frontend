@@ -648,6 +648,58 @@ export class NotificationsListComponent implements OnInit {
         }${coinRoyaltyStr} on the sale`;
         return result;
       }
+    } else if (txnMeta.TxnType === "DAO_COIN") {
+      const coinMeta = txnMeta.DAOCoinTxindexMetadata;
+      if (!coinMeta) {
+        return null;
+      }
+      switch (coinMeta.OperationType) {
+        case "mint": {
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToMintNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `minted ${amountFormatted} ${coinMeta.CreatorUsername} ${this.globalVars.pluralize(
+            amount,
+            "coin"
+          )}`;
+          result.icon = "fas fa-coins fc-green";
+          return result;
+        }
+        case "burn": {
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToBurnNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `${actorName} burned ${amountFormatted} ${
+            coinMeta.CreatorUsername
+          } ${this.globalVars.pluralize(amount, "coin")}`;
+          result.icon = "fa fa-fire fc-red";
+          return result;
+        }
+        case "disable_minting": {
+          result.action = `${actorName} disabled minting for ${coinMeta.CreatorUsername} coin`;
+          result.icon = "fas fa-minus-circle fc-red";
+          return result;
+        }
+        case "update_transfer_restriction_status": {
+          result.action = `${actorName} updated the transfer restriction status of ${coinMeta.CreatorUsername} coin to ${coinMeta.TransferRestrictionStatus}`;
+          result.icon = "fas fa-pen-fancy";
+          return result;
+        }
+      }
+      return null;
+    } else if (txnMeta.TxnType === "DAO_COIN_TRANSFER") {
+      const coinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
+      const amount = this.globalVars.hexNanosToStandardUnit(coinTransferMeta.DAOCoinToTransferNanos);
+      const amountFormatted = this.globalVars.abbreviateNumber(amount, 6, false);
+
+      if (!coinTransferMeta) {
+        return null;
+      }
+      result.icon = "fas fa-money-bill-wave fc-blue";
+      result.action = `${actorName} sent you <b>${amountFormatted} ${
+        coinTransferMeta.CreatorUsername
+      } ${this.globalVars.pluralize(amount, "coin")}`;
+      return result;
     }
 
     // If we don't recognize the transaction type we return null
