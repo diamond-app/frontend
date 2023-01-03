@@ -88,15 +88,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if (!this.globalVars.messageResponse && !this.globalVars.loadingMessages) {
-      console.log("loading initial messages");
-      this.globalVars.LoadInitialMessages().add(() => {
-        this.initializeRouteParams();
-      });
-    } else {
-      console.log("skipping load");
+    this.globalVars.LoadInitialMessages().add(() => {
       this.initializeRouteParams();
-    }
+    });
   }
 
   ngOnChanges(changes: any) {
