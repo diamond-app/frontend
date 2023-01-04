@@ -28,6 +28,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
   @Input() profileMap: any;
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
+  @Output() updateMessageResponse = new EventEmitter<any>();
   selectedThread: any;
   fetchingMoreMessages: boolean = false;
   activeTab: string;
@@ -46,7 +47,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
     private tracking: TrackingService
   ) {}
 
-  initializeRouteParams() {
+  initializeRouteParams(messageResponse) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
       let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
@@ -63,7 +64,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
       }
 
       // Handle the tab click if the stored messages are from a different tab
-      this._handleTabClick(this.activeTab);
+      // this._handleTabClick(this.activeTab);
       if (params.username) {
         this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe(
           (response) => {
@@ -73,7 +74,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
             }
             let profile = response.Profile;
             this._handleCreatorSelectedInSearch(profile);
-            this._setSelectedThreadBasedOnDefaultThread(profile);
+            this._setSelectedThreadBasedOnDefaultThread(messageResponse, profile);
           },
           (err) => {
             console.error(err);
@@ -82,16 +83,32 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
         );
         this.startingSearchText = params.username;
       } else if (!this.isMobile) {
-        this._setSelectedThreadBasedOnDefaultThread(null);
+        this._setSelectedThreadBasedOnDefaultThread(messageResponse, null);
       }
     });
   }
 
   ngAfterViewInit() {
     console.log("Loading initial messages");
-    this.globalVars.LoadInitialMessages().add(() => {
-      this.initializeRouteParams();
-    });
+    if (this.globalVars.messageResponse === null) {
+      this.globalVars.messagesLoadedCallback = this.messagesLoadedCallback;
+      this.globalVars.messagesLoadedComponent = this;
+    } else {
+      this.initializeRouteParams(this.globalVars.messageResponse);
+    }
+  }
+
+  // Callback to be called when messages are loaded
+  messagesLoadedCallback(comp: MessagesInboxComponent, messageResponse) {
+    console.log("Firing off the callback");
+    // Reset message loaded callback
+    comp.globalVars.messagesLoadedCallback = null;
+    comp.globalVars.messagesLoadedComponent = null;
+    comp.globalVars.messageResponse = messageResponse;
+
+    comp.updateMessageResponse.emit(messageResponse);
+    // Initialize route params and load page
+    comp.initializeRouteParams(messageResponse);
   }
 
   ngOnChanges(changes: any) {
@@ -199,8 +216,10 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
     // Set the most recent tab in local storage
     this.backendApi.SetStorage("mostRecentMessagesTab", tabName);
 
+    console.log("Threads:", this.messageThreads);
+
     // Fetch initial messages for the new tab
-    this.globalVars.SetupMessages();
+    this.globalVars.LoadInitialMessages(0, 10);
   }
 
   _toggleSettingsTray() {
@@ -213,39 +232,65 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
 
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
-  _setSelectedThreadBasedOnDefaultThread(profile) {
+  _setSelectedThreadBasedOnDefaultThread(messageResponse, profile) {
+    console.log("Here are the message response: ", messageResponse);
+    // If we don't have the messageResponse yet, return
+    let orderedContactsWithMessages = messageResponse?.OrderedContactsWithMessages;
+    if (orderedContactsWithMessages == null) {
+      return;
+    }
+
+    // Check if the query params are set, otherwise default to the first thread
+    let defaultThread = null;
+    if (this.defaultContactUsername || this.defaultContactPublicKey) {
+      defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
+        let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
+        let matchesUsername = responseUsername && responseUsername === this.contactUsername;
+        let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
+        return (responseUsername && matchesUsername) || matchesPublicKey;
+      });
+    } else if (orderedContactsWithMessages.length > 0) {
+      defaultThread = orderedContactsWithMessages[0];
+    }
+
+    if (profile !== null) {
+      this._handleCreatorSelectedInSearch(profile);
+    } else if (!this.selectedThread) {
+      this._handleMessagesThreadClick(defaultThread);
+    }
+
     // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
     // so we set an interval and repeat until we get it. It might be better to use
     // an explicit subscription, but this is less cruft, so not sure.
     // TODO: refactor silly setInterval
-    let interval = setInterval(() => {
-      // If we don't have the messageResponse yet, return
-      let orderedContactsWithMessages = this.globalVars.messageResponse?.OrderedContactsWithMessages;
-      if (orderedContactsWithMessages == null) {
-        return;
-      }
-
-      // Check if the query params are set, otherwise default to the first thread
-      let defaultThread = null;
-      if (this.defaultContactUsername || this.defaultContactPublicKey) {
-        defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
-          let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
-          let matchesUsername = responseUsername && responseUsername === this.contactUsername;
-          let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
-          return (responseUsername && matchesUsername) || matchesPublicKey;
-        });
-      } else if (orderedContactsWithMessages.length > 0) {
-        defaultThread = orderedContactsWithMessages[0];
-      }
-
-      if (profile !== null) {
-        this._handleCreatorSelectedInSearch(profile);
-      } else if (!this.selectedThread) {
-        this._handleMessagesThreadClick(defaultThread);
-      }
-
-      clearInterval(interval);
-    }, 50);
+    // let interval = setInterval(() => {
+    //   // If we don't have the messageResponse yet, return
+    //   let orderedContactsWithMessages = this.globalVars.messageResponse?.OrderedContactsWithMessages;
+    //   if (orderedContactsWithMessages == null) {
+    //     return;
+    //   }
+    //
+    //   // Check if the query params are set, otherwise default to the first thread
+    //   let defaultThread = null;
+    //   if (this.defaultContactUsername || this.defaultContactPublicKey) {
+    //     defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
+    //       let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
+    //       let matchesUsername = responseUsername && responseUsername === this.contactUsername;
+    //       let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
+    //       return (responseUsername && matchesUsername) || matchesPublicKey;
+    //     });
+    //   } else if (orderedContactsWithMessages.length > 0) {
+    //     defaultThread = orderedContactsWithMessages[0];
+    //   }
+    //
+    //   if (profile !== null) {
+    //     this._handleCreatorSelectedInSearch(profile);
+    //   } else if (!this.selectedThread) {
+    //     this._handleMessagesThreadClick(defaultThread);
+    //   }
+    //
+    //   clearInterval(interval);
+    // }, 50);
   }
 
   // This marks all messages as read and relays this request to the server.
@@ -312,7 +357,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
   _handleMessagesThreadClick(thread: any) {
     this.selectedThread = thread;
     this.selectedThreadEmitter.emit(thread);
-    this.updateReadMessagesForSelectedThread();
+    // this.updateReadMessagesForSelectedThread();
   }
 
   updateReadMessagesForSelectedThread() {

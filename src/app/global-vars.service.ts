@@ -137,6 +137,8 @@ export class GlobalVarsService {
   hotFeedPosts = [];
   tagFeedPosts = [];
   messageResponse = null;
+  messagesLoadedCallback = null;
+  messagesLoadedComponent = null;
   loadingMessages = false;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -250,6 +252,7 @@ export class GlobalVarsService {
   identityInfoResponse?: any;
 
   SetupMessages() {
+    console.log("Setup messages");
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
       this.messageNotificationCount = 0;
@@ -269,13 +272,8 @@ export class GlobalVarsService {
 
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
-    if (this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 1) !== "/" + this.RouteNames.INBOX_PREFIX) {
-      console.log(
-        "Calling load initial messages from global vars: ",
-        this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 1)
-      );
-      this.LoadInitialMessages();
-    }
+    // We don't have a great way to wait for the identity iFrame, so we retry this function until it works.
+    this.LoadInitialMessages(0, 10);
   }
 
   pollUnreadNotifications() {
@@ -331,7 +329,7 @@ export class GlobalVarsService {
     }
   }
 
-  LoadInitialMessages() {
+  LoadInitialMessages(retryCount: number, maxRetries) {
     if (!this.loggedInUser) {
       return;
     }
@@ -362,11 +360,17 @@ export class GlobalVarsService {
 
             // Update the number of new messages so we know when to stop scrolling
             this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+            if (this.messagesLoadedCallback !== null) {
+              this.messagesLoadedCallback(this.messagesLoadedComponent, res);
+            }
           }
           this.loadingMessages = false;
         },
         (err) => {
           console.log("Error getting messages: ", err);
+          if (retryCount < maxRetries) {
+            this.LoadInitialMessages(retryCount + 1, maxRetries);
+          }
           console.error(this.backendApi.stringifyError(err));
           this.loadingMessages = false;
         }
