@@ -272,7 +272,9 @@ export class GlobalVarsService {
     console.log("Calling load initial messages from global vars: ", this.loadingMessages);
     console.log("Here is the router: ", this.router);
     console.log("Here is the router url: ", this.router.url);
-    this.LoadInitialMessages();
+    if (this.router.url !== "/" + this.RouteNames.INBOX_PREFIX) {
+      this.LoadInitialMessages();
+    }
   }
 
   pollUnreadNotifications() {
