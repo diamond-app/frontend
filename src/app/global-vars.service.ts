@@ -331,8 +331,7 @@ export class GlobalVarsService {
   }
 
   LoadInitialMessages() {
-    if (!this.loggedInUser || this.loadingMessages) {
-      console.log("Bailing from loading messages: ", this.loggedInUser, this.loadingMessages);
+    if (!this.loggedInUser) {
       return;
     }
     this.loadingMessages = true;
