@@ -270,6 +270,8 @@ export class GlobalVarsService {
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
     console.log("Calling load initial messages from global vars: ", this.loadingMessages);
+    console.log("Here is the router: ", this.router);
+    console.log("Here is the router url: ", this.router.url);
     this.LoadInitialMessages();
   }
 
@@ -348,6 +350,7 @@ export class GlobalVarsService {
       )
       .subscribe(
         (res) => {
+          console.log("Here is the message res: ", res);
           if (this.pauseMessageUpdates) {
             // We pause message updates when a user sends a messages so that we can
             // wait for it to be sent before updating the thread.  If we do not do this the
@@ -361,6 +364,7 @@ export class GlobalVarsService {
           this.loadingMessages = false;
         },
         (err) => {
+          console.log("Error getting messages: ", err);
           console.error(this.backendApi.stringifyError(err));
           this.loadingMessages = false;
         }
