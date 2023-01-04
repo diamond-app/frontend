@@ -272,7 +272,7 @@ export class GlobalVarsService {
     if (this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 2) !== "/" + this.RouteNames.INBOX_PREFIX) {
       console.log(
         "Calling load initial messages from global vars: ",
-        this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 2)
+        this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 1)
       );
       this.LoadInitialMessages();
     }
