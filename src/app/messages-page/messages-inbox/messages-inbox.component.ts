@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
 import { TrackingService } from "src/app/tracking.service";
@@ -10,7 +10,7 @@ import { GlobalVarsService } from "../../global-vars.service";
   templateUrl: "./messages-inbox.component.html",
   styleUrls: ["./messages-inbox.component.scss"],
 })
-export class MessagesInboxComponent implements OnInit, OnChanges {
+export class MessagesInboxComponent implements AfterViewInit, OnChanges {
   static CONTACT_US_USERNAME = "clippy";
 
   static QUERYTOTAB = {
@@ -87,7 +87,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     console.log("Loading initial messages");
     this.globalVars.LoadInitialMessages().add(() => {
       this.initializeRouteParams();
