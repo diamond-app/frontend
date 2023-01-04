@@ -269,7 +269,7 @@ export class GlobalVarsService {
 
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
-    if (this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 2) !== "/" + this.RouteNames.INBOX_PREFIX) {
+    if (this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 1) !== "/" + this.RouteNames.INBOX_PREFIX) {
       console.log(
         "Calling load initial messages from global vars: ",
         this.router.url.substring(0, this.RouteNames.INBOX_PREFIX.length + 1)
