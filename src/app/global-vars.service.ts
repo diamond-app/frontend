@@ -10,6 +10,7 @@ import { Observable, Observer, of, Subscription } from "rxjs";
 import { catchError, first, share, switchMap } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
+import { fromWei, Hex, toBN } from "web3-utils";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -35,7 +36,6 @@ import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
-import { fromWei, Hex, toBN } from "web3-utils";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -504,13 +504,19 @@ export class GlobalVarsService {
 
   getLoggedInUserDefaultKey(): Subscription {
     return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-      // NOTE: We only trigger the prompt if the user is not in the sign-up flow.
-      if (!res && !(this.userSigningUp || this.router.url === "/sign-up")) {
+      // NOTE: We only trigger the prompt if the user is not in the sign-up
+      // flow. Twitter sync is also excluded because it is part of the sign-up
+      // flow. There is an edge case where a user may have already signed up and
+      // they land directly on the twitter sync page from an external link. In
+      // this case, I think it makes sense to also prevent showing the messaging
+      // key prompt until after the twitter sync flow is complete.
+      if (!res && !(this.userSigningUp || this.router.url === "/sign-up" || this.router.url === "/twitter-sync")) {
         SwalHelper.fire({
           html:
             "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
           showCancelButton: false,
         }).then(({ isConfirmed }) => {
+          this.tracking.log(`default-messaging-key-prompt : ${isConfirmed ? "confirmed" : "cancelled"}`);
           if (isConfirmed) {
             this.launchIdentityMessagingKey();
           }
@@ -553,6 +559,7 @@ export class GlobalVarsService {
 
     // TODO: error handling
     obs$.subscribe((messagingGroupEntryResponse) => {
+      this.tracking.log("default-messaging-key : create");
       if (messagingGroupEntryResponse) {
         this.loggedInUserDefaultKey = messagingGroupEntryResponse;
       }
