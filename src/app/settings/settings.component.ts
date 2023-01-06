@@ -91,7 +91,7 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  initializeAppUser() {
+  initializeAppUser(retryCount: number, maxRetries: number) {
     const loggedInUser = this.globalVars.loggedInUser;
     const userPublicKey =
       this.userPublicKeyBase58Check !== "" ? this.userPublicKeyBase58Check : loggedInUser?.PublicKeyBase58Check;
@@ -140,9 +140,20 @@ export class SettingsComponent implements OnInit {
               return of(appUser);
             })
           )
-          .subscribe((appUser) => {
-            this.appUser = appUser;
-          });
+          .subscribe(
+            (appUser) => {
+              this.appUser = appUser;
+            },
+            (err) => {
+              console.log("GOT AN ERROR: ", err);
+              // Sometimes the identity iframe hasn't initialized by the time these functions are called.
+              // In this case, the best we can do is retry until it works - there's no great way to await
+              // the identity iframe initialization currently.
+              if (retryCount < maxRetries) {
+                this.initializeAppUser(retryCount + 1, maxRetries);
+              }
+            }
+          );
       } else {
         getAppUserObs.subscribe((appUser) => {
           this.appUser = appUser;
@@ -155,7 +166,7 @@ export class SettingsComponent implements OnInit {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
     this.globalVars.updateEverything().add(() => {
-      this.initializeAppUser();
+      this.initializeAppUser(0, 5);
     });
   }
 
