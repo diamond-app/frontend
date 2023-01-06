@@ -327,7 +327,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   _handleMessagesThreadClick(thread: any) {
     this.selectedThread = thread;
     this.selectedThreadEmitter.emit(thread);
-    // this.updateReadMessagesForSelectedThread();
+    this.updateReadMessagesForSelectedThread();
   }
 
   updateReadMessagesForSelectedThread() {
