@@ -252,7 +252,6 @@ export class GlobalVarsService {
   identityInfoResponse?: any;
 
   SetupMessages() {
-    console.log("Setup messages");
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
       this.messageNotificationCount = 0;

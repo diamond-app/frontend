@@ -1,3 +1,4 @@
+<simple-center-loader *ngIf="loading"></simple-center-loader>
 <div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars position-relative">
   <div *ngIf="_settingsTrayIsOpen()">
     <messages-filter-menu></messages-filter-menu>

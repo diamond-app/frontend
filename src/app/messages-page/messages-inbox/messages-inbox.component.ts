@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
 import { TrackingService } from "src/app/tracking.service";
@@ -10,7 +10,7 @@ import { GlobalVarsService } from "../../global-vars.service";
   templateUrl: "./messages-inbox.component.html",
   styleUrls: ["./messages-inbox.component.scss"],
 })
-export class MessagesInboxComponent implements AfterViewInit, OnChanges {
+export class MessagesInboxComponent implements OnInit, OnChanges {
   static CONTACT_US_USERNAME = "clippy";
 
   static QUERYTOTAB = {
@@ -28,11 +28,11 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
   @Input() profileMap: any;
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
-  @Output() updateMessageResponse = new EventEmitter<any>();
   selectedThread: any;
   fetchingMoreMessages: boolean = false;
   activeTab: string;
   startingSearchText: string;
+  loading: boolean;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -63,8 +63,8 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
         this.activeTab = "Holders";
       }
 
-      // Handle the tab click if the stored messages are from a different tab
-      // this._handleTabClick(this.activeTab);
+      this.setTab(this.activeTab);
+
       if (params.username) {
         this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe(
           (response) => {
@@ -84,12 +84,14 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
         this.startingSearchText = params.username;
       } else if (!this.isMobile) {
         this._setSelectedThreadBasedOnDefaultThread(messageResponse, null);
+      } else {
+        this.loading = false;
       }
     });
   }
 
-  ngAfterViewInit() {
-    console.log("Loading initial messages");
+  ngOnInit() {
+    this.loading = true;
     if (this.globalVars.messageResponse === null) {
       this.globalVars.messagesLoadedCallback = this.messagesLoadedCallback;
       this.globalVars.messagesLoadedComponent = this;
@@ -100,13 +102,11 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
 
   // Callback to be called when messages are loaded
   messagesLoadedCallback(comp: MessagesInboxComponent, messageResponse) {
-    console.log("Firing off the callback");
     // Reset message loaded callback
     comp.globalVars.messagesLoadedCallback = null;
     comp.globalVars.messagesLoadedComponent = null;
     comp.globalVars.messageResponse = messageResponse;
 
-    comp.updateMessageResponse.emit(messageResponse);
     // Initialize route params and load page
     comp.initializeRouteParams(messageResponse);
   }
@@ -205,21 +205,24 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
     // Clear the current messages
     this.globalVars.messageResponse = null;
 
+    this.setTab(tabName);
+
+    // Fetch initial messages for the new tab
+    this.globalVars.LoadInitialMessages(0, 10);
+  }
+
+  setTab(tabName: string) {
     // Make sure the tab is set in the url
     this.activeTab = tabName;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { messagesTab: MessagesInboxComponent.TABTOQUERY[tabName] },
+      queryParams: { messagesTab: MessagesInboxComponent.TABTOQUERY[tabName], username: null },
       queryParamsHandling: "merge",
     });
+    this.globalVars.SetMessagesFilter(tabName);
 
     // Set the most recent tab in local storage
     this.backendApi.SetStorage("mostRecentMessagesTab", tabName);
-
-    console.log("Threads:", this.messageThreads);
-
-    // Fetch initial messages for the new tab
-    this.globalVars.LoadInitialMessages(0, 10);
   }
 
   _toggleSettingsTray() {
@@ -233,7 +236,6 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
   _setSelectedThreadBasedOnDefaultThread(messageResponse, profile) {
-    console.log("Here are the message response: ", messageResponse);
     // If we don't have the messageResponse yet, return
     let orderedContactsWithMessages = messageResponse?.OrderedContactsWithMessages;
     if (orderedContactsWithMessages == null) {
@@ -258,6 +260,7 @@ export class MessagesInboxComponent implements AfterViewInit, OnChanges {
     } else if (!this.selectedThread) {
       this._handleMessagesThreadClick(defaultThread);
     }
+    this.loading = false;
 
     // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
     // so we set an interval and repeat until we get it. It might be better to use
