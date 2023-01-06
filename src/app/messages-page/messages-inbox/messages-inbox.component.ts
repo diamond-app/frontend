@@ -261,39 +261,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this._handleMessagesThreadClick(defaultThread);
     }
     this.loading = false;
-
-    // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
-    // so we set an interval and repeat until we get it. It might be better to use
-    // an explicit subscription, but this is less cruft, so not sure.
-    // TODO: refactor silly setInterval
-    // let interval = setInterval(() => {
-    //   // If we don't have the messageResponse yet, return
-    //   let orderedContactsWithMessages = this.globalVars.messageResponse?.OrderedContactsWithMessages;
-    //   if (orderedContactsWithMessages == null) {
-    //     return;
-    //   }
-    //
-    //   // Check if the query params are set, otherwise default to the first thread
-    //   let defaultThread = null;
-    //   if (this.defaultContactUsername || this.defaultContactPublicKey) {
-    //     defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
-    //       let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
-    //       let matchesUsername = responseUsername && responseUsername === this.contactUsername;
-    //       let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
-    //       return (responseUsername && matchesUsername) || matchesPublicKey;
-    //     });
-    //   } else if (orderedContactsWithMessages.length > 0) {
-    //     defaultThread = orderedContactsWithMessages[0];
-    //   }
-    //
-    //   if (profile !== null) {
-    //     this._handleCreatorSelectedInSearch(profile);
-    //   } else if (!this.selectedThread) {
-    //     this._handleMessagesThreadClick(defaultThread);
-    //   }
-    //
-    //   clearInterval(interval);
-    // }, 50);
   }
 
   // This marks all messages as read and relays this request to the server.
