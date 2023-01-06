@@ -137,6 +137,8 @@ export class GlobalVarsService {
   hotFeedPosts = [];
   tagFeedPosts = [];
   messageResponse = null;
+  messagesLoadedCallback = null;
+  messagesLoadedComponent = null;
   loadingMessages = false;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -269,7 +271,8 @@ export class GlobalVarsService {
 
     // Set the filters most recently used and load the messages
     this.SetMessagesFilter(storedTab);
-    this.LoadInitialMessages();
+    // We don't have a great way to wait for the identity iFrame, so we retry this function until it works.
+    this.LoadInitialMessages(0, 10);
   }
 
   pollUnreadNotifications() {
@@ -325,11 +328,11 @@ export class GlobalVarsService {
     }
   }
 
-  LoadInitialMessages() {
-    this.loadingMessages = true;
+  LoadInitialMessages(retryCount: number, maxRetries) {
     if (!this.loggedInUser) {
       return;
     }
+    this.loadingMessages = true;
 
     return this.backendApi
       .GetMessages(
@@ -346,6 +349,7 @@ export class GlobalVarsService {
       )
       .subscribe(
         (res) => {
+          console.log("Here is the message res: ", res);
           if (this.pauseMessageUpdates) {
             // We pause message updates when a user sends a messages so that we can
             // wait for it to be sent before updating the thread.  If we do not do this the
@@ -355,10 +359,17 @@ export class GlobalVarsService {
 
             // Update the number of new messages so we know when to stop scrolling
             this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+            if (this.messagesLoadedCallback !== null) {
+              this.messagesLoadedCallback(this.messagesLoadedComponent, res);
+            }
           }
           this.loadingMessages = false;
         },
         (err) => {
+          console.log("Error getting messages: ", err);
+          if (retryCount < maxRetries) {
+            this.LoadInitialMessages(retryCount + 1, maxRetries);
+          }
           console.error(this.backendApi.stringifyError(err));
           this.loadingMessages = false;
         }
