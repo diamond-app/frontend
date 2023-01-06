@@ -66,8 +66,8 @@ export class LeftBarMoreComponent implements AfterViewInit {
   }
 
   openSettings() {
-    this.modalService.show(SettingsComponent, {
-      class: "modal-dialog-centered update-profile-modal",
+    this.router.navigate(["/" + this.globalVars.RouteNames.SETTINGS], {
+      queryParamsHandling: "merge",
     });
   }
 
