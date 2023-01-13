@@ -507,6 +507,7 @@
                     [afterCommentCreatedCallback]="afterCommentCreatedCallback"
                     [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                     [inTutorial]="inTutorial"
+                    [postReactionCounts]="postReactionCounts"
                     (diamondSent)="diamondSent.emit()"
                   ></feed-post-icon-row>
 
@@ -577,7 +578,11 @@
       </a>
 
       <ng-container *ngIf="showInteractionDetails">
-        <post-interaction-details class="border-top" [post]="postContent"></post-interaction-details>
+        <post-interaction-details
+          class="border-top"
+          [post]="postContent"
+          [postReactionCounts]="postReactionCounts"
+        ></post-interaction-details>
         <feed-post-icon-row
           class="border-top"
           style="padding: 12px 40px"

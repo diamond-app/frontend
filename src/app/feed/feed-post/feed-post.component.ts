@@ -27,7 +27,7 @@ import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
 import { GlobalVarsService } from "../../global-vars.service";
-import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
+import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
 import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
@@ -35,6 +35,7 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { AssociationReactionValue, AssociationType, PostReactionCountsResponse } from "../feedTypes";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -247,6 +248,11 @@ export class FeedPostComponent implements OnInit {
   streamPlayer: any;
   imageLoaded: boolean = false;
   embedLoaded: boolean = false;
+  // TODO: set proper type
+  postReactionCounts: PostReactionCountsResponse = {
+    Counts: [],
+    Total: 0,
+  };
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -393,6 +399,11 @@ export class FeedPostComponent implements OnInit {
     this.isFollowing = this.followService._isLoggedInUserFollowing(
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
+    this.backendApi
+      .GetPostAssociationsCounts(this.globalVars.localNode, this.post.PostHashHex, AssociationType.reaction)
+      .subscribe((c: PostReactionCountsResponse) => {
+        this.postReactionCounts = c;
+      });
   }
 
   imageLoadedEvent() {
@@ -504,44 +515,6 @@ export class FeedPostComponent implements OnInit {
         imageURL,
       },
     });
-  }
-
-  openInteractionPage(event, pageName: string, component): void {
-    event.stopPropagation();
-    if (this.globalVars.isMobile()) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
-        queryParamsHandling: "merge",
-      });
-    } else {
-      this.modalService.show(component, {
-        class: "modal-dialog-centered",
-        initialState: { postHashHex: this.post.PostHashHex },
-      });
-    }
-  }
-
-  openDiamondsPage(event): void {
-    if (this.postContent.DiamondCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS, DiamondsModalComponent);
-    }
-  }
-
-  openLikesPage(event): void {
-    if (this.postContent.LikeCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
-    }
-  }
-
-  openRepostsPage(event): void {
-    if (this.postContent.RecloutCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS, RepostsModalComponent);
-    }
-  }
-
-  openQuoteRepostsModal(event): void {
-    if (this.postContent.QuoteRepostCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS, QuoteRepostsModalComponent);
-    }
   }
 
   getHotnessScore() {

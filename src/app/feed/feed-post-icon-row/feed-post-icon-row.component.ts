@@ -2,7 +2,7 @@ import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { includes, isNil, round, set } from "lodash";
+import { debounce, includes, isNil, round, uniq, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { TrackingService } from "src/app/tracking.service";
@@ -12,11 +12,18 @@ import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
+import {
+  AssociationReactionDetails,
+  AssociationReactionValue,
+  AssociationType,
+  PostReactionCountsResponse,
+} from "../feedTypes";
+import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
 
 @Component({
   selector: "feed-post-icon-row",
   templateUrl: "./feed-post-icon-row.component.html",
-  styleUrls: ["./feed-post-icon-row.component.sass"],
+  styleUrls: ["./feed-post-icon-row.component.scss"],
 })
 export class FeedPostIconRowComponent {
   @ViewChild("diamondPopover", { static: false }) diamondPopover: PopoverDirective;
@@ -29,6 +36,7 @@ export class FeedPostIconRowComponent {
   @Input() hideNumbers: boolean = false;
   // Will need additional inputs if we walk through actions other than diamonds.
   @Input() inTutorial: boolean = false;
+  @Input() postReactionCounts: PostReactionCountsResponse;
 
   @Output() diamondSent = new EventEmitter();
 
@@ -74,6 +82,15 @@ export class FeedPostIconRowComponent {
   // Track when the drag began, if less than .1 seconds ago, and the drag didn't move, assume it was a click
   diamondDragStarted: Date;
 
+  choosingReaction = false;
+  debouncedToggleSelectReactionFunction: (show: boolean) => void;
+  allowedReactions = Object.values(AssociationReactionDetails);
+  reactionsVisible = Array<boolean>(this.allowedReactions.length).fill(false);
+  reactionTimeouts: NodeJS.Timer[] = [];
+  uniqReactions = uniq(["ANGRY", "LOVE", "LAUGH", "LAUGH"]).map((e) => AssociationReactionDetails[e].imageUrl);
+  private readonly reactionAnimationDelay = 50;
+  private readonly toggleReactionsDebounceTime = 50;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -84,7 +101,12 @@ export class FeedPostIconRowComponent {
     private modalService: BsModalService,
     private translocoService: TranslocoService,
     private tracking: TrackingService
-  ) {}
+  ) {
+    this.debouncedToggleSelectReactionFunction = debounce(
+      this.toggleSelectReaction.bind(this),
+      this.toggleReactionsDebounceTime
+    );
+  }
 
   diamondDraggedText() {
     const textKey = !this.diamondDragMoved
@@ -93,6 +115,26 @@ export class FeedPostIconRowComponent {
       ? "feed_post_icon_row.release_to_cancel"
       : "feed_post_icon_row.slide_to_cancel";
     return this.translocoService.translate(textKey);
+  }
+
+  toggleSelectReaction(show: boolean) {
+    if (!this.choosingReaction && show) {
+      for (let idx = 0; idx < this.allowedReactions.length; idx++) {
+        this.reactionTimeouts[idx] = setTimeout(() => {
+          this.reactionsVisible[idx] = true;
+          this.ref.detectChanges();
+        }, idx * this.reactionAnimationDelay);
+      }
+    } else if (this.choosingReaction && !show) {
+      for (let idx = 0; idx < this.allowedReactions.length; idx++) {
+        clearTimeout(this.reactionTimeouts[idx]);
+        this.reactionsVisible[idx] = false;
+      }
+      this.ref.detectChanges();
+    }
+
+    this.choosingReaction = show;
+    this.ref.detectChanges();
   }
 
   // Initiate mobile drag, have diamonds appear
@@ -669,5 +711,33 @@ export class FeedPostIconRowComponent {
   handleRepostClick(event) {
     event.stopPropagation();
     this.ref.detectChanges();
+  }
+
+  openReactionsDetails(event) {
+    event.stopPropagation();
+
+    this.openInteractionPage(event, this.globalVars.RouteNames.REACTIONS, ReactionsModalComponent);
+  }
+
+  private openInteractionPage(event, pageName: string, component): void {
+    event.stopPropagation();
+    if (this.globalVars.isMobile()) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.post.PostHashHex, pageName], {
+        queryParamsHandling: "merge",
+      });
+    } else {
+      this.modalService.show(component, {
+        class: "modal-dialog-centered",
+        initialState: { postHashHex: this.post.PostHashHex },
+      });
+    }
+  }
+
+  sendReaction(event: Event, value: AssociationReactionValue) {
+    event.stopPropagation();
+
+    this.backendApi
+      .CreateUserAssociation(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .subscribe(() => {});
   }
 }

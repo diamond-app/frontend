@@ -6,10 +6,10 @@ import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 
 @Component({
-  selector: "likes-details",
-  templateUrl: "./likes-details.component.html",
+  selector: "reactions-details",
+  templateUrl: "./reactions-details.component.html",
 })
-export class LikesDetailsComponent implements OnInit {
+export class ReactionsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
   diamonds = [];
   loading = false;

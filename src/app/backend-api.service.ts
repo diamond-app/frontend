@@ -10,6 +10,7 @@ import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { IdentityService } from "./identity.service";
+import { AssociationReactionDetails, AssociationReactionValue, AssociationType } from "./feed/feedTypes";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -157,6 +158,12 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
+
+  // Associations
+  static RoutePathCreateUserAssociation = "/api/v0/user-associations/create";
+  static RoutePathCreatePostAssociation = "/api/v0/post-associations/create";
+  static RoutePathGetPostAssociations = "/api/v0/post-associations/query";
+  static RoutePathGetPostAssociationCounts = "/api/v0/post-associations/counts";
 }
 
 export class Transaction {
@@ -470,6 +477,7 @@ export class BackendApiService {
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
   static SELL_CREATOR_COIN_OPERATION_TYPE = "sell";
+  static DIAMOND_APP_PUBLIC_KEY = "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL";
 
   // TODO: Cleanup - this should be a configurable value on the node. Leaving it in the frontend
   // is fine for now because BlockCypher has strong anti-abuse measures in place.
@@ -694,8 +702,8 @@ export class BackendApiService {
     Broadcast: boolean
   ): Observable<any> {
     // Check if the user is logged in with a derived key and operating as the owner key.
-    const DerivedPublicKeyBase58Check = this.identityService.identityServiceUsers[PublicKeyBase58Check]
-      ?.derivedPublicKeyBase58Check;
+    const DerivedPublicKeyBase58Check =
+      this.identityService.identityServiceUsers[PublicKeyBase58Check]?.derivedPublicKeyBase58Check;
 
     let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
@@ -830,8 +838,7 @@ export class BackendApiService {
           const launchDefaultMessagingKey$ = () =>
             from(
               SwalHelper.fire({
-                html:
-                  "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+                html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
                 showCancelButton: false,
               })
             ).pipe(
@@ -1501,6 +1508,7 @@ export class BackendApiService {
       responseType: "blob",
     });
   }
+
   GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
     return this._makeRequestURL(
       endpoint,
@@ -1511,6 +1519,7 @@ export class BackendApiService {
         (fallback ?? this.GetDefaultProfilePictureURL(endpoint))
     );
   }
+
   GetDefaultProfilePictureURL(endpoint: string): string {
     return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
   }
@@ -1573,6 +1582,7 @@ export class BackendApiService {
       FetchAll,
     });
   }
+
   UpdateProfile(
     verificationNodeEndpoint: string,
     localNodeEndpoint: string,
@@ -1707,8 +1717,7 @@ export class BackendApiService {
     const launchDefaultMessagingKey$ = () =>
       from(
         SwalHelper.fire({
-          html:
-            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+          html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
           showCancelButton: false,
         })
       ).pipe(
@@ -1859,6 +1868,63 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
   }
 
+  CreateUserAssociation(localNode: string, TransactorPublicKeyBase58Check: string): Observable<any> {
+    const endpoint = "http://localhost:18001";
+
+    const request = this.post(localNode, BackendRoutes.RoutePathCreateUserAssociation, {
+      TransactorPublicKeyBase58Check: TransactorPublicKeyBase58Check,
+      TargetUserPublicKeyBase58Check: TransactorPublicKeyBase58Check,
+      AppPublicKeyBase58Check: "",
+      AssociationType: "ENDORSEMENT",
+      AssociationValue: "SQL",
+      ExtraData: {},
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, "BC1YLhzNgVov49AZRrkE2SSL8o9K53fSu96zDnpeqAxyH9PbAta7fix");
+  }
+
+  CreatePostAssociation(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    PostHashHex: string,
+    type: AssociationType,
+    value: AssociationReactionValue
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreatePostAssociation, {
+      TransactorPublicKeyBase58Check,
+      PostHashHex,
+      AppPublicKeyBase58Check: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+      AssociationType: type,
+      AssociationValue: value,
+      ExtraData: {},
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
+  }
+
+  GetPostAssociations(endpoint: string, PostHashHex: string, AssociationTypePrefix: AssociationType) {
+    return this.post(endpoint, BackendRoutes.RoutePathGetPostAssociations, {
+      PostHashHex,
+      AssociationTypePrefix,
+      AppPublicKey: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+    });
+  }
+
+  GetPostAssociationsCounts(endpoint: string, PostHashHex: string, AssociationType: AssociationType) {
+    const availableReactionTypes = Object.values(AssociationReactionDetails).map((e) => e.value);
+
+    return this.post(endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
+      PostHashHex,
+      AssociationType,
+      AppPublicKey: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+      AssociationValues: availableReactionTypes,
+    });
+  }
+
   SendDiamonds(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -1953,7 +2019,6 @@ export class BackendApiService {
 
   BuyOrSellCreatorCoin(
     endpoint: string,
-
     // The public key of the user who is making the buy/sell.
     UpdaterPublicKeyBase58Check: string,
     // The public key of the profile that the purchaser is trying
@@ -1977,7 +2042,6 @@ export class BackendApiService {
     // them to zero turns off the check. Give it your best shot, Ivan.
     MinDeSoExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
-
     MinFeeRateNanosPerKB: number,
     Broadcast: boolean,
     InTutorial: boolean = false
@@ -2128,7 +2192,6 @@ export class BackendApiService {
 
   GetUserGlobalMetadata(
     endpoint: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2248,7 +2311,6 @@ export class BackendApiService {
   AdminGetUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user for whom we'd like to get global metadata
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2261,7 +2323,6 @@ export class BackendApiService {
   AdminUpdateUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string,
     Username: string,

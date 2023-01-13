@@ -10,9 +10,13 @@
     </span>
   </div>
   <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
-    <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openLikesPage($event)" class="interaction-detail">
-      {{ globalVars.abbreviateNumber(post.LikeCount, 0) }}
-      {{ "feed_post.like" | transloco }}{{ post.LikeCount === 1 ? "" : "s" }}
+    <span
+      [ngClass]="{ 'mb-5px': globalVars.isMobile() }"
+      (click)="openReactionsPage($event)"
+      class="interaction-detail"
+    >
+      {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }}
+      {{ "feed_post.reaction" | transloco }}{{ postReactionCounts.Total === 1 ? "" : "s" }}
     </span>
     <span (click)="openDiamondsPage($event)" class="interaction-detail">
       {{ globalVars.abbreviateNumber(post.DiamondCount, 0) }}

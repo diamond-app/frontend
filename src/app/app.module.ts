@@ -102,9 +102,9 @@ import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.compon
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
@@ -214,8 +214,8 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
-import { WelcomeModalComponent } from './welcome-modal/welcome-modal.component';
-import { LoggedOutEmptyStateComponent } from './logged-out-empty-state/logged-out-empty-state.component';
+import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -335,9 +335,9 @@ export function playerFactory() {
     QuoteRepostsDetailsComponent,
     QuoteRepostsModalComponent,
     QuoteRepostsPageComponent,
-    LikesDetailsComponent,
-    LikesPageComponent,
-    LikesModalComponent,
+    ReactionsDetailsComponent,
+    ReactionsPageComponent,
+    ReactionsModalComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
