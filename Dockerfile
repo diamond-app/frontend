@@ -27,6 +27,7 @@ RUN npm run ngcc
 COPY ./angular.json .
 COPY ./tsconfig.json .
 COPY ./src ./src
+COPY ./nginx.conf .
 
 # use --build-arg index=index.custom.html to specify a custom index.html file
 ARG index=index.html
