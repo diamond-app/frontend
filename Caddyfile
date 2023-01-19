@@ -62,6 +62,7 @@ header @html Content-Security-Policy "
     https://*.hotjar.com
     https://*.hotjar.io
     wss://*.hotjar.com
+    https://dev.diamondapp.com
     https://diamondapp.com;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
