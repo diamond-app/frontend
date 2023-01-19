@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   uploadImageHostname: "node.deso.org",
-  verificationEndpointHostname: "https://node.deso.org",
+  verificationEndpointHostname: "https://rt.deso.run",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.bitclout.com",
   supportEmail: "node.admin@bitclout.com",
