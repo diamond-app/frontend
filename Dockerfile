@@ -42,19 +42,30 @@ COPY ./src/environments/environment.$environment.ts ./src/environments/environme
 
 RUN npm run build_prod
 
-# build minified version of frontend, served using caddy
-FROM caddy:2.3.0-alpine
+# build minified version of frontend, served via nginx
+FROM nginx:1.17
 
-WORKDIR /frontend
+COPY --from=frontend frontend/build/ /usr/share/nginx/html
+COPY --from=frontend frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY ./Caddyfile .
-COPY --from=frontend /frontend/dist .
+# Expose port
+EXPOSE 80
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
 
-# We use a run.sh script so that we can pass environment variables
-# to it.
-COPY ./run.sh .
-
-# Default options overrideable by docker-compose
-ENV CADDY_FILE "/frontend/Caddyfile"
-
-ENTRYPOINT ["/frontend/run.sh"]
+## build minified version of frontend, served using caddy
+#FROM caddy:2.3.0-alpine
+#
+#WORKDIR /frontend
+#
+#COPY ./Caddyfile .
+#COPY --from=frontend /frontend/dist .
+#
+## We use a run.sh script so that we can pass environment variables
+## to it.
+#COPY ./run.sh .
+#
+## Default options overrideable by docker-compose
+#ENV CADDY_FILE "/frontend/Caddyfile"
+#
+#ENTRYPOINT ["/frontend/run.sh"]
