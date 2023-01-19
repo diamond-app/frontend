@@ -45,7 +45,7 @@ RUN npm run build_prod
 # build minified version of frontend, served via nginx
 FROM nginx:1.17
 
-COPY --from=frontend frontend/build/ /usr/share/nginx/html
+COPY --from=frontend --from=frontend /frontend/dist/ /usr/share/nginx/html
 COPY --from=frontend frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
