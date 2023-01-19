@@ -8,7 +8,7 @@ export const environment = {
   verificationEndpointHostname: "https://rt.deso.run",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
-  apiInternalHostname: "https://diamondapp.com",
+  apiInternalHostname: "https://dev.diamondapp.com/",
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
