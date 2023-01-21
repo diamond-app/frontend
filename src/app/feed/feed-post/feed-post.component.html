@@ -361,6 +361,8 @@
                     [innerHTML]="
                       !!postContent.PostExtraData?.BlogDeltaRtfFormat
                         ? postContent.PostExtraData?.Description
+                        : postFromOtherSocialMedia()
+                        ? postContentBodyFn()
                         : (postContentBodyFn() | sanitizeAndAutoLink)
                     "
                     queryParamsHandling="merge"
