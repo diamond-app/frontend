@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  uploadImageHostname: "node.deso.org",
+  uploadImageHostname: "rt.deso.run",
   verificationEndpointHostname: "https://rt.deso.run",
   apiInternalHostname: "https://dev.diamondapp.com",
-  uploadVideoHostname: "node.deso.org",
+  uploadVideoHostname: "rt.deso.run",
   identityURL: "https://identity.deso.run",
   supportEmail: "help@diamondapp.com",
   dd: {
