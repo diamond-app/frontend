@@ -301,83 +301,122 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
     this._setProfileUpdates();
 
-    this.apiInternal
-      .getAppUser(this.loggedInUser.PublicKeyBase58Check)
-      .pipe(
-        catchError((err) => {
-          if (err.status === 404) {
-            return of(null);
+    this._callBackendUpdateProfile().subscribe(
+      ([updateProfileResponse]) => {
+        this.globalVars.profileUpdateTimestamp = Date.now();
+        this.tracking.log("profile : update");
+        // TODO: create or update app user record here
+        // This updates things like the username that shows up in the dropdown.
+        this.globalVars.updateEverything(
+          updateProfileResponse.TxnHashHex,
+          this._updateProfileSuccess,
+          this._updateProfileFailure,
+          this
+        );
+      },
+      (err) => {
+        const parsedError = this.backendApi.parseProfileError(err);
+        const lowBalance = parsedError.indexOf("insufficient");
+        this.tracking.log("profile : update", { error: parsedError, lowBalance });
+        this.updateProfileBeingCalled = false;
+        SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          icon: "error",
+          title: `An Error Occurred`,
+          html: parsedError,
+          showConfirmButton: !this.inTutorial,
+          focusConfirm: true,
+          customClass: {
+            confirmButton: "btn btn-light",
+            cancelButton: "btn btn-light no",
+          },
+          confirmButtonText: lowBalance ? "Buy $DESO" : null,
+          cancelButtonText: lowBalance ? "Later" : null,
+          showCancelButton: !!lowBalance,
+        }).then((res) => {
+          if (lowBalance && res.isConfirmed) {
+            this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
           }
-          throw err;
-        }),
-        switchMap((appUser: AppUser) => {
-          let createOrUdpateAppUserObs: Observable<any>;
-
-          // if the app user exists and the username has not changed, we don't need to update anything
-          if (appUser && appUser.Username !== this.usernameInput) {
-            createOrUdpateAppUserObs = this.apiInternal.updateAppUser({
-              ...appUser,
-              Username: this.usernameInput,
-            });
-            // if the app user is null, it means we need to create a new one
-          } else if (appUser === null) {
-            const userNotifPreferences = this.subscribeToEmailNotifs
-              ? SUBSCRIBED_APP_USER_DEFAULTS
-              : NEW_APP_USER_DEFAULTS;
-            const utcOffset = getUTCOffset();
-            createOrUdpateAppUserObs = this.apiInternal.createAppUser(
-              this.loggedInUser.PublicKeyBase58Check,
-              this.usernameInput,
-              this.globalVars.lastSeenNotificationIdx,
-              utcOffset,
-              localHourToUtcHour(20),
-              userNotifPreferences
-            );
-          }
-
-          // run api calls to the internal api and the node backend api in parallel
-          return forkJoin([this._callBackendUpdateProfile(), createOrUdpateAppUserObs ?? of(null)]);
-        })
-      )
-      .subscribe(
-        ([updateProfileResponse]) => {
-          this.globalVars.profileUpdateTimestamp = Date.now();
-          this.tracking.log("profile : update");
-          // TODO: create or update app user record here
-          // This updates things like the username that shows up in the dropdown.
-          this.globalVars.updateEverything(
-            updateProfileResponse.TxnHashHex,
-            this._updateProfileSuccess,
-            this._updateProfileFailure,
-            this
-          );
-        },
-        (err) => {
-          const parsedError = this.backendApi.parseProfileError(err);
-          const lowBalance = parsedError.indexOf("insufficient");
-          this.tracking.log("profile : update", { error: parsedError, lowBalance });
-          this.updateProfileBeingCalled = false;
-          SwalHelper.fire({
-            target: this.globalVars.getTargetComponentSelector(),
-            icon: "error",
-            title: `An Error Occurred`,
-            html: parsedError,
-            showConfirmButton: !this.inTutorial,
-            focusConfirm: true,
-            customClass: {
-              confirmButton: "btn btn-light",
-              cancelButton: "btn btn-light no",
-            },
-            confirmButtonText: lowBalance ? "Buy $DESO" : null,
-            cancelButtonText: lowBalance ? "Later" : null,
-            showCancelButton: !!lowBalance,
-          }).then((res) => {
-            if (lowBalance && res.isConfirmed) {
-              this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
-            }
-          });
-        }
-      );
+        });
+      }
+    );
+    // this.apiInternal
+    //   .getAppUser(this.loggedInUser.PublicKeyBase58Check)
+    //   .pipe(
+    //     catchError((err) => {
+    //       if (err.status === 404) {
+    //         return of(null);
+    //       }
+    //       throw err;
+    //     }),
+    //     switchMap((appUser: AppUser) => {
+    //       let createOrUdpateAppUserObs: Observable<any>;
+    //
+    //       // if the app user exists and the username has not changed, we don't need to update anything
+    //       if (appUser && appUser.Username !== this.usernameInput) {
+    //         createOrUdpateAppUserObs = this.apiInternal.updateAppUser({
+    //           ...appUser,
+    //           Username: this.usernameInput,
+    //         });
+    //         // if the app user is null, it means we need to create a new one
+    //       } else if (appUser === null) {
+    //         const userNotifPreferences = this.subscribeToEmailNotifs
+    //           ? SUBSCRIBED_APP_USER_DEFAULTS
+    //           : NEW_APP_USER_DEFAULTS;
+    //         const utcOffset = getUTCOffset();
+    //         createOrUdpateAppUserObs = this.apiInternal.createAppUser(
+    //           this.loggedInUser.PublicKeyBase58Check,
+    //           this.usernameInput,
+    //           this.globalVars.lastSeenNotificationIdx,
+    //           utcOffset,
+    //           localHourToUtcHour(20),
+    //           userNotifPreferences
+    //         );
+    //       }
+    //
+    //       // run api calls to the internal api and the node backend api in parallel
+    //       return forkJoin([this._callBackendUpdateProfile(), createOrUdpateAppUserObs ?? of(null)]);
+    //     })
+    //   )
+    //   .subscribe(
+    //     ([updateProfileResponse]) => {
+    //       this.globalVars.profileUpdateTimestamp = Date.now();
+    //       this.tracking.log("profile : update");
+    //       // TODO: create or update app user record here
+    //       // This updates things like the username that shows up in the dropdown.
+    //       this.globalVars.updateEverything(
+    //         updateProfileResponse.TxnHashHex,
+    //         this._updateProfileSuccess,
+    //         this._updateProfileFailure,
+    //         this
+    //       );
+    //     },
+    //     (err) => {
+    //       const parsedError = this.backendApi.parseProfileError(err);
+    //       const lowBalance = parsedError.indexOf("insufficient");
+    //       this.tracking.log("profile : update", { error: parsedError, lowBalance });
+    //       this.updateProfileBeingCalled = false;
+    //       SwalHelper.fire({
+    //         target: this.globalVars.getTargetComponentSelector(),
+    //         icon: "error",
+    //         title: `An Error Occurred`,
+    //         html: parsedError,
+    //         showConfirmButton: !this.inTutorial,
+    //         focusConfirm: true,
+    //         customClass: {
+    //           confirmButton: "btn btn-light",
+    //           cancelButton: "btn btn-light no",
+    //         },
+    //         confirmButtonText: lowBalance ? "Buy $DESO" : null,
+    //         cancelButtonText: lowBalance ? "Later" : null,
+    //         showCancelButton: !!lowBalance,
+    //       }).then((res) => {
+    //         if (lowBalance && res.isConfirmed) {
+    //           this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+    //         }
+    //       });
+    //     }
+    //   );
   }
 
   _updateProfileSuccess(comp: UpdateProfileComponent) {

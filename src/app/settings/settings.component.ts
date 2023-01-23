@@ -166,7 +166,8 @@ export class SettingsComponent implements OnInit {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
     this.globalVars.updateEverything().add(() => {
-      this.initializeAppUser(0, 5);
+      console.log("skipping initializing app user");
+      // this.initializeAppUser(0, 5);
     });
   }
 
