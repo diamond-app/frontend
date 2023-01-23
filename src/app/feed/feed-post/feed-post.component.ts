@@ -325,6 +325,15 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
+  // Detects whether this post was created on another social media site.
+  // If so, don't display any tags/hashtags, etc.
+  postFromOtherSocialMedia(): boolean {
+    let postBody = this.postContent.Body;
+    const lines = postBody.split("\n");
+    const attributionSearchText = "Posted via @setu_deso";
+    return lines[lines.length - 1].startsWith(attributionSearchText);
+  }
+
   postContentBodyFn() {
     let postBody = this.postContent.Body;
 
