@@ -1262,7 +1262,8 @@ export class GlobalVarsService {
     this.initializeLocalStorageGlobalVars();
     this.getReferralUSDCents();
 
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
+    let identityServiceURL =
+      environment.identityURL || this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
       identityServiceURL = "https://identity.deso.org";
       this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
