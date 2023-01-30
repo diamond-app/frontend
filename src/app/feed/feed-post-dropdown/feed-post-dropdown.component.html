@@ -66,7 +66,6 @@
       <a
         *ngIf="
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
-          !post.IsNFT &&
           (post.Body !== '' || post.ImageURLs?.length || post.VideoURLs?.length || post.PostExtraData?.EmbedVideoURL)
         "
         class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
