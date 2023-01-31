@@ -1,5 +1,6 @@
 // @ts-strict
 import { Location } from "@angular/common";
+import { Meta } from "@angular/platform-browser";
 import { AfterViewInit, Component, EventEmitter, Input, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -85,6 +86,7 @@ export class PostThreadComponent implements AfterViewInit {
     private toastr: ToastrService,
     private titleService: Title,
     private location: Location,
+    private meta: Meta,
     private transloco: TranslocoService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
@@ -266,6 +268,11 @@ export class PostThreadComponent implements AfterViewInit {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
+        this.meta.updateTag({ property: "og:title", content: res.PostFound.Body });
+        if (res.PostFound.ImageURLs.length > 0) {
+          this.meta.updateTag({ property: "og:image", content: res.PostFound.ImageURLs[0] });
+        }
+
         if (
           res.PostFound.IsNFT &&
           (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
