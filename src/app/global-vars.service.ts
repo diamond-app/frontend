@@ -1241,7 +1241,8 @@ export class GlobalVarsService {
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
       if (environment.production) {
-        this.localNode = hostname;
+        // this.localNode = hostname;
+        this.localNode = "https://node.deso.org";
       } else {
         this.localNode = `${hostname}:18001`;
       }
