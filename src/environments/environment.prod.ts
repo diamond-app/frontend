@@ -16,6 +16,12 @@ export const environment = {
     key: "",
     domain: "",
   },
+  heap: {
+    appId: "1382101420",
+  },
+  hotjar: {
+    hjid: "",
+  },
   node: {
     id: 1,
     name: "DeSo",

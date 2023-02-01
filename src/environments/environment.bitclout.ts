@@ -15,6 +15,12 @@ export const environment = {
     key: "23345b239094949bc7f3402cebe9e5d2",
     domain: "amp.bitclout.com",
   },
+  heap: {
+    appId: "1382101420",
+  },
+  hotjar: {
+    hjid: "",
+  },
   node: {
     id: 2,
     name: "BitClout",
