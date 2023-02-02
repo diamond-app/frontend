@@ -135,7 +135,13 @@
               'fc-red': myReactions.length > 0
             }"
             class="position-relative cursor-pointer d-flex align-items-center"
+            (mouseover)="debouncedToggleSelectReactionFunction(true)"
+            (mouseleave)="debouncedToggleSelectReactionFunction(false)"
           >
+            <div *ngIf="choosingReaction">
+              <ng-container *ngTemplateOutlet="reactionsPopTemplate"></ng-container>
+            </div>
+
             <i-feather
               [ngClass]="{
                 is_animating: processedReaction,

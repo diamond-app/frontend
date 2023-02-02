@@ -407,11 +407,7 @@ export class FeedPostComponent implements OnInit {
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
 
-    this.getUserReactions().subscribe(([counts, reactions]) => {
-      this.postReactionCounts = counts;
-      this.myReactions = reactions.Associations;
-      this.ref.detectChanges();
-    });
+    this.getUserReactions();
   }
 
   imageLoadedEvent() {
@@ -1038,6 +1034,20 @@ export class FeedPostComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         Object.values(AssociationReactionValue)
       ),
-    ]);
+    ]).subscribe(([counts, reactions]) => {
+      this.postReactionCounts = counts;
+      this.myReactions = reactions.Associations;
+      this.ref.detectChanges();
+    });
+  }
+
+  updateReactionCounts(counts: PostAssociationCountsResponse) {
+    this.postReactionCounts = counts;
+    this.ref.detectChanges();
+  }
+
+  updateMyReactions(reactions: Array<PostAssociation>) {
+    this.myReactions = reactions;
+    this.ref.detectChanges();
   }
 }

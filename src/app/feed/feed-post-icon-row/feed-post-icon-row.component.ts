@@ -43,6 +43,8 @@ export class FeedPostIconRowComponent {
 
   @Output() diamondSent = new EventEmitter();
   @Output() userReacted = new EventEmitter();
+  @Output() updateReactionCounts = new EventEmitter<PostAssociationCountsResponse>();
+  @Output() updateMyReactions = new EventEmitter<Array<PostAssociation>>();
 
   sendingRepostRequest = false;
 
@@ -686,6 +688,32 @@ export class FeedPostIconRowComponent {
     event && event.stopPropagation();
 
     const existingReaction = this.hasUserReacted(value);
+
+    // Update reactions locally
+    this.updateReactionCounts.emit({
+      Total: existingReaction ? this.postReactionCounts.Total - 1 : this.postReactionCounts.Total + 1,
+      Counts: {
+        ...this.postReactionCounts.Counts,
+        [value]: existingReaction
+          ? this.postReactionCounts.Counts[value] - 1
+          : this.postReactionCounts.Counts[value] + 1,
+      },
+    });
+
+    this.updateMyReactions.emit(
+      existingReaction
+        ? this.myReactions.filter((e) => e.AssociationValue !== value)
+        : [
+            ...this.myReactions,
+            { AssociationType: AssociationType.reaction, AssociationValue: value } as PostAssociation,
+          ]
+    );
+
+    setTimeout(() => {
+      this.processedReaction = null;
+      this.ref.detectChanges();
+    }, 1000);
+
     const $request = existingReaction
       ? this.backendApi.DeletePostAssociation(
           this.globalVars.localNode,
@@ -700,10 +728,20 @@ export class FeedPostIconRowComponent {
           value
         );
 
-    $request.subscribe(() => {
-      this.userReacted.emit();
-      this.processedReaction = null;
-    });
+    $request.subscribe(
+      () => {
+        this.userReacted.emit();
+        this.processedReaction = null;
+      },
+      (err) => {
+        console.error(err);
+        this.sendingRepostRequest = false;
+        const parsedError = this.backendApi.parsePostError(err);
+        this.tracking.log("post : repost", { error: err });
+        this.globalVars._alertError(parsedError);
+        this.ref.detectChanges();
+      }
+    );
   }
 
   hasUserReacted(value: AssociationReactionValue) {

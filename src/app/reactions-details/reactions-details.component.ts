@@ -12,7 +12,7 @@ import {
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { difference, keyBy, orderBy, uniq } from "lodash";
-import { finalize, map, tap } from "rxjs/operators";
+import { finalize, map, mergeMap } from "rxjs/operators";
 import { of } from "rxjs";
 
 @Component({
@@ -85,20 +85,24 @@ export class ReactionsDetailsComponent implements OnInit {
         this.postReactionCounts.Counts[this.activeReactionTab]
       )
       .pipe(
-        map((Associations) => {
-          return this.fetchReactedUsers(Associations).subscribe((usersByKey) => {
-            this.userKeysReacted = orderBy(
-              Associations.map((e) => e.TransactorPublicKeyBase58Check),
-              (key) => usersByKey[key].BalanceNanos,
-              ["desc"]
-            );
-
-            this.infiniteScroller = new InfiniteScroller(this.pageSize, this.getPage.bind(this), false);
-            this.datasource = this.infiniteScroller.getDatasource();
-          });
+        mergeMap((Associations) => {
+          return this.fetchReactedUsers(Associations).pipe(
+            map((usersByKey) => {
+              return orderBy(
+                Associations.map((e) => e.TransactorPublicKeyBase58Check),
+                (key) => usersByKey[key].BalanceNanos,
+                ["desc"]
+              );
+            })
+          );
         }),
         finalize(() => (this.loading = false))
-      );
+      )
+      .subscribe((users: any) => {
+        this.userKeysReacted = users;
+        this.infiniteScroller = new InfiniteScroller(this.pageSize, this.getPage.bind(this), false);
+        this.datasource = this.infiniteScroller.getDatasource();
+      });
   }
 
   private fetchReactedUsers(reactions: Array<PostAssociation>) {

@@ -511,6 +511,8 @@
                     [myReactions]="myReactions"
                     (diamondSent)="diamondSent.emit()"
                     (userReacted)="getUserReactions()"
+                    (updateReactionCounts)="updateReactionCounts($event)"
+                    (updateMyReactions)="updateMyReactions($event)"
                   ></feed-post-icon-row>
 
                   <!-- Admin Buttons -->
@@ -600,6 +602,8 @@
           [hideSummary]="true"
           (diamondSent)="diamondSent.emit()"
           (userReacted)="getUserReactions()"
+          (updateReactionCounts)="updateReactionCounts($event)"
+          (updateMyReactions)="updateMyReactions($event)"
         ></feed-post-icon-row>
       </ng-container>
     </div>
