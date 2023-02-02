@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from "@angular/core";
 import { TrackingService } from "src/app/tracking.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -16,6 +16,9 @@ export class TabSelectorComponent {
   @Input() buttonSelector: boolean = true;
   @Input() deadTabs: Set<string> = new Set(); // A set of tabs that can't be clicked.
   @Input() onTabClick?: (tab: string) => void = () => {};
+  @Input() highlightTab?: boolean = false;
+
+  @ContentChild("tabItem", { static: false }) tabItemRef: TemplateRef<any>;
 
   constructor(public globalVars: GlobalVarsService, private tracking: TrackingService) {}
 

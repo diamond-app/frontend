@@ -1,11 +1,17 @@
-<div *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0" class="row no-gutters pt-10px creator-profile-details__no-results">
+<div
+  *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0"
+  class="row no-gutters pt-10px creator-profile-details__no-results"
+>
   <div class="d-flex justify-content-center w-100">
     <div class="circle-div">
       <i-feather name="bitclout-circle" class="feather-xlarge"></i-feather>
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span>{{ 'creator_profile_holders.noone_owns_0' | transloco }} ${{ profile.Username }} {{ 'creator_profile_holders.noone_owns_1' | transloco }}</span>
+    <span>
+      {{ "creator_profile_holders.noone_owns_0" | transloco }} ${{ profile.Username }}
+      {{ "creator_profile_holders.noone_owns_1" | transloco }}
+    </span>
   </div>
 </div>
 <simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
@@ -18,20 +24,26 @@
   }"
 >
   <div class="font-weight-bold fs-15px pl-0px">
-    {{ 'creator_profile_holders.holders_of_0' | transloco }} ${{ profile.Username }} {{ 'creator_profile_holders.holders_of_1' | transloco }}
+    {{ "creator_profile_holders.holders_of_0" | transloco }} ${{ profile.Username }}
+    {{ "creator_profile_holders.holders_of_1" | transloco }}
   </div>
 </div>
 
-<div [ngStyle]=" { height: datasource.adapter.itemsCount > 0 ? 'auto' : '0px' }">
+<div [ngStyle]="{ height: datasource.adapter.itemsCount > 0 ? 'auto' : '0px' }">
   <div class="fs-15px flex-grow-1 px-0px">
-    <div *ngIf="datasource.adapter.itemsCount > 0" class="row no-gutters border-bottom border-color-grey fc-muted creator-profile-hodlers__row">
-      <div class="col-6 d-flex mb-0" [ngClass]="{ 'col-8': globalVars.isMobile() }">{{ 'creator_profile_holders.username' | transloco }}</div>
+    <div
+      *ngIf="datasource.adapter.itemsCount > 0"
+      class="row no-gutters border-bottom border-color-grey fc-muted creator-profile-hodlers__row"
+    >
+      <div class="col-6 d-flex mb-0" [ngClass]="{ 'col-8': globalVars.isMobile() }">
+        {{ "creator_profile_holders.username" | transloco }}
+      </div>
       <div
         class="col-3 mb-0"
         [ngClass]="{ 'col-4 d-flex justify-content-end': globalVars.isMobile() }"
         [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px' : 'auto' }"
       >
-        {{ 'creator_profile_holders.coins_held' | transloco }}
+        {{ "creator_profile_holders.coins_held" | transloco }}
         <i-feather
           *ngIf="globalVars.isMobile()"
           name="info"
@@ -40,10 +52,11 @@
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
           [matTooltip]="'Market value is computed as the number of coins times the current price.'"
           #tooltip="matTooltip"
-          (click)="tooltip.toggle()"></i-feather>
+          (click)="tooltip.toggle()"
+        ></i-feather>
       </div>
       <div class="col-3 mb-0" *ngIf="!globalVars.isMobile()">
-        {{ 'creator_profile_holders.market_value' | transloco }}
+        {{ "creator_profile_holders.market_value" | transloco }}
         <i-feather
           name="info"
           class="feather-small position-relative ml-8px"
@@ -51,7 +64,8 @@
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
           [matTooltip]="'This is computed as the number of coins times the current price.'"
           #tooltip="matTooltip"
-          (click)="tooltip.toggle()"></i-feather>
+          (click)="tooltip.toggle()"
+        ></i-feather>
       </div>
     </div>
     <div #uiScroll *uiScroll="let row of datasource">
@@ -60,7 +74,7 @@
           <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
             <div
               class="creator-profile-details__hodler-avatar mr-10px"
-              style="background-image: url('/assets/img/default_profile_pic.png')"
+              style="background-image: url('/diamondapp-frontend/src/assets/img/default-profile-pic.png')"
             ></div>
             <div class="d-flex flex-column">
               <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.HODLerPublicKeyBase58Check }}</span>
@@ -75,15 +89,22 @@
               >
                 <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
                   <i-feather name="repeat" class="feather-small pr-5px"></i-feather>
-                  {{ 'creator_profile_holders.received' | transloco }}
+                  {{ "creator_profile_holders.received" | transloco }}
                 </div>
                 <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
-                  <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
+                  <div
+                    *ngIf="
+                      row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check &&
+                        row.ProfileEntryResponse.IsReserved &&
+                        !row.ProfileEntryResponse.IsVerified;
+                      else purchasedCoins
+                    "
+                  >
                     <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
-                    {{ 'creator_profile_holders.reserved' | transloco }}
+                    {{ "creator_profile_holders.reserved" | transloco }}
                   </div>
                   <ng-template #purchasedCoins>
-                    {{ 'creator_profile_holders.purchased' | transloco }}
+                    {{ "creator_profile_holders.purchased" | transloco }}
                   </ng-template>
                 </div>
               </div>
@@ -111,8 +132,8 @@
                   matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                   [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
                 >
-              <i class="far fa-clock fa-md"></i>
-            </span>
+                  <i class="far fa-clock fa-md"></i>
+                </span>
                 <span
                   *ngIf="row.ProfileEntryResponse.IsVerified"
                   (click)="tooltip.toggle()"
@@ -121,8 +142,8 @@
                   [matTooltip]="'This account is verified'"
                   #tooltip="matTooltip"
                 >
-              <i-feather name="check-circle" class="feather-small"></i-feather>
-            </span>
+                  <i-feather name="check-circle" class="feather-small"></i-feather>
+                </span>
               </div>
               <div
                 class="text-grey9"
@@ -135,15 +156,22 @@
               >
                 <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
                   <i-feather name="repeat" class="feather-small pr-5px"></i-feather>
-                  {{ 'creator_profile_holders.received' | transloco }}
+                  {{ "creator_profile_holders.received" | transloco }}
                 </div>
                 <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
-                  <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
+                  <div
+                    *ngIf="
+                      row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check &&
+                        row.ProfileEntryResponse.IsReserved &&
+                        !row.ProfileEntryResponse.IsVerified;
+                      else purchasedCoins
+                    "
+                  >
                     <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
-                    {{ 'creator_profile_holders.reserved' | transloco }}
+                    {{ "creator_profile_holders.reserved" | transloco }}
                   </div>
                   <ng-template #purchasedCoins>
-                    {{ 'creator_profile_holders.purchased' | transloco }}
+                    {{ "creator_profile_holders.purchased" | transloco }}
                   </ng-template>
                 </div>
               </div>
@@ -156,10 +184,12 @@
             'col-4 justify-content-center align-items-end flex-column': globalVars.isMobile(),
             'align-items-center': !globalVars.isMobile()
           }"
-          [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px': 'auto' }"
+          [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px' : 'auto' }"
         >
           <span>{{ (row.BalanceNanos / 1e9).toFixed(4) }}</span>
-          <div class="fc-muted fs-13px" *ngIf="globalVars.isMobile()">~{{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}</div>
+          <div class="fc-muted fs-13px" *ngIf="globalVars.isMobile()">
+            ~{{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}
+          </div>
         </div>
         <div class="col-3 d-flex align-items-center mb-0" *ngIf="!globalVars.isMobile()">
           ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}
@@ -187,11 +217,11 @@
         <div class="col-3 mb-0" *ngIf="!globalVars.isMobile()">
           ≈
           {{
-          globalVars.creatorCoinNanosToUSDNaive(
-            profile.CoinEntry.CoinsInCirculationNanos,
-            profile.CoinPriceDeSoNanos,
-            true
-          )
+            globalVars.creatorCoinNanosToUSDNaive(
+              profile.CoinEntry.CoinsInCirculationNanos,
+              profile.CoinPriceDeSoNanos,
+              true
+            )
           }}
         </div>
       </div>

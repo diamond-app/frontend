@@ -1,11 +1,21 @@
 <section>
-  <div class="reactions-summary__container d-inline-flex text-secondary pt-10px" (click)="openReactionsDetails($event)">
-    <div *ngFor="let reaction of uniqReactions" class="reaction-summary__reaction-item">
-      {{ reaction }}
-    </div>
+  <div
+    *ngIf="postReactionCounts.Total > 0 && !hideSummary"
+    class="reactions-summary__container d-inline-flex text-secondary pt-10px"
+    (click)="openReactionsDetails($event)"
+  >
+    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue">
+      <div
+        *ngIf="reaction.value > 0 && allowedReactions.includes(reaction.key)"
+        class="reaction-summary__reaction-item mr-5px"
+      >
+        <reactions-image [reaction]="reaction.key" [size]="16"></reactions-image>
+      </div>
+    </ng-container>
 
-    <div href="#" class="reactions-summary__toggle-summary text-secondary ml-5px">
-      {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }} reactions
+    <div class="reactions-summary__toggle-summary text-secondary">
+      {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }}
+      {{ globalVars.pluralize(postReactionCounts.Total, "reaction") }}
     </div>
   </div>
 
@@ -91,9 +101,10 @@
     </div>
 
     <div
-      (click)="toggleLike($event)"
+      *ngIf="!globalVars.isMobile(); else reactionSwiper"
+      (click)="sendReaction(allowedReactions[0], $event)"
       [ngClass]="{
-        'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        'fc-red': myReactions.length > 0
       }"
       class="position-relative cursor-pointer d-flex align-items-center pt-5px"
       (mouseover)="debouncedToggleSelectReactionFunction(true)"
@@ -105,15 +116,54 @@
 
       <i-feather
         [ngClass]="{
-          is_animating: animateLike,
+          is_animating: processedReaction,
           'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-          'thumbs-up-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+          'thumbs-up-fill': myReactions.length > 0
         }"
         name="thumbs-up"
-        class="feed-post-icon-row__icon"
+        class="feed-post-icon-row__icon thumbs-up"
       ></i-feather>
       <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
     </div>
+
+    <ng-template #reactionSwiper>
+      <swipe-to-choose [itemCount]="allowedReactions.length" (selectItem)="sendReaction(allowedReactions[$event])">
+        <ng-template #actionBtn>
+          <div
+            (click)="sendReaction(allowedReactions[0], $event)"
+            [ngClass]="{
+              'fc-red': myReactions.length > 0
+            }"
+            class="position-relative cursor-pointer d-flex align-items-center"
+          >
+            <i-feather
+              [ngClass]="{
+                is_animating: processedReaction,
+                'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+                'thumbs-up-fill': myReactions.length > 0
+              }"
+              name="thumbs-up"
+              class="feed-post-icon-row__icon thumbs-up"
+            ></i-feather>
+            <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
+          </div>
+        </ng-template>
+
+        <ng-template #item let-index>
+          <div
+            class="reactions-list__item reactions-list__item-mobile show"
+            [ngClass]="{
+              selected: hasUserReacted(allowedReactions[index]),
+              bouncing: processedReaction === allowedReactions[index],
+              inactive: processedReaction && processedReaction !== allowedReactions[index]
+            }"
+            (click)="sendReaction(allowedReactions[index], $event)"
+          >
+            <reactions-image [reaction]="allowedReactions[index]"></reactions-image>
+          </div>
+        </ng-template>
+      </swipe-to-choose>
+    </ng-template>
 
     <ng-template #popTemplate>
       <div id="diamond-popover" class="m-10px">
@@ -128,15 +178,20 @@
     </ng-template>
 
     <ng-template #reactionsPopTemplate>
-      <div class="reactions-popover m-10px reaction-box">
+      <div class="reactions-popover reaction-box" [ngClass]="{ 'reactions-popover__mobile': globalVars.isMobile() }">
         <div class="reactions-list d-flex align-items-center">
           <div
             *ngFor="let reaction of allowedReactions; let i = index"
             class="reactions-list__item"
-            [ngClass]="{ show: reactionsVisible[i] }"
-            (click)="sendReaction($event, reaction.value)"
+            [ngClass]="{
+              show: reactionsVisible[i],
+              selected: hasUserReacted(reaction),
+              bouncing: processedReaction === reaction,
+              inactive: processedReaction && processedReaction !== reaction
+            }"
+            (click)="sendReaction(reaction, $event)"
           >
-            {{ reaction.imageUrl }}
+            <reactions-image [reaction]="reaction"></reactions-image>
           </div>
         </div>
       </div>

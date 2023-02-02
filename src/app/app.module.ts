@@ -216,6 +216,8 @@ import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.comp
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
 import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -338,6 +340,7 @@ export function playerFactory() {
     ReactionsDetailsComponent,
     ReactionsPageComponent,
     ReactionsModalComponent,
+    ReactionsImageComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
@@ -411,6 +414,7 @@ export function playerFactory() {
     TwitterSyncPageComponent,
     WelcomeModalComponent,
     LoggedOutEmptyStateComponent,
+    SwipeToChooseComponent,
   ],
   imports: [
     BrowserModule,

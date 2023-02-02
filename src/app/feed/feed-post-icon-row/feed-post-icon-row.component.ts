@@ -2,22 +2,23 @@ import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { debounce, includes, isNil, round, uniq, set } from "lodash";
+import { debounce, includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
-import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import {
-  AssociationReactionDetails,
   AssociationReactionValue,
   AssociationType,
-  PostReactionCountsResponse,
-} from "../feedTypes";
+  BackendApiService,
+  PostAssociation,
+  PostAssociationCountsResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
+import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
+import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
 
 @Component({
@@ -36,17 +37,17 @@ export class FeedPostIconRowComponent {
   @Input() hideNumbers: boolean = false;
   // Will need additional inputs if we walk through actions other than diamonds.
   @Input() inTutorial: boolean = false;
-  @Input() postReactionCounts: PostReactionCountsResponse;
+  @Input() postReactionCounts: PostAssociationCountsResponse;
+  @Input() myReactions: Array<PostAssociation> = [];
+  @Input() hideSummary: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
+  @Output() userReacted = new EventEmitter();
 
   sendingRepostRequest = false;
 
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 4;
-
-  // Boolean for animation on whether a heart is clicked or not
-  animateLike = false;
 
   diamondCount = GlobalVarsService.MAX_DIAMONDS_GIVABLE;
   // Indexes from 0 to diamondCount (used by *ngFor)
@@ -59,8 +60,6 @@ export class FeedPostIconRowComponent {
   diamondTimeouts: NodeJS.Timer[] = [];
   // How quickly the diamonds sequentially appear on hover
   diamondAnimationDelay = 50;
-  // Where the drag div should be placed for mobile dragging
-  diamondDragLeftOffset = "0px";
   // Whether the diamond drag selector is being dragged
   diamondDragging = false;
   // Which diamond is selected by the drag selector
@@ -84,10 +83,10 @@ export class FeedPostIconRowComponent {
 
   choosingReaction = false;
   debouncedToggleSelectReactionFunction: (show: boolean) => void;
-  allowedReactions = Object.values(AssociationReactionDetails);
+  allowedReactions = Object.values(AssociationReactionValue) as Array<AssociationReactionValue>;
   reactionsVisible = Array<boolean>(this.allowedReactions.length).fill(false);
   reactionTimeouts: NodeJS.Timer[] = [];
-  uniqReactions = uniq(["ANGRY", "LOVE", "LAUGH", "LAUGH"]).map((e) => AssociationReactionDetails[e].imageUrl);
+  processedReaction: AssociationReactionValue | null = null;
   private readonly reactionAnimationDelay = 50;
   private readonly toggleReactionsDebounceTime = 50;
 
@@ -338,63 +337,6 @@ export class FeedPostIconRowComponent {
       );
   }
 
-  toggleLike(event: any) {
-    this.animateLike = !this.animateLike;
-
-    if (this.inTutorial) {
-      return;
-    }
-    // Prevent the post from navigating.
-    event.stopPropagation();
-
-    // If the user isn't logged in, alert them.
-    if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("like");
-    }
-
-    // If the reader hasn't liked a post yet, they won't have a reader state.
-    if (this.postContent.PostEntryReaderState == null) {
-      this.postContent.PostEntryReaderState = { LikedByReader: false };
-    }
-
-    let isUnlike;
-    // Immediately toggle like and increment/decrement so that it feels instant.
-    if (this.postContent.PostEntryReaderState.LikedByReader) {
-      this.postContent.LikeCount--;
-      this.postContent.PostEntryReaderState.LikedByReader = false;
-      isUnlike = true;
-    } else {
-      this.postContent.LikeCount++;
-      this.postContent.PostEntryReaderState.LikedByReader = true;
-      isUnlike = false;
-    }
-    this.ref.detectChanges();
-    // Fire off the transaction.
-    this.backendApi
-      .CreateLike(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.postContent.PostHashHex,
-        isUnlike,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
-      .subscribe(
-        (res) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
-            postHashHex: this.postContent.PostHashHex,
-            authorUsername: this.postContent.ProfileEntryResponse?.Username,
-            authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
-          });
-        },
-        (err) => {
-          this.tracking.log(`post : ${isUnlike ? "unlike" : "like"}`, {
-            error: err.error?.error,
-          });
-          console.error(err);
-        }
-      );
-  }
-
   openModal(event, isQuote: boolean = false) {
     if (this.inTutorial) {
       return;
@@ -602,7 +544,7 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    // If triggered from mobile, stop propegation
+    // If triggered from mobile, stop propagation
     if (fromDragEvent) {
       event.stopPropagation();
     }
@@ -733,11 +675,38 @@ export class FeedPostIconRowComponent {
     }
   }
 
-  sendReaction(event: Event, value: AssociationReactionValue) {
-    event.stopPropagation();
+  sendReaction(value: AssociationReactionValue, event?: Event) {
+    if (this.processedReaction) {
+      return;
+    }
 
-    this.backendApi
-      .CreateUserAssociation(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe(() => {});
+    this.processedReaction = value;
+    this.ref.detectChanges();
+
+    event && event.stopPropagation();
+
+    const existingReaction = this.hasUserReacted(value);
+    const $request = existingReaction
+      ? this.backendApi.DeletePostAssociation(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          existingReaction.AssociationID
+        )
+      : this.backendApi.CreatePostAssociation(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.post.PostHashHex,
+          AssociationType.reaction,
+          value
+        );
+
+    $request.subscribe(() => {
+      this.userReacted.emit();
+      this.processedReaction = null;
+    });
+  }
+
+  hasUserReacted(value: AssociationReactionValue) {
+    return this.myReactions.find((e) => e.AssociationValue === value);
   }
 }

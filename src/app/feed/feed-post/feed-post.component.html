@@ -508,7 +508,9 @@
                     [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                     [inTutorial]="inTutorial"
                     [postReactionCounts]="postReactionCounts"
+                    [myReactions]="myReactions"
                     (diamondSent)="diamondSent.emit()"
+                    (userReacted)="getUserReactions()"
                   ></feed-post-icon-row>
 
                   <!-- Admin Buttons -->
@@ -593,7 +595,11 @@
           [hideNumbers]="true"
           [afterCommentCreatedCallback]="afterCommentCreatedCallback"
           [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+          [postReactionCounts]="postReactionCounts"
+          [myReactions]="myReactions"
+          [hideSummary]="true"
           (diamondSent)="diamondSent.emit()"
+          (userReacted)="getUserReactions()"
         ></feed-post-icon-row>
       </ng-container>
     </div>

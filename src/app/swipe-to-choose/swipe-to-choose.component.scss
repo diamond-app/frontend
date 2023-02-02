@@ -1,0 +1,15 @@
+:host {
+  display: contents;
+}
+
+.swiper {
+  &.dragging {
+    z-index: 1;
+  }
+
+  .swiper__action-btn {
+    &.hidden {
+      opacity: 0;
+    }
+  }
+}

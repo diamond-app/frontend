@@ -3,8 +3,8 @@
 
   .reaction-summary__reaction-item {
     background-color: white;
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
@@ -13,7 +13,7 @@
     cursor: pointer;
 
     &:not(:first-child) {
-      margin-left: -4px;
+      margin-left: -10px;
     }
   }
 
@@ -37,23 +37,80 @@
   right: -10px;
   top: -60px;
   padding: 0 8px;
-  overflow: hidden;
+
+  &.reactions-popover__mobile {
+    right: -60px;
+  }
+
+  &:after {
+    position: absolute;
+    content: ".";
+    opacity: 0;
+    display: block;
+    width: 340px;
+    height: 30px;
+    top: 50px;
+    left: 0px;
+  }
 
   .reactions-list {
     .reactions-list__item {
+      position: relative;
       transform-origin: bottom center;
       transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
       font-size: 30px;
       padding: 4px 8px;
-      transform: translate(0, 50px) scale(1);
-
-      &.show {
-        transform: translate(0, 0) scale(1);
-
-        &:hover {
-          transform: translate(0, 0) scale(1.3);
-        }
-      }
     }
   }
+}
+
+.reactions-list__item {
+  transform: translate(0, 30px) scale(0);
+
+  &.selected {
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      height: 2px;
+      background: var(--cred);
+      transition: opacity 2s cubic-bezier(.09,1.22,.5,1.04);
+      opacity: 0;
+    }
+
+    &.reactions-list__item-mobile:after {
+      bottom: -8px;
+    }
+  }
+
+  &.show {
+    transform: translate(0, 0) scale(1);
+
+    &:hover {
+      transform: translate(0, 0) scale(1.3);
+    }
+
+    &.bouncing {
+      animation: gelatine 0.5s infinite;
+    }
+
+    &.inactive {
+      opacity: 0.4;
+      filter: grayscale(100%);
+      pointer-events: none;
+    }
+
+    &.selected:after {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes gelatine {
+  from, to { transform: scale(1.3, 1.3); }
+  25% { transform: scale(1.2, 1.3); }
+  50% { transform: scale(1.3, 1.2); }
+  75% { transform: scale(1.10, 1.25); }
 }

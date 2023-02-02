@@ -24,18 +24,22 @@ import { FollowService } from "../../../lib/services/follow/follow.service";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+  PostAssociation,
+  AssociationType,
+  PostAssociationCountsResponse,
+  AssociationReactionValue,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { AssociationReactionValue, AssociationType, PostReactionCountsResponse } from "../feedTypes";
+import { forkJoin } from "rxjs";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -60,10 +64,12 @@ const DEPRECATED_CUSTOM_ATTRIBUTIONS = {
 export class FeedPostComponent implements OnInit {
   @Input() isOnThreadPage;
   @Input() hasReadMoreRollup = true;
+
   @Input()
   get post(): PostEntryResponse {
     return this._post;
   }
+
   set post(post: PostEntryResponse) {
     // When setting the post, we need to consider repost behavior.
     // If a post is a reposting another post (without a quote), then use the reposted post as the post content.
@@ -91,6 +97,7 @@ export class FeedPostComponent implements OnInit {
     this._blocked = value;
     this.ref.detectChanges();
   }
+
   get blocked() {
     return this._blocked;
   }
@@ -248,11 +255,11 @@ export class FeedPostComponent implements OnInit {
   streamPlayer: any;
   imageLoaded: boolean = false;
   embedLoaded: boolean = false;
-  // TODO: set proper type
-  postReactionCounts: PostReactionCountsResponse = {
-    Counts: [],
+  postReactionCounts: PostAssociationCountsResponse = {
+    Counts: {},
     Total: 0,
   };
+  myReactions: Array<PostAssociation> = [];
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -399,11 +406,12 @@ export class FeedPostComponent implements OnInit {
     this.isFollowing = this.followService._isLoggedInUserFollowing(
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
-    this.backendApi
-      .GetPostAssociationsCounts(this.globalVars.localNode, this.post.PostHashHex, AssociationType.reaction)
-      .subscribe((c: PostReactionCountsResponse) => {
-        this.postReactionCounts = c;
-      });
+
+    this.getUserReactions().subscribe(([counts, reactions]) => {
+      this.postReactionCounts = counts;
+      this.myReactions = reactions.Associations;
+      this.ref.detectChanges();
+    });
   }
 
   imageLoadedEvent() {
@@ -1004,12 +1012,32 @@ export class FeedPostComponent implements OnInit {
     this.showUnlockableContent = !this.showUnlockableContent;
     this.ref.detectChanges();
   }
+
   showmOfNNFTTooltip = false;
+
   toggleShowMOfNNFTTooltip(): void {
     this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
   }
 
   getRouterLink(val: any): any {
     return this.inTutorial ? [] : val;
+  }
+
+  getUserReactions() {
+    return forkJoin([
+      this.backendApi.GetPostAssociationsCounts(
+        this.globalVars.localNode,
+        this.post.PostHashHex,
+        AssociationType.reaction,
+        Object.values(AssociationReactionValue)
+      ),
+      this.backendApi.GetPostAssociations(
+        this.globalVars.localNode,
+        this.post.PostHashHex,
+        AssociationType.reaction,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        Object.values(AssociationReactionValue)
+      ),
+    ]);
   }
 }

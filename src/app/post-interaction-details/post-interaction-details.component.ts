@@ -1,13 +1,12 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { PostEntryResponse } from "src/app/backend-api.service";
+import { PostEntryResponse, PostAssociationCountsResponse } from "src/app/backend-api.service";
 import { DiamondsModalComponent } from "src/app/diamonds-details/diamonds-modal/diamonds-modal.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { ReactionsModalComponent } from "src/app/reactions-details/reactions-modal/reactions-modal.component";
 import { QuoteRepostsModalComponent } from "src/app/quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "src/app/reposts-details/reposts-modal/reposts-modal.component";
-import { PostReactionCountsResponse } from "../feed/feedTypes";
 
 @Component({
   selector: "post-interaction-details",
@@ -16,7 +15,7 @@ import { PostReactionCountsResponse } from "../feed/feedTypes";
 })
 export class PostInteractionDetailsComponent {
   @Input() post: PostEntryResponse;
-  @Input() postReactionCounts: PostReactionCountsResponse;
+  @Input() postReactionCounts: PostAssociationCountsResponse;
 
   constructor(public globalVars: GlobalVarsService, private modalService: BsModalService, private router: Router) {}
 

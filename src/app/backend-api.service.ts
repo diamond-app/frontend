@@ -4,13 +4,12 @@
 // https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { from, interval, Observable, of, throwError, zip } from "rxjs";
-import { catchError, concatMap, filter, map, switchMap, take, timeout } from "rxjs/operators";
+import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
+import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { IdentityService } from "./identity.service";
-import { AssociationReactionDetails, AssociationReactionValue, AssociationType } from "./feed/feedTypes";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -162,6 +161,7 @@ export class BackendRoutes {
   // Associations
   static RoutePathCreateUserAssociation = "/api/v0/user-associations/create";
   static RoutePathCreatePostAssociation = "/api/v0/post-associations/create";
+  static RoutePathDeletePostAssociation = "/api/v0/post-associations/delete";
   static RoutePathGetPostAssociations = "/api/v0/post-associations/query";
   static RoutePathGetPostAssociationCounts = "/api/v0/post-associations/counts";
 }
@@ -467,6 +467,44 @@ export type MessagingGroupMemberResponse = {
   // to the member's registered messaging key labeled with GroupMemberKeyName.
   EncryptedKey: string;
 };
+
+export enum AssociationType {
+  // TODO: add more types when needed
+  reaction = "REACTION",
+}
+
+export enum AssociationReactionValue {
+  LIKE = "LIKE",
+  DISLIKE = "DISLIKE",
+  LOVE = "LOVE",
+  LAUGH = "LAUGH",
+  ASTONISHED = "ASTONISHED",
+  SAD = "SAD",
+  ANGRY = "ANGRY",
+}
+
+// TODO: other association values can be added as Value1 | Value2 etc.
+export type AssociationValue = AssociationReactionValue;
+
+export interface PostAssociation {
+  AppPublicKeyBase58Check: string;
+  AssociationID: string;
+  AssociationType: AssociationType;
+  AssociationValue: AssociationValue;
+  BlockHeight: number;
+  ExtraData: any;
+  PostHashHex: string;
+  TransactorPublicKeyBase58Check: string;
+}
+
+export interface PostAssociationCountsResponse {
+  Counts: { [key in AssociationValue]?: number };
+  Total: number;
+}
+
+export interface PostAssociationsResponse {
+  Associations: Array<PostAssociation>;
+}
 
 @Injectable({
   providedIn: "root",
@@ -1521,7 +1559,7 @@ export class BackendApiService {
   }
 
   GetDefaultProfilePictureURL(endpoint: string): string {
-    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+    return this._makeRequestURL(endpoint, "/assets/img/default-profile-pic.png");
   }
 
   GetPostsForPublicKey(
@@ -1868,60 +1906,113 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
   }
 
-  CreateUserAssociation(localNode: string, TransactorPublicKeyBase58Check: string): Observable<any> {
-    const endpoint = "http://localhost:18001";
-
-    const request = this.post(localNode, BackendRoutes.RoutePathCreateUserAssociation, {
-      TransactorPublicKeyBase58Check: TransactorPublicKeyBase58Check,
-      TargetUserPublicKeyBase58Check: TransactorPublicKeyBase58Check,
-      AppPublicKeyBase58Check: "",
-      AssociationType: "ENDORSEMENT",
-      AssociationValue: "SQL",
-      ExtraData: {},
-      MinFeeRateNanosPerKB: 1000,
-      TransactionFees: [],
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, "BC1YLhzNgVov49AZRrkE2SSL8o9K53fSu96zDnpeqAxyH9PbAta7fix");
-  }
-
   CreatePostAssociation(
-    endpoint: string,
+    Endpoint: string,
     TransactorPublicKeyBase58Check: string,
     PostHashHex: string,
-    type: AssociationType,
-    value: AssociationReactionValue
+    AssociationType: AssociationType,
+    AssociationValue: AssociationValue
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreatePostAssociation, {
+    const request = this.post(Endpoint, BackendRoutes.RoutePathCreatePostAssociation, {
       TransactorPublicKeyBase58Check,
       PostHashHex,
       AppPublicKeyBase58Check: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
-      AssociationType: type,
-      AssociationValue: value,
+      AssociationType,
+      AssociationValue,
       ExtraData: {},
       MinFeeRateNanosPerKB: 1000,
       TransactionFees: [],
     });
 
-    return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
   }
 
-  GetPostAssociations(endpoint: string, PostHashHex: string, AssociationTypePrefix: AssociationType) {
-    return this.post(endpoint, BackendRoutes.RoutePathGetPostAssociations, {
+  DeletePostAssociation(
+    Endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    AssociationID: string
+  ): Observable<any> {
+    const request = this.post(Endpoint, BackendRoutes.RoutePathDeletePostAssociation, {
+      TransactorPublicKeyBase58Check,
+      AssociationID,
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
+  }
+
+  GetAllPostAssociations(
+    Endpoint: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    TransactorPublicKeyBase58Check?: string,
+    AssociationValue?: AssociationValue,
+    total: number = 0
+  ) {
+    const ASSOCIATIONS_PER_REQUEST_LIMIT = 100;
+    let receivedItems = [];
+
+    const fetchAssociationsChunk = (LastSeenAssociationID?: string) => {
+      return this.GetPostAssociations(
+        Endpoint,
+        PostHashHex,
+        AssociationType,
+        TransactorPublicKeyBase58Check,
+        AssociationValue,
+        LastSeenAssociationID,
+        ASSOCIATIONS_PER_REQUEST_LIMIT
+      ).pipe(
+        tap(({ Associations }) => {
+          receivedItems = [...receivedItems, ...Associations];
+        })
+      );
+    };
+
+    return fetchAssociationsChunk().pipe(
+      expand(() => {
+        if (receivedItems.length < total) {
+          return fetchAssociationsChunk(receivedItems[receivedItems.length - 1].AssociationID);
+        }
+        return EMPTY;
+      }),
+      map((res) => res.Associations),
+      reduce((acc, val) => acc.concat(val), new Array<PostAssociation>())
+    );
+  }
+
+  GetPostAssociations(
+    Endpoint: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    TransactorPublicKeyBase58Check?: string,
+    AssociationValues?: AssociationValue | Array<AssociationValue>,
+    LastSeenAssociationID?: string,
+    Limit: number = 100
+  ): Observable<PostAssociationsResponse> {
+    const isValuesList = AssociationValues && Array.isArray(AssociationValues);
+
+    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociations, {
+      TransactorPublicKeyBase58Check,
       PostHashHex,
-      AssociationTypePrefix,
-      AppPublicKey: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+      AssociationType: AssociationType,
+      AssociationValue: isValuesList ? undefined : AssociationValues,
+      AssociationValues: isValuesList ? AssociationValues : undefined,
+      LastSeenAssociationID,
+      Limit,
     });
   }
 
-  GetPostAssociationsCounts(endpoint: string, PostHashHex: string, AssociationType: AssociationType) {
-    const availableReactionTypes = Object.values(AssociationReactionDetails).map((e) => e.value);
-
-    return this.post(endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
+  GetPostAssociationsCounts(
+    Endpoint: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    AssociationValues: Array<AssociationValue>
+  ): Observable<PostAssociationCountsResponse> {
+    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
       PostHashHex,
       AssociationType,
-      AppPublicKey: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
-      AssociationValues: availableReactionTypes,
+      AssociationValues,
     });
   }
 

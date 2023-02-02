@@ -6,12 +6,28 @@
   </div>
 
   <div class="flex-grow-1">
-    <div #uiScroll *uiScroll="let profile of datasource">
-      <simple-profile-card
-        [profile]="profile"
-        [followButtonOppositeSide]="true"
-        [hideFollowLink]="true"
-      ></simple-profile-card>
+    <tab-selector
+      [tabs]="reactionTabs"
+      [activeTab]="activeReactionTab"
+      [highlightTab]="true"
+      (tabClick)="selectTab($event)"
+    >
+      <ng-template let-tabItem #tabItem>
+        <div>
+          <reactions-image [reaction]="tabItem" [size]="20"></reactions-image>
+          <b class="ml-2">{{ postReactionCounts.Counts[tabItem] }}</b>
+        </div>
+      </ng-template>
+    </tab-selector>
+
+    <div *ngIf="userKeysReacted.length > 0">
+      <div #uiScroll *uiScroll="let key of datasource">
+        <simple-profile-card
+          [profile]="usersByKey[key].ProfileEntryResponse"
+          [followButtonOppositeSide]="true"
+          [hideFollowLink]="true"
+        ></simple-profile-card>
+      </div>
     </div>
   </div>
   <!-- Spacer for PWA Apps -->
