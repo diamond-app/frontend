@@ -20,6 +20,7 @@ import {
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
+import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -677,8 +678,9 @@ export class FeedPostIconRowComponent {
     }
   }
 
-  sendReaction(value: AssociationReactionValue, event?: Event) {
+  sendReaction(value: AssociationReactionValue = this.allowedReactions[0], event?: Event) {
     if (this.processedReaction) {
+      event.preventDefault();
       return;
     }
 
@@ -689,7 +691,7 @@ export class FeedPostIconRowComponent {
 
     const existingReaction = this.hasUserReacted(value);
 
-    // Update reactions locally
+    // Update counts locally without waiting for a response to immediately show the result to the user
     this.updateReactionCounts.emit({
       Total: existingReaction ? this.postReactionCounts.Total - 1 : this.postReactionCounts.Total + 1,
       Counts: {
@@ -700,6 +702,7 @@ export class FeedPostIconRowComponent {
       },
     });
 
+    // Update reactions locally without waiting for a response to immediately show the result to the user
     this.updateMyReactions.emit(
       existingReaction
         ? this.myReactions.filter((e) => e.AssociationValue !== value)
@@ -708,11 +711,6 @@ export class FeedPostIconRowComponent {
             { AssociationType: AssociationType.reaction, AssociationValue: value } as PostAssociation,
           ]
     );
-
-    setTimeout(() => {
-      this.processedReaction = null;
-      this.ref.detectChanges();
-    }, 1000);
 
     const $request = existingReaction
       ? this.backendApi.DeletePostAssociation(
@@ -728,10 +726,9 @@ export class FeedPostIconRowComponent {
           value
         );
 
-    $request.subscribe(
+    $request.pipe(finalize(() => (this.processedReaction = null))).subscribe(
       () => {
         this.userReacted.emit();
-        this.processedReaction = null;
       },
       (err) => {
         console.error(err);

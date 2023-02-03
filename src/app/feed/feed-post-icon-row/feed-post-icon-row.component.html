@@ -104,7 +104,7 @@
       *ngIf="!globalVars.isMobile(); else reactionSwiper"
       (click)="sendReaction(allowedReactions[0], $event)"
       [ngClass]="{
-        'fc-red': myReactions.length > 0
+        'fc-blue': myReactions.length > 0
       }"
       class="position-relative cursor-pointer d-flex align-items-center pt-5px"
       (mouseover)="debouncedToggleSelectReactionFunction(true)"
@@ -116,7 +116,7 @@
 
       <i-feather
         [ngClass]="{
-          is_animating: processedReaction,
+          is_animating_ice: processedReaction,
           'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
           'thumbs-up-fill': myReactions.length > 0
         }"
@@ -127,12 +127,16 @@
     </div>
 
     <ng-template #reactionSwiper>
-      <swipe-to-choose [itemCount]="allowedReactions.length" (selectItem)="sendReaction(allowedReactions[$event])">
+      <swipe-to-choose
+        [itemCount]="allowedReactions.length"
+        (selectItem)="sendReaction(allowedReactions[$event])"
+        (sendOne)="sendReaction(allowedReactions[0])"
+      >
         <ng-template #actionBtn>
           <div
             (click)="sendReaction(allowedReactions[0], $event)"
             [ngClass]="{
-              'fc-red': myReactions.length > 0
+              'fc-blue': myReactions.length > 0
             }"
             class="position-relative cursor-pointer d-flex align-items-center"
             (mouseover)="debouncedToggleSelectReactionFunction(true)"
@@ -144,7 +148,7 @@
 
             <i-feather
               [ngClass]="{
-                is_animating: processedReaction,
+                is_animating_ice: processedReaction,
                 'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
                 'thumbs-up-fill': myReactions.length > 0
               }"
@@ -192,12 +196,22 @@
             [ngClass]="{
               show: reactionsVisible[i],
               selected: hasUserReacted(reaction),
-              bouncing: processedReaction === reaction,
               inactive: processedReaction && processedReaction !== reaction
             }"
-            (click)="sendReaction(reaction, $event)"
+            (click)="$event.stopPropagation()"
           >
-            <reactions-image [reaction]="reaction"></reactions-image>
+            <input
+              class="reactions-list__item-checkbox"
+              type="checkbox"
+              [id]="'reaction' + i"
+              [checked]="hasUserReacted(reaction)"
+              (change)="sendReaction(reaction, $event)"
+            />
+            <label [for]="'reaction' + i" class="reactions-list__item-checkbox-label">
+              <i>
+                <reactions-image [reaction]="reaction"></reactions-image>
+              </i>
+            </label>
           </div>
         </div>
       </div>

@@ -1990,14 +1990,14 @@ export class BackendApiService {
     LastSeenAssociationID?: string,
     Limit: number = 100
   ): Observable<PostAssociationsResponse> {
-    const isValuesList = AssociationValues && Array.isArray(AssociationValues);
+    const isArray = AssociationValues && Array.isArray(AssociationValues);
 
     return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociations, {
       TransactorPublicKeyBase58Check,
       PostHashHex,
       AssociationType: AssociationType,
-      AssociationValue: isValuesList ? undefined : AssociationValues,
-      AssociationValues: isValuesList ? AssociationValues : undefined,
+      AssociationValue: isArray ? undefined : AssociationValues,
+      AssociationValues: isArray ? AssociationValues : undefined,
       LastSeenAssociationID,
       Limit,
     });

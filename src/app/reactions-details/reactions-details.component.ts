@@ -112,7 +112,7 @@ export class ReactionsDetailsComponent implements OnInit {
       return of(this.usersByKey);
     }
 
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, this.getUserPublicKeys(reactions), true).pipe(
+    return this.backendApi.GetUsersStateless(this.globalVars.localNode, userKeysToFetch, true).pipe(
       map(({ UserList }) => {
         this.usersByKey = { ...this.usersByKey, ...keyBy(UserList, "PublicKeyBase58Check") };
         return this.usersByKey;
