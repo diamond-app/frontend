@@ -49,6 +49,7 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -95,6 +96,7 @@ class RouteNames {
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
   public static QUOTE_REPOSTS = "quote-reposts";
+  public static LIKES = "likes";
   public static REACTIONS = "reactions";
   public static TRENDS = "trends";
   public static REFERRALS = "referrals";
@@ -152,6 +154,11 @@ const routes: Routes = [
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.QUOTE_REPOSTS,
     component: QuoteRepostsPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.LIKES,
+    component: LikesPageComponent,
     pathMatch: "full",
   },
   {

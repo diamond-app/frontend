@@ -25,7 +25,7 @@ export class ReactionsDetailsComponent implements OnInit {
 
   loading = false;
   reactionTabs: Array<AssociationReactionValue> = [];
-  activeReactionTab: AssociationReactionValue | string = "";
+  activeReactionTab: AssociationReactionValue | null = null;
   postReactionCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
   userKeysReacted: Array<string> = [];
   usersByKey: { [publicKey: string]: User } = {};
@@ -62,7 +62,7 @@ export class ReactionsDetailsComponent implements OnInit {
       });
   }
 
-  selectTab(tab: string) {
+  selectTab(tab: AssociationReactionValue) {
     this.activeReactionTab = tab;
     this.userKeysReacted = [];
     this.fetchData(tab as AssociationReactionValue);

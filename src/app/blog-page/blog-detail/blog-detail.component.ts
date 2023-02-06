@@ -6,7 +6,15 @@ import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
+import {
+  AssociationReactionValue,
+  AssociationType,
+  BackendApiService,
+  PostAssociation,
+  PostAssociationCountsResponse,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from "src/app/backend-api.service";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
@@ -16,6 +24,8 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
+import { forkJoin } from "rxjs";
+import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "app-blog-detail",
@@ -35,6 +45,12 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   isScrollingUp: boolean = false;
   previousPageYOffset = 0;
   boundDetectScrollDirection?: () => void;
+  postReactionCounts: PostAssociationCountsResponse = {
+    Counts: {},
+    Total: 0,
+  };
+  myReactions: Array<PostAssociation> = [];
+  reactionsLoaded: boolean = false;
 
   datasource = new Datasource<Thread>({
     get: (index, count, success) => {
@@ -183,6 +199,8 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         this.isFollowing = this.followService._isLoggedInUserFollowing(
           res.PostFound.ProfileEntryResponse?.PublicKeyBase58Check
         );
+
+        this.getUserReactions();
       });
   }
 
@@ -486,5 +504,42 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           this.location.replaceState(this.router.url.split("?")[0]);
         }
       });
+  }
+
+  getUserReactions() {
+    this.reactionsLoaded = false;
+
+    return forkJoin([
+      this.backendApi.GetPostAssociationsCounts(
+        this.globalVars.localNode,
+        this.currentPostHashHex,
+        AssociationType.reaction,
+        Object.values(AssociationReactionValue)
+      ),
+      this.backendApi.GetPostAssociations(
+        this.globalVars.localNode,
+        this.currentPostHashHex,
+        AssociationType.reaction,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        Object.values(AssociationReactionValue)
+      ),
+    ])
+      .pipe(
+        finalize(() => {
+          this.reactionsLoaded = true;
+        })
+      )
+      .subscribe(([counts, reactions]) => {
+        this.postReactionCounts = counts;
+        this.myReactions = reactions.Associations;
+      });
+  }
+
+  updateReactionCounts(counts: PostAssociationCountsResponse) {
+    this.postReactionCounts = counts;
+  }
+
+  updateMyReactions(reactions: Array<PostAssociation>) {
+    this.myReactions = reactions;
   }
 }

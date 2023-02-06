@@ -4,6 +4,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { PostEntryResponse, PostAssociationCountsResponse } from "src/app/backend-api.service";
 import { DiamondsModalComponent } from "src/app/diamonds-details/diamonds-modal/diamonds-modal.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { LikesModalComponent } from "src/app/likes-details/likes-modal/likes-modal.component";
 import { ReactionsModalComponent } from "src/app/reactions-details/reactions-modal/reactions-modal.component";
 import { QuoteRepostsModalComponent } from "src/app/quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { RepostsModalComponent } from "src/app/reposts-details/reposts-modal/reposts-modal.component";
@@ -16,6 +17,7 @@ import { RepostsModalComponent } from "src/app/reposts-details/reposts-modal/rep
 export class PostInteractionDetailsComponent {
   @Input() post: PostEntryResponse;
   @Input() postReactionCounts: PostAssociationCountsResponse;
+  @Input() reactionsLoading: boolean = false;
 
   constructor(public globalVars: GlobalVarsService, private modalService: BsModalService, private router: Router) {}
 
@@ -36,6 +38,12 @@ export class PostInteractionDetailsComponent {
   openDiamondsPage(event): void {
     if (this.post.DiamondCount) {
       this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS, DiamondsModalComponent);
+    }
+  }
+
+  openLikesPage(event): void {
+    if (this.post.LikeCount) {
+      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
     }
   }
 

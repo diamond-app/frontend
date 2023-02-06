@@ -1,4 +1,4 @@
-import { PlatformLocation } from "@angular/common";
+import { KeyValue, PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
@@ -41,6 +41,7 @@ export class FeedPostIconRowComponent {
   @Input() postReactionCounts: PostAssociationCountsResponse;
   @Input() myReactions: Array<PostAssociation> = [];
   @Input() hideSummary: boolean = false;
+  @Input() hideLegacyLikeIcon: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
   @Output() userReacted = new EventEmitter();
@@ -726,22 +727,36 @@ export class FeedPostIconRowComponent {
           value
         );
 
-    $request.pipe(finalize(() => (this.processedReaction = null))).subscribe(
-      () => {
-        this.userReacted.emit();
-      },
-      (err) => {
-        console.error(err);
-        this.sendingRepostRequest = false;
-        const parsedError = this.backendApi.parsePostError(err);
-        this.tracking.log("post : repost", { error: err });
-        this.globalVars._alertError(parsedError);
-        this.ref.detectChanges();
-      }
-    );
+    $request
+      .pipe(
+        finalize(() => {
+          this.processedReaction = null;
+          this.ref.detectChanges();
+        })
+      )
+      .subscribe(
+        () => {
+          this.userReacted.emit();
+        },
+        (err) => {
+          console.error(err);
+          this.sendingRepostRequest = false;
+          const parsedError = this.backendApi.parsePostError(err);
+          this.tracking.log("post : repost", { error: err });
+          this.globalVars._alertError(parsedError);
+          this.ref.detectChanges();
+        }
+      );
   }
 
   hasUserReacted(value: AssociationReactionValue) {
     return this.myReactions.find((e) => e.AssociationValue === value);
+  }
+
+  sortReactionsByCount(
+    a: KeyValue<AssociationReactionValue, number>,
+    b: KeyValue<AssociationReactionValue, number>
+  ): number {
+    return a.value > b.value ? -1 : 1;
   }
 }

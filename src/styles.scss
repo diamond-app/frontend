@@ -826,7 +826,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .reactions-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
       border-radius: 0px;
     }
   }
@@ -2785,6 +2785,9 @@ bs-dropdown-container {
   &:hover {
     background-color: var(--background-secondary);
   }
+  &.inactive:hover {
+    background-color: inherit;
+  }
   &.fa-spinner {
     svg {
       display: none;
@@ -2837,15 +2840,6 @@ bs-dropdown-container {
   &:hover {
     background-color: $repost-hover;
     color: $repost-color;
-    transition: background-color .5s;
-  }
-}
-
-/* like button hover animation */
-.feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
-  &:hover{
-    background-color: $like-hover;
-    color: $like-color;
     transition: background-color .5s;
   }
 }
@@ -5357,7 +5351,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.reactions-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);

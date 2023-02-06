@@ -14,6 +14,7 @@ import player from "lottie-web";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
@@ -218,6 +219,9 @@ import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
 import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
 import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -337,6 +341,9 @@ export function playerFactory() {
     QuoteRepostsDetailsComponent,
     QuoteRepostsModalComponent,
     QuoteRepostsPageComponent,
+    LikesDetailsComponent,
+    LikesPageComponent,
+    LikesModalComponent,
     ReactionsDetailsComponent,
     ReactionsPageComponent,
     ReactionsModalComponent,
@@ -436,6 +443,7 @@ export function playerFactory() {
     PopoverModule.forRoot(),
     RatingModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    TooltipModule.forRoot(),
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     QuillModule.forRoot({

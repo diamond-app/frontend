@@ -8,6 +8,9 @@
   }
 
   .swiper__action-btn {
+    // prevent action button from dragging itself
+    transform: translate3d(0, 0, 0) !important;
+
     &.hidden {
       opacity: 0;
     }

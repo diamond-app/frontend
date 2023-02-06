@@ -34,12 +34,24 @@
   height: 55px;
   background: var(--tile-bg);
   border-radius: 20px;
-  right: -10px;
+  left: -288px;
   top: -60px;
   padding: 0 8px;
 
-  &.reactions-popover__mobile {
-    right: -60px;
+  @media (pointer: coarse) and (hover: none) {
+    // always hide popup that gets shown on hover when using a device with a touchscreen
+    display: none;
+  }
+
+  &:before {
+    position: absolute;
+    content: ".";
+    opacity: 0;
+    display: block;
+    width: 50px;
+    height: 5px;
+    top: 55px;
+    left: 286px;
   }
 
   &:after {
@@ -47,10 +59,10 @@
     content: ".";
     opacity: 0;
     display: block;
-    width: 340px;
-    height: 30px;
-    top: 50px;
-    left: 0px;
+    right: 50px;
+    height: 25px;
+    top: 55px;
+    left: 0;
   }
 
   .reactions-list {
