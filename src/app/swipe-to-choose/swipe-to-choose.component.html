@@ -1,0 +1,49 @@
+<div class="swiper cursor-pointer d-flex align-items-center mt-5px" [ngClass]="{ dragging: itemDragging }">
+  <div
+    (touchstart)="startDrag()"
+    (touchend)="dragClick($event)"
+    (cdkDragEnded)="endDrag($event)"
+    (cdkDragMoved)="duringDrag($event)"
+    cdkDrag
+    class="swiper__action-btn"
+    [ngClass]="{ hidden: itemDragging }"
+  >
+    <ng-container [ngTemplateOutlet]="actionBtn"></ng-container>
+  </div>
+
+  <!--Container to hold the bounds for the mobile drag interface-->
+  <div class="diamond-mobile-drag-container unselectable">
+    <div [ngClass]="{ 'bg-danger': itemDragCancel, show: itemDragging }" class="diamond-mobile-drag-instructions">
+      <p class="d-block">
+        {{ itemDraggedText() }}
+      </p>
+    </div>
+    <div
+      [ngClass]="{
+        'dragged-like': itemDragging
+      }"
+      class="diamond-btn icon-diamond mobile-reaction-box"
+    >
+      <div
+        class="reaction-box"
+        [ngStyle]="{
+          height: '55px'
+        }"
+      >
+        <div class="reaction-box-icons">
+          <div
+            *ngFor="let index of itemIndexes"
+            [ngClass]="{
+              show: itemsVisible[index],
+              'dragged-icon': itemIdxDraggedTo === index
+            }"
+            class="reaction-icon transformable"
+            (click)="selectItem.emit(index)"
+          >
+            <ng-container [ngTemplateOutlet]="item" [ngTemplateOutletContext]="{ $implicit: index }"></ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

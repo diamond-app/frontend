@@ -1,0 +1,7 @@
+.tab-selector__tab {
+  border-bottom: 2px solid transparent;
+
+  &.highlighted {
+    border-bottom: 2px solid var(--highlight);
+  }
+}

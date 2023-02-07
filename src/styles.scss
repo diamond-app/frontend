@@ -644,6 +644,7 @@ i-feather[name="check-circle"] {
         top: $global__top-bar__height;
         background: var(--tile-bg);
         z-index: 1;
+        top: 60px;
         border-bottom: 1px solid var(--border);
       }
       .tab-selector__container--logged-out {
@@ -825,7 +826,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
       border-radius: 0px;
     }
   }
@@ -2589,7 +2590,7 @@ trends {
 }
 
 .feed-create-post__avatar_default {
-  background-image: url('/assets/img/default_profile_pic.png');
+  background-image: url('/assets/img/default-profile-pic.png');
 }
 
 .feed-create-comment__textarea {
@@ -2784,6 +2785,9 @@ bs-dropdown-container {
   &:hover {
     background-color: var(--background-secondary);
   }
+  &.inactive:hover {
+    background-color: inherit;
+  }
   &.fa-spinner {
     svg {
       display: none;
@@ -2836,15 +2840,6 @@ bs-dropdown-container {
   &:hover {
     background-color: $repost-hover;
     color: $repost-color;
-    transition: background-color .5s;
-  }
-}
-
-/* like button hover animation */
-.feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
-  &:hover{
-    background-color: $like-hover;
-    color: $like-color;
     transition: background-color .5s;
   }
 }
@@ -5356,7 +5351,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -5944,7 +5939,7 @@ sell-nft-modal {
       }
       bottom: 45px;
     }
-    left: -125px; bottom: 50px;
+    left: -125px; bottom: 40px;
     display: none;
 
     // Each selectable diamond level in the diamond pop-up

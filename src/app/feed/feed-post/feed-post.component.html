@@ -509,7 +509,12 @@
                     [afterCommentCreatedCallback]="afterCommentCreatedCallback"
                     [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                     [inTutorial]="inTutorial"
+                    [postReactionCounts]="postReactionCounts"
+                    [myReactions]="myReactions"
                     (diamondSent)="diamondSent.emit()"
+                    (userReacted)="getUserReactions()"
+                    (updateReactionCounts)="updateReactionCounts($event)"
+                    (updateMyReactions)="updateMyReactions($event)"
                   ></feed-post-icon-row>
 
                   <!-- Admin Buttons -->
@@ -579,7 +584,12 @@
       </a>
 
       <ng-container *ngIf="showInteractionDetails">
-        <post-interaction-details class="border-top" [post]="postContent"></post-interaction-details>
+        <post-interaction-details
+          class="border-top"
+          [post]="postContent"
+          [postReactionCounts]="postReactionCounts"
+          [reactionsLoading]="!reactionsLoaded"
+        ></post-interaction-details>
         <feed-post-icon-row
           class="border-top"
           style="padding: 12px 40px"
@@ -590,7 +600,14 @@
           [hideNumbers]="true"
           [afterCommentCreatedCallback]="afterCommentCreatedCallback"
           [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+          [postReactionCounts]="postReactionCounts"
+          [myReactions]="myReactions"
+          [hideSummary]="true"
+          [hideLegacyLikeIcon]="true"
           (diamondSent)="diamondSent.emit()"
+          (userReacted)="getUserReactions()"
+          (updateReactionCounts)="updateReactionCounts($event)"
+          (updateMyReactions)="updateMyReactions($event)"
         ></feed-post-icon-row>
       </ng-container>
     </div>

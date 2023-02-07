@@ -24,17 +24,23 @@ import { FollowService } from "../../../lib/services/follow/follow.service";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+  PostAssociation,
+  AssociationType,
+  PostAssociationCountsResponse,
+  AssociationReactionValue,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { forkJoin } from "rxjs";
+import { finalize } from "rxjs/operators";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -59,10 +65,12 @@ const DEPRECATED_CUSTOM_ATTRIBUTIONS = {
 export class FeedPostComponent implements OnInit {
   @Input() isOnThreadPage;
   @Input() hasReadMoreRollup = true;
+
   @Input()
   get post(): PostEntryResponse {
     return this._post;
   }
+
   set post(post: PostEntryResponse) {
     // When setting the post, we need to consider repost behavior.
     // If a post is a reposting another post (without a quote), then use the reposted post as the post content.
@@ -90,6 +98,7 @@ export class FeedPostComponent implements OnInit {
     this._blocked = value;
     this.ref.detectChanges();
   }
+
   get blocked() {
     return this._blocked;
   }
@@ -247,6 +256,12 @@ export class FeedPostComponent implements OnInit {
   streamPlayer: any;
   imageLoaded: boolean = false;
   embedLoaded: boolean = false;
+  postReactionCounts: PostAssociationCountsResponse = {
+    Counts: {},
+    Total: 0,
+  };
+  myReactions: Array<PostAssociation> = [];
+  reactionsLoaded: boolean = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -402,6 +417,8 @@ export class FeedPostComponent implements OnInit {
     this.isFollowing = this.followService._isLoggedInUserFollowing(
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
+
+    this.getUserReactions();
   }
 
   imageLoadedEvent() {
@@ -513,44 +530,6 @@ export class FeedPostComponent implements OnInit {
         imageURL,
       },
     });
-  }
-
-  openInteractionPage(event, pageName: string, component): void {
-    event.stopPropagation();
-    if (this.globalVars.isMobile()) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
-        queryParamsHandling: "merge",
-      });
-    } else {
-      this.modalService.show(component, {
-        class: "modal-dialog-centered",
-        initialState: { postHashHex: this.post.PostHashHex },
-      });
-    }
-  }
-
-  openDiamondsPage(event): void {
-    if (this.postContent.DiamondCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS, DiamondsModalComponent);
-    }
-  }
-
-  openLikesPage(event): void {
-    if (this.postContent.LikeCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
-    }
-  }
-
-  openRepostsPage(event): void {
-    if (this.postContent.RecloutCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS, RepostsModalComponent);
-    }
-  }
-
-  openQuoteRepostsModal(event): void {
-    if (this.postContent.QuoteRepostCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS, QuoteRepostsModalComponent);
-    }
   }
 
   getHotnessScore() {
@@ -1040,12 +1019,54 @@ export class FeedPostComponent implements OnInit {
     this.showUnlockableContent = !this.showUnlockableContent;
     this.ref.detectChanges();
   }
+
   showmOfNNFTTooltip = false;
+
   toggleShowMOfNNFTTooltip(): void {
     this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
   }
 
   getRouterLink(val: any): any {
     return this.inTutorial ? [] : val;
+  }
+
+  getUserReactions() {
+    this.reactionsLoaded = false;
+
+    return forkJoin([
+      this.backendApi.GetPostAssociationsCounts(
+        this.globalVars.localNode,
+        this.post.PostHashHex,
+        AssociationType.reaction,
+        Object.values(AssociationReactionValue)
+      ),
+      this.backendApi.GetPostAssociations(
+        this.globalVars.localNode,
+        this.post.PostHashHex,
+        AssociationType.reaction,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        Object.values(AssociationReactionValue)
+      ),
+    ])
+      .pipe(
+        finalize(() => {
+          this.reactionsLoaded = true;
+          this.ref.detectChanges();
+        })
+      )
+      .subscribe(([counts, reactions]) => {
+        this.postReactionCounts = counts;
+        this.myReactions = reactions.Associations;
+      });
+  }
+
+  updateReactionCounts(counts: PostAssociationCountsResponse) {
+    this.postReactionCounts = counts;
+    this.ref.detectChanges();
+  }
+
+  updateMyReactions(reactions: Array<PostAssociation>) {
+    this.myReactions = reactions;
+    this.ref.detectChanges();
   }
 }
