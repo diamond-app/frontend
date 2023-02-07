@@ -92,7 +92,9 @@ export class SwipeToChooseComponent implements OnInit {
       this.itemIdxDraggedTo = this.itemCount - 1;
     } else {
       // If the selector is in the middle, calculate what % of the middle it has been dragged to, assign a item value
-      this.itemIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.itemCount - 1);
+      this.itemIdxDraggedTo = Math.ceil(
+        ((event.pointerPosition.x - pageMargin) / selectableWidth) * this.itemCount - 1
+      );
     }
     // If the selector has been dragged out of the right margin, enable the helper text
     // (we don't want every drag event to start with the helper text enabled)
