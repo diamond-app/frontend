@@ -586,6 +586,7 @@
           class="border-top"
           [post]="postContent"
           [postReactionCounts]="postReactionCounts"
+          [reactionsLoading]="!reactionsLoaded"
         ></post-interaction-details>
         <feed-post-icon-row
           class="border-top"
@@ -600,6 +601,7 @@
           [postReactionCounts]="postReactionCounts"
           [myReactions]="myReactions"
           [hideSummary]="true"
+          [hideLegacyLikeIcon]="true"
           (diamondSent)="diamondSent.emit()"
           (userReacted)="getUserReactions()"
           (updateReactionCounts)="updateReactionCounts($event)"

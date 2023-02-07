@@ -24,8 +24,10 @@
       <div #uiScroll *uiScroll="let key of datasource">
         <simple-profile-card
           [profile]="usersByKey[key].ProfileEntryResponse"
+          [pubKeyBase58Check]="key"
           [followButtonOppositeSide]="true"
           [hideFollowLink]="true"
+          [reaction]="activeReactionTab"
         ></simple-profile-card>
       </div>
     </div>

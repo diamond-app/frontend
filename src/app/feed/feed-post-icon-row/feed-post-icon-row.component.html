@@ -4,7 +4,7 @@
     class="reactions-summary__container d-inline-flex text-secondary pt-10px"
     (click)="openReactionsDetails($event)"
   >
-    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue">
+    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue: sortReactionsByCount">
       <div
         *ngIf="reaction.value > 0 && allowedReactions.includes(reaction.key)"
         class="reaction-summary__reaction-item mr-5px"
@@ -106,7 +106,7 @@
       [ngClass]="{
         'fc-blue': myReactions.length > 0
       }"
-      class="position-relative cursor-pointer d-flex align-items-center pt-5px"
+      class="position-relative cursor-pointer d-flex align-items-center"
       (mouseover)="debouncedToggleSelectReactionFunction(true)"
       (mouseleave)="debouncedToggleSelectReactionFunction(false)"
     >
@@ -117,13 +117,32 @@
       <i-feather
         [ngClass]="{
           is_animating_ice: processedReaction,
-          'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-          'thumbs-up-fill': myReactions.length > 0
+          smile: postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+          'smile-fill': myReactions.length > 0
         }"
-        name="thumbs-up"
-        class="feed-post-icon-row__icon thumbs-up"
+        name="smile"
+        class="feed-post-icon-row__icon smile"
       ></i-feather>
       <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
+    </div>
+
+    <div
+      *ngIf="!hideLegacyLikeIcon && postContent.LikeCount > 0"
+      [ngClass]="{
+        'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+      }"
+      class="d-flex align-items-center pt-5px"
+      [tooltip]="'Legacy likes count'"
+    >
+      <i-feather
+        [ngClass]="{
+          'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+          'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        }"
+        name="heart"
+        class="feed-post-icon-row__icon inactive"
+      ></i-feather>
+      <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
     </div>
 
     <ng-template #reactionSwiper>
@@ -149,11 +168,11 @@
             <i-feather
               [ngClass]="{
                 is_animating_ice: processedReaction,
-                'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-                'thumbs-up-fill': myReactions.length > 0
+                smile: postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+                'smile-fill': myReactions.length > 0
               }"
-              name="thumbs-up"
-              class="feed-post-icon-row__icon thumbs-up"
+              name="smile"
+              class="feed-post-icon-row__icon smile"
             ></i-feather>
             <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
           </div>
@@ -188,7 +207,11 @@
     </ng-template>
 
     <ng-template #reactionsPopTemplate>
-      <div class="reactions-popover reaction-box" [ngClass]="{ 'reactions-popover__mobile': globalVars.isMobile() }">
+      <div
+        (click)="$event.stopPropagation()"
+        class="reactions-popover reaction-box"
+        [ngClass]="{ 'reactions-popover__mobile': globalVars.isMobile() }"
+      >
         <div class="reactions-list d-flex align-items-center">
           <div
             *ngFor="let reaction of allowedReactions; let i = index"

@@ -40,6 +40,7 @@ import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/trans
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 import { forkJoin } from "rxjs";
+import { finalize } from "rxjs/operators";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -260,6 +261,7 @@ export class FeedPostComponent implements OnInit {
     Total: 0,
   };
   myReactions: Array<PostAssociation> = [];
+  reactionsLoaded: boolean = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -1020,6 +1022,8 @@ export class FeedPostComponent implements OnInit {
   }
 
   getUserReactions() {
+    this.reactionsLoaded = false;
+
     return forkJoin([
       this.backendApi.GetPostAssociationsCounts(
         this.globalVars.localNode,
@@ -1034,11 +1038,17 @@ export class FeedPostComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         Object.values(AssociationReactionValue)
       ),
-    ]).subscribe(([counts, reactions]) => {
-      this.postReactionCounts = counts;
-      this.myReactions = reactions.Associations;
-      this.ref.detectChanges();
-    });
+    ])
+      .pipe(
+        finalize(() => {
+          this.reactionsLoaded = true;
+          this.ref.detectChanges();
+        })
+      )
+      .subscribe(([counts, reactions]) => {
+        this.postReactionCounts = counts;
+        this.myReactions = reactions.Associations;
+      });
   }
 
   updateReactionCounts(counts: PostAssociationCountsResponse) {
