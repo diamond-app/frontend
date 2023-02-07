@@ -742,7 +742,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.tracking.log("post : repost", { error: err });
+          this.tracking.log("post : react", { error: err });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }
