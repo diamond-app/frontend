@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { finalize } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "../../../environments/environment";
@@ -774,11 +775,17 @@ export class FeedPostComponent implements OnInit {
             }
           },
           (err) => {
-            this.videoURL = this.postContent.VideoURLs[0];
-            this.showVideoControls = true;
-            this.ref.detectChanges();
-            this.initializeStream();
-            this.setVideoControllerHeight(20);
+            this.backendApi.GetVideoDimensions(environment.uploadVideoHostname, videoId)
+              .pipe(finalize(() => {
+                this.videoURL = this.postContent.VideoURLs[0];
+                this.showVideoControls = true;
+                this.ref.detectChanges();
+                this.initializeStream();
+                this.setVideoControllerHeight(20);
+              }))
+              .subscribe((res) => {
+                this.sourceVideoAspectRatio = res.width / res.height;
+              });
           }
         );
       }
