@@ -473,8 +473,8 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   async uploadVideo(file: File): Promise<any> {
-    if (file.size > 250 * 1024 * 1024) {
-      this.globalVars._alertError("File is too large. Please choose a file less than 250MB");
+    if (file.size > 65 * 1024 * 1024) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 65MB");
       return;
     }
     this.currentPostModel.isUploadingMedia = true;
