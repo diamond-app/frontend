@@ -6,6 +6,11 @@
   </div>
 
   <div class="flex-grow-1">
+    <alert *ngIf="post && post.LikeCount > 0" type="info">
+      <strong>{{ post.LikeCount }} legacy likes</strong>
+      were hidden from the summary
+    </alert>
+
     <tab-selector
       [tabs]="reactionTabs"
       [activeTab]="activeReactionTab"
@@ -28,6 +33,7 @@
           [followButtonOppositeSide]="true"
           [hideFollowLink]="true"
           [reaction]="activeReactionTab"
+          [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
         ></simple-profile-card>
       </div>
     </div>

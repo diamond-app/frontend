@@ -512,7 +512,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     return forkJoin([
       this.backendApi.GetPostAssociationsCounts(
         this.globalVars.localNode,
-        this.currentPostHashHex,
+        this.currentPost,
         AssociationType.reaction,
         Object.values(AssociationReactionValue)
       ),
