@@ -350,7 +350,6 @@ export class GlobalVarsService {
       )
       .subscribe(
         (res) => {
-          console.log("Here is the message res: ", res);
           if (this.pauseMessageUpdates) {
             // We pause message updates when a user sends a messages so that we can
             // wait for it to be sent before updating the thread.  If we do not do this the
