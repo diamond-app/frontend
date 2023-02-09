@@ -510,7 +510,6 @@ export class FeedCreatePostComponent implements OnInit {
         clearInterval(this.videoStreamInterval!);
         return;
       }
-      console.log("Asset id: ", this.currentPostModel.assetId);
       this.streamService
         .checkVideoStatusByURL(this.currentPostModel.assetId)
         .then(([readyToStream, clearPoll, failed]) => {
