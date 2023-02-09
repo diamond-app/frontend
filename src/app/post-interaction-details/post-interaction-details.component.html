@@ -26,16 +26,6 @@
 
         {{ "feed_post.reaction" | transloco }}{{ postReactionCounts.Total === 1 ? "" : "s" }}
       </div>
-
-      <div
-        *ngIf="post.LikeCount > 0"
-        [ngClass]="{ 'mb-5px': globalVars.isMobile() }"
-        (click)="openLikesPage($event)"
-        class="interaction-detail"
-      >
-        {{ globalVars.abbreviateNumber(post.LikeCount, 0) }}
-        {{ "feed_post.like" | transloco }}{{ post.LikeCount === 1 ? "" : "s" }}
-      </div>
     </div>
     <span (click)="openDiamondsPage($event)" class="interaction-detail">
       {{ globalVars.abbreviateNumber(post.DiamondCount, 0) }}

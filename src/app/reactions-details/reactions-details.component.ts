@@ -7,12 +7,13 @@ import {
   BackendApiService,
   PostAssociation,
   PostAssociationCountsResponse,
+  PostEntryResponse,
   User,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { difference, keyBy, orderBy, uniq } from "lodash";
-import { finalize, map, mergeMap } from "rxjs/operators";
+import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
 
 @Component({
@@ -36,6 +37,7 @@ export class ReactionsDetailsComponent implements OnInit {
   pageSize = 50;
   infiniteScroller: InfiniteScroller;
   datasource: IDatasource<IAdapter<any>>;
+  post: PostEntryResponse;
 
   constructor(
     private backendApi: BackendApiService,
@@ -48,12 +50,31 @@ export class ReactionsDetailsComponent implements OnInit {
       this.postHashHex = this.route.snapshot.params.postHashHex;
     }
 
+    this.loading = true;
+
     this.backendApi
-      .GetPostAssociationsCounts(
+      .GetSinglePost(
         this.globalVars.localNode,
         this.postHashHex,
-        AssociationType.reaction,
-        Object.values(AssociationReactionValue)
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        false,
+        0,
+        0,
+        false
+      )
+      .pipe(
+        tap((res) => {
+          this.post = res.PostFound;
+        }),
+        switchMap((res) => {
+          return this.backendApi.GetPostAssociationsCounts(
+            this.globalVars.localNode,
+            res.PostFound,
+            AssociationType.reaction,
+            Object.values(AssociationReactionValue),
+            true
+          );
+        })
       )
       .subscribe((c: PostAssociationCountsResponse) => {
         this.postReactionCounts = c;
@@ -70,6 +91,7 @@ export class ReactionsDetailsComponent implements OnInit {
 
   private fetchData(value: AssociationReactionValue) {
     if (this.reactionTabs.length === 0) {
+      this.loading = false;
       return;
     }
 
@@ -96,7 +118,9 @@ export class ReactionsDetailsComponent implements OnInit {
             })
           );
         }),
-        finalize(() => (this.loading = false))
+        finalize(() => {
+          this.loading = false;
+        })
       )
       .subscribe((users: any) => {
         this.userKeysReacted = users;

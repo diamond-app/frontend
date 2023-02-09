@@ -41,7 +41,6 @@ export class FeedPostIconRowComponent {
   @Input() postReactionCounts: PostAssociationCountsResponse;
   @Input() myReactions: Array<PostAssociation> = [];
   @Input() hideSummary: boolean = false;
-  @Input() hideLegacyLikeIcon: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
   @Output() userReacted = new EventEmitter();

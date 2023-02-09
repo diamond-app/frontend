@@ -18,6 +18,7 @@ import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
+import { AlertModule } from "ngx-bootstrap/alert";
 import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { LottieModule } from "ngx-lottie";
@@ -441,6 +442,7 @@ export function playerFactory() {
     ToastrModule.forRoot(),
     BsDropdownModule.forRoot(),
     PopoverModule.forRoot(),
+    AlertModule.forRoot(),
     RatingModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TooltipModule.forRoot(),

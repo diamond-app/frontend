@@ -126,25 +126,6 @@
       <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
     </div>
 
-    <div
-      *ngIf="!hideLegacyLikeIcon && postContent.LikeCount > 0"
-      [ngClass]="{
-        'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
-      }"
-      class="d-flex align-items-center pt-5px"
-      [tooltip]="'Legacy likes count'"
-    >
-      <i-feather
-        [ngClass]="{
-          'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-          'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
-        }"
-        name="heart"
-        class="feed-post-icon-row__icon inactive"
-      ></i-feather>
-      <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
-    </div>
-
     <ng-template #reactionSwiper>
       <swipe-to-choose
         [itemCount]="allowedReactions.length"

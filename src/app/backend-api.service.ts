@@ -2005,15 +2005,32 @@ export class BackendApiService {
 
   GetPostAssociationsCounts(
     Endpoint: string,
-    PostHashHex: string,
+    Post: PostEntryResponse,
     AssociationType: AssociationType,
-    AssociationValues: Array<AssociationValue>
+    AssociationValues: Array<AssociationValue>,
+    SkipLegacyLikes: boolean = false
   ): Observable<PostAssociationCountsResponse> {
     return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
-      PostHashHex,
+      PostHashHex: Post.PostHashHex,
       AssociationType,
       AssociationValues,
-    });
+    }).pipe(
+      map((response) => {
+        if (SkipLegacyLikes) {
+          return response;
+        }
+
+        const { Counts, Total } = response;
+
+        return {
+          Counts: {
+            ...Counts,
+            [AssociationReactionValue.LIKE]: (Counts[AssociationReactionValue.LIKE] || 0) + Post.LikeCount,
+          },
+          Total: Total + Post.LikeCount,
+        };
+      })
+    );
   }
 
   SendDiamonds(

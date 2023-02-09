@@ -41,12 +41,6 @@ export class PostInteractionDetailsComponent {
     }
   }
 
-  openLikesPage(event): void {
-    if (this.post.LikeCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
-    }
-  }
-
   openReactionsPage(event): void {
     if (this.postReactionCounts.Total) {
       this.openInteractionPage(event, this.globalVars.RouteNames.REACTIONS, ReactionsModalComponent);
