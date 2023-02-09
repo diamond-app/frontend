@@ -114,7 +114,10 @@ export class ReactionsDetailsComponent implements OnInit {
             map((usersByKey) => {
               return orderBy(
                 Associations.map((e) => e.TransactorPublicKeyBase58Check),
-                (key) => usersByKey[key].BalanceNanos,
+                (key) => {
+                  const desoLockedNanos = usersByKey[key].ProfileEntryResponse?.CoinEntry?.DeSoLockedNanos || 0;
+                  return usersByKey[key].BalanceNanos + desoLockedNanos;
+                },
                 ["desc"]
               );
             })
