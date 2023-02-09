@@ -117,11 +117,11 @@
       <i-feather
         [ngClass]="{
           is_animating_ice: processedReaction,
-          smile: postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-          'smile-fill': myReactions.length > 0
+          'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+          'thumbs-up-fill': myReactions.length > 0
         }"
-        name="smile"
-        class="feed-post-icon-row__icon smile"
+        name="thumbs-up"
+        class="feed-post-icon-row__icon thumbs-up"
       ></i-feather>
       <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
     </div>
@@ -149,11 +149,11 @@
             <i-feather
               [ngClass]="{
                 is_animating_ice: processedReaction,
-                smile: postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-                'smile-fill': myReactions.length > 0
+                'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+                'thumbs-up-fill': myReactions.length > 0
               }"
-              name="smile"
-              class="feed-post-icon-row__icon smile"
+              name="thumbs-up"
+              class="feed-post-icon-row__icon thumbs-up"
             ></i-feather>
             <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
           </div>
