@@ -15,6 +15,7 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { difference, keyBy, orderBy, uniq } from "lodash";
 import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
+import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "reactions-details",
@@ -23,6 +24,7 @@ import { of } from "rxjs";
 })
 export class ReactionsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
+  @Input() bsModalRef: BsModalRef | null = null;
 
   loading = false;
   reactionTabs: Array<AssociationReactionValue> = [];
