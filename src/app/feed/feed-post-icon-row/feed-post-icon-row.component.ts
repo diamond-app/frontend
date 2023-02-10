@@ -721,7 +721,7 @@ export class FeedPostIconRowComponent {
       : this.backendApi.CreatePostAssociation(
           this.globalVars.localNode,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          this.post.PostHashHex,
+          this.postContent.PostHashHex,
           AssociationType.reaction,
           value
         );
