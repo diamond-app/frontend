@@ -13,9 +13,11 @@
       </div>
     </ng-container>
 
-    <div class="reactions-summary__toggle-summary text-secondary">
+    <div
+      class="reaction-summary__reaction-item text-secondary"
+      [ngClass]="{ 'reaction-summary__reaction-item-pill': postReactionCounts.Total > 99 }"
+    >
       {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }}
-      {{ globalVars.pluralize(postReactionCounts.Total, "reaction") }}
     </div>
   </div>
 

@@ -7,26 +7,27 @@ $reaction-hover-helper-left-width: 154px;
 
   .reaction-summary__reaction-item {
     background-color: var(--unread);
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: thin solid var(--link);
+    border: 3px solid var(--background);
     cursor: pointer;
+
+    &:first-child {
+      margin-left: -7px;
+    }
 
     &:not(:first-child) {
-      margin-left: -10px;
+      margin-left: -12px;
     }
-  }
 
-  .reactions-summary__toggle-summary {
-    text-decoration: underline;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--link) !important;
+    &.reaction-summary__reaction-item-pill {
+      width: auto;
+      border-radius: 16px;
+      padding: 0 7px;
     }
   }
 }
