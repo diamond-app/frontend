@@ -31,6 +31,7 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    media.deso.org
     node.deso.org
     amp.deso.org
     pulse.deso.org
@@ -83,6 +84,7 @@ header @html Content-Security-Policy "
     data:
     i.imgur.com
     images.deso.org
+    media.deso.org
     node.deso.org
     images.bitclout.com
     quickchart.io
