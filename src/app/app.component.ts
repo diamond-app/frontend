@@ -34,6 +34,14 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
+    // log interaction events emitted by identity
+    window.addEventListener("message", (ev) => {
+      if (!(ev.origin === environment.identityURL && ev.data?.category === "interaction-event")) return;
+      const { object, event, data } = ev.data.payload;
+      console.log(ev.data.payload);
+      this.tracking.log(`identity : ${object} : ${event}`, data);
+    });
+
     // Nuke the referrer so we don't leak anything
     // We also have a meta tag in index.html that does this in a different way to make
     // sure it's nuked.
