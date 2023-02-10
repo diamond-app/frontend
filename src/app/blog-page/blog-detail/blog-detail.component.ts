@@ -24,7 +24,7 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { forkJoin } from "rxjs";
+import { forkJoin, of } from "rxjs";
 import { finalize } from "rxjs/operators";
 
 @Component({
@@ -509,21 +509,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   getUserReactions() {
     this.reactionsLoaded = false;
 
-    return forkJoin([
-      this.backendApi.GetPostAssociationsCounts(
-        this.globalVars.localNode,
-        this.currentPost,
-        AssociationType.reaction,
-        Object.values(AssociationReactionValue)
-      ),
-      this.backendApi.GetPostAssociations(
-        this.globalVars.localNode,
-        this.currentPostHashHex,
-        AssociationType.reaction,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        Object.values(AssociationReactionValue)
-      ),
-    ])
+    return forkJoin([this.getPostReactionCounts(), this.getMyReactions()])
       .pipe(
         finalize(() => {
           this.reactionsLoaded = true;
@@ -533,6 +519,32 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         this.postReactionCounts = counts;
         this.myReactions = reactions.Associations;
       });
+  }
+
+  private getPostReactionCounts() {
+    return this.backendApi.GetPostAssociationsCounts(
+      this.globalVars.localNode,
+      this.currentPost,
+      AssociationType.reaction,
+      Object.values(AssociationReactionValue)
+    );
+  }
+
+  private getMyReactions() {
+    const key = this.globalVars.loggedInUser?.PublicKeyBase58Check;
+
+    if (!key) {
+      // Skip requesting my reactions if user is not logged in
+      return of({ Associations: [] });
+    }
+
+    return this.backendApi.GetPostAssociations(
+      this.globalVars.localNode,
+      this.currentPostHashHex,
+      AssociationType.reaction,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      Object.values(AssociationReactionValue)
+    );
   }
 
   updateReactionCounts(counts: PostAssociationCountsResponse) {

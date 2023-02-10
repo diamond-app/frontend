@@ -1033,23 +1033,7 @@ export class FeedPostComponent implements OnInit {
   getUserReactions() {
     this.reactionsLoaded = false;
 
-    return forkJoin([
-      this.backendApi.GetPostAssociationsCounts(
-        this.globalVars.localNode,
-        this.postContent,
-        AssociationType.reaction,
-        Object.values(AssociationReactionValue)
-      ),
-      this.globalVars.loggedInUser.PublicKeyBase58Check
-        ? this.backendApi.GetPostAssociations(
-            this.globalVars.localNode,
-            this.postContent.PostHashHex,
-            AssociationType.reaction,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            Object.values(AssociationReactionValue)
-          )
-        : of({ Associations: [] }),
-    ])
+    return forkJoin([this.getPostReactionCounts(), this.getMyReactions()])
       .pipe(
         finalize(() => {
           this.reactionsLoaded = true;
@@ -1060,6 +1044,32 @@ export class FeedPostComponent implements OnInit {
         this.postReactionCounts = counts;
         this.myReactions = reactions.Associations;
       });
+  }
+
+  private getPostReactionCounts() {
+    return this.backendApi.GetPostAssociationsCounts(
+      this.globalVars.localNode,
+      this.postContent,
+      AssociationType.reaction,
+      Object.values(AssociationReactionValue)
+    );
+  }
+
+  private getMyReactions() {
+    const key = this.globalVars.loggedInUser?.PublicKeyBase58Check;
+
+    if (!key) {
+      // Skip requesting my reactions if user is not logged in
+      return of({ Associations: [] });
+    }
+
+    return this.backendApi.GetPostAssociations(
+      this.globalVars.localNode,
+      this.postContent.PostHashHex,
+      AssociationType.reaction,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      Object.values(AssociationReactionValue)
+    );
   }
 
   updateReactionCounts(counts: PostAssociationCountsResponse) {
