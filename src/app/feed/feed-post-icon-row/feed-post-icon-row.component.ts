@@ -667,13 +667,13 @@ export class FeedPostIconRowComponent {
   private openInteractionPage(event, pageName: string, component): void {
     event.stopPropagation();
     if (this.globalVars.isMobile()) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.post.PostHashHex, pageName], {
+      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
         queryParamsHandling: "merge",
       });
     } else {
       this.modalService.show(component, {
         class: "modal-dialog-centered",
-        initialState: { postHashHex: this.post.PostHashHex },
+        initialState: { postHashHex: this.postContent.PostHashHex },
       });
     }
   }
