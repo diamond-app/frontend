@@ -1036,13 +1036,13 @@ export class FeedPostComponent implements OnInit {
     return forkJoin([
       this.backendApi.GetPostAssociationsCounts(
         this.globalVars.localNode,
-        this.post,
+        this.postContent,
         AssociationType.reaction,
         Object.values(AssociationReactionValue)
       ),
       this.backendApi.GetPostAssociations(
         this.globalVars.localNode,
-        this.post.PostHashHex,
+        this.postContent.PostHashHex,
         AssociationType.reaction,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         Object.values(AssociationReactionValue)
