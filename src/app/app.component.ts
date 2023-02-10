@@ -38,7 +38,6 @@ export class AppComponent implements OnInit {
     window.addEventListener("message", (ev) => {
       if (!(ev.origin === environment.identityURL && ev.data?.category === "interaction-event")) return;
       const { object, event, data } = ev.data.payload;
-      console.log(ev.data.payload);
       this.tracking.log(`identity : ${object} : ${event}`, data);
     });
 
