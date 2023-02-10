@@ -39,7 +39,7 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { forkJoin } from "rxjs";
+import { forkJoin, of } from "rxjs";
 import { finalize } from "rxjs/operators";
 
 /**
@@ -1040,13 +1040,15 @@ export class FeedPostComponent implements OnInit {
         AssociationType.reaction,
         Object.values(AssociationReactionValue)
       ),
-      this.backendApi.GetPostAssociations(
-        this.globalVars.localNode,
-        this.postContent.PostHashHex,
-        AssociationType.reaction,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        Object.values(AssociationReactionValue)
-      ),
+      this.globalVars.loggedInUser.PublicKeyBase58Check
+        ? this.backendApi.GetPostAssociations(
+            this.globalVars.localNode,
+            this.postContent.PostHashHex,
+            AssociationType.reaction,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            Object.values(AssociationReactionValue)
+          )
+        : of({ Associations: [] }),
     ])
       .pipe(
         finalize(() => {
