@@ -4,13 +4,13 @@ import { Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import ConfettiGenerator from "confetti-js";
+import { identity } from "deso-protocol";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { Observable, Observer, of, Subscription } from "rxjs";
+import { from, Observable, Observer, of, Subscription } from "rxjs";
 import { catchError, first, share, switchMap } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
-import { fromWei, Hex, toBN } from "web3-utils";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -763,9 +763,8 @@ export class GlobalVarsService {
   }
 
   // Used to convert uint256 Hex balances for DAO coins to standard units.
-  hexNanosToStandardUnit(hexNanos: Hex): number {
-    const result = fromWei(toBN(hexNanos), "ether").toString();
-    return parseFloat(result);
+  hexNanosToStandardUnit(hexNanos: string): number {
+    return parseFloat((BigInt(hexNanos) / BigInt(1e18)).toString());
   }
 
   isMobile(): boolean {
@@ -1114,41 +1113,41 @@ export class GlobalVarsService {
   }
 
   launchIdentityFlow(): Observable<any> {
-    let obs$: Observable<any>;
+    let obs$: Observable<any> = from(identity.login()).pipe(share());
 
-    if (
-      !(
-        this.identityInfoResponse &&
-        this.identityInfoResponse.hasStorageAccess &&
-        this.identityInfoResponse.browserSupported
-      )
-    ) {
-      this.tracking.log("storage-access : request");
-      this.requestingStorageAccess = true;
-      obs$ = this.identityService.storageGranted.pipe(share());
+    // if (
+    //   !(
+    //     this.identityInfoResponse &&
+    //     this.identityInfoResponse.hasStorageAccess &&
+    //     this.identityInfoResponse.browserSupported
+    //   )
+    // ) {
+    //   this.tracking.log("storage-access : request");
+    //   this.requestingStorageAccess = true;
+    //   obs$ = this.identityService.storageGranted.pipe(share());
 
-      obs$.subscribe(() => {
-        this.tracking.log("storage-access : grant");
-        // TODO: make sure we actually use the status returned from the tap to unlock response.
-        this.identityInfoResponse.hasStorageAccess = true;
-        this.requestingStorageAccess = false;
-      });
-    }
+    //   obs$.subscribe(() => {
+    //     this.tracking.log("storage-access : grant");
+    //     // TODO: make sure we actually use the status returned from the tap to unlock response.
+    //     this.identityInfoResponse.hasStorageAccess = true;
+    //     this.requestingStorageAccess = false;
+    //   });
+    // }
 
-    obs$ = obs$
-      ? obs$.pipe(
-          switchMap(() =>
-            this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
-          ),
-          share()
-        )
-      : this.identityService
-          .launch("/log-in", {
-            accessLevelRequest: "4",
-            hideJumio: true,
-            getFreeDeso: true,
-          })
-          .pipe(share());
+    // obs$ = obs$
+    //   ? obs$.pipe(
+    //       switchMap(() =>
+    //         this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
+    //       ),
+    //       share()
+    //     )
+    //   : this.identityService
+    //       .launch("/log-in", {
+    //         accessLevelRequest: "4",
+    //         hideJumio: true,
+    //         getFreeDeso: true,
+    //       })
+    //       .pipe(share());
 
     obs$.subscribe((res) => {
       this.userSigningUp = res.signedUp;

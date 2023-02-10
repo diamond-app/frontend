@@ -1,6 +1,8 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
+import { identity } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { from } from "rxjs";
 import { BackendApiService, User } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
@@ -27,9 +29,7 @@ export class ChangeAccountSelectorComponent {
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
-
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+    from(identity.logout()).subscribe((res) => {
       const users = Object.keys(res?.users || {});
 
       if (!users.length) {

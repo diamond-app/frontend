@@ -4,6 +4,7 @@
 // https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { identity } from "deso-protocol";
 import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
 import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
@@ -660,20 +661,8 @@ export class BackendApiService {
   }
 
   jwtPost(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(publicKey),
-    });
-
-    return request.pipe(
-      switchMap((signed) => {
-        body = {
-          JWT: signed.jwt,
-          ...body,
-        };
-
-        return this.post(endpoint, path, body).pipe(map((res) => ({ ...res, ...signed })));
-      })
-    );
+    const promise = identity.jwt();
+    return from(promise).pipe(switchMap((JWT) => this.post(endpoint, path, { JWT, ...body })));
   }
 
   GetExchangeRate(endpoint: string): Observable<any> {
@@ -742,8 +731,8 @@ export class BackendApiService {
     Broadcast: boolean
   ): Observable<any> {
     // Check if the user is logged in with a derived key and operating as the owner key.
-    const DerivedPublicKeyBase58Check =
-      this.identityService.identityServiceUsers[PublicKeyBase58Check]?.derivedPublicKeyBase58Check;
+    const DerivedPublicKeyBase58Check = this.identityService.identityServiceUsers[PublicKeyBase58Check]
+      ?.derivedPublicKeyBase58Check;
 
     let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
@@ -878,7 +867,8 @@ export class BackendApiService {
           const launchDefaultMessagingKey$ = () =>
             from(
               SwalHelper.fire({
-                html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+                html:
+                  "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
                 showCancelButton: false,
               })
             ).pipe(
@@ -1783,7 +1773,8 @@ export class BackendApiService {
     const launchDefaultMessagingKey$ = () =>
       from(
         SwalHelper.fire({
-          html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+          html:
+            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
           showCancelButton: false,
         })
       ).pipe(

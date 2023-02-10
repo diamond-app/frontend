@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { identity } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
@@ -28,6 +29,9 @@ export class AppComponent implements OnInit {
     private router: Router,
     private tracking: TrackingService
   ) {
+    identity.configure({
+      spendingLimitOptions: { IsUnlimited: true },
+    });
     this.globalVars.Init(
       null, // loggedInUser
       [], // userList
@@ -108,7 +112,7 @@ export class AppComponent implements OnInit {
       return new Subscription();
     }
 
-    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+    const publicKeys = Object.keys(identity.users ?? {});
 
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||

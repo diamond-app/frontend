@@ -1,7 +1,8 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { identity } from "deso-protocol";
+import { from, Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "src/app/backend-api.service";
 import { IdentityService } from "src/app/identity.service";
@@ -159,17 +160,9 @@ export class ApiInternalService {
       });
     }
 
-    const loggedInUserKey = this.backendAPI.GetStorage(this.backendAPI.LastLoggedInUserKey);
-    return this.identity
-      .jwt({
-        ...this.identity.identityServiceParamsForKey(loggedInUserKey),
-      })
-      .pipe(
-        map(({ jwt }) => ({
-          Authorization: `Bearer ${jwt}`,
-          "Diamond-Public-Key-Base58-Check": loggedInUserKey,
-        }))
-      );
+    return from(identity.jwt()).pipe(
+      map((jwt) => ({ Authorization: `Bearer ${jwt}`, "Diamond-Public-Key-Base58-Check": publicKey }))
+    );
   }
 
   /**

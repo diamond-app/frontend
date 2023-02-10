@@ -152,7 +152,7 @@ export class IdentityService {
   isTestnet = false;
 
   constructor(private tracking: TrackingService) {
-    window.addEventListener("message", (event) => this.handleMessage(event));
+    // window.addEventListener("message", (event) => this.handleMessage(event));
   }
 
   // Launch a new identity window
@@ -512,6 +512,6 @@ export class IdentityService {
 
   // Respond to a received message
   private respond(window: Window, id: string, payload: any): void {
-    window.postMessage({ id, service: "identity", payload }, "*");
+    // window.postMessage({ id, service: "identity", payload }, "*");
   }
 }
