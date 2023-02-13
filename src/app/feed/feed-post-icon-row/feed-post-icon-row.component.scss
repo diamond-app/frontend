@@ -13,7 +13,7 @@ $reaction-hover-helper-left-width: 154px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid var(--background);
+    border: 3px solid var(--tile-bg);
     cursor: pointer;
 
     &:first-child {
