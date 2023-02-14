@@ -100,6 +100,7 @@ interface PostExtraData {
   EmbedVideoURL?: string;
   Node?: string;
   Language?: string;
+  LivepeerAssetId?: string;
 }
 
 // show warning at 515 characters
@@ -296,6 +297,10 @@ export class FeedCreatePostComponent implements OnInit {
       if (EmbedUrlParserService.isValidEmbedURL(post.constructedEmbedURL)) {
         postExtraData.EmbedVideoURL = post.constructedEmbedURL;
       }
+    }
+
+    if (post.postVideoSrc) {
+      postExtraData.LivepeerAssetId = post.assetId;
     }
 
     if (environment.node.id) {
