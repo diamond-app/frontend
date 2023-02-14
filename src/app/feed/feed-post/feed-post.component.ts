@@ -755,7 +755,7 @@ export class FeedPostComponent implements OnInit {
 
   setURLForVideoContent(): void {
     if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
-      this.videoURL = this.videoURL + "&autoplay=false";
+      this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
       // const videoId = this.postContent.PostExtraData?.LivepeerAssetId
       // // const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
       // if (videoId && videoId != "") {
