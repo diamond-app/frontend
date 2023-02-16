@@ -207,6 +207,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
           return;
         }
         this.profile = res.Profile;
+        this.setMetaTags();
         this.loading = false;
       },
       (_) => {
