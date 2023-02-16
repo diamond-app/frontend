@@ -275,6 +275,14 @@ export class PostThreadComponent implements AfterViewInit {
         this.meta.updateTag({ property: "og:description", content: res.PostFound.Body });
         if (res.PostFound.ImageURLs.length > 0) {
           this.meta.updateTag({ property: "og:image", content: res.PostFound.ImageURLs[0] });
+          this.meta.updateTag({
+            property: "og:image:secure_url",
+            content: res.PostFound.ImageURLs[0],
+          });
+          this.meta.updateTag({
+            property: "twitter:image",
+            content: res.PostFound.ImageURLs[0],
+          });
         }
 
         if (

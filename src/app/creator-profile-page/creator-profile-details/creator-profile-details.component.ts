@@ -231,6 +231,14 @@ export class CreatorProfileDetailsComponent implements OnInit {
         property: "og:image",
         content: `https://${this.globalVars.localNode}/api/v0/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
       });
+      this.meta.updateTag({
+        property: "og:image:secure_url",
+        content: `https://${this.globalVars.localNode}/api/v0/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
+      });
+      this.meta.updateTag({
+        property: "twitter:image",
+        content: `https://${this.globalVars.localNode}/api/v0/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
+      });
     }
   }
 
