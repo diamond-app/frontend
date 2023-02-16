@@ -28,6 +28,7 @@ COPY ./angular.json .
 COPY ./tsconfig.json .
 COPY ./src ./src
 COPY ./nginx.conf .
+COPY ./security.conf .
 
 # use --build-arg index=index.custom.html to specify a custom index.html file
 ARG index=index.html
@@ -49,6 +50,7 @@ FROM nginx:1.17
 COPY --from=frontend /frontend/dist/ /usr/share/nginx/html
 #COPY --from=frontend frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=frontend frontend/nginx.conf /etc/nginx/nginx.conf
+COPY --from=frontend frontend/security.conf /etc/nginx/conf.d/security.conf
 
 # Expose port
 EXPOSE 80
