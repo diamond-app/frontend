@@ -229,7 +229,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     } else {
       this.meta.updateTag({
         property: "og:image",
-        content: `https://${this.globalVars.localNode}/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
+        content: `https://${this.globalVars.localNode}/api/v0/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
       });
     }
   }
