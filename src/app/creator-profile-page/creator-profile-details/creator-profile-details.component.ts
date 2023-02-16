@@ -219,9 +219,9 @@ export class CreatorProfileDetailsComponent implements OnInit {
   setMetaTags() {
     this.meta.updateTag({
       property: "og:title",
-      content: `${this.profile.Username}'s Profile on Diamond`,
+      content: `${this.profile?.Username}'s Profile on Diamond`,
     });
-    this.meta.updateTag({ property: "og:description", content: this.profile.Description });
+    this.meta.updateTag({ property: "og:description", content: this.profile?.Description });
     if (this.profile.ExtraData?.NFTProfilePictureUrl && this.profile.ExtraData?.NFTProfilePictureUrl.length > 0) {
       this.meta.updateTag({ property: "og:image", content: this.profile.ExtraData?.NFTProfilePictureUrl });
     } else if (this.profile.ExtraData?.LargeProfilePicURL && this.profile.ExtraData?.LargeProfilePicURL.length > 0) {
@@ -229,7 +229,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     } else {
       this.meta.updateTag({
         property: "og:image",
-        content: this.globalVars.localNode + "/get-single-profile-picture/${content.PublicKeyBase58Check}",
+        content: `https://${this.globalVars.localNode}/get-single-profile-picture/${this.profile.PublicKeyBase58Check}`,
       });
     }
   }
