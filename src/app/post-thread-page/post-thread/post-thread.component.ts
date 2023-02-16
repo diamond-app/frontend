@@ -268,7 +268,11 @@ export class PostThreadComponent implements AfterViewInit {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
-        this.meta.updateTag({ property: "og:title", content: res.PostFound.Body });
+        this.meta.updateTag({
+          property: "og:title",
+          content: `${res.PostFound.IsNFT ? "NFT" : "Post"} by ${res.PostFound.ProfileEntryResponse.Username}`,
+        });
+        this.meta.updateTag({ property: "og:description", content: res.PostFound.Body });
         if (res.PostFound.ImageURLs.length > 0) {
           this.meta.updateTag({ property: "og:image", content: res.PostFound.ImageURLs[0] });
         }

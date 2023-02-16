@@ -1,6 +1,6 @@
 import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { Title } from "@angular/platform-browser";
+import { Meta, Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
@@ -50,6 +50,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     private router: Router,
     private location: Location,
     private titleService: Title,
+    private meta: Meta,
     private tracking: TrackingService
   ) {
     this.route.params.subscribe((params) => {
@@ -212,6 +213,24 @@ export class CreatorProfileDetailsComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  setMetaTags() {
+    this.meta.updateTag({
+      property: "og:title",
+      content: `${this.profile.Username}'s Profile on Diamond`,
+    });
+    this.meta.updateTag({ property: "og:description", content: this.profile.Description });
+    if (this.profile.ExtraData?.NFTProfilePictureUrl && this.profile.ExtraData?.NFTProfilePictureUrl.length > 0) {
+      this.meta.updateTag({ property: "og:image", content: this.profile.ExtraData?.NFTProfilePictureUrl });
+    } else if (this.profile.ExtraData?.LargeProfilePicURL && this.profile.ExtraData?.LargeProfilePicURL.length > 0) {
+      this.meta.updateTag({ property: "og:image", content: this.profile.ExtraData?.LargeProfilePicURL });
+    } else {
+      this.meta.updateTag({
+        property: "og:image",
+        content: this.globalVars.localNode + "/get-single-profile-picture/${content.PublicKeyBase58Check}",
+      });
+    }
   }
 
   _handleTabClick(tabName: string) {
