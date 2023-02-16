@@ -18,6 +18,7 @@ export class CreatorProfilePostsComponent {
   static PADDING = 0.5;
 
   @Input() profile: ProfileEntryResponse;
+  @Input() includeComments: boolean = false;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
@@ -91,7 +92,8 @@ export class CreatorProfilePostsComponent {
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
         CreatorProfilePostsComponent.PAGE_SIZE,
-        false /*MediaRequired*/
+        false /*MediaRequired*/,
+        this.includeComments
       )
       .toPromise()
       .then(async (res) => {
