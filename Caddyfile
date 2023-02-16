@@ -31,6 +31,7 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    media.deso.org
     node.deso.org
     amp.deso.org
     pulse.deso.org
@@ -55,6 +56,7 @@ header @html Content-Security-Policy "
     api.testwyre.com
     api.sendwyre.com
     https://videodelivery.net
+    https://lvpr.tv
     https://upload.videodelivery.net
     https://web3setu.co.in
     https://api2.amplitude.com/2/httpapi
@@ -82,6 +84,7 @@ header @html Content-Security-Policy "
     data:
     i.imgur.com
     images.deso.org
+    media.deso.org
     node.deso.org
     images.bitclout.com
     quickchart.io
@@ -116,6 +119,7 @@ header @html Content-Security-Policy "
     https://geo.captcha-delivery.com
     https://www.youtube.com
     https://iframe.videodelivery.net/
+    https://lvpr.tv
     https://youtube.com
     https://player.vimeo.com
     https://www.tiktok.com

@@ -65,7 +65,7 @@ export class MessagesPageComponent implements OnInit {
     }
     this.selectedThread = thread;
     this.selectedThreadPublicKey = thread.PublicKeyBase58Check;
-    this.selectedThreadProfilePic = "/assets/img/default_profile_pic.png";
+    this.selectedThreadProfilePic = "/assets/img/default-profile-pic.png";
     if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic) {
       this.selectedThreadProfilePic = thread.ProfileEntryResponse.ProfilePic;
     }

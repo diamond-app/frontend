@@ -3,18 +3,19 @@ import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { ProfileEntryResponse } from "../backend-api.service";
+import { AssociationReactionValue, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "simple-profile-card",
+  styleUrls: ["simple-profile-card.component.scss"],
   templateUrl: "./simple-profile-card.component.html",
 })
 export class SimpleProfileCardComponent {
   @Input() profile: ProfileEntryResponse;
   @Input() diamondLevel = -1;
-  @Input() showHeartIcon = false;
+  @Input() reaction: AssociationReactionValue | null = null;
   @Input() showRepostIcon = false;
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
@@ -27,6 +28,7 @@ export class SimpleProfileCardComponent {
   @Input() tutorialBuySelf: boolean = false;
   // Whether the "buy" button should wiggle to prompt the user to click it
   @Input() tutorialWiggle = false;
+  @Input() pubKeyBase58Check: string = "";
   @Output() exitTutorial = new EventEmitter<any>();
   @Output() onboardingFollowCreator = new EventEmitter<boolean>();
   tutorialFollowing = false;

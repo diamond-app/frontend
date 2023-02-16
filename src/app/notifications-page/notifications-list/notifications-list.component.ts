@@ -195,7 +195,7 @@ export class NotificationsListComponent implements OnInit {
     // TODO: make sure this map contains profiles from nft transfers
     const actor = this.profileMap[txnMeta.TransactorPublicKeyBase58Check] || {
       Username: "anonymous",
-      ProfilePic: "/assets/img/default_profile_pic.png",
+      ProfilePic: "/assets/img/default-profile-pic.png",
       PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];

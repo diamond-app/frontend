@@ -84,7 +84,11 @@
             ></follow-button>
           </div>
         </div>
-        <post-interaction-details [post]="currentPost"></post-interaction-details>
+        <post-interaction-details
+          [post]="currentPost"
+          [postReactionCounts]="postReactionCounts"
+          [reactionsLoading]="!reactionsLoaded"
+        ></post-interaction-details>
       </header>
       <div
         *ngIf="currentPost.PostExtraData.CoverImage"
@@ -132,7 +136,13 @@
         [postContent]="currentPost"
         [hideNumbers]="false"
         [afterCommentCreatedCallback]="afterCommentCreatedCallback.bind(this)"
+        [postReactionCounts]="postReactionCounts"
+        [myReactions]="myReactions"
+        [hideSummary]="true"
         (diamondSent)="diamondSent.emit()"
+        (userReacted)="getUserReactions()"
+        (updateReactionCounts)="updateReactionCounts($event)"
+        (updateMyReactions)="updateMyReactions($event)"
       ></feed-post-icon-row>
     </div>
     <div

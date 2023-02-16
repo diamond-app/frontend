@@ -24,17 +24,23 @@ import { FollowService } from "../../../lib/services/follow/follow.service";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+  PostAssociation,
+  AssociationType,
+  PostAssociationCountsResponse,
+  AssociationReactionValue,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -59,10 +65,12 @@ const DEPRECATED_CUSTOM_ATTRIBUTIONS = {
 export class FeedPostComponent implements OnInit {
   @Input() isOnThreadPage;
   @Input() hasReadMoreRollup = true;
+
   @Input()
   get post(): PostEntryResponse {
     return this._post;
   }
+
   set post(post: PostEntryResponse) {
     // When setting the post, we need to consider repost behavior.
     // If a post is a reposting another post (without a quote), then use the reposted post as the post content.
@@ -90,6 +98,7 @@ export class FeedPostComponent implements OnInit {
     this._blocked = value;
     this.ref.detectChanges();
   }
+
   get blocked() {
     return this._blocked;
   }
@@ -247,6 +256,12 @@ export class FeedPostComponent implements OnInit {
   streamPlayer: any;
   imageLoaded: boolean = false;
   embedLoaded: boolean = false;
+  postReactionCounts: PostAssociationCountsResponse = {
+    Counts: {},
+    Total: 0,
+  };
+  myReactions: Array<PostAssociation> = [];
+  reactionsLoaded: boolean = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -325,6 +340,15 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
+  // Detects whether this post was created on another social media site.
+  // If so, don't display any tags/hashtags, etc.
+  postFromOtherSocialMedia(): boolean {
+    let postBody = this.postContent.Body;
+    const lines = postBody.split("\n");
+    const attributionSearchText = "Posted via @setu_deso";
+    return lines[lines.length - 1].startsWith(attributionSearchText);
+  }
+
   postContentBodyFn() {
     let postBody = this.postContent.Body;
 
@@ -393,6 +417,8 @@ export class FeedPostComponent implements OnInit {
     this.isFollowing = this.followService._isLoggedInUserFollowing(
       this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
     );
+
+    this.getUserReactions();
   }
 
   imageLoadedEvent() {
@@ -504,44 +530,6 @@ export class FeedPostComponent implements OnInit {
         imageURL,
       },
     });
-  }
-
-  openInteractionPage(event, pageName: string, component): void {
-    event.stopPropagation();
-    if (this.globalVars.isMobile()) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
-        queryParamsHandling: "merge",
-      });
-    } else {
-      this.modalService.show(component, {
-        class: "modal-dialog-centered",
-        initialState: { postHashHex: this.post.PostHashHex },
-      });
-    }
-  }
-
-  openDiamondsPage(event): void {
-    if (this.postContent.DiamondCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS, DiamondsModalComponent);
-    }
-  }
-
-  openLikesPage(event): void {
-    if (this.postContent.LikeCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
-    }
-  }
-
-  openRepostsPage(event): void {
-    if (this.postContent.RecloutCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS, RepostsModalComponent);
-    }
-  }
-
-  openQuoteRepostsModal(event): void {
-    if (this.postContent.QuoteRepostCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS, QuoteRepostsModalComponent);
-    }
   }
 
   getHotnessScore() {
@@ -767,33 +755,45 @@ export class FeedPostComponent implements OnInit {
 
   setURLForVideoContent(): void {
     if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
-      const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
-      if (videoId != "") {
-        this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe(
-          (res) => {
-            if (res?.Duration && _.isNumber(res?.Duration)) {
-              this.videoURL =
-                res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
-                  ? this.postContent.VideoURLs[0]
-                  : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
-              if (res?.Dimensions && res?.Dimensions?.height && res?.Dimensions?.width) {
-                this.sourceVideoAspectRatio = res.Dimensions.width / res.Dimensions.height;
-              }
-              this.showVideoControls = res?.Duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
-              this.ref.detectChanges();
-              this.initializeStream();
-              this.setVideoControllerHeight(20);
-            }
-          },
-          (err) => {
-            this.videoURL = this.postContent.VideoURLs[0];
-            this.showVideoControls = true;
-            this.ref.detectChanges();
-            this.initializeStream();
-            this.setVideoControllerHeight(20);
-          }
-        );
-      }
+      this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
+      // const videoId = this.postContent.PostExtraData?.LivepeerAssetId
+      // // const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
+      // if (videoId && videoId != "") {
+      //   this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe(
+      //     (res) => {
+      //       console.log("Here is the res: ", res);
+      //       const duration = res?.videoSpec?.duration;
+      //       if (duration && _.isNumber(duration)) {
+      //         console.log("Here is the duration: ", duration);
+      //         console.log("Here is the duration: ", duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD);
+      //         this.videoURL =
+      //           duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
+      //             ? this.postContent.VideoURLs[0]
+      //             : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
+      //
+      //         console.log("Here is the video url: ", this.videoURL);
+      //         if (res?.videoSpec?.tracks?.length > 0 && res?.videoSpec?.tracks?.[0]?.width === "video") {
+      //           const trackDetails = res.videoSpec.tracks[res.videoSpec.tracks.length - 1];
+      //           this.sourceVideoAspectRatio = trackDetails.width / trackDetails.height;
+      //         }
+      //         console.log("Here is the video url: ", this.videoURL);
+      //         this.showVideoControls = duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
+      //         this.ref.detectChanges();
+      //         console.log("Here is the video url: ", this.videoURL);
+      //         // this.initializeStream();
+      //         this.setVideoControllerHeight(20);
+      //         console.log("Here is the video url: ", this.videoURL);
+      //       }
+      //     },
+      //     (err) => {
+      //       this.videoURL = this.postContent.VideoURLs[0];
+      //       this.showVideoControls = true;
+      //       this.ref.detectChanges();
+      //       this.initializeStream();
+      //       this.setVideoControllerHeight(20);
+      //     }
+      //   );
+      // }
     }
   }
 
@@ -1031,12 +1031,66 @@ export class FeedPostComponent implements OnInit {
     this.showUnlockableContent = !this.showUnlockableContent;
     this.ref.detectChanges();
   }
+
   showmOfNNFTTooltip = false;
+
   toggleShowMOfNNFTTooltip(): void {
     this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
   }
 
   getRouterLink(val: any): any {
     return this.inTutorial ? [] : val;
+  }
+
+  getUserReactions() {
+    this.reactionsLoaded = false;
+
+    return forkJoin([this.getPostReactionCounts(), this.getMyReactions()])
+      .pipe(
+        finalize(() => {
+          this.reactionsLoaded = true;
+          this.ref.detectChanges();
+        })
+      )
+      .subscribe(([counts, reactions]) => {
+        this.postReactionCounts = counts;
+        this.myReactions = reactions.Associations;
+      });
+  }
+
+  private getPostReactionCounts() {
+    return this.backendApi.GetPostAssociationsCounts(
+      this.globalVars.localNode,
+      this.postContent,
+      AssociationType.reaction,
+      Object.values(AssociationReactionValue)
+    );
+  }
+
+  private getMyReactions() {
+    const key = this.globalVars.loggedInUser?.PublicKeyBase58Check;
+
+    if (!key) {
+      // Skip requesting my reactions if user is not logged in
+      return of({ Associations: [] });
+    }
+
+    return this.backendApi.GetPostAssociations(
+      this.globalVars.localNode,
+      this.postContent.PostHashHex,
+      AssociationType.reaction,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      Object.values(AssociationReactionValue)
+    );
+  }
+
+  updateReactionCounts(counts: PostAssociationCountsResponse) {
+    this.postReactionCounts = counts;
+    this.ref.detectChanges();
+  }
+
+  updateMyReactions(reactions: Array<PostAssociation>) {
+    this.myReactions = reactions;
+    this.ref.detectChanges();
   }
 }

@@ -16,38 +16,32 @@ export class CloudflareStreamService {
     private globalVars: GlobalVarsService
   ) {}
 
-  extractVideoID(url: string): string {
-    const regExp = /^https:\/\/iframe\.videodelivery\.net\/([A-Za-z0-9]+)$/;
-    const match = url.match(regExp);
-    return match && match[1] ? match[1] : "";
+  checkVideoStatusById(assetId: string): Promise<[boolean, boolean, boolean]> {
+    if (assetId === "") {
+      console.error("Invalid VideoID");
+      return Promise.resolve([false, true, true]);
+    }
+
+    return this.backendApi
+      .GetVideoStatus(environment.uploadVideoHostname, assetId)
+      .toPromise()
+      .then(({ status }) => {
+        const phase = status?.phase;
+        if (phase === "ready") {
+          return [true, true, false];
+        } else if (phase === "failed") {
+          return [false, true, true];
+        } else {
+          return [false, false, false];
+        }
+      });
   }
 
-  // Returns two booleans - the first indicates if a video is ready to stream, the second indicates if we should stop polling
-  checkVideoStatusByVideoID(videoID: string): Observable<[boolean, boolean]> {
-    if (videoID === "") {
-      console.error("invalid VideoID");
-      return of([false, true]);
+  checkVideoStatusByURL(assetId: string): Promise<[boolean, boolean, boolean]> {
+    if (assetId === "") {
+      console.error("Unable to extract VideoID");
+      return Promise.resolve([false, true, true]);
     }
-    return this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoID).pipe(
-      catchError((error) => {
-        console.error(error);
-        return of({
-          ReadyToStream: false,
-          Error: error,
-        });
-      }),
-      map((res) => {
-        return [res.ReadyToStream, res.Error || res.ReadyToStream];
-      })
-    );
-  }
-
-  checkVideoStatusByURL(videoURL: string): Observable<[boolean, boolean]> {
-    const videoID = this.extractVideoID(videoURL);
-    if (videoID == "") {
-      console.error("unable to extract VideoID");
-      return of([false, true]);
-    }
-    return this.checkVideoStatusByVideoID(this.extractVideoID(videoURL));
+    return this.checkVideoStatusById(assetId);
   }
 }
