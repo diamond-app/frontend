@@ -48,7 +48,6 @@ RUN npm run build_prod
 FROM nginx:1.17
 
 COPY --from=frontend /frontend/dist/ /usr/share/nginx/html
-#COPY --from=frontend frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=frontend frontend/nginx.conf /etc/nginx/nginx.conf
 COPY --from=frontend frontend/security.conf /etc/nginx/conf.d/security.conf
 
