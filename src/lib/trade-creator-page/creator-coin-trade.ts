@@ -1,6 +1,6 @@
-import { GlobalVarsService } from "../../app/global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
 import { FormControl, Validators } from "@angular/forms";
+import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
+import { GlobalVarsService } from "../../app/global-vars.service";
 
 export class CreatorCoinTrade {
   static BUY_VERB = "Buy";
@@ -66,7 +66,7 @@ export class CreatorCoinTrade {
 
   isBuyingOwnCoin(): boolean {
     return (
-      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
       this.isBuyingCreatorCoin
     );
   }
@@ -155,8 +155,7 @@ export class CreatorCoinTrade {
   }
 
   _returnedAssetRowLabelPresentTense() {
-    return this.isBuyingCreatorCoin ? "Buy" : "" +
-      "You receive";
+    return this.isBuyingCreatorCoin ? "Buy" : "" + "You receive";
   }
 
   _soldAssetRowLabelPresentTense() {
@@ -318,9 +317,7 @@ export class CreatorCoinTrade {
   // DeSo per creator coin
   desoPriceOfCreatorCoin() {
     if (this.isBuyingOwnCoin()) {
-      return (
-        this.desoToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9)
-      );
+      return this.desoToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9);
     }
     if (this.isBuyingCreatorCoin) {
       return this.desoToSell / (this.expectedCreatorCoinReturnedNanos / 1e9);

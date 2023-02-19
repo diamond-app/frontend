@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 class NetworkConstants {
   static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
@@ -86,7 +86,7 @@ export class NetworkInfoComponent implements OnInit {
   stopMining() {
     this.stoppingMiners = true;
     this.backendApi
-      .UpdateMiner(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, "")
+      .UpdateMiner(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, "")
       .subscribe(
         (res: any) => {
           SwalHelper.fire({
@@ -138,7 +138,7 @@ export class NetworkInfoComponent implements OnInit {
     this.backendApi
       .NodeControl(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         peerAddr,
         "disconnect_deso_node"
       )
@@ -148,9 +148,7 @@ export class NetworkInfoComponent implements OnInit {
           return;
         },
         (error) => {
-          this.globalVars._alertError(
-            "Problem disconnecting DeSo Peer. Debug output: " + this._extractError(error)
-          );
+          this.globalVars._alertError("Problem disconnecting DeSo Peer. Debug output: " + this._extractError(error));
           console.error(error);
         }
       )
@@ -168,7 +166,7 @@ export class NetworkInfoComponent implements OnInit {
     this.backendApi
       .NodeControl(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         peerAddr,
         "connect_deso_node"
       )
@@ -179,9 +177,7 @@ export class NetworkInfoComponent implements OnInit {
           return;
         },
         (error) => {
-          this.globalVars._alertError(
-            "Problem connecting to DeSo Peer. Debug output: " + this._extractError(error)
-          );
+          this.globalVars._alertError("Problem connecting to DeSo Peer. Debug output: " + this._extractError(error));
           console.error(error);
         }
       )
@@ -202,7 +198,7 @@ export class NetworkInfoComponent implements OnInit {
     this.backendApi
       .NodeControl(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         peerAddr,
         "connect_bitcoin_node"
       )
@@ -246,7 +242,7 @@ export class NetworkInfoComponent implements OnInit {
     this.backendApi
       .UpdateMiner(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.updatedMinerPubKeys
       )
       .subscribe(

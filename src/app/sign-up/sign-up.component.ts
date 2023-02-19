@@ -1,24 +1,24 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ApiInternalService } from "src/app/api-internal.service";
+import { TrackingService } from "src/app/tracking.service";
 import { AppComponent } from "../app.component";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
 import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
-import Timer = NodeJS.Timer;
 
 @Component({
   selector: "sign-up",
   templateUrl: "./sign-up.component.html",
   styleUrls: ["./sign-up.component.scss"],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnDestroy {
   stepNum: number;
   loading: boolean = false;
-  verifiedInterval: Timer = null;
+  verifiedInterval: number = null;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -28,9 +28,11 @@ export class SignUpComponent {
     private backendApi: BackendApiService,
     private identityService: IdentityService,
     private modalService: BsModalService,
-    private apiInternal: ApiInternalService
+    private apiInternal: ApiInternalService,
+    private tracking: TrackingService
   ) {
     this.globalVars.isLeftBarMobileOpen = false;
+    this.globalVars.userSigningUp = true;
     this.setStep();
   }
 
@@ -46,7 +48,7 @@ export class SignUpComponent {
     let attempts = 0;
     let numTries = 500;
     let timeoutMillis = 500;
-    this.verifiedInterval = setInterval(() => {
+    this.verifiedInterval = window.setInterval(() => {
       if (attempts >= numTries) {
         clearInterval(this.verifiedInterval);
         return;
@@ -84,21 +86,6 @@ export class SignUpComponent {
     }
   }
 
-  launchJumioVerification() {
-    this.globalVars.logEvent("identity : jumio : launch");
-    this.identityService
-      .launch("/get-free-deso", {
-        public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        referralCode: this.globalVars.referralCode(),
-      })
-      .subscribe(() => {
-        this.globalVars.logEvent("identity : jumio : success");
-        this.globalVars.updateEverything().add(() => {
-          this.stepNum = 1;
-        });
-      });
-  }
-
   launchSMSVerification(): void {
     this.identityService
       .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
@@ -133,7 +120,7 @@ export class SignUpComponent {
 
   finishOnboarding() {
     // sends a welcome email.
-    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(() => {
+    this.apiInternal.onboardingEmailSubscribe(this.globalVars.loggedInUser?.PublicKeyBase58Check).subscribe(() => {
       // TODO: use email response to show a "check your email" UI toast? not sure
       // what we want to do with it, if anything.
     });
@@ -141,19 +128,25 @@ export class SignUpComponent {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.COMPLETE,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         true
       )
       .subscribe(() => {
         this.globalVars.updateEverything().add(() => {
           const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-          const redirectPath = isNil(signUpRedirect) ? `/${this.globalVars.RouteNames.TWITTER_SYNC}` : signUpRedirect;
+          const twitterSyncPath = `/${this.globalVars.RouteNames.TWITTER_SYNC}`;
+          const redirectPath = isNil(signUpRedirect) ? twitterSyncPath : signUpRedirect;
           this.router.navigate([redirectPath], {
             queryParamsHandling: "merge",
+            state: { fromSignUp: true },
           });
         });
       });
+  }
+
+  ngOnDestroy() {
+    this.globalVars.userSigningUp = false;
   }
 }

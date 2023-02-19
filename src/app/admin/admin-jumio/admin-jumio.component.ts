@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "admin-jumio",
@@ -39,7 +39,7 @@ export class AdminJumioComponent {
     this.backendApi
       .AdminResetJumioAttemptsForPublicKey(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username
       )
@@ -66,7 +66,7 @@ export class AdminJumioComponent {
     this.backendApi
       .AdminJumioCallback(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username
       )
@@ -103,7 +103,7 @@ export class AdminJumioComponent {
         this.backendApi
           .AdminUpdateJumioDeSo(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.jumioDeSoNanos
           )
           .subscribe(

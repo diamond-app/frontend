@@ -28,6 +28,13 @@
         [nftProfileUrl]="postContent?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
         queryParamsHandling="merge"
+        (click)="
+          this.tracking.log('post-profile-link : click', {
+            isVerified: this.postContent.ProfileEntryResponse?.IsVerified,
+            username: this.postContent.ProfileEntryResponse?.Username,
+            publicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
+          })
+        "
       ></a>
     </div>
     <div class="creator-profile-nfts__list-body d-flex flex-column">
@@ -253,6 +260,13 @@
                       ])
                 "
                 queryParamsHandling="merge"
+                (click)="
+                  this.tracking.log('post-profile-link : click', {
+                    isVerified: postContent.ProfileEntryResponse.IsVerified,
+                    username: postContent.ProfileEntryResponse.Username,
+                    publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                  })
+                "
               ></a>
             </div>
 
@@ -268,6 +282,13 @@
                   "
                   [queryParams]="!!postContent.PostExtraData?.BlogDeltaRtfFormat ? { tab: 'blog' } : {}"
                   queryParamsHandling="merge"
+                  (click)="
+                    this.tracking.log('post-profile-link : click', {
+                      isVerified: postContent.ProfileEntryResponse.IsVerified,
+                      username: postContent.ProfileEntryResponse.Username,
+                      publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                    })
+                  "
                 >
                   {{ postContent.ProfileEntryResponse.Username }}
                   <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">/ blog</span>
@@ -340,6 +361,8 @@
                     [innerHTML]="
                       !!postContent.PostExtraData?.BlogDeltaRtfFormat
                         ? postContent.PostExtraData?.Description
+                        : postFromOtherSocialMedia()
+                        ? postContentBodyFn()
                         : (postContentBodyFn() | sanitizeAndAutoLink)
                     "
                     queryParamsHandling="merge"
@@ -486,7 +509,12 @@
                     [afterCommentCreatedCallback]="afterCommentCreatedCallback"
                     [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                     [inTutorial]="inTutorial"
+                    [postReactionCounts]="postReactionCounts"
+                    [myReactions]="myReactions"
                     (diamondSent)="diamondSent.emit()"
+                    (userReacted)="getUserReactions()"
+                    (updateReactionCounts)="updateReactionCounts($event)"
+                    (updateMyReactions)="updateMyReactions($event)"
                   ></feed-post-icon-row>
 
                   <!-- Admin Buttons -->
@@ -556,7 +584,12 @@
       </a>
 
       <ng-container *ngIf="showInteractionDetails">
-        <post-interaction-details class="border-top" [post]="postContent"></post-interaction-details>
+        <post-interaction-details
+          class="border-top"
+          [post]="postContent"
+          [postReactionCounts]="postReactionCounts"
+          [reactionsLoading]="!reactionsLoaded"
+        ></post-interaction-details>
         <feed-post-icon-row
           class="border-top"
           style="padding: 12px 40px"
@@ -567,7 +600,13 @@
           [hideNumbers]="true"
           [afterCommentCreatedCallback]="afterCommentCreatedCallback"
           [afterRepostCreatedCallback]="afterRepostCreatedCallback"
+          [postReactionCounts]="postReactionCounts"
+          [myReactions]="myReactions"
+          [hideSummary]="true"
           (diamondSent)="diamondSent.emit()"
+          (userReacted)="getUserReactions()"
+          (updateReactionCounts)="updateReactionCounts($event)"
+          (updateMyReactions)="updateMyReactions($event)"
         ></feed-post-icon-row>
       </ng-container>
     </div>

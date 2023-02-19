@@ -1,16 +1,16 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Location } from "@angular/common";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
-import { Subscription } from "rxjs";
-import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
-import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { AppRoutingModule } from "../../app-routing.module";
-import { dynamicMinValidator } from "../../../lib/validators/dynamic-min-validator";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
+import { Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
+import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
+import { dynamicMinValidator } from "../../../lib/validators/dynamic-min-validator";
+import { AppRoutingModule } from "../../app-routing.module";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "trade-creator-form",
@@ -439,8 +439,8 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       // of this component (computing the max), it's 0
       this.creatorCoinTrade.currentFeeForSellNanos = 0;
       if (
-        this.globalVars.loggedInUser.PublicKeyBase58Check ===
-        this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+        this.globalVars.loggedInUser?.PublicKeyBase58Check ===
+          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
         !this.creatorCoinTrade.isCreatorCoinTransfer() &&
         !this.hideWarning
       ) {

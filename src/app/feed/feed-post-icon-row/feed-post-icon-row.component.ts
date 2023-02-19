@@ -1,20 +1,31 @@
-import { PlatformLocation } from "@angular/common";
+import { KeyValue, PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { includes, isNil, round, set } from "lodash";
+import { debounce, includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import { TrackingService } from "src/app/tracking.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import {
+  AssociationReactionValue,
+  AssociationType,
+  BackendApiService,
+  PostAssociation,
+  PostAssociationCountsResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
+import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
+import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "feed-post-icon-row",
   templateUrl: "./feed-post-icon-row.component.html",
-  styleUrls: ["./feed-post-icon-row.component.sass"],
+  styleUrls: ["./feed-post-icon-row.component.scss"],
 })
 export class FeedPostIconRowComponent {
   @ViewChild("diamondPopover", { static: false }) diamondPopover: PopoverDirective;
@@ -27,16 +38,19 @@ export class FeedPostIconRowComponent {
   @Input() hideNumbers: boolean = false;
   // Will need additional inputs if we walk through actions other than diamonds.
   @Input() inTutorial: boolean = false;
+  @Input() postReactionCounts: PostAssociationCountsResponse;
+  @Input() myReactions: Array<PostAssociation> = [];
+  @Input() hideSummary: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
+  @Output() userReacted = new EventEmitter();
+  @Output() updateReactionCounts = new EventEmitter<PostAssociationCountsResponse>();
+  @Output() updateMyReactions = new EventEmitter<Array<PostAssociation>>();
 
   sendingRepostRequest = false;
 
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 4;
-
-  // Boolean for animation on whether a heart is clicked or not
-  animateLike = false;
 
   diamondCount = GlobalVarsService.MAX_DIAMONDS_GIVABLE;
   // Indexes from 0 to diamondCount (used by *ngFor)
@@ -49,8 +63,6 @@ export class FeedPostIconRowComponent {
   diamondTimeouts: NodeJS.Timer[] = [];
   // How quickly the diamonds sequentially appear on hover
   diamondAnimationDelay = 50;
-  // Where the drag div should be placed for mobile dragging
-  diamondDragLeftOffset = "0px";
   // Whether the diamond drag selector is being dragged
   diamondDragging = false;
   // Which diamond is selected by the drag selector
@@ -72,6 +84,15 @@ export class FeedPostIconRowComponent {
   // Track when the drag began, if less than .1 seconds ago, and the drag didn't move, assume it was a click
   diamondDragStarted: Date;
 
+  choosingReaction = false;
+  debouncedToggleSelectReactionFunction: (show: boolean) => void;
+  allowedReactions = Object.values(AssociationReactionValue) as Array<AssociationReactionValue>;
+  reactionsVisible = Array<boolean>(this.allowedReactions.length).fill(false);
+  reactionTimeouts: NodeJS.Timer[] = [];
+  processedReaction: AssociationReactionValue | null = null;
+  private readonly reactionAnimationDelay = 50;
+  private readonly toggleReactionsDebounceTime = 50;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -80,8 +101,14 @@ export class FeedPostIconRowComponent {
     private platformLocation: PlatformLocation,
     private ref: ChangeDetectorRef,
     private modalService: BsModalService,
-    private translocoService: TranslocoService
-  ) {}
+    private translocoService: TranslocoService,
+    private tracking: TrackingService
+  ) {
+    this.debouncedToggleSelectReactionFunction = debounce(
+      this.toggleSelectReaction.bind(this),
+      this.toggleReactionsDebounceTime
+    );
+  }
 
   diamondDraggedText() {
     const textKey = !this.diamondDragMoved
@@ -90,6 +117,26 @@ export class FeedPostIconRowComponent {
       ? "feed_post_icon_row.release_to_cancel"
       : "feed_post_icon_row.slide_to_cancel";
     return this.translocoService.translate(textKey);
+  }
+
+  toggleSelectReaction(show: boolean) {
+    if (!this.choosingReaction && show) {
+      for (let idx = 0; idx < this.allowedReactions.length; idx++) {
+        this.reactionTimeouts[idx] = setTimeout(() => {
+          this.reactionsVisible[idx] = true;
+          this.ref.detectChanges();
+        }, idx * this.reactionAnimationDelay);
+      }
+    } else if (this.choosingReaction && !show) {
+      for (let idx = 0; idx < this.allowedReactions.length; idx++) {
+        clearTimeout(this.reactionTimeouts[idx]);
+        this.reactionsVisible[idx] = false;
+      }
+      this.ref.detectChanges();
+    }
+
+    this.choosingReaction = show;
+    this.ref.detectChanges();
   }
 
   // Initiate mobile drag, have diamonds appear
@@ -174,28 +221,12 @@ export class FeedPostIconRowComponent {
   }
 
   _preventNonLoggedInUserActions(action: string) {
-    this.globalVars.logEvent(`alert : ${action} : account`);
-
-    return SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      icon: "info",
-      title: `Create an account to ${action}`,
-      html: `It's totally anonymous and takes under a minute`,
-      showCancelButton: true,
-      showConfirmButton: true,
-      focusConfirm: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      confirmButtonText: "Create an account",
-      cancelButtonText: "Nevermind",
-      reverseButtons: true,
-    }).then((res: any) => {
-      if (res.isConfirmed) {
-        this.globalVars.launchSignupFlow();
-      }
+    this.tracking.log(`post : ${action}`, {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
     });
+    this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: action } });
   }
 
   userHasReposted(): boolean {
@@ -210,10 +241,10 @@ export class FeedPostIconRowComponent {
     event.stopPropagation();
 
     // If the user isn't logged in, alert them.
-    if (this.globalVars.loggedInUser == null) {
+    if (!this.globalVars.loggedInUser) {
       return this._preventNonLoggedInUserActions("repost");
     } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : repost : profile");
+      this.tracking.log("alert : repost : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
@@ -226,7 +257,7 @@ export class FeedPostIconRowComponent {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -240,7 +271,7 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : repost");
+          this.tracking.log("post : repost");
           // Only set the RepostPostHashHex if this is the first time a user is reposting a post.
           if (!this.postContent.PostEntryReaderState.RepostPostHashHex) {
             this.postContent.PostEntryReaderState.RepostPostHashHex = response.PostHashHex;
@@ -254,7 +285,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : repost : error", { parsedError });
+          this.tracking.log("post : repost", { error: err });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
         }
@@ -278,7 +309,7 @@ export class FeedPostIconRowComponent {
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -292,7 +323,7 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : unrepost");
+          this.tracking.log("post : unrepost");
           this.postContent.RepostCount--;
           this.postContent.PostEntryReaderState.RepostedByReader = false;
           this.sendingRepostRequest = false;
@@ -302,60 +333,9 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : unrepost : error", { parsedError });
+          this.tracking.log("post : unrepost", { error: parsedError });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
-        }
-      );
-  }
-
-  toggleLike(event: any) {
-    this.animateLike = !this.animateLike;
-
-    if (this.inTutorial) {
-      return;
-    }
-    // Prevent the post from navigating.
-    event.stopPropagation();
-
-    // If the user isn't logged in, alert them.
-    if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("like");
-    }
-
-    // If the reader hasn't liked a post yet, they won't have a reader state.
-    if (this.postContent.PostEntryReaderState == null) {
-      this.postContent.PostEntryReaderState = { LikedByReader: false };
-    }
-
-    let isUnlike;
-    // Immediately toggle like and increment/decrement so that it feels instant.
-    if (this.postContent.PostEntryReaderState.LikedByReader) {
-      this.postContent.LikeCount--;
-      this.postContent.PostEntryReaderState.LikedByReader = false;
-      isUnlike = true;
-    } else {
-      this.postContent.LikeCount++;
-      this.postContent.PostEntryReaderState.LikedByReader = true;
-      isUnlike = false;
-    }
-    this.ref.detectChanges();
-    // Fire off the transaction.
-    this.backendApi
-      .CreateLike(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostHashHex,
-        isUnlike,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
-      .subscribe(
-        (res) => {
-          this.globalVars.logEvent(`post : ${isUnlike ? "unlike" : "like"}`);
-        },
-        (err) => {
-          this.globalVars.logEvent(`post : ${isUnlike ? "unlike" : "like"} : error`);
-          console.error(err);
         }
       );
   }
@@ -371,12 +351,10 @@ export class FeedPostIconRowComponent {
     }
 
     if (!this.globalVars.loggedInUser) {
-      // Check if the user has an account.
-      this.globalVars.logEvent("alert : reply : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "comment" } });
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
-      this.globalVars.logEvent("alert : reply : profile");
+      this.tracking.log("alert : reply : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
     } else {
       const initialState = {
@@ -391,12 +369,17 @@ export class FeedPostIconRowComponent {
         class: "modal-dialog-centered",
         initialState,
         ignoreBackdropClick: true,
+        keyboard: false,
       });
     }
   }
 
   copyPostLinkToClipboard(event) {
-    this.globalVars.logEvent("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -414,7 +397,11 @@ export class FeedPostIconRowComponent {
     if (this.inTutorial) {
       return;
     }
-    this.globalVars.logEvent("post : share");
+    this.tracking.log("post : share", {
+      postHashHex: this.postContent.PostHashHex,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+    });
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -468,7 +455,7 @@ export class FeedPostIconRowComponent {
     return this.backendApi
       .SendDiamonds(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
         diamonds,
@@ -480,11 +467,11 @@ export class FeedPostIconRowComponent {
         (res) => {
           this.sendingDiamonds = false;
           this.diamondSent.emit();
-          this.globalVars.logEvent("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
-            DiamondPostHashHex: this.postContent.PostHashHex,
-            DiamondLevel: diamonds,
+          this.tracking.log("diamond: send", {
+            postHashHex: this.postContent.PostHashHex,
+            authorUsername: this.postContent.ProfileEntryResponse?.Username,
+            authorPublicKey: this.postContent.PosterPublicKeyBase58Check,
+            diamondLevel: diamonds,
           });
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
@@ -502,7 +489,7 @@ export class FeedPostIconRowComponent {
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
-          this.globalVars.logEvent("diamonds: send: error", { parsedError });
+          this.tracking.log("diamonds: send", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -522,7 +509,7 @@ export class FeedPostIconRowComponent {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
       this.globalVars.localNode,
@@ -560,7 +547,7 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    // If triggered from mobile, stop propegation
+    // If triggered from mobile, stop propagation
     if (fromDragEvent) {
       event.stopPropagation();
     }
@@ -599,8 +586,8 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      this.globalVars._alertError("Must be logged in to send diamonds");
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "diamond" } });
       return;
     }
     // Disable diamond selection if diamonds are being sent
@@ -669,5 +656,106 @@ export class FeedPostIconRowComponent {
   handleRepostClick(event) {
     event.stopPropagation();
     this.ref.detectChanges();
+  }
+
+  openReactionsDetails(event) {
+    event.stopPropagation();
+
+    this.openInteractionPage(event, this.globalVars.RouteNames.REACTIONS, ReactionsModalComponent);
+  }
+
+  private openInteractionPage(event, pageName: string, component): void {
+    event.stopPropagation();
+    if (this.globalVars.isMobile()) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
+        queryParamsHandling: "merge",
+      });
+    } else {
+      this.modalService.show(component, {
+        class: "modal-dialog-centered",
+        initialState: { postHashHex: this.postContent.PostHashHex },
+      });
+    }
+  }
+
+  sendReaction(value: AssociationReactionValue = this.allowedReactions[0], event?: Event) {
+    if (this.processedReaction) {
+      event.preventDefault();
+      return;
+    }
+
+    this.processedReaction = value;
+    this.ref.detectChanges();
+
+    event && event.stopPropagation();
+
+    const existingReaction = this.hasUserReacted(value);
+
+    // Update counts locally without waiting for a response to immediately show the result to the user
+    this.updateReactionCounts.emit({
+      Total: existingReaction ? this.postReactionCounts.Total - 1 : this.postReactionCounts.Total + 1,
+      Counts: {
+        ...this.postReactionCounts.Counts,
+        [value]: existingReaction
+          ? this.postReactionCounts.Counts[value] - 1
+          : this.postReactionCounts.Counts[value] + 1,
+      },
+    });
+
+    // Update reactions locally without waiting for a response to immediately show the result to the user
+    this.updateMyReactions.emit(
+      existingReaction
+        ? this.myReactions.filter((e) => e.AssociationValue !== value)
+        : [
+            ...this.myReactions,
+            { AssociationType: AssociationType.reaction, AssociationValue: value } as PostAssociation,
+          ]
+    );
+
+    const $request = existingReaction
+      ? this.backendApi.DeletePostAssociation(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          existingReaction.AssociationID
+        )
+      : this.backendApi.CreatePostAssociation(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.postContent.PostHashHex,
+          AssociationType.reaction,
+          value
+        );
+
+    $request
+      .pipe(
+        finalize(() => {
+          this.processedReaction = null;
+          this.ref.detectChanges();
+        })
+      )
+      .subscribe(
+        () => {
+          this.userReacted.emit();
+        },
+        (err) => {
+          console.error(err);
+          this.sendingRepostRequest = false;
+          const parsedError = this.backendApi.parsePostError(err);
+          this.tracking.log("post : react", { error: err });
+          this.globalVars._alertError(parsedError);
+          this.ref.detectChanges();
+        }
+      );
+  }
+
+  hasUserReacted(value: AssociationReactionValue) {
+    return this.myReactions.find((e) => e.AssociationValue === value);
+  }
+
+  sortReactionsByCount(
+    a: KeyValue<AssociationReactionValue, number>,
+    b: KeyValue<AssociationReactionValue, number>
+  ): number {
+    return a.value > b.value ? -1 : 1;
   }
 }

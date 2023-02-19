@@ -1,7 +1,7 @@
 <div class="d-flex flex-column">
   <div *ngIf="!isMobile">
     <!-- Create Post -->
-    <div *ngIf="globalVars.loggedInUser != null" class="desktop-create-post">
+    <div class="desktop-create-post">
       <feed-create-post
         [numberOfRowsInTextArea]="2"
         [postRefreshFunc]="prependPostToFeed.bind(this)"
@@ -12,26 +12,26 @@
   <!--  Spacer for tab selector-->
   <div *ngIf="isMobile" style="margin-top: 32px"></div>
   <!-- Mobile DeSo Price -->
-<!--  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">-->
-<!--    <div>{{ 'feed.deso_price' | transloco }}&nbsp;&nbsp;&nbsp;</div>-->
-<!--    <div>-->
-<!--      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>-->
-<!--      <span class="text-muted">&nbsp;{{ 'feed.usd_coin' | transloco }}</span>-->
-<!--    </div>-->
-<!--  </div>-->
+  <!--  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">-->
+  <!--    <div>{{ 'feed.deso_price' | transloco }}&nbsp;&nbsp;&nbsp;</div>-->
+  <!--    <div>-->
+  <!--      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>-->
+  <!--      <span class="text-muted">&nbsp;{{ 'feed.usd_coin' | transloco }}</span>-->
+  <!--    </div>-->
+  <!--  </div>-->
 
-<!--  <a-->
-<!--    *ngIf="globalVars.loggedInUser && userReferral && !isMobile"-->
-<!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
-<!--  >-->
-<!--    <div-->
-<!--      class="feed-desktop-center-banner"-->
-<!--    >-->
-<!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
-<!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
-<!--    </div>-->
-<!--  </a>-->
-<!--  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>-->
+  <!--  <a-->
+  <!--    *ngIf="globalVars.loggedInUser && userReferral && !isMobile"-->
+  <!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
+  <!--  >-->
+  <!--    <div-->
+  <!--      class="feed-desktop-center-banner"-->
+  <!--    >-->
+  <!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
+  <!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
+  <!--    </div>-->
+  <!--  </a>-->
+  <!--  <jumio-status *ngIf="globalVars.loggedInUser && !isMobile"></jumio-status>-->
 
   <!-- Tab Selector -->
   <div class="d-flex align-items-center">
@@ -40,67 +40,53 @@
       [tabs]="feedTabs"
       [activeTab]="activeTab"
       [newTabs]="newTabs"
-      (tabClick)="_handleTabClick($event)"
-    ></tab-selector>
-    <div class="position-relative d-flex mt-2px" [ngClass]="{ 'feed__tag-container-mobile': globalVars.isMobile(), 'logged-out': !globalVars.loggedInUser }">
-      <div
-        class="cursor-pointer br-10px p-3 feed__tag-container d-flex align-items-center justify-content-center"
-        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== ''), 'active': activeTab === 'Tag' }"
-      >
-        {{ expandTagSelector || (tag && tag !== '') ? '#' : '# Explore' }}
+      (tabClick)="handleTabClick($event)"
+    >
+      <div class="position-relative d-flex align-items-center pl-15px">
+        <div
+          class="cursor-pointer br-10px p-3 feed__tag-container d-flex align-items-center justify-content-center"
+          [ngClass]="{
+            'feed__tag-container-expanded': expandTagSelector || (tag && tag !== ''),
+            active: activeTab === 'Tag'
+          }"
+        >
+          {{ expandTagSelector || (tag && tag !== "") ? "#" : "# Explore" }}
+        </div>
+        <div
+          class="cursor-pointer feed__tag-container-background"
+          [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
+        ></div>
+        <input
+          (focusin)="toggleTagInput(true)"
+          (focusout)="toggleTagInput(false)"
+          (keydown.enter)="updateTag()"
+          class="cursor-pointer position-absolute feed__tag-input"
+          [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
+          [(ngModel)]="tag"
+          [placeholder]="expandTagSelector || (tag && tag !== '') ? 'Search hashtags' : ''"
+        />
+        <div
+          *ngIf="expandTagSelector || (tag && tag !== '')"
+          (click)="updateTag()"
+          class="cursor-pointer d-flex align-items-center justify-content-center p-2 h-100 position-relative"
+          style="z-index: 10; right: 65px; top: 0px"
+        >
+          <i-feather name="arrow-right" class="feather-medium fc-blue fs-0px"></i-feather>
+        </div>
       </div>
-      <div
-        class="cursor-pointer feed__tag-container-background"
-        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
-      ></div>
-      <input
-        (focusin)="toggleTagInput(true)"
-        (focusout)="toggleTagInput(false)"
-        (keydown.enter)="updateTag()"
-        class="cursor-pointer position-absolute feed__tag-input"
-        [ngClass]="{ 'feed__tag-container-expanded': expandTagSelector || (tag && tag !== '') }"
-        [(ngModel)]="tag"
-        [placeholder]="expandTagSelector || (tag && tag !== '') ? 'Search hashtags' : ''"
-      />
-      <div
-        *ngIf="expandTagSelector || (tag && tag !== '')"
-        (click)="updateTag()"
-        class="cursor-pointer d-flex align-items-center justify-content-center p-2 h-100 position-relative"
-        style="z-index: 10; right: 65px; top: -2px"
-      >
-        <i-feather name="arrow-right" class="feather-medium fc-blue fs-0px"></i-feather>
-      </div>
-    </div>
+    </tab-selector>
   </div>
 
-<!--  <a-->
-<!--    *ngIf="globalVars.loggedInUser && userReferral && isMobile"-->
-<!--    [routerLink]="'/' + globalVars.RouteNames.REFERRALS"-->
-<!--    class="mt-40px mx-8px"-->
-<!--    [ngClass]="{-->
-<!--      'mb-5px': !(-->
-<!--        globalVars.loggedInUser &&-->
-<!--        !globalVars.loggedInUser.JumioVerified &&-->
-<!--        this.globalVars.showFreeMoneyBanner-->
-<!--      )-->
-<!--    }"-->
-<!--  >-->
-<!--    <div-->
-<!--      class="feed-desktop-center-banner"-->
-<!--    >-->
-<!--      <i-feather name="share-2" class="mr-10px fs-0px"></i-feather>-->
-<!--      <span class="mr-5px">{{ 'feed.you_have_referral_0' | transloco }} <b>{{globalVars.formatUSD(userReferral.Info.RefereeAmountUSDCents / 100, 0)}}</b> {{ 'feed.you_have_referral_1' | transloco }}</span>-->
-<!--    </div>-->
-<!--  </a>-->
-
-  <countdown-timer *ngIf="nextNFTShowcaseTime"
+  <countdown-timer
+    *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
     [fontWeight]="500"
-    [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
+    [timerEnd]="nextNFTShowcaseTime"
+  ></countdown-timer>
 
   <div *ngIf="isMobile" style="margin-top: 50px"></div>
   <div [id]="getPullToRefreshMarkerId()"></div>
-<!--  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>-->
+  <!--  <jumio-status *ngIf="globalVars.loggedInUser && isMobile"></jumio-status>-->
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingOrHotPosts()" [ngClass]="{ 'mt-0px': globalVars.isMobile() }">
@@ -137,8 +123,8 @@
       class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
       (click)="loadMorePosts()"
     >
-      <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">{{ 'feed.load_more' | transloco }}</div>
-      <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">{{ 'feed.loading' | transloco }}</div>
+      <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">{{ "feed.load_more" | transloco }}</div>
+      <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">{{ "feed.loading" | transloco }}</div>
     </div>
   </div>
 
@@ -147,7 +133,7 @@
     class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center"
     style="height: 400px"
   >
-    <div>{{ 'feed.no_posts' | transloco }}</div>
+    <div>{{ "feed.no_posts" | transloco }}</div>
 
     <div class="mt-10px">
       <a
@@ -156,14 +142,14 @@
         [queryParams]="{ feedTab: FeedComponent.HOT_TAB }"
         queryParamsHandling="merge"
       >
-      {{ 'feed.check_hot_0' | transloco }}
+        {{ "feed.check_hot_0" | transloco }}
       </a>
-      {{ 'feed.check_hot_1' | transloco }}
+      {{ "feed.check_hot_1" | transloco }}
     </div>
   </div>
   <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
 
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-<!--  <div class="global__bottom-bar-mobile-height"></div>-->
-<!--  <div class="global__bottom-bar-mobile-height"></div>-->
+  <!--  <div class="global__bottom-bar-mobile-height"></div>-->
+  <!--  <div class="global__bottom-bar-mobile-height"></div>-->
 </div>

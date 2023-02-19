@@ -4,8 +4,8 @@
 // https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { from, interval, Observable, of, throwError, zip } from "rxjs";
-import { catchError, concatMap, filter, map, switchMap, take, timeout } from "rxjs/operators";
+import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
+import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -157,6 +157,13 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
+
+  // Associations
+  static RoutePathCreateUserAssociation = "/api/v0/user-associations/create";
+  static RoutePathCreatePostAssociation = "/api/v0/post-associations/create";
+  static RoutePathDeletePostAssociation = "/api/v0/post-associations/delete";
+  static RoutePathGetPostAssociations = "/api/v0/post-associations/query";
+  static RoutePathGetPostAssociationCounts = "/api/v0/post-associations/counts";
 }
 
 export class Transaction {
@@ -461,6 +468,44 @@ export type MessagingGroupMemberResponse = {
   EncryptedKey: string;
 };
 
+export enum AssociationType {
+  // TODO: add more types when needed
+  reaction = "REACTION",
+}
+
+export enum AssociationReactionValue {
+  LIKE = "LIKE",
+  DISLIKE = "DISLIKE",
+  LOVE = "LOVE",
+  LAUGH = "LAUGH",
+  ASTONISHED = "ASTONISHED",
+  SAD = "SAD",
+  ANGRY = "ANGRY",
+}
+
+// TODO: other association values can be added as Value1 | Value2 etc.
+export type AssociationValue = AssociationReactionValue;
+
+export interface PostAssociation {
+  AppPublicKeyBase58Check: string;
+  AssociationID: string;
+  AssociationType: AssociationType;
+  AssociationValue: AssociationValue;
+  BlockHeight: number;
+  ExtraData: any;
+  PostHashHex: string;
+  TransactorPublicKeyBase58Check: string;
+}
+
+export interface PostAssociationCountsResponse {
+  Counts: { [key in AssociationValue]?: number };
+  Total: number;
+}
+
+export interface PostAssociationsResponse {
+  Associations: Array<PostAssociation>;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -470,6 +515,7 @@ export class BackendApiService {
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
   static SELL_CREATOR_COIN_OPERATION_TYPE = "sell";
+  static DIAMOND_APP_PUBLIC_KEY = "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL";
 
   // TODO: Cleanup - this should be a configurable value on the node. Leaving it in the frontend
   // is fine for now because BlockCypher has strong anti-abuse measures in place.
@@ -694,8 +740,8 @@ export class BackendApiService {
     Broadcast: boolean
   ): Observable<any> {
     // Check if the user is logged in with a derived key and operating as the owner key.
-    const DerivedPublicKeyBase58Check = this.identityService.identityServiceUsers[PublicKeyBase58Check]
-      ?.derivedPublicKeyBase58Check;
+    const DerivedPublicKeyBase58Check =
+      this.identityService.identityServiceUsers[PublicKeyBase58Check]?.derivedPublicKeyBase58Check;
 
     let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
@@ -830,8 +876,7 @@ export class BackendApiService {
           const launchDefaultMessagingKey$ = () =>
             from(
               SwalHelper.fire({
-                html:
-                  "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+                html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
                 showCancelButton: false,
               })
             ).pipe(
@@ -1066,6 +1111,32 @@ export class BackendApiService {
         formData.append("JWT", signed.jwt);
 
         return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
+      })
+    );
+  }
+
+  UploadVideo(
+    endpoint: string,
+    file: File,
+    publicKeyBase58Check: string
+  ): Observable<{
+    tusEndpoint: string;
+    asset: {
+      id: string;
+      playbackId: string;
+    };
+  }> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(publicKeyBase58Check),
+    });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("UserPublicKeyBase58Check", publicKeyBase58Check);
+        formData.append("JWT", signed.jwt);
+
+        return this.post(endpoint, BackendRoutes.RoutePathUploadVideo, formData);
       })
     );
   }
@@ -1501,6 +1572,7 @@ export class BackendApiService {
       responseType: "blob",
     });
   }
+
   GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
     return this._makeRequestURL(
       endpoint,
@@ -1511,8 +1583,9 @@ export class BackendApiService {
         (fallback ?? this.GetDefaultProfilePictureURL(endpoint))
     );
   }
+
   GetDefaultProfilePictureURL(endpoint: string): string {
-    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+    return this._makeRequestURL(endpoint, "/assets/img/default-profile-pic.png");
   }
 
   GetPostsForPublicKey(
@@ -1573,6 +1646,7 @@ export class BackendApiService {
       FetchAll,
     });
   }
+
   UpdateProfile(
     verificationNodeEndpoint: string,
     localNodeEndpoint: string,
@@ -1707,8 +1781,7 @@ export class BackendApiService {
     const launchDefaultMessagingKey$ = () =>
       from(
         SwalHelper.fire({
-          html:
-            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
+          html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
           showCancelButton: false,
         })
       ).pipe(
@@ -1859,6 +1932,133 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
   }
 
+  CreatePostAssociation(
+    Endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    AssociationValue: AssociationValue
+  ): Observable<any> {
+    const request = this.post(Endpoint, BackendRoutes.RoutePathCreatePostAssociation, {
+      TransactorPublicKeyBase58Check,
+      PostHashHex,
+      AppPublicKeyBase58Check: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+      AssociationType,
+      AssociationValue,
+      ExtraData: {},
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
+  }
+
+  DeletePostAssociation(
+    Endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    AssociationID: string
+  ): Observable<any> {
+    const request = this.post(Endpoint, BackendRoutes.RoutePathDeletePostAssociation, {
+      TransactorPublicKeyBase58Check,
+      AssociationID,
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
+  }
+
+  GetAllPostAssociations(
+    Endpoint: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    TransactorPublicKeyBase58Check?: string,
+    AssociationValue?: AssociationValue,
+    total: number = 0
+  ) {
+    const ASSOCIATIONS_PER_REQUEST_LIMIT = 100;
+    let receivedItems = [];
+
+    const fetchAssociationsChunk = (LastSeenAssociationID?: string) => {
+      return this.GetPostAssociations(
+        Endpoint,
+        PostHashHex,
+        AssociationType,
+        TransactorPublicKeyBase58Check,
+        AssociationValue,
+        LastSeenAssociationID,
+        ASSOCIATIONS_PER_REQUEST_LIMIT
+      ).pipe(
+        tap(({ Associations }) => {
+          receivedItems = [...receivedItems, ...Associations];
+        })
+      );
+    };
+
+    return fetchAssociationsChunk().pipe(
+      expand(() => {
+        if (receivedItems.length < total) {
+          return fetchAssociationsChunk(receivedItems[receivedItems.length - 1].AssociationID);
+        }
+        return EMPTY;
+      }),
+      map((res) => res.Associations),
+      reduce((acc, val) => acc.concat(val), new Array<PostAssociation>())
+    );
+  }
+
+  GetPostAssociations(
+    Endpoint: string,
+    PostHashHex: string,
+    AssociationType: AssociationType,
+    TransactorPublicKeyBase58Check?: string,
+    AssociationValues?: AssociationValue | Array<AssociationValue>,
+    LastSeenAssociationID?: string,
+    Limit: number = 100
+  ): Observable<PostAssociationsResponse> {
+    const isArray = AssociationValues && Array.isArray(AssociationValues);
+
+    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociations, {
+      TransactorPublicKeyBase58Check,
+      PostHashHex,
+      AssociationType: AssociationType,
+      AssociationValue: isArray ? undefined : AssociationValues,
+      AssociationValues: isArray ? AssociationValues : undefined,
+      LastSeenAssociationID,
+      Limit,
+    });
+  }
+
+  GetPostAssociationsCounts(
+    Endpoint: string,
+    Post: PostEntryResponse,
+    AssociationType: AssociationType,
+    AssociationValues: Array<AssociationValue>,
+    SkipLegacyLikes: boolean = false
+  ): Observable<PostAssociationCountsResponse> {
+    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
+      PostHashHex: Post.PostHashHex,
+      AssociationType,
+      AssociationValues,
+    }).pipe(
+      map((response) => {
+        if (SkipLegacyLikes) {
+          return response;
+        }
+
+        const { Counts, Total } = response;
+
+        return {
+          Counts: {
+            ...Counts,
+            [AssociationReactionValue.LIKE]: (Counts[AssociationReactionValue.LIKE] || 0) + Post.LikeCount,
+          },
+          Total: Total + Post.LikeCount,
+        };
+      })
+    );
+  }
+
   SendDiamonds(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -1953,7 +2153,6 @@ export class BackendApiService {
 
   BuyOrSellCreatorCoin(
     endpoint: string,
-
     // The public key of the user who is making the buy/sell.
     UpdaterPublicKeyBase58Check: string,
     // The public key of the profile that the purchaser is trying
@@ -1977,7 +2176,6 @@ export class BackendApiService {
     // them to zero turns off the check. Give it your best shot, Ivan.
     MinDeSoExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
-
     MinFeeRateNanosPerKB: number,
     Broadcast: boolean,
     InTutorial: boolean = false
@@ -2128,7 +2326,6 @@ export class BackendApiService {
 
   GetUserGlobalMetadata(
     endpoint: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2248,7 +2445,6 @@ export class BackendApiService {
   AdminGetUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user for whom we'd like to get global metadata
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2261,7 +2457,6 @@ export class BackendApiService {
   AdminUpdateUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string,
     Username: string,

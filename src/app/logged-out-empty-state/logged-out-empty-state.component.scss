@@ -1,0 +1,17 @@
+.logged-out-empty-state {
+  text-align: center;
+  padding: 2rem;
+
+  @media (min-width: 992px) {
+    padding: 5rem 7rem;
+  }
+}
+
+.btn-dark {
+  @media(prefers-color-scheme: light) {
+    background-color: #000;
+    &:hover {
+      background-color: #333;
+    }
+  }
+}

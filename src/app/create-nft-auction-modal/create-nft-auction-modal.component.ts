@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { concatMap, last, map } from "rxjs/operators";
-import { of } from "rxjs";
 import { Router } from "@angular/router";
-import { filter, isNumber } from "lodash";
 import { TranslocoService } from "@ngneat/transloco";
+import { filter, isNumber } from "lodash";
+import { BsModalRef } from "ngx-bootstrap/modal";
+import { of } from "rxjs";
+import { concatMap, last, map } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "create-nft-auction",
@@ -35,7 +36,8 @@ export class CreateNftAuctionModalComponent implements OnInit {
     public globalVars: GlobalVarsService,
     public bsModalRef: BsModalRef,
     private router: Router,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit() {
@@ -117,7 +119,7 @@ export class CreateNftAuctionModalComponent implements OnInit {
             return this.backendApi
               .UpdateNFT(
                 this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 this.post.PostHashHex,
                 val + 1,
                 true,
@@ -140,12 +142,24 @@ export class CreateNftAuctionModalComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
+          this.tracking.log("nft-auction : create", {
+            postHashHex: this.post.PostHashHex,
+            authorUsername: this.post.ProfileEntryResponse?.Username,
+            authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
+          });
           this.bsModalRef.hide();
           this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
+          const parsedError = this.backendApi.parseMessageError(err);
+          this.globalVars._alertError(parsedError);
+          this.tracking.log("nft-auction : create", { error: parsedError });
         }
       )
       .add(() => (this.creatingAuction = false));

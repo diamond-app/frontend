@@ -1,8 +1,13 @@
-<div class="d-flex w-100 tab-selector__container" style="cursor: pointer; height: 50px" [ngClass]="{ 'tab-selector-links': !buttonSelector }">
+<div
+  class="d-flex w-100 tab-selector__container"
+  style="cursor: pointer; height: 50px"
+  [ngClass]="{ 'tab-selector-links': !buttonSelector, 'tab-selector__container--logged-out': !globalVars.loggedInUser }"
+>
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
-    class="d-flex flex-column align-items-center h-100 pl-15px pr-15px"
+    class="d-flex flex-column align-items-center h-100 pl-15px pr-15px tab-selector__tab"
+    [ngClass]="{ highlighted: highlightTab && tab === activeTab }"
   >
     <div class="d-flex h-100 align-items-center">
       <div
@@ -10,19 +15,34 @@
         *ngIf="tab !== activeTab || !buttonSelector"
         [ngClass]="{ 'active-tab': tab === activeTab, 'fc-secondary': tab !== activeTab }"
       >
-        {{ tab | transloco }}
+        <ng-container
+          *ngIf="tabItemRef; else defaultTabItem"
+          [ngTemplateOutlet]="tabItemRef"
+          [ngTemplateOutletContext]="{ $implicit: tab }"
+        ></ng-container>
+
+        <ng-template #defaultTabItem>
+          {{ tab | transloco }}
+        </ng-template>
       </div>
-      <button
-        *ngIf="tab === activeTab && buttonSelector"
-      >
-        <span>{{ tab | transloco }}</span>
+      <button *ngIf="tab === activeTab && buttonSelector">
+        <ng-container
+          *ngIf="tabItemRef; else defaultTabItem"
+          [ngTemplateOutlet]="tabItemRef"
+          [ngTemplateOutletContext]="{ $implicit: tab }"
+        ></ng-container>
+
+        <ng-template #defaultTabItem>
+          {{ tab | transloco }}
+        </ng-template>
       </button>
       <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== activeTab">
-        <span>{{ 'tab_selector.new' | transloco }}</span>
+        <span>{{ "tab_selector.new" | transloco }}</span>
       </div>
       <div *ngIf="isLink(tab) && !globalVars.isMobile()" class="d-flex align-items-center ml-5px">
         <i-feather class="feather-small fs-0px" name="external-link"></i-feather>
       </div>
     </div>
   </div>
+  <ng-content></ng-content>
 </div>

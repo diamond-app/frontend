@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute } from "@angular/router";
+import { sprintf } from "sprintf-js";
+import { TrackingService } from "src/app/tracking.service";
+import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { RouteNames } from "../app-routing.module";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { sprintf } from "sprintf-js";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { Title } from "@angular/platform-browser";
-import { RouteNames } from "../app-routing.module";
-import { ActivatedRoute } from "@angular/router";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { environment } from "src/environments/environment";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -49,7 +49,8 @@ export class TransferDeSoComponent implements OnInit {
     private backendApi: BackendApiService,
     private globalVarsService: GlobalVarsService,
     private titleService: Title,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tracking: TrackingService
   ) {
     this.globalVars = globalVarsService;
     this.route.queryParams.subscribe((queryParams) => {
@@ -63,7 +64,7 @@ export class TransferDeSoComponent implements OnInit {
     this.feeRateDeSoPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
     this.titleService.setTitle(`Send $DESO - ${environment.node.name}`);
     this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
-      this.globalVars.loggedInUser.PublicKeyBase58Check
+      this.globalVars.loggedInUser?.PublicKeyBase58Check
     }`;
     if (this.creatorToPayInput) {
       this._handleCreatorSelectedInSearch(this.creatorToPayInput);
@@ -75,7 +76,7 @@ export class TransferDeSoComponent implements OnInit {
     this.backendApi
       .SendDeSoPreview(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.payToPublicKey,
         // A negative amount causes the max value to be returned as the spend amount.
         -1,
@@ -173,12 +174,13 @@ export class TransferDeSoComponent implements OnInit {
           reverseButtons: true,
         }).then((res: any) => {
           if (res.isConfirmed) {
+            const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9;
             this.backendApi
               .SendDeSo(
                 this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 this.payToPublicKey,
-                this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9,
+                amountToSend,
                 Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
               )
               .subscribe(
@@ -192,14 +194,15 @@ export class TransferDeSoComponent implements OnInit {
                   } = res;
 
                   if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                    this.globalVars.logEvent("bitpop : send : error");
+                    this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
                     this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
                     return null;
                   }
 
-                  this.globalVars.logEvent("bitpop : send", {
+                  this.tracking.log("deso : send", {
+                    amountToSend,
+                    receiverPublicKey: this.payToPublicKey,
                     TotalInputNanos,
-                    SpendAmountNanos,
                     ChangeAmountNanos,
                     FeeNanos,
                   });
@@ -210,18 +213,13 @@ export class TransferDeSoComponent implements OnInit {
                   this.maxSendAmount = 0.0;
 
                   // This will update the user's balance.
-                  this.globalVars.updateEverything(
-                    res.TxnHashHex,
-                    this._sendDeSoSuccess,
-                    this._sendDeSoFailure,
-                    this
-                  );
+                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
                 },
                 (error) => {
                   this.sendingDeSo = false;
                   console.error(error);
                   this.transferDeSoError = this._extractError(error);
-                  this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDeSoError });
+                  this.tracking.log("bitpop : send", { error: this.transferDeSoError });
                   this.globalVars._alertError(
                     this.transferDeSoError,
                     false,
@@ -276,7 +274,7 @@ export class TransferDeSoComponent implements OnInit {
     return this.backendApi
       .SendDeSoPreview(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.payToPublicKey,
         this.transferAmount === this.maxSendAmount ? -1 : Math.floor(this.transferAmount * 1e9),
         Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)

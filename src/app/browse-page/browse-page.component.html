@@ -7,14 +7,10 @@
       <a
         class="link--unstyled d-flex align-items-center ml-15px"
         (click)="globalVars.isLeftBarMobileOpen = false"
-        [routerLink]="homeLink()"
+        [routerLink]="'/' + this.globalVars.RouteNames.BROWSE"
         queryParamsHandling="merge"
       >
-        <img
-          [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'"
-          class="deso"
-          style="height: 30px"
-        />
+        <img [src]="environment.node.logoAssetDir + 'camelcase_logo_new.svg'" class="deso" style="height: 30px" />
       </a>
       <div class="d-flex align-items-center">
         <div class="position-relative mr-15px" style="width: 343px; height: 48px">

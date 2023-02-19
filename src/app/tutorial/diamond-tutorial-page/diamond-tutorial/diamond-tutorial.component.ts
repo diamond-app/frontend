@@ -1,11 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import * as introJs from "intro.js/intro";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
+import { RouteNames } from "../../../app-routing.module";
+import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { GlobalVarsService } from "../../../global-vars.service";
 
 @Component({
   selector: "diamond-tutorial",
@@ -17,7 +18,8 @@ export class DiamondTutorialComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
   introJS = introJs();
@@ -35,7 +37,7 @@ export class DiamondTutorialComponent implements OnInit {
       .GetSinglePost(
         this.globalVars.localNode,
         this.postHashHex,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         false,
         0,
         0,
@@ -53,7 +55,7 @@ export class DiamondTutorialComponent implements OnInit {
     setTimeout(() => {
       this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.DIAMOND;
       this.globalVars.loggedInUser.MustCompleteTutorial = false;
-      this.globalVars.logEvent("diamond : send : next");
+      this.tracking.log("diamond : send : next");
       this.router.navigate([RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST]);
     }, 6000);
   }

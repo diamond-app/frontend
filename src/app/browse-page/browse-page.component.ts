@@ -1,10 +1,9 @@
 import { Component, HostListener, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { FeedComponent } from "../feed/feed.component";
 import { Router } from "@angular/router";
-import { environment } from "src/environments/environment";
-import { SettingsComponent } from "../settings/settings.component";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { environment } from "src/environments/environment";
+import { FeedComponent } from "../feed/feed.component";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "browse-page",
@@ -23,13 +22,6 @@ export class BrowsePageComponent implements OnInit {
 
   setMobileBasedOnViewport() {
     this.mobile = this.globalVars.isMobile();
-  }
-
-  homeLink(): string | string[] {
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   @HostListener("window:resize")

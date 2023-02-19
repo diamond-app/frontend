@@ -1,12 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { TrackingService } from "src/app/tracking.service";
+import { GlobalVarsService } from "../../global-vars.service";
 import { RightBarCreatorsComponent } from "../right-bar-creators.component";
-import { HttpClient } from "@angular/common/http";
-import { PulseService } from "../../../lib/services/pulse/pulse-service";
-import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
-import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
 
 @Component({
   selector: "right-bar-creators-leaderboard",
@@ -19,19 +15,24 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
 
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
-  constructor(public globalVars: GlobalVarsService, private route: ActivatedRoute, private _router: Router) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private route: ActivatedRoute,
+    private _router: Router,
+    private tracking: TrackingService
+  ) {}
 
   ngOnInit() {
     this.globalVars.updateLeaderboard();
   }
-  // [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
   navigateToUser(username: string) {
-    this._router.navigate(
-        ["/" + this.globalVars.RouteNames.USER_PREFIX, username],
-    )
+    this._router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, username]);
   }
 
   navigateToHashtag(hashtag: string) {
+    this.tracking.log("right-rail-hashtag : click", {
+      hashtag: hashtag,
+    });
     this._router.navigate(
       ["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, hashtag.substring(1)],
       {

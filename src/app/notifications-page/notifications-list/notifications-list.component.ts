@@ -1,15 +1,16 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import { Subscription } from "rxjs";
-import { document } from "ngx-bootstrap/utils";
-import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
-import { Router } from "@angular/router";
+import { difference, isEmpty } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
+import { InfiniteScroller } from "src/app/infinite-scroller";
+import { TrackingService } from "src/app/tracking.service";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "app-notifications-list",
@@ -25,7 +26,9 @@ export class NotificationsListComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private tracking: TrackingService
   ) {}
 
   // stores a mapping of page number to notification index
@@ -52,8 +55,15 @@ export class NotificationsListComponent implements OnInit {
   filteredOutSet = {};
   pauseVideos = false;
 
+  readonly filteredOutOptions = ["like", "diamond", "transfer", "follow", "post", "nft"];
+  readonly noFiltersSelectedOption = "none";
+
   ngOnInit() {
-    const savedNotificationFilterPreferences = this.backendApi.GetStorage("notificationFilterPreferences");
+    const filterOutParamsFromQuery = this.queryToFilterOutParams(this.route.snapshot.queryParams.filter || "");
+    const savedNotificationFilterPreferences = isEmpty(filterOutParamsFromQuery)
+      ? this.backendApi.GetStorage("notificationFilterPreferences")
+      : filterOutParamsFromQuery;
+
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
     this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
@@ -61,11 +71,27 @@ export class NotificationsListComponent implements OnInit {
     this.globalVars.unreadNotifications = 0;
   }
 
+  ngOnDestroy() {
+    // reset query params before leaving the page
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+    });
+  }
+
   updateSettings(settings) {
     this.filteredOutSet = settings.filteredOutSet;
     this.expandNotifications = settings.expandNotifications;
     this.backendApi.SetStorage("notificationFilterPreferences", this.filteredOutSet);
     this.backendApi.SetStorage("notificationViewPreference", this.expandNotifications);
+
+    const filterQuery = this.filterOutParamsToQuery(settings.filteredOutSet);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: filterQuery === "" ? {} : { filter: filterQuery },
+    });
+
     this.scrollerReset();
   }
 
@@ -91,7 +117,7 @@ export class NotificationsListComponent implements OnInit {
     return this.backendApi
       .GetNotifications(
         "https://node.deso.org",
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
         this.filteredOutSet
@@ -106,7 +132,7 @@ export class NotificationsListComponent implements OnInit {
             this.backendApi
               .SetNotificationsMetadata(
                 "https://node.deso.org",
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,
                 0
@@ -169,7 +195,7 @@ export class NotificationsListComponent implements OnInit {
     // TODO: make sure this map contains profiles from nft transfers
     const actor = this.profileMap[txnMeta.TransactorPublicKeyBase58Check] || {
       Username: "anonymous",
-      ProfilePic: "/assets/img/default_profile_pic.png",
+      ProfilePic: "/assets/img/default-profile-pic.png",
       PublicKeyBase58Check: txnMeta.TransactorPublicKeyBase58Check,
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
@@ -622,6 +648,58 @@ export class NotificationsListComponent implements OnInit {
         }${coinRoyaltyStr} on the sale`;
         return result;
       }
+    } else if (txnMeta.TxnType === "DAO_COIN") {
+      const coinMeta = txnMeta.DAOCoinTxindexMetadata;
+      if (!coinMeta) {
+        return null;
+      }
+      switch (coinMeta.OperationType) {
+        case "mint": {
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToMintNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `minted ${amountFormatted} ${coinMeta.CreatorUsername} ${this.globalVars.pluralize(
+            amount,
+            "coin"
+          )}`;
+          result.icon = "fas fa-coins fc-green";
+          return result;
+        }
+        case "burn": {
+          const amount = this.globalVars.hexNanosToStandardUnit(coinMeta.CoinsToBurnNanos);
+          const amountFormatted = this.globalVars.abbreviateNumber(amount, 4, false);
+
+          result.action = `${actorName} burned ${amountFormatted} ${
+            coinMeta.CreatorUsername
+          } ${this.globalVars.pluralize(amount, "coin")}`;
+          result.icon = "fa fa-fire fc-red";
+          return result;
+        }
+        case "disable_minting": {
+          result.action = `${actorName} disabled minting for ${coinMeta.CreatorUsername} coin`;
+          result.icon = "fas fa-minus-circle fc-red";
+          return result;
+        }
+        case "update_transfer_restriction_status": {
+          result.action = `${actorName} updated the transfer restriction status of ${coinMeta.CreatorUsername} coin to ${coinMeta.TransferRestrictionStatus}`;
+          result.icon = "fas fa-pen-fancy";
+          return result;
+        }
+      }
+      return null;
+    } else if (txnMeta.TxnType === "DAO_COIN_TRANSFER") {
+      const coinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
+      const amount = this.globalVars.hexNanosToStandardUnit(coinTransferMeta.DAOCoinToTransferNanos);
+      const amountFormatted = this.globalVars.abbreviateNumber(amount, 6, false);
+
+      if (!coinTransferMeta) {
+        return null;
+      }
+      result.icon = "fas fa-money-bill-wave fc-blue";
+      result.action = `${actorName} sent you <b>${amountFormatted} ${
+        coinTransferMeta.CreatorUsername
+      } ${this.globalVars.pluralize(amount, "coin")}`;
+      return result;
     }
 
     // If we don't recognize the transaction type we return null
@@ -642,6 +720,7 @@ export class NotificationsListComponent implements OnInit {
 
   acceptTransfer(event, notification) {
     event.stopPropagation();
+    this.tracking.log("nft-accept-button : click");
     if (!this.globalVars.isMobile()) {
       this.pauseAllVideos(true);
       const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {
@@ -691,6 +770,37 @@ export class NotificationsListComponent implements OnInit {
         return true;
       },
     });
+  }
+
+  private filterOutParamsToQuery(filterOutSet: { [notificationType: string]: boolean }) {
+    const keys = Object.keys(filterOutSet);
+    const diff = difference(this.filteredOutOptions, keys);
+
+    if (diff.length === 0) {
+      // no filters selected
+      return this.noFiltersSelectedOption;
+    }
+
+    if (diff.length === this.filteredOutOptions.length) {
+      // all filters selected, returning empty string to omit the query param
+      return "";
+    }
+
+    // return only selected filters
+    return difference(this.filteredOutOptions, keys).join(",");
+  }
+
+  private queryToFilterOutParams(routeQuery: string) {
+    const selectedFilters = routeQuery.split(",");
+    const diff = difference(this.filteredOutOptions, selectedFilters);
+
+    if (diff.length === this.filteredOutOptions.length && routeQuery !== this.noFiltersSelectedOption) {
+      // no specific filters defined in route query (no param at all, or all filters are enabled)
+      return {};
+    }
+
+    // return only non-selected filters
+    return diff.reduce((acc, key) => ({ ...acc, [key]: true }), {});
   }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(

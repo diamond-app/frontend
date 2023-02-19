@@ -17,6 +17,7 @@
   ],
   "private": true,
   "dependencies": {
+    "@amplitude/marketing-analytics-browser": "^0.3.3",
     "@angular/animations": "~11.2.12",
     "@angular/cdk": "^11.2.11",
     "@angular/common": "^11.2.12",
@@ -31,7 +32,6 @@
     "@ethereumjs/vm": "^5.5.3",
     "@ngneat/transloco": "^2.23.5",
     "@ngneat/transloco-persist-lang": "^1.0.4",
-    "amplitude-js": "^7.4.3",
     "angular-feather": "^6.1.0",
     "aos": "^3.0.0-beta.6",
     "assert": "^2.0.0",
@@ -90,7 +90,6 @@
     "@angular/compiler-cli": "~11.2.12",
     "@angular/core": "^11.2.12",
     "@angular/language-service": "~11.2.12",
-    "@types/amplitude-js": "^7.0.1",
     "@types/jasmine": "^2.8.16",
     "@types/jasminewd2": "~2.0.3",
     "@types/jest": "^26.0.23",
@@ -120,5 +119,9 @@
     "typescript-strict-plugin": "^1.1.2",
     "webpack-cli": "^3.3.10"
   },
-  "main": "main.js"
+  "main": "main.js",
+  "volta": {
+    "node": "16.19.0",
+    "npm": "7.24.2"
+  }
 }

@@ -1,13 +1,12 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import * as _ from "lodash";
+import { Location } from "@angular/common";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { isNumber } from "lodash";
-import { ToastrService } from "ngx-toastr";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { Location } from "@angular/common";
-import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
+import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "transfer-nft-accept",
@@ -46,7 +45,8 @@ export class TransferNftAcceptComponent {
     private modalService: BsModalService,
     private router: Router,
     private toastr: ToastrService,
-    private location: Location
+    private location: Location,
+    private tracking: TrackingService
   ) {}
 
   acceptTransfer() {
@@ -55,13 +55,23 @@ export class TransferNftAcceptComponent {
     this.backendApi
       .AcceptNFTTransfer(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
         (res) => {
+          this.tracking.log("nft : accept", {
+            postHashHex: this.post.PostHashHex,
+            authorUsername: this.post.ProfileEntryResponse?.Username,
+            authorPublicKey: this.post.ProfileEntryResponse?.PublicKeyBase58Check,
+            hasText: this.post.Body.length > 0,
+            hasImage: (this.post.ImageURLs?.length ?? 0) > 0,
+            hasVideo: (this.post.VideoURLs?.length ?? 0) > 0,
+            hasEmbed: !!this.post.PostExtraData?.EmbedVideoURL,
+            hasUnlockable: this.post.HasUnlockable,
+          });
           if (!this.globalVars.isMobile()) {
             // Hide this modal and open the next one.
             this.closeModal.emit("transfer accepted");
@@ -75,6 +85,9 @@ export class TransferNftAcceptComponent {
         },
         (err) => {
           console.error(err);
+          this.tracking.log("nft : accept", {
+            error: err.error?.error,
+          });
         }
       )
       .add(() => {

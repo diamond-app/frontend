@@ -234,12 +234,16 @@ $green-font-color: #19B028;
 .font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
+// Flex Gaps
+.flex-gap { gap: 4px }
 
 // Widths
 .w-10 { width: 10% }
 .w-15 { width: 15% }
 .w-20 { width: 20% }
+//why w-30 is 10%? cc @zordon @jacksondean
 .w-30 { width: 10% }
+.w-29 { width: 29% }
 .w-40 { width: 40% }
 .w-50 { width: 50% }
 .w-60 { width: 60% }
@@ -640,12 +644,13 @@ i-feather[name="check-circle"] {
         top: $global__top-bar__height;
         background: var(--tile-bg);
         z-index: 1;
+        top: 60px;
         border-bottom: 1px solid var(--border);
       }
+      .tab-selector__container--logged-out {
+        top: $global__top-bar__height + 34px;
+      }
     }
-  }
-  .mobile-scroll {
-    // padding: 0px 8px;
   }
   browse-page {
     top-bar-mobile-header {
@@ -821,7 +826,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
       border-radius: 0px;
     }
   }
@@ -1727,6 +1732,7 @@ app-landing-page {
   background: var(--tile-bg);
   @media (max-width: 992px) {
     width: 100%;
+    height: 100%;
   }
 }
 
@@ -1734,9 +1740,6 @@ app-landing-page {
   top: 64px;
   border-right: 1px solid var(--border);
   background: var(--tile-bg);
-  @media (max-width: 992px) {
-    top: 42px;
-  }
   height: 100%;
   position: fixed;
 }
@@ -1746,7 +1749,7 @@ app-landing-page {
   overflow-y: auto;
   height: 100%;
   @media (max-width: 992px) {
-    height: calc(100vh - 42px);
+    height: 100%;
     width: 75vw;
     max-width: 280px;
     min-width: 245px;
@@ -1798,10 +1801,6 @@ app-landing-page {
 
 .global__sidebar__inner {
   width: $global__sidebar__width;
-}
-
-.global__center__width {
-  width: $global__center__width;
 }
 
 browse-page {
@@ -2591,7 +2590,7 @@ trends {
 }
 
 .feed-create-post__avatar_default {
-  background-image: url('/assets/img/default_profile_pic.png');
+  background-image: url('/assets/img/default-profile-pic.png');
 }
 
 .feed-create-comment__textarea {
@@ -2786,6 +2785,9 @@ bs-dropdown-container {
   &:hover {
     background-color: var(--background-secondary);
   }
+  &.inactive:hover {
+    background-color: inherit;
+  }
   &.fa-spinner {
     svg {
       display: none;
@@ -2838,15 +2840,6 @@ bs-dropdown-container {
   &:hover {
     background-color: $repost-hover;
     color: $repost-color;
-    transition: background-color .5s;
-  }
-}
-
-/* like button hover animation */
-.feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
-  &:hover{
-    background-color: $like-hover;
-    color: $like-color;
     transition: background-color .5s;
   }
 }
@@ -5222,17 +5215,6 @@ input {
   }
 }
 
-.feed__tag-container-mobile {
-  position: fixed !important;
-  margin-left: 10px;
-  top: 68px;
-  left: 205px;
-  z-index: 1;
-  &.logged-out {
-    top: 99px;
-  }
-}
-
 .feed__tag-container-background {
   background: var(--tile-secondary-bg);
   position: relative;
@@ -5253,8 +5235,8 @@ input {
 .feed__tag-input {
   z-index: 2;
   width: 100px;
-  top: 0px;
-  left: 0px;
+  top: 9px;
+  left: 16px;
   height: 32px;
   color: var(--text-secondary);
   border: none;
@@ -5369,7 +5351,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -5957,7 +5939,7 @@ sell-nft-modal {
       }
       bottom: 45px;
     }
-    left: -125px; bottom: 50px;
+    left: -125px; bottom: 40px;
     display: none;
 
     // Each selectable diamond level in the diamond pop-up
@@ -6395,9 +6377,9 @@ sell-nft-modal {
   width: 100%;
   max-width: 700px;
   margin: 30px auto 0;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  padding: 0 0 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
   @media (max-width: 992px) {
     padding: 0 20px 12px;
   }
@@ -6414,7 +6396,7 @@ sell-nft-modal {
   width: 100%;
   max-width: 700px;
   margin: 40px auto 0;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--border);
 }
 .ql-align-center,
 .ql-align-justify {

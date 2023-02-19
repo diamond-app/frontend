@@ -226,7 +226,7 @@ export class AdminComponent implements OnInit {
       return;
     }
     this.backendApi
-      .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, "", "get_info")
+      .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, "", "get_info")
       .subscribe(
         (res: any) => {
           if (res == null || res.DeSoStatus == null) {
@@ -269,7 +269,7 @@ export class AdminComponent implements OnInit {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     if (!this.selectedTimeWindow) {
@@ -319,7 +319,7 @@ export class AdminComponent implements OnInit {
       (this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0)
     ) {
       this.backendApi
-        .AdminGetHotFeedAlgorithm(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+        .AdminGetHotFeedAlgorithm(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
         .subscribe(
           (res) => {
             this.hotFeedInteractionCap = res.InteractionCap / 1e9;
@@ -342,7 +342,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetUnfilteredHotFeed(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         50,
         this.hotFeedPostHashes
       )
@@ -369,7 +369,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedAlgorithm(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedInteractionCap * 1e9,
         0,
         0,
@@ -397,7 +397,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedAlgorithm(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         0,
         this.hotFeedTagInteractionCap * 1e9,
         0,
@@ -425,7 +425,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedAlgorithm(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         0,
         0,
         this.hotFeedTimeDecayBlocks,
@@ -453,7 +453,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedAlgorithm(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         0,
         0,
         0,
@@ -487,7 +487,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedAlgorithm(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         0,
         0,
         0,
@@ -515,7 +515,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedUserMultiplier(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedUserForPostsMultiplier,
         -1 /*InteractionMultiplier -- negative values are ignored*/,
         this.hotFeedUserPostsMultiplier
@@ -539,7 +539,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateHotFeedUserMultiplier(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedUserForInteractionMultiplier,
         this.hotFeedUserInteractionMultiplier,
         -1 /*PostsMultiplier -- negative values are ignored*/
@@ -563,7 +563,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetHotFeedUserMultiplier(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedUserForSearch
       )
       .subscribe(
@@ -593,7 +593,7 @@ export class AdminComponent implements OnInit {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
@@ -644,7 +644,7 @@ export class AdminComponent implements OnInit {
     console.log("Loading mempool stats...");
     this.loadingMempoolStats = true;
     this.backendApi
-      .AdminGetMempoolStats(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminGetMempoolStats(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res) => {
           this.mempoolSummaryStats = res.TransactionSummaryStats;
@@ -668,7 +668,7 @@ export class AdminComponent implements OnInit {
     this.loadingVerifiedUsers = true;
     console.log("Loading verified users...");
     this.backendApi
-      .AdminGetVerifiedUsers(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminGetVerifiedUsers(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res) => {
           this.verifiedUsers = res.VerifiedUsers;
@@ -688,7 +688,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetUsernameVerificationAuditLogs(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.usernameToFetchVerificationAuditLogs
       )
       .subscribe(
@@ -734,7 +734,7 @@ export class AdminComponent implements OnInit {
   _loadGlobalParams() {
     this.loadingGlobalParams = true;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res) => {
           this.globalParams = {
@@ -787,7 +787,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetAllUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         1000 // NumToFetch
       )
       .subscribe(
@@ -809,7 +809,7 @@ export class AdminComponent implements OnInit {
   _removeNilPosts() {
     this.removingNilPosts = true;
     this.backendApi
-      .AdminRemoveNilPosts(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 1000)
+      .AdminRemoveNilPosts(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, 1000)
       .subscribe(
         () => {
           this.removingNilPosts = false;
@@ -865,7 +865,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username,
         true,
@@ -916,7 +916,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username,
         false,
@@ -959,7 +959,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username,
         false,
@@ -1002,7 +1002,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminUpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username,
         false,
@@ -1099,7 +1099,7 @@ export class AdminComponent implements OnInit {
         this.backendApi
           .SetUSDCentsToDeSoReserveExchangeRate(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.usdToDeSoReserveExchangeRate * 100
           )
           .subscribe(
@@ -1136,7 +1136,7 @@ export class AdminComponent implements OnInit {
         this.backendApi
           .SetBuyDeSoFeeBasisPoints(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.buyDeSoFeeRate * 100
           )
           .subscribe(
@@ -1187,7 +1187,7 @@ export class AdminComponent implements OnInit {
           this.backendApi
             .UpdateGlobalParams(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               usdPerBitcoin >= 0 ? usdPerBitcoin * 100 : -1,
               createProfileFeeNanos >= 0 ? createProfileFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0 ? minimumNetworkFeeNanosPerKB : -1,
@@ -1249,7 +1249,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminReprocessBitcoinBlock(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.bitcoinBlockHashOrHeight
       )
       .subscribe(
@@ -1290,7 +1290,7 @@ export class AdminComponent implements OnInit {
           this.backendApi
             .EvictUnminedBitcoinTxns(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.evictBitcoinTxnHashes.split(","),
               dryRun
             )
@@ -1333,7 +1333,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGrantVerificationBadge(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.usernameToVerify
       )
       .subscribe(
@@ -1359,7 +1359,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetUserAdminData(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.getUserAdminDataPublicKey
       )
       .subscribe(
@@ -1385,7 +1385,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminRemoveVerificationBadge(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.usernameForWhomToRemoveVerification
       )
       .subscribe(
@@ -1415,7 +1415,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .SwapIdentity(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.swapIdentityFromUsernameOrPublicKey,
         this.swapIdentityToUsernameOrPublicKey,
         Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
@@ -1443,7 +1443,7 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .AdminGetUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.changeUsernamePublicKey
       )
       .subscribe(
@@ -1492,7 +1492,7 @@ export class AdminComponent implements OnInit {
           .UpdateProfile(
             environment.verificationEndpointHostname,
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,
             // Start params
             this.usernameTarget /*NewUsername*/,

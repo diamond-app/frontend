@@ -1,20 +1,21 @@
-import { Component, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { TrackingService } from "src/app/tracking.service";
+import { environment } from "src/environments/environment";
 import { AppRoutingModule } from "../app-routing.module";
 import { BackendApiService } from "../backend-api.service";
-import { Router } from "@angular/router";
-import { Title } from "@angular/platform-browser";
-import { BsModalService } from "ngx-bootstrap/modal";
+import { GlobalVarsService } from "../global-vars.service";
 import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
 import { MessagesInboxComponent } from "./messages-inbox/messages-inbox.component";
-import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-messages-page",
   templateUrl: "./messages-page.component.html",
   styleUrls: ["./messages-page.component.scss"],
 })
-export class MessagesPageComponent {
+export class MessagesPageComponent implements OnInit {
   @ViewChild(MessagesInboxComponent /* #name or Type*/, { static: false }) messagesInboxComponent;
   lastContactFetched = null;
   intervalsSet = [];
@@ -35,19 +36,12 @@ export class MessagesPageComponent {
     private backendApi: BackendApiService,
     private router: Router,
     private titleService: Title,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {}
 
   ngOnInit() {
     this.titleService.setTitle(`Messages - ${environment.node.name}`);
-  }
-
-  // send logged in users to browse
-  homeLink(): string | string[] {
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   openNewMessageModal() {
@@ -71,7 +65,7 @@ export class MessagesPageComponent {
     }
     this.selectedThread = thread;
     this.selectedThreadPublicKey = thread.PublicKeyBase58Check;
-    this.selectedThreadProfilePic = "/assets/img/default_profile_pic.png";
+    this.selectedThreadProfilePic = "/assets/img/default-profile-pic.png";
     if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic) {
       this.selectedThreadProfilePic = thread.ProfileEntryResponse.ProfilePic;
     }
@@ -98,15 +92,15 @@ export class MessagesPageComponent {
 
     // Send an update back to the server noting that we want to mark all threads read.
     this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.globalVars.logEvent("user : all-message-read");
+          this.tracking.log("profile : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.tracking.log("profile : all-message-read", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );

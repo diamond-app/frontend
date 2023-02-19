@@ -3,28 +3,21 @@
     class="w-100 d-flex justify-content-between align-items-baseline border-top border-color-grey"
     [ngClass]="{ 'mb-8px': globalVars.unreadNotifications > 0 }"
   >
-    <bottom-bar-mobile-tab
-      class="w-100 h-100 text-center"
-      [link]="'/' + globalVars.RouteNames.BROWSE"
-    >
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.BROWSE">
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather name="home" class="feather-medium"></i-feather>
-        <div class="mt-5px">{{ 'bottom_bar_mobile.home' | transloco }}</div>
+        <div class="mt-5px">{{ "bottom_bar_mobile.home" | transloco }}</div>
       </div>
     </bottom-bar-mobile-tab>
 
-    <bottom-bar-mobile-tab
-      *ngIf="globalVars.loggedInUser"
-      class="w-100 h-100 text-center"
-      [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-    >
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.NOTIFICATIONS">
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather
           [name]="globalVars.unreadNotifications > 0 ? 'bell-notification' : 'bell'"
           class="feather-medium"
         ></i-feather>
         <div class="mt-5px">
-          {{ 'bottom_bar_mobile.notifications' | transloco }}
+          {{ "bottom_bar_mobile.notifications" | transloco }}
           <span *ngIf="globalVars.unreadNotifications > 0">
             ({{ globalVars.unreadNotifications > 99 ? "99+" : globalVars.unreadNotifications }})
           </span>
@@ -32,11 +25,7 @@
       </div>
     </bottom-bar-mobile-tab>
 
-    <bottom-bar-mobile-tab
-      *ngIf="globalVars.loggedInUser"
-      class="w-100 h-100 text-center"
-      [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-    >
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.INBOX_PREFIX">
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather
           [name]="
@@ -47,7 +36,7 @@
           class="feather-medium"
         ></i-feather>
         <div class="mt-5px">
-          {{ 'bottom_bar_mobile.messages' | transloco }}
+          {{ "bottom_bar_mobile.messages" | transloco }}
           <span *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0">
             ({{
               globalVars.messageResponse.NumberOfUnreadThreads > 999
@@ -77,7 +66,29 @@
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather name="diamond" class="feather-medium"></i-feather>
-        <div class="mt-5px">{{ 'bottom_bar_mobile.wallet' | transloco }}</div>
+        <div class="mt-5px">{{ "bottom_bar_mobile.wallet" | transloco }}</div>
+      </div>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="!globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.CREATORS"
+    >
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="users" class="feather-medium"></i-feather>
+        <div class="mt-5px">{{ "left_bar.buy_creators" | transloco }}</div>
+      </div>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="!globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
+    >
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="user" class="feather-medium"></i-feather>
+        <div class="mt-5px">{{ "left_bar.my_profile" | transloco }}</div>
       </div>
     </bottom-bar-mobile-tab>
   </div>

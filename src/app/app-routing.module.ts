@@ -15,8 +15,7 @@ import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/crea
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
@@ -50,6 +49,7 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -93,11 +93,11 @@ class RouteNames {
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
   public static GET_STARTER_DESO = "get-starter-deso";
-  public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
   public static QUOTE_REPOSTS = "quote-reposts";
   public static LIKES = "likes";
+  public static REACTIONS = "reactions";
   public static TRENDS = "trends";
   public static REFERRALS = "referrals";
   public static NFT = "nft";
@@ -113,7 +113,7 @@ class RouteNames {
 }
 
 const routes: Routes = [
-  { path: "", component: LandingPageComponent, pathMatch: "full" },
+  { path: "", redirectTo: RouteNames.BROWSE, pathMatch: "full" },
   { path: RouteNames.BROWSE, component: BrowsePageComponent, pathMatch: "full" },
   { path: RouteNames.BROWSE + "/" + RouteNames.TAG + "/:tag", component: BrowsePageComponent, pathMatch: "full" },
   { path: RouteNames.CREATORS, component: CreatorsLeaderboardAppPageComponent, pathMatch: "full" },
@@ -159,6 +159,11 @@ const routes: Routes = [
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.LIKES,
     component: LikesPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REACTIONS,
+    component: ReactionsPageComponent,
     pathMatch: "full",
   },
   {

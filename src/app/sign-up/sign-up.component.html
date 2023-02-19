@@ -1,39 +1,62 @@
-<app-page [inTutorial]="true">
-  <div class="nft-modal-container w-100 px-15px pb-15px">
-    <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
-      <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond</div>
-      <div class="w-100 text-center mt-20px fs-20px font-weight-bold">Validate your account to earn starter $DESO</div>
-      <div class="w-100 d-flex align-items-center flex-column">
-        <div style="max-width: 500px" class="w-100 text-center fs-18px mt-5px mb-30px text-muted fc-secondary">
-          This is the cryptocurrency that fuels the engagement on Diamond and allows you to invest in creators & buy
-          NFTs.
-        </div>
-        <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose an option</div>
-        <button
-          (click)="launchSMSVerification()"
-          [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="primary-button mb-10px"
-        >
-          Get $DESO with Phone Number
-        </button>
-        <div class="fs-16px fc-muted">To earn under $1</div>
-        <button
-          (click)="launchTransferDesoModal()"
-          [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
-          class="secondary-button mt-30px mb-10px"
-        >
-          Buy or Send $DESO Anonymously
-        </button>
-        <div class="fs-16px fc-muted">Transfer from an exchange or a DeSo account</div>
+<div [class]="this.globalVars.isMobile() ? 'global__mobile' : 'global__desktop'">
+  <!-- Top Bar -->
+  <div *ngIf="!this.globalVars.isMobile()" class="desktop-top-bar">
+    <div class="d-flex justify-content-between align-items-center w-100 h-100 desktop-top-bar-width">
+      <a
+        class="link--unstyled d-flex align-items-center ml-15px"
+        (click)="this.globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="'/' + this.globalVars.RouteNames.BROWSE"
+        queryParamsHandling="merge"
+      >
+        <img src="/assets/diamond/camelcase_logo_new.svg" class="deso" style="height: 30px" />
+      </a>
+      <div class="d-flex align-items-center">
+        <change-account-selector></change-account-selector>
       </div>
     </div>
-    <div *ngIf="stepNum !== 0" class="w-100 border-bottom"></div>
-    <div *ngIf="stepNum === 1">
-      <update-profile
-        [loggedInUser]="globalVars.loggedInUser"
-        [inTutorial]="true"
-        (profileSaved)="finishOnboarding()"
-      ></update-profile>
+  </div>
+  <top-bar-mobile-header *ngIf="this.globalVars.isMobile()" [hideSearch]="true"></top-bar-mobile-header>
+  <div class="global__content__flex">
+    <div class="sign-up__content">
+      <div class="w-100 px-15px py-15px border">
+        <div *ngIf="stepNum === 0" [ngClass]="{ 'p-40px': !globalVars.isMobile(), 'my-20px': globalVars.isMobile() }">
+          <div class="w-100 text-center fs-32px font-weight-bold">Welcome to Diamond</div>
+          <div class="w-100 text-center mt-20px fs-20px font-weight-bold">
+            Validate your account to earn starter $DESO
+          </div>
+          <div class="w-100 d-flex align-items-center flex-column">
+            <div style="max-width: 500px" class="w-100 text-center fs-18px mt-5px mb-30px text-muted fc-secondary">
+              This is the cryptocurrency that fuels the engagement on Diamond and allows you to invest in creators & buy
+              NFTs.
+            </div>
+            <div class="w-100 text-center fs-18px mt-20px mb-10px font-weight-bold mb-10px">Choose an option</div>
+            <button
+              (click)="launchSMSVerification()"
+              [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
+              class="primary-button mb-10px"
+            >
+              Get $DESO with Phone Number
+            </button>
+            <div class="fs-16px fc-muted">To earn under $1</div>
+            <button
+              (click)="launchTransferDesoModal()"
+              [ngStyle]="{ width: globalVars.isMobile() ? '100%' : '40%' }"
+              class="secondary-button mt-30px mb-10px"
+            >
+              Buy or Send $DESO Anonymously
+            </button>
+            <div class="fs-16px fc-muted">Transfer from an exchange or a DeSo account</div>
+          </div>
+        </div>
+        <div *ngIf="stepNum !== 0" class="w-100 border-bottom"></div>
+        <div *ngIf="stepNum === 1">
+          <update-profile
+            [loggedInUser]="globalVars.loggedInUser"
+            [inTutorial]="true"
+            (profileSaved)="finishOnboarding()"
+          ></update-profile>
+        </div>
+      </div>
     </div>
   </div>
-</app-page>
+</div>

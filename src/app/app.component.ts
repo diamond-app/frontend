@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { isNil } from "lodash";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
 import { BackendApiService, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
@@ -24,13 +25,21 @@ export class AppComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     public identityService: IdentityService,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {
     this.globalVars.Init(
       null, // loggedInUser
       [], // userList
       this.route // route
     );
+
+    // log interaction events emitted by identity
+    window.addEventListener("message", (ev) => {
+      if (!(ev.origin === environment.identityURL && ev.data?.category === "interaction-event")) return;
+      const { object, event, data } = ev.data.payload;
+      this.tracking.log(`identity : ${object} : ${event}`, data);
+    });
 
     // Nuke the referrer so we don't leak anything
     // We also have a meta tag in index.html that does this in a different way to make
@@ -301,16 +310,14 @@ export class AppComponent implements OnInit {
     this.loadApp();
 
     this.identityService.info().subscribe((res) => {
-      // If the browser is not supported, display the browser not supported screen.
-      if (!res.browserSupported) {
-        this.globalVars.requestingStorageAccess = true;
-        return;
-      }
-
+      this.globalVars.identityInfoResponse = res;
       const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
+      // If the browser is not supported, display the browser not supported screen.
       if (!res.hasStorageAccess && isLoggedIn) {
+        this.tracking.log("storage-access : request");
         this.globalVars.requestingStorageAccess = true;
         this.identityService.storageGranted.subscribe(() => {
+          this.tracking.log("storage-access : grant");
           this.globalVars.requestingStorageAccess = false;
           this.loadApp();
         });
@@ -320,12 +327,12 @@ export class AppComponent implements OnInit {
     this.globalVars.pollUnreadNotifications();
 
     this.installDD();
-    this.installAmplitude();
-
     introJs().start();
   }
 
   loadApp() {
+    this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
+
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
     // Filter out invalid public keys
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
@@ -365,21 +372,5 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
-  }
-
-  installAmplitude() {
-    const { key, domain } = environment.amplitude;
-    if (!key || !domain || this.globalVars.amplitude) {
-      return;
-    }
-
-    this.globalVars.amplitude = require("amplitude-js");
-    this.globalVars.amplitude.init(key, null, {
-      apiEndpoint: domain,
-    });
-
-    // Track initial app load event so we are aware of every user
-    // who visits our site (and not just those who click a button)
-    this.globalVars.logEvent("app : load");
   }
 }

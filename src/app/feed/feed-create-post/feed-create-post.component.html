@@ -63,15 +63,16 @@
           <!-- Video is processing - please wait. TODO: Test what this looks like -->
           <div
             class="d-flex flex-column align-items-center"
-            *ngIf="!!postModels[i].postVideoSrc && postModels[i].isUploadingMedia"
+            *ngIf="!!postModels[i].postVideoSrc && (postModels[i].isUploadingMedia || postModels[i].isProcessingMedia)"
           >
-            <div>{{ "feed_create_post.video_processing" | transloco }}</div>
+            <div *ngIf="postModels[i].isUploadingMedia">Video Upload In Progress</div>
+            <div *ngIf="postModels[i].isProcessingMedia">{{ "feed_create_post.video_processing" | transloco }}</div>
             <simple-center-loader [height]="150"></simple-center-loader>
           </div>
 
           <!-- Video Player -->
           <div
-            *ngIf="!!postModels[i].postVideoSrc && !postModels[i].isUploadingMedia"
+            *ngIf="!!postModels[i].postVideoSrc && !(postModels[i].isUploadingMedia || postModels[i].isProcessingMedia)"
             class="feed-post__video-container"
           >
             <iframe
@@ -188,8 +189,7 @@
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
-      (click)="onNavigateToCreateBlog()"
-      [routerLink]="['/' + globalVars.RouteNames.CREATE_LONG_POST]"
+      (click)="onNavigateToCreateBlog($event)"
     >
       <i-feather name="edit"></i-feather>
     </button>

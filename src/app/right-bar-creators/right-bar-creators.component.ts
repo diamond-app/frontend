@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
@@ -22,7 +22,7 @@ export class RightBarTabOption {
   templateUrl: "./right-bar-creators.component.html",
   styleUrls: ["./right-bar-creators.component.sass"],
 })
-export class RightBarCreatorsComponent implements OnInit {
+export class RightBarCreatorsComponent implements OnInit, OnDestroy {
   @Input() inTutorial: boolean = false;
   isDestroyed: boolean = false;
   earningsProfile?: ProfileEntryResponse;
@@ -75,11 +75,6 @@ export class RightBarCreatorsComponent implements OnInit {
     width: 275,
     poweredBy: { name: "Altumbase", link: `https://altumbase.com/tools?${environment.node.name}` },
   };
-  static COMMUNITY: RightBarTabOption = {
-    name: "right_bar.creators.top_community_projects",
-    width: 225,
-    poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
-  };
   static HASHTAGS: RightBarTabOption = {
     name: "Top Daily Hashtags",
     width: 225,
@@ -95,13 +90,14 @@ export class RightBarCreatorsComponent implements OnInit {
   static chartMap = {
     [RightBarCreatorsComponent.GAINERS.name]: RightBarCreatorsComponent.GAINERS,
     [RightBarCreatorsComponent.DIAMONDS.name]: RightBarCreatorsComponent.DIAMONDS,
-    [RightBarCreatorsComponent.COMMUNITY.name]: RightBarCreatorsComponent.COMMUNITY,
     [RightBarCreatorsComponent.ALL_TIME.name]: RightBarCreatorsComponent.ALL_TIME,
     [RightBarCreatorsComponent.HASHTAGS.name]: RightBarCreatorsComponent.HASHTAGS,
   };
 
   ngOnInit() {
-    const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
+    const defaultTab = this.globalVars.loggedInUser
+      ? this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey)
+      : RightBarCreatorsComponent.DIAMONDS.name;
     this.activeTab =
       defaultTab in RightBarCreatorsComponent.chartMap ? defaultTab : RightBarCreatorsComponent.HASHTAGS.name;
     this.selectTab(true);

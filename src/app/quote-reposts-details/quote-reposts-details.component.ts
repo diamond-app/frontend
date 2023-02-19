@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "quote-reposts-details",
@@ -20,7 +20,7 @@ export class QuoteRepostsDetailsComponent implements OnInit {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class QuoteRepostsDetailsComponent implements OnInit {
         this.postHashHex,
         this.pageOffset,
         this.pageSize,
-        this.globalVars.loggedInUser.PublicKeyBase58Check
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
       )
       .toPromise()
       .then(

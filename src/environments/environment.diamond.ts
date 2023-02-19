@@ -3,7 +3,7 @@ export const environment = {
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
   apiInternalHostname: "https://diamondapp.com",
-  uploadVideoHostname: "node.deso.org",
+  uploadVideoHostname: "media.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "help@diamondapp.com",
   dd: {
@@ -13,8 +13,14 @@ export const environment = {
     endpoint: "https://diamondapp.com/js/",
   },
   amplitude: {
-    key: "eb2840b65cf3fa0fd605b2caa0926fb8",
+    key: "9aa641acfccd48c9d9b2e34a456a77aa",
     domain: "amp.diamondapp.com",
+  },
+  heap: {
+    appId: "115745872",
+  },
+  hotjar: {
+    hjid: "3289168",
   },
   node: {
     id: 3,

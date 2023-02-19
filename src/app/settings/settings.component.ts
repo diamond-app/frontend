@@ -1,16 +1,18 @@
 // @ts-strict
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { ActivatedRoute } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { ApiInternalService, AppUser } from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
+import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import { range } from "lodash";
 
 @Component({
   selector: "settings",
@@ -35,6 +37,10 @@ export class SettingsComponent implements OnInit {
     { duration: 30, text: "Monthly" },
     { duration: 0, text: "Never" },
   ];
+  digestSendAtTime = range(0, 24).map((localHour) => ({
+    value: localHour,
+    text: `${localHour.toString().padStart(2, "0")}:00`,
+  }));
   txEmailSettings = [
     { field: "ReceiveLikeNotif", text: "Like" },
     { field: "ReceiveCoinPurchaseNotif", text: "Creator coin purchase" },
@@ -82,11 +88,10 @@ export class SettingsComponent implements OnInit {
       if (queryParams?.publicKey) {
         this.userPublicKeyBase58Check = queryParams.publicKey;
       }
-      this.initializeAppUser();
     });
   }
 
-  initializeAppUser() {
+  initializeAppUser(retryCount: number, maxRetries: number) {
     const loggedInUser = this.globalVars.loggedInUser;
     const userPublicKey =
       this.userPublicKeyBase58Check !== "" ? this.userPublicKeyBase58Check : loggedInUser?.PublicKeyBase58Check;
@@ -100,8 +105,13 @@ export class SettingsComponent implements OnInit {
           throw err;
         })
       );
+      const utcOffset = getUTCOffset();
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey);
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+          catchError((err) => {
+            return of(null);
+          })
+        );
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
             switchMap(([appUser, userMetadata]) => {
@@ -113,9 +123,11 @@ export class SettingsComponent implements OnInit {
                   // but somehow we *DO* have their email address, we create an app
                   // user record with default email settings.
                   return this.apiInternal.createAppUser(
-                    this.globalVars.loggedInUser.PublicKeyBase58Check,
+                    this.globalVars.loggedInUser?.PublicKeyBase58Check,
                     this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-                    this.globalVars.lastSeenNotificationIdx
+                    this.globalVars.lastSeenNotificationIdx,
+                    utcOffset,
+                    localHourToUtcHour(20)
                   );
                 }
 
@@ -128,9 +140,20 @@ export class SettingsComponent implements OnInit {
               return of(appUser);
             })
           )
-          .subscribe((appUser) => {
-            this.appUser = appUser;
-          });
+          .subscribe(
+            (appUser) => {
+              this.appUser = appUser;
+            },
+            (err) => {
+              console.log("GOT AN ERROR: ", err);
+              // Sometimes the identity iframe hasn't initialized by the time these functions are called.
+              // In this case, the best we can do is retry until it works - there's no great way to await
+              // the identity iframe initialization currently.
+              if (retryCount < maxRetries) {
+                this.initializeAppUser(retryCount + 1, maxRetries);
+              }
+            }
+          );
       } else {
         getAppUserObs.subscribe((appUser) => {
           this.appUser = appUser;
@@ -142,6 +165,9 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
+    this.globalVars.updateEverything().add(() => {
+      this.initializeAppUser(0, 5);
+    });
   }
 
   closeModal() {
@@ -191,6 +217,34 @@ export class SettingsComponent implements OnInit {
     );
   }
 
+  updateDigestSendAtTime(ev: Event) {
+    if (!this.appUser || !ev?.target) return;
+    const inputEl = ev.target as HTMLInputElement;
+    const digestSetting = inputEl.name as "DigestSendAtHourLocalTime";
+    const originalValue = this.appUser.DigestSendAtHourLocalTime;
+
+    if (typeof originalValue === "undefined") {
+      throw new Error(`invalid digest send at time setting: ${digestSetting}`);
+    }
+
+    this.appUser = {
+      ...this.appUser,
+      DigestSendAtHourLocalTime: Number(inputEl.value),
+      UserTimezoneUtcOffset: getUTCOffset(),
+    };
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser = {
+          ...this.appUser,
+          DigestSendAtHourLocalTime: originalValue,
+        };
+      }
+    );
+  }
+
   updateTxEmailSetting(ev: Event) {
     if (!this.appUser || !ev?.target) return;
     const inputEl = ev.target as HTMLInputElement;
@@ -233,6 +287,13 @@ export class SettingsComponent implements OnInit {
     );
   }
 
+  isDigestSendAtTimeSelected(localHour: number) {
+    return (
+      localHourToUtcHour(this.appUser.DigestSendAtHourLocalTime, this.appUser.UserTimezoneUtcOffset * 60) ===
+      localHourToUtcHour(localHour)
+    );
+  }
+
   onEmailChange() {
     this.isValidEmail = true;
   }
@@ -249,19 +310,22 @@ export class SettingsComponent implements OnInit {
     }
 
     this.isSavingEmail = true;
+    const utcOffset = getUTCOffset();
     this.backendApi
       .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
       )
       .pipe(
-        switchMap((res) => {
+        switchMap(() => {
           return this.apiInternal.createAppUser(
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-            this.globalVars.lastSeenNotificationIdx
+            this.globalVars.lastSeenNotificationIdx,
+            utcOffset,
+            localHourToUtcHour(20)
           );
         })
       )

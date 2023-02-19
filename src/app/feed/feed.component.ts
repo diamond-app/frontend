@@ -1,26 +1,26 @@
 import {
+  AfterViewChecked,
+  ChangeDetectorRef,
   Component,
-  OnInit,
   Input,
   OnDestroy,
-  ChangeDetectorRef,
-  AfterViewChecked,
+  OnInit,
+  QueryList,
   ViewChildren,
-  QueryList
 } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { tap, finalize, first } from "rxjs/operators";
-import * as _ from "lodash";
-import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
-import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import * as _ from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import PullToRefresh from "pulltorefreshjs";
+import { Subscription } from "rxjs";
+import { finalize, first, tap } from "rxjs/operators";
+import { TrackingService } from "src/app/tracking.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 import { FeedPostComponent } from "./feed-post/feed-post.component";
-import { OpenProsperService } from "../../lib/services/openProsper/openprosper-service";
-import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "feed",
@@ -47,7 +47,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   followChangeSubscription: Subscription;
   FeedComponent = FeedComponent;
   switchingTabs = false;
-  deadTabs = new Set([this.FeedComponent.SHOWCASE_TAB])
+  deadTabs = new Set([this.FeedComponent.SHOWCASE_TAB]);
 
   nextNFTShowcaseTime;
 
@@ -105,7 +105,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private titleService: Title
+    private titleService: Title,
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
 
@@ -166,7 +168,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.backendApi
         .GetReferralInfoForUser(
           environment.verificationEndpointHostname,
-          this.globalVars.loggedInUser.PublicKeyBase58Check
+          this.globalVars.loggedInUser?.PublicKeyBase58Check
         )
         .subscribe(
           (res: any) => {
@@ -216,7 +218,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   _initializeFeeds() {
-    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB, FeedComponent.GLOBAL_TAB];
+    this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB];
+    if (this.globalVars.loggedInUser) {
+      this.feedTabs.push(FeedComponent.GLOBAL_TAB);
+    }
     if (this.globalVars.postsToShow.length === 0) {
       // Get some posts to show the user.
       this.loadingFirstBatchOfGlobalFeedPosts = true;
@@ -311,6 +316,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateTag() {
+    this.tracking.log("hashtag-input : change", { hashtag: this.tag });
     this.activeTab = FeedComponent.TAG_TAB;
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE + "/" + this.globalVars.RouteNames.TAG, this.tag], {
       queryParamsHandling: "merge",
@@ -355,12 +361,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   showGlobalOrFollowingOrHotPosts() {
     return (
       this.postsToShow().length > 0 &&
-      (
-        this.activeTab === FeedComponent.GLOBAL_TAB ||
+      (this.activeTab === FeedComponent.GLOBAL_TAB ||
         this.activeTab === FeedComponent.FOLLOWING_TAB ||
         this.activeTab === FeedComponent.HOT_TAB ||
-        this.activeTab === FeedComponent.TAG_TAB
-      )
+        this.activeTab === FeedComponent.TAG_TAB)
     );
   }
 
@@ -368,12 +372,19 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // activeTab == FeedComponent.GLOBAL_TAB && globalVars.postsToShow.length == 0 && !loadingPosts
     return (
       this.postsToShow().length === 0 &&
-      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB || this.activeTab === FeedComponent.TAG_TAB) &&
+      (this.activeTab === FeedComponent.GLOBAL_TAB ||
+        this.activeTab === FeedComponent.FOLLOWING_TAB ||
+        this.activeTab === FeedComponent.TAG_TAB) &&
       !this.loadingFirstBatchOfActiveTabPosts()
     );
   }
 
   loadMorePosts() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "load-more-posts" } });
+      return;
+    }
+
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       this._loadFollowFeedPosts();
     } else if (this.activeTab === FeedComponent.HOT_TAB) {
@@ -411,7 +422,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
@@ -441,7 +452,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             if (lastPostHash !== "") {
-              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(_.filter(res.PostsFound, { IsPinned: false }));
+              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(
+                _.filter(res.PostsFound, { IsPinned: false })
+              );
             } else {
               this.globalVars.postsToShow = _.filter(res.PostsFound, { IsPinned: false });
             }
@@ -479,7 +492,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         (response) => {
           this.followedPublicKeyToProfileEntry = response.PublicKeyToProfileEntry;
-          this.followedCount = this.followedPublicKeyToProfileEntry ? Object.keys(this.followedPublicKeyToProfileEntry)?.length : 0;
+          this.followedCount = this.followedPublicKeyToProfileEntry
+            ? Object.keys(this.followedPublicKeyToProfileEntry)?.length
+            : 0;
         },
         (error) => {}
       )
@@ -494,7 +509,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
@@ -558,7 +573,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
@@ -608,18 +623,28 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, tagFeedPostHashes, this.FeedComponent.NUM_TO_FETCH, "#" + this.tag.toLowerCase())
+      .GetHotFeed(
+        this.globalVars.localNode,
+        readerPubKey,
+        tagFeedPostHashes,
+        this.FeedComponent.NUM_TO_FETCH,
+        "#" + this.tag.toLowerCase()
+      )
       .pipe(
         tap(
           (res) => {
             if (res.HotFeedPage) {
               // Filter out pinned posts.
-              const hotFeedPage = _.filter(res.HotFeedPage, (hotFeedResult) => !hotFeedResult.IsPinned || hotFeedResult.Body.toLowerCase().includes("#" + this.tag.toLowerCase()));
+              const hotFeedPage = _.filter(
+                res.HotFeedPage,
+                (hotFeedResult) =>
+                  !hotFeedResult.IsPinned || hotFeedResult.Body.toLowerCase().includes("#" + this.tag.toLowerCase())
+              );
               this.globalVars.tagFeedPosts = this.globalVars.tagFeedPosts.concat(hotFeedPage);
             }
 
@@ -644,10 +669,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   _afterLoadingFollowingOnPageLoad() {
     this.isLoadingFollowingOnPageLoad = false;
 
-    // defaultActiveTab is "Following" if the user is following anybody. Otherwise
-    // the default is global.
     const defaultActiveTab = FeedComponent.HOT_TAB;
-
 
     if (!this.activeTab) {
       const storedTab = this.backendApi.GetStorage("mostRecentFeedTab");
@@ -660,26 +682,46 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       }
     }
-    this._handleTabClick(this.activeTab);
+    this.switchTab(this.activeTab, true);
   }
 
-  _handleTabClick(tab: string) {
+  handleTabClick(feedTab: string) {
+    this.tracking.log("feed-tab : click", { feedTab });
+    this.switchTab(feedTab, false);
+  }
+
+  /**
+   * @param tab the selected tab
+   * @param replaceUrl determines whether or not to preserve an entry in the
+   * browser history. In the case where the route is entered without a tab
+   * selected, we default to selecting the hotfeed which triggers a new
+   * navigation event, but this initial navigation event should not add a new
+   * history entry
+   */
+  private switchTab(tab: string, replaceUrl: boolean = false) {
     if (tab === FeedComponent.SHOWCASE_TAB) {
       window.open("https://polygram.cc", "_blank");
     } else {
-      this.backendApi.SetStorage("mostRecentFeedTab", tab);
       this.activeTab = tab;
       let commands = [];
       if (tab !== FeedComponent.TAG_TAB) {
+        if (this.globalVars.loggedInUser) {
+          // only store the selected tab if the user is logged in
+          // logged out users will always see the hot feed
+          this.backendApi.SetStorage("mostRecentFeedTab", tab);
+        }
         this.tag = null;
         this.expandTagSelector = false;
         commands = ["/" + this.globalVars.RouteNames.BROWSE];
       }
+
       this.router.navigate(commands, {
         relativeTo: this.route,
         queryParams: { feedTab: this.activeTab },
         queryParamsHandling: "merge",
+        replaceUrl,
       });
+
       this._onTabSwitch();
     }
   }

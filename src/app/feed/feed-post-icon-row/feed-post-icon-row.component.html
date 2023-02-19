@@ -1,152 +1,360 @@
-<div class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable">
+<section>
   <div
-    class="cursor-pointer d-flex align-items-center"
-    (click)="openModal($event)"
-    data-toggle="modal"
-    data-target=".js-feed-post-icon-row__comment-modal"
+    *ngIf="postReactionCounts.Total > 0 && !hideSummary"
+    class="reactions-summary__container d-inline-flex text-secondary pt-10px"
+    (click)="openReactionsDetails($event)"
   >
-    <div>
-      <i-feather name="message-square" class="feed-post-icon-row__icon reply-icon"></i-feather>
-    </div>
-    <div>
-      <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue: sortReactionsByCount">
+      <div
+        *ngIf="reaction.value > 0 && allowedReactions.includes(reaction.key)"
+        class="reaction-summary__reaction-item mr-5px"
+      >
+        <reactions-image [reaction]="reaction.key" [size]="16"></reactions-image>
+      </div>
+    </ng-container>
+
+    <div
+      class="reaction-summary__reaction-item text-secondary"
+      [ngClass]="{ 'reaction-summary__reaction-item-pill': postReactionCounts.Total > 99 }"
+    >
+      {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }}
     </div>
   </div>
 
-  <div
-    (click)="handleRepostClick($event)"
-    class="btn-group cursor-pointer d-flex align-items-center"
-    dropdown
-    #dropdown="bs-dropdown"
-    [ngClass]="{
-      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
-    }"
-  >
-    <div>
-      <a
-        class="link--unstyled"
-        dropdownToggle
-        id="repostActionsButton"
-        data-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <i-feather name="repeat" class="feed-post-icon-row__icon repost-icon"></i-feather>
-      </a>
-    </div>
+  <div class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable">
     <div
-      class="dropdown-menu feed-post__dropdown-menu-item-repost"
-      style="min-width: 7rem"
-      *dropdownMenu
-      aria-labelledby="repostActionsButton"
+      class="cursor-pointer d-flex align-items-center mt-5px"
+      (click)="openModal($event)"
+      data-toggle="modal"
+      data-target=".js-feed-post-icon-row__comment-modal"
     >
       <div>
-        <a *ngIf="sendingRepostRequest; else repostOptions" class="dropdown-menu-item d-block p-5px">
-          <div class="fc-muted">{{ "feed_post_icon_row.loading" | transloco }}</div>
-        </a>
+        <i-feather name="message-square" class="feed-post-icon-row__icon reply-icon"></i-feather>
       </div>
-      <ng-template #repostOptions>
-        <a
-          *ngIf="userHasReposted(); else repostElseBlock"
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
-          (click)="_undoRepost($event)"
-        >
-          <i-feather
-            name="repeat"
-            class="feed-post-icon-row__icon repost-icon position-relative"
-            style="right: 5px"
-          ></i-feather>
-          {{ "feed_post_icon_row.hide" | transloco }}
-        </a>
-        <ng-template #repostElseBlock>
-          <a
-            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
-            (click)="_repost($event)"
-          >
-            <i-feather name="repeat" class="feed-post-icon-row__icon-repost-option"></i-feather>
-            {{ "feed_post_icon_row.repost" | transloco }}
-          </a>
-        </ng-template>
-        <a
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
-          (click)="openModal($event, true)"
-        >
-          <i-feather name="quote" class="feed-post-icon-row__icon-repost-option"></i-feather>
-          {{ "feed_post_icon_row.quote" | transloco }}
-        </a>
-      </ng-template>
+      <div>
+        <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+      </div>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
-  </div>
 
-  <div
-    (click)="toggleLike($event)"
-    [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
-    class="cursor-pointer d-flex align-items-center"
-  >
-    <i-feather
-      [ngClass]="{
-        is_animating: animateLike,
-        'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-        'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
-      }"
-      name="heart"
-      class="feed-post-icon-row__icon"
-    ></i-feather>
-    <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
-  </div>
-  <ng-template #popTemplate>
-    <div id="diamond-popover" class="m-10px">
-      <div *ngIf="!sendingDiamonds">
-        <div class="mb-4" style="font-size: 11.25px">
-          {{ "feed_post_icon_row.give_diamond" | transloco }}
-          <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
-          {{ "feed_post_icon_row.will_receive" | transloco }}
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  <div class="cursor-pointer d-flex align-items-center">
-    <!--Container to hold the bounds for the mobile drag interface-->
     <div
-      class="diamond-mobile-drag-container unselectable"
+      (click)="handleRepostClick($event)"
+      class="btn-group cursor-pointer d-flex align-items-center mt-5px"
+      dropdown
+      #dropdown="bs-dropdown"
       [ngClass]="{
-        'hide-diamonds':
-          !globalVars.loggedInUser?.PublicKeyBase58Check ||
-          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
+        'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
       }"
     >
-      <div
-        [ngClass]="{ 'bg-danger': diamondDragCancel, show: diamondDragging }"
-        class="diamond-mobile-drag-instructions"
-      >
-        <p class="d-block">
-          {{ diamondDraggedText() }}
-        </p>
+      <div>
+        <a
+          class="link--unstyled"
+          dropdownToggle
+          id="repostActionsButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i-feather name="repeat" class="feed-post-icon-row__icon repost-icon"></i-feather>
+        </a>
       </div>
       <div
+        class="dropdown-menu feed-post__dropdown-menu-item-repost"
+        style="min-width: 7rem"
+        *dropdownMenu
+        aria-labelledby="repostActionsButton"
+      >
+        <div>
+          <a *ngIf="sendingRepostRequest; else repostOptions" class="dropdown-menu-item d-block p-5px">
+            <div class="fc-muted">{{ "feed_post_icon_row.loading" | transloco }}</div>
+          </a>
+        </div>
+        <ng-template #repostOptions>
+          <a
+            *ngIf="userHasReposted(); else repostElseBlock"
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+            (click)="_undoRepost($event)"
+          >
+            <i-feather
+              name="repeat"
+              class="feed-post-icon-row__icon repost-icon position-relative"
+              style="right: 5px"
+            ></i-feather>
+            {{ "feed_post_icon_row.hide" | transloco }}
+          </a>
+          <ng-template #repostElseBlock>
+            <a
+              class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+              (click)="_repost($event)"
+            >
+              <i-feather name="repeat" class="feed-post-icon-row__icon-repost-option"></i-feather>
+              {{ "feed_post_icon_row.repost" | transloco }}
+            </a>
+          </ng-template>
+          <a
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+            (click)="openModal($event, true)"
+          >
+            <i-feather name="quote" class="feed-post-icon-row__icon-repost-option"></i-feather>
+            {{ "feed_post_icon_row.quote" | transloco }}
+          </a>
+        </ng-template>
+      </div>
+      <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
+    </div>
+
+    <div
+      *ngIf="!globalVars.isMobile(); else reactionSwiper"
+      (click)="sendReaction(allowedReactions[0], $event)"
+      [ngClass]="{
+        'fc-blue': myReactions.length > 0
+      }"
+      class="position-relative cursor-pointer d-flex align-items-center mt-5px"
+      (mouseover)="debouncedToggleSelectReactionFunction(true)"
+      (mouseleave)="debouncedToggleSelectReactionFunction(false)"
+    >
+      <div *ngIf="choosingReaction">
+        <ng-container *ngTemplateOutlet="reactionsPopTemplate"></ng-container>
+      </div>
+
+      <i-feather
         [ngClass]="{
-          'dragged-like': diamondDragging,
+          is_animating_ice: processedReaction,
+          'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+          'thumbs-up-fill': myReactions.length > 0
+        }"
+        name="thumbs-up"
+        class="feed-post-icon-row__icon thumbs-up"
+      ></i-feather>
+      <span *ngIf="!hideNumbers" class="reaction-counter">
+        {{ globalVars.abbreviateNumber(postReactionCounts.Total, 0) }}
+      </span>
+    </div>
+
+    <ng-template #reactionSwiper>
+      <swipe-to-choose
+        [itemCount]="allowedReactions.length"
+        (selectItem)="sendReaction(allowedReactions[$event])"
+        (sendOne)="sendReaction(allowedReactions[0])"
+      >
+        <ng-template #actionBtn>
+          <div
+            (click)="sendReaction(allowedReactions[0], $event)"
+            [ngClass]="{
+              'fc-blue': myReactions.length > 0
+            }"
+            class="position-relative cursor-pointer d-flex align-items-center"
+            (mouseover)="debouncedToggleSelectReactionFunction(true)"
+            (mouseleave)="debouncedToggleSelectReactionFunction(false)"
+          >
+            <div *ngIf="choosingReaction">
+              <ng-container *ngTemplateOutlet="reactionsPopTemplate"></ng-container>
+            </div>
+
+            <i-feather
+              [ngClass]="{
+                is_animating_ice: processedReaction,
+                'thumbs-up': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+                'thumbs-up-fill': myReactions.length > 0
+              }"
+              name="thumbs-up"
+              class="feed-post-icon-row__icon thumbs-up"
+            ></i-feather>
+            <span *ngIf="!hideNumbers">{{ postReactionCounts.Total }}</span>
+          </div>
+        </ng-template>
+
+        <ng-template #item let-index>
+          <div
+            class="reactions-list__item reactions-list__item-mobile show"
+            [ngClass]="{
+              selected: hasUserReacted(allowedReactions[index]),
+              bouncing: processedReaction === allowedReactions[index],
+              inactive: processedReaction && processedReaction !== allowedReactions[index]
+            }"
+            (click)="sendReaction(allowedReactions[index], $event)"
+          >
+            <reactions-image [reaction]="allowedReactions[index]"></reactions-image>
+          </div>
+        </ng-template>
+      </swipe-to-choose>
+    </ng-template>
+
+    <ng-template #popTemplate>
+      <div id="diamond-popover" class="m-10px">
+        <div *ngIf="!sendingDiamonds">
+          <div class="mb-4" style="font-size: 11.25px">
+            {{ "feed_post_icon_row.give_diamond" | transloco }}
+            <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
+            {{ "feed_post_icon_row.will_receive" | transloco }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #reactionsPopTemplate>
+      <div
+        (click)="$event.stopPropagation()"
+        class="reactions-popover reaction-box"
+        [ngClass]="{ 'reactions-popover__mobile': globalVars.isMobile() }"
+      >
+        <div class="reactions-list d-flex align-items-center">
+          <div
+            *ngFor="let reaction of allowedReactions; let i = index"
+            class="reactions-list__item"
+            [ngClass]="{
+              show: reactionsVisible[i],
+              selected: hasUserReacted(reaction),
+              inactive: processedReaction && processedReaction !== reaction
+            }"
+            (click)="$event.stopPropagation()"
+          >
+            <input
+              class="reactions-list__item-checkbox"
+              type="checkbox"
+              [id]="'reaction' + i"
+              [checked]="hasUserReacted(reaction)"
+              (change)="sendReaction(reaction, $event)"
+            />
+            <label [for]="'reaction' + i" class="reactions-list__item-checkbox-label">
+              <i>
+                <reactions-image [reaction]="reaction"></reactions-image>
+              </i>
+            </label>
+          </div>
+        </div>
+
+        <div class="hover-helper"></div>
+      </div>
+    </ng-template>
+
+    <div class="cursor-pointer d-flex align-items-center mt-5px">
+      <!--Container to hold the bounds for the mobile drag interface-->
+      <div
+        class="diamond-mobile-drag-container unselectable"
+        [ngClass]="{
           'hide-diamonds':
             !globalVars.loggedInUser?.PublicKeyBase58Check ||
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check ||
-            sendingDiamonds
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
         }"
-        class="diamond-btn icon-diamond mobile-reaction-box"
       >
         <div
-          class="reaction-box"
-          [ngStyle]="{
-            height:
-              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
-                ? '121px'
-                : '55px'
-          }"
+          [ngClass]="{ 'bg-danger': diamondDragCancel, show: diamondDragging }"
+          class="diamond-mobile-drag-instructions"
         >
-          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
-            <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+          <p class="d-block">
+            {{ diamondDraggedText() }}
+          </p>
+        </div>
+        <div
+          [ngClass]="{
+            'dragged-like': diamondDragging,
+            'hide-diamonds':
+              !globalVars.loggedInUser?.PublicKeyBase58Check ||
+              postContent.ProfileEntryResponse?.PublicKeyBase58Check ===
+                globalVars.loggedInUser?.PublicKeyBase58Check ||
+              sendingDiamonds
+          }"
+          class="diamond-btn icon-diamond mobile-reaction-box"
+        >
+          <div
+            class="reaction-box"
+            [ngStyle]="{
+              height:
+                !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                  ? '121px'
+                  : '55px'
+            }"
+          >
+            <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
+              <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+            </div>
+            <div class="reaction-box-icons">
+              <div
+                *ngFor="let diamondIndex of diamondIndexes"
+                [ngClass]="{
+                  show: diamondsVisible[diamondIndex],
+                  'dragged-icon': diamondIdxDraggedTo === diamondIndex
+                }"
+                class="reaction-icon transformable"
+                (click)="onDiamondSelected($event, diamondIndex)"
+                (mouseover)="setDiamondHovered(diamondIndex)"
+                (mouseleave)="setDiamondHovered(-1)"
+              >
+                <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
+                <i-feather
+                  name="diamond"
+                  class="diamond-reaction"
+                  [ngStyle]="{
+                    color:
+                      diamondIndex < getCurrentDiamondLevel() ||
+                      diamondIndex <= this.diamondHovered ||
+                      diamondIndex <= this.diamondIdxDraggedTo
+                        ? 'var(--cblue)'
+                        : 'var(--grey)'
+                  }"
+                ></i-feather>
+              </div>
+              <div
+                class="reaction-icon show"
+                (click)="toggleExplainer($event)"
+                (mouseover)="setCollapseDiamondInfo(false)"
+                (mouseleave)="setCollapseDiamondInfo(true)"
+                style="position: relative; top: 38px"
+              >
+                <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
+              </div>
+            </div>
           </div>
-          <div class="reaction-box-icons">
+        </div>
+      </div>
+      <div
+        class="feed-reaction cursor-pointer d-flex align-items-center"
+        (click)="sendOneDiamond($event, false)"
+        (mouseover)="addDiamondSelection($event)"
+        (mouseleave)="removeDiamondSelection()"
+      >
+        <i-feather
+          name="diamond"
+          class="feed-post-icon-row__icon"
+          [ngClass]="{
+            'diamond-icon': !sendingDiamonds,
+            'd-none': sendingDiamonds,
+            'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
+          }"
+          [ngStyle]="{
+            visibility: diamondDragging ? 'hidden' : 'visible'
+          }"
+        ></i-feather>
+        <i
+          [ngClass]="{
+            'd-none': !sendingDiamonds,
+            'fas fa-spinner fa-spin mr-5px': sendingDiamonds
+          }"
+        ></i>
+        <a
+          [ngClass]="{
+            'dragged-like': diamondDragging,
+            'hide-diamonds':
+              !globalVars.loggedInUser?.PublicKeyBase58Check ||
+              postContent.ProfileEntryResponse?.PublicKeyBase58Check ===
+                globalVars.loggedInUser?.PublicKeyBase58Check ||
+              sendingDiamonds
+          }"
+          class="diamond-btn icon-diamond"
+          id="diamond-button"
+        >
+          <div
+            class="reaction-box non-mobile-reaction-box"
+            [ngStyle]="{
+              height:
+                !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                  ? '121px'
+                  : '55px'
+            }"
+          >
+            <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
+              <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+            </div>
             <div
               *ngFor="let diamondIndex of diamondIndexes"
               [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
@@ -174,117 +382,36 @@
               (click)="toggleExplainer($event)"
               (mouseover)="setCollapseDiamondInfo(false)"
               (mouseleave)="setCollapseDiamondInfo(true)"
-              style="position: relative; top: 38px"
             >
               <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="feed-reaction cursor-pointer d-flex align-items-center"
-      (click)="sendOneDiamond($event, false)"
-      (mouseover)="addDiamondSelection($event)"
-      (mouseleave)="removeDiamondSelection()"
-    >
-      <i-feather
-        name="diamond"
-        class="feed-post-icon-row__icon"
-        [ngClass]="{
-          'diamond-icon': !sendingDiamonds,
-          'd-none': sendingDiamonds,
-          'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
-        }"
-        [ngStyle]="{
-          visibility: diamondDragging ? 'hidden' : 'visible'
-        }"
-      ></i-feather>
-      <i
-        [ngClass]="{
-          'd-none': !sendingDiamonds,
-          'fas fa-spinner fa-spin mr-5px': sendingDiamonds
-        }"
-      ></i>
-      <a
-        [ngClass]="{
-          'dragged-like': diamondDragging,
-          'hide-diamonds':
-            !globalVars.loggedInUser?.PublicKeyBase58Check ||
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check ||
-            sendingDiamonds
-        }"
-        class="diamond-btn icon-diamond"
-        id="diamond-button"
-      >
+        </a>
+        <!--Draggable element for mobile drag-selection-->
         <div
-          class="reaction-box non-mobile-reaction-box"
-          [ngStyle]="{
-            height:
-              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
-                ? '121px'
-                : '55px'
+          (touchstart)="startDrag()"
+          (touchend)="dragClick($event)"
+          (cdkDragEnded)="endDrag($event)"
+          (cdkDragMoved)="duringDrag($event)"
+          class="diamond-mobile-drag-grab"
+          [ngClass]="{
+            'hide-diamonds':
+              postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
           }"
-        >
-          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
-            <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
-          </div>
-          <div
-            *ngFor="let diamondIndex of diamondIndexes"
-            [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
-            class="reaction-icon transformable"
-            (click)="onDiamondSelected($event, diamondIndex)"
-            (mouseover)="setDiamondHovered(diamondIndex)"
-            (mouseleave)="setDiamondHovered(-1)"
-          >
-            <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
-            <i-feather
-              name="diamond"
-              class="diamond-reaction"
-              [ngStyle]="{
-                color:
-                  diamondIndex < getCurrentDiamondLevel() ||
-                  diamondIndex <= this.diamondHovered ||
-                  diamondIndex <= this.diamondIdxDraggedTo
-                    ? 'var(--cblue)'
-                    : 'var(--grey)'
-              }"
-            ></i-feather>
-          </div>
-          <div
-            class="reaction-icon show"
-            (click)="toggleExplainer($event)"
-            (mouseover)="setCollapseDiamondInfo(false)"
-            (mouseleave)="setCollapseDiamondInfo(true)"
-          >
-            <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
-          </div>
-        </div>
-      </a>
-      <!--Draggable element for mobile drag-selection-->
-      <div
-        (touchstart)="startDrag()"
-        (touchend)="dragClick($event)"
-        (cdkDragEnded)="endDrag($event)"
-        (cdkDragMoved)="duringDrag($event)"
-        class="diamond-mobile-drag-grab"
-        [ngClass]="{
-          'hide-diamonds':
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
-        }"
-        id="diamond-mobile-drag-grab"
-        cdkDrag
-      ></div>
+          id="diamond-mobile-drag-grab"
+          cdkDrag
+        ></div>
+      </div>
+      <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">
+        {{ postContent.DiamondCount }}
+      </span>
     </div>
-    <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">
-      {{ postContent.DiamondCount }}
-    </span>
+    <div class="d-none d-lg-flex cursor-pointer align-items-center mt-5px">
+      <i-feather
+        name="link-2"
+        class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
+        (click)="copyPostLinkToClipboard($event)"
+      ></i-feather>
+    </div>
   </div>
-  <div class="d-none d-lg-flex cursor-pointer align-items-center">
-    <i-feather
-      name="link-2"
-      class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
-      (click)="copyPostLinkToClipboard($event)"
-    ></i-feather>
-  </div>
-</div>
+</section>

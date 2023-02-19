@@ -2,6 +2,8 @@ import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/co
 import { Router } from "@angular/router";
 import { filter, get } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { TrackingService } from "src/app/tracking.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
@@ -40,26 +42,27 @@ export class LeftBarComponent {
     private modalService: BsModalService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {}
 
-  // send logged out users to the landing page
-  // send logged in users to browse
-  homeLink(): string | string[] {
-    if (this.inTutorial) {
-      return [];
+  openCreatePostModal() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "left-rail-create-post" } });
+    } else {
+      this.modalService.show(FeedCreatePostModalComponent, {
+        class: "modal-dialog-centered",
+        ignoreBackdropClick: true,
+      });
     }
-    if (this.globalVars.showLandingPage()) {
-      return "/" + this.globalVars.RouteNames.LANDING;
-    }
-    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
-  openCreatePostModal() {
-    this.modalService.show(FeedCreatePostModalComponent, {
-      class: "modal-dialog-centered",
-      ignoreBackdropClick: true,
-    });
+  onCreateBlogPost() {
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "left-rail-create-blog-post" } });
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
+    }
   }
 
   displayMore(event: any) {
@@ -83,11 +86,11 @@ export class LeftBarComponent {
   }
 
   logHelp(): void {
-    this.globalVars.logEvent("help : click");
+    this.tracking.log("help : click");
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
         return res?.users && user?.PublicKeyBase58Check in res?.users;
@@ -169,7 +172,7 @@ export class LeftBarComponent {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          this.tracking.log(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
           this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
             ? TutorialStatus.STARTED

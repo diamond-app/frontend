@@ -11,6 +11,7 @@
             [tabs]="buyTabs"
             [activeTab]="activeTab"
             [linkTabs]="linkTabs"
+            [onTabClick]="this.onTabClick.bind(this)"
             (tabClick)="this.activeTab = $event"
           ></tab-selector>
         </div>

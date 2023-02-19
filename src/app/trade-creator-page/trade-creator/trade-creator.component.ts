@@ -5,21 +5,22 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import * as introJs from "intro.js/intro.js";
+import { isNil } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { Observable, Subscription } from "rxjs";
+import { TrackingService } from "src/app/tracking.service";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { RouteNames } from "../../app-routing.module";
-import { Observable, Subscription } from "rxjs";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
-import * as introJs from "intro.js/intro.js";
-import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
-import { isNil } from "lodash";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
+import { TradeCreatorPreviewComponent } from "../trade-creator-preview/trade-creator-preview.component";
 
 @Component({
   selector: "trade-creator",
@@ -84,6 +85,12 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   _onPreviewClicked() {
+    this.tracking.log("creator-coin-trade-review-button : click", {
+      username: this.creatorProfile?.Username,
+      publicKey: this.creatorProfile?.PublicKeyBase58Check,
+      isVerified: this.creatorProfile?.IsVerified,
+      operationType: this.tradeType,
+    });
     this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
     this.creatorCoinTrade.showSlippageError = false;
   }
@@ -109,9 +116,9 @@ export class TradeCreatorComponent implements OnInit {
         this.backendApi
           .UpdateTutorialStatus(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             TutorialStatus.COMPLETE,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             true
           )
           .subscribe(() => {
@@ -192,7 +199,7 @@ export class TradeCreatorComponent implements OnInit {
   _getCreatorProfile(creatorUsername): Subscription {
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
       (response) => {
@@ -203,10 +210,17 @@ export class TradeCreatorComponent implements OnInit {
         let profile = response.Profile;
         this.creatorCoinTrade.creatorProfile = profile;
         this.creatorProfile = profile;
+        this.tracking.log("creator-coin-trade-modal : open", {
+          username: profile.Username,
+          publicKey: profile.PublicKeyBase58Check,
+          isVerified: profile.IsVerified,
+          operationType: this.tradeType,
+        });
       },
       (err) => {
         console.error(err);
         console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+        this.tracking.log("creator-coin-trade-modal : open", { error: err.error?.error });
       }
     );
   }
@@ -216,7 +230,8 @@ export class TradeCreatorComponent implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.appData = globalVars;
     this.router = _router;
@@ -233,26 +248,9 @@ export class TradeCreatorComponent implements OnInit {
 
   ngOnInit() {
     this.creatorCoinTrade = new CreatorCoinTrade(this.appData);
-    if (!this.inTutorial) {
+    this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(this.route);
-      this.route.params.subscribe((params) => {
-        this._setStateFromActivatedRoute(this.route);
-      });
-    } else {
-      // this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
-      this.creatorCoinTrade.isBuyingCreatorCoin = true;
-      this.creatorCoinTrade.tradeType = CreatorCoinTrade.BUY_VERB;
-      this._getCreatorProfile(this.username).add(() => {
-        this.investInYourself =
-          this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
-          this.creatorCoinTrade.creatorProfile?.Username;
-        if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-          this.setUpBuyTutorial();
-        } else {
-          this.setUpSellTutorial();
-        }
-      });
-    }
+    });
   }
 
   setUpBuyTutorial(): void {
@@ -320,13 +318,13 @@ export class TradeCreatorComponent implements OnInit {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.INVEST_OTHERS_BUY,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("buy : creator : select");
+        this.tracking.log("buy : creator : select");
         this.globalVars.updateEverything().add(() => {
           this.hideModal.emit();
           this.router.navigate([
@@ -342,13 +340,13 @@ export class TradeCreatorComponent implements OnInit {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.INVEST_OTHERS_SELL,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
         true
       )
       .subscribe(() => {
-        this.globalVars.logEvent("invest : others : sell : next");
+        this.tracking.log("invest : others : sell : next");
         this.globalVars.updateEverything().add(() => {
           this.hideModal.emit();
           this.router.navigate([

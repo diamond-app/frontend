@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import * as _ from "lodash";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "referral-program-mgr",
@@ -60,7 +60,7 @@ export class ReferralProgramMgrComponent implements OnInit {
     this.backendApi
       .AdminCreateReferralHash(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.selectedCreator?.PublicKeyBase58Check,
         this.selectedCreator?.Username,
         this.referrerAmountUSD * 100,
@@ -89,7 +89,7 @@ export class ReferralProgramMgrComponent implements OnInit {
     this.backendApi
       .AdminGetAllReferralInfoForUser(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.selectedCreator?.PublicKeyBase58Check,
         this.selectedCreator?.Username
       )
@@ -111,7 +111,7 @@ export class ReferralProgramMgrComponent implements OnInit {
             this._setExistingLinkStatusArrays();
           } else {
             // If no links are returned, empty out the array.
-            this.existingLinks = []
+            this.existingLinks = [];
           }
         },
         (err) => {
@@ -132,7 +132,7 @@ export class ReferralProgramMgrComponent implements OnInit {
     this.backendApi
       .AdminUpdateReferralHash(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         existingLink.Info.ReferralHashBase58,
         existingLink.Info.referrerAmountUSD * 100,
         existingLink.Info.refereeAmountUSD * 100,
@@ -168,7 +168,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   _downloadReferralCSV() {
     this.downloadingReferralCSV = true;
     this.backendApi
-      .AdminDownloadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminDownloadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res) => {
           // We construct the CSV on the client side so that we can use our standard JWT post
@@ -196,7 +196,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   _downloadRefereeCSV() {
     this.downloadingRefereeCSV = true;
     this.backendApi
-      .AdminDownloadRefereeCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminDownloadRefereeCSV(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res) => {
           // We construct the CSV on the client side so that we can use our standard JWT post
@@ -247,7 +247,7 @@ export class ReferralProgramMgrComponent implements OnInit {
 
   _uploadCSVRows(csvRows: Array<Array<String>>) {
     this.backendApi
-      .AdminUploadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, csvRows)
+      .AdminUploadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, csvRows)
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(

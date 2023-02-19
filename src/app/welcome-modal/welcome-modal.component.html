@@ -1,0 +1,62 @@
+<div class="welcome-modal">
+  <div class="d-flex p-3">
+    <button
+      (click)="bsModalRef.hide()"
+      aria-label="Close"
+      class="ml-auto p-0 background-color-transparent border-none fc-secondary"
+    >
+      <i-feather name="x"></i-feather>
+    </button>
+  </div>
+  <header>
+    <img src="/assets/diamond/camelcase_logo_new.svg" class="deso" height="30" />
+    <h1 class="welcome-modal__header">The web3 creator economy starts here.</h1>
+  </header>
+  <div class="welcome-modal__login-section">
+    <div class="welcome-modal__bg-container">
+      <div class="welcome-modal__bg-mask"></div>
+      <div class="welcome-modal__login-section-inner">
+        <div>
+          <p style="color: white" class="mb-4 font-weight-bold">Sign up or Login</p>
+          <button
+            class="btn btn-outline-secondary mb-4 br-12px p-3 font-weight-bold background-color-white"
+            (click)="login()"
+          >
+            <img src="/assets/deso/desologo.svg" alt="DeSo identity" height="24" />
+            &nbsp;Continue with DeSo
+          </button>
+          <p class="fc-muted fs-14px">
+            Diamond is an open-sourced & decentralized application built on the DeSo blockchain
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="welcome-modal__callout-container">
+    <section class="welcome-modal__callout">
+      <picture>
+        <source srcset="/assets/diamond/diamond-outline-simple-white.svg" media="(prefers-color-scheme: dark)" />
+        <img src="/assets/diamond/diamond-outline-simple.svg" alt="" height="32" width="32" />
+      </picture>
+      <h2 class="font-weight-bold fs-16px my-2">For Creators</h2>
+      <p class="fs-14px">
+        Monetize your content and reach from day one through Creator Coins, NFTs, Social Tipping, and more!
+      </p>
+    </section>
+    <div class="welcome-modal__callout-divider"></div>
+    <section class="welcome-modal__callout">
+      <picture>
+        <source srcset="/assets/diamond/3-rings-outline-white.svg" media="(prefers-color-scheme: dark)" />
+        <img src="/assets/diamond/3-rings-outline.svg" alt="" height="32" width="32" />
+      </picture>
+      <h2 class="font-weight-bold fs-16px my-2">For Communities</h2>
+      <p class="fs-14px">Build your audience, and take it with you across the entire DeSo ecosystem of apps.</p>
+    </section>
+  </div>
+  <footer class="welcome-modal__footer">
+    <p class="welcome-modal__new-banner fs-14px">
+      <strong>New!</strong>
+      Diamond now has long-form content.
+    </p>
+  </footer>
+</div>

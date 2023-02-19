@@ -92,6 +92,8 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
     }
     this.sortByField = sortField;
     this.sortedSerialNumbers = _.orderBy(this.serialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reload();
   }
 
   showToast(serialNumber: number): void {

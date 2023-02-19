@@ -1,20 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Title } from "@angular/platform-browser";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { environment } from "src/environments/environment";
-import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
-import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
 import { HttpClient } from "@angular/common/http";
-import { OpenProsperService } from "../../../lib/services/openProsper/openprosper-service";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { InfiniteScroller } from "src/app/infinite-scroller";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { environment } from "src/environments/environment";
+import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
+import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
+import { OpenProsperService } from "../../../lib/services/openProsper/openprosper-service";
 import { HashtagResponse } from "../../../lib/services/pulse/pulse-service";
+import { AppRoutingModule } from "../../app-routing.module";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
+import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({
   selector: "trends",
@@ -45,7 +46,6 @@ export class TrendsComponent implements OnInit {
     RightBarCreatorsComponent.GAINERS.name,
     RightBarCreatorsComponent.HASHTAGS.name,
     RightBarCreatorsComponent.DIAMONDS.name,
-    RightBarCreatorsComponent.COMMUNITY.name,
   ];
 
   // FIME: Replace with real value
@@ -69,7 +69,7 @@ export class TrendsComponent implements OnInit {
   ) {
     this.appData = globalVars;
     this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
-    this.activeRightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab]
+    this.activeRightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab];
   }
 
   selectTab(tab: string) {
@@ -98,7 +98,7 @@ export class TrendsComponent implements OnInit {
     const fetchPubKey = this.pagedKeys[page];
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     this.isLoadingMore = true;
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
@@ -157,19 +157,18 @@ export class TrendsComponent implements OnInit {
           // We successfully loaded some profiles, so we're no longer loading for the first time
           this.isLoadingProfilesForFirstTime = false;
         });
-    } else if (this.activeTab === RightBarCreatorsComponent.COMMUNITY.name) {
-      const start = TrendsComponent.PAGE_SIZE * page;
-      let end = start + TrendsComponent.PAGE_SIZE;
-      if (end > this.globalVars.allCommunityProjectsLeaderboard.length) {
-        end = this.globalVars.allCommunityProjectsLeaderboard.length;
-      }
-      return this.globalVars.allCommunityProjectsLeaderboard.slice(TrendsComponent.PAGE_SIZE * page, end);
     }
   }
 
   openBuyCreatorCoinModal(event, username: string) {
     event.stopPropagation();
     this.closeModal.emit();
+
+    if (!this.globalVars.loggedInUser) {
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "buy-cc" } });
+      return;
+    }
+
     const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",

@@ -14,6 +14,10 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { GlobalVarsService } from "src/app/global-vars.service";
+import { TrackingService } from "src/app/tracking.service";
+import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
@@ -21,7 +25,6 @@ import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
 import Timer = NodeJS.Timer;
 
 const RANDOM_MOVIE_QUOTES = [
@@ -49,6 +52,7 @@ class PostModel {
   text = "";
   postImageSrc = "";
   postVideoSrc = "";
+  assetId = "";
   embedURL = "";
   constructedEmbedURL = "";
   showEmbedURL = false;
@@ -56,6 +60,7 @@ class PostModel {
   isMentionified = false;
   placeHolderText: string;
   isUploadingMedia = false;
+  isProcessingMedia = false;
   editPostHashHex = "";
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
@@ -95,6 +100,7 @@ interface PostExtraData {
   EmbedVideoURL?: string;
   Node?: string;
   Language?: string;
+  LivepeerAssetId?: string;
 }
 
 // show warning at 515 characters
@@ -127,6 +133,7 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() inModal = false;
   @Input() onCreateBlog?: () => void;
   @Input() postToEdit?: PostEntryResponse;
+  @Input() modalRef?: BsModalRef;
   @Output() postUpdated = new EventEmitter<boolean>();
   @Output() postCreated = new EventEmitter<PostEntryResponse>();
 
@@ -141,7 +148,9 @@ export class FeedCreatePostComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
     private streamService: CloudflareStreamService,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
   }
@@ -159,7 +168,7 @@ export class FeedCreatePostComponent implements OnInit {
         "" /*Description*/,
         "influencer_coin_price" /*Order by*/,
         5 /*NumToFetch*/,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check /*ReaderPublicKeyBase58Check*/,
         "" /*ModerationType*/,
         false /*FetchUsersThatHODL*/,
         false /*AddGlobalFeedBool*/
@@ -290,6 +299,10 @@ export class FeedCreatePostComponent implements OnInit {
       }
     }
 
+    if (post.postVideoSrc) {
+      postExtraData.LivepeerAssetId = post.assetId;
+    }
+
     if (environment.node.id) {
       postExtraData.Node = environment.node.id.toString();
     }
@@ -306,16 +319,16 @@ export class FeedCreatePostComponent implements OnInit {
 
     const repostedPostHashHex = this.isQuote && this.parentPost ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
-    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "create";
+    const postType = this.isQuote ? "quote" : this.isReply ? "reply" : "post";
 
     if (this.postModels.length > 1 && !this.postSubmitPercentage) {
       this.postSubmitPercentage = "0";
     }
-
+    const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
         "" /*Title*/,
@@ -331,7 +344,13 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .toPromise()
       .then((response) => {
-        this.globalVars.logEvent(`post : ${postType}`);
+        this.tracking.log(`post : ${action}`, {
+          type: postType,
+          hasText: bodyObj.Body.length > 0,
+          hasImage: bodyObj.ImageURLs.length > 0,
+          hasVideo: bodyObj.VideoURLs.length > 0,
+          hasEmbed: !!postExtraData.EmbedVideoURL,
+        });
 
         this.submittingPost = false;
 
@@ -375,7 +394,9 @@ export class FeedCreatePostComponent implements OnInit {
       .catch((err) => {
         const parsedError = this.backendApi.parsePostError(err);
         this.globalVars._alertError(parsedError);
-        this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
+        this.tracking.log(`post : ${action}`, {
+          error: parsedError,
+        });
         this.submittingPost = false;
 
         this.changeRef.detectChanges();
@@ -389,14 +410,16 @@ export class FeedCreatePostComponent implements OnInit {
   _createPost() {
     // Check if the user has an account.
     if (!this.globalVars?.loggedInUser) {
-      this.globalVars.logEvent("alert : post : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
+      this.modalRef?.hide();
+      this.tracking.log("alert : post : account");
+      this.modalService.show(WelcomeModalComponent, { initialState: { triggerAction: "post" } });
       return;
     }
 
     // Check if the user has a profile.
     if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : post : profile");
+      this.modalRef?.hide();
+      this.tracking.log("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
@@ -432,6 +455,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (uploadPromise) {
       uploadPromise.finally(() => {
         this.currentPostModel.isUploadingMedia = false;
+        this.currentPostModel.isProcessingMedia = false;
       });
     }
   }
@@ -442,7 +466,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         this.currentPostModel.postImageSrc = res.ImageURL;
@@ -453,60 +477,32 @@ export class FeedCreatePostComponent implements OnInit {
       });
   }
 
-  uploadVideo(file: File): Promise<any> {
+  async uploadVideo(file: File): Promise<any> {
+    if (file.size > 65 * 1024 * 1024) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 65MB");
+      return;
+    }
+    this.currentPostModel.isUploadingMedia = true;
+    // Set this so that the video upload progress bar shows up.
+    this.currentPostModel.postVideoSrc = `https://lvpr.tv`;
+    let tusEndpoint, asset;
+    try {
+      ({ tusEndpoint, asset } = await this.backendApi
+        .UploadVideo(environment.uploadVideoHostname, file, this.globalVars.loggedInUser.PublicKeyBase58Check)
+        .toPromise());
+    } catch (e) {
+      this.currentPostModel.postVideoSrc = "";
+      this.globalVars._alertError(JSON.stringify(e.error.error));
+      return;
+    }
+    this.currentPostModel.isUploadingMedia = false;
+    this.currentPostModel.isProcessingMedia = true;
+    this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
+    this.currentPostModel.assetId = asset.id;
+    this.currentPostModel.postImageSrc = "";
+    this.videoUploadPercentage = null;
     return new Promise((resolve, reject) => {
-      if (file.size > 4 * (1024 * 1024 * 1024)) {
-        this.globalVars._alertError("File is too large. Please choose a file less than 4GB");
-        return;
-      }
-      let upload: tus.Upload;
-      let mediaId = "";
-      const options: tus.UploadOptions = {
-        endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
-        chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
-        uploadSize: file.size,
-        onError: (error: Error) => {
-          this.globalVars._alertError(error.message);
-          upload
-            .abort(true)
-            .then(() => {
-              throw error;
-            })
-            .finally(reject);
-        },
-        onProgress: (bytesUploaded: number, bytesTotal: number) => {
-          this.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-        },
-        onSuccess: () => {
-          // Construct the url for the video based on the videoId and use the iframe url.
-          this.currentPostModel.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
-          this.currentPostModel.postImageSrc = "";
-          this.videoUploadPercentage = null;
-          this.pollForReadyToStream(resolve);
-        },
-        onAfterResponse: (req: tus.HttpRequest, res: tus.HttpResponse) => {
-          // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
-          return new Promise((resolve) => {
-            let mediaIdHeader = res.getHeader("stream-media-id");
-            if (mediaIdHeader) {
-              mediaId = mediaIdHeader;
-            }
-
-            resolve(res);
-          });
-        },
-      };
-      // Clear the interval used for polling cloudflare to check if a video is ready to stream.
-      if (this.videoStreamInterval != null) {
-        clearInterval(this.videoStreamInterval);
-      }
-      if (this.currentPostModel) {
-        // Reset the postVideoSrc and readyToStream values.
-        this.currentPostModel.postVideoSrc = "";
-      }
-      // Create and start the upload.
-      upload = new tus.Upload(file, options);
-      upload.start();
+      this.pollForReadyToStream(resolve);
     });
   }
 
@@ -520,19 +516,26 @@ export class FeedCreatePostComponent implements OnInit {
         return;
       }
       this.streamService
-        .checkVideoStatusByURL(this.currentPostModel.postVideoSrc)
-        .subscribe(([readyToStream, exitPolling]) => {
+        .checkVideoStatusByURL(this.currentPostModel.assetId)
+        .then(([readyToStream, clearPoll, failed]) => {
           if (readyToStream) {
             onReadyToStream();
             clearInterval(this.videoStreamInterval!);
             return;
           }
-          if (exitPolling) {
+          if (failed) {
+            onReadyToStream();
+            clearInterval(this.videoStreamInterval!);
+            this.currentPostModel.postVideoSrc = "";
+            this.globalVars._alertError("Video failed to upload. Please try again.");
+            return;
+          }
+          if (clearPoll) {
             clearInterval(this.videoStreamInterval!);
             return;
           }
-        })
-        .add(() => attempts++);
+        });
+      attempts++;
     }, timeoutMillis);
   }
 
@@ -573,8 +576,16 @@ export class FeedCreatePostComponent implements OnInit {
     this.postModels.splice(index, 1);
   }
 
-  onNavigateToCreateBlog() {
+  onNavigateToCreateBlog(ev: Event) {
     this.onCreateBlog?.();
+    if (!this.globalVars.loggedInUser) {
+      ev.preventDefault();
+      this.modalService.show(WelcomeModalComponent, {
+        initialState: { triggerAction: "feed-create-post-blog-post-button" },
+      });
+    } else {
+      this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
+    }
   }
 
   private autoFocusTextArea() {

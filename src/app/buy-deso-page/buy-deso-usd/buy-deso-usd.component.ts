@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import currencyToSymbolMap from "currency-symbol-map/map";
 import * as _ from "lodash";
+import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { WyreService } from "../../../lib/services/wyre/wyre";
@@ -47,7 +48,8 @@ export class BuyDeSoUSDComponent implements OnInit {
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private tracking: TrackingService
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
     this.supportedFiatCurrencies = this.wyreService.getSupportedFiatCurrencies();
@@ -57,7 +59,7 @@ export class BuyDeSoUSDComponent implements OnInit {
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
-        this.globalVars.logEvent("wyre : buy : success", { ...queryParams });
+        this.tracking.log("fiat : buy", { ...queryParams, service: "wyre" });
         const btcPurchased = queryParams.destAmount;
         this.globalVars.celebrate();
         SwalHelper.fire({
@@ -116,8 +118,13 @@ export class BuyDeSoUSDComponent implements OnInit {
             },
             reverseButtons: true,
           }).then((res: any) => {
+            this.tracking.log(`fiat-confirmation-modal : ${res.isConfirmed ? "confirm" : "cancel"}`, {
+              currency: this.selectedFiatCurrency,
+              amount: this.amount,
+              amountDESO: this.desoReceived,
+              service: "wyre",
+            });
             if (res.isConfirmed) {
-              this.globalVars.logEvent("wyre : buy", { amount: this.amount });
               window.open(wyreUrl);
             }
           });

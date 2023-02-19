@@ -89,7 +89,7 @@ export class BuyDesoTutorialComponent implements OnInit {
     this.backendApi
       .UpdateTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         TutorialStatus.FOLLOW_CREATORS
       )
       .subscribe((res) => {

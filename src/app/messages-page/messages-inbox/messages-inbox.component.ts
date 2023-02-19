@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, User } from "../../backend-api.service";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
+import { TrackingService } from "src/app/tracking.service";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "messages-inbox",
@@ -31,6 +32,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   fetchingMoreMessages: boolean = false;
   activeTab: string;
   startingSearchText: string;
+  loading: boolean;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -41,12 +43,11 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router
-  ) {
+    private router: Router,
+    private tracking: TrackingService
+  ) {}
 
-  }
-
-  initializeRouteParams() {
+  initializeRouteParams(messageResponse) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
       let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
@@ -54,16 +55,16 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
           ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
           : storedTab
-            ? storedTab
-            : MessagesInboxComponent.QUERYTOTAB.all;
+          ? storedTab
+          : MessagesInboxComponent.QUERYTOTAB.all;
 
       // Set the default active tab if there's nothing saved in local storage
       if (this.activeTab === null) {
         this.activeTab = "Holders";
       }
 
-      // Handle the tab click if the stored messages are from a different tab
-      this._handleTabClick(this.activeTab);
+      this.setTab(this.activeTab);
+
       if (params.username) {
         this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe(
           (response) => {
@@ -73,6 +74,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
             }
             let profile = response.Profile;
             this._handleCreatorSelectedInSearch(profile);
+            this._setSelectedThreadBasedOnDefaultThread(messageResponse, profile);
           },
           (err) => {
             console.error(err);
@@ -80,17 +82,33 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
           }
         );
         this.startingSearchText = params.username;
+      } else if (!this.isMobile) {
+        this._setSelectedThreadBasedOnDefaultThread(messageResponse, null);
+      } else {
+        this.loading = false;
       }
     });
   }
 
   ngOnInit() {
-    this.globalVars.LoadInitialMessages().add(() => {
-      this.initializeRouteParams();
-      if (!this.isMobile) {
-        this._setSelectedThreadBasedOnDefaultThread();
-      }
-    })
+    this.loading = true;
+    if (this.globalVars.messageResponse === null) {
+      this.globalVars.messagesLoadedCallback = this.messagesLoadedCallback;
+      this.globalVars.messagesLoadedComponent = this;
+    } else {
+      this.initializeRouteParams(this.globalVars.messageResponse);
+    }
+  }
+
+  // Callback to be called when messages are loaded
+  messagesLoadedCallback(comp: MessagesInboxComponent, messageResponse) {
+    // Reset message loaded callback
+    comp.globalVars.messagesLoadedCallback = null;
+    comp.globalVars.messagesLoadedComponent = null;
+    comp.globalVars.messageResponse = messageResponse;
+
+    // Initialize route params and load page
+    comp.initializeRouteParams(messageResponse);
   }
 
   ngOnChanges(changes: any) {
@@ -132,7 +150,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     this.backendApi
       .GetMessages(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchAfterPubKey,
         this.globalVars.messagesPerFetch,
         this.globalVars.messagesRequestsHoldersOnly,
@@ -187,19 +205,24 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     // Clear the current messages
     this.globalVars.messageResponse = null;
 
+    this.setTab(tabName);
+
+    // Fetch initial messages for the new tab
+    this.globalVars.LoadInitialMessages(0, 10);
+  }
+
+  setTab(tabName: string) {
     // Make sure the tab is set in the url
     this.activeTab = tabName;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { messagesTab: MessagesInboxComponent.TABTOQUERY[tabName] },
+      queryParams: { messagesTab: MessagesInboxComponent.TABTOQUERY[tabName], username: null },
       queryParamsHandling: "merge",
     });
+    this.globalVars.SetMessagesFilter(tabName);
 
     // Set the most recent tab in local storage
     this.backendApi.SetStorage("mostRecentMessagesTab", tabName);
-
-    // Fetch initial messages for the new tab
-    this.globalVars.SetupMessages();
   }
 
   _toggleSettingsTray() {
@@ -212,37 +235,32 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL
   // parameter
-  _setSelectedThreadBasedOnDefaultThread() {
-    // To figure out the default thread, we have to wait for globalVars to get a messagesResponse,
-    // so we set an interval and repeat until we get it. It might be better to use
-    // an explicit subscription, but this is less cruft, so not sure.
-    // TODO: refactor silly setInterval
-    let interval = setInterval(() => {
-      // If we don't have the messageResponse yet, return
-      let orderedContactsWithMessages = this.globalVars.messageResponse?.OrderedContactsWithMessages;
-      if (orderedContactsWithMessages == null) {
-        return;
-      }
+  _setSelectedThreadBasedOnDefaultThread(messageResponse, profile) {
+    // If we don't have the messageResponse yet, return
+    let orderedContactsWithMessages = messageResponse?.OrderedContactsWithMessages;
+    if (orderedContactsWithMessages == null) {
+      return;
+    }
 
-      // Check if the query params are set, otherwise default to the first thread
-      let defaultThread = null;
-      if (this.defaultContactUsername || this.defaultContactPublicKey) {
-        defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
-          let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
-          let matchesUsername = responseUsername && responseUsername === this.contactUsername;
-          let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
-          return (responseUsername && matchesUsername) || matchesPublicKey;
-        });
-      } else if (orderedContactsWithMessages.length > 0) {
-        defaultThread = orderedContactsWithMessages[0];
-      }
+    // Check if the query params are set, otherwise default to the first thread
+    let defaultThread = null;
+    if (this.defaultContactUsername || this.defaultContactPublicKey) {
+      defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
+        let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
+        let matchesUsername = responseUsername && responseUsername === this.contactUsername;
+        let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
+        return (responseUsername && matchesUsername) || matchesPublicKey;
+      });
+    } else if (orderedContactsWithMessages.length > 0) {
+      defaultThread = orderedContactsWithMessages[0];
+    }
 
-      if (!this.selectedThread) {
-        this._handleMessagesThreadClick(defaultThread);
-      }
-
-      clearInterval(interval);
-    }, 50);
+    if (profile !== null) {
+      this._handleCreatorSelectedInSearch(profile);
+    } else if (!this.selectedThread) {
+      this._handleMessagesThreadClick(defaultThread);
+    }
+    this.loading = false;
   }
 
   // This marks all messages as read and relays this request to the server.
@@ -253,15 +271,15 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     // Send an update back to the server noting that we want to mark all threads read.
     this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         () => {
-          this.globalVars.logEvent("user : all-message-read");
+          this.tracking.log("profile : all-message-read");
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.tracking.log("profile : all-message-read", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -332,17 +350,17 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.backendApi
         .MarkContactMessagesRead(
           this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
           this.selectedThread.PublicKeyBase58Check
         )
         .subscribe(
           () => {
-            this.globalVars.logEvent("user : message-read");
+            this.tracking.log("profile : message-read");
           },
           (err) => {
             console.log(err);
             const parsedError = this.backendApi.stringifyError(err);
-            this.globalVars.logEvent("user : message-read : error", { parsedError });
+            this.tracking.log("profile : message-read", { error: parsedError });
             this.globalVars._alertError(parsedError);
           }
         );

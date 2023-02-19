@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
 import { filter } from "lodash";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "admin-tutorial",
@@ -39,7 +39,7 @@ export class AdminTutorialComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     this.backendApi
-      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
+      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, 500)
       .subscribe(
         (res) => {
           this.wellKnownProfiles = res.WellKnownProfileEntryResponses;
@@ -58,7 +58,7 @@ export class AdminTutorialComponent implements OnInit {
     this.backendApi
       .AdminUpdateTutorialCreators(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         profilePublicKeyBase58Check,
         true,
         this.activeTutorialTab === this.WELL_KNOWN_TAB
@@ -89,7 +89,7 @@ export class AdminTutorialComponent implements OnInit {
     this.backendApi
       .AdminResetTutorialStatus(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.publicKeyToReset
       )
       .subscribe(
@@ -102,5 +102,4 @@ export class AdminTutorialComponent implements OnInit {
       )
       .add(() => (this.resettingTutorial = false));
   }
-
 }

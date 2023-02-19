@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
+import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService } from "../../../app/backend-api.service";
-import { FollowChangeObservableResult } from "../../observable-results/follow-change-observable-result";
 import { GlobalVarsService } from "../../../app/global-vars.service";
+import { FollowChangeObservableResult } from "../../observable-results/follow-change-observable-result";
 
 @Injectable({
   providedIn: "root",
@@ -11,8 +12,8 @@ export class FollowService {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private appData: GlobalVarsService,
-  ) {
-  }
+    private tracking: TrackingService
+  ) {}
 
   RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS = "RuleErrorFollowEntryAlreadyExists";
   RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY = "RuleErrorCannotUnfollowNonexistentFollowEntry";
@@ -63,7 +64,7 @@ export class FollowService {
             // TODO: RuleErrorInputSpendsNonexistentUtxo is a problem ... we need a lock in the server endpoint
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(error);
-            this.globalVars.logEvent(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
+            this.tracking.log(`profile : ${isFollow ? "follow" : "unfollow"}`, { error: parsedError });
             this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
           }
         }
@@ -82,7 +83,7 @@ export class FollowService {
   }
 
   _handleSuccessfulFollow(followedPubKeyBase58Check: string) {
-    this.globalVars.logEvent("user : follow");
+    this.tracking.log("profile : follow", { targetPublicKey: followedPubKeyBase58Check });
 
     // add to the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
@@ -102,7 +103,7 @@ export class FollowService {
   }
 
   _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
-    this.globalVars.logEvent("user : unfollow");
+    this.tracking.log("profile : unfollow", { targetPublicKey: followedPubKeyBase58Check });
 
     // remove from the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;

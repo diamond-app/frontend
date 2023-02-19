@@ -13,18 +13,34 @@
         class="row no-gutters border-bottom border-color-grey creator-diamonds__header"
         *ngIf="!isLoading && diamondSummaryList.length > 0"
       >
-        <div class="col-5 d-flex align-items-center py-15px mb-0">{{ 'creator_diamonds.username' | transloco }}</div>
-        <div class="col-4 text-left d-flex align-items-center py-15px mb-0" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }">Most Diamonds</div>
-        <div class="col-3 text-center d-flex align-items-center py-15px mb-0" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }">Total Diamonds</div>
+        <div class="col-5 d-flex align-items-center py-15px mb-0">{{ "creator_diamonds.username" | transloco }}</div>
+        <div
+          class="col-4 text-left d-flex align-items-center py-15px mb-0"
+          [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }"
+        >
+          Most Diamonds
+        </div>
+        <div
+          class="col-3 text-center d-flex align-items-center py-15px mb-0"
+          [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }"
+        >
+          Total Diamonds
+        </div>
       </div>
-      <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px creator-diamonds__no-diamonds">
+      <div
+        *ngIf="!isLoading && diamondSummaryList.length == 0"
+        class="row no-gutters pt-10px creator-diamonds__no-diamonds"
+      >
         <div class="d-flex justify-content-center w-100">
           <div class="circle-div">
             <i-feather name="gem" class="feather-xlarge"></i-feather>
           </div>
         </div>
         <div class="d-flex justify-content-center w-100">
-          <span>{{ profile.Username }} {{ 'creator_diamonds.no_diamonds_0' | transloco }} {{ activeTab.toLowerCase() }} {{ 'creator_diamonds.no_diamonds_1' | transloco }}</span>
+          <span>
+            {{ profile.Username }} {{ "creator_diamonds.no_diamonds_0" | transloco }} {{ activeTab.toLowerCase() }}
+            {{ "creator_diamonds.no_diamonds_1" | transloco }}
+          </span>
         </div>
       </div>
       <simple-center-loader *ngIf="isLoading"></simple-center-loader>
@@ -76,23 +92,26 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-4 mb-0 d-flex align-items-center justify-flex-start" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }">
+                <div
+                  class="col-4 mb-0 d-flex align-items-center justify-flex-start"
+                  [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }"
+                >
                   <div *ngIf="!globalVars.isMobile()">
                     <i-feather
                       *ngFor="let diamond of counter(row.HighestDiamondLevel)"
-                      name="diamond" class="feather-medium fc-default"
+                      name="diamond"
+                      class="feather-medium fc-default"
                     ></i-feather>
                     <i-feather
                       *ngFor="let diamond of counter(maxGivableDiamonds - row.HighestDiamondLevel)"
-                      name="diamond" class="feather-medium fc-muted"
+                      name="diamond"
+                      class="feather-medium fc-muted"
                     ></i-feather>
                   </div>
                   <div *ngIf="globalVars.isMobile()">
-                    <i-feather
-                      name="diamond" class="feather-medium fc-default"
-                    ></i-feather>
+                    <i-feather name="diamond" class="feather-medium fc-default"></i-feather>
                     <i-feather class="fc-muted feather-xsmall" name="x"></i-feather>
-                    <span class="fs-15px">{{row.HighestDiamondLevel}}</span>
+                    <span class="fs-15px">{{ row.HighestDiamondLevel }}</span>
                   </div>
                 </div>
                 <div
@@ -109,24 +128,20 @@
             </div>
           </div>
           <div *ngIf="row.anonDiamondsRow">
-            <div
-              class="link--unstyled"
-            >
+            <div class="link--unstyled">
               <div class="row no-gutters py-10px border-bottom mb-0">
                 <div class="col-5 d-flex align-items-left mb-0">
-                  <div
-                    class="d-flex align-items-center link--unstyled"
-                  >
+                  <div class="d-flex align-items-center link--unstyled">
                     <div
                       class="creator-profile-details__hodler-avatar mr-10px"
-                      style="background-image: url('/assets/img/default_profile_pic.png')"
+                      style="background-image: url('/assets/img/default-profile-pic.png')"
                     ></div>
                     <div
                       class="text-truncate"
                       style="font-size: 14px"
                       [ngStyle]="{ 'max-width': globalVars.isMobile() ? '100px' : '200px' }"
                     >
-                      <span>{{ 'creator_diamonds.anonymous' | transloco }}</span>
+                      <span>{{ "creator_diamonds.anonymous" | transloco }}</span>
                     </div>
                   </div>
                 </div>
@@ -147,7 +162,11 @@
           <div *ngIf="row.totalRow" class="row no-gutters font-weight-bold diamond-total-row">
             <div class="col-4 py-15px mb-0">Total</div>
             <div class="col-4 py-15px mb-0"><!--Blank--></div>
-            <div class="col-4 text-center py-15px mb-0" [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }" [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px': '0px' }">
+            <div
+              class="col-4 text-center py-15px mb-0"
+              [ngClass]="{ 'd-flex justify-content-end': globalVars.isMobile() }"
+              [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px' : '0px' }"
+            >
               {{ totalDiamonds }} ≈ {{ globalVars.abbreviateNumber(valueOfAllDiamonds(), 2, true) }}
             </div>
           </div>

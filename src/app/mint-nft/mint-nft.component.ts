@@ -1,11 +1,12 @@
-import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
+import { Location } from "@angular/common";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { isNumber } from "lodash";
-import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
+import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 type AdditionalRoyalty = {
   PublicKeyBase58Check?: string;
@@ -58,14 +59,15 @@ export class MintNftComponent {
     private router: Router,
     public location: Location,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private tracking: TrackingService
   ) {
     this.route.params.subscribe((params) => {
       this.postHashHex = params.postHashHex;
     });
     this.globalVars = _globalVars;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res) => {
         this.createNFTFeeNanos = res.CreateNFTFeeNanos;
         this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
@@ -314,29 +316,44 @@ export class MintNftComponent {
     }, {});
 
     this.minting = true;
+    const buyNowPriceDesoNanos = Math.trunc(this.buyNowPriceDESO * 1e9);
+    const minBidAmountDesoNanos = Math.trunc(this.minBidAmountDESO * 1e9);
     this.backendApi
       .CreateNft(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postHashHex,
         numCopiesToMint,
         creatorRoyaltyBasisPoints,
         coinRoyaltyBasisPoints,
         this.includeUnlockable,
         this.putOnSale,
-        Math.trunc(this.minBidAmountDESO * 1e9),
+        minBidAmountDesoNanos,
         this.isBuyNow,
-        Math.trunc(this.buyNowPriceDESO * 1e9),
+        buyNowPriceDesoNanos,
         additionalDESORoyaltiesMap,
         additionalCoinRoyaltiesMap,
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
         (res) => {
+          this.tracking.log("nft : create", {
+            postHashHex: this.postHashHex,
+            numCopies: numCopiesToMint,
+            creatorRoyaltyBasisPoints,
+            coinRoyaltyBasisPoints,
+            hasUnlockable: this.includeUnlockable,
+            isBuyNow: this.isBuyNow,
+            additionalDESORoyaltiesMap,
+            additionalCoinRoyaltiesMap,
+            minBidAmountDesoNanos,
+            buyNowPriceDesoNanos,
+          });
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
+          this.tracking.log("nft : create", { error: err.error.error });
           this.minting = false;
         }
       );

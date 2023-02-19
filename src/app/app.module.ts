@@ -14,9 +14,11 @@ import player from "lottie-web";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
+import { AlertModule } from "ngx-bootstrap/alert";
 import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { LottieModule } from "ngx-lottie";
@@ -98,14 +100,13 @@ import { GlobalVarsService } from "./global-vars.service";
 import { IconsModule } from "./icons/icons.module";
 import { IdentityService } from "./identity.service";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
-import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
@@ -215,6 +216,13 @@ import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
+import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -315,7 +323,6 @@ export function playerFactory() {
     SettingsComponent,
     NotificationsListComponent,
     PageComponent,
-    LandingPageComponent,
     SignUpComponent,
     SignUpTransferDesoComponent,
     SignUpGetStarterDeSoComponent,
@@ -338,6 +345,10 @@ export function playerFactory() {
     LikesDetailsComponent,
     LikesPageComponent,
     LikesModalComponent,
+    ReactionsDetailsComponent,
+    ReactionsPageComponent,
+    ReactionsModalComponent,
+    ReactionsImageComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
@@ -409,6 +420,9 @@ export function playerFactory() {
     EarningsCardComponent,
     TwitterSyncSettingsComponent,
     TwitterSyncPageComponent,
+    WelcomeModalComponent,
+    LoggedOutEmptyStateComponent,
+    SwipeToChooseComponent,
   ],
   imports: [
     BrowserModule,
@@ -428,8 +442,10 @@ export function playerFactory() {
     ToastrModule.forRoot(),
     BsDropdownModule.forRoot(),
     PopoverModule.forRoot(),
+    AlertModule.forRoot(),
     RatingModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    TooltipModule.forRoot(),
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     QuillModule.forRoot({

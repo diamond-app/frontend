@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { GlobalVarsService } from "../../../app/global-vars.service";
 import { BackendApiService } from "../../../app/backend-api.service";
+import { GlobalVarsService } from "../../../app/global-vars.service";
 
 @Injectable({
   providedIn: "root",
@@ -50,7 +50,7 @@ export class WyreService {
   makeWalletOrderReservation(sourceAmount: number, country: string, fiatCurrency: string): Observable<any> {
     return this.backendApi.GetWyreWalletOrderReservation(
       this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check,
       sourceAmount,
       country,
       fiatCurrency

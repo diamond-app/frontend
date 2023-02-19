@@ -7,6 +7,7 @@ import { document } from "ngx-bootstrap/utils";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { CashoutModalComponent } from "src/app/cashout/cashout-modal/cashout-modal.component";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
@@ -16,7 +17,6 @@ import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creat
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { TransferDesoModalComponent } from "../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
-//import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: "wallet",
@@ -71,7 +71,8 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tracking: TrackingService
   ) {
     this.globalVars = appData;
     this.route.params.subscribe((params) => {
@@ -152,7 +153,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
             const percentToBuy = 0.1;
             const nanosSimulatedBought = balance * percentToBuy;
             this.balanceEntryToHighlight = {
-              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+              HODLerPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
               CreatorPublicKeyBase58Check: res.Profile.PublicKeyBase58Check,
               HasPurchased: true,
               BalanceNanos: nanosSimulatedBought,
@@ -220,7 +221,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   _copyPublicKey() {
-    this.globalVars._copyText(this.globalVars.loggedInUser.PublicKeyBase58Check);
+    this.globalVars._copyText(this.globalVars.loggedInUser?.PublicKeyBase58Check);
     this.publicKeyIsCopied = true;
     setInterval(() => {
       this.publicKeyIsCopied = false;
@@ -379,14 +380,14 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tutorialNext(): void {
     if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
-      this.globalVars.logEvent("invest : others : buy : next");
+      this.tracking.log("invest : others : buy : next");
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-      this.globalVars.logEvent("invest : others : sell : next");
+      this.tracking.log("invest : others : sell : next");
       this.exitTutorial();
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
-      this.globalVars.logEvent("invest : self : buy : next");
+      this.tracking.log("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
@@ -411,7 +412,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
               .UpdateProfile(
                 environment.verificationEndpointHostname,
                 this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 "",
                 "",
                 "",
@@ -423,16 +424,16 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
               )
               .subscribe(
                 () => {
-                  this.globalVars.logEvent("set : founder-reward");
+                  this.tracking.log("set : founder-reward");
                 },
                 (err) => {
                   console.error(err);
                   const parsedError = this.backendApi.stringifyError(err);
-                  this.globalVars.logEvent("set : founder-reward : error", { parsedError });
+                  this.tracking.log("set : founder-reward", { error: parsedError });
                 }
               );
           } else {
-            this.globalVars.logEvent("set : founder-reward : skip");
+            this.tracking.log("set : founder-reward : skip");
           }
         })
         .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));
@@ -607,12 +608,12 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getBlockExplorerLink() {
-    return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
+    return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser?.PublicKeyBase58Check}`;
   }
 
   getOpenProsperLink() {
     return this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
       ? `https://openprosper.com/u/${this.globalVars.loggedInUser.ProfileEntryResponse.Username}/transactions`
-      : `https://openprosper.com/pk/${this.globalVars.loggedInUser.PublicKeyBase58Check}/transactions`;
+      : `https://openprosper.com/pk/${this.globalVars.loggedInUser?.PublicKeyBase58Check}/transactions`;
   }
 }

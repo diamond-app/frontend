@@ -2,6 +2,7 @@ import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
@@ -48,7 +49,8 @@ export class CreatorProfileDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location,
-    private titleService: Title
+    private titleService: Title,
+    private tracking: TrackingService
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
@@ -111,18 +113,22 @@ export class CreatorProfileDetailsComponent implements OnInit {
         this.backendApi
           .BlockPublicKey(
             this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.profile.PublicKeyBase58Check,
             true /* unblock */
           )
           .subscribe(
             () => {
-              this.globalVars.logEvent("user : unblock");
+              this.tracking.log("profile : unblock", {
+                username: this.profile.Username,
+                publicKey: this.profile.PublicKeyBase58Check,
+                isVerified: this.profile.IsVerified,
+              });
             },
             (err) => {
               console.log(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.globalVars.logEvent("user : unblock : error", { parsedError });
+              this.tracking.log("profile : unblock", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -156,17 +162,21 @@ export class CreatorProfileDetailsComponent implements OnInit {
           this.backendApi
             .BlockPublicKey(
               this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.profile.PublicKeyBase58Check
             )
             .subscribe(
               () => {
-                this.globalVars.logEvent("user : block");
+                this.tracking.log("profile : block", {
+                  username: this.profile.Username,
+                  publicKey: this.profile.PublicKeyBase58Check,
+                  isVerified: this.profile.IsVerified,
+                });
               },
               (err) => {
                 console.error(err);
                 const parsedError = this.backendApi.stringifyError(err);
-                this.globalVars.logEvent("user : block : error", { parsedError });
+                this.tracking.log("profile : block", { error: parsedError });
                 this.globalVars._alertError(parsedError);
               }
             ),
@@ -184,7 +194,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
-      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
     this.loading = true;
@@ -219,7 +229,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       `Claiming my account on ${environment.node.url.replace("https://", "")} 💎🙌\n\n${environment.node.url}/u/${
         this.userName
-      }?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}\n\n@desoprotocol #deso`
+      }?public_key=${this.globalVars.loggedInUser?.PublicKeyBase58Check}\n\n@desoprotocol #deso`
     )}`;
   }
 
