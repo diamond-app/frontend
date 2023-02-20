@@ -80,6 +80,8 @@ header @html Content-Security-Policy "
     https://static.hotjar.com
     https://script.hotjar.com
     https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css;
+  media-src 'self'
+    videos.deso.org;
   img-src 'self'
     data:
     i.imgur.com
