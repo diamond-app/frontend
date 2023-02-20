@@ -2740,6 +2740,9 @@ bs-dropdown-container {
   align-items: center;
   margin-top: 10px;
   margin-bottom: 5px;
+  &.cf-video {
+    padding-top: 0px;
+  }
 }
 
 .feed-post__video {
