@@ -244,6 +244,7 @@ export class FeedPostComponent implements OnInit {
   showReadMoreRollup = false;
   showRestOfPost = false;
   videoURL: string;
+  livepeerVideo: boolean = false;
   showVideoControls = false;
   // Height of video window, used for overlay to be clicked on to disable autoplay, enable controls and volume
   videoOverlayContainerHeight = "0px";
@@ -753,8 +754,23 @@ export class FeedPostComponent implements OnInit {
     ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
+  isCloudflareVideo(videoUrl: String): boolean {
+    return videoUrl.split("/").length > 2 && videoUrl.split("/")[2] === "iframe.videodelivery.net";
+  }
+
+  getCloudflareVideoId(videoUrl: String): String {
+    const cloudflareVideoId = videoUrl.split("/").pop();
+    return cloudflareVideoId;
+  }
+
   setURLForVideoContent(): void {
     if (this.postContent.VideoURLs && this.postContent.VideoURLs.length > 0) {
+      if (this.isCloudflareVideo(this.postContent.VideoURLs[0])) {
+        const cloudflareVideoId = this.getCloudflareVideoId(this.postContent.VideoURLs[0]);
+        this.videoURL = `https://videos.deso.org/${cloudflareVideoId}.mp4`;
+        return;
+      }
+      this.livepeerVideo = true;
       this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
       // const videoId = this.postContent.PostExtraData?.LivepeerAssetId
       // // const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
