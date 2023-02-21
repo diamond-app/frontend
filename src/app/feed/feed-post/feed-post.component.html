@@ -427,10 +427,15 @@
                     *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && videoURL"
                     class="feed-post__video-container"
                     [ngStyle]="{ height: videoContainerHeight }"
-                    [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+                    [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent, 'cf-video': !livepeerVideo }"
                     #videoContainer
                   >
+                    <video *ngIf="!livepeerVideo" controls class="w-100">
+                      <source [src]="videoURL" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
                     <iframe
+                      *ngIf="livepeerVideo"
                       [src]="videoURL | sanitizeVideoUrl"
                       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
                       allowfullscreen
