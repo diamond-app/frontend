@@ -277,11 +277,6 @@ export class FeedPostComponent implements OnInit {
 
   linkPreviewUrl: string = "";
 
-  public apiCallbackFn = (route: string) => {
-    console.log("NETWORK CALL TIME BABY");
-    return this.http.get(route);
-  };
-
   getNFTEntries() {
     this.backendApi
       .GetNFTEntriesForNFTPost(
@@ -446,7 +441,7 @@ export class FeedPostComponent implements OnInit {
   }
 
   showLinkPreview() {
-    if (
+    return (
       this.linkPreviewUrl &&
       this.linkPreviewUrl !== "" &&
       (!this.postContent?.ImageURLs || this.postContent?.ImageURLs?.length === 0) &&
@@ -456,10 +451,7 @@ export class FeedPostComponent implements OnInit {
       !(this.post?.RepostedPostEntryResponse && this.post.Body !== "") &&
       // Exclude reposts of quote reposts
       !(this.post?.RepostedPostEntryResponse && (this.post?.RepostedPostEntryResponse?.RepostedPostEntryResponse))
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   imageLoadedEvent() {
