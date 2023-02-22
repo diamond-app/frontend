@@ -41,6 +41,9 @@ import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-r
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 import { forkJoin, of } from "rxjs";
 import { finalize } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import Autolinker from "autolinker";
+
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -121,6 +124,7 @@ export class FeedPostComponent implements OnInit {
     private toastr: ToastrService,
     private followService: FollowService,
     private translocoService: TranslocoService,
+    private http: HttpClient,
     private streamService: CloudflareStreamService,
     public tracking: TrackingService
   ) {
@@ -271,6 +275,13 @@ export class FeedPostComponent implements OnInit {
 
   attribution: { link: string; text: string };
 
+  linkPreviewUrl: string = "";
+
+  public apiCallbackFn = (route: string) => {
+    console.log("NETWORK CALL TIME BABY");
+    return this.http.get(route);
+  };
+
   getNFTEntries() {
     this.backendApi
       .GetNFTEntriesForNFTPost(
@@ -412,6 +423,7 @@ export class FeedPostComponent implements OnInit {
     }
     this.setEmbedURLForPostContent();
     this.setURLForVideoContent();
+    this.extractURLsFromPost();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
@@ -420,6 +432,34 @@ export class FeedPostComponent implements OnInit {
     );
 
     this.getUserReactions();
+  }
+
+  extractURLsFromPost() {
+    const urls = Autolinker.parse(this.postContent.Body, {});
+    if (urls.length > 0) {
+      let url = urls[0].getMatchedText();
+      if (!url.startsWith("http")) {
+        url = "https://" + url;
+      }
+      this.linkPreviewUrl = url;
+    }
+  }
+
+  showLinkPreview() {
+    if (
+      this.linkPreviewUrl &&
+      this.linkPreviewUrl !== "" &&
+      (!this.postContent?.ImageURLs || this.postContent?.ImageURLs?.length === 0) &&
+      (!this.postContent?.VideoURLs || this.postContent?.VideoURLs?.length === 0) &&
+      (!this.postContent.PostExtraData?.EmbedVideoURL || this.postContent.PostExtraData["EmbedVideoURL"] === "") &&
+      // Exclude quote reposts
+      !(this.post?.RepostedPostEntryResponse && this.post.Body !== "") &&
+      // Exclude reposts of quote reposts
+      !(this.post?.RepostedPostEntryResponse && (this.post?.RepostedPostEntryResponse?.RepostedPostEntryResponse))
+    ) {
+      return true;
+    }
+    return false;
   }
 
   imageLoadedEvent() {

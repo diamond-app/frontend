@@ -241,8 +241,7 @@ $green-font-color: #19B028;
 .w-10 { width: 10% }
 .w-15 { width: 15% }
 .w-20 { width: 20% }
-//why w-30 is 10%? cc @zordon @jacksondean
-.w-30 { width: 10% }
+.w-30 { width: 30% }
 .w-29 { width: 29% }
 .w-40 { width: 40% }
 .w-50 { width: 50% }
@@ -6432,4 +6431,25 @@ sell-nft-modal {
   & em {
     color: var(--text-secondary);
   }
+}
+
+.link-preview-description {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -moz-box-lines: 3;
+  box-lines: 3;
+}
+
+.single-line-no-overflow-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

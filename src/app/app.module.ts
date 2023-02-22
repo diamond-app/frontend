@@ -223,6 +223,8 @@ import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.compon
 import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
+import { NgxLinkPreviewModule } from "ngx-link-preview";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -383,6 +385,7 @@ export function playerFactory() {
     NftPostComponent,
     NftDropMgrComponent,
     CreatorProfileNftsComponent,
+    LinkPreviewComponent,
     NftShowcaseComponent,
     VerifyEmailComponent,
     AdminJumioComponent,
@@ -436,6 +439,7 @@ export function playerFactory() {
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatTooltipModule,
+    NgxLinkPreviewModule,
     TextFieldModule,
     UiScrollModule,
     AnimateOnScrollModule.forRoot(),

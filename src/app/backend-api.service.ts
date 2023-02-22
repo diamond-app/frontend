@@ -79,6 +79,7 @@ export class BackendRoutes {
   // Media
   static RoutePathUploadVideo = "/api/v0/upload-video";
   static RoutePathGetVideoStatus = "/api/v0/get-video-status";
+  static RoutePathGetLinkPreview = "/api/v0/link-preview";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -2963,6 +2964,10 @@ export class BackendApiService {
 
   GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
     return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
+  }
+
+  GetLinkPreview(endpoint: string, url: string): Observable<any> {
+    return this.get(endpoint, `${BackendRoutes.RoutePathGetLinkPreview}?url=${url}`);
   }
 
   // Error parsing
