@@ -80,6 +80,7 @@ export class BackendRoutes {
   static RoutePathUploadVideo = "/api/v0/upload-video";
   static RoutePathGetVideoStatus = "/api/v0/get-video-status";
   static RoutePathGetLinkPreview = "/api/v0/link-preview";
+  static RoutePathProxyImage = "/api/v0/proxy-image";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -2967,7 +2968,11 @@ export class BackendApiService {
   }
 
   GetLinkPreview(endpoint: string, url: string): Observable<any> {
-    return this.get(endpoint, `${BackendRoutes.RoutePathGetLinkPreview}?url=${url}`);
+    return this.get(endpoint, `${BackendRoutes.RoutePathGetLinkPreview}?url=${encodeURIComponent(url)}`);
+  }
+
+  ConstructProxyImageUrl(endpoint: string, url: string): string {
+    return `${endpoint}/${BackendRoutes.RoutePathProxyImage}?url=${encodeURIComponent(url)}`;
   }
 
   // Error parsing

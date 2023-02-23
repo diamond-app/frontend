@@ -9,6 +9,7 @@ import { environment } from "../../environments/environment";
 export class LinkPreviewComponent implements OnInit {
   @Input() link: string;
   image: string;
+  proxyImageUrl: string;
   title: string;
   description: string;
   displayLink: string;
@@ -24,6 +25,12 @@ export class LinkPreviewComponent implements OnInit {
       .GetLinkPreview("https://" + environment.uploadVideoHostname, this.link)
       .subscribe((linkPreviewMetaTags) => {
         this.image = linkPreviewMetaTags.image;
+        if (this.image !== "") {
+          this.proxyImageUrl = this.backendApi.ConstructProxyImageUrl(
+            "https://" + environment.uploadVideoHostname,
+            this.image
+          );
+        }
         this.title = linkPreviewMetaTags.title;
         this.description = linkPreviewMetaTags.description;
         const url = new URL(this.link);
