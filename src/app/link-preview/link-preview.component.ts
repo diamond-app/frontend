@@ -35,7 +35,7 @@ export class LinkPreviewComponent implements OnInit {
         this.description = linkPreviewMetaTags.description;
         const url = new URL(this.link);
         this.displayLink = url.hostname.replace("www.", "");
-        this.showCard = this.title != "" || this.description != "";
+        this.showCard = this.title != "" && this.description != "";
         this.ref.detectChanges();
       });
   }
