@@ -97,7 +97,7 @@ export class ApiInternalService {
 
   getAppUser(publicKey: string, emailJwt: string = ""): Observable<any> {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
-    return this.getAuthHeaders(emailJwt, publicKey).pipe(
+    return this.getAuthHeaders(publicKey, { emailJwt }).pipe(
       switchMap((headers) =>
         this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publicKey}${queryParams}`), { headers })
       )
@@ -120,14 +120,14 @@ export class ApiInternalService {
       DigestSendAtHourLocalTime,
       UserTimezoneUtcOffset,
     };
-    return this.getAuthHeaders("", PublicKeyBase58check).pipe(
+    return this.getAuthHeaders(PublicKeyBase58check).pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))
     );
   }
 
   updateAppUser(payload: AppUser, emailJwt: string = "") {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
-    return this.getAuthHeaders(emailJwt, payload.PublicKeyBase58check).pipe(
+    return this.getAuthHeaders(payload.PublicKeyBase58check, { emailJwt }).pipe(
       switchMap((headers) =>
         this.httpClient.put<any>(
           buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}${queryParams}`),
@@ -139,7 +139,7 @@ export class ApiInternalService {
   }
 
   onboardingEmailSubscribe(PublicKeyBase58Check: string): Observable<any> {
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
       switchMap((headers) =>
         this.httpClient.post<any>(buildUrl("onboarding-email-subscription"), { PublicKeyBase58Check }, { headers })
       )
@@ -147,8 +147,8 @@ export class ApiInternalService {
   }
 
   private getAuthHeaders(
-    emailJwt: string = "",
-    publicKey: string = ""
+    publicKey: string,
+    { emailJwt }: { emailJwt?: string } = {}
   ): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
     if (emailJwt !== "") {
       return new Observable((observer) => {
