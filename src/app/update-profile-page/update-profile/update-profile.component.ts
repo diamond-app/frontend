@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { updateProfile } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { forkJoin, Observable, of } from "rxjs";
+import { forkJoin, from, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import {
   ApiInternalService,
@@ -255,24 +256,21 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   //
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
-    return this.backendApi.UpdateProfile(
-      environment.verificationEndpointHostname,
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-      "" /*ProfilePublicKeyBase58Check*/,
-      // Start params
-      this.profileUpdates.usernameUpdate /*NewUsername*/,
-      this.profileUpdates.descriptionUpdate /*NewDescription*/,
-      this.profileUpdates.profilePicUpdate /*NewProfilePic*/,
-      this.founderRewardInput * 100 /*NewCreatorBasisPoints*/,
-      1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
-      false /*IsHidden*/,
-      // End params
-      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
-      {
-        LargeProfilePicURL: this.profileUpdates.highQualityProfilePicUpdate,
-        FeaturedImageURL: this.profileUpdates.coverPhotoUpdate,
-      }
+    return from(
+      updateProfile({
+        UpdaterPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        ProfilePublicKeyBase58Check: "",
+        NewUsername: this.profileUpdates.usernameUpdate,
+        NewDescription: this.profileUpdates.descriptionUpdate,
+        NewProfilePic: this.profileUpdates.profilePicUpdate,
+        NewCreatorBasisPoints: this.founderRewardInput * 100,
+        NewStakeMultipleBasisPoints: 1.25 * 100 * 100,
+        IsHidden: false,
+        ExtraData: {
+          LargeProfilePicURL: this.profileUpdates.highQualityProfilePicUpdate,
+          FeaturedImageURL: this.profileUpdates.coverPhotoUpdate,
+        },
+      })
     );
   }
 
@@ -300,7 +298,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this._updateEmail();
     }
     this._setProfileUpdates();
-
+    debugger;
     this.apiInternal
       .getAppUser(this.loggedInUser.PublicKeyBase58Check)
       .pipe(
@@ -340,19 +338,20 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         })
       )
       .subscribe(
-        ([updateProfileResponse]) => {
+        ([{ submittedTransactionResponse }]) => {
           this.globalVars.profileUpdateTimestamp = Date.now();
           this.tracking.log("profile : update");
           // TODO: create or update app user record here
           // This updates things like the username that shows up in the dropdown.
           this.globalVars.updateEverything(
-            updateProfileResponse.TxnHashHex,
+            submittedTransactionResponse.TxnHashHex,
             this._updateProfileSuccess,
             this._updateProfileFailure,
             this
           );
         },
         (err) => {
+          console.error(err);
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
           this.tracking.log("profile : update", { error: parsedError, lowBalance });

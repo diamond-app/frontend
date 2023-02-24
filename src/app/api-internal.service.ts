@@ -120,7 +120,7 @@ export class ApiInternalService {
       DigestSendAtHourLocalTime,
       UserTimezoneUtcOffset,
     };
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders("", PublicKeyBase58check).pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))
     );
   }

@@ -607,6 +607,7 @@ export class BackendApiService {
   }
 
   // Stores identity service users in identityService and localStorage
+  // TODO: remove this since we don't really it... we can just use the identityService
   setIdentityServiceUsers(users: any, publicKeyAdded?: string) {
     this.SetStorage(this.IdentityUsersKey, users);
     this.identityService.identityServiceUsers = users;

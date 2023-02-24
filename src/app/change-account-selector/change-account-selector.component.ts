@@ -29,8 +29,9 @@ export class ChangeAccountSelectorComponent {
   }
 
   launchLogoutFlow() {
-    from(identity.logout()).subscribe((res) => {
-      const users = Object.keys(res?.users || {});
+    from(identity.logout()).subscribe(() => {
+      const { currentUser, alternateUsers } = identity.snapshot();
+      const users = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
 
       if (!users.length) {
         this.globalVars.userList = [];
@@ -47,7 +48,7 @@ export class ChangeAccountSelectorComponent {
         this.setUser(null);
       }
 
-      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
+      this.backendApi.setIdentityServiceUsers(users, loggedInUser);
       this.globalVars.updateEverything().add(() => {
         if (!this.userInTutorial) {
           this.goHome();
