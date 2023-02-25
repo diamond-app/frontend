@@ -6,6 +6,8 @@ import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 import {
   AssociationReactionValue,
   AssociationType,
@@ -24,8 +26,6 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { forkJoin, of } from "rxjs";
-import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "app-blog-detail",

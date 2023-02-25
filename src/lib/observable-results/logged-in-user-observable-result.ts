@@ -1,4 +1,4 @@
-import { User } from "../../app/backend-api.service";
+import { User } from "deso-protocol";
 
 export class LoggedInUserObservableResult {
   public loggedInUser: User;

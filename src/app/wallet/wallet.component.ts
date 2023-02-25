@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { BalanceEntryResponse } from "deso-protocol";
 import * as introJs from "intro.js/intro";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { document } from "ngx-bootstrap/utils";
@@ -11,7 +12,7 @@ import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { CreatorsLeaderboardModalComponent } from "../creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
@@ -48,7 +49,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   publicKeyIsCopied = false;
 
   usersYouReceived: BalanceEntryResponse[] = [];
-  usersYouPurchased: BalanceEntryResponse[] = [];
+  usersYouPurchased: Partial<BalanceEntryResponse>[] = [];
 
   static coinsPurchasedTab: string = "wallet.coins_purchased";
   static coinsReceivedTab: string = "wallet.coins_received";
@@ -57,7 +58,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   tutorialUsername: string;
   tutorialStatus: TutorialStatus;
   TutorialStatus = TutorialStatus;
-  balanceEntryToHighlight: BalanceEntryResponse;
+  balanceEntryToHighlight: Partial<BalanceEntryResponse>;
 
   nextButtonText: string;
   tutorialInitiated = false;
@@ -90,7 +91,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.inTutorial) {
       this.globalVars.preventBackButton();
       this.tabs = [WalletComponent.coinsPurchasedTab];
-      this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
+      this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus as TutorialStatus;
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Sell a Creator";
@@ -238,7 +239,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // sort by USD value
-  sortHodlingsCoins(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsCoins(hodlings: Partial<BalanceEntryResponse>[], descending: boolean): void {
     this.sortedUsernameFromHighToLow = 0;
     this.sortedPriceFromHighToLow = 0;
     this.sortedUSDValueFromHighToLow = descending ? -1 : 1;
@@ -252,7 +253,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // sort by coin price
-  sortHodlingsPrice(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsPrice(hodlings: Partial<BalanceEntryResponse>[], descending: boolean): void {
     this.sortedUsernameFromHighToLow = 0;
     this.sortedPriceFromHighToLow = descending ? -1 : 1;
     this.sortedUSDValueFromHighToLow = 0;
@@ -265,7 +266,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // sort by username
-  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsUsername(hodlings: Partial<BalanceEntryResponse>[], descending: boolean): void {
     this.sortedUsernameFromHighToLow = descending ? -1 : 1;
     this.sortedPriceFromHighToLow = 0;
     this.sortedUSDValueFromHighToLow = 0;

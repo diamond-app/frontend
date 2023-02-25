@@ -1,8 +1,9 @@
 import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { IDatasource, IAdapter } from "ngx-ui-scroll";
+import { BalanceEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "creator-profile-hodlers",

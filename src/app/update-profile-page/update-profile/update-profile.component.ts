@@ -211,8 +211,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       profileEntryResponse?.Username !== this.usernameInput ? this.usernameInput : "";
     this.profileUpdates.descriptionUpdate =
       profileEntryResponse?.Description !== this.descriptionInput ? this.descriptionInput : "";
-    this.profileUpdates.profilePicUpdate =
-      profileEntryResponse?.ProfilePic !== this.profilePicInput ? this.profilePicInput : "";
+    this.profileUpdates.profilePicUpdate = this.profilePicInput;
     this.profileUpdates.highQualityProfilePicUpdate =
       profileEntryResponse?.ExtraData?.HighQualityProfilePictureUrl !== this.highQualityProfPicUrl
         ? this.highQualityProfPicUrl

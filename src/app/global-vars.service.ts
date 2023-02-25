@@ -414,7 +414,10 @@ export class GlobalVarsService {
 
   userInTutorial(user: User): boolean {
     return (
-      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+      user &&
+      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
+        user.TutorialStatus as TutorialStatus
+      ) < 0
     );
   }
 

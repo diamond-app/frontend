@@ -1,21 +1,20 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
+import { PostEntryResponse, User } from "deso-protocol";
+import { difference, keyBy, orderBy, uniq } from "lodash";
+import { BsModalRef } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { of } from "rxjs";
+import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
 import {
   AssociationReactionValue,
   AssociationType,
   BackendApiService,
   PostAssociation,
   PostAssociationCountsResponse,
-  PostEntryResponse,
-  User,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
-import { difference, keyBy, orderBy, uniq } from "lodash";
-import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
-import { of } from "rxjs";
-import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "reactions-details",
