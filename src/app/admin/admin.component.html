@@ -1,5 +1,4 @@
 <div *ngIf="globalVars.nodeInfo != null">
-
   <!-- Selector -->
   <div class="fs-15px border-bottom border-color-grey">
     <div class="m-15px">
@@ -868,15 +867,6 @@
   <!-- NFTs -->
   <div *ngIf="activeTab == 'NFTs'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <nft-drop-mgr></nft-drop-mgr>
-  </div>
-
-  <!-- Referral Program -->
-  <div
-    *ngIf="activeTab == 'Referral Program'"
-    class="w-100 h-100 d-flex flex-column disable-scrollbars"
-    style="overflow-y: scroll; min-height: 400px"
-  >
-    <referral-program-mgr></referral-program-mgr>
   </div>
 
   <!-- Super Info -->

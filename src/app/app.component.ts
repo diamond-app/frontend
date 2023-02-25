@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { configure, identity } from "deso-protocol";
+import { configure, getUsersStateless, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
-import { of, Subscription, zip } from "rxjs";
+import { from, of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
-import { BackendApiService, User } from "./backend-api.service";
+import { BackendApiService } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { IdentityService } from "./identity.service";
 import { ThemeService } from "./theme/theme.service";
@@ -114,6 +114,8 @@ export class AppComponent implements OnInit {
       return new Subscription();
     }
 
+    // NOTE: we should subscribe to the identity instance instead of calling snapshot,
+    // but that would require a larger refactor.
     const { currentUser, alternateUsers } = identity.snapshot();
     const publicKeys = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
 
@@ -131,7 +133,7 @@ export class AppComponent implements OnInit {
     this.callingUpdateTopLevelData = true;
 
     return zip(
-      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      from(getUsersStateless({ PublicKeysBase58Check: [loggedInUserPublicKey] })),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
         ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
             catchError((err) => {

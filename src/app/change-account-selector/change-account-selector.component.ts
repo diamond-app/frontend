@@ -1,9 +1,9 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
-import { identity } from "deso-protocol";
+import { identity, User } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { from } from "rxjs";
-import { BackendApiService, User } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
 

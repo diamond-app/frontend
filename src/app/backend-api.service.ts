@@ -4,7 +4,7 @@
 // https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { identity } from "deso-protocol";
+import { identity, User } from "deso-protocol";
 import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
 import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
@@ -219,46 +219,6 @@ export enum TutorialStatus {
   COMPLETE = "TutorialComplete",
 }
 
-export class User {
-  ProfileEntryResponse: ProfileEntryResponse;
-
-  PublicKeyBase58Check: string;
-  PublicKeysBase58CheckFollowedByUser: string[];
-  EncryptedSeedHex: string;
-
-  BalanceNanos: number;
-  UnminedBalanceNanos: number;
-
-  NumActionItems: any;
-  NumMessagesToRead: any;
-
-  UsersYouHODL: BalanceEntryResponse[];
-  UsersWhoHODLYouCount: number;
-
-  HasPhoneNumber: boolean;
-  CanCreateProfile: boolean;
-  HasEmail: boolean;
-  EmailVerified: boolean;
-  JumioVerified: boolean;
-  JumioReturned: boolean;
-  JumioFinishedTime: number;
-
-  ReferralInfoResponses: any;
-
-  IsFeaturedTutorialWellKnownCreator: boolean;
-  IsFeaturedTutorialUpAndComingCreator: boolean;
-
-  BlockedPubKeys: { [key: string]: object };
-
-  IsAdmin?: boolean;
-  IsSuperAdmin?: boolean;
-
-  TutorialStatus: TutorialStatus;
-  CreatorPurchasedInTutorialUsername?: string;
-  CreatorCoinsPurchasedInTutorial: number;
-  MustCompleteTutorial: boolean;
-}
-
 export class GetSinglePostResponse {
   PostFound: PostEntryResponse;
 }
@@ -336,23 +296,6 @@ export class PostTxnBody {
   Body?: string;
   ImageURLs?: string[];
   VideoURLs?: string[];
-}
-
-export class BalanceEntryResponse {
-  // The public keys are provided for the frontend
-  HODLerPublicKeyBase58Check: string;
-  // The public keys are provided for the frontend
-  CreatorPublicKeyBase58Check: string;
-
-  // Has the hodler purchased these creator coins
-  HasPurchased: boolean;
-  // How much this HODLer owns of a particular creator coin.
-  BalanceNanos: number;
-  // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
-  // This is used by the frontend to convey info about mining.
-  NetBalanceInMempool: number;
-
-  ProfileEntryResponse: ProfileEntryResponse;
 }
 
 export class NFTEntryResponse {
@@ -675,34 +618,6 @@ export class BackendApiService {
     return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
-  SendPhoneNumberVerificationText(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    PhoneNumber: string,
-    PhoneNumberCountryCode: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSendPhoneNumberVerificationText, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-    });
-  }
-
-  SubmitPhoneNumberVerificationCode(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    PhoneNumber: string,
-    PhoneNumberCountryCode: string,
-    VerificationCode: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-      VerificationCode,
-    });
-  }
-
   GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
       PublicKeyBase58Check,
@@ -722,60 +637,6 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
-  ExchangeBitcoin(
-    endpoint: string,
-    LatestBitcionAPIResponse: any,
-    BTCDepositAddress: string,
-    PublicKeyBase58Check: string,
-    BurnAmountSatoshis: number,
-    FeeRateSatoshisPerKB: number,
-    Broadcast: boolean
-  ): Observable<any> {
-    // Check if the user is logged in with a derived key and operating as the owner key.
-    const DerivedPublicKeyBase58Check = this.identityService.identityServiceUsers[PublicKeyBase58Check]
-      ?.derivedPublicKeyBase58Check;
-
-    let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
-      PublicKeyBase58Check,
-      DerivedPublicKeyBase58Check,
-      BurnAmountSatoshis,
-      LatestBitcionAPIResponse,
-      BTCDepositAddress,
-      FeeRateSatoshisPerKB,
-      Broadcast: false,
-    });
-
-    if (Broadcast) {
-      req = req.pipe(
-        switchMap((res) =>
-          this.identityService
-            .burn({
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-              unsignedHashes: res.UnsignedHashes,
-            })
-            .pipe(map((signed) => ({ ...res, ...signed })))
-        )
-      );
-
-      req = req.pipe(
-        switchMap((res) =>
-          this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
-            PublicKeyBase58Check,
-            DerivedPublicKeyBase58Check,
-            BurnAmountSatoshis,
-            LatestBitcionAPIResponse,
-            BTCDepositAddress,
-            FeeRateSatoshisPerKB,
-            SignedHashes: res.signedHashes,
-            Broadcast,
-          }).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
-        )
-      );
-    }
-
-    return req.pipe(catchError(this._handleError));
-  }
-
   // TODO: Use Broadcast bool isntead
   SendDeSoPreview(
     endpoint: string,
@@ -792,6 +653,9 @@ export class BackendApiService {
     });
   }
 
+  // TODO: add flag to the sendDeso function in deso-protocol beta: `broadcast:
+  // boolean` set to to true by default, but can be set to false to return the
+  // "preview"
   SendDeSo(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -816,6 +680,7 @@ export class BackendApiService {
     });
   }
 
+  // TODO: migrate this to the new api
   SendMessage(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -969,6 +834,7 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
   }
 
+  // TODO: this should go away once we refactor to all the new stuff.
   RegisterGroupMessagingKey(
     endpoint: string,
     OwnerPublicKeyBase58Check: string,

@@ -160,28 +160,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnInit() {
     this._initializeFeeds();
     this.titleService.setTitle(`Feed - ${environment.node.name}`);
-    // this.fetchUserReferrals();
-  }
-
-  fetchUserReferrals() {
-    if (this.globalVars.loggedInUser) {
-      this.backendApi
-        .GetReferralInfoForUser(
-          environment.verificationEndpointHostname,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check
-        )
-        .subscribe(
-          (res: any) => {
-            const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
-            if (filteredReferrals.length > 0) {
-              this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
-            }
-          },
-          (err: any) => {
-            console.log(err);
-          }
-        );
-    }
   }
 
   ngAfterViewChecked() {

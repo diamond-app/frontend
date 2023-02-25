@@ -298,7 +298,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this._updateEmail();
     }
     this._setProfileUpdates();
-    debugger;
     this.apiInternal
       .getAppUser(this.loggedInUser.PublicKeyBase58Check)
       .pipe(

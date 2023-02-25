@@ -12,15 +12,15 @@ import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import player from "lottie-web";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
+import { AlertModule } from "ngx-bootstrap/alert";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
-import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
-import { AlertModule } from "ngx-bootstrap/alert";
 import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { LottieModule } from "ngx-lottie";
 import { QuillModule } from "ngx-quill";
 import { ToastrModule } from "ngx-toastr";
@@ -104,9 +104,6 @@ import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.compon
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
-import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
-import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
-import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
@@ -146,8 +143,9 @@ import { PostThreadComponent } from "./post-thread-page/post-thread/post-thread.
 import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
-import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-program-mgr.component";
-import { ReferralsComponent } from "./referrals/referrals.component";
+import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
 import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
 import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
@@ -168,6 +166,13 @@ import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
 import { Theme } from "./theme/symbols";
 // Modular Themes for DeSo by Carsen Klock @carsenk
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { ThemeModule } from "./theme/theme.module";
 import { TopBarMobileHamburgerMenuComponent } from "./top-bar-mobile/top-bar-mobile-hamburger-menu/top-bar-mobile-hamburger-menu.component";
 import { TopBarMobileHeaderComponent } from "./top-bar-mobile/top-bar-mobile-header/top-bar-mobile-header.component";
@@ -217,13 +222,6 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
-import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
-import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -389,8 +387,6 @@ export function playerFactory() {
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
-    ReferralProgramMgrComponent,
-    ReferralsComponent,
     AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,

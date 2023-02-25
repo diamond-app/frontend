@@ -4,11 +4,18 @@ import { Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import ConfettiGenerator from "confetti-js";
-import { identity } from "deso-protocol";
+import {
+  AccessGroupEntryResponse,
+  BalanceEntryResponse,
+  createAccessGroup,
+  getAllAccessGroupsOwned,
+  identity,
+  User,
+} from "deso-protocol";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { from, Observable, Observer, of, Subscription } from "rxjs";
-import { catchError, first, share, switchMap } from "rxjs/operators";
+import { catchError, share } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
@@ -21,15 +28,7 @@ import { OpenProsperService } from "../lib/services/openProsper/openprosper-serv
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 import { ApiInternalService } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
-import {
-  BackendApiService,
-  BalanceEntryResponse,
-  DeSoNode,
-  MessagingGroupEntryResponse,
-  PostEntryResponse,
-  TutorialStatus,
-  User,
-} from "./backend-api.service";
+import { BackendApiService, DeSoNode, PostEntryResponse, TutorialStatus } from "./backend-api.service";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
@@ -123,7 +122,7 @@ export class GlobalVarsService {
 
   // We track logged-in state
   loggedInUser: User;
-  loggedInUserDefaultKey: MessagingGroupEntryResponse;
+  loggedInUserDefaultKey: AccessGroupEntryResponse;
   userList: User[] = [];
 
   // Temporarily track tutorial status here until backend it flowing
@@ -150,7 +149,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
+  youHodlMap: Record<string, BalanceEntryResponse> = {};
 
   // Map of diamond level to deso nanos.
   diamondLevelMap = {};
@@ -424,10 +423,6 @@ export class GlobalVarsService {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
-    if (isSameUserAsBefore) {
-      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
-    }
-
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
@@ -513,69 +508,50 @@ export class GlobalVarsService {
   }
 
   getLoggedInUserDefaultKey(): Subscription {
-    return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-      // NOTE: We only trigger the prompt if the user is not in the sign-up
-      // flow. Twitter sync is also excluded because it is part of the sign-up
-      // flow. There is an edge case where a user may have already signed up and
-      // they land directly on the twitter sync page from an external link. In
-      // this case, I think it makes sense to also prevent showing the messaging
-      // key prompt until after the twitter sync flow is complete.
-      if (!res && !(this.userSigningUp || this.router.url === "/sign-up" || this.router.url === "/twitter-sync")) {
-        SwalHelper.fire({
-          html:
-            "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
-          showCancelButton: false,
-        }).then(({ isConfirmed }) => {
-          this.tracking.log(`default-messaging-key-prompt : ${isConfirmed ? "confirmed" : "cancelled"}`);
-          if (isConfirmed) {
-            this.launchIdentityMessagingKey();
-          }
-        });
-      } else {
-        this.loggedInUserDefaultKey = res;
-      }
-    });
-  }
+    if (!this.loggedInUser) {
+      throw new Error("Cannot get default key for user that is not logged in");
+    }
 
-  launchIdentityMessagingKey(): Observable<any> {
-    const obs$ = this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).pipe(
-      switchMap((res) => {
-        if (!res) return of(null);
-        this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
-          this.loggedInUser.PublicKeyBase58Check,
-          res.encryptedMessagingKeyRandomness
+    return from(
+      getAllAccessGroupsOwned({
+        PublicKeyBase58Check: this.loggedInUser.PublicKeyBase58Check,
+      }).then((res) => {
+        const defaultMessagingGroup = res?.AccessGroupsOwned?.find(
+          (group) => group.AccessGroupKeyName === "default-key"
         );
-        return this.backendApi
-          .RegisterGroupMessagingKey(
-            this.localNode,
-            this.loggedInUser.PublicKeyBase58Check,
-            res.messagingPublicKeyBase58Check,
-            "default-key",
-            res.messagingKeySignature,
-            [],
-            {},
-            this.feeRateDeSoPerKB * 1e9
-          )
-          .pipe(
-            switchMap((res) => {
-              if (!res) return of(null);
-              return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check);
-            })
-          );
-      }),
-      first(),
-      share()
-    );
+        if (defaultMessagingGroup) {
+          return defaultMessagingGroup;
+        } else {
+          const { currentUser } = identity.snapshot();
 
-    // TODO: error handling
-    obs$.subscribe((messagingGroupEntryResponse) => {
-      this.tracking.log("default-messaging-key : create");
-      if (messagingGroupEntryResponse) {
-        this.loggedInUserDefaultKey = messagingGroupEntryResponse;
-      }
+          if (!currentUser) {
+            throw new Error("Cannot create an access group without an identity user.");
+          }
+
+          // if they don't have a default messaging group yet, we'll create it for them under the hood.
+          return createAccessGroup({
+            AccessGroupOwnerPublicKeyBase58Check: this.loggedInUser.PublicKeyBase58Check,
+            AccessGroupPublicKeyBase58Check: currentUser.primaryDerivedKey.messagingPublicKeyBase58Check,
+            AccessGroupKeyName: "default-key",
+          }).then(() => {
+            return getAllAccessGroupsOwned({
+              PublicKeyBase58Check: this.loggedInUser?.PublicKeyBase58Check,
+            }).then((res) => {
+              const defaultMessagingGroup = res?.AccessGroupsOwned?.find(
+                (group) => group.AccessGroupKeyName === "default-key"
+              );
+              if (defaultMessagingGroup) {
+                return defaultMessagingGroup;
+              } else {
+                throw new Error("Failed to create default messaging group");
+              }
+            });
+          });
+        }
+      })
+    ).subscribe((defaultMessagingGroup) => {
+      this.loggedInUserDefaultKey = defaultMessagingGroup;
     });
-
-    return obs$;
   }
 
   preventBackButton() {

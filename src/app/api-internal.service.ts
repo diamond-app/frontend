@@ -150,7 +150,7 @@ export class ApiInternalService {
     publicKey: string,
     { emailJwt }: { emailJwt?: string } = {}
   ): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
-    if (emailJwt !== "") {
+    if (emailJwt) {
       return new Observable((observer) => {
         observer.next({
           Authorization: `Bearer ${emailJwt}`,
