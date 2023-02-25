@@ -189,7 +189,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   _updateEmail() {
     this.backendApi
       .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/

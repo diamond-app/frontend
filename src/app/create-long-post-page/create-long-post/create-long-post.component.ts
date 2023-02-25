@@ -3,6 +3,7 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { waitForTransactionFound } from "deso-protocol";
 import { escape, has } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
@@ -365,7 +366,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
-        await this.globalVars.waitForTransaction(postTx.TxnHashHex);
+        await waitForTransactionFound(postTx.TxnHashHex);
 
         const blogSlugMapJSON = JSON.stringify({
           ...existingSlugMappings,

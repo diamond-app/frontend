@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import {
   ChangeDetectorRef,
   Component,
@@ -11,13 +12,15 @@ import {
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import Autolinker from "autolinker";
 import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { FollowService } from "../../../lib/services/follow/follow.service";
@@ -25,13 +28,13 @@ import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import {
+  AssociationReactionValue,
+  AssociationType,
   BackendApiService,
   NFTEntryResponse,
-  PostEntryResponse,
   PostAssociation,
-  AssociationType,
   PostAssociationCountsResponse,
-  AssociationReactionValue,
+  PostEntryResponse,
 } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
@@ -39,11 +42,6 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { forkJoin, of } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { HttpClient } from "@angular/common/http";
-import Autolinker from "autolinker";
-
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -450,7 +448,7 @@ export class FeedPostComponent implements OnInit {
       // Exclude quote reposts
       !(this.post?.RepostedPostEntryResponse && this.post.Body !== "") &&
       // Exclude reposts of quote reposts
-      !(this.post?.RepostedPostEntryResponse && (this.post?.RepostedPostEntryResponse?.RepostedPostEntryResponse))
+      !(this.post?.RepostedPostEntryResponse && this.post?.RepostedPostEntryResponse?.RepostedPostEntryResponse)
     );
   }
 
@@ -641,11 +639,7 @@ export class FeedPostComponent implements OnInit {
     }).then((response: any) => {
       if (response.isConfirmed) {
         this.backendApi
-          .BlockPublicKey(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.post.PosterPublicKeyBase58Check
-          )
+          .BlockPublicKey(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.post.PosterPublicKeyBase58Check)
           .subscribe(
             () => {
               this.tracking.log("profile : block", {

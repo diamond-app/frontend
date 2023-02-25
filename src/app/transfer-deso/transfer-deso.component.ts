@@ -77,12 +77,10 @@ export class TransferDeSoComponent implements OnInit {
     this.loadingMax = true;
     this.backendApi
       .SendDeSoPreview(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.payToPublicKey,
         // A negative amount causes the max value to be returned as the spend amount.
-        -1,
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+        -1
       )
       .subscribe(
         (res: any) => {
@@ -273,11 +271,9 @@ export class TransferDeSoComponent implements OnInit {
     this.callingUpdateSendDeSoTxnFee = true;
     return this.backendApi
       .SendDeSoPreview(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.payToPublicKey,
-        this.transferAmount === this.maxSendAmount ? -1 : Math.floor(this.transferAmount * 1e9),
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+        this.transferAmount === this.maxSendAmount ? -1 : Math.floor(this.transferAmount * 1e9)
       )
       .toPromise()
       .then(

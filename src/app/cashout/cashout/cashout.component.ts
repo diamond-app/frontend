@@ -233,13 +233,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
     const amountNanos = this.amountToCashOutInputValue * 1e9;
     const depositAddress = this.depositAddresses.DepositAddresses[this.depositTicker];
     this.backend
-      .SendDeSo(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        depositAddress,
-        amountNanos,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
+      .SendDeSo(this.globalVars.loggedInUser?.PublicKeyBase58Check, depositAddress, amountNanos)
       .pipe(
         switchMap(() => this.megaswap.pollNewDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
         switchMap(() => this.megaswap.getDeposits({ DepositTicker: this.depositTicker, DepositAddress })),

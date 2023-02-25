@@ -4,7 +4,20 @@
 // https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { identity, User } from "deso-protocol";
+import {
+  blockPublicKey,
+  GetExchangeRateResponse,
+  getExchangeRates,
+  getTransaction,
+  GetTxnResponse,
+  getUsersStateless,
+  identity,
+  sendDeso,
+  SendDeSoResponse,
+  SubmitTransactionResponse,
+  updateUserGlobalMetadata,
+  User,
+} from "deso-protocol";
 import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
 import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
 import { environment } from "src/environments/environment";
@@ -13,12 +26,9 @@ import { SwalHelper } from "../lib/helpers/swal-helper";
 import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
-  static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
   static SendDeSoRoute = "/api/v0/send-deso";
   static MinerControlRoute = "/api/v0/miner-control";
 
-  static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
   static RoutePathSubmitPost = "/api/v0/submit-post";
   static RoutePathUploadImage = "/api/v0/upload-image";
   static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
@@ -609,8 +619,8 @@ export class BackendApiService {
     return from(promise).pipe(switchMap((JWT) => this.post(endpoint, path, { JWT, ...body })));
   }
 
-  GetExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.ExchangeRateRoute);
+  GetExchangeRate(): Observable<GetExchangeRateResponse> {
+    return from(getExchangeRates());
   }
 
   // Use empty string to return all top categories.
@@ -618,6 +628,7 @@ export class BackendApiService {
     return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
+  // TODO: migrate to data lib
   GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
       PublicKeyBase58Check,
@@ -625,53 +636,46 @@ export class BackendApiService {
     });
   }
 
-  GetTxn(endpoint: string, TxnHashHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetTxn, {
-      TxnHashHex,
-    });
+  GetTxn(TxnHashHex: string): Observable<GetTxnResponse> {
+    return from(getTransaction({ TxnHashHex }));
   }
 
+  // TODO: do we need this?
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
       .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
       .pipe(catchError(this._handleError));
   }
 
-  // TODO: Use Broadcast bool isntead
   SendDeSoPreview(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
-    AmountNanos: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.SendDeSoRoute, {
-      SenderPublicKeyBase58Check,
-      RecipientPublicKeyOrUsername,
-      AmountNanos: Math.floor(AmountNanos),
-      MinFeeRateNanosPerKB,
-    });
+    AmountNanos: number
+  ): Observable<SendDeSoResponse> {
+    return from(
+      sendDeso(
+        {
+          SenderPublicKeyBase58Check,
+          RecipientPublicKeyOrUsername,
+          AmountNanos,
+        },
+        { broadcast: false }
+      ).then((res) => res.constructedTransactionResponse)
+    );
   }
 
-  // TODO: add flag to the sendDeso function in deso-protocol beta: `broadcast:
-  // boolean` set to to true by default, but can be set to false to return the
-  // "preview"
   SendDeSo(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
-    AmountNanos: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.SendDeSoPreview(
-      endpoint,
-      SenderPublicKeyBase58Check,
-      RecipientPublicKeyOrUsername,
-      AmountNanos,
-      MinFeeRateNanosPerKB
+    AmountNanos: number
+  ): Observable<SendDeSoResponse & SubmitTransactionResponse> {
+    return from(
+      sendDeso({
+        SenderPublicKeyBase58Check,
+        RecipientPublicKeyOrUsername,
+        AmountNanos,
+      }).then((res) => ({ ...res.constructedTransactionResponse, ...res.submittedTransactionResponse }))
     );
-
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
   SubmitTransaction(endpoint: string, TransactionHex: string): Observable<any> {
@@ -859,14 +863,15 @@ export class BackendApiService {
 
   // User-related functions.
   GetUsersStateless(
-    endpoint: string,
     PublicKeysBase58Check: string[],
     SkipForLeaderboard: boolean = false
   ): Observable<GetUsersStatelessResponse> {
-    return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
-      PublicKeysBase58Check,
-      SkipForLeaderboard,
-    });
+    return from(
+      getUsersStateless({
+        PublicKeysBase58Check,
+        SkipForLeaderboard,
+      })
+    );
   }
 
   getAllTransactionOutputs(tx: any): Promise<any> {
@@ -1544,11 +1549,7 @@ export class BackendApiService {
         // We need to wait until the profile creation has been comped.
         if (res.CompProfileCreationTxnHashHex) {
           return interval(500)
-            .pipe(
-              concatMap((iteration) =>
-                zip(this.GetTxn(localNodeEndpoint, res.CompProfileCreationTxnHashHex), of(iteration))
-              )
-            )
+            .pipe(concatMap((iteration) => zip(this.GetTxn(res.CompProfileCreationTxnHashHex), of(iteration))))
             .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
             .pipe(take(1))
             .pipe(switchMap(() => of(res)));
@@ -2067,6 +2068,7 @@ export class BackendApiService {
     return request;
   }
 
+  // TODO: add a "broadcast" flag to all the transaction functions.
   TransferCreatorCoin(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -2095,16 +2097,17 @@ export class BackendApiService {
   }
 
   BlockPublicKey(
-    endpoint: string,
     PublicKeyBase58Check: string,
     BlockPublicKeyBase58Check: string,
     Unblock: boolean = false
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathBlockPublicKey, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      BlockPublicKeyBase58Check,
-      Unblock,
-    });
+    return from(
+      blockPublicKey({
+        BlockPublicKeyBase58Check,
+        PublicKeyBase58Check,
+        Unblock,
+      })
+    );
   }
 
   MarkContactMessagesRead(
@@ -2129,6 +2132,7 @@ export class BackendApiService {
   // is set FetchStartIndex to the Index value of the last notification in
   // the list and re-fetch. The endpoint will return NumToFetch notifications
   // that include all notifications that are currently in the mempool.
+  // TODO: add notifications data endpoints to the new lib
   GetNotifications(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -2172,16 +2176,11 @@ export class BackendApiService {
   }
 
   UpdateUserGlobalMetadata(
-    endpoint: string,
     UserPublicKeyBase58Check: string,
     Email: string,
     MessageReadStateUpdatesByContact: any
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateUserGlobalMetadata, UserPublicKeyBase58Check, {
-      UserPublicKeyBase58Check,
-      Email,
-      MessageReadStateUpdatesByContact,
-    });
+    return from(updateUserGlobalMetadata({ UserPublicKeyBase58Check, Email, MessageReadStateUpdatesByContact }));
   }
 
   GetUserGlobalMetadata(

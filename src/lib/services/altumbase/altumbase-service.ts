@@ -111,7 +111,6 @@ export class AltumbaseService {
     }
     return this.backendApi
       .GetUsersStateless(
-        this.globalVars.localNode,
         results.map((result) => result.public_key),
         true
       )

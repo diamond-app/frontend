@@ -409,7 +409,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       if (response.isConfirmed) {
         this.backendApi
           .BlockPublicKey(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PosterPublicKeyBase58Check
           )

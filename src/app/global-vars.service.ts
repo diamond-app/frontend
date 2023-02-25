@@ -1325,8 +1325,8 @@ export class GlobalVarsService {
   }
 
   _updateDeSoExchangeRate() {
-    this.backendApi.GetExchangeRate(this.localNode).subscribe(
-      (res: any) => {
+    this.backendApi.GetExchangeRate().subscribe(
+      (res) => {
         // BTC
         this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
         this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
@@ -1570,41 +1570,5 @@ export class GlobalVarsService {
 
   windowIsPWA(): Boolean {
     return window.matchMedia("(display-mode: standalone)").matches;
-  }
-
-  waitForTransaction(waitTxn: string): Promise<void> {
-    // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
-    // There is a success and error callback so that the caller gets feedback on the polling.
-    return new Promise((resolve, reject) => {
-      if (waitTxn !== "") {
-        let attempts = 0;
-        let numTries = 160;
-        let timeoutMillis = 750;
-        // Set an interval to repeat
-        let interval = setInterval(() => {
-          if (attempts >= numTries) {
-            reject(new Error("Polling aborted. Reached maximum retries."));
-            clearInterval(interval);
-          }
-          this.backendApi
-            .GetTxn(this.localNode, waitTxn)
-            .subscribe(
-              (res: Record<string, any>) => {
-                if (res.TxnFound) {
-                  clearInterval(interval);
-                  resolve();
-                }
-              },
-              (error) => {
-                clearInterval(interval);
-                reject(error);
-              }
-            )
-            .add(() => attempts++);
-        }, timeoutMillis) as any;
-      } else {
-        reject(new Error("No waitTxn was provided."));
-      }
-    });
   }
 }

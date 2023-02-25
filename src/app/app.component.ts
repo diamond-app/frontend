@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { configure, getUsersStateless, identity, User } from "deso-protocol";
+import { configure, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
-import { from, of, Subscription, zip } from "rxjs";
+import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
@@ -29,40 +29,27 @@ export class AppComponent implements OnInit {
     private router: Router,
     private tracking: TrackingService
   ) {
-    configure({
-      nodeURI: environment.production ? window.location.origin : "https://node.deso.org",
-      spendingLimitOptions: { IsUnlimited: true },
-      MinFeeRateNanosPerKB: 1000,
-    });
     this.globalVars.Init(
       null, // loggedInUser
       [], // userList
       this.route // route
     );
 
+    // NOTE: The deso-protocol configure call has to come *after* globalVars Init because it uses
+    // globalVars.localNode. There is no practical reason we need to store the
+    // localNode value in globalVars (or local storage), but it's an annoying
+    // thing to refactor right now...
+    configure({
+      nodeURI: this.globalVars.localNode,
+      spendingLimitOptions: { IsUnlimited: true },
+      MinFeeRateNanosPerKB: 1000,
+    });
+
     // log interaction events emitted by identity
     window.addEventListener("message", (ev) => {
       if (!(ev.origin === environment.identityURL && ev.data?.category === "interaction-event")) return;
       const { object, event, data } = ev.data.payload;
       this.tracking.log(`identity : ${object} : ${event}`, data);
-    });
-
-    // Nuke the referrer so we don't leak anything
-    // We also have a meta tag in index.html that does this in a different way to make
-    // sure it's nuked.
-    //
-    //
-    // TODO: I'm pretty sure all of this could fail on IE so we should make sure people
-    // only use the app with chrome.
-    Object.defineProperty(document, "referrer", {
-      get() {
-        return "";
-      },
-    });
-    Object.defineProperty(document, "referer", {
-      get() {
-        return "";
-      },
     });
   }
   static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS = "js-app-component__dynamically-added-router-link-class";
@@ -133,7 +120,7 @@ export class AppComponent implements OnInit {
     this.callingUpdateTopLevelData = true;
 
     return zip(
-      from(getUsersStateless({ PublicKeysBase58Check: [loggedInUserPublicKey] })),
+      this.backendApi.GetUsersStateless([loggedInUserPublicKey], false),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
         ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
             catchError((err) => {
@@ -262,7 +249,7 @@ export class AppComponent implements OnInit {
           clearInterval(interval);
         }
         this.backendApi
-          .GetTxn(this.globalVars.localNode, waitTxn)
+          .GetTxn(waitTxn)
           .subscribe(
             (res: any) => {
               if (!res.TxnFound) {
@@ -352,7 +339,7 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
+    this.backendApi.GetUsersStateless(publicKeys, true).subscribe((res) => {
       if (!_.isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];
       }
@@ -360,6 +347,7 @@ export class AppComponent implements OnInit {
     });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
+    // QUESTION: do we actually need this DeleteIdentities call?
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);

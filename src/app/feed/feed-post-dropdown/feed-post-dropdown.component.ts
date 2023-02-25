@@ -1,6 +1,7 @@
 import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { waitForTransactionFound } from "deso-protocol";
 import * as _ from "lodash";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -321,7 +322,7 @@ export class FeedPostDropdownComponent implements OnInit {
       .toPromise()
       .then((res) => {
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
-        return this.globalVars.waitForTransaction(res.TxnHashHex);
+        return waitForTransactionFound(res.TxnHashHex);
       })
       .then(() => {
         if (isPinned) {
@@ -358,7 +359,7 @@ export class FeedPostDropdownComponent implements OnInit {
       .toPromise()
       .then((res) => {
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
-        return this.globalVars.waitForTransaction(res.TxnHashHex);
+        return waitForTransactionFound(res.TxnHashHex);
       })
       .then(() => {
         if (isPinned) {

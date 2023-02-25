@@ -61,7 +61,6 @@ export class EmailSubscribeComponent implements OnInit {
     this.isProcessing = true;
     this.backendApi
       .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/

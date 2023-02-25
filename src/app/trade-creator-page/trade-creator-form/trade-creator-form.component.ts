@@ -413,12 +413,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         isFetching = true;
         this.backendApi
           .SendDeSoPreview(
-            this.appData.localNode,
             this.appData.loggedInUser.PublicKeyBase58Check,
             this.appData.loggedInUser.PublicKeyBase58Check,
             // A negative amount causes the max value to be returned as the spend amount.
-            -1,
-            this.appData.feeRateDeSoPerKB * 1e9 /* min fee rate */
+            -1
           )
           .subscribe(
             (response: any) => {
