@@ -597,17 +597,13 @@ export class FeedPostComponent implements OnInit {
         this.ref.detectChanges();
         this.backendApi
           .SubmitPost(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
-            "" /*Title*/,
             { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
             this._post.RepostedPostEntryResponse?.PostHashHex || "",
             {},
-            "" /*Sub*/,
-            true /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            true /*IsHidden*/
           )
           .subscribe(
             (response) => {

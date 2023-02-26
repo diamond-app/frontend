@@ -340,23 +340,19 @@ export class CreateLongPostComponent implements AfterViewInit {
       const permalink = `${window.location.origin}/u/${currentUserProfile.Username}/blog/${titleSlug}`;
       const postTx = await this.backendApi
         .SubmitPost(
-          this.globalVars.localNode,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
           this.editPostHashHex ?? "" /*PostHashHexToModify*/,
           "" /*ParentPostHashHex*/,
-          "" /*Title*/,
           {
             Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}${
               entities ? `\n\nMentions: ${entities}` : ""
             }\n\n#blog`,
             ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+            VideoURLs: null,
           } /*BodyObj*/,
           "" /*RepostedPostHashHex*/,
           postExtraData /*PostExtraData*/,
-          "" /*Sub*/,
-          false /*IsHidden*/,
-          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-          false
+          false /*IsHidden*/
         )
         .toPromise();
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;

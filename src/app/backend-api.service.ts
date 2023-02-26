@@ -5,7 +5,12 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
+  acceptNFTTransfer,
   blockPublicKey,
+  burnNFT,
+  createNFT,
+  createNFTBid,
+  DeSoBodySchema,
   GetExchangeRateResponse,
   getExchangeRates,
   getTransaction,
@@ -14,7 +19,9 @@ import {
   identity,
   sendDeso,
   SendDeSoResponse,
+  submitPost,
   SubmitTransactionResponse,
+  updateNFT,
   updateUserGlobalMetadata,
   User,
 } from "deso-protocol";
@@ -1006,7 +1013,6 @@ export class BackendApiService {
   }
 
   CreateNft(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     NumCopies: number,
@@ -1018,103 +1024,90 @@ export class BackendApiService {
     IsBuyNow: boolean,
     BuyNowPriceNanos: number,
     AdditionalDESORoyaltiesMap: { [k: string]: number },
-    AdditionalCoinRoyaltiesMap: { [k: string]: number },
-    MinFeeRateNanosPerKB: number
+    AdditionalCoinRoyaltiesMap: { [k: string]: number }
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      NumCopies,
-      NFTRoyaltyToCreatorBasisPoints,
-      NFTRoyaltyToCoinBasisPoints,
-      HasUnlockable,
-      IsForSale,
-      MinBidAmountNanos,
-      IsBuyNow,
-      BuyNowPriceNanos,
-      AdditionalDESORoyaltiesMap,
-      AdditionalCoinRoyaltiesMap,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      createNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        NumCopies,
+        NFTRoyaltyToCreatorBasisPoints,
+        NFTRoyaltyToCoinBasisPoints,
+        HasUnlockable,
+        IsForSale,
+        MinBidAmountNanos,
+        IsBuyNow,
+        BuyNowPriceNanos,
+        AdditionalDESORoyaltiesMap,
+        AdditionalCoinRoyaltiesMap,
+      })
+    );
   }
 
   UpdateNFT(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
     IsForSale: boolean,
     MinBidAmountNanos: number,
     IsBuyNow: boolean,
-    BuyNowPriceNanos: number,
-    MinFeeRateNanosPerKB: number
+    BuyNowPriceNanos: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      IsForSale,
-      MinBidAmountNanos,
-      IsBuyNow,
-      BuyNowPriceNanos,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      updateNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+        IsForSale,
+        MinBidAmountNanos,
+        IsBuyNow,
+        BuyNowPriceNanos,
+      })
+    );
   }
 
   CreateNFTBid(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
-    BidAmountNanos: number,
-    MinFeeRateNanosPerKB: number
+    BidAmountNanos: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNFTBid, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      BidAmountNanos,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      createNFTBid({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+        BidAmountNanos,
+      })
+    );
   }
 
-  BurnNFT(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
-    NFTPostHashHex: string,
-    SerialNumber: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathBurnNFT, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  BurnNFT(UpdaterPublicKeyBase58Check: string, NFTPostHashHex: string, SerialNumber: number): Observable<any> {
+    return from(
+      burnNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+      })
+    );
   }
 
   AcceptNFTTransfer(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
-    SerialNumber: number,
-    MinFeeRateNanosPerKB: number
+    SerialNumber: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      acceptNFTTransfer({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+      })
+    );
   }
 
+  // TODO: make sure our encrypt/decrypt stuff works right here. I think we'll need to make sure we're using the
+  // derived messaging keys for encrypt and decrypt.
   AcceptNFTBid(
     endpoint: string,
     UpdaterPublicKeyBase58Check: string,
@@ -1154,6 +1147,8 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
+  // TODO: make sure our encrypt/decrypt stuff works right here. I think we'll need to make sure we're using the
+  // derived messaging keys for encrypt and decrypt.
   DecryptUnlockableTexts(
     ReaderPublicKeyBase58Check: string,
     UnlockableNFTEntryResponses: NFTEntryResponse[]
@@ -1178,6 +1173,7 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
+  // TODO: add nft getters to the new lib.
   GetNFTBidsForNFTPost(
     endpoint: string,
     ReaderPublicKeyBase58Check: string,
@@ -1246,6 +1242,7 @@ export class BackendApiService {
     });
   }
 
+  // TODO: make sure our encrypt/decrypt stuff works right here.
   TransferNFT(
     endpoint: string,
     SenderPublicKeyBase58Check: string,
@@ -1284,35 +1281,27 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
+  // TODO: finish this...
   SubmitPost(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     PostHashHexToModify: string,
     ParentStakeID: string,
-    Title: string,
-    BodyObj: PostTxnBody,
+    BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    Sub: string,
-    IsHidden: boolean,
-    MinFeeRateNanosPerKB: number,
-    InTutorial: boolean = false
+    IsHidden: boolean
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
-      UpdaterPublicKeyBase58Check,
-      PostHashHexToModify,
-      ParentStakeID,
-      Title,
-      BodyObj,
-      RepostedPostHashHex,
-      PostExtraData,
-      Sub,
-      IsHidden,
-      MinFeeRateNanosPerKB,
-      InTutorial,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      submitPost({
+        UpdaterPublicKeyBase58Check,
+        PostHashHexToModify,
+        ParentStakeID,
+        BodyObj,
+        RepostedPostHashHex,
+        PostExtraData,
+        IsHidden,
+      })
+    );
   }
 
   GetPostsStateless(

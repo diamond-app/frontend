@@ -340,21 +340,17 @@ export class FeedPostDropdownComponent implements OnInit {
 
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
-        "" /*Title*/,
         {
           Body: this.post.Body,
           ImageURLs: this.post.ImageURLs ? this.post.ImageURLs : [],
+          VideoURLs: null,
         } /*BodyObj*/,
         "" /*RepostedPostHashHex*/,
         postExtraData /*PostExtraData*/,
-        "" /*Sub*/,
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        false
+        false /*IsHidden*/
       )
       .toPromise()
       .then((res) => {

@@ -54,11 +54,9 @@ export class TransferNftAcceptComponent {
     this.acceptingTransfer = true;
     this.backendApi
       .AcceptNFTTransfer(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
-        this.selectedSerialNumber.SerialNumber,
-        this.globalVars.defaultFeeRateNanosPerKB
+        this.selectedSerialNumber.SerialNumber
       )
       .subscribe(
         (res) => {

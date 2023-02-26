@@ -363,20 +363,17 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
         this.backendApi
           .SubmitPost(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
-            "" /*Title*/,
             {
               Body: this.currentPost.Body,
               ImageURLs: this.currentPost.ImageURLs,
+              VideoURLs: [],
             } /*BodyObj*/,
             "",
             this.currentPost.PostExtraData,
-            "" /*Sub*/,
-            true /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            true /*IsHidden*/
           )
           .subscribe(
             (response) => {

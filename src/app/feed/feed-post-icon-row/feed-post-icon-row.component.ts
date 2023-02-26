@@ -5,6 +5,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { debounce, includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import { finalize } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -20,7 +21,6 @@ import {
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
-import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -256,18 +256,17 @@ export class FeedPostIconRowComponent {
     this.ref.detectChanges();
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
-        "" /*Title*/,
-        {},
+        {
+          Body: null,
+          VideoURLs: null,
+          ImageURLs: null,
+        },
         this.postContent.PostHashHex,
         {},
-        "" /*Sub*/,
-        false /*IsHidden*/,
-        // What should the fee rate be for this?
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+        false /*IsHidden*/
       )
       .subscribe(
         (response) => {
@@ -308,18 +307,17 @@ export class FeedPostIconRowComponent {
     this.ref.detectChanges();
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
-        "" /*Title*/,
-        {} /*BodyObj*/,
+        {
+          Body: null,
+          VideoURLs: null,
+          ImageURLs: null,
+        } /*BodyObj*/,
         this.postContent.PostHashHex,
         {},
-        "" /*Sub*/,
-        true /*IsHidden*/,
-        // What should the fee rate be for this?
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+        true /*IsHidden*/
       )
       .subscribe(
         (response) => {

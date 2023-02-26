@@ -18,13 +18,12 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import Timer = NodeJS.Timer;
 
 const RANDOM_MOVIE_QUOTES = [
@@ -327,20 +326,13 @@ export class FeedCreatePostComponent implements OnInit {
     const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
-        "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
         postExtraData,
-        "" /*Sub*/,
-        // TODO: Should we have different values for creator basis points and stake multiple?
-        // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        this.inTutorial
+        false /*IsHidden*/
       )
       .toPromise()
       .then((response) => {

@@ -154,12 +154,10 @@ export class PlaceBidComponent implements OnInit {
     this.placingBids = true;
     this.backendApi
       .CreateNFTBid(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        Math.trunc(this.bidAmountDeSo * 1e9),
-        this.globalVars.defaultFeeRateNanosPerKB
+        Math.trunc(this.bidAmountDeSo * 1e9)
       )
       .subscribe(
         (res) => {

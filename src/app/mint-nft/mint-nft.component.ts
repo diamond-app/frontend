@@ -320,7 +320,6 @@ export class MintNftComponent {
     const minBidAmountDesoNanos = Math.trunc(this.minBidAmountDESO * 1e9);
     this.backendApi
       .CreateNft(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postHashHex,
         numCopiesToMint,
@@ -332,8 +331,7 @@ export class MintNftComponent {
         this.isBuyNow,
         buyNowPriceDesoNanos,
         additionalDESORoyaltiesMap,
-        additionalCoinRoyaltiesMap,
-        this.globalVars.defaultFeeRateNanosPerKB
+        additionalCoinRoyaltiesMap
       )
       .subscribe(
         (res) => {

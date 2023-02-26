@@ -467,12 +467,10 @@ export class NftPostComponent {
       if (res.isConfirmed) {
         this.backendApi
           .CreateNFTBid(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.nftPost.PostHashHex,
             bidEntry.SerialNumber,
-            0,
-            this.globalVars.defaultFeeRateNanosPerKB
+            0
           )
           .subscribe(
             (res) => {
