@@ -13,6 +13,7 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
 import { range } from "lodash";
+import { userInfo } from "os";
 
 @Component({
   selector: "settings",
@@ -168,6 +169,27 @@ export class SettingsComponent implements OnInit {
     this.globalVars.updateEverything().add(() => {
       this.initializeAppUser(0, 5);
     });
+  }
+
+  async subscribeToPushNotifications() {
+    // @ts-ignore
+    window.safari.pushNotification.requestPermission(
+      "https://565f-72-83-87-83.ngrok.io/api-internal",
+      "web.com.deso.z",
+      {
+        testing: "123",
+        publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      },
+      // @ts-ignore
+      (callbackInfo) => {
+        console.log(callbackInfo);
+      }
+    );
+    // Notification.requestPermission((testThings) => {
+    //   console.log(testThings);
+    // });
+    // console.log(Notification.permission);
+    // console.log(Notification);
   }
 
   closeModal() {

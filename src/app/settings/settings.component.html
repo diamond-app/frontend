@@ -7,6 +7,7 @@
 <div class="buy-deso__container p-16px">
   <div *ngIf="!onlyShowEmailSettings">
     <div class="mint-nft__title">Settings</div>
+    <button (click)="subscribeToPushNotifications()">Test Notification Subscription</button>
     <div class="update-profile__title">{{ environment.node.name }} {{ "update_profile.theme" | transloco }}</div>
     <select
       name="theme"
