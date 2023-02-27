@@ -197,17 +197,17 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   _initializeFeeds() {
     this.feedTabs = [FeedComponent.FOLLOWING_TAB, FeedComponent.HOT_TAB];
-    if (this.globalVars.loggedInUser) {
-      this.feedTabs.push(FeedComponent.GLOBAL_TAB);
-    }
-    if (this.globalVars.postsToShow.length === 0) {
-      // Get some posts to show the user.
-      this.loadingFirstBatchOfGlobalFeedPosts = true;
-      this._loadPosts();
-    } else {
-      // If we already have posts to show, delay rendering the posts for a hot second so nav is fast.
-      // this._onTabSwitch()
-    }
+    // if (this.globalVars.loggedInUser) {
+    //   this.feedTabs.push(FeedComponent.GLOBAL_TAB);
+    // }
+    // if (this.globalVars.postsToShow.length === 0) {
+    //   // Get some posts to show the user.
+    //   this.loadingFirstBatchOfGlobalFeedPosts = true;
+    //   this._loadPosts();
+    // } else {
+    //   // If we already have posts to show, delay rendering the posts for a hot second so nav is fast.
+    //   // this._onTabSwitch()
+    // }
 
     const feedPromises = [];
     // Request the hot feed (so we have it ready for display if needed)
@@ -680,6 +680,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (tab === FeedComponent.SHOWCASE_TAB) {
       window.open("https://polygram.cc", "_blank");
     } else {
+      if (tab === FeedComponent.GLOBAL_TAB) {
+        tab = FeedComponent.HOT_TAB;
+      }
       this.activeTab = tab;
       let commands = [];
       if (tab !== FeedComponent.TAG_TAB) {
