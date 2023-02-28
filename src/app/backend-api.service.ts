@@ -473,6 +473,7 @@ export type MessagingGroupMemberResponse = {
 export enum AssociationType {
   // TODO: add more types when needed
   reaction = "REACTION",
+  pollResponse = "POLL_RESPONSE",
 }
 
 export enum AssociationReactionValue {
@@ -486,7 +487,7 @@ export enum AssociationReactionValue {
 }
 
 // TODO: other association values can be added as Value1 | Value2 etc.
-export type AssociationValue = AssociationReactionValue;
+export type AssociationValue = AssociationReactionValue | string;
 
 export interface PostAssociation {
   AppPublicKeyBase58Check: string;

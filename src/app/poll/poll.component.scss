@@ -1,0 +1,35 @@
+:host {
+  display: contents;
+  height: 100%;
+}
+
+.progressbar-container {
+  height: 38px;
+  position: relative;
+
+  .progressbar__progress {
+    height: 100%;
+  }
+
+  .progressbar__indicator {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+  }
+
+  .progressbar__label {
+    position: absolute;
+    left: 12px;
+    top: 6px;
+
+    .check-circle {
+      top: 0;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.vote-btn .fa-spinner {
+  margin: 0;
+}

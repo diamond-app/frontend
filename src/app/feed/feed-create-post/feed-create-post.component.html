@@ -39,7 +39,7 @@
             rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
             class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative background-color-white"
             id="textarea-{{ i + 1 }}"
-            [placeholder]="t(postModels[i].placeHolderText)"
+            [placeholder]="postModels[i].showPoll ? 'Ask Question' : t(postModels[i].placeHolderText)"
             (paste)="onPaste($event)"
             (ngModelChange)="updatePost(postModels[i])"
             dropUpload
@@ -126,6 +126,14 @@
               placeholder="{{ 'feed_create_post.embed_image' | transloco }}"
             />
           </div>
+          <div class="flex-fill bg-tile" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="postModels[i].showPoll">
+            <input
+              *ngFor="let option of postModels[i].pollOptions; trackBy: trackByIndex; let index = index"
+              type="text"
+              [placeholder]="'Choice ' + index"
+              [(ngModel)]="postModels[i].pollOptions[index]"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -178,6 +186,13 @@
       (click)="imageInput.click()"
     >
       <i-feather name="image"></i-feather>
+    </button>
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.create_poll' | transloco }}"
+      (click)="togglePoll()"
+    >
+      <i-feather name="list"></i-feather>
     </button>
     <button
       class="btn feed-create-post__icon-bar-item"

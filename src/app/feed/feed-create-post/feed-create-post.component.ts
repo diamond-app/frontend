@@ -57,11 +57,13 @@ class PostModel {
   constructedEmbedURL = "";
   showEmbedURL = false;
   showImageLink = false;
+  showPoll = false;
   isMentionified = false;
   placeHolderText: string;
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
+  pollOptions: string[] = [];
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
   /**
@@ -101,6 +103,8 @@ interface PostExtraData {
   Node?: string;
   Language?: string;
   LivepeerAssetId?: string;
+  PollOptions?: string; // TODO: should be array
+  PollExpirationBlockHeight?: string; // TODO: should be number
 }
 
 // show warning at 515 characters
@@ -309,6 +313,18 @@ export class FeedCreatePostComponent implements OnInit {
 
     if (this.translocoService.getActiveLang()) {
       postExtraData.Language = this.translocoService.getActiveLang();
+    }
+
+    const pollOptions = post.pollOptions.map((e) => e.trim()).filter((e) => e !== "");
+
+    if (post.showPoll) {
+      if (pollOptions.length >= 2) {
+        postExtraData.PollOptions = JSON.stringify(pollOptions);
+        postExtraData.PollExpirationBlockHeight = "1929548918";
+      } else {
+        // TODO: throw an error
+        return;
+      }
     }
 
     const bodyObj = {
@@ -586,6 +602,24 @@ export class FeedCreatePostComponent implements OnInit {
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }
+  }
+
+  togglePoll() {
+    const newState = !this.currentPostModel.showPoll;
+    this.currentPostModel.showPoll = newState;
+
+    if (newState) {
+      this.currentPostModel.pollOptions = ["", ""];
+    } else {
+      this.currentPostModel.pollOptions = [];
+    }
+
+    this.changeRef.detectChanges();
+  }
+
+  trackByIndex(index) {
+    // required for Array of strings used for poll options not to restart *ngFor every time user types something in
+    return index;
   }
 
   private autoFocusTextArea() {

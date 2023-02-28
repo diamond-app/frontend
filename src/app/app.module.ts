@@ -20,6 +20,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { RatingModule } from "ngx-bootstrap/rating";
+import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { LottieModule } from "ngx-lottie";
 import { QuillModule } from "ngx-quill";
@@ -224,6 +225,7 @@ import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { PollComponent } from "./poll/poll.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -425,6 +427,7 @@ export function playerFactory() {
     WelcomeModalComponent,
     LoggedOutEmptyStateComponent,
     SwipeToChooseComponent,
+    PollComponent,
   ],
   imports: [
     BrowserModule,
@@ -446,6 +449,7 @@ export function playerFactory() {
     PopoverModule.forRoot(),
     AlertModule.forRoot(),
     RatingModule.forRoot(),
+    ProgressbarModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TooltipModule.forRoot(),
     TimepickerModule.forRoot(),
