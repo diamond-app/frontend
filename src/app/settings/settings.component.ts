@@ -174,7 +174,7 @@ export class SettingsComponent implements OnInit {
   async subscribeToPushNotifications() {
     // @ts-ignore
     window.safari.pushNotification.requestPermission(
-      "https://565f-72-83-87-83.ngrok.io/api-internal",
+      "https://8dba-72-83-87-83.ngrok.io/api-internal",
       "web.com.deso.z",
       {
         testing: "123",
