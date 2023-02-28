@@ -1,0 +1,49 @@
+<ng-container>
+  <span *ngIf="loading; else pollCountsLoaded" class="fas fa-spinner fa-spin my-10px"></span>
+
+  <ng-template #pollCountsLoaded>
+    <section class="w-100 mt-15px">
+      <div *ngIf="myVotes.length > 0; else userNotVoted">
+        <!-- USER VOTED -->
+        <div class="progressbar-container" *ngFor="let pollOption of pollOptions">
+          <progressbar
+            [value]="((pollCounts.Counts[pollOption] || 0) / pollCounts.Total) * 100 || 1"
+            class="progressbar__progress mt-5px"
+          ></progressbar>
+
+          <div class="progressbar__label d-flex align-items-center">
+            <span>
+              {{ pollOption }}
+            </span>
+
+            <i-feather
+              *ngIf="myVotes[0].AssociationValue === pollOption"
+              name="check-circle"
+              class="check-circle ml-5px"
+              tooltip="You voted for this option"
+              container="body"
+            ></i-feather>
+          </div>
+          <span class="progressbar__indicator">
+            {{ (pollCounts.Counts[pollOption] || 0) / pollCounts.Total | percent }}
+          </span>
+        </div>
+      </div>
+
+      <ng-template #userNotVoted>
+        <!-- USER NOT VOTED -->
+        <button
+          *ngFor="let pollOption of pollOptions"
+          (click)="vote(pollOption, $event)"
+          [disabled]="processedVote"
+          class="vote-btn btn btn-outline-primary w-100 mt-8px btn-sm"
+        >
+          <span *ngIf="processedVote === pollOption" class="fas fa-spinner fa-spin my-10px"></span>
+          {{ pollOption }}
+        </button>
+      </ng-template>
+
+      <footer>Total votes: {{ pollCounts.Total }}</footer>
+    </section>
+  </ng-template>
+</ng-container>
