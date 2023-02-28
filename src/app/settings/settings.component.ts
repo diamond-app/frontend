@@ -172,19 +172,19 @@ export class SettingsComponent implements OnInit {
   }
 
   async subscribeToPushNotifications() {
-    // @ts-ignore
-    window.safari.pushNotification.requestPermission(
-      "https://diamondapp.com/api-internal",
-      "web.com.deso.z",
-      {
-        testing: "123",
-        publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-      },
-      // @ts-ignore
-      (callbackInfo) => {
-        console.log(callbackInfo);
-      }
-    );
+    // // @ts-ignore
+    // window.safari.pushNotification.requestPermission(
+    //   "https://diamondapp.com/api-internal",
+    //   "web.com.deso.z",
+    //   {
+    //     testing: "123",
+    //     publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //   },
+    //   // @ts-ignore
+    //   (callbackInfo) => {
+    //     console.log(callbackInfo);
+    //   }
+    // );
     // Notification.requestPermission((testThings) => {
     //   console.log(testThings);
     // });

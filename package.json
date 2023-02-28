@@ -60,6 +60,7 @@
     "ngx-quill": "^13.4.0",
     "ngx-toastr": "^13.2.0",
     "ngx-ui-scroll": "^2.0.0-rc.8",
+    "onesignal-ngx": "^1.0.2",
     "os-browserify": "^0.3.0",
     "pulltorefreshjs": "^0.1.22",
     "quill-mention": "^3.1.0",
