@@ -37,13 +37,13 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
-    this.oneSignal.init({
-      appId: "010fcd05-7538-48ae-ab26-9d5b69db2a67",
-      safari_web_id: "web.com.deso.z",
-      notifyButton: {
-        enable: true,
-      },
-    });
+    // this.oneSignal.init({
+    //   appId: "010fcd05-7538-48ae-ab26-9d5b69db2a67",
+    //   safari_web_id: "web.run.deso.z",
+    //   notifyButton: {
+    //     enable: true,
+    //   },
+    // });
 
     // log interaction events emitted by identity
     window.addEventListener("message", (ev) => {
