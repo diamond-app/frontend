@@ -116,11 +116,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       },
       renderItem: (item: MentionRenderItem) => {
         const profile = this.profilesByPublicKey[item.id];
-        const profPicURL = this.backendApi.GetSingleProfilePictureURL(
-          this.globalVars.localNode,
-          profile.PublicKeyBase58Check ?? "",
-          `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`
-        );
+        const profPicURL = this.backendApi.GetSingleProfilePictureURL(profile.PublicKeyBase58Check);
         return `<div class="menu-item">
           <div class="d-flex align-items-center">
             <img src="${escape(profPicURL)}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
@@ -182,7 +178,6 @@ export class CreateLongPostComponent implements AfterViewInit {
   async getUsersFromMentionPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
@@ -201,7 +196,6 @@ export class CreateLongPostComponent implements AfterViewInit {
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
     return this.backendApi
       .GetSinglePost(
-        this.globalVars.localNode,
         blogPostHashHex /*PostHashHex*/,
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
         false /*FetchParents */,

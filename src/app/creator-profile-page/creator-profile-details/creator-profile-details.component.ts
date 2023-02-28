@@ -193,7 +193,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     }
 
     this.loading = true;
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
+    this.backendApi.GetSingleProfile("", this.userName).subscribe(
       (res) => {
         if (!res || res.IsBlacklisted) {
           this.loading = false;

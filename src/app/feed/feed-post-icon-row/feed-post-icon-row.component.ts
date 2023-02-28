@@ -510,7 +510,6 @@ export class FeedPostIconRowComponent {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       postHashHex /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       false,

@@ -143,15 +143,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
       if (profileEntryResponse) {
-        this.backendApi
-          .GetSingleProfilePicture(
-            this.globalVars.localNode,
-            profileEntryResponse?.PublicKeyBase58Check,
-            this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
-          )
-          .subscribe((res) => {
-            this._readImageFileToProfilePicInput(res);
-          });
+        this.backendApi.GetSingleProfilePicture(profileEntryResponse?.PublicKeyBase58Check).subscribe((res) => {
+          this._readImageFileToProfilePicInput(res);
+        });
       }
 
       // If they don't have CreatorBasisPoints set, use the default.
@@ -433,7 +427,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     if (username !== this.globalVars.loggedInUser?.ProfileEntryResponse?.Username) {
-      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username, true).subscribe(
+      this.backendApi.GetSingleProfile("", username, true).subscribe(
         (res) => {
           if (!isNil(res)) {
             this.usernameValidationError = `${username} is already in use`;
@@ -451,6 +445,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return Observable;
     };
   }
+
   _handleFileInput(files: FileList, fileType: string) {
     let fileToUpload = files.item(0);
     if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {

@@ -54,15 +54,7 @@ export class ReactionsDetailsComponent implements OnInit {
     this.loading = true;
 
     this.backendApi
-      .GetSinglePost(
-        this.globalVars.localNode,
-        this.postHashHex,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        false,
-        0,
-        0,
-        false
-      )
+      .GetSinglePost(this.postHashHex, this.globalVars.loggedInUser?.PublicKeyBase58Check, false, 0, 0, false)
       .pipe(
         tap((res) => {
           this.post = res.PostFound;

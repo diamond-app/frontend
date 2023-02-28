@@ -95,7 +95,6 @@ export class NftPostComponent {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       this.nftPostHashHex /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       fetchParents,

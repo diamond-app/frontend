@@ -142,11 +142,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       // If the user skipped the purchase, we simulate that purchase here so that there's something to show them
       if (!this.balanceEntryToHighlight) {
         this.backendApi
-          .GetSingleProfile(
-            this.globalVars.localNode,
-            "",
-            this.globalVars.loggedInUser.CreatorPurchasedInTutorialUsername
-          )
+          .GetSingleProfile("", this.globalVars.loggedInUser.CreatorPurchasedInTutorialUsername)
           .subscribe((res) => {
             let balance = this.appData.loggedInUser?.BalanceNanos;
             const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;

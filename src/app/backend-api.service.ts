@@ -7,12 +7,18 @@ import { Injectable } from "@angular/core";
 import {
   acceptNFTTransfer,
   blockPublicKey,
+  buildProfilePictureUrl,
   burnNFT,
   createNFT,
   createNFTBid,
   DeSoBodySchema,
   GetExchangeRateResponse,
   getExchangeRates,
+  getHotFeed,
+  getPostsStateless,
+  getProfiles,
+  getSinglePost,
+  getSingleProfile,
   getTransaction,
   GetTxnResponse,
   getUsersStateless,
@@ -1281,7 +1287,6 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  // TODO: finish this...
   SubmitPost(
     UpdaterPublicKeyBase58Check: string,
     PostHashHexToModify: string,
@@ -1305,7 +1310,6 @@ export class BackendApiService {
   }
 
   GetPostsStateless(
-    endpoint: string,
     PostHashHex: string,
     ReaderPublicKeyBase58Check: string,
     OrderBy: string,
@@ -1320,41 +1324,38 @@ export class BackendApiService {
     PostsByDESOMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetPostsStateless, {
-      PostHashHex,
-      ReaderPublicKeyBase58Check,
-      OrderBy,
-      StartTstampSecs,
-      PostContent,
-      NumToFetch,
-      FetchSubcomments,
-      GetPostsForFollowFeed,
-      GetPostsForGlobalWhitelist,
-      GetPostsByDESO,
-      MediaRequired,
-      PostsByDESOMinutesLookback,
-      AddGlobalFeedBool,
-    });
+    return from(
+      getPostsStateless({
+        PostHashHex,
+        ReaderPublicKeyBase58Check,
+        OrderBy,
+        StartTstampSecs,
+        PostContent,
+        NumToFetch,
+        FetchSubcomments,
+        GetPostsForFollowFeed,
+        GetPostsForGlobalWhitelist,
+        GetPostsByDESO,
+        MediaRequired,
+        PostsByDESOMinutesLookback,
+        AddGlobalFeedBool,
+      })
+    );
   }
 
-  GetHotFeed(
-    endpoint: string,
-    ReaderPublicKeyBase58Check: string,
-    SeenPosts,
-    ResponseLimit,
-    Tag?: string
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
-      ReaderPublicKeyBase58Check,
-      SeenPosts,
-      ResponseLimit,
-      SortByNew: false,
-      Tag,
-    });
+  GetHotFeed(ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit, Tag?: string): Observable<any> {
+    return from(
+      getHotFeed({
+        ReaderPublicKeyBase58Check,
+        SeenPosts,
+        ResponseLimit,
+        SortByNew: false,
+        Tag,
+      })
+    );
   }
 
   GetSinglePost(
-    endpoint: string,
     PostHashHex: string,
     ReaderPublicKeyBase58Check: string,
     FetchParents: boolean = true,
@@ -1365,21 +1366,22 @@ export class BackendApiService {
     ThreadLeafLimit: number | undefined = undefined,
     LoadAuthorThread: boolean | undefined = undefined
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetSinglePost, {
-      PostHashHex,
-      ReaderPublicKeyBase58Check,
-      FetchParents,
-      CommentOffset,
-      CommentLimit,
-      AddGlobalFeedBool,
-      ThreadLevelLimit,
-      ThreadLeafLimit,
-      LoadAuthorThread,
-    });
+    return from(
+      getSinglePost({
+        PostHashHex,
+        ReaderPublicKeyBase58Check,
+        FetchParents,
+        CommentOffset,
+        CommentLimit,
+        AddGlobalFeedBool,
+        ThreadLevelLimit,
+        ThreadLeafLimit,
+        LoadAuthorThread,
+      })
+    );
   }
 
   GetProfiles(
-    endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     UsernamePrefix: string,
@@ -1391,54 +1393,45 @@ export class BackendApiService {
     FetchUsersThatHODL: boolean,
     AddGlobalFeedBool: boolean = false
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetProfiles, {
-      PublicKeyBase58Check,
-      Username,
-      UsernamePrefix,
-      Description,
-      OrderBy,
-      NumToFetch,
-      ReaderPublicKeyBase58Check,
-      ModerationType,
-      FetchUsersThatHODL,
-      AddGlobalFeedBool,
-    });
+    return from(
+      getProfiles({
+        PublicKeyBase58Check,
+        Username,
+        UsernamePrefix,
+        Description,
+        OrderBy,
+        NumToFetch,
+        ReaderPublicKeyBase58Check,
+        ModerationType,
+        FetchUsersThatHODL,
+        AddGlobalFeedBool,
+      })
+    );
   }
 
-  GetSingleProfile(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    Username: string,
-    NoErrorOnMissing: boolean = false
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
-      PublicKeyBase58Check,
-      Username,
-      NoErrorOnMissing,
-    });
+  GetSingleProfile(PublicKeyBase58Check: string, Username: string, NoErrorOnMissing: boolean = false): Observable<any> {
+    return from(
+      getSingleProfile({
+        PublicKeyBase58Check,
+        Username,
+        NoErrorOnMissing,
+      })
+    );
   }
 
   // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
-  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
-    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
-      // @ts-ignore
+  GetSingleProfilePicture(PublicKeyBase58Check: string): Observable<Blob> {
+    return this.httpClient.get(this.GetSingleProfilePictureURL(PublicKeyBase58Check), {
       responseType: "blob",
     });
   }
 
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
-    return this._makeRequestURL(
-      endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture +
-        "/" +
-        PublicKeyBase58Check +
-        "?" +
-        (fallback ?? this.GetDefaultProfilePictureURL(endpoint))
-    );
+  GetSingleProfilePictureURL(PublicKeyBase58Check?: string): string {
+    return buildProfilePictureUrl(PublicKeyBase58Check, { fallbackImageUrl: this.GetDefaultProfilePictureURL() });
   }
 
-  GetDefaultProfilePictureURL(endpoint: string): string {
-    return this._makeRequestURL(endpoint, "/assets/img/default-profile-pic.png");
+  GetDefaultProfilePictureURL(): string {
+    return `${window.location.origin}/assets/img/default-profile-pic.png`;
   }
 
   GetPostsForPublicKey(

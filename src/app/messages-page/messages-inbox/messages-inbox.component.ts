@@ -66,7 +66,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.setTab(this.activeTab);
 
       if (params.username) {
-        this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe(
+        this.backendApi.GetSingleProfile("", params.username).subscribe(
           (response) => {
             if (!response || !response.Profile) {
               console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)

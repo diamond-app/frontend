@@ -115,13 +115,11 @@ export class TransferNftAcceptComponent {
 
   selectSerialNumber(serialNumber: NFTEntryResponse) {
     this.selectedSerialNumber = serialNumber;
-    this.backendApi
-      .GetSingleProfile(this.globalVars.localNode, this.selectedSerialNumber.LastOwnerPublicKeyBase58Check, "")
-      .subscribe((res) => {
-        if (res && !res.IsBlacklisted) {
-          this.transferringUser = res.Profile?.Username;
-        }
-      });
+    this.backendApi.GetSingleProfile(this.selectedSerialNumber.LastOwnerPublicKeyBase58Check, "").subscribe((res) => {
+      if (res && !res.IsBlacklisted) {
+        this.transferringUser = res.Profile?.Username;
+      }
+    });
     this.saveSelection();
   }
 

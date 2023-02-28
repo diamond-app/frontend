@@ -201,7 +201,7 @@ export class TradeCreatorComponent implements OnInit {
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
-    return this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
+    return this.backendApi.GetSingleProfile("", creatorUsername).subscribe(
       (response) => {
         if (!response || !response.Profile) {
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });

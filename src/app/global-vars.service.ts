@@ -1276,7 +1276,6 @@ export class GlobalVarsService {
       const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
       this.backendApi
         .GetProfiles(
-          this.localNode,
           null /*PublicKeyBase58Check*/,
           null /*Username*/,
           null /*UsernamePrefix*/,

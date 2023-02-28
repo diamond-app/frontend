@@ -159,7 +159,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   getPost(postHashHex: string, commentOffset = 0, commentLimit = 20) {
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       postHashHex,
       this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
       false /*FetchParents */,
@@ -440,7 +439,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     try {
       if (username) {
-        const { Profile } = await this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username).toPromise();
+        const { Profile } = await this.backendApi.GetSingleProfile("", username).toPromise();
         if (!Profile?.ExtraData?.BlogSlugMap) {
           throw new Error(`No slug mapping for username ${username}`);
         }

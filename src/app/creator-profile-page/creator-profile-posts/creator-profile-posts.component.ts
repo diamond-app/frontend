@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute } from "@angular/router";
+import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import * as _ from "lodash";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "creator-profile-posts",
@@ -42,7 +42,6 @@ export class CreatorProfilePostsComponent {
   getPinnedPost(postHashHex: string): Promise<any> {
     return this.backendApi
       .GetSinglePost(
-        this.globalVars.localNode,
         postHashHex,
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
         false /*FetchParents */,

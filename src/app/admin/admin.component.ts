@@ -277,7 +277,6 @@ export class AdminComponent implements OnInit {
     }
     this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         "" /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "" /*OrderBy*/,
@@ -603,7 +602,6 @@ export class AdminComponent implements OnInit {
     }
     this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "newest" /*OrderBy*/,

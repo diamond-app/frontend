@@ -118,7 +118,6 @@ export class FeedCreatePostComponent implements OnInit {
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
   videoStreamInterval: Timer | null = null;
-  fallbackProfilePicURL: string | undefined;
   maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
@@ -160,7 +159,6 @@ export class FeedCreatePostComponent implements OnInit {
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
@@ -188,13 +186,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
     // we do a basic _.escape anyways just to be extra safe.
-    const profPicURL = _.escape(
-      this.backendApi.GetSingleProfilePictureURL(
-        this.globalVars.localNode,
-        user.PublicKeyBase58Check ?? "",
-        this.fallbackProfilePicURL
-      )
-    );
+    const profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(user.PublicKeyBase58Check));
     div.innerHTML = `
       <div class="d-flex align-items-center">
         <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
@@ -214,7 +206,6 @@ export class FeedCreatePostComponent implements OnInit {
   ngOnInit() {
     this.isReply = !this.isQuote && !!this.parentPost;
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
-    this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
       this.currentPostModel.text = "It's Diamond time!";
     }

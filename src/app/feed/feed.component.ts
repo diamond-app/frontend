@@ -411,7 +411,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     return this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "", // Blank orderBy so we don't sort twice
@@ -497,7 +496,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
     return this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "newest" /*OrderBy*/,
@@ -556,7 +554,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
+      .GetHotFeed(readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
       .pipe(
         tap(
           (res) => {
@@ -606,13 +604,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(
-        this.globalVars.localNode,
-        readerPubKey,
-        tagFeedPostHashes,
-        this.FeedComponent.NUM_TO_FETCH,
-        "#" + this.tag.toLowerCase()
-      )
+      .GetHotFeed(readerPubKey, tagFeedPostHashes, this.FeedComponent.NUM_TO_FETCH, "#" + this.tag.toLowerCase())
       .pipe(
         tap(
           (res) => {
