@@ -180,15 +180,24 @@ export class SettingsComponent implements OnInit {
         publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
       },
       // @ts-ignore
-      (callbackInfo) => {
-        console.log(callbackInfo);
+      (callbackInfo: { deviceToken: string; permission: string }) => {
+        if (!this.appUser) return;
+        if (callbackInfo.permission === "granted") {
+          this.appUser = { ...this.appUser, DeviceId: callbackInfo.deviceToken };
+          this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+            () => {},
+            () => {
+              if (!this.appUser) return;
+              this.appUser = {
+                ...this.appUser,
+                DeviceId: "",
+              };
+            }
+          );
+          console.log(callbackInfo);
+        }
       }
     );
-    // Notification.requestPermission((testThings) => {
-    //   console.log(testThings);
-    // });
-    // console.log(Notification.permission);
-    // console.log(Notification);
   }
 
   closeModal() {

@@ -37,6 +37,7 @@ export interface AppUser {
   LastNotificationScannedIndex: number;
   DigestSendAtHourLocalTime: number;
   UserTimezoneUtcOffset: number;
+  DeviceId: string;
 }
 
 export const NEW_APP_USER_DEFAULTS = {

@@ -11,8 +11,6 @@ import { BackendApiService, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { IdentityService } from "./identity.service";
 import { ThemeService } from "./theme/theme.service";
-import { OneSignal } from 'onesignal-ngx';
-
 
 @Component({
   selector: "app-root",
@@ -28,22 +26,13 @@ export class AppComponent implements OnInit {
     private route: ActivatedRoute,
     public identityService: IdentityService,
     private router: Router,
-    private tracking: TrackingService,
-    private oneSignal: OneSignal
+    private tracking: TrackingService
   ) {
     this.globalVars.Init(
       null, // loggedInUser
       [], // userList
       this.route // route
     );
-
-    // this.oneSignal.init({
-    //   appId: "010fcd05-7538-48ae-ab26-9d5b69db2a67",
-    //   safari_web_id: "web.run.deso.z",
-    //   notifyButton: {
-    //     enable: true,
-    //   },
-    // });
 
     // log interaction events emitted by identity
     window.addEventListener("message", (ev) => {
