@@ -465,7 +465,7 @@ export function playerFactory() {
     LottieModule.forRoot({ player: playerFactory }),
     ScrollingModule,
     TranslocoRootModule,
-    ServiceWorkerModule.register("ngsw-worker.js", { enabled: true }),
+    // ServiceWorkerModule.register("service-worker.js", { enabled: true }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

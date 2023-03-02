@@ -331,6 +331,13 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
+    console.log("Loaded");
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then(() => console.log("Service worker registered"))
+        .catch((err) => console.error("Error registering service worker", err));
+    }
     this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
 
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
