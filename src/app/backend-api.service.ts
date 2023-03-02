@@ -6,6 +6,11 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   acceptNFTTransfer,
+  adminGetBuyDesoFeeBasisPoints,
+  adminGetUSDCentsToDESOReserveExchangeRate,
+  adminSetBuyDesoFeeBasisPoints,
+  adminSetUSDCentsToDESOReserveExchangeRate,
+  adminSwapIdentity,
   blockPublicKey,
   buildProfilePictureUrl,
   burnNFT,
@@ -2032,10 +2037,6 @@ export class BackendApiService {
   // is set FetchStartIndex to the Index value of the last notification in
   // the list and re-fetch. The endpoint will return NumToFetch notifications
   // that include all notifications that are currently in the mempool.
-  //
-  // QUESTION: this was previously using node.deso.org to get notifications. Is it fine to just query diamond's node?
-  // TODO: figure out a way to optionally call a different node than the one initially configured. This could
-  // probably just be an optional parameter available on all data calls.
   GetNotifications(
     PublicKeyBase58Check: string,
     FetchStartIndex: number,
@@ -2043,12 +2044,17 @@ export class BackendApiService {
     FilteredOutNotificationCategories: {}
   ): Observable<any> {
     return from(
-      getNotifications({
-        PublicKeyBase58Check,
-        FetchStartIndex,
-        NumToFetch,
-        FilteredOutNotificationCategories,
-      })
+      getNotifications(
+        {
+          PublicKeyBase58Check,
+          FetchStartIndex,
+          NumToFetch,
+          FilteredOutNotificationCategories,
+        },
+        {
+          nodeURI: environment.verificationEndpointHostname,
+        }
+      )
     );
   }
 
@@ -2272,47 +2278,45 @@ export class BackendApiService {
   }
 
   SwapIdentity(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     FromUsernameOrPublicKeyBase58Check: string,
     ToUsernameOrPublicKeyBase58Check: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathSwapIdentity, UpdaterPublicKeyBase58Check, {
-      UpdaterPublicKeyBase58Check,
-      FromUsernameOrPublicKeyBase58Check,
-      ToUsernameOrPublicKeyBase58Check,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      adminSwapIdentity({
+        UpdaterPublicKeyBase58Check,
+        FromUsernameOrPublicKeyBase58Check,
+        ToUsernameOrPublicKeyBase58Check,
+        MinFeeRateNanosPerKB,
+      })
+    );
   }
 
-  SetUSDCentsToDeSoReserveExchangeRate(
-    endpoint: string,
-    AdminPublicKey: string,
-    USDCentsPerDeSo: number
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate, AdminPublicKey, {
-      AdminPublicKey,
-      USDCentsPerDeSo,
-    });
+  SetUSDCentsToDeSoReserveExchangeRate(USDCentsPerDeSo: number): Observable<any> {
+    return from(
+      adminSetUSDCentsToDESOReserveExchangeRate({
+        USDCentsPerDeSo,
+      })
+    );
   }
 
-  GetUSDCentsToDeSoReserveExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate);
+  GetUSDCentsToDeSoReserveExchangeRate(): Observable<any> {
+    return from(adminGetUSDCentsToDESOReserveExchangeRate());
   }
 
-  SetBuyDeSoFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDeSoFeeBasisPoints: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints, AdminPublicKey, {
-      AdminPublicKey,
-      BuyDeSoFeeBasisPoints,
-    });
+  SetBuyDeSoFeeBasisPoints(BuyDeSoFeeBasisPoints: number): Observable<any> {
+    return from(
+      adminSetBuyDesoFeeBasisPoints({
+        BuyDeSoFeeBasisPoints,
+        // FIXME: this should not be required. it gets set by the library.
+        AdminPublicKey: undefined,
+      })
+    );
   }
 
-  GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetBuyDeSoFeeBasisPoints);
+  GetBuyDeSoFeeBasisPoints(): Observable<any> {
+    return from(adminGetBuyDesoFeeBasisPoints());
   }
 
   UpdateGlobalParams(

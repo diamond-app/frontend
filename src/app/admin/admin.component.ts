@@ -754,14 +754,14 @@ export class AdminComponent implements OnInit {
   }
 
   _loadBuyDeSoFeeRate(): void {
-    this.backendApi.GetBuyDeSoFeeBasisPoints(this.globalVars.localNode).subscribe(
+    this.backendApi.GetBuyDeSoFeeBasisPoints().subscribe(
       (res) => (this.buyDeSoFeeRate = res.BuyDeSoFeeBasisPoints / 100),
       (err) => console.log(err)
     );
   }
 
   _loadUSDToDeSoReserveExchangeRate(): void {
-    this.backendApi.GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode).subscribe(
+    this.backendApi.GetUSDCentsToDeSoReserveExchangeRate().subscribe(
       (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSoCoinbase / 100),
       (err) => console.log(err)
     );
@@ -1095,11 +1095,7 @@ export class AdminComponent implements OnInit {
       if (res.isConfirmed) {
         this.submittingUSDToDeSoReserveExchangeRateUpdate = true;
         this.backendApi
-          .SetUSDCentsToDeSoReserveExchangeRate(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.usdToDeSoReserveExchangeRate * 100
-          )
+          .SetUSDCentsToDeSoReserveExchangeRate(this.usdToDeSoReserveExchangeRate * 100)
           .subscribe(
             (res: any) => {
               console.log(res);
@@ -1132,11 +1128,7 @@ export class AdminComponent implements OnInit {
       if (res.isConfirmed) {
         this.submittingBuyDeSoFeeRate = true;
         this.backendApi
-          .SetBuyDeSoFeeBasisPoints(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.buyDeSoFeeRate * 100
-          )
+          .SetBuyDeSoFeeBasisPoints(this.buyDeSoFeeRate * 100)
           .subscribe(
             (res: any) => {
               console.log(res);
@@ -1412,7 +1404,6 @@ export class AdminComponent implements OnInit {
     this.submittingSwapIdentity = true;
     this.backendApi
       .SwapIdentity(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.swapIdentityFromUsernameOrPublicKey,
         this.swapIdentityToUsernameOrPublicKey,
