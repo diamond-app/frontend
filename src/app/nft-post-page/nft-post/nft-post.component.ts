@@ -157,14 +157,10 @@ export class NftPostComponent {
   refreshBidData(): Subscription {
     this.refreshingBids = true;
     return this.backendApi
-      .GetNFTBidsForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.nftPost.PostHashHex
-      )
+      .GetNFTBidsForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.nftPost.PostHashHex)
       .subscribe(
         (res) => {
-          this.nftBidData = res;
+          this.nftBidData = res as NFTBidData;
           if (!this.nftBidData.BidEntryResponses) {
             this.nftBidData.BidEntryResponses = [];
           }

@@ -1,10 +1,7 @@
-import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 import { BackendApiService } from "../../../app/backend-api.service";
-import { Observable, of } from "rxjs";
 import { GlobalVarsService } from "../../../app/global-vars.service";
-import { catchError, map } from "rxjs/operators";
-import { environment } from "../../../environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +20,7 @@ export class CloudflareStreamService {
     }
 
     return this.backendApi
-      .GetVideoStatus(environment.uploadVideoHostname, assetId)
+      .GetVideoStatus(assetId)
       .toPromise()
       .then(({ status }) => {
         const phase = status?.phase;

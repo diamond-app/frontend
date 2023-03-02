@@ -30,12 +30,7 @@ export class AdminWyreComponent {
       username = this.usernameToFetchWyreOrders;
     }
     this.backendApi
-      .GetWyreWalletOrderForPublicKey(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        pubKey,
-        username
-      )
+      .GetWyreWalletOrderForPublicKey(pubKey, username)
       .subscribe(
         (res) => {
           this.wyreOrders = res.WyreWalletOrderMetadataResponses;

@@ -703,12 +703,7 @@ export class FeedPostComponent implements OnInit {
     const postHashHex = this.post.PostHashHex;
     const inGlobalFeed = this.post.InGlobalFeed;
     this.backendApi
-      .AdminUpdateGlobalFeed(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        postHashHex,
-        inGlobalFeed /*RemoveFromGlobalFeed*/
-      )
+      .AdminUpdateGlobalFeed(postHashHex, inGlobalFeed /*RemoveFromGlobalFeed*/)
       .subscribe(
         (res) => {
           this.post.InGlobalFeed = !this.post.InGlobalFeed;
@@ -738,12 +733,7 @@ export class FeedPostComponent implements OnInit {
     const postHashHex = this._post.PostHashHex;
     const isPostPinned = this._post.IsPinned;
     this.backendApi
-      .AdminPinPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        postHashHex,
-        isPostPinned
-      )
+      .AdminPinPost(postHashHex, isPostPinned)
       .subscribe(
         (res) => {
           this._post.IsPinned = isPostPinned;

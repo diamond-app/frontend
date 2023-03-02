@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
-import { environment } from "../../environments/environment";
 
 @Component({
   selector: "link-preview",
@@ -21,23 +20,18 @@ export class LinkPreviewComponent implements OnInit {
   }
 
   getLinkPreview() {
-    this.backendApi
-      .GetLinkPreview("https://" + environment.uploadVideoHostname, this.link)
-      .subscribe((linkPreviewMetaTags) => {
-        this.image = linkPreviewMetaTags.image;
-        if (this.image !== "") {
-          this.proxyImageUrl = this.backendApi.ConstructProxyImageUrl(
-            "https://" + environment.uploadVideoHostname,
-            this.image
-          );
-        }
-        this.title = linkPreviewMetaTags.title;
-        this.description = linkPreviewMetaTags.description;
-        const url = new URL(this.link);
-        this.displayLink = url.hostname.replace("www.", "");
-        this.showCard = this.title != "" && this.description != "";
-        this.ref.detectChanges();
-      });
+    this.backendApi.GetLinkPreview(this.link).subscribe((linkPreviewMetaTags) => {
+      this.image = linkPreviewMetaTags.image;
+      if (this.image !== "") {
+        this.proxyImageUrl = this.backendApi.ConstructProxyImageUrl(this.image);
+      }
+      this.title = linkPreviewMetaTags.title;
+      this.description = linkPreviewMetaTags.description;
+      const url = new URL(this.link);
+      this.displayLink = url.hostname.replace("www.", "");
+      this.showCard = this.title != "" && this.description != "";
+      this.ref.detectChanges();
+    });
   }
 
   handleClick(event) {

@@ -283,28 +283,25 @@ export class GlobalVarsService {
 
   GetUnreadNotifications() {
     if (this.loggedInUser) {
-      this.backendApi
-        .GetUnreadNotificationsCount(this.loggedInUser.PublicKeyBase58Check)
-        .toPromise()
-        .then(
-          (res) => {
-            this.unreadNotifications = res.NotificationsCount;
-            this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
-            if (res.UpdateMetadata) {
-              this.backendApi
-                .SetNotificationsMetadata(
-                  this.loggedInUser.PublicKeyBase58Check,
-                  -1,
-                  res.LastUnreadNotificationIndex,
-                  res.NotificationsCount
-                )
-                .toPromise();
-            }
-          },
-          (err) => {
-            console.error(this.backendApi.stringifyError(err));
+      this.backendApi.GetUnreadNotificationsCount(this.loggedInUser.PublicKeyBase58Check).subscribe(
+        (res) => {
+          this.unreadNotifications = res.NotificationsCount;
+          this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
+          if (res.UpdateMetadata) {
+            this.backendApi
+              .SetNotificationsMetadata(
+                this.loggedInUser.PublicKeyBase58Check,
+                -1,
+                res.LastUnreadNotificationIndex,
+                res.NotificationsCount
+              )
+              .subscribe();
           }
-        );
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
+        }
+      );
     }
   }
 
@@ -426,11 +423,6 @@ export class GlobalVarsService {
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
     this.loggedInUser = user;
-
-    // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
-      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
-    }
 
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
@@ -1232,12 +1224,10 @@ export class GlobalVarsService {
         if (!inAppBrowser) {
           this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
         }
-        this.getReferralUSDCents();
       }
     });
 
     this.initializeLocalStorageGlobalVars();
-    this.getReferralUSDCents();
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
@@ -1366,78 +1356,8 @@ export class GlobalVarsService {
 
   resentVerifyEmail = false;
   resendVerifyEmail() {
-    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.backendApi.ResendVerifyEmail(this.loggedInUser.PublicKeyBase58Check).subscribe();
     this.resentVerifyEmail = true;
-  }
-
-  startTutorialAlert(): void {
-    Swal.fire({
-      target: this.getTargetComponentSelector(),
-      title: "Congrats!",
-      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
-      showConfirmButton: true,
-      // Only show skip option to admins
-      showCancelButton: !!this.loggedInUser?.IsAdmin,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-      confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
-      // User must skip or start tutorial
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then((res) => {
-      this.backendApi
-        .StartOrSkipTutorial(
-          this.localNode,
-          this.loggedInUser?.PublicKeyBase58Check,
-          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
-        )
-        .subscribe((response) => {
-          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
-          if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.BUY_CREATOR]);
-          }
-        });
-    });
-  }
-
-  jumioFailedAlert(): void {
-    Swal.fire({
-      target: this.getTargetComponentSelector(),
-      title: "Identity Validation Failed",
-      html: "We're sorry, your validation failed. Would you like to validate with a phone number instead?",
-      showConfirmButton: true,
-      // Only show skip option to admins
-      showCancelButton: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-      confirmButtonText: "Validate Via Phone Number",
-      cancelButtonText: "Skip",
-      // User must skip or start tutorial
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then((res) => {
-      if (res.isConfirmed) {
-        this.launchSMSValidation();
-      } else {
-        this.router.navigate(["/" + this.RouteNames.BROWSE]);
-      }
-    });
-  }
-
-  launchSMSValidation(): void {
-    this.identityService.launchPhoneNumberVerification(this.loggedInUser?.PublicKeyBase58Check).subscribe((res) => {
-      if (res.phoneNumberSuccess) {
-        this.updateEverything();
-      }
-    });
   }
 
   skipTutorial(tutorialComponent): void {
@@ -1473,55 +1393,6 @@ export class GlobalVarsService {
     });
   }
 
-  jumioInterval: Timer = null;
-  // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
-  pollLoggedInUserForJumio(publicKey: string): void {
-    if (this.jumioInterval) {
-      clearInterval(this.jumioInterval);
-    }
-    let attempts = 0;
-    let numTries = 120;
-    let timeoutMillis = 5000;
-    this.jumioInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        clearInterval(this.jumioInterval);
-        return;
-      }
-      this.backendApi
-        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
-        .subscribe(
-          (res: any) => {
-            if (res.JumioVerified) {
-              let user: User;
-              this.userList.forEach((userInList, idx) => {
-                if (userInList.PublicKeyBase58Check === publicKey) {
-                  this.userList[idx].JumioVerified = res.JumioVerified;
-                  this.userList[idx].JumioReturned = res.JumioReturned;
-                  this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
-                  this.userList[idx].BalanceNanos = res.BalanceNanos;
-                  this.userList[idx].MustCompleteTutorial = true;
-                  user = this.userList[idx];
-                }
-              });
-              if (user) {
-                this.setLoggedInUser(user);
-              }
-              clearInterval(this.jumioInterval);
-              return;
-            }
-            // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
-            if (res.JumioReturned) {
-              this.jumioFailedAlert();
-              clearInterval(this.jumioInterval);
-            }
-          },
-          (error) => {
-            clearInterval(this.jumioInterval);
-          }
-        )
-        .add(() => attempts++);
-    }, timeoutMillis);
-  }
   // Add possessive apostrophe
   addOwnershipApostrophe(input: string): string {
     if (!input) {
@@ -1543,28 +1414,6 @@ export class GlobalVarsService {
       ? this.formatUSD(this.referralUSDCents / 100, 0)
       : this.nanosToUSD(this.jumioDeSoNanos, 0);
     return freeDesoMessage !== "$0" ? freeDesoMessage : "starter $DESO";
-  }
-
-  getReferralUSDCents(): void {
-    const referralHash = localStorage.getItem("referralCode");
-    if (referralHash) {
-      this.backendApi
-        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
-        .subscribe((res) => {
-          const referralInfo = res.ReferralInfoResponse.Info;
-          const countrySignUpBonus = res.CountrySignUpBonus;
-          if (!countrySignUpBonus.AllowCustomReferralAmount) {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
-          } else if (
-            res.ReferralInfoResponse.IsActive &&
-            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
-          ) {
-            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
-          } else {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
-          }
-        });
-    }
   }
 
   windowIsPWA(): Boolean {

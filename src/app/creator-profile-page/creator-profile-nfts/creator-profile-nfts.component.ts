@@ -151,6 +151,8 @@ export class CreatorProfileNftsComponent implements OnInit {
             res.PostHashHexToPostEntryResponse[key] = value;
           });
           this.myBids = res.NFTBidEntries.map((bidEntry) => {
+            // FIXME
+            // @ts-ignore
             bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
             return bidEntry;
           });

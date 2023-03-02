@@ -123,7 +123,7 @@ export class AppComponent implements OnInit {
     return zip(
       this.backendApi.GetUsersStateless([loggedInUserPublicKey], false),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
-        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
+        ? this.backendApi.GetUserMetadata(loggedInUserPublicKey).pipe(
             catchError((err) => {
               console.error(err);
               return of(null);

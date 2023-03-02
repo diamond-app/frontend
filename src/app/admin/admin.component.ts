@@ -225,21 +225,19 @@ export class AdminComponent implements OnInit {
     if (!this.globalVars.loggedInUser) {
       return;
     }
-    this.backendApi
-      .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, "", "get_info")
-      .subscribe(
-        (res: any) => {
-          if (res == null || res.DeSoStatus == null) {
-            return;
-          }
-
-          this.globalVars.nodeInfo = res;
-        },
-        (error) => {
-          console.error(error);
-          this.globalVars.nodeInfo = null;
+    this.backendApi.NodeControl("", "get_info").subscribe(
+      (res: any) => {
+        if (res == null || res.DeSoStatus == null) {
+          return;
         }
-      );
+
+        this.globalVars.nodeInfo = res;
+      },
+      (error) => {
+        console.error(error);
+        this.globalVars.nodeInfo = null;
+      }
+    );
   }
 
   _tabClicked(tabName: any) {
@@ -317,21 +315,19 @@ export class AdminComponent implements OnInit {
       this.globalVars.showSuperAdminTools() &&
       (this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0)
     ) {
-      this.backendApi
-        .AdminGetHotFeedAlgorithm(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-        .subscribe(
-          (res) => {
-            this.hotFeedInteractionCap = res.InteractionCap / 1e9;
-            this.hotFeedTagInteractionCap = res.InteractionCapTag / 1e9;
-            this.hotFeedTimeDecayBlocks = res.TimeDecayBlocks;
-            this.hotFeedTagTimeDecayBlocks = res.TimeDecayBlocksTag;
-            this.hotFeedTxnTypeMultiplierMap = res.TxnTypeMultiplierMap;
-          },
-          (err) => {
-            console.error(err);
-            this.globalVars._alertError("Error getting hot feed constants: " + this.backendApi.stringifyError(err));
-          }
-        );
+      this.backendApi.AdminGetHotFeedAlgorithm().subscribe(
+        (res) => {
+          this.hotFeedInteractionCap = res.InteractionCap / 1e9;
+          this.hotFeedTagInteractionCap = res.InteractionCapTag / 1e9;
+          this.hotFeedTimeDecayBlocks = res.TimeDecayBlocks;
+          this.hotFeedTagTimeDecayBlocks = res.TimeDecayBlocksTag;
+          this.hotFeedTxnTypeMultiplierMap = res.TxnTypeMultiplierMap;
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError("Error getting hot feed constants: " + this.backendApi.stringifyError(err));
+        }
+      );
     }
 
     // Fetch the hot feed.
@@ -339,12 +335,7 @@ export class AdminComponent implements OnInit {
       this.loadingMoreHotFeed = true;
     }
     this.backendApi
-      .AdminGetUnfilteredHotFeed(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        50,
-        this.hotFeedPostHashes
-      )
+      .AdminGetUnfilteredHotFeed(50, this.hotFeedPostHashes)
       .subscribe(
         (res) => {
           this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
@@ -366,15 +357,7 @@ export class AdminComponent implements OnInit {
   updateHotFeedInteractionCap() {
     this.updatingHotFeedInteractionCap = true;
     this.backendApi
-      .AdminUpdateHotFeedAlgorithm(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.hotFeedInteractionCap * 1e9,
-        0,
-        0,
-        0,
-        {}
-      )
+      .AdminUpdateHotFeedAlgorithm(this.hotFeedInteractionCap * 1e9, 0, 0, 0, {})
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
@@ -394,15 +377,7 @@ export class AdminComponent implements OnInit {
   updateHotFeedTagInteractionCap() {
     this.updatingHotFeedTagInteractionCap = true;
     this.backendApi
-      .AdminUpdateHotFeedAlgorithm(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        0,
-        this.hotFeedTagInteractionCap * 1e9,
-        0,
-        0,
-        {}
-      )
+      .AdminUpdateHotFeedAlgorithm(0, this.hotFeedTagInteractionCap * 1e9, 0, 0, {})
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
@@ -422,15 +397,7 @@ export class AdminComponent implements OnInit {
   updateHotFeedTimeDecayBlocks() {
     this.updatingHotFeedTimeDecayBlocks = true;
     this.backendApi
-      .AdminUpdateHotFeedAlgorithm(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        0,
-        0,
-        this.hotFeedTimeDecayBlocks,
-        0,
-        {}
-      )
+      .AdminUpdateHotFeedAlgorithm(0, 0, this.hotFeedTimeDecayBlocks, 0, {})
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
@@ -450,15 +417,7 @@ export class AdminComponent implements OnInit {
   updateHotFeedTagTimeDecayBlocks() {
     this.updatingHotFeedTagTimeDecayBlocks = true;
     this.backendApi
-      .AdminUpdateHotFeedAlgorithm(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        0,
-        0,
-        0,
-        this.hotFeedTagTimeDecayBlocks,
-        {}
-      )
+      .AdminUpdateHotFeedAlgorithm(0, 0, 0, this.hotFeedTagTimeDecayBlocks, {})
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
@@ -484,15 +443,7 @@ export class AdminComponent implements OnInit {
   updateHotFeedTxnTypeMultiplierMap() {
     this.updatingHotFeedTxnTypeMultiplierMap = true;
     this.backendApi
-      .AdminUpdateHotFeedAlgorithm(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        0,
-        0,
-        0,
-        0,
-        this.hotFeedTxnTypeMultiplierMap
-      )
+      .AdminUpdateHotFeedAlgorithm(0, 0, 0, 0, this.hotFeedTxnTypeMultiplierMap)
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
@@ -513,8 +464,6 @@ export class AdminComponent implements OnInit {
     this.updatingHotFeedUserPostsMultiplier = true;
     this.backendApi
       .AdminUpdateHotFeedUserMultiplier(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedUserForPostsMultiplier,
         -1 /*InteractionMultiplier -- negative values are ignored*/,
         this.hotFeedUserPostsMultiplier
@@ -537,8 +486,6 @@ export class AdminComponent implements OnInit {
     this.updatingHotFeedUserInteractionMultiplier = true;
     this.backendApi
       .AdminUpdateHotFeedUserMultiplier(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.hotFeedUserForInteractionMultiplier,
         this.hotFeedUserInteractionMultiplier,
         -1 /*PostsMultiplier -- negative values are ignored*/
@@ -560,11 +507,7 @@ export class AdminComponent implements OnInit {
   searchForHotFeedUserMultipliers() {
     this.searchingHotFeedUserMultipliers = true;
     this.backendApi
-      .AdminGetHotFeedUserMultiplier(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.hotFeedUserForSearch
-      )
+      .AdminGetHotFeedUserMultiplier(this.hotFeedUserForSearch)
       .subscribe(
         (res) => {
           this.hotFeedUserSearchResults = JSON.stringify(
@@ -642,7 +585,7 @@ export class AdminComponent implements OnInit {
     console.log("Loading mempool stats...");
     this.loadingMempoolStats = true;
     this.backendApi
-      .AdminGetMempoolStats(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .AdminGetMempoolStats()
       .subscribe(
         (res) => {
           this.mempoolSummaryStats = res.TransactionSummaryStats;
@@ -666,7 +609,7 @@ export class AdminComponent implements OnInit {
     this.loadingVerifiedUsers = true;
     console.log("Loading verified users...");
     this.backendApi
-      .AdminGetVerifiedUsers(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .AdminGetVerifiedUsers()
       .subscribe(
         (res) => {
           this.verifiedUsers = res.VerifiedUsers;
@@ -684,11 +627,7 @@ export class AdminComponent implements OnInit {
     this.loadingVerifiedUsersAuditLog = true;
     console.log("Loading username verification audit log...");
     this.backendApi
-      .AdminGetUsernameVerificationAuditLogs(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.usernameToFetchVerificationAuditLogs
-      )
+      .AdminGetUsernameVerificationAuditLogs(this.usernameToFetchVerificationAuditLogs)
       .subscribe(
         (res) => {
           this.usernameVerificationAuditLogs = res.VerificationAuditLogs;
@@ -732,7 +671,7 @@ export class AdminComponent implements OnInit {
   _loadGlobalParams() {
     this.loadingGlobalParams = true;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .GetGlobalParams()
       .subscribe(
         (res) => {
           this.globalParams = {
@@ -784,8 +723,6 @@ export class AdminComponent implements OnInit {
 
     this.backendApi
       .AdminGetAllUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         1000 // NumToFetch
       )
       .subscribe(
@@ -806,16 +743,14 @@ export class AdminComponent implements OnInit {
 
   _removeNilPosts() {
     this.removingNilPosts = true;
-    this.backendApi
-      .AdminRemoveNilPosts(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, 1000)
-      .subscribe(
-        () => {
-          this.removingNilPosts = false;
-        },
-        (err) => {
-          this.globalVars._alertError(JSON.stringify(err.error));
-        }
-      );
+    this.backendApi.AdminRemoveNilPosts(1000).subscribe(
+      () => {
+        this.removingNilPosts = false;
+      },
+      (err) => {
+        this.globalVars._alertError(JSON.stringify(err.error));
+      }
+    );
   }
 
   updateProfileModerationLevel(level: string) {
@@ -862,8 +797,6 @@ export class AdminComponent implements OnInit {
     this.submittingProfileUpdateType = level;
     this.backendApi
       .AdminUpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         pubKey,
         username,
         true,
@@ -912,18 +845,7 @@ export class AdminComponent implements OnInit {
     }
 
     this.backendApi
-      .AdminUpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        pubKey,
-        username,
-        false,
-        false,
-        false,
-        true,
-        true,
-        false
-      )
+      .AdminUpdateUserGlobalMetadata(pubKey, username, false, false, false, true, true, false)
       .subscribe(
         (res) => {
           this.whitelistUpdateSuccess = true;
@@ -955,18 +877,7 @@ export class AdminComponent implements OnInit {
     }
 
     this.backendApi
-      .AdminUpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        pubKey,
-        username,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false
-      )
+      .AdminUpdateUserGlobalMetadata(pubKey, username, false, false, false, true, false, false)
       .subscribe(
         (res) => {
           this.unwhitelistUpdateSuccess = true;
@@ -998,18 +909,7 @@ export class AdminComponent implements OnInit {
     this.submittingRemovePhone = true;
 
     this.backendApi
-      .AdminUpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        pubKey,
-        username,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true
-      )
+      .AdminUpdateUserGlobalMetadata(pubKey, username, false, false, false, false, false, true)
       .subscribe(
         (res) => {
           this.updateProfileSuccessType = "phone";
@@ -1236,11 +1136,7 @@ export class AdminComponent implements OnInit {
 
     this.submittingReprocessRequest = true;
     this.backendApi
-      .AdminReprocessBitcoinBlock(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.bitcoinBlockHashOrHeight
-      )
+      .AdminReprocessBitcoinBlock(this.bitcoinBlockHashOrHeight)
       .subscribe(
         (res: any) => {
           if (res == null || res.Message == null) {
@@ -1260,58 +1156,6 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  evictBitcoinExchangeTxns(dryRun: boolean) {
-    SwalHelper.fire({
-      target: this.globalVars.getTargetComponentSelector(),
-      title: "Are you ready?",
-      html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
-      showConfirmButton: true,
-      showCancelButton: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-    })
-      .then((res: any) => {
-        if (res.isConfirmed) {
-          this.submittingEvictUnminedBitcoinTxns = true;
-          this.backendApi
-            .EvictUnminedBitcoinTxns(
-              this.globalVars.localNode,
-              this.globalVars.loggedInUser?.PublicKeyBase58Check,
-              this.evictBitcoinTxnHashes.split(","),
-              dryRun
-            )
-            .subscribe(
-              (res: any) => {
-                if (res == null) {
-                  this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
-                  return null;
-                }
-
-                this.globalVars._alertSuccess(
-                  `Success! Lost ${res.TotalMempoolTxns - res.MempoolTxnsLeftAfterEviction} mempool
-                  txns with ${res.TotalMempoolTxns} total txns in the mempool before eviction.
-                  Types: ${JSON.stringify(res.TxnTypesEvicted, null, 2)}.
-                  Check the response of this request in the browser's inspector for more information.`
-                );
-              },
-              (error) => {
-                console.error(error);
-                this.globalVars._alertError(this.extractError(error));
-              }
-            )
-            .add(() => {
-              this.submittingEvictUnminedBitcoinTxns = false;
-            });
-        }
-      })
-      .finally(() => {
-        this.submittingEvictUnminedBitcoinTxns = false;
-      });
-  }
-
   grantVerificationBadge() {
     if (this.usernameToVerify === "") {
       this.globalVars._alertError("Please enter a valid username.");
@@ -1320,11 +1164,7 @@ export class AdminComponent implements OnInit {
 
     this.submittingVerifyRequest = true;
     this.backendApi
-      .AdminGrantVerificationBadge(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.usernameToVerify
-      )
+      .AdminGrantVerificationBadge(this.usernameToVerify)
       .subscribe(
         (res: any) => {
           this.globalVars._alertSuccess(res.Message);
@@ -1346,11 +1186,7 @@ export class AdminComponent implements OnInit {
 
     this.submittingGetUserAdminData = true;
     this.backendApi
-      .AdminGetUserAdminData(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.getUserAdminDataPublicKey
-      )
+      .AdminGetUserAdminData(this.globalVars.localNode)
       .subscribe(
         (res: any) => {
           this.getUserAdminDataResponse = res;
@@ -1372,11 +1208,7 @@ export class AdminComponent implements OnInit {
 
     this.submittingRemovalRequest = true;
     this.backendApi
-      .AdminRemoveVerificationBadge(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.usernameForWhomToRemoveVerification
-      )
+      .AdminRemoveVerificationBadge(this.usernameForWhomToRemoveVerification)
       .subscribe(
         (res: any) => {
           this.globalVars._alertSuccess(res.Message);
@@ -1428,22 +1260,16 @@ export class AdminComponent implements OnInit {
 
   // GetUserMetadata
   getUserMetadata() {
-    this.backendApi
-      .AdminGetUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.changeUsernamePublicKey
-      )
-      .subscribe(
-        (res) => {
-          this.userMetadataToUpdate = res.UserMetadata;
-          this.userProfileEntryResponseToUpdate = res.UserProfileEntryResponse;
-          this.searchedForPubKey = true;
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+    this.backendApi.AdminGetUserGlobalMetadata(this.changeUsernamePublicKey).subscribe(
+      (res) => {
+        this.userMetadataToUpdate = res.UserMetadata;
+        this.userProfileEntryResponseToUpdate = res.UserProfileEntryResponse;
+        this.searchedForPubKey = true;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   updateUsername() {

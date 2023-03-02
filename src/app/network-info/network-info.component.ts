@@ -86,7 +86,7 @@ export class NetworkInfoComponent implements OnInit {
   stopMining() {
     this.stoppingMiners = true;
     this.backendApi
-      .UpdateMiner(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, "")
+      .UpdateMiner("")
       .subscribe(
         (res: any) => {
           SwalHelper.fire({
@@ -136,12 +136,7 @@ export class NetworkInfoComponent implements OnInit {
     }
     this.updatingDeSoPeer = true;
     this.backendApi
-      .NodeControl(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        peerAddr,
-        "disconnect_deso_node"
-      )
+      .NodeControl(peerAddr, "disconnect_deso_node")
       .subscribe(
         (res: any) => {
           this.globalVars._alertSuccess("Successfully disconnected DeSo peer: " + peerAddr);
@@ -164,12 +159,7 @@ export class NetworkInfoComponent implements OnInit {
     }
     this.updatingDeSoPeer = true;
     this.backendApi
-      .NodeControl(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        peerAddr,
-        "connect_deso_node"
-      )
+      .NodeControl(peerAddr, "connect_deso_node")
       .subscribe(
         (res: any) => {
           this.manualDeSoPeer = "";
@@ -196,12 +186,7 @@ export class NetworkInfoComponent implements OnInit {
     }
     this.updatingBitcoinPeer = true;
     this.backendApi
-      .NodeControl(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        peerAddr,
-        "connect_bitcoin_node"
-      )
+      .NodeControl(peerAddr, "connect_bitcoin_node")
       .subscribe(
         (res: any) => {
           this.globalVars._alertSuccess("Successfully connected to Bitcoin node: " + peerAddr);
@@ -240,11 +225,7 @@ export class NetworkInfoComponent implements OnInit {
 
     this.updatingMiners = true;
     this.backendApi
-      .UpdateMiner(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.updatedMinerPubKeys
-      )
+      .UpdateMiner(this.updatedMinerPubKeys)
       .subscribe(
         (res: any) => {
           SwalHelper.fire({

@@ -66,12 +66,10 @@ export class MintNftComponent {
       this.postHashHex = params.postHashHex;
     });
     this.globalVars = _globalVars;
-    this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res) => {
-        this.createNFTFeeNanos = res.CreateNFTFeeNanos;
-        this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
-      });
+    this.backendApi.GetGlobalParams().subscribe((res) => {
+      this.createNFTFeeNanos = res.CreateNFTFeeNanos;
+      this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
+    });
   }
 
   hasUnreasonableTotalRoyalties(): boolean {

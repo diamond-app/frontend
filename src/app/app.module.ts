@@ -31,8 +31,6 @@ import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
-import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
-import { AdminTutorialComponent } from "./admin/admin-tutorial/admin-tutorial.component";
 import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { AdminComponent } from "./admin/admin.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -104,6 +102,12 @@ import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.compon
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
+// Modular Themes for DeSo by Carsen Klock @carsenk
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
@@ -144,6 +148,7 @@ import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-repo
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
 import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
 import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
@@ -162,17 +167,10 @@ import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-mod
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
 import { Theme } from "./theme/symbols";
-// Modular Themes for DeSo by Carsen Klock @carsenk
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { LinkPreviewComponent } from "./link-preview/link-preview.component";
-import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
-import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
-import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { ThemeModule } from "./theme/theme.module";
 import { TopBarMobileHamburgerMenuComponent } from "./top-bar-mobile/top-bar-mobile-hamburger-menu/top-bar-mobile-hamburger-menu.component";
 import { TopBarMobileHeaderComponent } from "./top-bar-mobile/top-bar-mobile-header/top-bar-mobile-header.component";
@@ -385,9 +383,7 @@ export function playerFactory() {
     LinkPreviewComponent,
     NftShowcaseComponent,
     VerifyEmailComponent,
-    AdminJumioComponent,
     JumioStatusComponent,
-    AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,
     BuyCreatorCoinsConfirmTutorialComponent,

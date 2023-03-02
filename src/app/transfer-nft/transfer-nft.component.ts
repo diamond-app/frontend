@@ -88,7 +88,6 @@ export class TransferNftComponent implements OnInit {
       if (res.isConfirmed) {
         this.backendApi
           .TransferNFT(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.selectedCreator?.PublicKeyBase58Check,
             this.post.PostHashHex,
