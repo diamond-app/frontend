@@ -2,7 +2,8 @@ export const environment = {
   production: true,
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
-  apiInternalHostname: "https://diamondapp.com",
+  // apiInternalHostname: "https://diamondapp.com",
+  apiInternalHostname: "http://localhost:3000",
   uploadVideoHostname: "media.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
@@ -15,6 +16,12 @@ export const environment = {
   amplitude: {
     key: "",
     domain: "",
+  },
+  heap: {
+    appId: "1382101420",
+  },
+  hotjar: {
+    hjid: "",
   },
   node: {
     id: 1,

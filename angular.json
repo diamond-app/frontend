@@ -49,6 +49,7 @@
           },
           "configurations": {
             "production": {
+              "serviceWorker": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

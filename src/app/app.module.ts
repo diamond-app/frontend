@@ -224,6 +224,7 @@ import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { ServiceWorkerModule } from "@angular/service-worker";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -464,6 +465,7 @@ export function playerFactory() {
     LottieModule.forRoot({ player: playerFactory }),
     ScrollingModule,
     TranslocoRootModule,
+    ServiceWorkerModule.register("ngsw-worker.js", { enabled: true }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

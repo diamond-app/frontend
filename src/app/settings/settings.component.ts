@@ -171,33 +171,67 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  urlBase64ToUint8Array(base64String: string) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+
   async subscribeToPushNotifications() {
+    const pushServerPublicKey =
+      "BBt2v52sa0J-1D6w25XGk-eXqSOWdnfddV256XXI1B-UZlfX-HSIDzv4TkXbTLhHHNjDc45yZ8jsZWsXWg2CbF0";
+    const applicationServerKey = this.urlBase64ToUint8Array(pushServerPublicKey);
+
+    const serviceWorker = await navigator.serviceWorker.ready;
+    const subscription = await serviceWorker.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey,
+    });
+    const subscriptionObject = subscription.toJSON();
+    if (subscriptionObject?.keys?.auth && subscriptionObject?.keys?.p256dh && subscriptionObject?.endpoint) {
+      this.apiInternal
+        .createPushNotificationSubscription(
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          subscriptionObject.endpoint,
+          subscriptionObject.keys.auth,
+          subscriptionObject.keys.p256dh
+        )
+        .subscribe((res) => {
+          console.log("Response: ", res);
+        });
+    }
+
     // @ts-ignore
-    window.safari.pushNotification.requestPermission(
-      "https://diamondapp.com/api-internal",
-      "web.run.deso.z",
-      {
-        publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-      },
-      // @ts-ignore
-      (callbackInfo: { deviceToken: string; permission: string }) => {
-        if (!this.appUser) return;
-        if (callbackInfo.permission === "granted") {
-          this.appUser = { ...this.appUser, DeviceId: callbackInfo.deviceToken };
-          this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-            () => {},
-            () => {
-              if (!this.appUser) return;
-              this.appUser = {
-                ...this.appUser,
-                DeviceId: "",
-              };
-            }
-          );
-          console.log(callbackInfo);
-        }
-      }
-    );
+    // window.safari.pushNotification.requestPermission(
+    //   "https://diamondapp.com/api-internal",
+    //   "web.run.deso.z",
+    //   {
+    //     publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //   },
+    //   // @ts-ignore
+    //   (callbackInfo: { deviceToken: string; permission: string }) => {
+    //     if (!this.appUser) return;
+    //     if (callbackInfo.permission === "granted") {
+    //       this.appUser = { ...this.appUser, DeviceId: callbackInfo.deviceToken };
+    //       this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+    //         () => {},
+    //         () => {
+    //           if (!this.appUser) return;
+    //           this.appUser = {
+    //             ...this.appUser,
+    //             DeviceId: "",
+    //           };
+    //         }
+    //       );
+    //       console.log(callbackInfo);
+    //     }
+    //   }
+    // );
   }
 
   closeModal() {

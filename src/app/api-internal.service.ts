@@ -10,6 +10,7 @@ import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services
 
 const ENDPOINTS = Object.freeze({
   appUser: "app-user",
+  pushNotifSubscription: "push-notification-subscriptions",
   onboardingEmailSubscription: "onboarding-email-subscription",
 });
 
@@ -143,6 +144,23 @@ export class ApiInternalService {
       switchMap((headers) =>
         this.httpClient.post<any>(buildUrl("onboarding-email-subscription"), { PublicKeyBase58Check }, { headers })
       )
+    );
+  }
+
+  createPushNotificationSubscription(
+    UserPublicKeyBase58check: string,
+    Endpoint: string,
+    AuthKey: string,
+    P256dhKey: string
+  ) {
+    const payload = {
+      UserPublicKeyBase58check,
+      Endpoint,
+      AuthKey,
+      P256dhKey,
+    };
+    return this.getAuthHeaders().pipe(
+      switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.pushNotifSubscription), payload, { headers }))
     );
   }
 
