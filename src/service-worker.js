@@ -8,7 +8,7 @@ function receivePushNotification(event) {
 
   const options = {
     //data: url,
-    data: "something you want to send within the notification, such an URL to open"
+    data: "something you want to send within the notification, such an URL to open",
     //body: text,
     body: "hello",
     //icon: image,
