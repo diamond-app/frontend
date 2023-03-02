@@ -3,14 +3,14 @@ function receivePushNotification(event) {
 
   //const { image, tag, url, title, text } = event.data.json();
 
-  const notificationText = event.data.text();
+  // const notificationText = event.data.text();
   const title = "A brand new notification!";
 
   const options = {
     //data: url,
     data: "something you want to send within the notification, such an URL to open"
     //body: text,
-    body: notificationText,
+    body: "hello",
     //icon: image,
     vibrate: [200, 100, 200],
     //tag: tag,
