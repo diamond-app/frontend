@@ -25,6 +25,8 @@ RUN npm install
 RUN npm run ngcc
 
 COPY ./angular.json .
+COPY ./ngsw-worker.js .
+COPY ./ngsw-config.js .
 COPY ./tsconfig.json .
 COPY ./src ./src
 
