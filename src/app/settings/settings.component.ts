@@ -194,6 +194,7 @@ export class SettingsComponent implements OnInit {
     });
     const subscriptionObject = subscription.toJSON();
     if (subscriptionObject?.keys?.auth && subscriptionObject?.keys?.p256dh && subscriptionObject?.endpoint) {
+      console.log("Subscription: ", subscriptionObject);
       this.apiInternal
         .createPushNotificationSubscription(
           this.globalVars.loggedInUser.PublicKeyBase58Check,
