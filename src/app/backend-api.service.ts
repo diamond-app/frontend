@@ -1,7 +1,3 @@
-// FYI: any request that needs the HttpOnly cookie to be sent (e.g. b/c the server
-// needs the seed phrase) needs the {withCredentials: true} option. It may also needed to
-// get the browser to save the cookie in the response.
-// https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
@@ -132,43 +128,6 @@ export class BackendRoutes {
 
   // Media
   static RoutePathUploadVideo = "/api/v0/upload-video";
-
-  // Admin routes.
-  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
-  static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
-  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
-  static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
-  static RoutePathAdminGetUnfilteredHotFeed = "/api/v0/admin/get-unfiltered-hot-feed";
-  static RoutePathAdminGetHotFeedAlgorithm = "/api/v0/admin/get-hot-feed-algorithm";
-  static RoutePathAdminUpdateHotFeedAlgorithm = "/api/v0/admin/update-hot-feed-algorithm";
-  static RoutePathAdminUpdateHotFeedPostMultiplier = "/api/v0/admin/update-hot-feed-post-multiplier";
-  static RoutePathAdminUpdateHotFeedUserMultiplier = "/api/v0/admin/update-hot-feed-user-multiplier";
-  static RoutePathAdminGetHotFeedUserMultiplier = "/api/v0/admin/get-hot-feed-user-multiplier";
-
-  // Referral program admin routes.
-  static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
-  static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user";
-  static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash";
-  static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv";
-  static RoutePathAdminDownloadRefereeCSV = "/api/v0/admin/download-referee-csv";
-  static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv";
-
-  // Referral program non-admin routes
-  static RoutePathGetReferralInfoForUser = "/api/v0/get-referral-info-for-user";
-  static RoutePathGetReferralInfoForReferralHash = "/api/v0/get-referral-info-for-referral-hash";
-
-  static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
-
-  // Wyre routes.
-  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
-  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
-
-  // Associations
-  static RoutePathCreateUserAssociation = "/api/v0/user-associations/create";
-  static RoutePathCreatePostAssociation = "/api/v0/post-associations/create";
-  static RoutePathDeletePostAssociation = "/api/v0/post-associations/delete";
-  static RoutePathGetPostAssociations = "/api/v0/post-associations/query";
-  static RoutePathGetPostAssociationCounts = "/api/v0/post-associations/counts";
 }
 
 export class Transaction {
