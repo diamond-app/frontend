@@ -293,7 +293,6 @@ export class GlobalVarsService {
             if (res.UpdateMetadata) {
               this.backendApi
                 .SetNotificationsMetadata(
-                  "https://node.deso.org",
                   this.loggedInUser.PublicKeyBase58Check,
                   -1,
                   res.LastUnreadNotificationIndex,
@@ -484,7 +483,7 @@ export class GlobalVarsService {
       return "";
     }
     const getUserMetadataPromise = this.backendApi
-      .GetUserGlobalMetadata(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+      .GetUserGlobalMetadata(this.loggedInUser.PublicKeyBase58Check)
       .toPromise();
 
     const getAppUserPromise = this.apiInternal
@@ -1225,6 +1224,7 @@ export class GlobalVarsService {
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
+
     route.queryParams.subscribe((queryParams) => {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);

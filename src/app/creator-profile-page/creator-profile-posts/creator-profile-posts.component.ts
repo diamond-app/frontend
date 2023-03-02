@@ -84,7 +84,6 @@ export class CreatorProfilePostsComponent {
     const lastPostHashHex = this.pagedKeys[page];
     return this.backendApi
       .GetPostsForPublicKey(
-        this.globalVars.localNode,
         "",
         this.profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,

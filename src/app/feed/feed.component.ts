@@ -461,7 +461,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.isLoadingFollowingOnPageLoad = true;
     this.backendApi
       .GetFollows(
-        this.appData.localNode,
         "" /* username */,
         this.appData.loggedInUser.PublicKeyBase58Check,
         false /* getEntriesFollowingPublicKey */

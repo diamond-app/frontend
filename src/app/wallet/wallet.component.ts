@@ -407,8 +407,6 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
           if (res.isDismissed) {
             return this.backendApi
               .UpdateProfile(
-                environment.verificationEndpointHostname,
-                this.globalVars.localNode,
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 "",
                 "",
@@ -416,8 +414,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
                 "",
                 10 * 100,
                 1.25 * 100 * 100,
-                false,
-                this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+                false
               )
               .subscribe(
                 () => {

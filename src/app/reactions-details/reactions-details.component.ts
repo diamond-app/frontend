@@ -61,7 +61,6 @@ export class ReactionsDetailsComponent implements OnInit {
         }),
         switchMap((res) => {
           return this.backendApi.GetPostAssociationsCounts(
-            this.globalVars.localNode,
             res.PostFound,
             AssociationType.reaction,
             Object.values(AssociationReactionValue),
@@ -92,7 +91,6 @@ export class ReactionsDetailsComponent implements OnInit {
 
     this.backendApi
       .GetAllPostAssociations(
-        this.globalVars.localNode,
         this.postHashHex,
         AssociationType.reaction,
         undefined,

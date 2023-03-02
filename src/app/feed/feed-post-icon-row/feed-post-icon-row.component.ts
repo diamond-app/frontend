@@ -452,13 +452,10 @@ export class FeedPostIconRowComponent {
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
-        diamonds,
-        this.globalVars.feeRateDeSoPerKB * 1e9,
-        this.inTutorial
+        diamonds
       )
       .toPromise()
       .then(
@@ -711,12 +708,10 @@ export class FeedPostIconRowComponent {
 
     const $request = existingReaction
       ? this.backendApi.DeletePostAssociation(
-          this.globalVars.localNode,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
           existingReaction.AssociationID
         )
       : this.backendApi.CreatePostAssociation(
-          this.globalVars.localNode,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
           this.postContent.PostHashHex,
           AssociationType.reaction,

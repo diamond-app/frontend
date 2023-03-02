@@ -35,12 +35,13 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
-    // NOTE: The deso-protocol configure call has to come *after* globalVars Init because it uses
-    // globalVars.localNode. There is no practical reason we need to store the
-    // localNode value in globalVars (or local storage), but it's an annoying
-    // thing to refactor right now...
+    // NOTE: The deso-protocol configure call has to come *after* globalVars
+    // Init because it uses globalVars.localNode. There is no practical reason
+    // we need to store the localNode value in globalVars (or local storage),
+    // but it's an annoying and unrelated thing to refactor right now...
     configure({
       nodeURI: this.globalVars.localNode,
+      mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: { IsUnlimited: true },
       MinFeeRateNanosPerKB: 1000,
     });

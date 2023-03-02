@@ -107,7 +107,7 @@ export class SettingsComponent implements OnInit {
       );
       const utcOffset = getUTCOffset();
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(userPublicKey).pipe(
           catchError((err) => {
             return of(null);
           })

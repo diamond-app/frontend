@@ -277,11 +277,7 @@ export class FeedPostComponent implements OnInit {
 
   getNFTEntries() {
     this.backendApi
-      .GetNFTEntriesForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.postContent.PostHashHex
-      )
+      .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.postContent.PostHashHex)
       .subscribe((res) => {
         this.nftEntryResponses = res.NFTEntryResponses;
         this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
@@ -1098,7 +1094,6 @@ export class FeedPostComponent implements OnInit {
 
   private getPostReactionCounts() {
     return this.backendApi.GetPostAssociationsCounts(
-      this.globalVars.localNode,
       this.postContent,
       AssociationType.reaction,
       Object.values(AssociationReactionValue)
@@ -1114,7 +1109,6 @@ export class FeedPostComponent implements OnInit {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.postContent.PostHashHex,
       AssociationType.reaction,
       this.globalVars.loggedInUser?.PublicKeyBase58Check,

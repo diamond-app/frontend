@@ -89,7 +89,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
     const operationType = this.creatorCoinTrade.operationType();
     this.backendApi
       .BuyOrSellCreatorCoin(
-        this.appData.localNode,
         this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         operationType /*OperationType*/,
@@ -97,11 +96,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
         0 /*DeSoToAddNanos*/,
         minDeSoExpectedNanos /*MinDeSoExpectedNanos*/,
-        minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/,
-
-        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
-        true,
-        false
+        minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/
       )
       .subscribe(
         (response) => {
@@ -168,13 +163,10 @@ export class TradeCreatorPreviewComponent implements OnInit {
     // Broadcast the transaction.
     this.backendApi
       .TransferCreatorCoin(
-        this.appData.localNode,
         this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
-        this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
-        true
+        this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/
       )
       .subscribe(
         (response) => {

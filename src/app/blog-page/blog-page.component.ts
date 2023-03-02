@@ -29,7 +29,6 @@ export class BlogPageComponent implements AfterViewInit {
         .then(({ Profile }) => Profile),
       this.backendApi
         .GetPostsForPublicKey(
-          this.globalVars.localNode,
           "",
           route.snapshot.params.username,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,

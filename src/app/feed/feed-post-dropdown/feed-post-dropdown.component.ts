@@ -9,7 +9,6 @@ import { ToastrService } from "ngx-toastr";
 import { FeedCreatePostModalComponent } from "src/app/feed/feed-create-post-modal/feed-create-post-modal.component";
 import RouteNamesService from "src/app/route-names.service";
 import { TrackingService } from "src/app/tracking.service";
-import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
@@ -306,8 +305,6 @@ export class FeedPostDropdownComponent implements OnInit {
     event.stopPropagation();
     this.backendApi
       .UpdateProfile(
-        this.globalVars.localNode,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -316,7 +313,6 @@ export class FeedPostDropdownComponent implements OnInit {
         this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9,
         { PinnedPostHashHex: isPinned ? this.post.PostHashHex : "" }
       )
       .toPromise()
@@ -476,8 +472,6 @@ export class FeedPostDropdownComponent implements OnInit {
   makeNFTProfilePic(event): void {
     this.backendApi
       .UpdateProfile(
-        environment.verificationEndpointHostname,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -486,7 +480,6 @@ export class FeedPostDropdownComponent implements OnInit {
         this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
         {
           NFTProfilePicturePostHashHex: this.post.PostHashHex,
           NFTProfilePictureUrl: this.post.ImageURLs[0],

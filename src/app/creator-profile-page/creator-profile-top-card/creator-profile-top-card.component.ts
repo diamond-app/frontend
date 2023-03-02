@@ -219,7 +219,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
     const getFollowers = this.backendApi
       .GetFollows(
-        this.globalVars.localNode,
         this.profile.Username,
         "" /* PublicKeyBase58Check */,
         true /* get followers */,
@@ -230,7 +229,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
     const getFollowing = this.backendApi
       .GetFollows(
-        this.globalVars.localNode,
         this.profile.Username,
         "" /* PublicKeyBase58Check */,
         false /* get following */,

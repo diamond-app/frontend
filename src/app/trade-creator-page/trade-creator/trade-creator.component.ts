@@ -300,7 +300,6 @@ export class TradeCreatorComponent implements OnInit {
 
   getBuyOrSellObservable(): Observable<any> {
     return this.backendApi.BuyOrSellCreatorCoin(
-      this.appData.localNode,
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       this.creatorCoinTrade.creatorProfile?.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
       this.creatorCoinTrade.operationType() /*OperationType*/,
@@ -309,7 +308,6 @@ export class TradeCreatorComponent implements OnInit {
       0 /*DeSoToAddNanos*/,
       0 /*MinDeSoExpectedNanos*/,
       0 /*MinCreatorCoinExpectedNanos*/,
-      this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
       false
     );
   }

@@ -365,8 +365,6 @@ export class CreateLongPostComponent implements AfterViewInit {
 
         await this.backendApi
           .UpdateProfile(
-            this.globalVars.localNode,
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             "",
             "",
@@ -375,7 +373,6 @@ export class CreateLongPostComponent implements AfterViewInit {
             this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
             1.25 * 100 * 100,
             false,
-            this.globalVars.feeRateDeSoPerKB * 1e9,
             { BlogSlugMap: blogSlugMapJSON }
           )
           .toPromise();

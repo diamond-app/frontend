@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
+import { uniqBy } from "lodash";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService, NFTCollectionResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { uniqBy } from "lodash";
 
 @Component({
   selector: "nft-showcase",
@@ -36,11 +36,7 @@ export class NftShowcaseComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     this.backendApi
-      .GetNFTShowcase(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check
-      )
+      .GetNFTShowcase(this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res: any) => {
           this.nftCollections = res.NFTCollections;

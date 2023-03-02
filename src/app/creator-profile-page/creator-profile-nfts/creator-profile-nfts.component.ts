@@ -138,11 +138,7 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   getNFTBids(): Subscription {
     return this.backendApi
-      .GetNFTBidsForUser(
-        this.globalVars.localNode,
-        this.profile.PublicKeyBase58Check,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check
-      )
+      .GetNFTBidsForUser(this.profile.PublicKeyBase58Check, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res: {
           PublicKeyBase58CheckToProfileEntryResponse: { [k: string]: ProfileEntryResponse };
@@ -168,7 +164,6 @@ export class CreatorProfileNftsComponent implements OnInit {
   getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null): Subscription {
     return this.backendApi
       .GetNFTsForUser(
-        this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         isForSale,

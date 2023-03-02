@@ -35,7 +35,6 @@ export class CreatorProfileHodlersComponent {
     const lastPublicKeyBase58Check = this.pagedKeys[page];
     return this.backendApi
       .GetHodlersForPublicKey(
-        this.globalVars.localNode,
         "",
         this.profile.Username,
         lastPublicKeyBase58Check,

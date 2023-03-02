@@ -43,7 +43,6 @@ export class QuoteRepostsDetailsComponent implements OnInit {
     this.loading = true;
     return this.backendApi
       .GetQuoteRepostsForPost(
-        this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
         this.pageSize,

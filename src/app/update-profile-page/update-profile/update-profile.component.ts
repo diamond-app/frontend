@@ -157,10 +157,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _getUserMetadata() {
     this.backendApi
-      .GetUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
-      )
+      .GetUserGlobalMetadata(this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/)
       .subscribe(
         (res) => {
           this.emailAddress = res.Email;
@@ -531,8 +528,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
     this.backendApi
       .UpdateProfile(
-        environment.verificationEndpointHostname,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -541,7 +536,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
         fieldsToRemove
       )
       .subscribe(() => {

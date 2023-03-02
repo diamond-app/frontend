@@ -462,7 +462,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   _fetchRecentPosts(profile: ProfileEntryResponse) {
     this.backendApi
       .GetPostsForPublicKey(
-        this.globalVars.localNode,
         "",
         profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
@@ -518,7 +517,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   private getPostReactionCounts() {
     return this.backendApi.GetPostAssociationsCounts(
-      this.globalVars.localNode,
       this.currentPost,
       AssociationType.reaction,
       Object.values(AssociationReactionValue)
@@ -534,7 +532,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.currentPostHashHex,
       AssociationType.reaction,
       this.globalVars.loggedInUser.PublicKeyBase58Check,

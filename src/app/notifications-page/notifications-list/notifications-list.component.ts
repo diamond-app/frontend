@@ -116,7 +116,6 @@ export class NotificationsListComponent implements OnInit {
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
       .GetNotifications(
-        "https://node.deso.org",
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
@@ -131,7 +130,6 @@ export class NotificationsListComponent implements OnInit {
           if (fetchStartIndex === -1) {
             this.backendApi
               .SetNotificationsMetadata(
-                "https://node.deso.org",
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,
@@ -573,11 +571,7 @@ export class NotificationsListComponent implements OnInit {
       result.iconClass = "fc-blue";
       result.link = AppRoutingModule.nftPath(postHash);
       this.backendApi
-        .GetNFTEntriesForNFTPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          result.post.PostHashHex
-        )
+        .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, result.post.PostHashHex)
         .subscribe((res) => {
           const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (

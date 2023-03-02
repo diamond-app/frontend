@@ -715,7 +715,7 @@ export class AdminComponent implements OnInit {
     }
 
     this.backendApi
-      .GetBlockTemplate(this.globalVars.localNode, dummyPubKey)
+      .GetBlockTemplate(dummyPubKey)
       .subscribe(
         (res) => {
           this.nextBlockStats = res.LatestBlockTemplateStats;
@@ -1488,8 +1488,6 @@ export class AdminComponent implements OnInit {
           this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints || 1.25 * 100 * 100;
         return this.backendApi
           .UpdateProfile(
-            environment.verificationEndpointHostname,
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,
             // Start params
@@ -1498,9 +1496,7 @@ export class AdminComponent implements OnInit {
             "" /*NewProfilePic*/,
             creatorCoinBasisPoints /*NewCreatorBasisPoints*/,
             stakeMultipleBasisPoints /*NewStakeMultipleBasisPoints*/,
-            false /*IsHidden*/,
-            // End params
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+            false /*IsHidden*/
           )
           .subscribe(
             () => {
