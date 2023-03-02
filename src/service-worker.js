@@ -11,7 +11,7 @@ function receivePushNotification(event) {
     data: "something you want to send within the notification, such an URL to open",
     //body: text,
     body: "hello",
-    //icon: image,
+    icon: "https://via.placeholder.com/128/ff0000",
     vibrate: [200, 100, 200],
     //tag: tag,
     //image: image,
