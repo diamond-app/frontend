@@ -1,16 +1,16 @@
 function receivePushNotification(event) {
   console.log("[Service Worker] Push Received.");
 
-  // const { image, tag, url, title, text } = event.data.json();
-  const { text } = event.data.json();
-  // const notificationText = event.data.text();
-  const title = "A brand new notification!"
+  //const { image, tag, url, title, text } = event.data.json();
+
+  const notificationText = event.data.text();
+  const title = "A brand new notification!";
 
   const options = {
     //data: url,
     data: "something you want to send within the notification, such an URL to open"
     //body: text,
-    body: notificationText
+    body: notificationText,
     //icon: image,
     vibrate: [200, 100, 200],
     //tag: tag,
@@ -22,4 +22,13 @@ function receivePushNotification(event) {
   event.waitUntil(self.registration.showNotification(title, options));
 }
 self.addEventListener("push", receivePushNotification);
-console.log("Service Worker Loaded");
+
+
+function openPushNotification(event) {
+  console.log("[Service Worker] Notification click Received.", event.notification.data);
+
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data));
+}
+
+self.addEventListener("notificationclick", openPushNotification);
