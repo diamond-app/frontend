@@ -11,6 +11,7 @@ import {
   adminSetBuyDesoFeeBasisPoints,
   adminSetUSDCentsToDESOReserveExchangeRate,
   adminSwapIdentity,
+  adminUpdateGlobalParams,
   blockPublicKey,
   buildProfilePictureUrl,
   burnNFT,
@@ -21,6 +22,7 @@ import {
   createPostAssociation,
   deletePostAssociation,
   DeSoBodySchema,
+  getAppState,
   getBlockTemplate,
   GetBlockTemplateResponse,
   getDiamondedPosts,
@@ -47,6 +49,7 @@ import {
   getSingleProfile,
   getTransaction,
   GetTxnResponse,
+  getUnreadNotificationsCount,
   getUserGlobalMetadata,
   getUserMetadata,
   getUsersStateless,
@@ -2052,13 +2055,12 @@ export class BackendApiService {
           FilteredOutNotificationCategories,
         },
         {
-          nodeURI: environment.verificationEndpointHostname,
+          nodeURI: "https://node.deso.org",
         }
       )
     );
   }
 
-  // TODO: add to jwt posts
   SetNotificationsMetadata(
     PublicKeyBase58Check: string,
     LastSeenIndex: number,
@@ -2075,18 +2077,25 @@ export class BackendApiService {
     );
   }
 
-  // TODO: add to data lib
-  GetUnreadNotificationsCount(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
-      PublicKeyBase58Check,
-    });
+  GetUnreadNotificationsCount(PublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getUnreadNotificationsCount(
+        {
+          PublicKeyBase58Check,
+        },
+        {
+          nodeURI: "https://node.deso.org",
+        }
+      )
+    );
   }
 
-  // TODO: add to data lib
-  GetAppState(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetAppState, {
-      PublicKeyBase58Check,
-    });
+  GetAppState(PublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getAppState({
+        PublicKeyBase58Check,
+      })
+    );
   }
 
   UpdateUserGlobalMetadata(
@@ -2309,8 +2318,6 @@ export class BackendApiService {
     return from(
       adminSetBuyDesoFeeBasisPoints({
         BuyDeSoFeeBasisPoints,
-        // FIXME: this should not be required. it gets set by the library.
-        AdminPublicKey: undefined,
       })
     );
   }
@@ -2320,7 +2327,6 @@ export class BackendApiService {
   }
 
   UpdateGlobalParams(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     USDCentsPerBitcoin: number,
     CreateProfileFeeNanos: number,
@@ -2329,17 +2335,17 @@ export class BackendApiService {
     CreateNFTFeeNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateGlobalParams, UpdaterPublicKeyBase58Check, {
-      UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      CreateProfileFeeNanos,
-      MaxCopiesPerNFT,
-      CreateNFTFeeNanos,
-      MinimumNetworkFeeNanosPerKB,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      adminUpdateGlobalParams({
+        UpdaterPublicKeyBase58Check,
+        USDCentsPerBitcoin,
+        CreateProfileFeeNanos,
+        MaxCopiesPerNFT,
+        CreateNFTFeeNanos,
+        MinimumNetworkFeeNanosPerKB,
+        MinFeeRateNanosPerKB,
+      })
+    );
   }
 
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {

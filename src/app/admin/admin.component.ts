@@ -1176,7 +1176,6 @@ export class AdminComponent implements OnInit {
           this.updatingGlobalParams = true;
           this.backendApi
             .UpdateGlobalParams(
-              this.globalVars.localNode,
               this.globalVars.loggedInUser?.PublicKeyBase58Check,
               usdPerBitcoin >= 0 ? usdPerBitcoin * 100 : -1,
               createProfileFeeNanos >= 0 ? createProfileFeeNanos * 1e9 : -1,

@@ -284,7 +284,7 @@ export class GlobalVarsService {
   GetUnreadNotifications() {
     if (this.loggedInUser) {
       this.backendApi
-        .GetUnreadNotificationsCount("https://node.deso.org", this.loggedInUser.PublicKeyBase58Check)
+        .GetUnreadNotificationsCount(this.loggedInUser.PublicKeyBase58Check)
         .toPromise()
         .then(
           (res) => {

@@ -203,23 +203,21 @@ export class AppComponent implements OnInit {
   }
 
   _updateAppState() {
-    this.backendApi
-      .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res: any) => {
-        this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
-        this.globalVars.diamondLevelMap = res.DiamondLevelMap;
-        this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
-        this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-        this.globalVars.showJumio = res.HasJumioIntegration;
-        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
-        this.globalVars.isTestnet = res.IsTestnet;
-        this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
-        this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
-        this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
-        this.globalVars.buyETHAddress = res.BuyETHAddress;
-        this.globalVars.nodes = res.Nodes;
-      });
+    this.backendApi.GetAppState(this.globalVars.loggedInUser?.PublicKeyBase58Check).subscribe((res: any) => {
+      this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
+      this.globalVars.diamondLevelMap = res.DiamondLevelMap;
+      this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
+      this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+      this.globalVars.showJumio = res.HasJumioIntegration;
+      this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
+      this.globalVars.isTestnet = res.IsTestnet;
+      this.identityService.isTestnet = res.IsTestnet;
+      this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
+      this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
+      this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+      this.globalVars.buyETHAddress = res.BuyETHAddress;
+      this.globalVars.nodes = res.Nodes;
+    });
   }
 
   _updateEverything = (
