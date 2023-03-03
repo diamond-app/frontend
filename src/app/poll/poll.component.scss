@@ -20,12 +20,15 @@
   .progressbar__label {
     position: absolute;
     left: 12px;
+    right: 70px;
     top: 6px;
 
     .check-circle {
       top: 0;
       width: 18px;
       height: 18px;
+      vertical-align: inherit;
+      flex: none;
     }
   }
 }

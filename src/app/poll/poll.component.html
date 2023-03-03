@@ -12,14 +12,14 @@
           ></progressbar>
 
           <div class="progressbar__label d-flex align-items-center">
-            <span>
+            <span class="text-truncate">
               {{ pollOption }}
             </span>
 
             <i-feather
               *ngIf="myVotes[0].AssociationValue === pollOption"
-              name="check-circle"
-              class="check-circle ml-5px"
+              name="my-vote"
+              class="check-circle ml-2 text-success"
               tooltip="You voted for this option"
               container="body"
             ></i-feather>
@@ -43,7 +43,10 @@
         </button>
       </ng-template>
 
-      <footer>Total votes: {{ pollCounts.Total }}</footer>
+      <footer class="mt-8px d-flex justify-content-between align-items-center">
+        <span class="text-muted">Total votes: {{ pollCounts.Total }}</span>
+        <span (click)="openPollDetails($event)" class="ml-1 link text-primary small cursor-pointer">Show details</span>
+      </footer>
     </section>
   </ng-template>
 </ng-container>

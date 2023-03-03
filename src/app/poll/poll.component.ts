@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
 import {
   AssociationType,
   BackendApiService,
@@ -7,8 +7,9 @@ import {
   PostAssociationCountsResponse,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { finalize, map, mergeMap } from "rxjs/operators";
-import { of } from "rxjs";
+import { finalize, mergeMap } from "rxjs/operators";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { PollModalComponent } from "./poll-modal/poll-modal.component";
 
 @Component({
   selector: "poll",
@@ -27,7 +28,9 @@ export class PollComponent implements OnInit {
   constructor(
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private router: Router,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit(): void {
@@ -50,19 +53,15 @@ export class PollComponent implements OnInit {
       )
       .pipe(
         mergeMap((e) => {
-          if (e.Associations.length > 0) {
-            this.myVotes = e.Associations;
+          this.myVotes = e.Associations;
 
-            return this.backendApi.GetPostAssociationsCounts(
-              this.globalVars.localNode,
-              this.post,
-              AssociationType.pollResponse,
-              this.pollOptions,
-              true
-            );
-          } else {
-            return of({ Counts: {}, Total: 0 });
-          }
+          return this.backendApi.GetPostAssociationsCounts(
+            this.globalVars.localNode,
+            this.post,
+            AssociationType.pollResponse,
+            this.pollOptions,
+            true
+          );
         }),
         finalize(() => {
           this.loading = false;
@@ -71,7 +70,6 @@ export class PollComponent implements OnInit {
       )
       .subscribe((e) => {
         this.pollCounts = e;
-        console.log(this.pollCounts, "this.pollCounts");
       });
   }
 
@@ -89,9 +87,33 @@ export class PollComponent implements OnInit {
         AssociationType.pollResponse,
         value
       )
-      .pipe(finalize(() => (this.processedVote = "")))
+      .pipe(
+        finalize(() => {
+          this.processedVote = "";
+          this.ref.detectChanges();
+        })
+      )
       .subscribe((e) => {
         this.fetchData();
       });
+  }
+
+  openPollDetails(event) {
+    event.stopPropagation();
+    this.openInteractionPage(event, this.globalVars.RouteNames.POLL, PollModalComponent);
+  }
+
+  private openInteractionPage(event, pageName: string, component): void {
+    event.stopPropagation();
+    if (this.globalVars.isMobile()) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.post.PostHashHex, pageName], {
+        queryParamsHandling: "merge",
+      });
+    } else {
+      this.modalService.show(component, {
+        class: "modal-dialog-centered",
+        initialState: { postHashHex: this.post.PostHashHex },
+      });
+    }
   }
 }

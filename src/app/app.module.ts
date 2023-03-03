@@ -226,6 +226,9 @@ import { LikesPageComponent } from "./likes-details/likes-page/likes-page.compon
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 import { PollComponent } from "./poll/poll.component";
+import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
+import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -428,6 +431,9 @@ export function playerFactory() {
     LoggedOutEmptyStateComponent,
     SwipeToChooseComponent,
     PollComponent,
+    PollDetailsComponent,
+    PollPageComponent,
+    PollModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -26,6 +26,15 @@ import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import Timer = NodeJS.Timer;
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -63,7 +72,9 @@ class PostModel {
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
-  pollOptions: string[] = [];
+  pollForm: FormGroup = new FormGroup({
+    options: new FormArray([]),
+  });
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
   /**
@@ -129,6 +140,10 @@ export class FeedCreatePostComponent implements OnInit {
   submittedPost: PostEntryResponse | null = null;
   embedUrlParserService = EmbedUrlParserService;
 
+  readonly REQUIRED_POLL_OPTIONS: number = 2;
+  readonly MAX_POLL_OPTIONS: number = 5;
+  readonly MAX_POLL_CHARACTERS: number = 50;
+
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
   @Input() parentPost: PostEntryResponse | null = null;
@@ -144,6 +159,7 @@ export class FeedCreatePostComponent implements OnInit {
   @ViewChildren("autosizables") autosizables: QueryList<CdkTextareaAutosize> | undefined;
   @ViewChildren("textareas") textAreas: QueryList<ElementRef<HTMLTextAreaElement>> | undefined;
   @ViewChildren("menus") menus: QueryList<ElementRef<HTMLDivElement>> | undefined;
+  @ViewChildren("pollOptionsRef") pollOptionsRef: QueryList<ElementRef<HTMLInputElement>> | undefined;
 
   constructor(
     private router: Router,
@@ -161,6 +177,10 @@ export class FeedCreatePostComponent implements OnInit {
 
   // Functions for the mention autofill component
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
+
+  get pollOptions() {
+    return this.currentPostModel.pollForm.controls.options as FormArray;
+  }
 
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
@@ -315,11 +335,9 @@ export class FeedCreatePostComponent implements OnInit {
       postExtraData.Language = this.translocoService.getActiveLang();
     }
 
-    const pollOptions = post.pollOptions.map((e) => e.trim()).filter((e) => e !== "");
-
     if (post.showPoll) {
-      if (pollOptions.length >= 2) {
-        postExtraData.PollOptions = JSON.stringify(pollOptions);
+      if (this.pollOptions.length >= 2) {
+        postExtraData.PollOptions = JSON.stringify(this.pollOptions.value);
         postExtraData.PollExpirationBlockHeight = "1929548918";
       } else {
         // TODO: throw an error
@@ -604,22 +622,53 @@ export class FeedCreatePostComponent implements OnInit {
     }
   }
 
+  uniqPollOptionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value.trim() === "") {
+        return null;
+      }
+
+      const duplicates = this.pollOptions.controls
+        .map((e) => e.value)
+        .filter((e) => e.toLowerCase().trim() === control.value.toLowerCase().trim());
+
+      return duplicates.length < 2 ? null : { uniq: "Options must be unique" };
+    };
+  }
+
+  getNewPollOptionFormItem(required: boolean = false) {
+    const validators = [Validators.maxLength(this.MAX_POLL_CHARACTERS), this.uniqPollOptionValidator()];
+    if (required) {
+      validators.push(Validators.required);
+    }
+    return new FormControl("", validators);
+  }
+
   togglePoll() {
     const newState = !this.currentPostModel.showPoll;
     this.currentPostModel.showPoll = newState;
 
     if (newState) {
-      this.currentPostModel.pollOptions = ["", ""];
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.changeRef.detectChanges();
+      this.autoFocusTextArea();
     } else {
-      this.currentPostModel.pollOptions = [];
+      this.pollOptions.clear();
     }
 
     this.changeRef.detectChanges();
   }
 
-  trackByIndex(index) {
-    // required for Array of strings used for poll options not to restart *ngFor every time user types something in
-    return index;
+  addPollOption() {
+    this.pollOptions.push(this.getNewPollOptionFormItem());
+    this.changeRef.detectChanges();
+    this.pollOptionsRef.last.nativeElement.focus();
+  }
+
+  removePollOption(index: number) {
+    this.pollOptions.removeAt(index);
+    this.changeRef.detectChanges();
   }
 
   private autoFocusTextArea() {
