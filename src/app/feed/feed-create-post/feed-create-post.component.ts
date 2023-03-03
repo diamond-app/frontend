@@ -114,8 +114,8 @@ interface PostExtraData {
   Node?: string;
   Language?: string;
   LivepeerAssetId?: string;
-  PollOptions?: string; // TODO: should be array
-  PollExpirationBlockHeight?: string; // TODO: should be number
+  PollOptions?: string; // saving it as string since the API cannot save the array structure in PostExtraData
+  PollExpirationBlockHeight?: string; // this field is ignored for now
 }
 
 // show warning at 515 characters
@@ -159,6 +159,8 @@ export class FeedCreatePostComponent implements OnInit {
   @ViewChildren("autosizables") autosizables: QueryList<CdkTextareaAutosize> | undefined;
   @ViewChildren("textareas") textAreas: QueryList<ElementRef<HTMLTextAreaElement>> | undefined;
   @ViewChildren("menus") menus: QueryList<ElementRef<HTMLDivElement>> | undefined;
+  // Ref is used only to `.focus()` an poll input from TypeScript.
+  // The rest of operations should go through the ReactiveForms
   @ViewChildren("pollOptionsRef") pollOptionsRef: QueryList<ElementRef<HTMLInputElement>> | undefined;
 
   constructor(
@@ -336,13 +338,8 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     if (post.showPoll) {
-      if (this.pollOptions.length >= 2) {
-        postExtraData.PollOptions = JSON.stringify(this.pollOptions.value);
-        postExtraData.PollExpirationBlockHeight = "1929548918";
-      } else {
-        // TODO: throw an error
-        return;
-      }
+      postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e) => e && e.trim()));
+      postExtraData.PollExpirationBlockHeight = ""; // leaving it empty for now since it's unused
     }
 
     const bodyObj = {
@@ -622,7 +619,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
   }
 
-  uniqPollOptionValidator(): ValidatorFn {
+  private uniqPollOptionValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (control.value.trim() === "") {
         return null;
@@ -636,7 +633,7 @@ export class FeedCreatePostComponent implements OnInit {
     };
   }
 
-  getNewPollOptionFormItem(required: boolean = false) {
+  private getNewPollOptionFormItem(required: boolean = false) {
     const validators = [Validators.maxLength(this.MAX_POLL_CHARACTERS), this.uniqPollOptionValidator()];
     if (required) {
       validators.push(Validators.required);

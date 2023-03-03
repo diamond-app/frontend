@@ -7,9 +7,10 @@ import {
   PostAssociationCountsResponse,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { finalize, mergeMap } from "rxjs/operators";
+import { finalize } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PollModalComponent } from "./poll-modal/poll-modal.component";
+import { forkJoin } from "rxjs";
 
 @Component({
   selector: "poll",
@@ -43,33 +44,31 @@ export class PollComponent implements OnInit {
     this.loading = true;
     this.myVotes = [];
 
-    this.backendApi
-      .GetPostAssociations(
+    forkJoin([
+      this.backendApi.GetPostAssociations(
         this.globalVars.localNode,
         this.post.PostHashHex,
         AssociationType.pollResponse,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.pollOptions
-      )
+      ),
+      this.backendApi.GetPostAssociationsCounts(
+        this.globalVars.localNode,
+        this.post,
+        AssociationType.pollResponse,
+        this.pollOptions,
+        true
+      ),
+    ])
       .pipe(
-        mergeMap((e) => {
-          this.myVotes = e.Associations;
-
-          return this.backendApi.GetPostAssociationsCounts(
-            this.globalVars.localNode,
-            this.post,
-            AssociationType.pollResponse,
-            this.pollOptions,
-            true
-          );
-        }),
         finalize(() => {
           this.loading = false;
           this.ref.detectChanges();
         })
       )
-      .subscribe((e) => {
-        this.pollCounts = e;
+      .subscribe(([{ Associations }, counts]) => {
+        this.myVotes = Associations;
+        this.pollCounts = counts;
       });
   }
 
