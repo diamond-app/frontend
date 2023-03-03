@@ -10,6 +10,7 @@ import {
   ArrowUp,
   AtSign,
   Award,
+  BarChart2,
   Bell,
   Check,
   CheckCircle,
@@ -101,6 +102,7 @@ const icons = {
   ArrowUp,
   AtSign,
   Award,
+  BarChart2,
   Bell,
   BellNotification,
   Bitclout,
@@ -179,6 +181,7 @@ const icons = {
   XSquare,
   Edit2,
   Twitter,
+  MyVote: CheckCircle,
 };
 
 @NgModule({

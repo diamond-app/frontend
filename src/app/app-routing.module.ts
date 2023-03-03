@@ -50,6 +50,7 @@ import { UpdateProfilePageComponent } from "./update-profile-page/update-profile
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -98,6 +99,7 @@ class RouteNames {
   public static QUOTE_REPOSTS = "quote-reposts";
   public static LIKES = "likes";
   public static REACTIONS = "reactions";
+  public static POLL = "poll";
   public static TRENDS = "trends";
   public static REFERRALS = "referrals";
   public static NFT = "nft";
@@ -169,6 +171,11 @@ const routes: Routes = [
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.DIAMONDS,
     component: DiamondsPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.POLL,
+    component: PollPageComponent,
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG, component: BlogPageComponent, pathMatch: "full" },

@@ -9,9 +9,9 @@
     class="d-flex flex-column align-items-center h-100 pl-15px pr-15px tab-selector__tab"
     [ngClass]="{ highlighted: highlightTab && tab === activeTab }"
   >
-    <div class="d-flex h-100 align-items-center">
+    <div class="d-flex h-100 align-items-center tab-selector__tab-content">
       <div
-        class="d-flex h-100 align-items-center fs-15px"
+        class="d-flex h-100 align-items-center text-center fs-15px"
         *ngIf="tab !== activeTab || !buttonSelector"
         [ngClass]="{ 'active-tab': tab === activeTab, 'fc-secondary': tab !== activeTab }"
       >
