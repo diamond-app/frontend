@@ -9,7 +9,7 @@ export const environment = {
   uploadVideoHostname: "media.deso.org",
   identityURL: "https://identity.deso.org",
   // apiInternalHostname: "https://diamondapp.com",
-  apiInternalHostname: "http://localhost:3000",
+  apiInternalHostname: "https://dev.diamondapp.com",
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",

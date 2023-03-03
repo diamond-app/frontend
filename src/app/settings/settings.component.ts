@@ -206,33 +206,6 @@ export class SettingsComponent implements OnInit {
           console.log("Response: ", res);
         });
     }
-
-    // @ts-ignore
-    // window.safari.pushNotification.requestPermission(
-    //   "https://diamondapp.com/api-internal",
-    //   "web.run.deso.z",
-    //   {
-    //     publicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-    //   },
-    //   // @ts-ignore
-    //   (callbackInfo: { deviceToken: string; permission: string }) => {
-    //     if (!this.appUser) return;
-    //     if (callbackInfo.permission === "granted") {
-    //       this.appUser = { ...this.appUser, DeviceId: callbackInfo.deviceToken };
-    //       this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-    //         () => {},
-    //         () => {
-    //           if (!this.appUser) return;
-    //           this.appUser = {
-    //             ...this.appUser,
-    //             DeviceId: "",
-    //           };
-    //         }
-    //       );
-    //       console.log(callbackInfo);
-    //     }
-    //   }
-    // );
   }
 
   closeModal() {

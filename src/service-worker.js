@@ -1,9 +1,5 @@
 function receivePushNotification(event) {
-  console.log("[Service Worker] Push Received.");
-
   const { tag, text, action, title, icon } = event.data.json();
-
-  console.log("Here is the json: ", event.data.json());
 
   const options = {
     body: text,
@@ -21,8 +17,5 @@ self.addEventListener("notificationclick", function(event) {
     return;
   }
 
-  console.log("Here is the action: ", event.action);
-
   clients.openWindow(event.action);
 });
-console.log("Service Worker Loaded");

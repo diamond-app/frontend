@@ -331,7 +331,7 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
-    console.log("Loaded");
+    // Load service worker for push notifications.
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/service-worker.js")
