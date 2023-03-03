@@ -420,7 +420,7 @@ export class FeedPostComponent implements OnInit {
     this.setURLForVideoContent();
     this.extractURLsFromPost();
 
-    this.pollPost = this.postContent.PostExtraData.PollOptions;
+    this.pollPost = !!this.postContent.PostExtraData.PollOptions;
 
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();

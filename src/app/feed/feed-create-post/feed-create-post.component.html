@@ -127,10 +127,10 @@
             />
           </div>
           <form
-            [formGroup]="currentPostModel.pollForm"
-            class="flex-fill bg-tile"
-            [ngClass]="{ 'pt-10px': parentPost }"
             *ngIf="postModels[i].showPoll"
+            [formGroup]="currentPostModel.pollForm"
+            [ngClass]="{ 'pt-10px': parentPost }"
+            class="flex-fill bg-tile"
           >
             <header class="d-flex justify-content-between align-items-center mb-2 feed-post__poll-header">
               <span class="small text-muted">Enter your poll options below</span>
@@ -141,13 +141,12 @@
                 [disabled]="pollOptions.length >= MAX_POLL_OPTIONS"
                 (click)="addPollOption()"
               >
-                <span *ngIf="pollOptions.length < MAX_POLL_OPTIONS">Add option</span>
-                <span *ngIf="pollOptions.length >= MAX_POLL_OPTIONS">Options limit reached</span>
-              </button>
+                <span *ngIf="pollOptions.length < MAX_POLL_OPTIONS; else limitReached">Add option</span>
 
-              <ng-template #maxLimitReached>
-                <span class="text-warning small">Max {{ MAX_POLL_OPTIONS }} Options Reached</span>
-              </ng-template>
+                <ng-template #limitReached>
+                  <span>Options limit reached</span>
+                </ng-template>
+              </button>
             </header>
 
             <section
@@ -291,12 +290,12 @@
       class="feed-create-post__post-btn btn"
       [disabled]="
         (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
-        !currentPostModel.pollForm.valid
+        (currentPostModel.showPoll && !currentPostModel.pollForm.valid)
       "
       [ngClass]="{
         disabled:
           (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
-          !currentPostModel.pollForm.valid,
+          (currentPostModel.showPoll && !currentPostModel.pollForm.valid),
         'btn-loading': submittingPost,
         wiggle: inTutorial,
         'feed-create-post__post-btn--in-modal': inModal
