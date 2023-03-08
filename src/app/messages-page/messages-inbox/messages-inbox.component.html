@@ -1,4 +1,4 @@
-<simple-center-loader *ngIf="loading && !messageThreads"></simple-center-loader>
+<simple-center-loader *ngIf="this.loading && !this.messageThreads"></simple-center-loader>
 <div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars position-relative">
   <div *ngIf="_settingsTrayIsOpen()">
     <messages-filter-menu></messages-filter-menu>
@@ -25,7 +25,7 @@
           thread.PublicKeyBase58Check == selectedThread.PublicKeyBase58Check) ||
         (selectedThread === undefined && ii === 0 && !isMobile)
       "
-      [thread]="thread"
+      [threadPreview]="thread"
     ></messages-thread>
   </div>
 
@@ -34,8 +34,8 @@
     class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
     (click)="loadMoreMessages()"
   >
-    <div *ngIf="!fetchingMoreMessages" class="fs-15px">{{ 'messages.load_more' | transloco }}</div>
-    <div *ngIf="fetchingMoreMessages" class="fs-15px">{{ 'messages.loading' | transloco }}...</div>
+    <div *ngIf="!fetchingMoreMessages" class="fs-15px">{{ "messages.load_more" | transloco }}</div>
+    <div *ngIf="fetchingMoreMessages" class="fs-15px">{{ "messages.loading" | transloco }}...</div>
   </div>
 
   <!-- Spacer for PWA Apps -->

@@ -8,8 +8,11 @@ import {
   AccessGroupEntryResponse,
   BalanceEntryResponse,
   createAccessGroup,
+  DecryptedMessageEntryResponse,
   getAllAccessGroupsOwned,
+  getDMThreads,
   identity,
+  PublicKeyToProfileEntryResponseMap,
   User,
 } from "deso-protocol";
 import { isNil } from "lodash";
@@ -110,6 +113,8 @@ export class GlobalVarsService {
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
+  messagesNumberOfUnreadThreads = 0;
+  messagesPublicKeyToProfileMap: PublicKeyToProfileEntryResponseMap = {};
 
   // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
@@ -135,7 +140,7 @@ export class GlobalVarsService {
   followFeedPosts = [];
   hotFeedPosts = [];
   tagFeedPosts = [];
-  messageResponse = null;
+  decryptedMessages: DecryptedMessageEntryResponse[] | null = null;
   messagesLoadedCallback = null;
   messagesLoadedComponent = null;
   loadingMessages = false;
@@ -258,7 +263,7 @@ export class GlobalVarsService {
     }
 
     // If a message response already exists, we skip this step
-    if (this.messageResponse) {
+    if (this.decryptedMessages) {
       return;
     }
 
@@ -323,51 +328,74 @@ export class GlobalVarsService {
     }
   }
 
+  // TODO: remove params
   LoadInitialMessages(retryCount: number, maxRetries) {
     if (!this.loggedInUser) {
       return;
     }
     this.loadingMessages = true;
+    const loggedInUserPublicKey = this.loggedInUser.PublicKeyBase58Check;
 
-    return this.backendApi
-      .GetMessages(
-        this.localNode,
-        this.loggedInUser.PublicKeyBase58Check,
-        "",
-        this.messagesPerFetch,
-        this.messagesRequestsHoldersOnly,
-        this.messagesRequestsHoldingsOnly,
-        this.messagesRequestsFollowersOnly,
-        this.messagesRequestsFollowedOnly,
-        this.messagesSortAlgorithm,
-        this.feeRateDeSoPerKB * 1e9
-      )
-      .subscribe(
-        (res) => {
-          if (this.pauseMessageUpdates) {
-            // We pause message updates when a user sends a messages so that we can
-            // wait for it to be sent before updating the thread.  If we do not do this the
-            // temporary message place holder would disappear until "GetMessages()" finds it.
-          } else {
-            this.messageResponse = res;
-
-            // Update the number of new messages so we know when to stop scrolling
-            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
-            if (this.messagesLoadedCallback !== null) {
-              this.messagesLoadedCallback(this.messagesLoadedComponent, res);
-            }
+    getDMThreads({
+      UserPublicKeyBase58Check: loggedInUserPublicKey,
+    })
+      .then((messages) => {
+        return Promise.all(messages.MessageThreads.map((message) => identity.decryptMessage(message, []))).then(
+          (decryptedMessages) => {
+            console.log(decryptedMessages);
+            this.decryptedMessages = decryptedMessages;
+            this.messagesPublicKeyToProfileMap = messages.PublicKeyToProfileEntryResponse;
           }
-          this.loadingMessages = false;
-        },
-        (err) => {
-          console.log("Error getting messages: ", err);
-          if (retryCount < maxRetries) {
-            this.LoadInitialMessages(retryCount + 1, maxRetries);
-          }
-          console.error(this.backendApi.stringifyError(err));
-          this.loadingMessages = false;
+        );
+      })
+      .catch((err) => {
+        console.log("Error getting messages: ", err);
+        if (retryCount < maxRetries) {
+          this.LoadInitialMessages(retryCount + 1, maxRetries);
         }
-      );
+        console.error(this.backendApi.stringifyError(err));
+        this.loadingMessages = false;
+      });
+
+    // return this.backendApi
+    //   .GetMessages(
+    //     this.localNode,
+    //     this.loggedInUser.PublicKeyBase58Check,
+    //     "",
+    //     this.messagesPerFetch,
+    //     this.messagesRequestsHoldersOnly,
+    //     this.messagesRequestsHoldingsOnly,
+    //     this.messagesRequestsFollowersOnly,
+    //     this.messagesRequestsFollowedOnly,
+    //     this.messagesSortAlgorithm,
+    //     this.feeRateDeSoPerKB * 1e9
+    //   )
+    //   .subscribe(
+    //     (res) => {
+    //       if (this.pauseMessageUpdates) {
+    //         // We pause message updates when a user sends a messages so that we can
+    //         // wait for it to be sent before updating the thread.  If we do not do this the
+    //         // temporary message place holder would disappear until "GetMessages()" finds it.
+    //       } else {
+    //         this.messageResponse = res;
+
+    //         // Update the number of new messages so we know when to stop scrolling
+    //         this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+    //         if (this.messagesLoadedCallback !== null) {
+    //           this.messagesLoadedCallback(this.messagesLoadedComponent, res);
+    //         }
+    //       }
+    //       this.loadingMessages = false;
+    //     },
+    //     (err) => {
+    //       console.log("Error getting messages: ", err);
+    //       if (retryCount < maxRetries) {
+    //         this.LoadInitialMessages(retryCount + 1, maxRetries);
+    //       }
+    //       console.error(this.backendApi.stringifyError(err));
+    //       this.loadingMessages = false;
+    //     }
+    //   );
   }
 
   _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {
@@ -434,7 +462,7 @@ export class GlobalVarsService {
       });
 
       // Clear out the message inbox and BitcoinAPI
-      this.messageResponse = null;
+      this.decryptedMessages = null;
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.

@@ -49,7 +49,7 @@
           [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
           [buttonLabel]="t('left_bar.messages')"
           [iconName]="
-            globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads > 0
+            globalVars.decryptedMessages && globalVars.messagesNumberOfUnreadThreads > 0
               ? 'message-notification'
               : 'message-square'
           "

@@ -59,7 +59,7 @@ export class ChangeAccountSelectorComponent {
 
   _switchToUser(user) {
     this.setUser(user);
-    this.globalVars.messageResponse = null;
+    this.globalVars.decryptedMessages = null;
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
     this.globalVars.updateEverything().add(() => {

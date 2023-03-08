@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { DecryptedMessageEntryResponse } from "deso-protocol";
 import * as _ from "lodash";
 import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService } from "../../backend-api.service";
@@ -24,7 +25,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     Custom: "custom",
   };
 
-  @Input() messageThreads: any;
+  @Input() messageThreads: DecryptedMessageEntryResponse[];
   @Input() profileMap: any;
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
@@ -92,11 +93,11 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.loading = true;
-    if (this.globalVars.messageResponse === null) {
+    if (this.globalVars.decryptedMessages === null) {
       this.globalVars.messagesLoadedCallback = this.messagesLoadedCallback;
       this.globalVars.messagesLoadedComponent = this;
     } else {
-      this.initializeRouteParams(this.globalVars.messageResponse);
+      this.initializeRouteParams(this.globalVars.decryptedMessages);
     }
   }
 
@@ -105,7 +106,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     // Reset message loaded callback
     comp.globalVars.messagesLoadedCallback = null;
     comp.globalVars.messagesLoadedComponent = null;
-    comp.globalVars.messageResponse = messageResponse;
+    comp.globalVars.decryptedMessages = messageResponse;
 
     // Initialize route params and load page
     comp.initializeRouteParams(messageResponse);
@@ -140,75 +141,75 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       return;
     }
 
-    let fetchAfterPubKey = "";
-    if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      fetchAfterPubKey = this.globalVars.messageResponse.OrderedContactsWithMessages[
-        this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
-      ].PublicKeyBase58Check;
-    }
+    console.log("loadMoreMessages()");
+    // let fetchAfterPubKey = "";
+    // if (this.globalVars.decryptedMessages.OrderedContactsWithMessages) {
+    //   fetchAfterPubKey = this.globalVars.decryptedMessages.OrderedContactsWithMessages[
+    //     this.globalVars.decryptedMessages.OrderedContactsWithMessages.length - 1
+    //   ].PublicKeyBase58Check;
+    // }
 
-    this.backendApi
-      .GetMessages(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        fetchAfterPubKey,
-        this.globalVars.messagesPerFetch,
-        this.globalVars.messagesRequestsHoldersOnly,
-        this.globalVars.messagesRequestsHoldingsOnly,
-        this.globalVars.messagesRequestsFollowersOnly,
-        this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
-      .toPromise()
-      .then(
-        (res) => {
-          if (this.globalVars.pauseMessageUpdates) {
-            // We pause message updates when a user sends a messages so that we can
-            // wait for it to be sent before updating the thread.  If we do not do this the
-            // temporary message place holder would disappear until "GetMessages()" finds it.
-          } else {
-            if (!this.globalVars.messageResponse) {
-              this.globalVars.messageResponse = res;
+    // this.backendApi
+    //   .GetMessages(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //     fetchAfterPubKey,
+    //     this.globalVars.messagesPerFetch,
+    //     this.globalVars.messagesRequestsHoldersOnly,
+    //     this.globalVars.messagesRequestsHoldingsOnly,
+    //     this.globalVars.messagesRequestsFollowersOnly,
+    //     this.globalVars.messagesRequestsFollowedOnly,
+    //     this.globalVars.messagesSortAlgorithm,
+    //     this.globalVars.feeRateDeSoPerKB * 1e9
+    //   )
+    //   .toPromise()
+    //   .then(
+    //     (res) => {
+    //       if (this.globalVars.pauseMessageUpdates) {
+    //         // We pause message updates when a user sends a messages so that we can
+    //         // wait for it to be sent before updating the thread.  If we do not do this the
+    //         // temporary message place holder would disappear until "GetMessages()" finds it.
+    //       } else {
+    //         if (!this.globalVars.decryptedMessages) {
+    //           this.globalVars.decryptedMessages = res;
 
-              // If globalVars already has a messageResponse, we need to consolidate.
-            } else if (JSON.stringify(this.globalVars.messageResponse) !== JSON.stringify(res)) {
-              // Add the new contacts
-              this.globalVars.messageResponse.OrderedContactsWithMessages = this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
-                res.OrderedContactsWithMessages
-              );
+    //           // If globalVars already has a messageResponse, we need to consolidate.
+    //         } else if (JSON.stringify(this.globalVars.decryptedMessages) !== JSON.stringify(res)) {
+    //           // Add the new contacts
+    //           this.globalVars.decryptedMessages.OrderedContactsWithMessages = this.globalVars.decryptedMessages.OrderedContactsWithMessages.concat(
+    //             res.OrderedContactsWithMessages
+    //           );
 
-              // If they're a new contact, add their read/unread status mapping
-              for (let key in res.UnreadStateByContact) {
-                this.globalVars.messageResponse.UnreadStateByContact[key] = res.UnreadStateByContact[key];
-              }
+    //           // If they're a new contact, add their read/unread status mapping
+    //           for (let key in res.UnreadStateByContact) {
+    //             this.globalVars.decryptedMessages.UnreadStateByContact[key] = res.UnreadStateByContact[key];
+    //           }
 
-              // Update the number of unread threads
-              this.globalVars.messageResponse.NumberOfUnreadThreads =
-                this.globalVars.messageResponse.NumberOfUnreadThreads + res.NumberOfUnreadThreads;
+    //           // Update the number of unread threads
+    //           this.globalVars.messagesNumberOfUnreadThreads =
+    //             this.globalVars.messagesNumberOfUnreadThreads + res.NumberOfUnreadThreads;
 
-              // Update the number of new messages so we know when to stop scrolling
-              this.globalVars.newMessagesFromPage = res.OrderedContactsWithMessages.length;
-            }
-          }
-        },
-        (err) => {
-          console.error(this.backendApi.stringifyError(err));
-        }
-      )
-      .finally(() => {
-        this.fetchingMoreMessages = false;
-      });
+    //           // Update the number of new messages so we know when to stop scrolling
+    //           this.globalVars.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+    //         }
+    //       }
+    //     },
+    //     (err) => {
+    //       console.error(this.backendApi.stringifyError(err));
+    //     }
+    //   )
+    //   .finally(() => {
+    //     this.fetchingMoreMessages = false;
+    //   });
   }
 
   _handleTabClick(tabName: any) {
+    console.log("tabName", tabName);
     // Clear the current messages
-    this.globalVars.messageResponse = null;
-
-    this.setTab(tabName);
-
-    // Fetch initial messages for the new tab
-    this.globalVars.LoadInitialMessages(0, 10);
+    // this.globalVars.decryptedMessages = null;
+    // this.setTab(tabName);
+    // // Fetch initial messages for the new tab
+    // this.globalVars.LoadInitialMessages(0, 10);
   }
 
   setTab(tabName: string) {
@@ -265,63 +266,65 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   // This marks all messages as read and relays this request to the server.
   _markAllMessagesRead() {
-    for (let thread of this.messageThreads) {
-      this.globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
-    }
+    console.log("_markAllMessagesRead()");
+    // for (let thread of this.messageThreads) {
+    //   this.globalVars.decryptedMessages.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
+    // }
 
-    // Send an update back to the server noting that we want to mark all threads read.
-    this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe(
-        () => {
-          this.tracking.log("profile : all-message-read");
-        },
-        (err) => {
-          console.log(err);
-          const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("profile : all-message-read", { error: parsedError });
-          this.globalVars._alertError(parsedError);
-        }
-      );
+    // // Send an update back to the server noting that we want to mark all threads read.
+    // this.backendApi
+    //   .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+    //   .subscribe(
+    //     () => {
+    //       this.tracking.log("profile : all-message-read");
+    //     },
+    //     (err) => {
+    //       console.log(err);
+    //       const parsedError = this.backendApi.stringifyError(err);
+    //       this.tracking.log("profile : all-message-read", { error: parsedError });
+    //       this.globalVars._alertError(parsedError);
+    //     }
+    //   );
 
     // Reflect this change in NumberOfUnreadThreads.
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
+    this.globalVars.messagesNumberOfUnreadThreads = 0;
   }
 
-  _getThreadWithPubKey(pubKey: string) {
-    for (let thread of this.messageThreads) {
-      // Public keys without a profile can message so use safe navigation
-      if (thread.ProfileEntryResponse?.PublicKeyBase58Check === pubKey) {
-        return thread;
-      }
-    }
-    return false;
-  }
+  // _getThreadWithPubKey(pubKey: string) {
+  //   for (let thread of this.messageThreads) {
+  //     // Public keys without a profile can message so use safe navigation
+  //     if (thread.ProfileEntryResponse?.PublicKeyBase58Check === pubKey) {
+  //       return thread;
+  //     }
+  //   }
+  //   return false;
+  // }
 
   _handleCreatorSelectedInSearch(creator: any) {
-    // If we haven't gotten the user's message state yet, bail.
-    if (!this.globalVars.messageResponse) {
-      return;
-    }
+    console.log("_handleCreatorSelectedInSearch()");
+    // // If we haven't gotten the user's message state yet, bail.
+    // if (!this.globalVars.decryptedMessages) {
+    //   return;
+    // }
 
-    // If a thread with this creator already exists, select it.
-    let existingThread = this._getThreadWithPubKey(creator.PublicKeyBase58Check);
-    if (existingThread) {
-      this._handleMessagesThreadClick(existingThread);
-      return;
-    }
+    // // If a thread with this creator already exists, select it.
+    // let existingThread = this._getThreadWithPubKey(creator.PublicKeyBase58Check);
+    // if (existingThread) {
+    //   this._handleMessagesThreadClick(existingThread);
+    //   return;
+    // }
 
-    // Add the creator to the inbox as a new thread.
-    let newThread = {
-      PublicKeyBase58Check: creator.PublicKeyBase58Check,
-      Messages: [],
-      ProfileEntryResponse: creator,
-      NumMessagesRead: 0,
-    };
-    // This gets appeneded to the front of the ordered contacts list in the message inbox.
-    this.messageThreads.unshift(newThread);
-    // Make this the new selected thread.
-    this._handleMessagesThreadClick(newThread);
+    // // Add the creator to the inbox as a new thread.
+    // let newThread = {
+    //   PublicKeyBase58Check: creator.PublicKeyBase58Check,
+    //   Messages: [],
+    //   ProfileEntryResponse: creator,
+    //   NumMessagesRead: 0,
+    // };
+    // // This gets appeneded to the front of the ordered contacts list in the message inbox.
+    // this.messageThreads.unshift(newThread);
+    // // Make this the new selected thread.
+    // this._handleMessagesThreadClick(newThread);
   }
 
   _handleMessagesThreadClick(thread: any) {
@@ -331,39 +334,41 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   updateReadMessagesForSelectedThread() {
+    console.log("updateReadMessagesForSelectedThread()");
     // If selectedThread is undefined, we return
     if (!this.selectedThread) {
       return;
     }
 
-    let contactPubKey = this.messageThreads[0]?.PublicKeyBase58Check;
+    // TODO: make sure this is doing the right thing
+    let contactPubKey = this.messageThreads[0]?.SenderInfo?.OwnerPublicKeyBase58Check;
     if (this.selectedThread && this.selectedThread.PublicKeyBase58Check) {
       contactPubKey = this.selectedThread.PublicKeyBase58Check;
     }
 
     // We update the read message state on global vars before sending the request so it is more instant.
-    if (this.globalVars.messageResponse.UnreadStateByContact[contactPubKey]) {
-      this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] = false;
-      this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
+    // if (this.globalVars.decryptedMessages.UnreadStateByContact[contactPubKey]) {
+    //   this.globalVars.decryptedMessages.UnreadStateByContact[contactPubKey] = false;
+    //   this.globalVars.messagesNumberOfUnreadThreads -= 1;
 
-      // Send an update back to the server noting that we read this thread.
-      this.backendApi
-        .MarkContactMessagesRead(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          this.selectedThread.PublicKeyBase58Check
-        )
-        .subscribe(
-          () => {
-            this.tracking.log("profile : message-read");
-          },
-          (err) => {
-            console.log(err);
-            const parsedError = this.backendApi.stringifyError(err);
-            this.tracking.log("profile : message-read", { error: parsedError });
-            this.globalVars._alertError(parsedError);
-          }
-        );
-    }
+    //   // Send an update back to the server noting that we read this thread.
+    //   this.backendApi
+    //     .MarkContactMessagesRead(
+    //       this.globalVars.localNode,
+    //       this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //       this.selectedThread.PublicKeyBase58Check
+    //     )
+    //     .subscribe(
+    //       () => {
+    //         this.tracking.log("profile : message-read");
+    //       },
+    //       (err) => {
+    //         console.log(err);
+    //         const parsedError = this.backendApi.stringifyError(err);
+    //         this.tracking.log("profile : message-read", { error: parsedError });
+    //         this.globalVars._alertError(parsedError);
+    //       }
+    //     );
+    // }
   }
 }

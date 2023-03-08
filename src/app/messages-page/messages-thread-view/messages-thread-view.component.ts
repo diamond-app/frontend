@@ -66,98 +66,99 @@ export class MessagesThreadViewComponent {
   }
 
   _sendMessage() {
+    console.log("_sendMessage()");
     // If we get here then it means Enter has been pressed without the shift
     // key held down or the send message button has been pressed.
-    if (this.messageText == null || this.messageText === "") {
-      this.globalVars._alertError("Please enter a message to send.");
-      this.messageText = "";
-      this._scrollToMostRecentMessage();
-      return;
-    }
-    if (this.sendMessageBeingCalled) {
-      this.globalVars._alertError("Still processing your previous message. Please wait a few seconds.");
-      return;
-    }
+    // if (this.messageText == null || this.messageText === "") {
+    //   this.globalVars._alertError("Please enter a message to send.");
+    //   this.messageText = "";
+    //   this._scrollToMostRecentMessage();
+    //   return;
+    // }
+    // if (this.sendMessageBeingCalled) {
+    //   this.globalVars._alertError("Still processing your previous message. Please wait a few seconds.");
+    //   return;
+    // }
 
     // Immediately add the message to the list  to make it feel instant.
-    const messageObj: any = {
-      SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-      RecipientPublicKeyBase58Check: this.messageThread.PublicKeyBase58Check,
-      DecryptedText: this.messageText,
-      IsSender: true,
-      TstampNanos: null, // We explicitly set this to null so we can rely on it for "sending..." text.
-    };
-    this.messageThread.Messages.push(messageObj);
-    this._scrollToMostRecentMessage();
+    // const messageObj: any = {
+    //   SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //   RecipientPublicKeyBase58Check: this.messageThread.PublicKeyBase58Check,
+    //   DecryptedText: this.messageText,
+    //   IsSender: true,
+    //   TstampNanos: null, // We explicitly set this to null so we can rely on it for "sending..." text.
+    // };
+    // this.messageThread.Messages.push(messageObj);
+    // this._scrollToMostRecentMessage();
 
-    // Move the thread to the top of the messageResponse object to make it feel responsive.
-    for (let ii = 0; ii < this.globalVars.messageResponse.OrderedContactsWithMessages.length; ii++) {
-      // Check if we've hit the contact in the list
-      if (
-        this.globalVars.messageResponse.OrderedContactsWithMessages[ii].PublicKeyBase58Check ===
-        this.messageThread.PublicKeyBase58Check
-      ) {
-        // Check if this thread is already at the top
-        if (ii == 0) {
-          break;
-        }
+    // // Move the thread to the top of the messageResponse object to make it feel responsive.
+    // for (let ii = 0; ii < this.globalVars.decryptedMessages.OrderedContactsWithMessages.length; ii++) {
+    //   // Check if we've hit the contact in the list
+    //   if (
+    //     this.globalVars.decryptedMessages.OrderedContactsWithMessages[ii].PublicKeyBase58Check ===
+    //     this.messageThread.PublicKeyBase58Check
+    //   ) {
+    //     // Check if this thread is already at the top
+    //     if (ii == 0) {
+    //       break;
+    //     }
 
-        // Move the threads around inside OrderedContactsWithMessages to put the current thread at the top.
-        let currentContact = this.globalVars.messageResponse.OrderedContactsWithMessages[ii];
-        let messagesBelow = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(ii + 1);
-        let messagesAbove = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(0, ii);
-        let newMessageList = messagesAbove.concat(messagesBelow);
-        newMessageList.unshift(currentContact);
-        this.globalVars.messageResponse.OrderedContactsWithMessages = newMessageList;
-      }
-    }
+    //     // Move the threads around inside OrderedContactsWithMessages to put the current thread at the top.
+    //     let currentContact = this.globalVars.decryptedMessages.OrderedContactsWithMessages[ii];
+    //     let messagesBelow = this.globalVars.decryptedMessages.OrderedContactsWithMessages.slice(ii + 1);
+    //     let messagesAbove = this.globalVars.decryptedMessages.OrderedContactsWithMessages.slice(0, ii);
+    //     let newMessageList = messagesAbove.concat(messagesBelow);
+    //     newMessageList.unshift(currentContact);
+    //     this.globalVars.decryptedMessages.OrderedContactsWithMessages = newMessageList;
+    //   }
+    // }
 
     // If we get here then we have a message to send on the current thread.
-    this.sendMessageBeingCalled = true;
-    this.globalVars.pauseMessageUpdates = true;
-    const textToSend = this.messageText;
-    this._resetMessageText("");
+    // this.sendMessageBeingCalled = true;
+    // this.globalVars.pauseMessageUpdates = true;
+    // const textToSend = this.messageText;
+    // this._resetMessageText("");
 
-    this.backendApi
-      .SendMessage(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.messageThread.PublicKeyBase58Check,
-        textToSend,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
-      .subscribe(
-        (res: any) => {
-          this.tracking.log("message : send");
+    // this.backendApi
+    //   .SendMessage(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //     this.messageThread.PublicKeyBase58Check,
+    //     textToSend,
+    //     this.globalVars.feeRateDeSoPerKB * 1e9
+    //   )
+    //   .subscribe(
+    //     (res: any) => {
+    //       this.tracking.log("message : send");
 
-          this.sendMessageBeingCalled = false;
-          this.globalVars.messageMeta.decryptedMessgesMap[
-            this.globalVars.loggedInUser?.PublicKeyBase58Check + "" + res.TstampNanos
-          ] = messageObj;
-          this.backendApi.SetStorage(this.backendApi.MessageMetaKey, this.globalVars.messageMeta);
-          // Set the timestamp in this case since it's normally set by the BE.
-          messageObj.TstampNanos = res.TstampNanos;
+    //       this.sendMessageBeingCalled = false;
+    //       this.globalVars.messageMeta.decryptedMessgesMap[
+    //         this.globalVars.loggedInUser?.PublicKeyBase58Check + "" + res.TstampNanos
+    //       ] = messageObj;
+    //       this.backendApi.SetStorage(this.backendApi.MessageMetaKey, this.globalVars.messageMeta);
+    //       // Set the timestamp in this case since it's normally set by the BE.
+    //       messageObj.TstampNanos = res.TstampNanos;
 
-          // Increment the notification map.
-          this.globalVars.messageMeta.notificationMap[
-            this.globalVars.loggedInUser?.PublicKeyBase58Check + this.messageThread.PublicKeyBase58Check
-          ]++;
-        },
-        (error) => {
-          this.tracking.log("message : send");
+    //       // Increment the notification map.
+    //       this.globalVars.messageMeta.notificationMap[
+    //         this.globalVars.loggedInUser?.PublicKeyBase58Check + this.messageThread.PublicKeyBase58Check
+    //       ]++;
+    //     },
+    //     (error) => {
+    //       this.tracking.log("message : send");
 
-          // Remove the previous message since it didn't actually post and reset
-          // the text area to the old message.
-          this.messageThread.Messages.pop();
-          this.messageText = textToSend;
+    //       // Remove the previous message since it didn't actually post and reset
+    //       // the text area to the old message.
+    //       this.messageThread.Messages.pop();
+    //       this.messageText = textToSend;
 
-          this.sendMessageBeingCalled = false;
-          this.globalVars._alertError(this.backendApi.parseMessageError(error));
-          return;
-        }
-      )
-      .add(() => {
-        this.globalVars.pauseMessageUpdates = false;
-      });
+    //       this.sendMessageBeingCalled = false;
+    //       this.globalVars._alertError(this.backendApi.parseMessageError(error));
+    //       return;
+    //     }
+    //   )
+    //   .add(() => {
+    //     this.globalVars.pauseMessageUpdates = false;
+    //   });
   }
 }

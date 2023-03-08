@@ -86,27 +86,28 @@ export class MessagesPageComponent implements OnInit {
 
   // This marks all messages as read and relays this request to the server.
   _markAllMessagesReadMobile() {
-    for (let thread of this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      this.globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
-    }
+    console.log("_markAllMessagesReadMobile()");
+    // for (let thread of this.globalVars.decryptedMessages.OrderedContactsWithMessages) {
+    //   this.globalVars.decryptedMessages.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
+    // }
 
-    // Send an update back to the server noting that we want to mark all threads read.
-    this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe(
-        () => {
-          this.tracking.log("profile : all-message-read");
-        },
-        (err) => {
-          console.log(err);
-          const parsedError = this.backendApi.stringifyError(err);
-          this.tracking.log("profile : all-message-read", { error: parsedError });
-          this.globalVars._alertError(parsedError);
-        }
-      );
+    // // Send an update back to the server noting that we want to mark all threads read.
+    // this.backendApi
+    //   .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+    //   .subscribe(
+    //     () => {
+    //       this.tracking.log("profile : all-message-read");
+    //     },
+    //     (err) => {
+    //       console.log(err);
+    //       const parsedError = this.backendApi.stringifyError(err);
+    //       this.tracking.log("profile : all-message-read", { error: parsedError });
+    //       this.globalVars._alertError(parsedError);
+    //     }
+    //   );
 
     // Reflect this change in NumberOfUnreadThreads.
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
+    this.globalVars.messagesNumberOfUnreadThreads = 0;
   }
 
   navigateToInbox() {

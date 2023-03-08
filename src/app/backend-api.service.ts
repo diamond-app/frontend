@@ -130,6 +130,8 @@ export class BackendRoutes {
   static RoutePathUploadVideo = "/api/v0/upload-video";
 }
 
+// TODO: migrate all these backend types to use deso-protocol-types
+
 export class Transaction {
   inputs: {
     txID: string;
@@ -508,43 +510,13 @@ export class BackendApiService {
     this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
   }
 
-  signAndSubmitTransaction(endpoint: string, request: Observable<any>, PublicKeyBase58Check: string): Observable<any> {
-    return request
-      .pipe(
-        switchMap((res) =>
-          this.identityService
-            .sign({
-              transactionHex: res.TransactionHex,
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-            })
-            .pipe(
-              switchMap((signed) => {
-                if (signed.approvalRequired) {
-                  return this.identityService
-                    .launch("/approve", {
-                      tx: res.TransactionHex,
-                    })
-                    .pipe(
-                      map((approved) => {
-                        this.setIdentityServiceUsers(approved.users);
-                        return { ...res, ...approved };
-                      })
-                    );
-                } else {
-                  return of({ ...res, ...signed });
-                }
-              })
-            )
-        )
-      )
-      .pipe(
-        switchMap((res) =>
-          this.SubmitTransaction(endpoint, res.signedTransactionHex).pipe(
-            map((broadcasted) => ({ ...res, ...broadcasted }))
-          )
-        )
-      )
-      .pipe(catchError(this._handleError));
+  signAndSubmitTransaction(request: Observable<any>): Observable<any> {
+    return request.pipe(
+      switchMap((res) => {
+        return from(identity.signAndSubmit(res.TransactionHex));
+      }),
+      catchError(this._handleError)
+    );
   }
 
   get(endpoint: string, path: string) {
@@ -772,7 +744,7 @@ export class BackendApiService {
         })
       )
       .pipe(catchError(this._handleError));
-    return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(req);
   }
 
   // TODO: this should go away once we refactor to all the new stuff.
@@ -795,7 +767,8 @@ export class BackendApiService {
       ExtraData,
       MinFeeRateNanosPerKB,
     });
-    return this.signAndSubmitTransaction(endpoint, request, OwnerPublicKeyBase58Check);
+
+    return this.signAndSubmitTransaction(request);
   }
 
   // User-related functions.
@@ -1472,68 +1445,60 @@ export class BackendApiService {
     req = req
       .pipe(
         switchMap((res) => {
-          return this.identityService
-            .decrypt({
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-              encryptedMessages: res.encryptedMessages,
-              // encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
-            })
-            .pipe(
-              map((decryptedResponse) => {
-                if (decryptedResponse?.requiresEncryptedMessagingKeyRandomness === true) {
-                  // go get the key
-                  return launchDefaultMessagingKey$().pipe(
-                    switchMap((defaultMessagingKeyResponse) => {
-                      if (defaultMessagingKeyResponse.encryptedMessagingKeyRandomness) {
-                        this.SetEncryptedMessagingKeyRandomnessForPublicKey(
-                          PublicKeyBase58Check,
-                          defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
-                        );
-                        return this.GetDefaultKey(endpoint, PublicKeyBase58Check).pipe(
-                          switchMap((defaultKey) => {
-                            return of({
-                              defaultKey,
-                              defaultMessagingKeyResponse,
-                            });
-                          }),
-                          switchMap(({ defaultKey, defaultMessagingKeyResponse }) => {
-                            return !defaultKey
-                              ? callRegisterGroupMessagingKey$(defaultMessagingKeyResponse).pipe(
-                                  switchMap((groupMessagingKeyResponse) => {
-                                    if (!groupMessagingKeyResponse) {
-                                      throwError("Error creating default key");
-                                    }
-                                    return of(defaultMessagingKeyResponse);
-                                  })
-                                )
-                              : of(defaultMessagingKeyResponse);
-                          }),
-                          switchMap((_) => {
-                            return this.identityService
-                              .decrypt({
-                                ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-                                encryptedMessages: res.encryptedMessages,
+          return this.identityService.decrypt(res.encryptedMessages).pipe(
+            map((decryptedResponse) => {
+              if (decryptedResponse?.requiresEncryptedMessagingKeyRandomness === true) {
+                // go get the key
+                return launchDefaultMessagingKey$().pipe(
+                  switchMap((defaultMessagingKeyResponse) => {
+                    if (defaultMessagingKeyResponse.encryptedMessagingKeyRandomness) {
+                      this.SetEncryptedMessagingKeyRandomnessForPublicKey(
+                        PublicKeyBase58Check,
+                        defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
+                      );
+                      return this.GetDefaultKey(endpoint, PublicKeyBase58Check).pipe(
+                        switchMap((defaultKey) => {
+                          return of({
+                            defaultKey,
+                            defaultMessagingKeyResponse,
+                          });
+                        }),
+                        switchMap(({ defaultKey, defaultMessagingKeyResponse }) => {
+                          return !defaultKey
+                            ? callRegisterGroupMessagingKey$(defaultMessagingKeyResponse).pipe(
+                                switchMap((groupMessagingKeyResponse) => {
+                                  if (!groupMessagingKeyResponse) {
+                                    throwError("Error creating default key");
+                                  }
+                                  return of(defaultMessagingKeyResponse);
+                                })
+                              )
+                            : of(defaultMessagingKeyResponse);
+                        }),
+                        switchMap((_) => {
+                          return this.identityService
+                            .decrypt({
+                              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
+                              encryptedMessages: res.encryptedMessages,
 
-                                encryptedMessagingKeyRandomness:
-                                  defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
-                              })
-                              .pipe(
-                                map((decryptedHexes) =>
-                                  addDecryptedMessagesToMessagePayload(res, decryptedHexes, false)
-                                )
-                              );
-                          })
-                        );
-                      }
-                    })
-                  );
-                } else if (decryptedResponse.decryptedHexes) {
-                  return addDecryptedMessagesToMessagePayload(res, decryptedResponse, true);
-                } else {
-                  throw "something went wrong with decrypting";
-                }
-              })
-            );
+                              encryptedMessagingKeyRandomness:
+                                defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
+                            })
+                            .pipe(
+                              map((decryptedHexes) => addDecryptedMessagesToMessagePayload(res, decryptedHexes, false))
+                            );
+                        })
+                      );
+                    }
+                  })
+                );
+              } else if (decryptedResponse.decryptedHexes) {
+                return addDecryptedMessagesToMessagePayload(res, decryptedResponse, true);
+              } else {
+                throw "something went wrong with decrypting";
+              }
+            })
+          );
         })
       )
       .pipe(
