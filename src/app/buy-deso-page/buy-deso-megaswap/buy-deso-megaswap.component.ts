@@ -41,6 +41,7 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
         "&destinationTickers=DESO",
         "&destinationTicker=DESO",
         `&destinationAddress=${this.globalVars.loggedInUser?.PublicKeyBase58Check || ""}`,
+        `&affiliateAddress=${environment.megaswapAffiliateAddress}`,
       ].join("")
     );
   }
