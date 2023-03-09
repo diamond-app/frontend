@@ -10,7 +10,7 @@ import {
   ApiInternalService,
   AppUser,
   NEW_APP_USER_DEFAULTS,
-  SUBSCRIBED_APP_USER_DEFAULTS,
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
@@ -322,7 +322,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             // if the app user is null, it means we need to create a new one
           } else if (appUser === null) {
             const userNotifPreferences = this.subscribeToEmailNotifs
-              ? SUBSCRIBED_APP_USER_DEFAULTS
+              ? SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
               : NEW_APP_USER_DEFAULTS;
             const utcOffset = getUTCOffset();
             createOrUdpateAppUserObs = this.apiInternal.createAppUser(

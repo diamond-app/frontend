@@ -252,6 +252,8 @@ export class GlobalVarsService {
 
   identityInfoResponse?: any;
 
+  browserSupportsWebPush: boolean = false;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -383,6 +385,18 @@ export class GlobalVarsService {
       result.isSameUserAsBefore = isSameUserAsBefore;
       observer.next(result);
     });
+  }
+
+  async checkIfBrowserSupportsWebPush(): Promise<boolean> {
+    const registration = await navigator.serviceWorker.getRegistration();
+    return !!registration.pushManager;
+  }
+
+  initializeWebPush() {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then(() => console.log("Service worker registered"))
+      .catch((err) => console.error("Error registering service worker", err));
   }
 
   initializeShowPriceSetting() {

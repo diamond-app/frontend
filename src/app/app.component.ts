@@ -332,12 +332,12 @@ export class AppComponent implements OnInit {
 
   loadApp() {
     // Load service worker for push notifications.
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/service-worker.js")
-        .then(() => console.log("Service worker registered"))
-        .catch((err) => console.error("Error registering service worker", err));
-    }
+    this.globalVars.checkIfBrowserSupportsWebPush().then((webPushSupported: boolean) => {
+      this.globalVars.browserSupportsWebPush = webPushSupported;
+      if (webPushSupported) {
+        this.globalVars.initializeWebPush();
+      }
+    });
     this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
 
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};

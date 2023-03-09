@@ -1,4 +1,3 @@
-// @ts-strict
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
@@ -12,7 +11,7 @@ import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
-import { range } from "lodash";
+import { range, isNil } from "lodash";
 import { userInfo } from "os";
 
 @Component({
@@ -21,6 +20,185 @@ import { userInfo } from "os";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
+  notificationCategories = {
+    "Social Engagement": {
+      isHidden: true,
+      order: 0,
+      notificationTypes: [
+        { name: "Likes", appUserField: "ReceiveLike" },
+        { name: "Post replies", appUserField: "ReceiveComment" },
+        { name: "Reposts", appUserField: "ReceiveRepost" },
+        { name: "Quote reposts", appUserField: "ReceiveQuoteRepost"}
+      ],
+    },
+    "Social Interaction": {
+      isHidden: true,
+      order: 1,
+      notificationTypes: [
+        { name: "@Mentions", appUserField: "ReceiveMention" },
+        { name: "Follows", appUserField: "ReceiveFollow" },
+        { name: "Received messages", appUserField: "ReceiveDm" },
+      ],
+    },
+    "Social Transactions": {
+      isHidden: true,
+      order: 2,
+      notificationTypes: [
+        { name: "Received diamonds", appUserField: "ReceiveDiamond" },
+        { name: "Received DESO", appUserField: "ReceiveBasicTransfer" },
+        { name: "Creator coin purchase", appUserField: "ReceiveCoinPurchase" },
+      ],
+    },
+    "NFT Transactions": {
+      isHidden: true,
+      order: 3,
+      notificationTypes: [
+        { name: "NFT bid", appUserField: "ReceiveNftBid" },
+        { name: "NFT bid accepted", appUserField: "ReceiveNftBidAccepted" },
+        { name: "NFT purchase", appUserField: "ReceiveNftPurchase" },
+        { name: "NFT transfer", appUserField: "ReceiveNftTransfer" },
+      ],
+    },
+  };
+
+  getSortedNotificationCategories() {
+    return Object.keys(this.notificationCategories).sort((a, b) => {
+      return this.notificationCategories[a].order - this.notificationCategories[b].order;
+    });
+  }
+
+  categorySelected(category: string, notificationChannel: string): boolean {
+    if (isNil(this.appUser)) {
+      return false;
+    }
+    return this.notificationCategories[category].notificationTypes.every((notificationType) => {
+      return this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`];
+    });
+  }
+
+  categoryPartiallySelected(category: string, notificationChannel: string): boolean {
+    if (isNil(this.appUser)) {
+      return false;
+    }
+    if (this.categorySelected(category, notificationChannel)) {
+      return false;
+    }
+    return this.notificationCategories[category].notificationTypes.some((notificationType) => {
+      return this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`];
+    });
+  }
+
+  // Define a function to toggle whether a category is shown.
+  toggleCategoryHidden(category: string): void {
+    this.notificationCategories[category].isHidden = !this.notificationCategories[category].isHidden;
+  }
+
+  // Define a function to toggle the user's subscription to all notifications in a category
+  toggleCategory(category: string, notificationChannel: string): void {
+    if (this.appUser === null) {
+      return;
+    }
+    const currentCategoryStatus = this.categorySelected(category, notificationChannel);
+    // Create copy of appUser to revert to if the API call fails.
+    const originalAppUser = { ...this.appUser };
+
+    for (let notificationType of this.notificationCategories[category].notificationTypes) {
+      this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`] = !currentCategoryStatus;
+    }
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (!currentCategoryStatus && notificationChannel === "Push") {
+      this.subscribeToPushNotifications();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser = originalAppUser;
+      }
+    );
+  }
+
+  // Define a function to toggle the user's subscription to a specific notification type
+  toggleNotificationType(notificationType: string, notificationChannel: string): void {
+    if (this.appUser === null) {
+      return;
+    }
+
+    this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
+      `${notificationType}${notificationChannel}Notif`
+    ];
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (this.appUser[`${notificationType}${notificationChannel}Notif`] && notificationChannel === "Push") {
+      this.subscribeToPushNotifications();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
+          `${notificationType}${notificationChannel}Notif`
+        ];
+      }
+    );
+  }
+
+  // Define a function to toggle the user's subscription to a specific notification type.
+  notificationChecked(notificationType: string, notificationChannel: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+    return this.appUser[`${notificationType}${notificationChannel}Notif`];
+  }
+
+  toggleNotificationDigest(digestType: string, notificationChannel: string) {
+    if (this.appUser === null) {
+      return;
+    }
+
+    this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
+      `Receive${notificationChannel}${digestType}Digest`
+    ];
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (this.appUser[`Receive${notificationChannel}${digestType}Digest`] && notificationChannel === "Push") {
+      this.subscribeToPushNotifications();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
+          `Receive${notificationChannel}${digestType}Digest`
+        ];
+      }
+    );
+  }
+
+  notificationDigestChecked(digestType: string, notificationChannel: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+
+    return this.appUser[`Receive${notificationChannel}${digestType}Digest`];
+  }
+
+  notificationDigestDisabled(digestType: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+
+    if (digestType === "Earnings") {
+      return this.appUser.EarningsDigestFrequency === 0;
+    } else {
+      return this.appUser.ActivityDigestFrequency === 0;
+    }
+  }
+
   emailAddress = "";
   showEmailPrompt: boolean = false;
   environment = environment;
@@ -43,20 +221,20 @@ export class SettingsComponent implements OnInit {
     text: `${localHour.toString().padStart(2, "0")}:00`,
   }));
   txEmailSettings = [
-    { field: "ReceiveLikeNotif", text: "Like" },
-    { field: "ReceiveCoinPurchaseNotif", text: "Creator coin purchase" },
-    { field: "ReceiveFollowNotif", text: "Follow" },
-    { field: "ReceiveBasicTransferNotif", text: "Received DESO" },
-    { field: "ReceiveCommentNotif", text: "Post comment" },
-    { field: "ReceiveDmNotif", text: "Received message" },
-    { field: "ReceiveDiamondNotif", text: "Received diamonds" },
-    { field: "ReceiveRepostNotif", text: "Repost" },
-    { field: "ReceiveQuoteRepostNotif", text: "Quote repost" },
-    { field: "ReceiveMentionNotif", text: "@Mentioned" },
-    { field: "ReceiveNftBidNotif", text: "NFT bid" },
-    { field: "ReceiveNftPurchaseNotif", text: "NFT purchased" },
-    { field: "ReceiveNftBidAcceptedNotif", text: "NFT bid accepted" },
-    { field: "ReceiveNftRoyaltyNotif", text: "Received NFT royalty" },
+    { field: "ReceiveLikeEmailNotif", text: "Like" },
+    { field: "ReceiveCoinPurchaseEmailNotif", text: "Creator coin purchase" },
+    { field: "ReceiveFollowEmailNotif", text: "Follow" },
+    { field: "ReceiveBasicTransferEmailNotif", text: "Received DESO" },
+    { field: "ReceiveCommentEmailNotif", text: "Post comment" },
+    { field: "ReceiveDmEmailNotif", text: "Received message" },
+    { field: "ReceiveDiamondEmailNotif", text: "Received diamonds" },
+    { field: "ReceiveRepostEmailNotif", text: "Repost" },
+    { field: "ReceiveQuoteRepostEmailNotif", text: "Quote repost" },
+    { field: "ReceiveMentionEmailNotif", text: "@Mentioned" },
+    { field: "ReceiveNftBidEmailNotif", text: "NFT bid" },
+    { field: "ReceiveNftPurchaseEmailNotif", text: "NFT purchased" },
+    { field: "ReceiveNftBidAcceptedEmailNotif", text: "NFT bid accepted" },
+    { field: "ReceiveNftRoyaltyEmailNotif", text: "Received NFT royalty" },
   ];
 
   get allTxSettingsSelected() {
@@ -183,8 +361,8 @@ export class SettingsComponent implements OnInit {
   }
 
   async subscribeToPushNotifications() {
-    const pushServerPublicKey =
-      "BBt2v52sa0J-1D6w25XGk-eXqSOWdnfddV256XXI1B-UZlfX-HSIDzv4TkXbTLhHHNjDc45yZ8jsZWsXWg2CbF0";
+    if (!this.globalVars.browserSupportsWebPush) return;
+    const pushServerPublicKey = environment.webPushServerVapidPublicKey;
     const applicationServerKey = this.urlBase64ToUint8Array(pushServerPublicKey);
 
     const serviceWorker = await navigator.serviceWorker.ready;
@@ -194,7 +372,6 @@ export class SettingsComponent implements OnInit {
     });
     const subscriptionObject = subscription.toJSON();
     if (subscriptionObject?.keys?.auth && subscriptionObject?.keys?.p256dh && subscriptionObject?.endpoint) {
-      console.log("Subscription: ", subscriptionObject);
       this.apiInternal
         .createPushNotificationSubscription(
           this.globalVars.loggedInUser.PublicKeyBase58Check,
@@ -202,9 +379,7 @@ export class SettingsComponent implements OnInit {
           subscriptionObject.keys.auth,
           subscriptionObject.keys.p256dh
         )
-        .subscribe((res) => {
-          console.log("Response: ", res);
-        });
+        .subscribe((res) => {});
     }
   }
 
@@ -242,6 +417,17 @@ export class SettingsComponent implements OnInit {
     }
 
     this.appUser = { ...this.appUser, [digestSetting]: Number(inputEl.value) };
+
+    // If the user has set digest frequency to 0, we disable that digest across all channels.
+    if (Number(inputEl.value) === 0) {
+      if (digestSetting === "ActivityDigestFrequency") {
+        this.appUser.ReceivePushActivityDigest = false;
+        this.appUser.ReceiveEmailActivityDigest = false;
+      } else {
+        this.appUser.ReceivePushEarningsDigest = false;
+        this.appUser.ReceiveEmailEarningsDigest = false;
+      }
+    }
 
     this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
       () => {},

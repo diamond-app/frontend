@@ -3,6 +3,8 @@ export const environment = {
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "media.deso.org",
+  webPushServerVapidPublicKey:
+    "BBt2v52sa0J-1D6w25XGk-eXqSOWdnfddV256XXI1B-UZlfX-HSIDzv4TkXbTLhHHNjDc45yZ8jsZWsXWg2CbF0",
   identityURL: "https://identity.bitclout.com",
   supportEmail: "node.admin@bitclout.com",
   dd: {

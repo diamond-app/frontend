@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { switchMap } from "rxjs/operators";
-import { ApiInternalService, AppUser, SUBSCRIBED_APP_USER_DEFAULTS } from "src/app/api-internal.service";
+import { ApiInternalService, AppUser, SUBSCRIBED_EMAIL_APP_USER_DEFAULTS } from "src/app/api-internal.service";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -74,7 +74,7 @@ export class EmailSubscribeComponent implements OnInit {
             this.globalVars.lastSeenNotificationIdx,
             utcOffset,
             localHourToUtcHour(20),
-            SUBSCRIBED_APP_USER_DEFAULTS
+            SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
           );
         })
       )
@@ -102,7 +102,7 @@ export class EmailSubscribeComponent implements OnInit {
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,
         localHourToUtcHour(20),
-        SUBSCRIBED_APP_USER_DEFAULTS
+        SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
       )
       .subscribe(() => {
         this.isProcessing = false;
