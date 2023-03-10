@@ -5,7 +5,12 @@ import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService, AppUser } from "src/app/api-internal.service";
+import {
+  ApiInternalService,
+  AppUser,
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+  SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
+} from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
@@ -20,46 +25,9 @@ import { userInfo } from "os";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-  notificationCategories = {
-    "Social Engagement": {
-      isHidden: true,
-      order: 0,
-      notificationTypes: [
-        { name: "Likes", appUserField: "ReceiveLike" },
-        { name: "Post replies", appUserField: "ReceiveComment" },
-        { name: "Reposts", appUserField: "ReceiveRepost" },
-        { name: "Quote reposts", appUserField: "ReceiveQuoteRepost"}
-      ],
-    },
-    "Social Interaction": {
-      isHidden: true,
-      order: 1,
-      notificationTypes: [
-        { name: "@Mentions", appUserField: "ReceiveMention" },
-        { name: "Follows", appUserField: "ReceiveFollow" },
-        { name: "Received messages", appUserField: "ReceiveDm" },
-      ],
-    },
-    "Social Transactions": {
-      isHidden: true,
-      order: 2,
-      notificationTypes: [
-        { name: "Received diamonds", appUserField: "ReceiveDiamond" },
-        { name: "Received DESO", appUserField: "ReceiveBasicTransfer" },
-        { name: "Creator coin purchase", appUserField: "ReceiveCoinPurchase" },
-      ],
-    },
-    "NFT Transactions": {
-      isHidden: true,
-      order: 3,
-      notificationTypes: [
-        { name: "NFT bid", appUserField: "ReceiveNftBid" },
-        { name: "NFT bid accepted", appUserField: "ReceiveNftBidAccepted" },
-        { name: "NFT purchase", appUserField: "ReceiveNftPurchase" },
-        { name: "NFT transfer", appUserField: "ReceiveNftTransfer" },
-      ],
-    },
-  };
+  notificationCategories = this.globalVars.notificationCategories;
+
+  notificationDetailsExpanded = false;
 
   getSortedNotificationCategories() {
     return Object.keys(this.notificationCategories).sort((a, b) => {
@@ -108,7 +76,7 @@ export class SettingsComponent implements OnInit {
 
     // If the user is subscribing, subscribe them to push notifications.
     if (!currentCategoryStatus && notificationChannel === "Push") {
-      this.subscribeToPushNotifications();
+      this.globalVars.createWebPushEndpointAndSubscribe();
     }
 
     this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
@@ -132,7 +100,7 @@ export class SettingsComponent implements OnInit {
 
     // If the user is subscribing, subscribe them to push notifications.
     if (this.appUser[`${notificationType}${notificationChannel}Notif`] && notificationChannel === "Push") {
-      this.subscribeToPushNotifications();
+      this.globalVars.createWebPushEndpointAndSubscribe();
     }
 
     this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
@@ -165,7 +133,7 @@ export class SettingsComponent implements OnInit {
 
     // If the user is subscribing, subscribe them to push notifications.
     if (this.appUser[`Receive${notificationChannel}${digestType}Digest`] && notificationChannel === "Push") {
-      this.subscribeToPushNotifications();
+      this.globalVars.createWebPushEndpointAndSubscribe();
     }
 
     this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
@@ -199,12 +167,21 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  showNotificationAdvancedSettings(): boolean {
+    if (!this.appUser) {
+      return false;
+    }
+    return (
+      this.globalVars.userHasSubscribedToNotificationChannel("Email", this.appUser) ||
+      this.globalVars.userHasSubscribedToNotificationChannel("Push", this.appUser)
+    );
+  }
+
   emailAddress = "";
   showEmailPrompt: boolean = false;
   environment = environment;
   selectedLanguage?: string;
   appUser?: AppUser | null;
-  isSelectEmailsDropdownOpen: boolean = false;
   isValidEmail: boolean = true;
   isSavingEmail: boolean = false;
   onlyShowEmailSettings: boolean = false;
@@ -220,30 +197,6 @@ export class SettingsComponent implements OnInit {
     value: localHour,
     text: `${localHour.toString().padStart(2, "0")}:00`,
   }));
-  txEmailSettings = [
-    { field: "ReceiveLikeEmailNotif", text: "Like" },
-    { field: "ReceiveCoinPurchaseEmailNotif", text: "Creator coin purchase" },
-    { field: "ReceiveFollowEmailNotif", text: "Follow" },
-    { field: "ReceiveBasicTransferEmailNotif", text: "Received DESO" },
-    { field: "ReceiveCommentEmailNotif", text: "Post comment" },
-    { field: "ReceiveDmEmailNotif", text: "Received message" },
-    { field: "ReceiveDiamondEmailNotif", text: "Received diamonds" },
-    { field: "ReceiveRepostEmailNotif", text: "Repost" },
-    { field: "ReceiveQuoteRepostEmailNotif", text: "Quote repost" },
-    { field: "ReceiveMentionEmailNotif", text: "@Mentioned" },
-    { field: "ReceiveNftBidEmailNotif", text: "NFT bid" },
-    { field: "ReceiveNftPurchaseEmailNotif", text: "NFT purchased" },
-    { field: "ReceiveNftBidAcceptedEmailNotif", text: "NFT bid accepted" },
-    { field: "ReceiveNftRoyaltyEmailNotif", text: "Received NFT royalty" },
-  ];
-
-  get allTxSettingsSelected() {
-    return !!this.appUser && !this.txEmailSettings.find(({ field }) => !this.appUser[field]);
-  }
-
-  get allTxSettingsUnselected() {
-    return !this.appUser || !this.txEmailSettings.find(({ field }) => this.appUser[field]);
-  }
 
   @Input() isModal: boolean = true;
 
@@ -294,6 +247,7 @@ export class SettingsComponent implements OnInit {
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
             switchMap(([appUser, userMetadata]) => {
+              this.emailAddress = userMetadata.Email;
               if (appUser === null && loggedInUser?.ProfileEntryResponse) {
                 if (userMetadata.Email.length > 0) {
                   // This case should only happen if there was an error when creating
@@ -342,45 +296,12 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("In settings");
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
     this.globalVars.updateEverything().add(() => {
       this.initializeAppUser(0, 5);
     });
-  }
-
-  urlBase64ToUint8Array(base64String: string) {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-    const rawData = atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-  }
-
-  async subscribeToPushNotifications() {
-    if (!this.globalVars.browserSupportsWebPush) return;
-    const pushServerPublicKey = environment.webPushServerVapidPublicKey;
-    const applicationServerKey = this.urlBase64ToUint8Array(pushServerPublicKey);
-
-    const serviceWorker = await navigator.serviceWorker.ready;
-    const subscription = await serviceWorker.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: applicationServerKey,
-    });
-    const subscriptionObject = subscription.toJSON();
-    if (subscriptionObject?.keys?.auth && subscriptionObject?.keys?.p256dh && subscriptionObject?.endpoint) {
-      this.apiInternal
-        .createPushNotificationSubscription(
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-          subscriptionObject.endpoint,
-          subscriptionObject.keys.auth,
-          subscriptionObject.keys.p256dh
-        )
-        .subscribe((res) => {});
-    }
   }
 
   closeModal() {
@@ -400,10 +321,6 @@ export class SettingsComponent implements OnInit {
   updateShowPriceInFeed() {
     this.globalVars.setShowPriceOnFeed(!this.globalVars.showPriceOnFeed);
     this.globalVars.updateEverything();
-  }
-
-  toggleEmailDropdown() {
-    this.isSelectEmailsDropdownOpen = !this.isSelectEmailsDropdownOpen;
   }
 
   updateDigestFrequency(ev: Event) {
@@ -469,48 +386,6 @@ export class SettingsComponent implements OnInit {
     );
   }
 
-  updateTxEmailSetting(ev: Event) {
-    if (!this.appUser || !ev?.target) return;
-    const inputEl = ev.target as HTMLInputElement;
-    const fieldName = inputEl.name as keyof AppUser;
-    const originalValue = this.appUser[fieldName];
-
-    if (typeof originalValue === "undefined") {
-      throw new Error(`invalid email setting: ${fieldName}`);
-    }
-
-    this.appUser = { ...this.appUser, [fieldName]: inputEl.checked };
-    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-      () => {},
-      () => {
-        if (!this.appUser) return;
-        this.appUser = {
-          ...this.appUser,
-          [fieldName]: originalValue,
-        };
-      }
-    );
-  }
-
-  toggleSelectAllTxEmailSettings(select: boolean) {
-    if (!this.appUser) return;
-    const originalAppUser = { ...this.appUser };
-    const settings = this.txEmailSettings.reduce((res, { field }) => {
-      res[field] = select;
-      return res;
-    }, {} as Record<string, boolean>);
-
-    this.appUser = { ...this.appUser, ...settings };
-
-    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-      () => {},
-      () => {
-        if (!this.appUser) return;
-        this.appUser = originalAppUser;
-      }
-    );
-  }
-
   isDigestSendAtTimeSelected(localHour: number) {
     return (
       localHourToUtcHour(this.appUser.DigestSendAtHourLocalTime, this.appUser.UserTimezoneUtcOffset * 60) ===
@@ -520,6 +395,42 @@ export class SettingsComponent implements OnInit {
 
   onEmailChange() {
     this.isValidEmail = true;
+  }
+
+  subscribeToPushNotifications() {
+    const utcOffset = getUTCOffset();
+    if (!this.appUser) {
+      this.apiInternal
+        .createAppUser(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          this.globalVars.lastSeenNotificationIdx,
+          utcOffset,
+          localHourToUtcHour(20),
+          SUBSCRIBED_PUSH_APP_USER_DEFAULTS
+        )
+        .subscribe((appUser) => {
+          this.appUser = appUser;
+          this.globalVars.createWebPushEndpointAndSubscribe();
+        });
+    } else {
+      console.log("Updating");
+      this.apiInternal
+        .updateAppUser(
+          {
+            ...this.appUser,
+            ...SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
+            UserTimezoneUtcOffset: utcOffset,
+            DigestSendAtHourLocalTime: localHourToUtcHour(20),
+          },
+          this.emailJwt
+        )
+        .subscribe((appUser) => {
+          console.log("Here is the app user: ", appUser);
+          this.appUser = appUser;
+          this.globalVars.createWebPushEndpointAndSubscribe();
+        });
+    }
   }
 
   onEmailSubmit(ev: Event) {
@@ -534,6 +445,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.isSavingEmail = true;
+
     const utcOffset = getUTCOffset();
     this.backendApi
       .UpdateUserGlobalMetadata(
@@ -544,13 +456,26 @@ export class SettingsComponent implements OnInit {
       )
       .pipe(
         switchMap(() => {
-          return this.apiInternal.createAppUser(
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-            this.globalVars.lastSeenNotificationIdx,
-            utcOffset,
-            localHourToUtcHour(20)
-          );
+          if (!this.appUser) {
+            return this.apiInternal.createAppUser(
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
+              this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+              this.globalVars.lastSeenNotificationIdx,
+              utcOffset,
+              localHourToUtcHour(20),
+              SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
+            );
+          } else {
+            return this.apiInternal.updateAppUser(
+              {
+                ...this.appUser,
+                ...SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+                UserTimezoneUtcOffset: utcOffset,
+                DigestSendAtHourLocalTime: localHourToUtcHour(20),
+              },
+              this.emailJwt
+            );
+          }
         })
       )
       .subscribe(

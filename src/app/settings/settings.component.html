@@ -47,27 +47,69 @@
     </div>
   </div>
 
-  <form (submit)="onEmailSubmit($event)" *ngIf="showEmailPrompt">
-    <label for="email-prompt" class="update-profile__title">
-      Enter your email to receive earnings and activity digests
-    </label>
-    <input
-      id="email-prompt"
-      class="form-control"
-      type="email"
-      name="email-address"
-      [(ngModel)]="this.emailAddress"
-      (input)="onEmailChange()"
-    />
-    <div class="d-flex mt-1">
-      <button type="submit" class="ml-auto btn btn-primary">
-        <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
-        <span *ngIf="!this.isSavingEmail">Save email</span>
-      </button>
+  <form (submit)="onEmailSubmit($event)">
+    <label for="email-prompt" class="update-profile__title">Subscribe to email notifications</label>
+    <div class="d-flex">
+      <input
+        id="email-prompt"
+        class="form-control w-80"
+        type="email"
+        name="email-address"
+        placeholder="Email address"
+        [(ngModel)]="this.emailAddress"
+        (input)="onEmailChange()"
+      />
+      <div class="d-flex w-20">
+        <button type="submit" class="ml-auto btn btn-primary">
+          <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+          <span
+            *ngIf="
+              !this.isSavingEmail && (this.emailAddress === '' || !globalVars.userHasSubscribedToNotificationChannel('Email', appUser))
+            "
+          >
+            Subscribe
+          </span>
+          <span
+            *ngIf="!this.isSavingEmail && this.emailAddress !== '' && globalVars.userHasSubscribedToNotificationChannel('Email', appUser)"
+          >
+            Update
+          </span>
+        </button>
+      </div>
     </div>
     <span *ngIf="!this.isValidEmail" class="text-danger">Please enter a valid email address.</span>
   </form>
-  <section *ngIf="!!appUser" class="mt-2">
+
+  <div *ngIf="globalVars.browserSupportsWebPush">
+    <label for="email-prompt" class="update-profile__title">Subscribe to push notifications</label>
+    <div class="pb-20px">
+      <button
+        class="ml-auto btn btn-primary"
+        (click)="subscribeToPushNotifications()"
+        [ngClass]="{ 'btn-secondary': globalVars.userHasSubscribedToNotificationChannel('Push', appUser) }"
+        [disabled]="globalVars.userHasSubscribedToNotificationChannel('Push', appUser)"
+      >
+        <span *ngIf="!globalVars.userHasSubscribedToNotificationChannel('Push', appUser)">Subscribe</span>
+        <span *ngIf="globalVars.userHasSubscribedToNotificationChannel('Push', appUser)">Subscribed</span>
+      </button>
+    </div>
+  </div>
+
+  <span
+    *ngIf="showNotificationAdvancedSettings()"
+    class="cursor-pointer update-profile__title"
+    (click)="notificationDetailsExpanded = !notificationDetailsExpanded"
+  >
+    <i
+      class="fa pr-5px"
+      [ngClass]="{
+        'fa-caret-right': !notificationDetailsExpanded,
+        'fa-caret-down': notificationDetailsExpanded
+      }"
+    ></i>
+    Advanced notification settings
+  </span>
+  <section *ngIf="notificationDetailsExpanded" class="mt-2">
     <div class="d-flex">
       <div class="w-50">
         <label for="activity_digest_frequency" class="update-profile__title">Activity digest email frequency?</label>
@@ -107,7 +149,7 @@
             ></label>
           </div>
         </div>
-        <div>
+        <div *ngIf="emailAddress !== ''">
           <label class="update-profile__title">Email</label>
           <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
             <input
@@ -163,7 +205,7 @@
             ></label>
           </div>
         </div>
-        <div>
+        <div *ngIf="emailAddress !== ''">
           <label for="activity_digest_frequency" class="update-profile__title">Email</label>
           <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
             <input
@@ -202,7 +244,7 @@
         <tr>
           <th class="pr-30px pl-10px py-10px">Notification Type</th>
           <th *ngIf="globalVars.browserSupportsWebPush" class="pr-30px py-10px">Push</th>
-          <th class="py-10px">Email</th>
+          <th *ngIf="emailAddress !== ''" class="py-10px">Email</th>
         </tr>
       </thead>
       <tbody>
@@ -229,7 +271,7 @@
                 [indeterminate]="categoryPartiallySelected(category, 'Push')"
               />
             </td>
-            <td class="py-10px">
+            <td *ngIf="emailAddress !== ''" class="py-10px">
               <input
                 class="cursor-pointer"
                 type="checkbox"
@@ -257,7 +299,7 @@
                 (click)="toggleNotificationType(notificationRow.appUserField, 'Push')"
               />
             </td>
-            <td *ngIf="!notificationCategories[category]['isHidden']" class="py-5px">
+            <td *ngIf="!notificationCategories[category]['isHidden'] && emailAddress !== ''" class="py-5px">
               <input
                 class="cursor-pointer"
                 type="checkbox"

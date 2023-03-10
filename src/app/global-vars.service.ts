@@ -19,7 +19,7 @@ import { LoggedInUserObservableResult } from "../lib/observable-results/logged-i
 import { AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { OpenProsperService } from "../lib/services/openProsper/openprosper-service";
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
-import { ApiInternalService } from "./api-internal.service";
+import { ApiInternalService, AppUser } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
 import {
   BackendApiService,
@@ -36,6 +36,7 @@ import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import Timer = NodeJS.Timer;
+import { SettingsComponent } from "./settings/settings.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -254,6 +255,48 @@ export class GlobalVarsService {
 
   browserSupportsWebPush: boolean = false;
 
+  // All notification categories, and their respective notification types.
+  notificationCategories = {
+    "Social Engagement": {
+      isHidden: true,
+      order: 0,
+      notificationTypes: [
+        { name: "Likes", appUserField: "ReceiveLike" },
+        { name: "Post replies", appUserField: "ReceiveComment" },
+        { name: "Reposts", appUserField: "ReceiveRepost" },
+        { name: "Quote reposts", appUserField: "ReceiveQuoteRepost" },
+      ],
+    },
+    "Social Interaction": {
+      isHidden: true,
+      order: 1,
+      notificationTypes: [
+        { name: "@Mentions", appUserField: "ReceiveMention" },
+        { name: "Follows", appUserField: "ReceiveFollow" },
+        { name: "Received messages", appUserField: "ReceiveDm" },
+      ],
+    },
+    "Social Transactions": {
+      isHidden: true,
+      order: 2,
+      notificationTypes: [
+        { name: "Received diamonds", appUserField: "ReceiveDiamond" },
+        { name: "Received DESO", appUserField: "ReceiveBasicTransfer" },
+        { name: "Creator coin purchase", appUserField: "ReceiveCoinPurchase" },
+      ],
+    },
+    "NFT Transactions": {
+      isHidden: true,
+      order: 3,
+      notificationTypes: [
+        { name: "NFT bid", appUserField: "ReceiveNftBid" },
+        { name: "NFT bid accepted", appUserField: "ReceiveNftBidAccepted" },
+        { name: "NFT purchase", appUserField: "ReceiveNftPurchase" },
+        { name: "NFT royalty", appUserField: "ReceiveNftRoyalty" },
+      ],
+    },
+  }
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -389,7 +432,7 @@ export class GlobalVarsService {
 
   async checkIfBrowserSupportsWebPush(): Promise<boolean> {
     const registration = await navigator.serviceWorker.getRegistration();
-    return !!registration.pushManager;
+    return !!registration?.pushManager;
   }
 
   initializeWebPush() {
@@ -397,6 +440,58 @@ export class GlobalVarsService {
       .register("/service-worker.js")
       .then(() => console.log("Service worker registered"))
       .catch((err) => console.error("Error registering service worker", err));
+  }
+
+  urlBase64ToUint8Array(base64String: string) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+
+  async createWebPushEndpoint() {
+    if (!this.browserSupportsWebPush) return;
+
+    const pushServerPublicKey = environment.webPushServerVapidPublicKey;
+    const applicationServerKey = this.urlBase64ToUint8Array(pushServerPublicKey);
+
+    const serviceWorker = await navigator.serviceWorker.ready;
+    let subscription;
+    try {
+      subscription = await serviceWorker.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey,
+      });
+    } catch (error) {
+      this.tracking.log("browser-push-notification-prompt : deny");
+      return;
+    }
+    this.tracking.log("browser-push-notification-prompt : confirm");
+    return subscription.toJSON();
+  }
+
+  subscribeUserToWebPushNotifications(subscriptionObject): Observable<any> {
+    if (subscriptionObject?.keys?.auth && subscriptionObject?.keys?.p256dh && subscriptionObject?.endpoint) {
+      return this.apiInternal.createPushNotificationSubscription(
+        this.loggedInUser.PublicKeyBase58Check,
+        subscriptionObject.endpoint,
+        subscriptionObject.keys.auth,
+        subscriptionObject.keys.p256dh
+      );
+    } else {
+      return new Observable<any>();
+    }
+  }
+
+  async createWebPushEndpointAndSubscribe(): Promise<boolean> {
+    const subscriptionObject = await this.createWebPushEndpoint();
+    if (subscriptionObject === undefined) return false;
+    await this.subscribeUserToWebPushNotifications(subscriptionObject).toPromise();
+    return true;
   }
 
   initializeShowPriceSetting() {
@@ -474,14 +569,16 @@ export class GlobalVarsService {
       this.getLoggedInUserDefaultKey().add(async () => {
         if (
           !isNil(this.loggedInUserDefaultKey) &&
-          this.backendApi.GetStorage(this.backendApi.EmailNotificationsDismissalKey) === null
+          this.backendApi.GetStorage(this.backendApi.PushNotificationsDismissalKey) === null
         ) {
-          const missingField = await this.appUserMissingField();
+          const currentAppUser = await this.getCurrentAppUser();
+          const missingField = await this.appUserShowNotifPrompt(currentAppUser);
           if (missingField !== "") {
             this.modalService.show(EmailSubscribeComponent, {
               class: "modal-dialog-centered buy-deso-modal",
               initialState: {
                 missingField,
+                currentAppUser,
               },
             });
           }
@@ -493,18 +590,28 @@ export class GlobalVarsService {
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
-  // Check to see if the app user has created an email, and subsequently created a user in the diamond backend.
-  // The 3 possible return options are "" (email and user are both created), "email" (email has not been created), and
-  // "user" (email has been created, app user has not)
-  async appUserMissingField(): Promise<string> {
-    if (!this.loggedInUser?.ProfileEntryResponse) {
-      return "";
+  // Check to see if a user has subscribed to any of the notification types for a given channel.
+  userHasSubscribedToNotificationChannel(notificationChannel: string, appUser: AppUser): boolean {
+    if (!appUser) {
+      return false;
     }
-    const getUserMetadataPromise = this.backendApi
-      .GetUserGlobalMetadata(this.localNode, this.loggedInUser.PublicKeyBase58Check)
-      .toPromise();
 
-    const getAppUserPromise = this.apiInternal
+    // Check if the user has subscribed to any of the notification types for the specified channel.
+    // This loops through every notification category, and each type in that category, to see if the user has subscribed.
+    const subscribedToTransactionalEmails = Object.values(this.notificationCategories).some((category) => {
+      return category.notificationTypes.some((notificationType) => {
+        return appUser[`${notificationType.appUserField}${notificationChannel}Notif`];
+      });
+    });
+    return (
+      subscribedToTransactionalEmails ||
+      appUser[`Receive${notificationChannel}ActivityDigest`] ||
+      appUser[`Receive${notificationChannel}EarningsDigest`]
+    );
+  }
+
+  async getCurrentAppUser(): Promise<AppUser> {
+    return await this.apiInternal
       .getAppUser(this.loggedInUser.PublicKeyBase58Check)
       .pipe(
         catchError((err) => {
@@ -515,15 +622,39 @@ export class GlobalVarsService {
         })
       )
       .toPromise();
+  }
 
-    const [userMetadata, appUser] = await Promise.all([getUserMetadataPromise, getAppUserPromise]);
-
-    if (userMetadata.Email.length === 0) {
-      return "email";
+  // Check to see if the app user has a profile, has created a user in the diamond backend,
+  // has subscribed to push notifs, and has a browser that supports push notifs.
+  // The 3 possible return options are "" (no subscription needed/possible), "user" (app user needs to be created)
+  // and "push" (push subscription needs to be created).
+  async appUserShowNotifPrompt(appUser: AppUser): Promise<string> {
+    if (!this.loggedInUser?.ProfileEntryResponse) {
+      return "";
     }
+
+    const webPushSupported = await this.checkIfBrowserSupportsWebPush();
+
+    if (!webPushSupported) {
+      return "";
+    }
+
+    if (Notification?.permission === "denied") {
+      return "";
+    }
+
     if (appUser === null) {
       return "user";
     }
+
+    if (!this.userHasSubscribedToNotificationChannel("Push", appUser)) {
+      return "push";
+    }
+
+    if (Notification?.permission !== "granted") {
+      return "push";
+    }
+
     return "";
   }
 
