@@ -1,9 +1,14 @@
 // @ts-strict
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { switchMap } from "rxjs/operators";
-import { ApiInternalService, AppUser, SUBSCRIBED_APP_USER_DEFAULTS } from "src/app/api-internal.service";
+import {
+  ApiInternalService,
+  AppUser,
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+  SUBSCRIBED_PUSH_APP_USER_DEFAULTS
+} from "src/app/api-internal.service";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -13,15 +18,13 @@ import { GlobalVarsService } from "../global-vars.service";
   templateUrl: "./email-subscribe.component.html",
   styleUrls: ["./email-subscribe.component.scss"],
 })
-export class EmailSubscribeComponent implements OnInit {
-  emailAddress = "";
+export class EmailSubscribeComponent {
   showEmailPrompt: boolean = false;
-  appUser?: AppUser | null;
-  isValidEmail: boolean = true;
   isProcessing: boolean = false;
-  onlyShowEmailSettings: boolean = false;
 
   @Input() missingField: string = "";
+
+  @Input() currentAppUser: AppUser | null = null;
 
   constructor(
     private bsModalService: BsModalService,
@@ -31,65 +34,43 @@ export class EmailSubscribeComponent implements OnInit {
     private apiInternal: ApiInternalService
   ) {}
 
-  ngOnInit() {
-    if (this.missingField === "email") {
-      this.showEmailPrompt = true;
-    }
-  }
-
   closeModal() {
     this.bsModalService.hide();
-    this.backendApi.SetStorage(this.backendApi.EmailNotificationsDismissalKey, new Date().toISOString());
+    this.backendApi.SetStorage(this.backendApi.PushNotificationsDismissalKey, new Date().toISOString());
   }
 
-  onEmailChange() {
-    this.isValidEmail = true;
-  }
-
-  onEmailSubmit(ev: Event) {
-    ev.preventDefault();
-    if (this.isProcessing) {
-      return;
-    }
-
-    if (!this.globalVars.emailRegExp.test(this.emailAddress)) {
-      this.isValidEmail = false;
-      return;
-    }
-
-    const utcOffset = getUTCOffset();
+  subscribeToPushNotifications() {
     this.isProcessing = true;
-    this.backendApi
-      .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-        this.emailAddress /*EmailAddress*/,
-        null /*MessageReadStateUpdatesByContact*/
-      )
-      .pipe(
-        switchMap((res) => {
-          return this.apiInternal.createAppUser(
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-            this.globalVars.lastSeenNotificationIdx,
-            utcOffset,
-            localHourToUtcHour(20),
-            SUBSCRIBED_APP_USER_DEFAULTS
-          );
-        })
-      )
-      .subscribe(
-        (appUser) => {
-          this.showEmailPrompt = false;
-          this.appUser = appUser;
+    const utcOffset = getUTCOffset();
+
+    if (this.missingField === "user") {
+      this.apiInternal
+        .createAppUser(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          this.globalVars.lastSeenNotificationIdx,
+          utcOffset,
+          localHourToUtcHour(20),
+          SUBSCRIBED_PUSH_APP_USER_DEFAULTS
+        )
+        .subscribe(async () => {
+          await this.globalVars.createWebPushEndpointAndSubscribe();
           this.isProcessing = false;
           this.bsModalService.hide();
-        },
-        (err) => {
-          this.isProcessing = false;
-          this.bsModalService.hide();
-        }
-      );
+        });
+    } else {
+      if (!this.currentAppUser) return;
+      let newAppUser: AppUser;
+      newAppUser = {
+        ...this.currentAppUser,
+        ...SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
+      };
+      this.apiInternal.updateAppUser(newAppUser).subscribe(async () => {
+        await this.globalVars.createWebPushEndpointAndSubscribe();
+        this.isProcessing = false;
+        this.bsModalService.hide();
+      });
+    }
   }
 
   addUserToEmailDigest() {
@@ -102,7 +83,7 @@ export class EmailSubscribeComponent implements OnInit {
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,
         localHourToUtcHour(20),
-        SUBSCRIBED_APP_USER_DEFAULTS
+        SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
       )
       .subscribe(() => {
         this.isProcessing = false;

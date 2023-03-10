@@ -10,6 +10,7 @@ import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services
 
 const ENDPOINTS = Object.freeze({
   appUser: "app-user",
+  pushNotifSubscription: "push-notification-subscriptions",
   onboardingEmailSubscription: "onboarding-email-subscription",
 });
 
@@ -20,61 +21,126 @@ export interface AppUser {
   Username: string;
   ActivityDigestFrequency: number;
   EarningsDigestFrequency: number;
-  ReceiveCoinPurchaseNotif: boolean;
-  ReceiveFollowNotif: boolean;
-  ReceiveBasicTransferNotif: boolean;
-  ReceiveDmNotif: boolean;
-  ReceiveLikeNotif: boolean;
-  ReceiveCommentNotif: boolean;
-  ReceiveDiamondNotif: boolean;
-  ReceiveRepostNotif: boolean;
-  ReceiveQuoteRepostNotif: boolean;
-  ReceiveMentionNotif: boolean;
-  ReceiveNftBidNotif: boolean;
-  ReceiveNftPurchaseNotif: boolean;
-  ReceiveNftBidAcceptedNotif: boolean;
-  ReceiveNftRoyaltyNotif: boolean;
+  ReceivePushActivityDigest: boolean;
+  ReceivePushEarningsDigest: boolean;
+  ReceiveEmailActivityDigest: boolean;
+  ReceiveEmailEarningsDigest: boolean;
+  ReceiveCoinPurchaseEmailNotif: boolean;
+  ReceiveFollowEmailNotif: boolean;
+  ReceiveBasicTransferEmailNotif: boolean;
+  ReceiveDmEmailNotif: boolean;
+  ReceiveLikeEmailNotif: boolean;
+  ReceiveCommentEmailNotif: boolean;
+  ReceiveDiamondEmailNotif: boolean;
+  ReceiveRepostEmailNotif: boolean;
+  ReceiveQuoteRepostEmailNotif: boolean;
+  ReceiveMentionEmailNotif: boolean;
+  ReceiveNftBidEmailNotif: boolean;
+  ReceiveNftPurchaseEmailNotif: boolean;
+  ReceiveNftBidAcceptedEmailNotif: boolean;
+  ReceiveNftRoyaltyEmailNotif: boolean;
+  ReceiveCoinPurchasePushNotif: boolean;
+  ReceiveFollowPushNotif: boolean;
+  ReceiveBasicTransferPushNotif: boolean;
+  ReceiveDmPushNotif: boolean;
+  ReceiveLikePushNotif: boolean;
+  ReceiveCommentPushNotif: boolean;
+  ReceiveDiamondPushNotif: boolean;
+  ReceiveRepostPushNotif: boolean;
+  ReceiveQuoteRepostPushNotif: boolean;
+  ReceiveMentionPushNotif: boolean;
+  ReceiveNftBidPushNotif: boolean;
+  ReceiveNftPurchasePushNotif: boolean;
+  ReceiveNftBidAcceptedPushNotif: boolean;
+  ReceiveNftRoyaltyPushNotif: boolean;
   LastNotificationScannedIndex: number;
   DigestSendAtHourLocalTime: number;
   UserTimezoneUtcOffset: number;
+  DeviceId: string;
 }
 
 export const NEW_APP_USER_DEFAULTS = {
   ActivityDigestFrequency: 0,
   EarningsDigestFrequency: 0,
-  ReceiveLikeNotif: false,
-  ReceiveCoinPurchaseNotif: false,
-  ReceiveFollowNotif: false,
-  ReceiveBasicTransferNotif: false,
-  ReceiveDmNotif: false,
-  ReceiveCommentNotif: false,
-  ReceiveDiamondNotif: false,
-  ReceiveRepostNotif: false,
-  ReceiveQuoteRepostNotif: false,
-  ReceiveMentionNotif: false,
-  ReceiveNftBidNotif: false,
-  ReceiveNftPurchaseNotif: false,
-  ReceiveNftBidAcceptedNotif: false,
-  ReceiveNftRoyaltyNotif: false,
+  ReceiveLikeEmailNotif: false,
+  ReceiveCoinPurchaseEmailNotif: false,
+  ReceiveFollowEmailNotif: false,
+  ReceiveBasicTransferEmailNotif: false,
+  ReceiveDmEmailNotif: false,
+  ReceiveCommentEmailNotif: false,
+  ReceiveDiamondEmailNotif: false,
+  ReceiveRepostEmailNotif: false,
+  ReceiveQuoteRepostEmailNotif: false,
+  ReceiveMentionEmailNotif: false,
+  ReceiveNftBidEmailNotif: false,
+  ReceiveNftPurchaseEmailNotif: false,
+  ReceiveNftBidAcceptedEmailNotif: false,
+  ReceiveNftRoyaltyEmailNotif: false,
+  ReceiveLikePushNotif: false,
+  ReceiveCoinPurchasePushNotif: false,
+  ReceiveFollowPushNotif: false,
+  ReceiveBasicTransferPushNotif: false,
+  ReceiveDmPushNotif: false,
+  ReceiveCommentPushNotif: false,
+  ReceiveDiamondPushNotif: false,
+  ReceiveRepostPushNotif: false,
+  ReceiveQuoteRepostPushNotif: false,
+  ReceiveMentionPushNotif: false,
+  ReceiveNftBidPushNotif: false,
+  ReceiveNftPurchasePushNotif: false,
+  ReceiveNftBidAcceptedPushNotif: false,
+  ReceiveNftRoyaltyPushNotif: false,
+  ReceivePushActivityDigest: false,
+  ReceivePushEarningsDigest: false,
+  ReceiveEmailActivityDigest: false,
+  ReceiveEmailEarningsDigest: false,
 };
 
-export const SUBSCRIBED_APP_USER_DEFAULTS = {
+export const SUBSCRIBED_EMAIL_APP_USER_DEFAULTS = {
   ActivityDigestFrequency: 1,
   EarningsDigestFrequency: 1,
-  ReceiveLikeNotif: false,
-  ReceiveCoinPurchaseNotif: true,
-  ReceiveFollowNotif: false,
-  ReceiveBasicTransferNotif: true,
-  ReceiveDmNotif: true,
-  ReceiveCommentNotif: true,
-  ReceiveDiamondNotif: true,
-  ReceiveRepostNotif: false,
-  ReceiveQuoteRepostNotif: false,
-  ReceiveMentionNotif: true,
-  ReceiveNftBidNotif: true,
-  ReceiveNftPurchaseNotif: true,
-  ReceiveNftBidAcceptedNotif: true,
-  ReceiveNftRoyaltyNotif: true,
+  ReceiveEmailActivityDigest: true,
+  ReceiveEmailEarningsDigest: true,
+  ReceiveLikeEmailNotif: false,
+  ReceiveCoinPurchaseEmailNotif: true,
+  ReceiveFollowEmailNotif: false,
+  ReceiveBasicTransferEmailNotif: true,
+  ReceiveDmEmailNotif: true,
+  ReceiveCommentEmailNotif: true,
+  ReceiveDiamondEmailNotif: true,
+  ReceiveRepostEmailNotif: false,
+  ReceiveQuoteRepostEmailNotif: false,
+  ReceiveMentionEmailNotif: true,
+  ReceiveNftBidEmailNotif: true,
+  ReceiveNftPurchaseEmailNotif: true,
+  ReceiveNftBidAcceptedEmailNotif: true,
+  ReceiveNftRoyaltyEmailNotif: true,
+};
+
+export const SUBSCRIBED_PUSH_APP_USER_DEFAULTS = {
+  ActivityDigestFrequency: 1,
+  EarningsDigestFrequency: 1,
+  ReceivePushActivityDigest: true,
+  ReceivePushEarningsDigest: true,
+  ReceiveLikePushNotif: true,
+  ReceiveCoinPurchasePushNotif: true,
+  ReceiveFollowPushNotif: true,
+  ReceiveBasicTransferPushNotif: true,
+  ReceiveDmPushNotif: true,
+  ReceiveCommentPushNotif: true,
+  ReceiveDiamondPushNotif: true,
+  ReceiveRepostPushNotif: true,
+  ReceiveQuoteRepostPushNotif: true,
+  ReceiveMentionPushNotif: true,
+  ReceiveNftBidPushNotif: true,
+  ReceiveNftPurchasePushNotif: true,
+  ReceiveNftBidAcceptedPushNotif: true,
+  ReceiveNftRoyaltyPushNotif: true,
+};
+
+export const SUBSCRIBED_FULL_APP_USER_DEFAULTS = {
+  ...SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+  ...SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
 };
 
 @Injectable({
@@ -142,6 +208,23 @@ export class ApiInternalService {
       switchMap((headers) =>
         this.httpClient.post<any>(buildUrl("onboarding-email-subscription"), { PublicKeyBase58Check }, { headers })
       )
+    );
+  }
+
+  createPushNotificationSubscription(
+    UserPublicKeyBase58check: string,
+    Endpoint: string,
+    AuthKey: string,
+    P256dhKey: string
+  ) {
+    const payload = {
+      UserPublicKeyBase58check,
+      Endpoint,
+      AuthKey,
+      P256dhKey,
+    };
+    return this.getAuthHeaders().pipe(
+      switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.pushNotifSubscription), payload, { headers }))
     );
   }
 

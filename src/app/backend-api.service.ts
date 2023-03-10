@@ -543,6 +543,7 @@ export class BackendApiService {
 
   // Store whether user has dismissed email notifications in localStorage
   EmailNotificationsDismissalKey = "emailNotificationsDismissedAt";
+  PushNotificationsDismissalKey = "pushNotificationsDismissedAt";
 
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";

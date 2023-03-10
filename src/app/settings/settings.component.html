@@ -47,55 +47,185 @@
     </div>
   </div>
 
-  <form (submit)="onEmailSubmit($event)" *ngIf="showEmailPrompt">
-    <label for="email-prompt" class="update-profile__title">
-      Enter your email to receive earnings and activity digests
-    </label>
-    <input
-      id="email-prompt"
-      class="form-control"
-      type="email"
-      name="email-address"
-      [(ngModel)]="this.emailAddress"
-      (input)="onEmailChange()"
-    />
-    <div class="d-flex mt-1">
-      <button type="submit" class="ml-auto btn btn-primary">
-        <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
-        <span *ngIf="!this.isSavingEmail">Save email</span>
-      </button>
+  <form (submit)="onEmailSubmit($event)">
+    <label for="email-prompt" class="update-profile__title">Subscribe to email notifications</label>
+    <div class="d-flex">
+      <input
+        id="email-prompt"
+        class="form-control w-80"
+        type="email"
+        name="email-address"
+        placeholder="Email address"
+        [(ngModel)]="this.emailAddress"
+        (input)="onEmailChange()"
+      />
+      <div class="d-flex w-20">
+        <button type="submit" class="ml-auto btn btn-primary">
+          <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+          <span
+            *ngIf="
+              !this.isSavingEmail && (this.emailAddress === '' || !globalVars.userHasSubscribedToNotificationChannel('Email', appUser))
+            "
+          >
+            Subscribe
+          </span>
+          <span
+            *ngIf="!this.isSavingEmail && this.emailAddress !== '' && globalVars.userHasSubscribedToNotificationChannel('Email', appUser)"
+          >
+            Update
+          </span>
+        </button>
+      </div>
     </div>
     <span *ngIf="!this.isValidEmail" class="text-danger">Please enter a valid email address.</span>
   </form>
-  <section *ngIf="!!appUser" class="mt-2">
-    <label for="activity_digest_frequency" class="update-profile__title">Activity digest email frequency?</label>
-    <select
-      id="activity_digest_frequency"
-      name="ActivityDigestFrequency"
-      (change)="updateDigestFrequency($event)"
-      style="padding: 6px 12px"
-      class="form-control selector"
-    >
-      <option
-        *ngFor="let f of digestFrequencies"
-        [value]="f.duration"
-        [selected]="f.duration === appUser.ActivityDigestFrequency"
+
+  <div *ngIf="globalVars.browserSupportsWebPush">
+    <label for="email-prompt" class="update-profile__title">Subscribe to push notifications</label>
+    <div class="pb-20px">
+      <button
+        class="ml-auto btn btn-primary"
+        (click)="subscribeToPushNotifications()"
+        [ngClass]="{ 'btn-secondary': globalVars.userHasSubscribedToNotificationChannel('Push', appUser) }"
+        [disabled]="globalVars.userHasSubscribedToNotificationChannel('Push', appUser)"
       >
-        {{ f.text }}
-      </option>
-    </select>
-    <label for="earnings_digest_frequency" class="update-profile__title">Earnings digest email frequency?</label>
-    <select
-      id="earnings_digest_frequency"
-      name="EarningsDigestFrequency"
-      (change)="updateDigestFrequency($event)"
-      style="padding: 6px 12px"
-      class="form-control selector"
-    >
-      <option *ngFor="let f of digestFrequencies" [value]="f.duration">
-        {{ f.text }}
-      </option>
-    </select>
+        <span *ngIf="!globalVars.userHasSubscribedToNotificationChannel('Push', appUser)">Subscribe</span>
+        <span *ngIf="globalVars.userHasSubscribedToNotificationChannel('Push', appUser)">Subscribed</span>
+      </button>
+    </div>
+  </div>
+
+  <span
+    *ngIf="showNotificationAdvancedSettings()"
+    class="cursor-pointer update-profile__title"
+    (click)="notificationDetailsExpanded = !notificationDetailsExpanded"
+  >
+    <i
+      class="fa pr-5px"
+      [ngClass]="{
+        'fa-caret-right': !notificationDetailsExpanded,
+        'fa-caret-down': notificationDetailsExpanded
+      }"
+    ></i>
+    Advanced notification settings
+  </span>
+  <section *ngIf="notificationDetailsExpanded" class="mt-2">
+    <div class="d-flex">
+      <div class="w-50">
+        <label for="activity_digest_frequency" class="update-profile__title">Activity digest email frequency?</label>
+        <select
+          id="activity_digest_frequency"
+          name="ActivityDigestFrequency"
+          (change)="updateDigestFrequency($event)"
+          style="padding: 6px 12px"
+          class="form-control selector"
+        >
+          <option
+            *ngFor="let f of digestFrequencies"
+            [value]="f.duration"
+            [selected]="f.duration === appUser.ActivityDigestFrequency"
+          >
+            {{ f.text }}
+          </option>
+        </select>
+      </div>
+      <div class="d-flex w-50" style="justify-content: space-evenly">
+        <div *ngIf="globalVars.browserSupportsWebPush">
+          <label class="update-profile__title">Push</label>
+          <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="activityDigestPushCheckbox"
+              [checked]="notificationDigestChecked('Activity', 'Push')"
+              (click)="toggleNotificationDigest('Activity', 'Push')"
+              [disabled]="notificationDigestDisabled('Activity')"
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Activity') }"
+            />
+            <label
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Activity') }"
+              class="custom-control-label mt-2px"
+              for="activityDigestPushCheckbox"
+            ></label>
+          </div>
+        </div>
+        <div *ngIf="emailAddress !== ''">
+          <label class="update-profile__title">Email</label>
+          <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="activityDigestEmailCheckbox"
+              [checked]="notificationDigestChecked('Activity', 'Email')"
+              (click)="toggleNotificationDigest('Activity', 'Email')"
+              [disabled]="notificationDigestDisabled('Activity')"
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Activity') }"
+            />
+            <label
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Activity') }"
+              class="custom-control-label mt-2px"
+              for="activityDigestEmailCheckbox"
+            ></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex">
+      <div class="w-50">
+        <label for="earnings_digest_frequency" class="update-profile__title">Earnings digest email frequency?</label>
+        <select
+          id="earnings_digest_frequency"
+          name="EarningsDigestFrequency"
+          (change)="updateDigestFrequency($event)"
+          style="padding: 6px 12px"
+          class="form-control selector"
+        >
+          <option *ngFor="let f of digestFrequencies" [value]="f.duration">
+            {{ f.text }}
+          </option>
+        </select>
+      </div>
+      <div class="d-flex w-50" style="justify-content: space-evenly">
+        <div *ngIf="globalVars.browserSupportsWebPush">
+          <label class="update-profile__title">Push</label>
+          <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="earningsDigestPushCheckbox"
+              [checked]="notificationDigestChecked('Earnings', 'Push')"
+              (click)="toggleNotificationDigest('Earnings', 'Push')"
+              [disabled]="notificationDigestDisabled('Earnings')"
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Earnings') }"
+            />
+            <label
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Earnings') }"
+              class="custom-control-label mt-2px"
+              for="earningsDigestPushCheckbox"
+            ></label>
+          </div>
+        </div>
+        <div *ngIf="emailAddress !== ''">
+          <label for="activity_digest_frequency" class="update-profile__title">Email</label>
+          <div class="custom-control custom-switch custom-switch-lg" style="top: 2px">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="earningsDigestEmailCheckbox"
+              [checked]="notificationDigestChecked('Earnings', 'Email')"
+              (click)="toggleNotificationDigest('Earnings', 'Email')"
+              [disabled]="notificationDigestDisabled('Earnings')"
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Earnings') }"
+            />
+            <label
+              [ngClass]="{ 'cursor-pointer': !notificationDigestDisabled('Earnings') }"
+              class="custom-control-label mt-2px"
+              for="earningsDigestEmailCheckbox"
+            ></label>
+          </div>
+        </div>
+      </div>
+    </div>
     <label for="digest_send_at_time" class="update-profile__title">Digest send time?</label>
     <select
       id="digest_send_at_time"
@@ -109,46 +239,80 @@
       </option>
     </select>
     <div class="update-profile__title">Select engagement emails</div>
-    <div class="btn-group w-100">
-      <ul class="w-100 p-0" role="menu" aria-labelledby="button-basic" style="list-style: none">
-        <li role="menuitem">
-          <span class="dropdown-item fc-secondary">
-            <input
-              id="select-all-tx-emails"
-              type="checkbox"
-              [checked]="allTxSettingsSelected"
-              class="w-auto mr-2"
-              (change)="toggleSelectAllTxEmailSettings(true)"
-            />
-            <label for="select-all-tx-emails">Receive all</label>
-          </span>
-        </li>
-        <li role="menuitem">
-          <span class="dropdown-item fc-secondary">
-            <input
-              id="unselect-all-tx-emails"
-              type="checkbox"
-              [checked]="allTxSettingsUnselected"
-              class="w-auto mr-2"
-              (change)="toggleSelectAllTxEmailSettings(false)"
-            />
-            <label for="unselect-all-tx-emails">Receive none</label>
-          </span>
-        </li>
-        <li role="menuitem" *ngFor="let setting of txEmailSettings">
-          <span class="dropdown-item fc-secondary">
-            <input
-              [id]="setting.field"
-              [name]="setting.field"
-              type="checkbox"
-              [checked]="appUser[setting.field]"
-              class="w-auto mr-2"
-              (change)="updateTxEmailSetting($event)"
-            />
-            <label [for]="setting.field">{{ setting.text }}</label>
-          </span>
-        </li>
-      </ul>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th class="pr-30px pl-10px py-10px">Notification Type</th>
+          <th *ngIf="globalVars.browserSupportsWebPush" class="pr-30px py-10px">Push</th>
+          <th *ngIf="emailAddress !== ''" class="py-10px">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let category of getSortedNotificationCategories()">
+          <tr class="border-bottom border-top">
+            <td class="cursor-pointer pr-30px pl-10px py-10px" (click)="toggleCategoryHidden(category)">
+              <span class="category-toggle">
+                <i
+                  class="fa pr-5px"
+                  [ngClass]="{
+                    'fa-caret-right': notificationCategories[category]['isHidden'],
+                    'fa-caret-down': !notificationCategories[category]['isHidden']
+                  }"
+                ></i>
+              </span>
+              <b>{{ category }}</b>
+            </td>
+            <td *ngIf="globalVars.browserSupportsWebPush" class="pr-30px py-10px">
+              <input
+                class="cursor-pointer"
+                type="checkbox"
+                [checked]="categorySelected(category, 'Push')"
+                (click)="toggleCategory(category, 'Push')"
+                [indeterminate]="categoryPartiallySelected(category, 'Push')"
+              />
+            </td>
+            <td *ngIf="emailAddress !== ''" class="py-10px">
+              <input
+                class="cursor-pointer"
+                type="checkbox"
+                [checked]="categorySelected(category, 'Email')"
+                (click)="toggleCategory(category, 'Email')"
+                [indeterminate]="categoryPartiallySelected(category, 'Email')"
+              />
+            </td>
+          </tr>
+          <tr
+            class="background-color-light-grey pt-5px"
+            *ngFor="let notificationRow of notificationCategories[category]['notificationTypes']"
+          >
+            <td *ngIf="!notificationCategories[category]['isHidden']" class="pr-30px pl-10px py-5px">
+              {{ notificationRow.name }}
+            </td>
+            <td
+              *ngIf="!notificationCategories[category]['isHidden'] && globalVars.browserSupportsWebPush"
+              class="pr-30px py-5px"
+            >
+              <input
+                class="cursor-pointer"
+                type="checkbox"
+                [checked]="notificationChecked(notificationRow.appUserField, 'Push')"
+                (click)="toggleNotificationType(notificationRow.appUserField, 'Push')"
+              />
+            </td>
+            <td *ngIf="!notificationCategories[category]['isHidden'] && emailAddress !== ''" class="py-5px">
+              <input
+                class="cursor-pointer"
+                type="checkbox"
+                [checked]="notificationChecked(notificationRow.appUserField, 'Email')"
+                (click)="toggleNotificationType(notificationRow.appUserField, 'Email')"
+              />
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
   </section>
 </div>
+<!-- Bottom spacer for PWA apps-->
+<div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
+<div class="global__bottom-bar-mobile-height"></div>
