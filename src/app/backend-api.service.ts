@@ -99,6 +99,9 @@ import {
   updateNFT,
   updateProfile,
   updateUserGlobalMetadata,
+  uploadImage,
+  uploadVideo,
+  UploadVideoV2Response,
   User,
   verifyEmail,
 } from "deso-protocol";
@@ -784,50 +787,12 @@ export class BackendApiService {
     );
   }
 
-  // TODO: figure out the best way to deal with this...
-  // Do we need *another* api client for uploading images?
-  // we could also temporarily configure the nodeURI and then set it back which seems fine as well.
-  UploadImage(endpoint: string, UserPublicKeyBase58Check: string, file: File): Observable<any> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(UserPublicKeyBase58Check),
-    });
-    return request.pipe(
-      switchMap((signed) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", UserPublicKeyBase58Check);
-        formData.append("JWT", signed.jwt);
-
-        return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
-      })
-    );
+  UploadImage(UserPublicKeyBase58Check: string, file: File): Observable<any> {
+    return from(uploadImage({ UserPublicKeyBase58Check, file }, { nodeURI: "https://node.deso.org" }));
   }
 
-  // TODO: figure this out too. this is using the media client though.
-  UploadVideo(
-    endpoint: string,
-    file: File,
-    publicKeyBase58Check: string
-  ): Observable<{
-    tusEndpoint: string;
-    asset: {
-      id: string;
-      playbackId: string;
-    };
-  }> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(publicKeyBase58Check),
-    });
-    return request.pipe(
-      switchMap((signed) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", publicKeyBase58Check);
-        formData.append("JWT", signed.jwt);
-
-        return this.post(endpoint, BackendRoutes.RoutePathUploadVideo, formData);
-      })
-    );
+  UploadVideo(file: File, publicKeyBase58Check: string): Observable<UploadVideoV2Response> {
+    return from(uploadVideo({ file, UserPublicKeyBase58Check: publicKeyBase58Check }));
   }
 
   CreateNft(

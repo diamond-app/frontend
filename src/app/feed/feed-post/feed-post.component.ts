@@ -24,7 +24,6 @@ import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.compo
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { FollowService } from "../../../lib/services/follow/follow.service";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import {
@@ -123,7 +122,6 @@ export class FeedPostComponent implements OnInit {
     private followService: FollowService,
     private translocoService: TranslocoService,
     private http: HttpClient,
-    private streamService: CloudflareStreamService,
     public tracking: TrackingService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
@@ -780,44 +778,6 @@ export class FeedPostComponent implements OnInit {
       }
       this.livepeerVideo = true;
       this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
-      // const videoId = this.postContent.PostExtraData?.LivepeerAssetId
-      // // const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
-      // if (videoId && videoId != "") {
-      //   this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe(
-      //     (res) => {
-      //       console.log("Here is the res: ", res);
-      //       const duration = res?.videoSpec?.duration;
-      //       if (duration && _.isNumber(duration)) {
-      //         console.log("Here is the duration: ", duration);
-      //         console.log("Here is the duration: ", duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD);
-      //         this.videoURL =
-      //           duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
-      //             ? this.postContent.VideoURLs[0]
-      //             : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
-      //
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         if (res?.videoSpec?.tracks?.length > 0 && res?.videoSpec?.tracks?.[0]?.width === "video") {
-      //           const trackDetails = res.videoSpec.tracks[res.videoSpec.tracks.length - 1];
-      //           this.sourceVideoAspectRatio = trackDetails.width / trackDetails.height;
-      //         }
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         this.showVideoControls = duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
-      //         this.ref.detectChanges();
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         // this.initializeStream();
-      //         this.setVideoControllerHeight(20);
-      //         console.log("Here is the video url: ", this.videoURL);
-      //       }
-      //     },
-      //     (err) => {
-      //       this.videoURL = this.postContent.VideoURLs[0];
-      //       this.showVideoControls = true;
-      //       this.ref.detectChanges();
-      //       this.initializeStream();
-      //       this.setVideoControllerHeight(20);
-      //     }
-      //   );
-      // }
     }
   }
 

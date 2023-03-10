@@ -479,7 +479,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         if (fileType === "profile") {

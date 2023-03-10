@@ -13,6 +13,7 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { pollForVideoReady } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -21,9 +22,9 @@ import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.compo
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+
 import Timer = NodeJS.Timer;
 
 const RANDOM_MOVIE_QUOTES = [
@@ -145,7 +146,6 @@ export class FeedCreatePostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: CloudflareStreamService,
     private translocoService: TranslocoService,
     private modalService: BsModalService,
     private tracking: TrackingService
@@ -449,7 +449,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         this.currentPostModel.postImageSrc = res.ImageURL;
@@ -471,7 +471,8 @@ export class FeedCreatePostComponent implements OnInit {
     let tusEndpoint, asset;
     try {
       ({ tusEndpoint, asset } = await this.backendApi
-        .UploadVideo(environment.uploadVideoHostname, file, this.globalVars.loggedInUser.PublicKeyBase58Check)
+        // TODO: just use upload video directly
+        .UploadVideo(file, this.globalVars.loggedInUser.PublicKeyBase58Check)
         .toPromise());
     } catch (e) {
       this.currentPostModel.postVideoSrc = "";
@@ -484,42 +485,8 @@ export class FeedCreatePostComponent implements OnInit {
     this.currentPostModel.assetId = asset.id;
     this.currentPostModel.postImageSrc = "";
     this.videoUploadPercentage = null;
-    return new Promise((resolve, reject) => {
-      this.pollForReadyToStream(resolve);
-    });
-  }
 
-  pollForReadyToStream(onReadyToStream: Function): void {
-    let attempts = 0;
-    let numTries = 1200;
-    let timeoutMillis = 500;
-    this.videoStreamInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        clearInterval(this.videoStreamInterval!);
-        return;
-      }
-      this.streamService
-        .checkVideoStatusByURL(this.currentPostModel.assetId)
-        .then(([readyToStream, clearPoll, failed]) => {
-          if (readyToStream) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-          if (failed) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            this.currentPostModel.postVideoSrc = "";
-            this.globalVars._alertError("Video failed to upload. Please try again.");
-            return;
-          }
-          if (clearPoll) {
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-        });
-      attempts++;
-    }, timeoutMillis);
+    return pollForVideoReady(asset.id);
   }
 
   hasAddCommentButton(): boolean {

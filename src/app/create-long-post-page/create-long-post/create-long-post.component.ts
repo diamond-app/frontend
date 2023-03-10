@@ -11,7 +11,6 @@ import "quill-mention";
 import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { environment } from "src/environments/environment";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
 
 const RANDOM_MOVIE_QUOTES = [
@@ -222,7 +221,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
-            .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, newFile)
+            .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, newFile)
             .toPromise();
           op.insert.image = res.ImageURL;
         }
@@ -412,7 +411,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     }
 
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => res.ImageURL)
       .catch((err) => {
