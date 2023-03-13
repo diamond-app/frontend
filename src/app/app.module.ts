@@ -73,6 +73,7 @@ import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-prof
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorProfilePostsComponent } from "./creator-profile-page/creator-profile-posts/creator-profile-posts.component";
 import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
+import { CreatorProfileSimpleCardComponent } from "./creator-profile-page/creator-profile-row/creator-profile-simple-card.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
@@ -274,6 +275,7 @@ export function playerFactory() {
     CreatorProfilePostsComponent,
     TabSelectorComponent,
     CreatorProfileTopCardComponent,
+    CreatorProfileSimpleCardComponent,
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,

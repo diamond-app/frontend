@@ -130,10 +130,31 @@
             *ngIf="postModels[i].showPoll"
             [formGroup]="currentPostModel.pollForm"
             [ngClass]="{ 'pt-10px': parentPost }"
-            class="flex-fill bg-tile"
+            class="flex-fill bg-tile mt-10px"
           >
             <header class="d-flex justify-content-between align-items-center mb-2 feed-post__poll-header">
-              <span class="small text-muted">Enter your poll options below</span>
+              <div class="btn-group" dropdown>
+                <button
+                  dropdownToggle
+                  type="button"
+                  class="btn btn-sm btn-outline-primary dropdown-toggle"
+                  aria-controls="dropdown-autoclose"
+                >
+                  {{ POLL_WEIGHT_TYPE_LABELS[currentPostModel.pollType] }}
+                  <span class="caret"></span>
+                </button>
+
+                <ul *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-autoclose">
+                  <li
+                    *ngFor="let item of POLL_WEIGHT_TYPE_LABELS | keyvalue: keepPollWeightsOrder"
+                    (click)="currentPostModel.pollType = item.key"
+                    role="menuitem"
+                    class="cursor-pointer"
+                  >
+                    <span class="dropdown-item">{{ item.value }}</span>
+                  </li>
+                </ul>
+              </div>
 
               <button
                 class="btn btn-sm btn-outline-primary"
@@ -148,6 +169,37 @@
                 </ng-template>
               </button>
             </header>
+
+            <section class="my-15px">
+              <div
+                *ngIf="currentPostModel.pollType === POLL_WEIGHT_TYPE.desoTokenBalance"
+                class="position-relative"
+                style="width: 343px; height: 48px"
+              >
+                <search-bar
+                  resultsUnderBar
+                  [showCloutavista]="false"
+                  [isSearchForUsersToSendDESO]="true"
+                  [placeholderText]="'Select a DeSo token profile...'"
+                  (creatorToMessage)="onPollTokenProfileSelected($event)"
+                ></search-bar>
+              </div>
+
+              <div
+                class="card text-center mt-5px"
+                *ngIf="
+                  currentPostModel.pollType === POLL_WEIGHT_TYPE.desoTokenBalance &&
+                  currentPostModel.pollWeightTokenProfile
+                "
+              >
+                <div class="card-header small">Your poll will be weighted based on the token of:</div>
+                <div class="card-body">
+                  <creator-profile-simple-card
+                    [profile]="currentPostModel.pollWeightTokenProfile"
+                  ></creator-profile-simple-card>
+                </div>
+              </div>
+            </section>
 
             <section
               formArrayName="options"

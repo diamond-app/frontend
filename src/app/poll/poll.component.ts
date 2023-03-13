@@ -1,16 +1,19 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-  AssociationType,
-  BackendApiService,
-  PostAssociation,
-  PostAssociationCountsResponse,
-} from "../backend-api.service";
+import { AssociationType, BackendApiService, PostAssociation, User } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { finalize } from "rxjs/operators";
+import { finalize, map, mergeMap, tap } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PollModalComponent } from "./poll-modal/poll-modal.component";
 import { forkJoin } from "rxjs";
+import { groupBy, keyBy, mapValues, sum, uniq } from "lodash";
+import { PollWeightType } from "../feed/feed-create-post/feed-create-post.component";
+import { environment } from "../../environments/environment";
+
+interface PollVoteWeights {
+  Weights: { [option: string]: number };
+  Total: number;
+}
 
 @Component({
   selector: "poll",
@@ -20,11 +23,16 @@ import { forkJoin } from "rxjs";
 export class PollComponent implements OnInit {
   @Input() post: any;
 
+  environment = environment;
   loading = false;
   pollOptions: Array<string> = [];
-  pollCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
+  pollVoteWeights: PollVoteWeights = { Weights: {}, Total: 0 };
+  pollWeightTokenProfile: User | null = null;
   myVotes: Array<PostAssociation> = [];
   processedVote: string = "";
+  isUserHoldingPollToken: boolean = false;
+
+  readonly POLL_WEIGHT_TYPE = PollWeightType;
 
   constructor(
     private backendApi: BackendApiService,
@@ -52,13 +60,7 @@ export class PollComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.pollOptions
       ),
-      this.backendApi.GetPostAssociationsCounts(
-        this.globalVars.localNode,
-        this.post,
-        AssociationType.pollResponse,
-        this.pollOptions,
-        true
-      ),
+      this.fetchPollCounts(),
     ])
       .pipe(
         finalize(() => {
@@ -66,9 +68,9 @@ export class PollComponent implements OnInit {
           this.ref.detectChanges();
         })
       )
-      .subscribe(([{ Associations }, counts]) => {
+      .subscribe(([{ Associations }, weights]) => {
         this.myVotes = Associations;
-        this.pollCounts = counts;
+        this.pollVoteWeights = weights;
       });
   }
 
@@ -95,6 +97,125 @@ export class PollComponent implements OnInit {
       .subscribe((e) => {
         this.fetchData();
       });
+  }
+
+  private fetchPollCounts() {
+    const pollType = this.post.PostExtraData.PollWeightType;
+
+    if (pollType === PollWeightType.desoBalance) {
+      return this.backendApi
+        .GetAllPostAssociations(
+          this.globalVars.localNode,
+          this.post.PostHashHex,
+          AssociationType.pollResponse,
+          undefined,
+          this.pollOptions
+        )
+        .pipe(
+          mergeMap((associations) => {
+            const uniqUserKeys = uniq(associations.map((e) => e.TransactorPublicKeyBase58Check));
+
+            return this.backendApi.GetUsersStateless(this.globalVars.localNode, uniqUserKeys).pipe(
+              map((res) => {
+                const userBalanceByKey = res.UserList.reduce(
+                  (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: curr.BalanceNanos }),
+                  {}
+                );
+
+                const totalBalance = sum(Object.values(userBalanceByKey));
+                const associationsGroupedByValue = groupBy(associations, "AssociationValue");
+
+                return {
+                  Weights: {
+                    ...this.pollOptions.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {}),
+                    ...mapValues(associationsGroupedByValue, (v) => {
+                      const totalBalanceNanosForPollOption = sum(
+                        v.map((association) => userBalanceByKey[association.TransactorPublicKeyBase58Check])
+                      );
+                      return totalBalanceNanosForPollOption / totalBalance;
+                    }),
+                  },
+                  Total: associations.length,
+                };
+              })
+            );
+          })
+        );
+    } else if (pollType === PollWeightType.desoTokenBalance) {
+      const tokenKey = this.post.PostExtraData.PollWeightTokenPublicKey;
+
+      return forkJoin([
+        this.backendApi.GetAllPostAssociations(
+          this.globalVars.localNode,
+          this.post.PostHashHex,
+          AssociationType.pollResponse,
+          undefined,
+          this.pollOptions
+        ),
+        this.backendApi.GetHodlersForPublicKey(this.globalVars.localNode, tokenKey, "", "", 100000, false, true, true),
+        this.backendApi.GetUsersStateless(this.globalVars.localNode, [tokenKey], true),
+      ]).pipe(
+        tap((results) => {
+          const [_, { Hodlers }, { UserList }] = results;
+
+          this.isUserHoldingPollToken = Hodlers.some(
+            (e) => e.HODLerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          );
+
+          if (UserList.length > 0) {
+            this.pollWeightTokenProfile = UserList[0];
+          }
+        }),
+        map(([associations, { Hodlers }]) => {
+          const hodlerBalanceByKey = mapValues(keyBy(Hodlers, "HODLerPublicKeyBase58Check"), (e) =>
+            this.globalVars.hexNanosToStandardUnit(e.BalanceNanosUint256)
+          );
+          const votedUserKeys = associations.map((e) => e.TransactorPublicKeyBase58Check);
+
+          const totalBalance = Object.keys(hodlerBalanceByKey).reduce((acc, curr) => {
+            if (!votedUserKeys.includes(curr)) {
+              return acc;
+            }
+
+            return acc + hodlerBalanceByKey[curr];
+          }, 0);
+
+          const associationsGroupedByValue = groupBy(associations, "AssociationValue");
+
+          return {
+            Weights: {
+              ...this.pollOptions.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {}),
+              ...mapValues(associationsGroupedByValue, (v) => {
+                const totalBalanceNanosForPollOption = sum(
+                  v.map((association) => hodlerBalanceByKey[association.TransactorPublicKeyBase58Check] || 0)
+                );
+                return totalBalanceNanosForPollOption / totalBalance;
+              }),
+            },
+            Total: associations.length,
+          };
+        })
+      );
+    }
+
+    return this.backendApi
+      .GetPostAssociationsCounts(
+        this.globalVars.localNode,
+        this.post,
+        AssociationType.pollResponse,
+        this.pollOptions,
+        true
+      )
+      .pipe(
+        map((e) => {
+          return {
+            Weights: mapValues(e.Counts, (v) => {
+              return (v || 0) / e.Total;
+            }),
+            Total: e.Total,
+          };
+        })
+      );
   }
 
   openPollDetails(event) {
