@@ -75,6 +75,8 @@ class PostModel {
   pollForm: FormGroup = new FormGroup({
     options: new FormArray([]),
   });
+  pollType: PollWeightType = PollWeightType.unweighted;
+  pollWeightTokenProfile: ProfileEntryResponse | null = null;
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
   /**
@@ -109,6 +111,12 @@ class PostModel {
   }
 }
 
+export enum PollWeightType {
+  unweighted = "unweighted",
+  desoBalance = "deso_balance",
+  desoTokenBalance = "deso_token_balance",
+}
+
 interface PostExtraData {
   EmbedVideoURL?: string;
   Node?: string;
@@ -116,6 +124,8 @@ interface PostExtraData {
   LivepeerAssetId?: string;
   PollOptions?: string; // saving it as string since the API cannot save the array structure in PostExtraData
   PollExpirationBlockHeight?: string; // this field is ignored for now
+  PollWeightType?: PollWeightType;
+  PollWeightTokenPublicKey?: string;
 }
 
 // show warning at 515 characters
@@ -143,6 +153,12 @@ export class FeedCreatePostComponent implements OnInit {
   readonly REQUIRED_POLL_OPTIONS: number = 2;
   readonly MAX_POLL_OPTIONS: number = 5;
   readonly MAX_POLL_CHARACTERS: number = 50;
+  readonly POLL_WEIGHT_TYPE_LABELS = {
+    [PollWeightType.unweighted]: "Simple poll",
+    [PollWeightType.desoBalance]: "Weight By DeSo Balance",
+    [PollWeightType.desoTokenBalance]: "Weight By DeSo Token Balance",
+  };
+  readonly POLL_WEIGHT_TYPE = PollWeightType;
 
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
@@ -340,6 +356,16 @@ export class FeedCreatePostComponent implements OnInit {
     if (post.showPoll) {
       postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e) => e && e.trim()));
       postExtraData.PollExpirationBlockHeight = ""; // leaving it empty for now since it's unused
+      postExtraData.PollWeightType = this.currentPostModel.pollType;
+
+      if (this.currentPostModel.pollType === PollWeightType.desoTokenBalance) {
+        if (!this.currentPostModel.pollWeightTokenProfile) {
+          this.globalVars._alertError("A DeSo Token Profile must be selected to create this poll type.");
+          return;
+        }
+
+        postExtraData.PollWeightTokenPublicKey = this.currentPostModel.pollWeightTokenProfile.PublicKeyBase58Check;
+      }
     }
 
     const bodyObj = {
@@ -666,6 +692,15 @@ export class FeedCreatePostComponent implements OnInit {
   removePollOption(index: number) {
     this.pollOptions.removeAt(index);
     this.changeRef.detectChanges();
+  }
+
+  keepPollWeightsOrder() {
+    // keeps original order when iterating thought *ngFor with `keyvalue` pipe
+    return 0;
+  }
+
+  onPollTokenProfileSelected(profile: ProfileEntryResponse) {
+    this.currentPostModel.pollWeightTokenProfile = profile;
   }
 
   private autoFocusTextArea() {

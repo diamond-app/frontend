@@ -38,5 +38,6 @@ export const environment = {
   megaswapURL: "https://megaswap.xyz",
   megaswapAPI: "https://megaswap.dev",
   megaswapAffiliateAddress: "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL",
+  openfundURL: "https://openfund.com",
   setuAPI: "https://web3setu.co.in",
 };

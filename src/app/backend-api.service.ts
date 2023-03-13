@@ -1639,7 +1639,9 @@ export class BackendApiService {
     LastPublicKeyBase58Check: string,
     NumToFetch: number,
     FetchHodlings: boolean = false,
-    FetchAll: boolean = false
+    FetchAll: boolean = false,
+    IsDAOCoin: boolean = false,
+    SortType: string = "coin_balance"
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHodlersForPublicKey, {
       PublicKeyBase58Check,
@@ -1648,6 +1650,8 @@ export class BackendApiService {
       NumToFetch,
       FetchHodlings,
       FetchAll,
+      IsDAOCoin,
+      SortType,
     });
   }
 
@@ -1977,7 +1981,7 @@ export class BackendApiService {
     PostHashHex: string,
     AssociationType: AssociationType,
     TransactorPublicKeyBase58Check?: string,
-    AssociationValue?: AssociationValue,
+    AssociationValue?: AssociationValue | Array<AssociationValue>,
     total: number = 0
   ) {
     const ASSOCIATIONS_PER_REQUEST_LIMIT = 100;
