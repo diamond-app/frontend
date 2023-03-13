@@ -431,14 +431,24 @@ export class GlobalVarsService {
   }
 
   async checkIfBrowserSupportsWebPush(): Promise<boolean> {
+    if (!("serviceWorker" in navigator)) {
+      return false;
+    }
     const registration = await navigator.serviceWorker.getRegistration();
     return !!registration?.pushManager;
   }
 
   initializeWebPush() {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
     navigator.serviceWorker
       .register("/service-worker.js")
-      .then(() => console.log("Service worker registered"))
+      .then(async () => {
+        console.log("Service worker registered");
+        this.browserSupportsWebPush = await this.checkIfBrowserSupportsWebPush();
+      })
       .catch((err) => console.error("Error registering service worker", err));
   }
 
@@ -1380,8 +1390,7 @@ export class GlobalVarsService {
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
 
-    // this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
-    this.localNode = "https://node.deso.org";
+    this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
 
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
