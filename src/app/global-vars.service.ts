@@ -431,7 +431,11 @@ export class GlobalVarsService {
   }
 
   async checkIfBrowserSupportsWebPush(): Promise<boolean> {
+    if (!("serviceWorker" in navigator)) {
+      console.log("Service worker not supported");
+    }
     const registration = await navigator.serviceWorker.getRegistration();
+    console.log("Service worker registration", registration);
     return !!registration?.pushManager;
   }
 

@@ -19,3 +19,4 @@ self.addEventListener("notificationclick", function(event) {
 
   clients.openWindow(event.action);
 });
+console.log("Service Worker Loaded...");
