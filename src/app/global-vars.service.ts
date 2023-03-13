@@ -436,14 +436,21 @@ export class GlobalVarsService {
     }
     const registration = await navigator.serviceWorker.getRegistration();
     console.log("Service worker registration", registration);
-    console.log('Service worker registered with scope:', registration.scope);
     return !!registration?.pushManager;
   }
 
   initializeWebPush() {
+    if (!("serviceWorker" in navigator)) {
+      console.log("Service worker not supported");
+      return;
+    }
+
     navigator.serviceWorker
       .register("/service-worker.js")
-      .then(() => console.log("Service worker registered"))
+      .then(async () => {
+        console.log("Service worker registered");
+        this.browserSupportsWebPush = await this.checkIfBrowserSupportsWebPush();
+      })
       .catch((err) => console.error("Error registering service worker", err));
   }
 
