@@ -1779,7 +1779,6 @@ app-landing-page {
 
 // Set a width, height, and border on desktop
 .global__desktop .global__content__inner {
-  min-height: 100vh;
   width: $global__content__width;
   border-left: var(--border) solid 1px;
   border-right: var(--border) solid 1px;
@@ -4118,17 +4117,20 @@ creator-profile-nfts {
 
 .messages-thread-view__message-builder {
   position: fixed;
-  bottom: 0px;
+  bottom: 16px; // offset for textarea padding
   height: 120px;
   width: 593px;
   background: var(--tile-bg);
   border-top: 1px solid var(--border);
   textarea {
-    padding: 16px;
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
     border: none;
     border-radius: 0px;
     resize: none;
     outline: none;
+    font-size: 15px;
     &:focus {
       outline: none;
       -webkit-box-shadow: none;
@@ -4211,6 +4213,25 @@ creator-profile-nfts {
 
 .message-thread__unread-light-blue {
   background-color: var(--unread);
+}
+
+.messages-thread__timestamp {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-left: auto;
+  padding: 4px 0 0 4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.messages-thread-view__scroll-container {
+  overflow-y: scroll;
+  height: calc(100vh - 305px);
+}
+
+.message-thread-view {
+  position: relative;
+  height: calc(100vh - 170px);
 }
 
 .admin__get-user-admin-data-line {

@@ -1,119 +1,119 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { Title } from "@angular/platform-browser";
-import { Router } from "@angular/router";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { TrackingService } from "src/app/tracking.service";
-import { environment } from "src/environments/environment";
-import { AppRoutingModule } from "../app-routing.module";
-import { BackendApiService } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
-import { MessagesInboxComponent } from "./messages-inbox/messages-inbox.component";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import {
+  AccessGroupEntryResponse,
+  ChatType,
+  DecryptedMessageEntryResponse,
+  getAllAccessGroups,
+  getAllMessageThreads,
+  getPaginatedDMThread,
+  getPaginatedGroupChatThread,
+  identity,
+  PublicKeyToProfileEntryResponseMap,
+} from "deso-protocol";
+import { GlobalVarsService } from "src/app/global-vars.service";
 
 @Component({
   selector: "app-messages-page",
   templateUrl: "./messages-page.component.html",
   styleUrls: ["./messages-page.component.scss"],
 })
-export class MessagesPageComponent implements OnInit {
-  @ViewChild(MessagesInboxComponent /* #name or Type*/, { static: false }) messagesInboxComponent;
-  lastContactFetched = null;
-  intervalsSet = [];
-  selectedThread: any;
-  selectedThreadDisplayName = "";
-  selectedThreadPublicKey = "";
-  selectedThreadProfilePic = "";
-  showThreadView = false;
-  AppRoutingModule = AppRoutingModule;
-  environment = environment;
+export class MessagesPageComponent implements OnInit, OnDestroy {
+  isLoadingThreadList: boolean = false;
+  threadPreviewList: DecryptedMessageEntryResponse[] = [];
+  publicKeyToProfileMap: PublicKeyToProfileEntryResponseMap = {};
+  isDestroyed = false;
+  selectedThread: DecryptedMessageEntryResponse | null = null;
+  threadMessages: DecryptedMessageEntryResponse[] = [];
+  accessGroups: AccessGroupEntryResponse[] = [];
 
-  backButtonFunction = () => {
-    this.showThreadView = false;
+  selectThread = (threadListItem: DecryptedMessageEntryResponse) => {
+    this.selectedThread = threadListItem;
+
+    switch (this.selectedThread.ChatType) {
+      case ChatType.DM:
+        getPaginatedDMThread({
+          UserGroupOwnerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+          UserGroupKeyName: "default-key",
+          PartyGroupKeyName: "default-key",
+          PartyGroupOwnerPublicKeyBase58Check: this.selectedThread.IsSender
+            ? this.selectedThread.RecipientInfo.OwnerPublicKeyBase58Check
+            : this.selectedThread.SenderInfo.OwnerPublicKeyBase58Check,
+          StartTimeStampString: this.selectedThread.MessageInfo.TimestampNanosString,
+          MaxMessagesToFetch: 3,
+        })
+          .then((thread) => {
+            return Promise.all(thread.ThreadMessages.map((message) => identity.decryptMessage(message, []))).then(
+              (decryptedMessages) => {
+                if (this.isDestroyed) return;
+                this.threadMessages = [...decryptedMessages.reverse(), this.selectedThread];
+              }
+            );
+          })
+          .catch((err) => {
+            this.globalVars._alertError(err.error.error);
+          });
+        break;
+      case ChatType.GROUPCHAT:
+        getPaginatedGroupChatThread({
+          UserPublicKeyBase58Check: this.selectedThread.RecipientInfo.OwnerPublicKeyBase58Check,
+          AccessGroupKeyName: this.selectedThread.RecipientInfo.AccessGroupKeyName,
+          StartTimeStampString: this.selectedThread.MessageInfo.TimestampNanosString,
+          MaxMessagesToFetch: 3,
+        })
+          .then((thread) => {
+            Object.assign(this.publicKeyToProfileMap, thread.PublicKeyToProfileEntryResponse);
+            return Promise.all(
+              thread.GroupChatMessages.map((message) => identity.decryptMessage(message, this.accessGroups))
+            ).then((decryptedMessages) => {
+              if (this.isDestroyed) return;
+              this.threadMessages = [...decryptedMessages.reverse(), this.selectedThread];
+            });
+          })
+          .catch((err) => {
+            this.globalVars._alertError(err.error.error);
+          });
+        break;
+      default:
+        throw new Error("Unknown chat type");
+    }
   };
 
-  constructor(
-    public globalVars: GlobalVarsService,
-    private backendApi: BackendApiService,
-    private router: Router,
-    private titleService: Title,
-    private modalService: BsModalService,
-    private tracking: TrackingService
-  ) {}
+  constructor(public globalVars: GlobalVarsService) {}
 
   ngOnInit() {
-    this.titleService.setTitle(`Messages - ${environment.node.name}`);
-  }
-
-  openNewMessageModal() {
-    const modalClass = this.globalVars.isMobile()
-      ? "modal-dialog-centered modal-dialog-high modal-dialog-light"
-      : "modal-dialog-centered";
-    const backdrop = !this.globalVars.isMobile();
-    const messageSelectorModal = this.modalService.show(MessageRecipientModalComponent, {
-      class: modalClass,
-      backdrop,
-      animated: !this.globalVars.isMobile(),
-    });
-    messageSelectorModal.content.userSelected.subscribe((event) => {
-      this.messagesInboxComponent._handleCreatorSelectedInSearch(event);
-    });
-  }
-
-  _handleMessageThreadSelectedMobile(thread: any) {
-    if (!thread) {
-      return;
+    if (this.globalVars.loggedInUser) {
+      this.isLoadingThreadList = true;
+      Promise.all([
+        getAllMessageThreads({
+          UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+        }),
+        getAllAccessGroups({
+          PublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+        }),
+      ])
+        .then(([threads, groups]) => {
+          this.accessGroups = [...groups.AccessGroupsMember, ...groups.AccessGroupsOwned];
+          return Promise.all(
+            threads.MessageThreads.map((message) => identity.decryptMessage(message, this.accessGroups))
+          ).then((decryptedMessages) => {
+            if (this.isDestroyed) return;
+            this.threadPreviewList = decryptedMessages;
+            this.publicKeyToProfileMap = threads.PublicKeyToProfileEntryResponse;
+            // Select the first thread by default. Maybe we should do something smarter here.
+            this.selectThread(decryptedMessages[0]);
+          });
+        })
+        .catch((err) => {
+          this.globalVars._alertError(err.error.error);
+        })
+        .finally(() => {
+          if (this.isDestroyed) return;
+          this.isLoadingThreadList = false;
+        });
     }
-    this.selectedThread = thread;
-    this.selectedThreadPublicKey = thread.PublicKeyBase58Check;
-    this.selectedThreadProfilePic = "/assets/img/default-profile-pic.png";
-    if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic) {
-      this.selectedThreadProfilePic = thread.ProfileEntryResponse.ProfilePic;
-    }
-    this.selectedThreadDisplayName = thread.PublicKeyBase58Check;
-    if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.Username) {
-      this.selectedThreadDisplayName = thread.ProfileEntryResponse.Username;
-    }
-    this.showThreadView = true;
   }
 
-  _toggleSettingsTray() {
-    this.globalVars.openSettingsTray = !this.globalVars.openSettingsTray;
-  }
-
-  _settingsTrayBeOpen() {
-    return this.globalVars.openSettingsTray;
-  }
-
-  // This marks all messages as read and relays this request to the server.
-  _markAllMessagesReadMobile() {
-    console.log("_markAllMessagesReadMobile()");
-    // for (let thread of this.globalVars.decryptedMessages.OrderedContactsWithMessages) {
-    //   this.globalVars.decryptedMessages.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
-    // }
-
-    // // Send an update back to the server noting that we want to mark all threads read.
-    // this.backendApi
-    //   .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-    //   .subscribe(
-    //     () => {
-    //       this.tracking.log("profile : all-message-read");
-    //     },
-    //     (err) => {
-    //       console.log(err);
-    //       const parsedError = this.backendApi.stringifyError(err);
-    //       this.tracking.log("profile : all-message-read", { error: parsedError });
-    //       this.globalVars._alertError(parsedError);
-    //     }
-    //   );
-
-    // Reflect this change in NumberOfUnreadThreads.
-    this.globalVars.messagesNumberOfUnreadThreads = 0;
-  }
-
-  navigateToInbox() {
-    this.selectedThread = null;
-    this.selectedThreadPublicKey = "";
-    this.showThreadView = false;
-    this.router.navigate([], { queryParams: { username: null }, queryParamsHandling: "merge" });
+  ngOnDestroy() {
+    this.isDestroyed = true;
   }
 }

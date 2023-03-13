@@ -110,13 +110,8 @@ import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
-import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
-import { MessageComponent } from "./messages-page/message/message.component";
-import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
-import { MessagesInboxComponent } from "./messages-page/messages-inbox/messages-inbox.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
-import { MessagesThreadViewComponent } from "./messages-page/messages-thread-view/messages-thread-view.component";
-import { MessagesThreadComponent } from "./messages-page/messages-thread/messages-thread.component";
+import { ThreadListItemComponent } from "./messages-page/thread-list-item/thread-list-item.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { MintNftComponent } from "./mint-nft/mint-nft.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
@@ -220,6 +215,8 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
+import { MessageBubbleComponent } from './messages-page/message-bubble/message-bubble.component';
+import { MessageThreadComponent } from './messages-page/message-thread/message-thread.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -294,11 +291,6 @@ export function playerFactory() {
     TransferDesoModalComponent,
     BuyDeSoLoggedOutComponent,
     BuyDeSoCompleteComponent,
-    MessagesInboxComponent,
-    MessagesThreadComponent,
-    MessageComponent,
-    MessagesThreadViewComponent,
-    MessageRecipientModalComponent,
     FeedCreatePostModalComponent,
     TopBarMobileNavigationControlComponent,
     TopBarMobileHeaderComponent,
@@ -347,7 +339,6 @@ export function playerFactory() {
     ReactionsModalComponent,
     ReactionsImageComponent,
     SimpleProfileCardComponent,
-    MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
     DiamondPostsComponent,
     CountdownTimerComponent,
@@ -417,6 +408,9 @@ export function playerFactory() {
     WelcomeModalComponent,
     LoggedOutEmptyStateComponent,
     SwipeToChooseComponent,
+    ThreadListItemComponent,
+    MessageBubbleComponent,
+    MessageThreadComponent,
   ],
   imports: [
     BrowserModule,

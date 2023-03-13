@@ -11,7 +11,6 @@ import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-
 import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
-import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
 
 @Component({
   selector: "left-bar",
@@ -19,7 +18,6 @@ import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages
   styleUrls: ["./left-bar.component.sass"],
 })
 export class LeftBarComponent {
-  MessagesInboxComponent = MessagesInboxComponent;
   environment = environment;
 
   TutorialStatus = TutorialStatus;

@@ -328,7 +328,7 @@ export class GlobalVarsService {
     }
   }
 
-  // TODO: remove params
+  // TODO: delete. we don't need this anymore
   LoadInitialMessages(retryCount: number, maxRetries) {
     if (!this.loggedInUser) {
       return;
@@ -342,14 +342,12 @@ export class GlobalVarsService {
       .then((messages) => {
         return Promise.all(messages.MessageThreads.map((message) => identity.decryptMessage(message, []))).then(
           (decryptedMessages) => {
-            console.log(decryptedMessages);
             this.decryptedMessages = decryptedMessages;
             this.messagesPublicKeyToProfileMap = messages.PublicKeyToProfileEntryResponse;
           }
         );
       })
       .catch((err) => {
-        console.log("Error getting messages: ", err);
         if (retryCount < maxRetries) {
           this.LoadInitialMessages(retryCount + 1, maxRetries);
         }

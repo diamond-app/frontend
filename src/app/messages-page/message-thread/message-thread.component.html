@@ -1,0 +1,13 @@
+<div class="message-thread-view">
+  <div class="p-2 messages-thread-view__scroll-container disable-scrollbars">
+    <message-bubble *ngFor="let message of this.threadMessages" [message]="message"></message-bubble>
+  </div>
+  <div class="border-top messages-thread-view__message-builder">
+    <form action="">
+      <textarea class="w-100" name="chatMessage" placeholder="Write message here..."></textarea>
+      <div class="d-flex p-2">
+        <button type="submit" class="ml-auto btn btn-primary">Send</button>
+      </div>
+    </form>
+  </div>
+</div>
