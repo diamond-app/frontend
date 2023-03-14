@@ -59,6 +59,7 @@ export interface DepositEvent {
 interface CreateAddrsParams {
   DestinationTicker: Ticker;
   DestinationAddress: string;
+  AffiliateAddress: string;
 }
 interface GetDepositsParams {
   DepositTicker: Ticker;
