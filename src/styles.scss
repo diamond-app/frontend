@@ -4119,7 +4119,7 @@ creator-profile-nfts {
   position: fixed;
   bottom: 16px; // offset for textarea padding
   height: 120px;
-  width: 593px;
+  width: 622px;
   background: var(--tile-bg);
   border-top: 1px solid var(--border);
   textarea {
@@ -4226,12 +4226,12 @@ creator-profile-nfts {
 
 .messages-thread-view__scroll-container {
   overflow-y: scroll;
-  height: calc(100vh - 305px);
+  height: calc(100vh - 298px);
 }
 
 .message-thread-view {
   position: relative;
-  height: calc(100vh - 170px);
+  height: calc(100vh - 162px);
 }
 
 .admin__get-user-admin-data-line {

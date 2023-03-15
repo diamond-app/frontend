@@ -13,14 +13,24 @@
   <app-page [hideSidebar]="true">
     <header class="border-bottom pt-3 pb-2 px-3">
       <h1 class="font-weight-bold fs-24px mb-2">Messages</h1>
-      <div class="position-relative" [ngStyle]="{ height: '48px', width: '400px' }">
-        <!-- TODO: We need this to search access group names, eth addresses, and
+      <div class="d-flex align-items-center">
+        <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
+          <!-- TODO: We need this to search access group names, eth addresses, and
         usernames. -->
-        <search-bar [showCloutavista]="false" [searchFunction] class="position-relative"></search-bar>
+          <search-bar
+            [showCloutavista]="false"
+            [isSearchForUsersToMessage]="true"
+            [startingSearchText]=""
+            [messagingAccessGroups]="this.accessGroups"
+            (creatorToMessage)="this.onSearchItemSelected($event)"
+            class="position-relative"
+          ></search-bar>
+        </div>
+        <button class="ml-auto btn btn-primary">Create Group</button>
       </div>
     </header>
     <div class="d-flex">
-      <div class="border-right overflow-hidden" [ngStyle]="{ maxWidth: '380px' }">
+      <div class="border-right overflow-hidden" [ngStyle]="{ width: '351px' }">
         <thread-list-item
           *ngFor="let item of this.threadPreviewList"
           [listItem]="item"

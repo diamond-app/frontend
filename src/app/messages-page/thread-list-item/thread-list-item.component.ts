@@ -17,15 +17,21 @@ export class ThreadListItemComponent {
     return this.listItem?.ChatType === ChatType.GROUPCHAT;
   }
 
-  get senderProfile() {
-    const key = this.listItem?.SenderInfo.OwnerPublicKeyBase58Check;
+  get previewPublicKey() {
+    return this.listItem?.SenderInfo.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      ? this.listItem?.RecipientInfo.OwnerPublicKeyBase58Check
+      : this.listItem?.SenderInfo.OwnerPublicKeyBase58Check;
+  }
+
+  get profile() {
+    const key = this.previewPublicKey;
     return key ? this.publicKeyToProfileMap[key] : null;
   }
 
   get chatName() {
     return this.isGroupChat
       ? this.listItem?.RecipientInfo.AccessGroupKeyName
-      : this.senderProfile?.Username || this.listItem?.SenderInfo.OwnerPublicKeyBase58Check;
+      : this.profile?.Username || this.previewPublicKey;
   }
 
   constructor(public globalVars: GlobalVarsService) {}

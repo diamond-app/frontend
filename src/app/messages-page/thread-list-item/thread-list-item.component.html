@@ -4,21 +4,21 @@
   tabindex="0"
   (click)="this.onItemClick(this.listItem)"
 >
-  <div class="messages-thread__avatar" [avatar]="this.listItem.SenderInfo.OwnerPublicKeyBase58Check"></div>
+  <div class="messages-thread__avatar" [avatar]="this.previewPublicKey"></div>
   <div class="ml-3 messages-thread__ellipsis-restriction fs-15px">
     <span class="font-weight-bold" [title]="this.chatName">
       {{ this.chatName }}
     </span>
     <ng-container *ngIf="!this.isGroupChat">
-      <span *ngIf="this.senderProfile?.IsVerified" class="ml-1 text-primary">
+      <span *ngIf="this.profile?.IsVerified" class="ml-1 text-primary">
         <i class="fas fa-check-circle fa-md align-middle"></i>
       </span>
       <span
-        *ngIf="this.senderProfile"
+        *ngIf="this.profile"
         class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
         style="width: fit-content"
       >
-        {{ this.globalVars.nanosToUSD(this.globalVars._parseFloat(this.senderProfile.CoinPriceDeSoNanos), 2) }}
+        {{ this.globalVars.nanosToUSD(this.globalVars._parseFloat(this.profile.CoinPriceDeSoNanos), 2) }}
       </span>
     </ng-container>
     <div class="messages-thread__ellipsis-restriction">
