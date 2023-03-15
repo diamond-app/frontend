@@ -14,5 +14,13 @@ export class MessageBubbleComponent {
   @Input() nextMessage!: DecryptedMessageEntryResponse;
   @Input() profile?: ProfileEntryResponse;
 
+  get hasError() {
+    return !!this.message.error;
+  }
+
+  get messageText() {
+    return this.message.error ? this.message.error : this.message.DecryptedMessage;
+  }
+
   constructor(public globalVars: GlobalVarsService) {}
 }

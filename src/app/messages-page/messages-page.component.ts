@@ -7,9 +7,12 @@ import {
   getAllAccessGroups,
   getAllMessageThreads,
   identity,
+  ProfileEntryResponse,
   PublicKeyToProfileEntryResponseMap,
 } from "deso-protocol";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
 
 @Component({
   selector: "app-messages-page",
@@ -23,6 +26,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
   isDestroyed = false;
   selectedThread: DecryptedMessageEntryResponse | null = null;
   accessGroups: AccessGroupEntryResponse[] = [];
+  accessGroupsOwned: AccessGroupEntryResponse[] = [];
 
   selectThread = (threadListItem: DecryptedMessageEntryResponse) => {
     this.selectedThread = threadListItem;
@@ -33,47 +37,23 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
    * existing thread. If it does, we select that thread. Otherwise, we create a
    * new thread manually client side and select it. The newly created thread is
    * a transient object that will not be persisted to the server until the user
-   * sends a message.
-   *
-   * The item passed here could be a ProfileEntryResponse or an AccessGroupEntryResponse.
+   * sends a message. NOTE: this only works for DM chats. Group chats are more
+   * complicated and require a different UI flow to create them.
    */
-  onSearchItemSelected = async (item: any) => {
-    let existingThread: DecryptedMessageEntryResponse;
-
-    if (item.PublicKeyBase58Check) {
-      // this is single profile, so we search for a DM where this user is the counterpart.
-      existingThread = this.threadPreviewList.find((thread) => {
-        return (
-          thread.ChatType === ChatType.DM &&
-          (thread.SenderInfo.OwnerPublicKeyBase58Check === item.PublicKeyBase58Check ||
-            thread.RecipientInfo.OwnerPublicKeyBase58Check === item.PublicKeyBase58Check)
-        );
-      });
-    } else if (item.AccessGroupPublicKeyBase58Check) {
-      // this is a group, so we search for a group chat where this group is the recipient.
-      existingThread = this.threadPreviewList.find((thread) => {
-        return (
-          thread.ChatType === ChatType.GROUPCHAT &&
-          thread.RecipientInfo.AccessGroupPublicKeyBase58Check === item.AccessGroupPublicKeyBase58Check
-        );
-      });
-
-      // We only search existing group chats so if we don't find it something is wrong...
-      if (!existingThread) {
-        this.globalVars._alertError("Could not find group chat.");
-        return;
-      }
-    }
+  onSearchItemSelected = async (item: ProfileEntryResponse) => {
+    const existingThread = this.threadPreviewList.find((thread) => {
+      return (
+        thread.ChatType === ChatType.DM &&
+        (thread.SenderInfo.OwnerPublicKeyBase58Check === item.PublicKeyBase58Check ||
+          thread.RecipientInfo.OwnerPublicKeyBase58Check === item.PublicKeyBase58Check)
+      );
+    });
 
     if (existingThread) {
       this.selectThread(existingThread);
       return;
     }
 
-    // If we didn't find an existing thread, we create a new one, prepend it to
-    // the thread preview list, and select it. NOTE: this only works for DM
-    // chats. Group chats are more complicated and require a different UI flow
-    // to create them.
     const { currentUser } = identity.snapshot();
     if (!currentUser) {
       this.globalVars._alertError("You must be logged in to create a new thread.");
@@ -92,17 +72,11 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
         SenderAccessGroupKeyName: "default-key",
         SenderPublicKeyBase58Check: currentUser?.publicKey,
         RecipientAccessGroupKeyName: "default-key",
-        // NOTE: we'll need a more sophisticated way to determine the recipient's public key
-        // once we start dealing with group chats.
         RecipientPublicKeyBase58Check: item.PublicKeyBase58Check,
       });
 
-      // If we've gotten here we know we're dealing with an individual profile.
-      // Update the public key to profile map with the selected profile.
       this.publicKeyToProfileMap[item.PublicKeyBase58Check] = item;
 
-      // NOTE: This is a transient object that we create client side. It will be overwritten once we
-      // actually send a message.
       const TimestampNanos = Date.now() * 1e6;
       const threadListItem: DecryptedMessageEntryResponse = {
         ChatType: ChatType.DM,
@@ -133,42 +107,99 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
-      this.isLoadingThreadList = true;
-      Promise.all([
-        getAllMessageThreads({
-          UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-        }),
-        getAllAccessGroups({
-          PublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-        }),
-      ])
-        .then(([threads, groups]) => {
-          this.accessGroups = [...(groups.AccessGroupsMember ?? []), ...(groups.AccessGroupsOwned ?? [])];
-          return Promise.all(
-            threads.MessageThreads.map((message) => identity.decryptMessage(message, this.accessGroups))
-          ).then((decryptedMessages) => {
-            if (this.isDestroyed) return;
-            this.threadPreviewList = decryptedMessages;
-            this.publicKeyToProfileMap = threads.PublicKeyToProfileEntryResponse;
-            // Select the first thread by default. Maybe we should do something smarter here.
-            this.selectThread(decryptedMessages[0]);
-          });
-        })
-        .catch((err) => {
-          this.globalVars._alertError(err?.error?.error ?? err?.message);
-        })
-        .finally(() => {
-          if (this.isDestroyed) return;
-          this.isLoadingThreadList = false;
-        });
+      this.updateThreadList();
     }
+  }
+
+  private updateThreadList() {
+    this.isLoadingThreadList = true;
+    Promise.all([
+      getAllMessageThreads({
+        UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      }),
+      getAllAccessGroups({
+        PublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      }),
+    ])
+      .then(([threads, groups]) => {
+        this.accessGroupsOwned = groups.AccessGroupsOwned ?? [];
+        this.accessGroups = [...(groups.AccessGroupsMember ?? []), ...(groups.AccessGroupsOwned ?? [])];
+        return Promise.all(
+          threads.MessageThreads.map((message) => identity.decryptMessage(message, this.accessGroups))
+        ).then((decryptedMessages) => {
+          if (this.isDestroyed) return;
+          const groupsOwnedWithMessages = decryptedMessages.filter(
+            (message) => message.ChatType === ChatType.GROUPCHAT
+          );
+          // We want to show groups that have no messages but are owned by the user,
+          // so we add dummy messages to each of these groups.
+          const identityState = identity.snapshot();
+          const TimestampNanos = Date.now() * 1e6;
+          const groupsOwnedWithoutMessages: DecryptedMessageEntryResponse[] = this.accessGroupsOwned
+            .filter(
+              (group) =>
+                group.AccessGroupOwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+                group.AccessGroupKeyName !== "default-key" &&
+                group.AccessGroupKeyName !== "" &&
+                !groupsOwnedWithMessages.find(
+                  (g) => g.RecipientInfo.AccessGroupPublicKeyBase58Check === group.AccessGroupPublicKeyBase58Check
+                )
+            )
+            .map((group) => ({
+              ChatType: ChatType.GROUPCHAT,
+              SenderInfo: {
+                OwnerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+                AccessGroupKeyName: "default-key",
+                AccessGroupPublicKeyBase58Check:
+                  identityState.currentUser?.primaryDerivedKey.messagingPublicKeyBase58Check,
+              },
+              RecipientInfo: {
+                OwnerPublicKeyBase58Check: group.AccessGroupOwnerPublicKeyBase58Check,
+                AccessGroupKeyName: group.AccessGroupKeyName,
+                AccessGroupPublicKeyBase58Check: group.AccessGroupPublicKeyBase58Check,
+              },
+              MessageInfo: {
+                EncryptedText: "",
+                TimestampNanos,
+                TimestampNanosString: TimestampNanos.toString(),
+                ExtraData: {},
+              },
+              DecryptedMessage: "",
+              IsSender: true,
+              error: "",
+            }));
+
+          this.threadPreviewList = [...decryptedMessages, ...groupsOwnedWithoutMessages];
+          this.publicKeyToProfileMap = threads.PublicKeyToProfileEntryResponse;
+          // Select the first thread by default. Maybe we should do something smarter here.
+          this.selectThread(decryptedMessages[0]);
+        });
+      })
+      .catch((err) => {
+        this.globalVars._alertError(err?.error?.error ?? err?.message);
+      })
+      .finally(() => {
+        if (this.isDestroyed) return;
+        this.isLoadingThreadList = false;
+      });
   }
 
   ngOnDestroy() {
     this.isDestroyed = true;
+  }
+
+  openCreateAccessGroupModal() {
+    this.modalService.show(CreateAccessGroupComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: {
+        afterAccessGroupCreated: () => {
+          this.updateThreadList();
+        },
+      },
+    });
   }
 }

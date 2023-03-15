@@ -11,8 +11,9 @@
   >
     <div
       class="disable-scrollbars"
+      [ngClass]="{ 'fc-red': this.hasError }"
       style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
-      [innerHTML]="message.DecryptedMessage | sanitizeAndAutoLink"
+      [innerHTML]="this.messageText | sanitizeAndAutoLink"
     ></div>
   </div>
   <div
@@ -62,7 +63,8 @@
     <div
       class="disable-scrollbars"
       style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
-      [innerHTML]="message.DecryptedMessage | sanitizeAndAutoLink"
+      [ngClass]="{ 'fc-red': this.hasError }"
+      [innerHTML]="this.messageText | sanitizeAndAutoLink"
     ></div>
   </div>
 </div>

@@ -217,6 +217,7 @@ import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
 import { MessageBubbleComponent } from './messages-page/message-bubble/message-bubble.component';
 import { MessageThreadComponent } from './messages-page/message-thread/message-thread.component';
+import { CreateAccessGroupComponent } from './messages-page/create-access-group/create-access-group.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -411,6 +412,7 @@ export function playerFactory() {
     ThreadListItemComponent,
     MessageBubbleComponent,
     MessageThreadComponent,
+    CreateAccessGroupComponent,
   ],
   imports: [
     BrowserModule,

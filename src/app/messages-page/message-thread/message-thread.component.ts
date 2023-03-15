@@ -63,10 +63,11 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
     if (changes.threadHead && changes.threadHead !== this.threadHead) {
       this.threadMessages = [];
 
-      // If an existing thread is not provided it means we're starting a new chat and we don't need to load any messages
-      // NOTE: In the case of an empty DecryptedMessage we assume we are dealing with a newly created transient thread,
-      // so there is no need to load anything.
-      if (this.threadHead && this.threadHead.DecryptedMessage !== "") {
+      // If an existing thread is not provided it means we're starting a new
+      // chat and we don't need to load any messages NOTE: In the case of an
+      // empty DecryptedMessage and error we assume we are dealing with a newly
+      // created transient thread, so there is no need to load anything.
+      if (this.threadHead && (this.threadHead.DecryptedMessage !== "" || this.threadHead.error !== "")) {
         Promise.all([
           checkPartyAccessGroups({
             SenderAccessGroupKeyName: this.threadHead.SenderInfo.AccessGroupKeyName,
@@ -83,6 +84,7 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
           })
           .catch((e) => {
             this.globalVars._alertError(e?.error?.error ?? e.message);
+            console.error(e);
           });
       }
     }
@@ -197,12 +199,14 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
             ? this.threadHead.RecipientInfo.OwnerPublicKeyBase58Check
             : this.threadHead.SenderInfo.OwnerPublicKeyBase58Check,
         Message,
+        AccessGroup: this.threadHead.RecipientInfo.AccessGroupKeyName,
       });
     } catch (e) {
       const rawError = e?.error?.error ?? e.message;
       this.globalVars._alertError("Problem sending message: " + rawError);
       // If we failed, remove the manually added message from the UI.
       this.threadMessages.pop();
+      console.error(e);
     }
 
     this.isSendingMessage = false;
