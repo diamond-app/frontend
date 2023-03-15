@@ -156,7 +156,7 @@ export class FeedCreatePostComponent implements OnInit {
   readonly POLL_WEIGHT_TYPE_LABELS = {
     [PollWeightType.unweighted]: "Simple poll",
     [PollWeightType.desoBalance]: "Weight By DeSo Balance",
-    [PollWeightType.desoTokenBalance]: "Weight By DeSo Token Balance",
+    [PollWeightType.desoTokenBalance]: "Weight By Token Balance",
   };
   readonly POLL_WEIGHT_TYPE_LABELS_SELECTED = {
     [PollWeightType.unweighted]: "Simple poll",

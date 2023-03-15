@@ -26,14 +26,14 @@
       *ngIf="post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoBalance"
       class="text-muted small mt-20px mb-10px"
     >
-      Weight by DeSo balance
+      Weighted by DeSo balance
     </span>
 
     <span
       *ngIf="post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoTokenBalance"
       class="text-muted small mt-20px mb-10px"
     >
-      Weight by
+      Weighted by
       <b>@{{ pollWeightTokenProfile.ProfileEntryResponse.Username }}</b>
       token balance
     </span>
@@ -61,7 +61,7 @@
             <i-feather
               *ngIf="myVotes[0] && myVotes[0].AssociationValue === pollOption"
               name="my-vote"
-              class="check-circle ml-2 text-success"
+              class="check-circle ml-2 text-black"
               tooltip="You voted for this option"
               container="body"
             ></i-feather>
