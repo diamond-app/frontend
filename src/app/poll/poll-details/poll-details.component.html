@@ -15,11 +15,11 @@
       </ng-template>
     </tab-selector>
 
-    <div *ngIf="userKeysReacted.length > 0">
-      <div #uiScroll *uiScroll="let key of datasource">
+    <div *ngIf="usersReacted.length > 0">
+      <div #uiScroll *uiScroll="let user of datasource">
         <simple-profile-card
-          [profile]="usersByKey[key].ProfileEntryResponse"
-          [pubKeyBase58Check]="key"
+          [profile]="user.profile"
+          [pubKeyBase58Check]="user.publicKey"
           [followButtonOppositeSide]="true"
           [hideFollowLink]="true"
           [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"

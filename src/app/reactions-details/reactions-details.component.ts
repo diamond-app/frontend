@@ -8,6 +8,7 @@ import {
   PostAssociation,
   PostAssociationCountsResponse,
   PostEntryResponse,
+  ProfileEntryResponse,
   User,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -30,8 +31,7 @@ export class ReactionsDetailsComponent implements OnInit {
   reactionTabs: Array<AssociationReactionValue> = [];
   activeReactionTab: AssociationReactionValue | null = null;
   postReactionCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
-  userKeysReacted: Array<string> = [];
-  usersByKey: { [publicKey: string]: User } = {};
+  usersReacted: Array<{ publicKey: string; profile: ProfileEntryResponse | null }> = [];
 
   // Infinite scroll metadata.
   pageOffset = 0;
@@ -87,7 +87,7 @@ export class ReactionsDetailsComponent implements OnInit {
 
   selectTab(tab: AssociationReactionValue) {
     this.activeReactionTab = tab;
-    this.userKeysReacted = [];
+    this.usersReacted = [];
     this.fetchData(tab as AssociationReactionValue);
   }
 
@@ -106,21 +106,21 @@ export class ReactionsDetailsComponent implements OnInit {
         AssociationType.reaction,
         undefined,
         value,
+        true,
         this.postReactionCounts.Counts[this.activeReactionTab]
       )
       .pipe(
-        mergeMap((Associations) => {
-          return this.fetchReactedUsers(Associations).pipe(
-            map((usersByKey) => {
-              return orderBy(
-                Associations.map((e) => e.TransactorPublicKeyBase58Check),
-                (key) => {
-                  const desoLockedNanos = usersByKey[key].ProfileEntryResponse?.CoinEntry?.DeSoLockedNanos || 0;
-                  return usersByKey[key].BalanceNanos + desoLockedNanos;
-                },
-                ["desc"]
-              );
-            })
+        map(({ Associations, PublicKeyToProfileEntryResponse }) => {
+          return orderBy(
+            Associations.map((e) => ({
+              publicKey: e.TransactorPublicKeyBase58Check,
+              profile: PublicKeyToProfileEntryResponse[e.TransactorPublicKeyBase58Check],
+            })),
+            ({ profile }) => {
+              const desoLockedNanos = profile?.CoinEntry?.DeSoLockedNanos || 0;
+              return (profile as any).DESOBalanceNanos + desoLockedNanos;
+            },
+            ["desc"]
           );
         }),
         finalize(() => {
@@ -128,25 +128,10 @@ export class ReactionsDetailsComponent implements OnInit {
         })
       )
       .subscribe((users: any) => {
-        this.userKeysReacted = users;
+        this.usersReacted = users;
         this.infiniteScroller = new InfiniteScroller(this.pageSize, this.getPage.bind(this), false);
         this.datasource = this.infiniteScroller.getDatasource();
       });
-  }
-
-  private fetchReactedUsers(reactions: Array<PostAssociation>) {
-    const userKeysToFetch = this.getUserPublicKeys(reactions);
-
-    if (!userKeysToFetch.length) {
-      return of(this.usersByKey);
-    }
-
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, userKeysToFetch, true).pipe(
-      map(({ UserList }) => {
-        this.usersByKey = { ...this.usersByKey, ...keyBy(UserList, "PublicKeyBase58Check") };
-        return this.usersByKey;
-      })
-    );
   }
 
   private processTabs(reactionCounts: { [key in AssociationReactionValue]?: number }) {
@@ -154,19 +139,14 @@ export class ReactionsDetailsComponent implements OnInit {
     return orderBy(filledInReactions, ([_key, value]) => value, "desc").map(([key]) => key as AssociationReactionValue);
   }
 
-  private getUserPublicKeys(reactions: Array<PostAssociation>) {
-    const userKeysReacted = uniq(reactions.map((e) => e.TransactorPublicKeyBase58Check));
-    return difference(userKeysReacted, Object.keys(this.usersByKey));
-  }
-
   getPage(page: number) {
-    const lastPage = Math.ceil(this.userKeysReacted.length / this.pageSize);
+    const lastPage = Math.ceil(this.usersReacted.length / this.pageSize);
     // After we have filled the lastPage, do not honor any more requests.
     if (page > lastPage) {
       return [];
     }
     const currentPageIdx = page * this.pageSize + this.pageOffset;
     const nextPageIdx = currentPageIdx + this.pageSize;
-    return this.userKeysReacted.slice(currentPageIdx, nextPageIdx);
+    return this.usersReacted.slice(currentPageIdx, nextPageIdx);
   }
 }

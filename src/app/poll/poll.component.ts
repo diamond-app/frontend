@@ -109,36 +109,31 @@ export class PollComponent implements OnInit {
           this.post.PostHashHex,
           AssociationType.pollResponse,
           undefined,
-          this.pollOptions
+          this.pollOptions,
+          true
         )
         .pipe(
-          mergeMap((associations) => {
-            const uniqUserKeys = uniq(associations.map((e) => e.TransactorPublicKeyBase58Check));
-
-            return this.backendApi.GetUsersStateless(this.globalVars.localNode, uniqUserKeys).pipe(
-              map((res) => {
-                const userBalanceByKey = res.UserList.reduce(
-                  (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: curr.BalanceNanos }),
-                  {}
-                );
-
-                const totalBalance = sum(Object.values(userBalanceByKey));
-                const associationsGroupedByValue = groupBy(associations, "AssociationValue");
-
-                return {
-                  Weights: {
-                    ...this.pollOptions.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {}),
-                    ...mapValues(associationsGroupedByValue, (v) => {
-                      const totalBalanceNanosForPollOption = sum(
-                        v.map((association) => userBalanceByKey[association.TransactorPublicKeyBase58Check])
-                      );
-                      return totalBalanceNanosForPollOption / totalBalance;
-                    }),
-                  },
-                  Total: associations.length,
-                };
-              })
+          map(({ Associations, PublicKeyToProfileEntryResponse }) => {
+            const userBalanceByKey = Object.values(PublicKeyToProfileEntryResponse).reduce(
+              (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: (curr as any).DESOBalanceNanos }),
+              {}
             );
+
+            const totalBalance = sum(Object.values(userBalanceByKey));
+            const associationsGroupedByValue = groupBy(Associations, "AssociationValue");
+
+            return {
+              Weights: {
+                ...this.pollOptions.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {}),
+                ...mapValues(associationsGroupedByValue, (v) => {
+                  const totalBalanceNanosForPollOption = sum(
+                    v.map((association) => userBalanceByKey[association.TransactorPublicKeyBase58Check])
+                  );
+                  return totalBalanceNanosForPollOption / totalBalance;
+                }),
+              },
+              Total: Associations.length,
+            };
           })
         );
     } else if (pollType === PollWeightType.desoTokenBalance) {
@@ -166,11 +161,11 @@ export class PollComponent implements OnInit {
             this.pollWeightTokenProfile = UserList[0];
           }
         }),
-        map(([associations, { Hodlers }]) => {
+        map(([{ Associations }, { Hodlers }]) => {
           const hodlerBalanceByKey = mapValues(keyBy(Hodlers, "HODLerPublicKeyBase58Check"), (e) =>
             this.globalVars.hexNanosToStandardUnit(e.BalanceNanosUint256)
           );
-          const votedUserKeys = associations.map((e) => e.TransactorPublicKeyBase58Check);
+          const votedUserKeys = Associations.map((e) => e.TransactorPublicKeyBase58Check);
 
           const totalBalance = Object.keys(hodlerBalanceByKey).reduce((acc, curr) => {
             if (!votedUserKeys.includes(curr)) {
@@ -180,7 +175,7 @@ export class PollComponent implements OnInit {
             return acc + hodlerBalanceByKey[curr];
           }, 0);
 
-          const associationsGroupedByValue = groupBy(associations, "AssociationValue");
+          const associationsGroupedByValue = groupBy(Associations, "AssociationValue");
 
           return {
             Weights: {
@@ -192,7 +187,7 @@ export class PollComponent implements OnInit {
                 return totalBalanceNanosForPollOption / totalBalance;
               }),
             },
-            Total: associations.length,
+            Total: Associations.length,
           };
         })
       );

@@ -507,6 +507,8 @@ export interface PostAssociationCountsResponse {
 
 export interface PostAssociationsResponse {
   Associations: Array<PostAssociation>;
+  PostHashHexToPostEntryResponse: { [postHex: string]: PostEntryResponse };
+  PublicKeyToProfileEntryResponse: { [publicKey: string]: ProfileEntryResponse };
 }
 
 @Injectable({
@@ -1982,7 +1984,8 @@ export class BackendApiService {
     AssociationType: AssociationType,
     TransactorPublicKeyBase58Check?: string,
     AssociationValue?: AssociationValue | Array<AssociationValue>,
-    total: number = 0
+    IncludeTransactorProfile: boolean = false,
+    Total: number = 0
   ) {
     const ASSOCIATIONS_PER_REQUEST_LIMIT = 100;
     let receivedItems = [];
@@ -1995,7 +1998,8 @@ export class BackendApiService {
         TransactorPublicKeyBase58Check,
         AssociationValue,
         LastSeenAssociationID,
-        ASSOCIATIONS_PER_REQUEST_LIMIT
+        ASSOCIATIONS_PER_REQUEST_LIMIT,
+        IncludeTransactorProfile
       ).pipe(
         tap(({ Associations }) => {
           receivedItems = [...receivedItems, ...Associations];
@@ -2005,13 +2009,22 @@ export class BackendApiService {
 
     return fetchAssociationsChunk().pipe(
       expand(() => {
-        if (receivedItems.length < total) {
+        if (receivedItems.length < Total) {
           return fetchAssociationsChunk(receivedItems[receivedItems.length - 1].AssociationID);
         }
         return EMPTY;
       }),
-      map((res) => res.Associations),
-      reduce((acc, val) => acc.concat(val), new Array<PostAssociation>())
+      reduce((acc, val) => ({
+        Associations: [...acc.Associations, ...val.Associations],
+        PublicKeyToProfileEntryResponse: {
+          ...acc.PublicKeyToProfileEntryResponse,
+          ...val.PublicKeyToProfileEntryResponse,
+        },
+        PostHashHexToPostEntryResponse: {
+          ...acc.PostHashHexToPostEntryResponse,
+          ...val.PostHashHexToPostEntryResponse,
+        },
+      }))
     );
   }
 
@@ -2022,7 +2035,8 @@ export class BackendApiService {
     TransactorPublicKeyBase58Check?: string,
     AssociationValues?: AssociationValue | Array<AssociationValue>,
     LastSeenAssociationID?: string,
-    Limit: number = 100
+    Limit: number = 100,
+    IncludeTransactorProfile: boolean = false
   ): Observable<PostAssociationsResponse> {
     const isArray = AssociationValues && Array.isArray(AssociationValues);
 
@@ -2034,6 +2048,7 @@ export class BackendApiService {
       AssociationValues: isArray ? AssociationValues : undefined,
       LastSeenAssociationID,
       Limit,
+      IncludeTransactorProfile,
     });
   }
 
