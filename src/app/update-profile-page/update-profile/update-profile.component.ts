@@ -11,7 +11,7 @@ import {
   ApiInternalService,
   AppUser,
   NEW_APP_USER_DEFAULTS,
-  SUBSCRIBED_APP_USER_DEFAULTS,
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
@@ -75,7 +75,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   };
   profileUpdated = false;
   emailAddress: string = "";
-  subscribeToEmailNotifs: boolean = true;
+  subscribeToNotifs: boolean = true;
   initialEmailAddress = "";
   invalidEmailEntered = false;
   usernameValidationError: string = null;
@@ -270,7 +270,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this._saveProfileUpdates();
   }
 
-  _saveProfileUpdates() {
+  async _saveProfileUpdates() {
     // Trim the username input in case the user added a space at the end. Some mobile
     // browsers may do this.
     this.usernameInput = this.usernameInput.trim();
@@ -287,6 +287,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this._updateEmail();
     }
     this._setProfileUpdates();
+
+    // let subscriptionObject;
+    // if (this.subscribeToNotifs) {
+    //   subscriptionObject = await this.globalVars.createWebPushEndpoint();
+    // }
+
     this.apiInternal
       .getAppUser(this.loggedInUser.PublicKeyBase58Check)
       .pipe(
@@ -297,21 +303,28 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           throw err;
         }),
         switchMap((appUser: AppUser) => {
-          let createOrUdpateAppUserObs: Observable<any>;
+          let createOrUpdateAppUserObs: Observable<any>;
+
+          // const userNotifPreferences = this.subscribeToNotifs
+          //   ? subscriptionObject === undefined
+          //     ? SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
+          //     : SUBSCRIBED_FULL_APP_USER_DEFAULTS
+          //   : NEW_APP_USER_DEFAULTS;
+          const userNotifPreferences = this.subscribeToNotifs
+            ? SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
+            : NEW_APP_USER_DEFAULTS;
 
           // if the app user exists and the username has not changed, we don't need to update anything
           if (appUser && appUser.Username !== this.usernameInput) {
-            createOrUdpateAppUserObs = this.apiInternal.updateAppUser({
+            createOrUpdateAppUserObs = this.apiInternal.updateAppUser({
               ...appUser,
+              ...userNotifPreferences,
               Username: this.usernameInput,
             });
             // if the app user is null, it means we need to create a new one
           } else if (appUser === null) {
-            const userNotifPreferences = this.subscribeToEmailNotifs
-              ? SUBSCRIBED_APP_USER_DEFAULTS
-              : NEW_APP_USER_DEFAULTS;
             const utcOffset = getUTCOffset();
-            createOrUdpateAppUserObs = this.apiInternal.createAppUser(
+            createOrUpdateAppUserObs = this.apiInternal.createAppUser(
               this.loggedInUser.PublicKeyBase58Check,
               this.usernameInput,
               this.globalVars.lastSeenNotificationIdx,
@@ -322,11 +335,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           }
 
           // run api calls to the internal api and the node backend api in parallel
-          return forkJoin([this._callBackendUpdateProfile(), createOrUdpateAppUserObs ?? of(null)]);
+          return forkJoin([this._callBackendUpdateProfile(), createOrUpdateAppUserObs ?? of(null)]);
         })
       )
       .subscribe(
         ([{ submittedTransactionResponse }]) => {
+          // if (subscriptionObject !== undefined) {
+          //   await this.globalVars.subscribeUserToWebPushNotifications(subscriptionObject).toPromise();
+          // }
           this.globalVars.profileUpdateTimestamp = Date.now();
           this.tracking.log("profile : update");
           // TODO: create or update app user record here

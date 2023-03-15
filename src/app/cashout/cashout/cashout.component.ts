@@ -11,6 +11,7 @@ import {
   Ticker,
 } from "src/app/megaswap.service";
 import { TrackingService } from "src/app/tracking.service";
+import { environment } from "../../../environments/environment";
 
 const LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY = "lastUsedMegaswapCashOutAddresses";
 
@@ -166,6 +167,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       .createDepositAddresses({
         DestinationAddress: (ev.target as HTMLInputElement).value.trim(),
         DestinationTicker: this.destinationTicker,
+        AffiliateAddress: environment.megaswapAffiliateAddress,
       })
       .pipe(
         takeWhile(() => !this.isDestroyed),

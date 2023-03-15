@@ -326,6 +326,8 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
+    // Load service worker for push notifications.
+    this.globalVars.initializeWebPush();
     this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
 
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};

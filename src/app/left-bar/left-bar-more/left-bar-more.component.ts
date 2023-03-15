@@ -63,7 +63,8 @@ export class LeftBarMoreComponent implements AfterViewInit {
     this.closeMore.emit();
   }
 
-  openSettings() {
+  openSettings(event) {
+    event.stopPropagation();
     this.router.navigate(["/" + this.globalVars.RouteNames.SETTINGS], {
       queryParamsHandling: "merge",
     });
