@@ -224,7 +224,7 @@ export class ApiInternalService {
       AuthKey,
       P256dhKey,
     };
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders(UserPublicKeyBase58check).pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.pushNotifSubscription), payload, { headers }))
     );
   }
