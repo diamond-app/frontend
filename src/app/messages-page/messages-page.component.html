@@ -15,8 +15,7 @@
       <h1 class="font-weight-bold fs-24px mb-2">Messages</h1>
       <div class="d-flex align-items-center">
         <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
-          <!-- TODO: We need this to search access group names, eth addresses, and
-        usernames. -->
+          <!-- TODO: Make it where we can search access group names and eth addresses in addition to deso profiles -->
           <search-bar
             [showCloutavista]="false"
             [isSearchForUsersToMessage]="true"
@@ -36,6 +35,7 @@
           [listItem]="item"
           [publicKeyToProfileMap]="this.publicKeyToProfileMap"
           [onItemClick]="this.selectThread"
+          [isSelected]="this.selectedThread === item"
         ></thread-list-item>
       </div>
       <div [ngStyle]="{ width: '600px' }">

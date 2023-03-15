@@ -11,6 +11,7 @@ import { GlobalVarsService } from "src/app/global-vars.service";
 export class ThreadListItemComponent {
   @Input() listItem?: DecryptedMessageEntryResponse;
   @Input() publicKeyToProfileMap: PublicKeyToProfileEntryResponseMap = {};
+  @Input() isSelected: boolean = false;
   @Input() onItemClick: (threadListItem: DecryptedMessageEntryResponse) => void = () => {};
 
   get isGroupChat() {

@@ -14,7 +14,8 @@ import {
 } from "deso-protocol";
 import { GlobalVarsService } from "src/app/global-vars.service";
 
-const THREAD_PAGE_SIZE = 100;
+// TODO: make this smaller and add pagination.
+const THREAD_PAGE_SIZE = 500;
 
 @Component({
   selector: "message-thread",

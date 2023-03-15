@@ -4076,7 +4076,10 @@ creator-profile-nfts {
 
 .messages-thread__container {
   background: var(--background);
-  &.messages-inbox__selected-thread {
+  &--selected {
+    background: var(--text-inverted);
+  }
+  &:hover {
     background: var(--text-inverted);
   }
 }

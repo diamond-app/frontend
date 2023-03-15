@@ -1,5 +1,6 @@
 <div
   class="d-flex align-items-center messages-thread__container border-bottom border-color-grey px-15px pb-15px pt-10px cursor-pointer"
+  [ngClass]="{ 'messages-thread__container--selected': this.isSelected }"
   role="button"
   tabindex="0"
   (click)="this.onItemClick(this.listItem)"
