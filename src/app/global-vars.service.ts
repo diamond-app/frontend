@@ -10,9 +10,7 @@ import {
   createAccessGroup,
   DecryptedMessageEntryResponse,
   getAllAccessGroupsOwned,
-  getDMThreads,
   identity,
-  PublicKeyToProfileEntryResponseMap,
   User,
 } from "deso-protocol";
 import { isNil } from "lodash";
@@ -101,20 +99,6 @@ export class GlobalVarsService {
   pauseMessageUpdates = false; // TODO: Monkey patch for when message polling conflicts with other calls.
 
   desoToUSDExchangeRateToDisplay = "Fetching...";
-
-  // We keep information regarding the messages tab in global vars for smooth
-  // transitions to and from messages.
-  messageNotificationCount = 0;
-  messagesSortAlgorithm = "time";
-  messagesPerFetch = 25;
-  openSettingsTray = false;
-  newMessagesFromPage = 0;
-  messagesRequestsHoldersOnly = false;
-  messagesRequestsHoldingsOnly = false;
-  messagesRequestsFollowersOnly = false;
-  messagesRequestsFollowedOnly = false;
-  messagesNumberOfUnreadThreads = 0;
-  messagesPublicKeyToProfileMap: PublicKeyToProfileEntryResponseMap = {};
 
   // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
@@ -299,30 +283,6 @@ export class GlobalVarsService {
     },
   };
 
-  SetupMessages() {
-    // If there's no loggedInUser, we set the notification count to zero
-    if (!this.loggedInUser) {
-      this.messageNotificationCount = 0;
-      return;
-    }
-
-    // If a message response already exists, we skip this step
-    if (this.decryptedMessages) {
-      return;
-    }
-
-    let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
-    if (storedTab === null) {
-      storedTab = "My Holders";
-      this.backendApi.SetStorage("mostRecentMessagesTab", storedTab);
-    }
-
-    // Set the filters most recently used and load the messages
-    this.SetMessagesFilter(storedTab);
-    // We don't have a great way to wait for the identity iFrame, so we retry this function until it works.
-    this.LoadInitialMessages(0, 10);
-  }
-
   pollUnreadNotifications() {
     // this.GetUnreadNotifications();
     // setTimeout(() => {
@@ -352,92 +312,6 @@ export class GlobalVarsService {
         }
       );
     }
-  }
-
-  SetMessagesFilter(tabName: any) {
-    // Set the request parameters if it's a known tab.
-    // Custom is set in the filter menu component and saved in local storage.
-    if (tabName !== "Custom") {
-      this.messagesRequestsHoldersOnly = tabName === "Holders";
-      this.messagesRequestsHoldingsOnly = false;
-      this.messagesRequestsFollowersOnly = false;
-      this.messagesRequestsFollowedOnly = false;
-      this.messagesSortAlgorithm = "time";
-    } else {
-      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
-      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
-      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
-      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
-      this.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
-    }
-  }
-
-  // TODO: delete. we don't need this anymore
-  LoadInitialMessages(retryCount: number, maxRetries) {
-    if (!this.loggedInUser) {
-      return;
-    }
-    this.loadingMessages = true;
-    const loggedInUserPublicKey = this.loggedInUser.PublicKeyBase58Check;
-
-    getDMThreads({
-      UserPublicKeyBase58Check: loggedInUserPublicKey,
-    })
-      .then((messages) => {
-        return Promise.all(messages.MessageThreads.map((message) => identity.decryptMessage(message, []))).then(
-          (decryptedMessages) => {
-            this.decryptedMessages = decryptedMessages;
-            this.messagesPublicKeyToProfileMap = messages.PublicKeyToProfileEntryResponse;
-          }
-        );
-      })
-      .catch((err) => {
-        if (retryCount < maxRetries) {
-          this.LoadInitialMessages(retryCount + 1, maxRetries);
-        }
-        console.error(this.backendApi.stringifyError(err));
-        this.loadingMessages = false;
-      });
-
-    // return this.backendApi
-    //   .GetMessages(
-    //     this.localNode,
-    //     this.loggedInUser.PublicKeyBase58Check,
-    //     "",
-    //     this.messagesPerFetch,
-    //     this.messagesRequestsHoldersOnly,
-    //     this.messagesRequestsHoldingsOnly,
-    //     this.messagesRequestsFollowersOnly,
-    //     this.messagesRequestsFollowedOnly,
-    //     this.messagesSortAlgorithm,
-    //     this.feeRateDeSoPerKB * 1e9
-    //   )
-    //   .subscribe(
-    //     (res) => {
-    //       if (this.pauseMessageUpdates) {
-    //         // We pause message updates when a user sends a messages so that we can
-    //         // wait for it to be sent before updating the thread.  If we do not do this the
-    //         // temporary message place holder would disappear until "GetMessages()" finds it.
-    //       } else {
-    //         this.messageResponse = res;
-
-    //         // Update the number of new messages so we know when to stop scrolling
-    //         this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
-    //         if (this.messagesLoadedCallback !== null) {
-    //           this.messagesLoadedCallback(this.messagesLoadedComponent, res);
-    //         }
-    //       }
-    //       this.loadingMessages = false;
-    //     },
-    //     (err) => {
-    //       console.log("Error getting messages: ", err);
-    //       if (retryCount < maxRetries) {
-    //         this.LoadInitialMessages(retryCount + 1, maxRetries);
-    //       }
-    //       console.error(this.backendApi.stringifyError(err));
-    //       this.loadingMessages = false;
-    //     }
-    //   );
   }
 
   _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {

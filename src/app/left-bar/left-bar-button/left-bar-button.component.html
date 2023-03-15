@@ -29,18 +29,6 @@
       {{ buttonLabel }}
     </a>
     <div
-      *ngIf="
-        hasNotifications &&
-        globalVars.decryptedMessages &&
-        globalVars.messagesNumberOfUnreadThreads != 0 &&
-        notificationType === 'messages'
-      "
-      class="ml-5px fs-12px notification p-0px position-relative"
-      style="padding: 0px"
-    >
-      {{ globalVars.messagesNumberOfUnreadThreads > 999 ? "999+" : globalVars.messagesNumberOfUnreadThreads }}
-    </div>
-    <div
       *ngIf="hasNotifications && globalVars.unreadNotifications != 0 && notificationType === 'notifications'"
       class="ml-5px fs-12px notification p-0px position-relative"
       style="padding: 0px"

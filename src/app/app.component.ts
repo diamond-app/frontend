@@ -167,9 +167,6 @@ export class AppComponent implements OnInit {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
-        // Setup messages for the logged in user
-        this.globalVars.SetupMessages();
-
         // Get unread notifications for the logged in user
         this.globalVars.GetUnreadNotifications();
 

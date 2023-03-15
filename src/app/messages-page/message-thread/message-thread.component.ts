@@ -52,9 +52,12 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
   threadPartyAccessInfo?: CheckPartyAccessGroupsResponse;
   isSendingMessage = false;
 
-  #prependPreviousMessages = (messages: DecryptedMessageEntryResponse[]) => {
+  // This is meant for pagination which we don't have yet...
+  // But or fetching previous pages of messages we stick then at the end of the
+  // list.
+  #prependPreviousMessages = (olderMessages: DecryptedMessageEntryResponse[]) => {
     if (this.isDestroyed || !this.threadHead) return;
-    this.threadMessages = [...messages.reverse(), ...this.threadMessages, this.threadHead];
+    this.threadMessages = [...olderMessages.reverse(), ...this.threadMessages, this.threadHead];
   };
 
   constructor(public globalVars: GlobalVarsService) {}
