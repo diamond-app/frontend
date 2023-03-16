@@ -70,7 +70,7 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
       // chat and we don't need to load any messages NOTE: In the case of an
       // empty DecryptedMessage and error we assume we are dealing with a newly
       // created transient thread, so there is no need to load anything.
-      if (this.threadHead && (this.threadHead.DecryptedMessage !== "" || this.threadHead.error !== "")) {
+      if (this.threadHead && !(this.threadHead.DecryptedMessage === "" && this.threadHead.error === "")) {
         Promise.all([
           checkPartyAccessGroups({
             SenderAccessGroupKeyName: this.threadHead.SenderInfo.AccessGroupKeyName,
