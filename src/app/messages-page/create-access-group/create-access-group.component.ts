@@ -1,7 +1,9 @@
 import { Component, Input } from "@angular/core";
 import {
   addAccessGroupMembers,
+  ChatType,
   createAccessGroup,
+  DecryptedMessageEntryResponse,
   encrypt,
   getBulkAccessGroups,
   identity,
@@ -15,7 +17,11 @@ import { GlobalVarsService } from "../../global-vars.service";
   templateUrl: "./create-access-group.component.html",
 })
 export class CreateAccessGroupComponent {
-  @Input() afterAccessGroupCreated: () => void;
+  /**
+   * After the group is created we create a client side mock message to display in the
+   * list view.
+   */
+  @Input() afterAccessGroupCreated: (mockMessage: DecryptedMessageEntryResponse) => void;
 
   groupMembers: ProfileEntryResponse[] = [];
   groupName = "";
@@ -114,7 +120,30 @@ export class CreateAccessGroupComponent {
         MinFeeRateNanosPerKB: 1000,
       });
 
-      this.afterAccessGroupCreated?.();
+      const identityState = identity.snapshot();
+      const TimestampNanos = Date.now() * 1e6;
+      this.afterAccessGroupCreated?.({
+        ChatType: ChatType.GROUPCHAT,
+        SenderInfo: {
+          OwnerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+          AccessGroupKeyName: "default-key",
+          AccessGroupPublicKeyBase58Check: identityState.currentUser?.primaryDerivedKey.messagingPublicKeyBase58Check,
+        },
+        RecipientInfo: {
+          OwnerPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+          AccessGroupKeyName: groupName,
+          AccessGroupPublicKeyBase58Check: accessGroupKeyPair.AccessGroupPublicKeyBase58Check,
+        },
+        MessageInfo: {
+          EncryptedText: "",
+          TimestampNanos,
+          TimestampNanosString: TimestampNanos.toString(),
+          ExtraData: {},
+        },
+        DecryptedMessage: "",
+        IsSender: true,
+        error: "",
+      });
       this.bsModalRef.hide();
     } catch (e) {
       this.globalVars._alertError(e?.error?.error ?? e?.message);

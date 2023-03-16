@@ -27,8 +27,12 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
   selectedThread: DecryptedMessageEntryResponse | null = null;
   accessGroups: AccessGroupEntryResponse[] = [];
   accessGroupsOwned: AccessGroupEntryResponse[] = [];
+  mobileTopBarTitle = "";
 
   selectThread = (threadListItem: DecryptedMessageEntryResponse) => {
+    if (this.globalVars.isMobile()) {
+      this.mobileTopBarTitle = "Back";
+    }
     this.selectedThread = threadListItem;
   };
 
@@ -196,8 +200,9 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     this.modalService.show(CreateAccessGroupComponent, {
       class: "modal-dialog-centered modal-lg",
       initialState: {
-        afterAccessGroupCreated: () => {
-          this.updateThreadList();
+        afterAccessGroupCreated: (mockMessage: DecryptedMessageEntryResponse) => {
+          this.threadPreviewList.unshift(mockMessage);
+          this.selectThread(mockMessage);
         },
       },
     });

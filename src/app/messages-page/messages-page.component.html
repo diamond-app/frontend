@@ -12,7 +12,6 @@
 <ng-template #messages>
   <app-page [hideSidebar]="true">
     <header class="border-bottom pt-3 pb-2 px-3">
-      <!-- TODO: add some banner with a link to node.deso.org for legacy messages -->
       <h1 class="font-weight-bold fs-24px mb-2">Messages</h1>
       <div class="d-flex align-items-center">
         <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
@@ -21,11 +20,12 @@
             [showCloutavista]="false"
             [isSearchForUsersToMessage]="true"
             [startingSearchText]=""
+            [messagingAccessGroups]="this.accessGroups"
             (creatorToMessage)="this.onSearchItemSelected($event)"
             class="position-relative"
           ></search-bar>
         </div>
-        <button class="ml-auto btn btn-primary" (click)="this.openCreateAccessGroupModal()">Create Group Chat</button>
+        <button class="ml-auto btn btn-primary" (click)="this.openCreateAccessGroupModal()">Create Group</button>
       </div>
     </header>
     <div class="d-flex">
