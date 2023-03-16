@@ -779,10 +779,10 @@ export class BackendApiService {
         );
       }),
       map((decryptedText) => {
-        debugger;
         for (let i = 0; i < UnlockableNFTEntryResponses.length; i++) {
           UnlockableNFTEntryResponses[i].DecryptedUnlockableText = decryptedText[i];
         }
+        return UnlockableNFTEntryResponses;
       }),
       catchError(this._handleError)
     );
