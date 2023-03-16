@@ -48,7 +48,6 @@ export class ChangeAccountSelectorComponent {
         this.setUser(null);
       }
 
-      this.backendApi.setIdentityServiceUsers(users, loggedInUser);
       this.globalVars.updateEverything().add(() => {
         if (!this.userInTutorial) {
           this.goHome();

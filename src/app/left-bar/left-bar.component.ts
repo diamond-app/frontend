@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { filter, get } from "lodash";
+import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
@@ -95,12 +95,9 @@ export class LeftBarComponent {
       if (!res?.users) {
         this.globalVars.userList = [];
       }
-      let loggedInUser = get(Object.keys(res?.users), "[0]");
       if (this.globalVars.userList.length === 0) {
-        loggedInUser = null;
         this.globalVars.setLoggedInUser(null);
       }
-      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
       this.globalVars.updateEverything().add(() => {
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
       });

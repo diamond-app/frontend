@@ -456,20 +456,6 @@ export class BackendApiService {
     return JSON.parse(data);
   }
 
-  SetEncryptedMessagingKeyRandomnessForPublicKey(
-    publicKeyBase58Check: string,
-    encryptedMessagingKeyRandomness: string
-  ): void {
-    const users = this.GetStorage(this.IdentityUsersKey);
-    this.setIdentityServiceUsers({
-      ...users,
-      [publicKeyBase58Check]: {
-        ...users[publicKeyBase58Check],
-        encryptedMessagingKeyRandomness,
-      },
-    });
-  }
-
   // Assemble a URL to hit the BE with.
   _makeRequestURL(endpoint: string, routeName: string, adminPublicKey?: string): string {
     let queryURL = location.protocol + "//" + endpoint + routeName;
@@ -494,14 +480,6 @@ export class BackendApiService {
     }
     // return an observable with a user-facing error message
     return throwError(error);
-  }
-
-  // Stores identity service users in identityService and localStorage
-  // TODO: remove this since we don't really it... we can just use the identityService
-  setIdentityServiceUsers(users: any, publicKeyAdded?: string) {
-    this.SetStorage(this.IdentityUsersKey, users);
-    this.identityService.identityServiceUsers = users;
-    this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
   }
 
   signAndSubmitTransaction(request: Observable<any>): Observable<any> {

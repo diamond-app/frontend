@@ -1139,40 +1139,6 @@ export class GlobalVarsService {
   launchIdentityFlow(): Observable<any> {
     let obs$: Observable<any> = from(identity.login()).pipe(share());
 
-    // if (
-    //   !(
-    //     this.identityInfoResponse &&
-    //     this.identityInfoResponse.hasStorageAccess &&
-    //     this.identityInfoResponse.browserSupported
-    //   )
-    // ) {
-    //   this.tracking.log("storage-access : request");
-    //   this.requestingStorageAccess = true;
-    //   obs$ = this.identityService.storageGranted.pipe(share());
-
-    //   obs$.subscribe(() => {
-    //     this.tracking.log("storage-access : grant");
-    //     // TODO: make sure we actually use the status returned from the tap to unlock response.
-    //     this.identityInfoResponse.hasStorageAccess = true;
-    //     this.requestingStorageAccess = false;
-    //   });
-    // }
-
-    // obs$ = obs$
-    //   ? obs$.pipe(
-    //       switchMap(() =>
-    //         this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
-    //       ),
-    //       share()
-    //     )
-    //   : this.identityService
-    //       .launch("/log-in", {
-    //         accessLevelRequest: "4",
-    //         hideJumio: true,
-    //         getFreeDeso: true,
-    //       })
-    //       .pipe(share());
-
     obs$.subscribe((res) => {
       this.userSigningUp = res.signedUp;
       this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
@@ -1180,7 +1146,6 @@ export class GlobalVarsService {
           phoneNumberSuccess: res.phoneNumberSuccess,
         }),
       });
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
       });
