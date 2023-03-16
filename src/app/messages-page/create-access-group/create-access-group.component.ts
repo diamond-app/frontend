@@ -114,8 +114,6 @@ export class CreateAccessGroupComponent {
         MinFeeRateNanosPerKB: 1000,
       });
 
-      // TODO: how do we add the group to the user's chat preview list??
-      // Maybe we should add a dummy message to every group chat where a message hasn't been sent yet...
       this.afterAccessGroupCreated?.();
       this.bsModalRef.hide();
     } catch (e) {

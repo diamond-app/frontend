@@ -39,12 +39,15 @@ import {
   buildProxyImageURL,
   burnNFT,
   buyCreatorCoin,
+  checkPartyAccessGroups,
   countPostAssociations,
   createNFT,
   createNFTBid,
   createPostAssociation,
+  decryptChatMessage,
   deletePostAssociation,
   DeSoBodySchema,
+  encryptChatMessage,
   getAllBidsForNFT,
   getAppState,
   getBlockTemplate,
@@ -105,7 +108,7 @@ import {
   User,
   verifyEmail,
 } from "deso-protocol";
-import { EMPTY, from, Observable, of, throwError } from "rxjs";
+import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -693,10 +696,7 @@ export class BackendApiService {
     );
   }
 
-  // TODO: make sure our encrypt/decrypt stuff works right here. I think we'll need to make sure we're using the
-  // derived messaging keys for encrypt and decrypt.
   AcceptNFTBid(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
@@ -706,16 +706,31 @@ export class BackendApiService {
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let request = UnencryptedUnlockableText
-      ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
-          recipientPublicKey: BidderPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
+      ? from(
+          checkPartyAccessGroups({
+            SenderAccessGroupKeyName: "default-key",
+            RecipientAccessGroupKeyName: "default-key",
+            SenderPublicKeyBase58Check: UpdaterPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check: BidderPublicKeyBase58Check,
+          })
+        ).pipe(
+          switchMap((resp) => {
+            const identityState = identity.snapshot();
+            if (!identityState.currentUser) {
+              throw new Error("No identityState.currentUser");
+            }
+            return from(
+              encryptChatMessage(
+                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+                resp.RecipientAccessGroupPublicKeyBase58Check,
+                UnencryptedUnlockableText
+              )
+            );
+          })
+        )
+      : of("");
     return request.pipe(
-      switchMap((encrypted) => {
-        const EncryptedMessageText = encrypted.encryptedMessage;
+      switchMap((EncryptedUnlockableText) => {
         return from(
           acceptNFTBid({
             UpdaterPublicKeyBase58Check,
@@ -723,7 +738,7 @@ export class BackendApiService {
             SerialNumber,
             BidderPublicKeyBase58Check,
             BidAmountNanos,
-            EncryptedUnlockableText: EncryptedMessageText,
+            EncryptedUnlockableText,
             MinFeeRateNanosPerKB,
           })
         ).pipe(map(mergeTxResponse));
@@ -731,30 +746,46 @@ export class BackendApiService {
     );
   }
 
-  // TODO: make sure our encrypt/decrypt stuff works right here. I think we'll need to make sure we're using the
-  // derived messaging keys for encrypt and decrypt.
   DecryptUnlockableTexts(
     ReaderPublicKeyBase58Check: string,
     UnlockableNFTEntryResponses: NFTEntryResponse[]
   ): Observable<any> {
-    return this.identityService
-      .decrypt({
-        ...this.identityService.identityServiceParamsForKey(ReaderPublicKeyBase58Check),
-        encryptedMessages: UnlockableNFTEntryResponses.map((unlockableNFTEntryResponses) => ({
-          EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
-          PublicKey: unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
-        })),
+    const lastOwnerPublicKey = UnlockableNFTEntryResponses[0]?.LastOwnerPublicKeyBase58Check;
+    if (!lastOwnerPublicKey) {
+      throw new Error("lastOwnerPublicKey missing");
+    }
+
+    return from(
+      checkPartyAccessGroups({
+        SenderAccessGroupKeyName: "default-key",
+        RecipientAccessGroupKeyName: "default-key",
+        SenderPublicKeyBase58Check: lastOwnerPublicKey,
+        RecipientPublicKeyBase58Check: ReaderPublicKeyBase58Check,
       })
-      .pipe(
-        map((decrypted) => {
-          for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
-            unlockableNFTEntryResponse.DecryptedUnlockableText =
-              decrypted.decryptedHexes[unlockableNFTEntryResponse.EncryptedUnlockableText];
-          }
-          return UnlockableNFTEntryResponses;
-        })
-      )
-      .pipe(catchError(this._handleError));
+    ).pipe(
+      switchMap((resp) => {
+        const identityState = identity.snapshot();
+        if (!identityState.currentUser) {
+          throw new Error("No identityState.currentUser");
+        }
+        return forkJoin(
+          UnlockableNFTEntryResponses.map((nft) => {
+            return decryptChatMessage(
+              identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+              resp.SenderAccessGroupPublicKeyBase58Check,
+              nft.EncryptedUnlockableText
+            );
+          })
+        );
+      }),
+      map((decryptedText) => {
+        debugger;
+        for (let i = 0; i < UnlockableNFTEntryResponses.length; i++) {
+          UnlockableNFTEntryResponses[i].DecryptedUnlockableText = decryptedText[i];
+        }
+      }),
+      catchError(this._handleError)
+    );
   }
 
   GetNFTBidsForNFTPost(ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
