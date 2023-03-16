@@ -140,6 +140,9 @@ export class CreateAccessGroupComponent {
           TimestampNanosString: TimestampNanos.toString(),
           ExtraData: {},
         },
+        // NOTE: we could add some text here that would populate in the chat
+        // window but it would be ephemeral. But it could be helpful to show
+        // that the group has been created successfully
         DecryptedMessage: "",
         IsSender: true,
         error: "",

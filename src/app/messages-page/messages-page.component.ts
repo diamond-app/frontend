@@ -139,8 +139,13 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           const groupsOwnedWithMessages = decryptedMessages.filter(
             (message) => message.ChatType === ChatType.GROUPCHAT
           );
-          // We want to show groups that have no messages but are owned by the user,
-          // so we add dummy messages to each of these groups.
+          // NOTE: I'm not sure the best way to deal with "orphaned" group chats
+          // (group chats that never got a message sent to them). I guess we
+          // want to show groups that have no messages but are owned by the
+          // user, so we add empty messages to each of these groups so they at
+          // least show up. This is not a great UX, but to deal with it properly
+          // would take more thought and time which is unfortunately not
+          // available atm.
           const identityState = identity.snapshot();
           const TimestampNanos = Date.now() * 1e6;
           const groupsOwnedWithoutMessages: DecryptedMessageEntryResponse[] = this.accessGroupsOwned
