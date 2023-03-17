@@ -227,6 +227,7 @@
       "embed_arweave": "Add an arweave image link",
       "upload_video": "Upload a video file",
       "upload_image": "Upload an image file",
+      "create_poll": "Create a poll",
       "add_post": "A another post",
       "remove_post": "Remove this post"
     }

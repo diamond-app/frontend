@@ -1,0 +1,94 @@
+<section class="text-center mt-15px">
+  <span *ngIf="loading; else pollCountsLoaded" class="fas fa-spinner fa-spin mb-15px"></span>
+
+  <ng-template #pollCountsLoaded>
+    <alert
+      *ngIf="
+        post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoTokenBalance &&
+        pollWeightTokenProfile &&
+        !isUserHoldingPollToken
+      "
+      type="info"
+    >
+      To participate in this poll you should hold some tokens of
+      <strong>@{{ pollWeightTokenProfile.ProfileEntryResponse.Username }}</strong>
+      .
+
+      <a
+        [href]="environment.openfundURL + '/trade/' + pollWeightTokenProfile.ProfileEntryResponse.Username"
+        target="_blank"
+      >
+        Buy on Openfund
+      </a>
+    </alert>
+
+    <span
+      *ngIf="post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoBalance"
+      class="text-muted small mt-20px mb-10px"
+    >
+      Weighted by DeSo balance
+    </span>
+
+    <span
+      *ngIf="post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoTokenBalance"
+      class="text-muted small mt-20px mb-10px"
+    >
+      Weighted by
+      <b>@{{ pollWeightTokenProfile.ProfileEntryResponse.Username }}</b>
+      token balance
+    </span>
+
+    <section class="w-100">
+      <div
+        *ngIf="
+          myVotes.length > 0 ||
+            (post.PostExtraData.PollWeightType === POLL_WEIGHT_TYPE.desoTokenBalance && !isUserHoldingPollToken);
+          else userNotVoted
+        "
+      >
+        <!-- USER VOTED -->
+        <div class="progressbar-container" *ngFor="let pollOption of pollOptions">
+          <progressbar
+            [value]="pollVoteWeights.Weights[pollOption] * 100 || 1"
+            class="progressbar__progress mt-5px"
+          ></progressbar>
+
+          <div class="progressbar__label d-flex align-items-center">
+            <span class="text-truncate">
+              {{ pollOption }}
+            </span>
+
+            <i-feather
+              *ngIf="myVotes[0] && myVotes[0].AssociationValue === pollOption"
+              name="my-vote"
+              class="check-circle ml-2 text-black"
+              tooltip="You voted for this option"
+              container="body"
+            ></i-feather>
+          </div>
+          <span class="progressbar__indicator">
+            {{ pollVoteWeights.Weights[pollOption] | percent }}
+          </span>
+        </div>
+      </div>
+
+      <ng-template #userNotVoted>
+        <!-- USER NOT VOTED -->
+        <button
+          *ngFor="let pollOption of pollOptions"
+          (click)="vote(pollOption, $event)"
+          [disabled]="processedVote"
+          class="vote-btn btn btn-outline-primary w-100 mt-8px btn-sm"
+        >
+          <span *ngIf="processedVote === pollOption" class="fas fa-spinner fa-spin my-10px"></span>
+          {{ pollOption }}
+        </button>
+      </ng-template>
+
+      <footer class="mt-8px d-flex justify-content-between align-items-center">
+        <span class="text-muted">Total votes: {{ pollVoteWeights.Total }}</span>
+        <span (click)="openPollDetails($event)" class="ml-1 link text-primary small cursor-pointer">Show details</span>
+      </footer>
+    </section>
+  </ng-template>
+</section>

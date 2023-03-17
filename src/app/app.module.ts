@@ -20,6 +20,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { RatingModule } from "ngx-bootstrap/rating";
+import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { LottieModule } from "ngx-lottie";
 import { QuillModule } from "ngx-quill";
@@ -72,6 +73,7 @@ import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-prof
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorProfilePostsComponent } from "./creator-profile-page/creator-profile-posts/creator-profile-posts.component";
 import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
+import { CreatorProfileSimpleCardComponent } from "./creator-profile-page/creator-profile-row/creator-profile-simple-card.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
@@ -224,6 +226,10 @@ import { LikesDetailsComponent } from "./likes-details/likes-details.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { PollComponent } from "./poll/poll.component";
+import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
+import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -269,6 +275,7 @@ export function playerFactory() {
     CreatorProfilePostsComponent,
     TabSelectorComponent,
     CreatorProfileTopCardComponent,
+    CreatorProfileSimpleCardComponent,
     LeftBarButtonComponent,
     TradeCreatorPageComponent,
     TradeCreatorComponent,
@@ -425,6 +432,10 @@ export function playerFactory() {
     WelcomeModalComponent,
     LoggedOutEmptyStateComponent,
     SwipeToChooseComponent,
+    PollComponent,
+    PollDetailsComponent,
+    PollPageComponent,
+    PollModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -446,6 +457,7 @@ export function playerFactory() {
     PopoverModule.forRoot(),
     AlertModule.forRoot(),
     RatingModule.forRoot(),
+    ProgressbarModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TooltipModule.forRoot(),
     TimepickerModule.forRoot(),

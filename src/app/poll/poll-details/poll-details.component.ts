@@ -1,36 +1,32 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import {
-  AssociationReactionValue,
   AssociationType,
   BackendApiService,
-  PostAssociation,
   PostAssociationCountsResponse,
   PostEntryResponse,
   ProfileEntryResponse,
-  User,
-} from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { InfiniteScroller } from "../infinite-scroller";
-import { difference, keyBy, orderBy, uniq } from "lodash";
-import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
-import { of } from "rxjs";
+} from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { InfiniteScroller } from "../../infinite-scroller";
+import { orderBy } from "lodash";
+import { finalize, map, switchMap, tap } from "rxjs/operators";
 import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
-  selector: "reactions-details",
-  templateUrl: "./reactions-details.component.html",
-  styleUrls: ["./reactions-details.component.scss"],
+  selector: "poll-details",
+  templateUrl: "./poll-details.component.html",
+  styleUrls: ["./poll-details.component.scss"],
 })
-export class ReactionsDetailsComponent implements OnInit {
+export class PollDetailsComponent implements OnInit {
   @Input() postHashHex: string;
   @Input() bsModalRef: BsModalRef | null = null;
 
   loading = false;
-  reactionTabs: Array<AssociationReactionValue> = [];
-  activeReactionTab: AssociationReactionValue | null = null;
-  postReactionCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
+  voteTabs: Array<string> = [];
+  activeVoteTab: string | null = null;
+  postVoteCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
   usersReacted: Array<{ publicKey: string; profile: ProfileEntryResponse | null }> = [];
 
   // Infinite scroll metadata.
@@ -72,27 +68,27 @@ export class ReactionsDetailsComponent implements OnInit {
           return this.backendApi.GetPostAssociationsCounts(
             this.globalVars.localNode,
             res.PostFound,
-            AssociationType.reaction,
-            Object.values(AssociationReactionValue),
+            AssociationType.pollResponse,
+            JSON.parse(this.post.PostExtraData.PollOptions),
             true
           );
         })
       )
       .subscribe((c: PostAssociationCountsResponse) => {
-        this.postReactionCounts = c;
-        this.reactionTabs = this.processTabs(c.Counts);
-        this.selectTab(this.reactionTabs[0]);
+        this.postVoteCounts = c;
+        this.voteTabs = this.processTabs(c.Counts);
+        this.selectTab(this.voteTabs[0]);
       });
   }
 
-  selectTab(tab: AssociationReactionValue) {
-    this.activeReactionTab = tab;
+  selectTab(tab: string) {
+    this.activeVoteTab = tab;
     this.usersReacted = [];
-    this.fetchData(tab as AssociationReactionValue);
+    this.fetchData(tab as string);
   }
 
-  private fetchData(value: AssociationReactionValue) {
-    if (this.reactionTabs.length === 0) {
+  private fetchData(value: string) {
+    if (this.voteTabs.length === 0) {
       this.loading = false;
       return;
     }
@@ -103,11 +99,11 @@ export class ReactionsDetailsComponent implements OnInit {
       .GetAllPostAssociations(
         this.globalVars.localNode,
         this.postHashHex,
-        AssociationType.reaction,
+        AssociationType.pollResponse,
         undefined,
         value,
         true,
-        this.postReactionCounts.Counts[this.activeReactionTab]
+        this.postVoteCounts.Counts[this.activeVoteTab]
       )
       .pipe(
         map(({ Associations, PublicKeyToProfileEntryResponse }) => {
@@ -118,7 +114,7 @@ export class ReactionsDetailsComponent implements OnInit {
             })),
             ({ profile }) => {
               const desoLockedNanos = profile?.CoinEntry?.DeSoLockedNanos || 0;
-              return (profile as any).DESOBalanceNanos + desoLockedNanos;
+              return ((profile as any)?.DESOBalanceNanos || 0) + desoLockedNanos;
             },
             ["desc"]
           );
@@ -134,9 +130,9 @@ export class ReactionsDetailsComponent implements OnInit {
       });
   }
 
-  private processTabs(reactionCounts: { [key in AssociationReactionValue]?: number }) {
-    const filledInReactions = Object.entries(reactionCounts || {}).filter(([key, value]) => value > 0);
-    return orderBy(filledInReactions, ([_key, value]) => value, "desc").map(([key]) => key as AssociationReactionValue);
+  private processTabs(voteCounts: { [key in string]?: number }) {
+    const votesReacted = Object.entries(voteCounts || {}).filter(([key, value]) => value > 0);
+    return orderBy(votesReacted, ([_key, value]) => value, "desc").map(([key]) => key as string);
   }
 
   getPage(page: number) {

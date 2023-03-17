@@ -1,26 +1,16 @@
-<div class="reactions-modal-container">
+<div class="poll-modal-container">
   <div *ngIf="!globalVars.isMobile()" class="w-100 d-flex align-items-center border-bottom fc-secondary">
     <div class="p-15px fs-25px font-weight-bold d-flex align-items-center">
-      <div class="fs-17px font-weight-bold">Reacted By</div>
+      <div class="fs-17px font-weight-bold">Voted By</div>
     </div>
   </div>
 
   <div class="flex-grow-1">
-    <alert *ngIf="post && post.LikeCount > 0" type="info">
-      <strong>{{ post.LikeCount }} legacy likes</strong>
-      were hidden from the summary
-    </alert>
-
-    <tab-selector
-      [tabs]="reactionTabs"
-      [activeTab]="activeReactionTab"
-      [highlightTab]="true"
-      (tabClick)="selectTab($event)"
-    >
+    <tab-selector [tabs]="voteTabs" [activeTab]="activeVoteTab" [highlightTab]="true" (tabClick)="selectTab($event)">
       <ng-template let-tabItem #tabItem>
         <div>
-          <reactions-image [reaction]="tabItem" [size]="20"></reactions-image>
-          <b class="ml-2">{{ postReactionCounts.Counts[tabItem] }}</b>
+          {{ tabItem }}
+          <b class="ml-2">({{ postVoteCounts.Counts[tabItem] }})</b>
         </div>
       </ng-template>
     </tab-selector>
@@ -29,10 +19,9 @@
       <div #uiScroll *uiScroll="let user of datasource">
         <simple-profile-card
           [profile]="user.profile"
-          [pubKeyBase58Check]="user.key"
+          [pubKeyBase58Check]="user.publicKey"
           [followButtonOppositeSide]="true"
           [hideFollowLink]="true"
-          [reaction]="activeReactionTab"
           [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
         ></simple-profile-card>
       </div>

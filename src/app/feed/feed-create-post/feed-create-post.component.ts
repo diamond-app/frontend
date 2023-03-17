@@ -26,6 +26,15 @@ import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import Timer = NodeJS.Timer;
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -57,11 +66,17 @@ class PostModel {
   constructedEmbedURL = "";
   showEmbedURL = false;
   showImageLink = false;
+  showPoll = false;
   isMentionified = false;
   placeHolderText: string;
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
+  pollForm: FormGroup = new FormGroup({
+    options: new FormArray([]),
+  });
+  pollType: PollWeightType = PollWeightType.unweighted;
+  pollWeightTokenProfile: ProfileEntryResponse | null = null;
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
   /**
@@ -96,11 +111,21 @@ class PostModel {
   }
 }
 
+export enum PollWeightType {
+  unweighted = "unweighted",
+  desoBalance = "deso_balance",
+  desoTokenBalance = "deso_token_balance",
+}
+
 interface PostExtraData {
   EmbedVideoURL?: string;
   Node?: string;
   Language?: string;
   LivepeerAssetId?: string;
+  PollOptions?: string; // saving it as string since the API cannot save the array structure in PostExtraData
+  PollExpirationBlockHeight?: string; // this field is ignored for now
+  PollWeightType?: PollWeightType;
+  PollWeightTokenPublicKey?: string;
 }
 
 // show warning at 515 characters
@@ -125,6 +150,21 @@ export class FeedCreatePostComponent implements OnInit {
   submittedPost: PostEntryResponse | null = null;
   embedUrlParserService = EmbedUrlParserService;
 
+  readonly REQUIRED_POLL_OPTIONS: number = 2;
+  readonly MAX_POLL_OPTIONS: number = 5;
+  readonly MAX_POLL_CHARACTERS: number = 50;
+  readonly POLL_WEIGHT_TYPE_LABELS = {
+    [PollWeightType.unweighted]: "Simple poll",
+    [PollWeightType.desoBalance]: "Weight By DeSo Balance",
+    [PollWeightType.desoTokenBalance]: "Weight By Token Balance",
+  };
+  readonly POLL_WEIGHT_TYPE_LABELS_SELECTED = {
+    [PollWeightType.unweighted]: "Simple poll",
+    [PollWeightType.desoBalance]: "DeSo Balance",
+    [PollWeightType.desoTokenBalance]: "Token Balance",
+  };
+  readonly POLL_WEIGHT_TYPE = PollWeightType;
+
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
   @Input() parentPost: PostEntryResponse | null = null;
@@ -140,6 +180,9 @@ export class FeedCreatePostComponent implements OnInit {
   @ViewChildren("autosizables") autosizables: QueryList<CdkTextareaAutosize> | undefined;
   @ViewChildren("textareas") textAreas: QueryList<ElementRef<HTMLTextAreaElement>> | undefined;
   @ViewChildren("menus") menus: QueryList<ElementRef<HTMLDivElement>> | undefined;
+  // Ref is used only to `.focus()` an poll input from TypeScript.
+  // The rest of operations should go through the ReactiveForms
+  @ViewChildren("pollOptionsRef") pollOptionsRef: QueryList<ElementRef<HTMLInputElement>> | undefined;
 
   constructor(
     private router: Router,
@@ -157,6 +200,10 @@ export class FeedCreatePostComponent implements OnInit {
 
   // Functions for the mention autofill component
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
+
+  get pollOptions() {
+    return this.currentPostModel.pollForm.controls.options as FormArray;
+  }
 
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
@@ -309,6 +356,21 @@ export class FeedCreatePostComponent implements OnInit {
 
     if (this.translocoService.getActiveLang()) {
       postExtraData.Language = this.translocoService.getActiveLang();
+    }
+
+    if (post.showPoll) {
+      postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e) => e && e.trim()));
+      postExtraData.PollExpirationBlockHeight = ""; // leaving it empty for now since it's unused
+      postExtraData.PollWeightType = this.currentPostModel.pollType;
+
+      if (this.currentPostModel.pollType === PollWeightType.desoTokenBalance) {
+        if (!this.currentPostModel.pollWeightTokenProfile) {
+          this.globalVars._alertError("A DeSo Token Profile must be selected to create this poll type.");
+          return;
+        }
+
+        postExtraData.PollWeightTokenPublicKey = this.currentPostModel.pollWeightTokenProfile.PublicKeyBase58Check;
+      }
     }
 
     const bodyObj = {
@@ -586,6 +648,64 @@ export class FeedCreatePostComponent implements OnInit {
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }
+  }
+
+  private uniqPollOptionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value.trim() === "") {
+        return null;
+      }
+
+      const duplicates = this.pollOptions.controls
+        .map((e) => e.value)
+        .filter((e) => e.toLowerCase().trim() === control.value.toLowerCase().trim());
+
+      return duplicates.length < 2 ? null : { uniq: "Options must be unique" };
+    };
+  }
+
+  private getNewPollOptionFormItem(required: boolean = false) {
+    const validators = [Validators.maxLength(this.MAX_POLL_CHARACTERS), this.uniqPollOptionValidator()];
+    if (required) {
+      validators.push(Validators.required);
+    }
+    return new FormControl("", validators);
+  }
+
+  togglePoll() {
+    const newState = !this.currentPostModel.showPoll;
+    this.currentPostModel.showPoll = newState;
+
+    if (newState) {
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.changeRef.detectChanges();
+      this.autoFocusTextArea();
+    } else {
+      this.pollOptions.clear();
+    }
+
+    this.changeRef.detectChanges();
+  }
+
+  addPollOption() {
+    this.pollOptions.push(this.getNewPollOptionFormItem());
+    this.changeRef.detectChanges();
+    this.pollOptionsRef.last.nativeElement.focus();
+  }
+
+  removePollOption(index: number) {
+    this.pollOptions.removeAt(index);
+    this.changeRef.detectChanges();
+  }
+
+  keepPollWeightsOrder() {
+    // keeps original order when iterating thought *ngFor with `keyvalue` pipe
+    return 0;
+  }
+
+  onPollTokenProfileSelected(profile: ProfileEntryResponse) {
+    this.currentPostModel.pollWeightTokenProfile = profile;
   }
 
   private autoFocusTextArea() {
