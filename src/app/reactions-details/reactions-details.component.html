@@ -29,7 +29,7 @@
       <div #uiScroll *uiScroll="let user of datasource">
         <simple-profile-card
           [profile]="user.profile"
-          [pubKeyBase58Check]="user.key"
+          [pubKeyBase58Check]="user.publicKey"
           [followButtonOppositeSide]="true"
           [hideFollowLink]="true"
           [reaction]="activeReactionTab"
