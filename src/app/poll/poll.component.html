@@ -77,7 +77,7 @@
         <button
           *ngFor="let pollOption of pollOptions"
           (click)="vote(pollOption, $event)"
-          [disabled]="processedVote"
+          [disabled]="processedVote || !globalVars.loggedInUser"
           class="vote-btn btn btn-outline-primary w-100 mt-8px btn-sm"
         >
           <span *ngIf="processedVote === pollOption" class="fas fa-spinner fa-spin my-10px"></span>
