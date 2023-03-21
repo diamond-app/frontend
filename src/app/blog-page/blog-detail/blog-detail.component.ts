@@ -363,6 +363,26 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       if (response.isConfirmed) {
         this.currentPost.IsHidden = isHidden;
 
+        const titleSlug = this.currentPost.PostExtraData?.BlogTitleSlug;
+        let existingSlugMappings = JSON.parse(
+          this.globalVars.loggedInUser.ProfileEntryResponse.ExtraData?.BlogSlugMap ?? "{}"
+        );
+
+        let blogSlugMapJSON;
+
+        console.log("existingSlugMappings", existingSlugMappings);
+        console.log("titleSlug", titleSlug);
+        if (isHidden) {
+          delete existingSlugMappings[titleSlug];
+          console.log("existingSlugMappings after delete", existingSlugMappings);
+          blogSlugMapJSON = JSON.stringify(existingSlugMappings);
+        } else {
+          blogSlugMapJSON = JSON.stringify({
+            ...existingSlugMappings,
+            [titleSlug]: this.currentPost.PostHashHex,
+          });
+        }
+
         this.backendApi
           .SubmitPost(
             this.globalVars.localNode,
@@ -383,7 +403,24 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
           .subscribe(
             (response) => {
               this.tracking.log("post : hide");
-              this.postDeleted.emit(response.PostEntryResponse);
+              this.backendApi
+                .UpdateProfile(
+                  this.globalVars.localNode,
+                  this.globalVars.localNode,
+                  this.globalVars.loggedInUser?.PublicKeyBase58Check,
+                  "",
+                  "",
+                  "",
+                  "",
+                  this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
+                  1.25 * 100 * 100,
+                  false,
+                  this.globalVars.feeRateDeSoPerKB * 1e9,
+                  { BlogSlugMap: blogSlugMapJSON }
+                )
+                .subscribe(() => {
+                  this.postDeleted.emit(response.PostEntryResponse);
+                });
             },
             (err) => {
               console.error(err);
@@ -557,3 +594,17 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.myReactions = reactions;
   }
 }
+
+// Naively copied this from here:
+// https://gist.github.com/codeguy/6684588?permalink_comment_id=3332719#gistcomment-3332719
+// Tested with a few edge cases (special chars, weird spacing, etc) and it did
+// fine. May need to revisit if it doesn't handle some edge case properly.
+const stringToSlug = (str: string) =>
+  str
+    .normalize("NFD") // split an accented letter in the base letter and the acent
+    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+    .trim()
+    .replace(/\s+/g, "-") // replace all spaces with -
+    .replace(/-+/g, "-"); // replace multiple - with a single -
