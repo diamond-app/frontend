@@ -346,11 +346,13 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     await this.datasource.adapter.prepend(thread);
   }
 
-  hidePost() {
+  hidePost(isHidden: boolean) {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Hide post?",
-      html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
+      title: isHidden ? "Hide post?" : "Unhide post?",
+      html: isHidden
+        ? `The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`
+        : "This post will be added back to your profile, search results, and the feeds of anyone who follows you.",
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-light",
@@ -359,7 +361,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        this.currentPost.IsHidden = true;
+        this.currentPost.IsHidden = isHidden;
 
         this.backendApi
           .SubmitPost(
@@ -375,7 +377,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
             "",
             this.currentPost.PostExtraData,
             "" /*Sub*/,
-            true /*IsHidden*/,
+            isHidden /*IsHidden*/,
             this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
