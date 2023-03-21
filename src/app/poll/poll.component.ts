@@ -5,8 +5,8 @@ import { GlobalVarsService } from "../global-vars.service";
 import { finalize, map, mergeMap, tap } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PollModalComponent } from "./poll-modal/poll-modal.component";
-import { forkJoin } from "rxjs";
-import { groupBy, keyBy, mapValues, sum, uniq } from "lodash";
+import { forkJoin, of } from "rxjs";
+import { groupBy, keyBy, mapValues, sum } from "lodash";
 import { PollWeightType } from "../feed/feed-create-post/feed-create-post.component";
 import { environment } from "../../environments/environment";
 
@@ -52,16 +52,7 @@ export class PollComponent implements OnInit {
     this.loading = true;
     this.myVotes = [];
 
-    forkJoin([
-      this.backendApi.GetPostAssociations(
-        this.globalVars.localNode,
-        this.post.PostHashHex,
-        AssociationType.pollResponse,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.pollOptions
-      ),
-      this.fetchPollCounts(),
-    ])
+    forkJoin([this.fetchMyVotes(), this.fetchPollCounts()])
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -97,6 +88,20 @@ export class PollComponent implements OnInit {
       .subscribe((e) => {
         this.fetchData();
       });
+  }
+
+  private fetchMyVotes() {
+    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+      return of({ Associations: [] });
+    }
+
+    return this.backendApi.GetPostAssociations(
+      this.globalVars.localNode,
+      this.post.PostHashHex,
+      AssociationType.pollResponse,
+      this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      this.pollOptions
+    );
   }
 
   private fetchPollCounts() {
