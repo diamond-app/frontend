@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { configure, identity, User } from "deso-protocol";
+import { configure, DeSoNetwork, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
       mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: { IsUnlimited: true },
       MinFeeRateNanosPerKB: 1000,
+      network: this.globalVars.isTestnet ? DeSoNetwork.testnet : DeSoNetwork.mainnet,
     });
 
     // log interaction events emitted by identity

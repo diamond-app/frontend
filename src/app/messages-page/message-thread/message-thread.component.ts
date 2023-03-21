@@ -51,6 +51,7 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
   threadMessages: DecryptedMessageEntryResponse[] = [];
   threadPartyAccessInfo?: CheckPartyAccessGroupsResponse;
   isSendingMessage = false;
+  loading = false;
 
   // This is meant for pagination which we don't have yet...
   // But or fetching previous pages of messages we stick then at the end of the
@@ -71,6 +72,8 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
       // empty DecryptedMessage and error we assume we are dealing with a newly
       // created transient thread, so there is no need to load anything.
       if (this.threadHead && !(this.threadHead.DecryptedMessage === "" && this.threadHead.error === "")) {
+        this.loading = true;
+
         Promise.all([
           checkPartyAccessGroups({
             SenderAccessGroupKeyName: this.threadHead.SenderInfo.AccessGroupKeyName,
@@ -88,6 +91,9 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
           .catch((e) => {
             this.globalVars._alertError(e?.error?.error ?? e.message);
             console.error(e);
+          })
+          .finally(() => {
+            this.loading = false;
           });
       }
     }

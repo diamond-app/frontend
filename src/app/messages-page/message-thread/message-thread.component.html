@@ -1,8 +1,14 @@
 <div class="message-thread-view">
-  <div class="p-2 messages-thread-view__scroll-container disable-scrollbars" #scrollContainer>
-    <message-bubble *ngFor="let message of this.threadMessages" [message]="message"></message-bubble>
+  <div class="p-2 messages-thread-view__scroll-container custom-scrollbar" #scrollContainer>
+    <simple-center-loader *ngIf="loading; else threadList"></simple-center-loader>
+
+    <ng-template #threadList>
+      <div *ngFor="let message of this.threadMessages; let index = index" [ngClass]="{ 'mt-20px': index === 0 }">
+        <message-bubble [message]="message"></message-bubble>
+      </div>
+    </ng-template>
   </div>
-  <div class="border-top messages-thread-view__message-builder">
+  <div class="border-top messages-thread-view__message-builder d-flex align-items-end">
     <textarea
       class="w-100"
       name="chatMessage"

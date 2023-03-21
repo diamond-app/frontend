@@ -4077,10 +4077,10 @@ creator-profile-nfts {
 .messages-thread__container {
   background: var(--background);
   &--selected {
-    background: var(--text-inverted);
+    background: var(--nft-section-bg);
   }
   &:hover {
-    background: var(--text-inverted);
+    background: var(--nft-section-bg);
   }
 }
 
@@ -4099,6 +4099,10 @@ creator-profile-nfts {
   width: 100%;
   max-width: 600px;
   border-right: solid 1px var(--background-secondary);
+}
+
+.message-bubble__wrapper {
+  max-width: 80%;
 }
 
 .messages-thread__border-radius {
@@ -4125,7 +4129,9 @@ creator-profile-nfts {
   width: 622px;
   background: var(--tile-bg);
   border-top: 1px solid var(--border);
+
   textarea {
+    height: 100%;
     padding-top: 16px;
     padding-left: 16px;
     padding-right: 16px;
@@ -4212,6 +4218,24 @@ creator-profile-nfts {
 .message__non-sender-bubble-color {
   background-color: var(--background);
   color: var(--text-secondary);
+}
+
+.messages-page {
+  height: calc(100vh - 75px);
+  overflow: hidden;
+}
+
+.messages-page__content-area {
+  height: calc(100% - 100px);
+}
+
+.messages-page__chats-area {
+  width: 351px;
+  flex: none;
+}
+
+.messages-page__threads-area {
+  width: calc(100% - 351px);
 }
 
 .message-thread__unread-light-blue {
