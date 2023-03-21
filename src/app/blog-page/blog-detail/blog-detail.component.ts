@@ -371,7 +371,11 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         let blogSlugMapJSON;
 
         if (isHidden) {
-          delete existingSlugMappings[titleSlug];
+          for (let slug in existingSlugMappings) {
+            if (existingSlugMappings[slug] === this.currentPost.PostHashHex) {
+              delete existingSlugMappings[slug];
+            }
+          }
           blogSlugMapJSON = JSON.stringify(existingSlugMappings);
         } else {
           blogSlugMapJSON = JSON.stringify({
