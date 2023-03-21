@@ -370,11 +370,8 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
         let blogSlugMapJSON;
 
-        console.log("existingSlugMappings", existingSlugMappings);
-        console.log("titleSlug", titleSlug);
         if (isHidden) {
           delete existingSlugMappings[titleSlug];
-          console.log("existingSlugMappings after delete", existingSlugMappings);
           blogSlugMapJSON = JSON.stringify(existingSlugMappings);
         } else {
           blogSlugMapJSON = JSON.stringify({
