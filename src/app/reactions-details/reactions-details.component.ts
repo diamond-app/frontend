@@ -1,21 +1,18 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import {
   AssociationReactionValue,
   AssociationType,
   BackendApiService,
-  PostAssociation,
   PostAssociationCountsResponse,
   PostEntryResponse,
   ProfileEntryResponse,
-  User,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
-import { difference, keyBy, orderBy, uniq } from "lodash";
-import { finalize, map, mergeMap, switchMap, tap } from "rxjs/operators";
-import { of } from "rxjs";
+import { orderBy } from "lodash";
+import { finalize, map, switchMap, tap } from "rxjs/operators";
 import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
@@ -118,7 +115,7 @@ export class ReactionsDetailsComponent implements OnInit {
             })),
             ({ profile }) => {
               const desoLockedNanos = profile?.CoinEntry?.DeSoLockedNanos || 0;
-              return (profile as any).DESOBalanceNanos + desoLockedNanos;
+              return ((profile as any)?.DESOBalanceNanos || 0) + desoLockedNanos;
             },
             ["desc"]
           );
