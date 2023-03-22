@@ -27,12 +27,8 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
   selectedThread: DecryptedMessageEntryResponse | null = null;
   accessGroups: AccessGroupEntryResponse[] = [];
   accessGroupsOwned: AccessGroupEntryResponse[] = [];
-  mobileTopBarTitle = "";
 
   selectThread = (threadListItem: DecryptedMessageEntryResponse) => {
-    if (this.globalVars.isMobile()) {
-      this.mobileTopBarTitle = "Back";
-    }
     this.selectedThread = threadListItem;
   };
 
@@ -119,6 +115,28 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  get chatNameFromThread() {
+    if (!this.selectedThread) {
+      return "";
+    }
+
+    if (this.selectedThread.ChatType === ChatType.DM) {
+      // User name
+      const profile = this.publicKeyToProfileMap[this.selectedThread.RecipientInfo.OwnerPublicKeyBase58Check];
+      return profile.Username || this.selectedThread.RecipientInfo.OwnerPublicKeyBase58Check || "";
+    }
+
+    // Group name
+    return this.selectedThread.RecipientInfo.AccessGroupKeyName;
+  }
+
+  get previewPublicKey() {
+    return this.selectedThread?.SenderInfo.OwnerPublicKeyBase58Check ===
+      this.globalVars.loggedInUser?.PublicKeyBase58Check
+      ? this.selectedThread?.RecipientInfo.OwnerPublicKeyBase58Check
+      : this.selectedThread?.SenderInfo.OwnerPublicKeyBase58Check;
+  }
+
   private updateThreadList() {
     this.isLoadingThreadList = true;
     Promise.all([
@@ -184,8 +202,11 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
 
           this.threadPreviewList = [...decryptedMessages, ...groupsOwnedWithoutMessages];
           this.publicKeyToProfileMap = threads.PublicKeyToProfileEntryResponse;
-          // Select the first thread by default. Maybe we should do something smarter here.
-          this.selectThread(decryptedMessages[0]);
+
+          if (!this.globalVars.isMobile() && decryptedMessages[0]) {
+            // Select the first thread by default if not a mobile. Maybe we should do something smarter here.
+            this.selectThread(decryptedMessages[0]);
+          }
         });
       })
       .catch((err) => {

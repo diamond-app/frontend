@@ -758,7 +758,7 @@ i-feather[name="check-circle"] {
     .messages-thread-view__message-builder {
       position: fixed;
       top: auto;
-      bottom: 0px;
+      bottom: 60px;
       width: 100%;
     }
   }
@@ -4229,13 +4229,42 @@ creator-profile-nfts {
   height: calc(100% - 100px);
 }
 
-.messages-page__chats-area {
+.messages-page__threads-list {
   width: 351px;
   flex: none;
+
+  &.mobile {
+    width: 100%;
+  }
+
+  &.mobile-hidden {
+    display: none;
+  }
 }
 
 .messages-page__threads-area {
   width: calc(100% - 351px);
+
+  $mobile-header-height: 60px;
+
+  .messages-page__mobile-thread-header {
+    height: $mobile-header-height;
+    background: var(--tile-secondary-bg);
+  }
+
+  .messages-thread-view__scroll-container {
+    overflow-y: scroll;
+    height: calc(100vh - 298px);
+  }
+
+  &.mobile {
+    width: 100%;
+
+    .messages-thread-view__scroll-container {
+      overflow-y: scroll;
+      height: calc(100vh - 298px - #{$mobile-header-height});
+    }
+  }
 }
 
 .message-thread__unread-light-blue {
@@ -4249,11 +4278,6 @@ creator-profile-nfts {
   padding: 4px 0 0 4px;
   flex-shrink: 0;
   align-self: flex-start;
-}
-
-.messages-thread-view__scroll-container {
-  overflow-y: scroll;
-  height: calc(100vh - 298px);
 }
 
 .message-thread-view {

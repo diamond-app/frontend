@@ -1,10 +1,22 @@
 <div class="message-thread-view">
-  <div class="p-2 messages-thread-view__scroll-container custom-scrollbar" #scrollContainer>
+  <div
+    class="p-2 messages-thread-view__scroll-container custom-scrollbar d-flex flex-column-reverse"
+    [ngClass]="{ 'justify-content-center': loading }"
+    #scrollContainer
+    (scroll)="debouncedOnScroll($event)"
+  >
     <simple-center-loader *ngIf="loading; else threadList"></simple-center-loader>
 
     <ng-template #threadList>
-      <div *ngFor="let message of this.threadMessages; let index = index" [ngClass]="{ 'mt-20px': index === 0 }">
+      <div
+        *ngFor="let message of this.threadMessages; let index = index"
+        [ngClass]="{ 'mt-40px': index === threadMessages.length - 1 && !loadingMore }"
+      >
         <message-bubble [message]="message"></message-bubble>
+      </div>
+
+      <div class="text-center py-10px messages-thread-view__loader" *ngIf="loadingMore">
+        <i class="fas fa-spinner fs-24px fa-spin px-3"></i>
       </div>
     </ng-template>
   </div>
@@ -16,7 +28,7 @@
       (keypress)="this.onTextAreaKeyPress($event)"
       [(ngModel)]="this.messageText"
     ></textarea>
-    <div class="d-flex p-2">
+    <div class="d-flex p-2" [ngClass]="{ 'align-items-center h-100': globalVars.isMobile() }">
       <button
         type="submit"
         class="ml-auto btn btn-primary"

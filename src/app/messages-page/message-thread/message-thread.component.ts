@@ -13,9 +13,11 @@ import {
   sendMessage,
 } from "deso-protocol";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { debounce } from "lodash";
 
-// TODO: make this smaller and add pagination.
-const THREAD_PAGE_SIZE = 500;
+const THREAD_PAGE_SIZE = 10;
+const SCROLL_DEBOUNCE_MS = 150;
+const SCROLL_BUFFER_PX = 40;
 
 @Component({
   selector: "message-thread",
@@ -52,13 +54,16 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
   threadPartyAccessInfo?: CheckPartyAccessGroupsResponse;
   isSendingMessage = false;
   loading = false;
+  loadingMore = false;
+  lastPage = false;
+  debouncedOnScroll = debounce((e) => this.onScroll(e), SCROLL_DEBOUNCE_MS, {});
 
-  // This is meant for pagination which we don't have yet...
-  // But or fetching previous pages of messages we stick then at the end of the
-  // list.
   #prependPreviousMessages = (olderMessages: DecryptedMessageEntryResponse[]) => {
+    if (olderMessages.length < THREAD_PAGE_SIZE) {
+      this.lastPage = true;
+    }
     if (this.isDestroyed || !this.threadHead) return;
-    this.threadMessages = [...olderMessages.reverse(), ...this.threadMessages, this.threadHead];
+    this.threadMessages = [...this.threadMessages, ...olderMessages];
   };
 
   constructor(public globalVars: GlobalVarsService) {}
@@ -66,12 +71,15 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: any): void {
     if (changes.threadHead && changes.threadHead !== this.threadHead) {
       this.threadMessages = [];
+      this.lastPage = false;
 
       // If an existing thread is not provided it means we're starting a new
       // chat and we don't need to load any messages NOTE: In the case of an
       // empty DecryptedMessage and error we assume we are dealing with a newly
       // created transient thread, so there is no need to load anything.
       if (this.threadHead && !(this.threadHead.DecryptedMessage === "" && this.threadHead.error === "")) {
+        this.threadMessages.push(this.threadHead);
+
         this.loading = true;
 
         Promise.all([
@@ -83,9 +91,10 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
           }),
           this.loadMessages(),
         ])
-          .then(([threadPartyAccessInfo]) => {
+          .then(([threadPartyAccessInfo, messages]) => {
             if (this.isDestroyed) return;
             this.threadPartyAccessInfo = threadPartyAccessInfo;
+            this.#prependPreviousMessages(messages);
             setTimeout(() => this.scrollToMostRecentMessage(), 0);
           })
           .catch((e) => {
@@ -108,6 +117,9 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
       throw new Error("Cannot load messages without an existing thread.");
     }
 
+    const startTimestampNanosString = this.threadMessages[this.threadMessages.length - 1]?.MessageInfo
+      ?.TimestampNanosString;
+
     switch (this.threadHead.ChatType) {
       case ChatType.DM:
         return getPaginatedDMThread({
@@ -117,32 +129,32 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
           PartyGroupOwnerPublicKeyBase58Check: this.threadHead.IsSender
             ? this.threadHead.RecipientInfo.OwnerPublicKeyBase58Check
             : this.threadHead.SenderInfo.OwnerPublicKeyBase58Check,
-          StartTimeStampString: this.threadHead.MessageInfo.TimestampNanosString,
+          StartTimeStampString: startTimestampNanosString,
           MaxMessagesToFetch: THREAD_PAGE_SIZE,
         })
           .then((thread) => {
-            return Promise.all(thread.ThreadMessages.map((message) => identity.decryptMessage(message, []))).then(
-              this.#prependPreviousMessages
-            );
+            return Promise.all(thread.ThreadMessages.map((message) => identity.decryptMessage(message, [])));
           })
           .catch((err) => {
             this.globalVars._alertError(err.error.error);
+            return [];
           });
       case ChatType.GROUPCHAT:
         return getPaginatedGroupChatThread({
           UserPublicKeyBase58Check: this.threadHead.RecipientInfo.OwnerPublicKeyBase58Check,
           AccessGroupKeyName: this.threadHead.RecipientInfo.AccessGroupKeyName,
-          StartTimeStampString: this.threadHead.MessageInfo.TimestampNanosString,
+          StartTimeStampString: startTimestampNanosString,
           MaxMessagesToFetch: THREAD_PAGE_SIZE,
         })
           .then((thread) => {
             this.publicKeyToProfileMap = { ...this.publicKeyToProfileMap, ...thread.PublicKeyToProfileEntryResponse };
             return Promise.all(
               thread.GroupChatMessages.map((message) => identity.decryptMessage(message, this.accessGroups))
-            ).then(this.#prependPreviousMessages);
+            );
           })
           .catch((err) => {
             this.globalVars._alertError(err.error.error);
+            return [];
           });
       default:
         throw new Error("Unknown chat type");
@@ -180,7 +192,7 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
     // This will get overwritten when the data is reloaded from the server.
     const senderInfo = this.threadHead.IsSender ? this.threadHead.SenderInfo : this.threadHead.RecipientInfo;
     const TimestampNanos = Date.now() * 1e6;
-    this.threadMessages.push({
+    this.threadMessages.unshift({
       ChatType: this.threadHead.ChatType,
       SenderInfo: this.threadHead.IsSender ? this.threadHead.SenderInfo : this.threadHead.RecipientInfo,
       RecipientInfo: this.threadHead.IsSender ? this.threadHead.RecipientInfo : this.threadHead.SenderInfo,
@@ -219,6 +231,36 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
     }
 
     this.isSendingMessage = false;
+  }
+
+  onScroll($event) {
+    if (this.loading || this.loadingMore || this.lastPage) {
+      return;
+    }
+
+    const threadHeadMessageTimestamp = this.threadHead.MessageInfo.TimestampNanosString;
+
+    if (
+      Math.abs($event.target.scrollTop) + SCROLL_BUFFER_PX >
+      this.scrollContainer.nativeElement.scrollHeight - this.scrollContainer.nativeElement.offsetHeight
+    ) {
+      this.loadingMore = true;
+
+      this.loadMessages()
+        .then((messages) => {
+          if (this.threadHead.MessageInfo.TimestampNanosString !== threadHeadMessageTimestamp) {
+            // Here we check if the last message stayed the same when the new items are loaded.
+            // It allows us to catch corner cases like switching threads or sending a new message.
+            // In such cases we simply ignore updating the thread
+            return;
+          }
+
+          this.#prependPreviousMessages(messages);
+        })
+        .finally(() => {
+          this.loadingMore = false;
+        });
+    }
   }
 
   private scrollToMostRecentMessage() {

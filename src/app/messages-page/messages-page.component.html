@@ -13,7 +13,7 @@
   <app-page [hideSidebar]="true">
     <section class="messages-page">
       <header class="border-bottom pt-3 pb-2 px-3">
-        <h1 class="font-weight-bold fs-24px mb-2">Messages</h1>
+        <h1 class="font-weight-bold fs-24px mb-2" *ngIf="!globalVars.isMobile()">Messages</h1>
         <div class="d-flex align-items-center">
           <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
             <!-- TODO: Make it where we can search access group names and eth addresses in addition to deso profiles -->
@@ -26,11 +26,17 @@
               class="position-relative"
             ></search-bar>
           </div>
-          <button class="ml-auto btn btn-primary" (click)="this.openCreateAccessGroupModal()">Create Group</button>
+          <button class="ml-auto btn btn-primary" (click)="this.openCreateAccessGroupModal()">
+            <i-feather *ngIf="globalVars.isMobile; else btnText" name="plus"></i-feather>
+            <ng-template #btnText>Create Group</ng-template>
+          </button>
         </div>
       </header>
       <div class="d-flex messages-page__content-area">
-        <div class="overflow-auto custom-scrollbar messages-page__chats-area">
+        <div
+          class="overflow-auto custom-scrollbar messages-page__threads-list"
+          [ngClass]="{ 'mobile-hidden': globalVars.isMobile() && selectedThread, mobile: globalVars.isMobile() }"
+        >
           <thread-list-item
             *ngFor="let item of this.threadPreviewList"
             [listItem]="item"
@@ -39,7 +45,20 @@
             [isSelected]="this.selectedThread === item"
           ></thread-list-item>
         </div>
-        <div class="messages-page__threads-area">
+        <div class="messages-page__threads-area" [ngClass]="{ mobile: globalVars.isMobile() }">
+          <header
+            *ngIf="globalVars.isMobile() && selectedThread"
+            class="messages-page__mobile-thread-header d-flex align-items-center justify-content-between px-4"
+          >
+            <div (click)="this.selectedThread = null" class="d-inline-block cursor-pointer w-10">
+              <i-feather name="chevron-left"></i-feather>
+            </div>
+
+            <span class="px-4 font-weight-semibold">{{ chatNameFromThread }}</span>
+
+            <div class="messages-thread__avatar" [avatar]="previewPublicKey"></div>
+          </header>
+
           <message-thread
             [threadHead]="this.selectedThread"
             [publicKeyToProfileMap]="this.publicKeyToProfileMap"

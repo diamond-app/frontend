@@ -9,6 +9,7 @@ import {
   BalanceEntryResponse,
   createAccessGroup,
   DecryptedMessageEntryResponse,
+  DeSoNetwork,
   getAllAccessGroupsOwned,
   identity,
   User,
@@ -35,7 +36,6 @@ import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe
 import { FeedComponent } from "./feed/feed.component";
 import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -686,8 +686,8 @@ export class GlobalVarsService {
     return this.loggedInUser?.IsSuperAdmin;
   }
 
-  networkName(): string {
-    return this.isTestnet ? "testnet" : "mainnet";
+  networkName(): DeSoNetwork {
+    return this.isTestnet ? DeSoNetwork.testnet : DeSoNetwork.mainnet;
   }
 
   getUSDForDiamond(index: number): string {
