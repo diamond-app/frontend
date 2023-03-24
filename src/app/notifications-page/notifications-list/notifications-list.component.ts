@@ -8,7 +8,12 @@ import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { TrackingService } from "src/app/tracking.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import {
+  AssociationReactionValue,
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
@@ -700,8 +705,29 @@ export class NotificationsListComponent implements OnInit {
         coinTransferMeta.CreatorUsername
       } ${this.globalVars.pluralize(amount, "coin")}`;
       return result;
-    }
+    } else if (
+      txnMeta.TxnType === "CREATE_POST_ASSOCIATION" &&
+      txnMeta.CreatePostAssociationTxindexMetadata.AssociationType &&
+      Object.values(AssociationReactionValue).includes(txnMeta.CreatePostAssociationTxindexMetadata.AssociationValue)
+    ) {
+      const postHash = txnMeta.CreatePostAssociationTxindexMetadata.PostHashHex;
 
+      result.icon = "smile";
+      result.category = "reaction";
+      result.iconClass = "fc-blue";
+
+      const truncatedPost = this.truncatePost(postHash);
+      const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+      if (!truncatedPost) {
+        return null;
+      }
+
+      result.action = `${actorName} sent <img class="mx-1" src="assets/reactions/${txnMeta.CreatePostAssociationTxindexMetadata.AssociationValue.toLowerCase()}.png" alt="reaction" width="16" height="16" /> reaction to your post  ${postContent}`;
+      result.actionDetails = postContent;
+      result.link = AppRoutingModule.postPath(postHash);
+
+      return result;
+    }
     // If we don't recognize the transaction type we return null
     return null;
   }
