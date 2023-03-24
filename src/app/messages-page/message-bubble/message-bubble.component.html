@@ -49,10 +49,15 @@
     <!--                                             -->
     <div class="d-flex">
       <div
+        [tooltip]="publicKeyToProfileMap[message.SenderInfo.OwnerPublicKeyBase58Check]?.Username"
+        container="body"
+        placement="top"
+        [adaptivePosition]="false"
         *ngIf="profile && nextMessage ? message.IsSender != nextMessage.IsSender : true"
         class="message__avatar mr-15px cursor-pointer"
         [avatar]="message.SenderInfo.OwnerPublicKeyBase58Check"
-        [routerLink]="['u/' + profile?.Username]"
+        [routerLink]="['/' + globalVars.RouteNames.INBOX_PREFIX]"
+        [queryParams]="{ username: publicKeyToProfileMap[message.SenderInfo.OwnerPublicKeyBase58Check]?.Username }"
       ></div>
       <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
       <div

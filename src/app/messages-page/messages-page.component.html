@@ -34,7 +34,7 @@
       </header>
       <div class="d-flex messages-page__content-area">
         <div
-          class="overflow-auto custom-scrollbar messages-page__threads-list"
+          class="overflow-auto custom-scrollbar messages-page__threads-list border-right"
           [ngClass]="{ 'mobile-hidden': globalVars.isMobile() && selectedThread, mobile: globalVars.isMobile() }"
         >
           <thread-list-item

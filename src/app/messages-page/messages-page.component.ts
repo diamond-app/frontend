@@ -13,6 +13,8 @@ import {
 import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BackendApiService } from "../backend-api.service";
 
 @Component({
   selector: "app-messages-page",
@@ -107,11 +109,39 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private modalService: BsModalService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private backendApi: BackendApiService
+  ) {}
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
-      this.updateThreadList();
+      this.updateThreadList().then(() => {
+        this.route.queryParams.subscribe((queryParams) => {
+          const firstThread = this.threadPreviewList?.[0];
+
+          if (queryParams.username) {
+            this.backendApi.GetSingleProfile("", queryParams.username).subscribe((res) => {
+              const selectProfileAttempt = res.Profile ? this.onSearchItemSelected(res.Profile) : Promise.resolve();
+              selectProfileAttempt.then(() => {
+                this.router.navigate([], {
+                  queryParams: { username: null },
+                  queryParamsHandling: "merge",
+                  replaceUrl: true,
+                });
+              });
+            });
+          } else {
+            if (!this.globalVars.isMobile() && firstThread) {
+              // Select the first thread by default if not a mobile. Maybe we should do something smarter here.
+              this.selectThread(firstThread);
+            }
+          }
+        });
+      });
     }
   }
 
@@ -139,7 +169,8 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
 
   private updateThreadList() {
     this.isLoadingThreadList = true;
-    Promise.all([
+
+    return Promise.all([
       getAllMessageThreads({
         UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
       }),
@@ -203,10 +234,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           this.threadPreviewList = [...decryptedMessages, ...groupsOwnedWithoutMessages];
           this.publicKeyToProfileMap = threads.PublicKeyToProfileEntryResponse;
 
-          if (!this.globalVars.isMobile() && decryptedMessages[0]) {
-            // Select the first thread by default if not a mobile. Maybe we should do something smarter here.
-            this.selectThread(decryptedMessages[0]);
-          }
+          return this.threadPreviewList;
         });
       })
       .catch((err) => {

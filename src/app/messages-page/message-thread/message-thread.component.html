@@ -12,7 +12,7 @@
         *ngFor="let message of this.threadMessages; let index = index"
         [ngClass]="{ 'mt-40px': index === threadMessages.length - 1 && !loadingMore }"
       >
-        <message-bubble [message]="message"></message-bubble>
+        <message-bubble [message]="message" [publicKeyToProfileMap]="publicKeyToProfileMap"></message-bubble>
       </div>
 
       <div class="text-center py-10px messages-thread-view__loader" *ngIf="loadingMore">
@@ -20,7 +20,7 @@
       </div>
     </ng-template>
   </div>
-  <div class="border-top messages-thread-view__message-builder d-flex align-items-end">
+  <div class="border-top border-bottom messages-thread-view__message-builder d-flex align-items-end">
     <textarea
       class="w-100"
       name="chatMessage"

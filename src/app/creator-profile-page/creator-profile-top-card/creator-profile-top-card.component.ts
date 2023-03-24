@@ -109,7 +109,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   messageUser(): void {
     this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
       queryParams: { username: this.profile.Username },
-      queryParamsHandling: "merge",
     });
   }
 
