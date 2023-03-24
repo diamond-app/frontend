@@ -1,6 +1,6 @@
 import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { UntypedFormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
 import { Subscription } from "rxjs";
@@ -322,7 +322,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   }
 
   _setUpAmountField() {
-    this.creatorCoinTrade.amount = new FormControl(null, [
+    this.creatorCoinTrade.amount = new UntypedFormControl(null, [
       Validators.required,
       Validators.pattern(this.NUMBERS_ONLY_REGEX),
       dynamicMinValidator(() => {

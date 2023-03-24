@@ -28,9 +28,9 @@ import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryRespon
 import Timer = NodeJS.Timer;
 import {
   AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -72,8 +72,8 @@ class PostModel {
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
-  pollForm: FormGroup = new FormGroup({
-    options: new FormArray([]),
+  pollForm: UntypedFormGroup = new UntypedFormGroup({
+    options: new UntypedFormArray([]),
   });
   pollType: PollWeightType = PollWeightType.unweighted;
   pollWeightTokenProfile: ProfileEntryResponse | null = null;
@@ -202,7 +202,7 @@ export class FeedCreatePostComponent implements OnInit {
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
 
   get pollOptions() {
-    return this.currentPostModel.pollForm.controls.options as FormArray;
+    return this.currentPostModel.pollForm.controls.options as UntypedFormArray;
   }
 
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
@@ -669,7 +669,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (required) {
       validators.push(Validators.required);
     }
-    return new FormControl("", validators);
+    return new UntypedFormControl("", validators);
   }
 
   togglePoll() {
