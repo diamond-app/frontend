@@ -85,6 +85,7 @@ import {
   getUserMetadata,
   getUsersStateless,
   getVideoStatus,
+  HodlersSortType,
   identity,
   NFTBidEntryResponse as NFTBidEntry,
   resendVerifyEmail,
@@ -1058,7 +1059,7 @@ export class BackendApiService {
     FetchHodlings: boolean = false,
     FetchAll: boolean = false,
     IsDAOCoin: boolean = false,
-    SortType: string = "coin_balance"
+    SortType: HodlersSortType = HodlersSortType.coin_balance
   ): Observable<any> {
     return from(
       getHodlersForUser({
@@ -1070,7 +1071,7 @@ export class BackendApiService {
         FetchAll,
         IsDAOCoin,
         SortType,
-      } as any) // TODO: DO NOT COMMIT
+      })
     );
   }
 
@@ -1223,8 +1224,8 @@ export class BackendApiService {
           ...val.PublicKeyToProfileEntryResponse,
         },
         PostHashHexToPostEntryResponse: {
-          ...(acc as any).PostHashHexToPostEntryResponse, // TODO: DO NOT COMMIT
-          ...(val as any).PostHashHexToPostEntryResponse, // TODO: DO NOT COMMIT
+          ...acc.PostHashHexToPostEntryResponse,
+          ...val.PostHashHexToPostEntryResponse,
         },
       }))
     );
