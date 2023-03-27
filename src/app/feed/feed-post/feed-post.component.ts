@@ -41,7 +41,6 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
  * but that approach was deprecated and there is not currently an interim

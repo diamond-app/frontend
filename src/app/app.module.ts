@@ -105,11 +105,6 @@ import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-butt
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
 // Modular Themes for DeSo by Carsen Klock @carsenk
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { LinkPreviewComponent } from "./link-preview/link-preview.component";
-import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
@@ -145,7 +140,6 @@ import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-repo
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
-import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
 import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
 import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
@@ -164,7 +158,6 @@ import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-mod
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
-import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
 import { Theme } from "./theme/symbols";
@@ -217,9 +210,16 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { MessageBubbleComponent } from './messages-page/message-bubble/message-bubble.component';
-import { MessageThreadComponent } from './messages-page/message-thread/message-thread.component';
-import { CreateAccessGroupComponent } from './messages-page/create-access-group/create-access-group.component';
+import { MessageBubbleComponent } from "./messages-page/message-bubble/message-bubble.component";
+import { MessageThreadComponent } from "./messages-page/message-thread/message-thread.component";
+import { CreateAccessGroupComponent } from "./messages-page/create-access-group/create-access-group.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 import { PollComponent } from "./poll/poll.component";
 import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
 import { PollPageComponent } from "./poll/poll-page/poll-page.component";
@@ -420,6 +420,10 @@ export function playerFactory() {
     MessageBubbleComponent,
     MessageThreadComponent,
     CreateAccessGroupComponent,
+    PollComponent,
+    PollDetailsComponent,
+    PollPageComponent,
+    PollModalComponent,
     PollComponent,
     PollDetailsComponent,
     PollPageComponent,

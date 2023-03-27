@@ -1245,7 +1245,7 @@ export class BackendApiService {
       getPostAssociations({
         TransactorPublicKeyBase58Check,
         PostHashHex,
-        AssociationType: AssociationType as string,
+        AssociationType: AssociationType,
         ...(isArray && { AssociationValues: AssociationValues as string[] }),
         ...(!isArray && AssociationValues && { AssociationValue: AssociationValues as string }),
         LastSeenAssociationID,
