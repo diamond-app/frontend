@@ -345,11 +345,13 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     await this.datasource.adapter.prepend(thread);
   }
 
-  hidePost() {
+  hidePost(isHidden: boolean) {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Hide post?",
-      html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
+      title: isHidden ? "Hide post?" : "Unhide post?",
+      html: isHidden
+        ? `The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`
+        : "This post will be added back to your profile, search results, and the feeds of anyone who follows you.",
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-light",
@@ -358,7 +360,28 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        this.currentPost.IsHidden = true;
+        this.currentPost.IsHidden = isHidden;
+
+        const titleSlug = this.currentPost.PostExtraData?.BlogTitleSlug;
+        let existingSlugMappings = JSON.parse(
+          this.globalVars.loggedInUser.ProfileEntryResponse.ExtraData?.BlogSlugMap ?? "{}"
+        );
+
+        let blogSlugMapJSON;
+
+        if (isHidden) {
+          for (let slug in existingSlugMappings) {
+            if (existingSlugMappings[slug] === this.currentPost.PostHashHex) {
+              delete existingSlugMappings[slug];
+            }
+          }
+          blogSlugMapJSON = JSON.stringify(existingSlugMappings);
+        } else {
+          blogSlugMapJSON = JSON.stringify({
+            ...existingSlugMappings,
+            [titleSlug]: this.currentPost.PostHashHex,
+          });
+        }
 
         this.backendApi
           .SubmitPost(
@@ -372,12 +395,26 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
             } /*BodyObj*/,
             "",
             this.currentPost.PostExtraData,
-            true /*IsHidden*/
+            isHidden /*IsHidden*/
           )
           .subscribe(
             (response) => {
               this.tracking.log("post : hide");
-              this.postDeleted.emit(response.PostEntryResponse);
+              this.backendApi
+                .UpdateProfile(
+                  this.globalVars.loggedInUser?.PublicKeyBase58Check,
+                  "",
+                  "",
+                  "",
+                  "",
+                  this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
+                  1.25 * 100 * 100,
+                  false,
+                  { BlogSlugMap: blogSlugMapJSON }
+                )
+                .subscribe(() => {
+                  this.postDeleted.emit(response.PostEntryResponse);
+                });
             },
             (err) => {
               console.error(err);
@@ -547,3 +584,17 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.myReactions = reactions;
   }
 }
+
+// Naively copied this from here:
+// https://gist.github.com/codeguy/6684588?permalink_comment_id=3332719#gistcomment-3332719
+// Tested with a few edge cases (special chars, weird spacing, etc) and it did
+// fine. May need to revisit if it doesn't handle some edge case properly.
+const stringToSlug = (str: string) =>
+  str
+    .normalize("NFD") // split an accented letter in the base letter and the acent
+    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+    .trim()
+    .replace(/\s+/g, "-") // replace all spaces with -
+    .replace(/-+/g, "-"); // replace multiple - with a single -

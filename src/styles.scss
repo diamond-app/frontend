@@ -825,7 +825,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
       border-radius: 0px;
     }
   }
@@ -5425,7 +5425,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -6525,4 +6525,31 @@ sell-nft-modal {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.progressbar__progress {
+  background-color: var(--secalt);
+
+  [role="progressbar"] {
+    background-color: var(--borderheavy);
+  }
+}
+
+.progressbar__label [name="my-vote"] svg {
+  vertical-align: inherit;
+}
+
+.poll-modal-container tab-selector .tab-selector__container {
+  min-height: 50px;
+  height: auto !important;
+  overflow: auto;
+
+  .tab-selector__tab-content {
+    min-height: 50px;
+  }
+
+  button {
+    min-height: 50px;
+    height: auto !important;
+  }
 }

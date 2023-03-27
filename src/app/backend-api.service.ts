@@ -363,6 +363,7 @@ export type MessagingGroupMemberResponse = {
 export enum AssociationType {
   // TODO: add more types when needed
   reaction = "REACTION",
+  pollResponse = "POLL_RESPONSE",
 }
 
 export enum AssociationReactionValue {
@@ -376,7 +377,7 @@ export enum AssociationReactionValue {
 }
 
 // TODO: other association values can be added as Value1 | Value2 etc.
-export type AssociationValue = AssociationReactionValue;
+export type AssociationValue = AssociationReactionValue | string;
 
 export interface PostAssociation {
   AppPublicKeyBase58Check: string;
@@ -396,6 +397,8 @@ export interface PostAssociationCountsResponse {
 
 export interface PostAssociationsResponse {
   Associations: Array<PostAssociation>;
+  PostHashHexToPostEntryResponse: { [postHex: string]: PostEntryResponse };
+  PublicKeyToProfileEntryResponse: { [publicKey: string]: ProfileEntryResponse };
 }
 
 @Injectable({
@@ -1053,7 +1056,9 @@ export class BackendApiService {
     LastPublicKeyBase58Check: string,
     NumToFetch: number,
     FetchHodlings: boolean = false,
-    FetchAll: boolean = false
+    FetchAll: boolean = false,
+    IsDAOCoin: boolean = false,
+    SortType: string = "coin_balance"
   ): Observable<any> {
     return from(
       getHodlersForUser({
@@ -1063,7 +1068,9 @@ export class BackendApiService {
         NumToFetch,
         FetchHodlings,
         FetchAll,
-      })
+        IsDAOCoin,
+        SortType,
+      } as any) // TODO: DO NOT COMMIT
     );
   }
 
@@ -1179,8 +1186,9 @@ export class BackendApiService {
     PostHashHex: string,
     AssociationType: AssociationType,
     TransactorPublicKeyBase58Check?: string,
-    AssociationValue?: AssociationValue,
-    total: number = 0
+    AssociationValue?: AssociationValue | Array<AssociationValue>,
+    IncludeTransactorProfile: boolean = false,
+    Total: number = 0
   ) {
     const ASSOCIATIONS_PER_REQUEST_LIMIT = 100;
     let receivedItems = [];
@@ -1192,7 +1200,8 @@ export class BackendApiService {
         TransactorPublicKeyBase58Check,
         AssociationValue,
         LastSeenAssociationID,
-        ASSOCIATIONS_PER_REQUEST_LIMIT
+        ASSOCIATIONS_PER_REQUEST_LIMIT,
+        IncludeTransactorProfile
       ).pipe(
         tap(({ Associations }) => {
           receivedItems = [...receivedItems, ...Associations];
@@ -1202,13 +1211,22 @@ export class BackendApiService {
 
     return fetchAssociationsChunk().pipe(
       expand(() => {
-        if (receivedItems.length < total) {
+        if (receivedItems.length < Total) {
           return fetchAssociationsChunk(receivedItems[receivedItems.length - 1].AssociationID);
         }
         return EMPTY;
       }),
-      map((res) => res.Associations),
-      reduce((acc, val) => acc.concat(val), new Array<PostAssociation>())
+      reduce((acc, val) => ({
+        Associations: [...acc.Associations, ...val.Associations],
+        PublicKeyToProfileEntryResponse: {
+          ...acc.PublicKeyToProfileEntryResponse,
+          ...val.PublicKeyToProfileEntryResponse,
+        },
+        PostHashHexToPostEntryResponse: {
+          ...(acc as any).PostHashHexToPostEntryResponse, // TODO: DO NOT COMMIT
+          ...(val as any).PostHashHexToPostEntryResponse, // TODO: DO NOT COMMIT
+        },
+      }))
     );
   }
 
@@ -1218,8 +1236,9 @@ export class BackendApiService {
     TransactorPublicKeyBase58Check?: string,
     AssociationValues?: AssociationValue | AssociationValue[],
     LastSeenAssociationID?: string,
-    Limit: number = 100
-  ): Observable<any> {
+    Limit: number = 100,
+    IncludeTransactorProfile: boolean = false
+  ) {
     const isArray = AssociationValues && Array.isArray(AssociationValues);
 
     return from(
@@ -1231,6 +1250,7 @@ export class BackendApiService {
         ...(!isArray && AssociationValues && { AssociationValue: AssociationValues as string }),
         LastSeenAssociationID,
         Limit,
+        IncludeTransactorProfile,
       })
     );
   }

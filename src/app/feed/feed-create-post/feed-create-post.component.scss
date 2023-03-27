@@ -16,7 +16,7 @@
 }
 
 .feed-create-post__post-content-container-thread:not(:first-child) {
-  border-top: 1px solid var(--border); 
+  border-top: 1px solid var(--border);
 }
 
 .feed-create-post__post-remove-btn {
@@ -99,4 +99,8 @@
 
 .feed-create-post__post-btn--in-modal {
   margin-right: 16px;
+}
+
+.feed-post__poll-header {
+  min-height: 31px;
 }

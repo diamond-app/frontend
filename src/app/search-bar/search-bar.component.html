@@ -28,7 +28,7 @@
           'border-bottom-right-radius':
             resultsUnderBar && searchText != '' && (loading || creators.length > 0) ? '0px' : '6px'
         }"
-        placeholder="{{ t('search_bar.search') }}"
+        placeholder="{{ placeholderText || t('search_bar.search') }}"
         id="searchbar"
         autocomplete="off"
         #searchbar

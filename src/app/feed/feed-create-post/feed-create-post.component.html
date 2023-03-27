@@ -39,7 +39,7 @@
             rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
             class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea position-relative background-color-white"
             id="textarea-{{ i + 1 }}"
-            [placeholder]="t(postModels[i].placeHolderText)"
+            [placeholder]="postModels[i].showPoll ? 'Ask Question' : t(postModels[i].placeHolderText)"
             (paste)="onPaste($event)"
             (ngModelChange)="updatePost(postModels[i])"
             dropUpload
@@ -126,6 +126,123 @@
               placeholder="{{ 'feed_create_post.embed_image' | transloco }}"
             />
           </div>
+          <form
+            *ngIf="postModels[i].showPoll"
+            [formGroup]="currentPostModel.pollForm"
+            [ngClass]="{ 'pt-10px': parentPost, 'pb-20px': globalVars.isMobile() }"
+            class="flex-fill bg-tile mt-10px"
+          >
+            <header class="d-flex justify-content-between align-items-center mb-2 feed-post__poll-header">
+              <div class="btn-group" dropdown>
+                <button
+                  dropdownToggle
+                  type="button"
+                  class="btn btn-sm btn-outline-primary dropdown-toggle"
+                  aria-controls="dropdown-autoclose"
+                >
+                  {{ POLL_WEIGHT_TYPE_LABELS_SELECTED[currentPostModel.pollType] }}
+                  <span class="caret"></span>
+                </button>
+
+                <ul *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-autoclose">
+                  <li
+                    *ngFor="let item of POLL_WEIGHT_TYPE_LABELS | keyvalue: keepPollWeightsOrder"
+                    (click)="currentPostModel.pollType = item.key"
+                    role="menuitem"
+                    class="cursor-pointer"
+                  >
+                    <span class="dropdown-item">{{ item.value }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-sm btn-outline-primary"
+                [ngClass]="{ 'btn-outline-dark': pollOptions.length >= MAX_POLL_OPTIONS }"
+                [disabled]="pollOptions.length >= MAX_POLL_OPTIONS"
+                (click)="addPollOption()"
+              >
+                <span *ngIf="pollOptions.length < MAX_POLL_OPTIONS; else limitReached">Add option</span>
+
+                <ng-template #limitReached>
+                  <span>{{ globalVars.isMobile() ? "Limit reached" : "Options limit reached" }}</span>
+                </ng-template>
+              </button>
+            </header>
+
+            <section class="my-15px">
+              <div
+                *ngIf="currentPostModel.pollType === POLL_WEIGHT_TYPE.desoTokenBalance"
+                class="position-relative"
+                style="max-width: 343px; width: 100%; height: 48px"
+              >
+                <search-bar
+                  resultsUnderBar
+                  [showCloutavista]="false"
+                  [isSearchForUsersToSendDESO]="true"
+                  [placeholderText]="'Select a DeSo token profile...'"
+                  (creatorToMessage)="onPollTokenProfileSelected($event)"
+                ></search-bar>
+              </div>
+
+              <div
+                class="card text-center mt-5px"
+                *ngIf="
+                  currentPostModel.pollType === POLL_WEIGHT_TYPE.desoTokenBalance &&
+                  currentPostModel.pollWeightTokenProfile
+                "
+              >
+                <div class="card-header small">Your poll will be weighted based on the token of:</div>
+                <div class="card-body">
+                  <creator-profile-simple-card
+                    [profile]="currentPostModel.pollWeightTokenProfile"
+                  ></creator-profile-simple-card>
+                </div>
+              </div>
+            </section>
+
+            <section
+              formArrayName="options"
+              class="mb-2"
+              *ngFor="let option of pollOptions.controls; let index = index"
+            >
+              <div class="d-flex">
+                <input
+                  #pollOptionsRef
+                  type="text"
+                  class="form-control"
+                  [formControlName]="index"
+                  [placeholder]="
+                    index >= REQUIRED_POLL_OPTIONS ? 'Choice ' + (index + 1) + ' (Optional)' : 'Choice ' + (index + 1)
+                  "
+                />
+
+                <button
+                  *ngIf="index >= REQUIRED_POLL_OPTIONS"
+                  class="btn btn-sm btn-outline-danger ml-2"
+                  (click)="removePollOption(index)"
+                >
+                  <i-feather name="trash-2" style="width: 16px; height: 16px"></i-feather>
+                </button>
+              </div>
+
+              <div
+                *ngIf="
+                  pollOptions.controls[index].invalid &&
+                  (pollOptions.controls[index].dirty || pollOptions.controls[index].touched)
+                "
+                class="text-danger small"
+              >
+                <div *ngIf="pollOptions.controls[index].errors?.required">Option #{{ index + 1 }} is required.</div>
+                <div *ngIf="pollOptions.controls[index].errors?.maxlength">
+                  Option cannot be more than {{ MAX_POLL_CHARACTERS }} characters long.
+                </div>
+                <div *ngIf="pollOptions.controls[index].errors?.uniq">
+                  This option is already taken, please enter a unique value.
+                </div>
+              </div>
+            </section>
+          </form>
         </div>
       </div>
     </div>
@@ -161,7 +278,7 @@
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_video' | transloco }}"
       (click)="currentPostModel.showEmbedURL = !currentPostModel.showEmbedURL"
     >
-      <i-feather name="code"></i-feather>
+      <i-feather name="code" tooltip="Embed a Link"></i-feather>
     </button>
     <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
     <button
@@ -169,7 +286,7 @@
       attr.aria-label="{{ 'feed_create_post.a11y_text.upload_video' | transloco }}"
       (click)="videoInput.click()"
     >
-      <i-feather name="video"></i-feather>
+      <i-feather name="video" tooltip="Upload a Video"></i-feather>
     </button>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <button
@@ -177,21 +294,33 @@
       attr.aria-label="{{ 'feed_create_post.a11y_text.upload_image' | transloco }}"
       (click)="imageInput.click()"
     >
-      <i-feather name="image"></i-feather>
+      <i-feather name="image" tooltip="Upload an Image"></i-feather>
+    </button>
+    <button
+      class="btn feed-create-post__icon-bar-item"
+      attr.aria-label="{{ 'feed_create_post.a11y_text.create_poll' | transloco }}"
+      (click)="togglePoll()"
+    >
+      <i-feather
+        name="bar-chart-2"
+        class="feed-create-post__create-poll-icon"
+        tooltip="Create a Poll"
+        [ngClass]="{ 'text-primary': currentPostModel.showPoll }"
+      ></i-feather>
     </button>
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
       (click)="currentPostModel.showImageLink = !currentPostModel.showImageLink"
     >
-      <i-feather name="external-link"></i-feather>
+      <i-feather name="external-link" tooltip="Attach an Arweave Image"></i-feather>
     </button>
     <button
       class="btn feed-create-post__icon-bar-item"
       attr.aria-label="{{ 'feed_create_post.a11y_text.embed_arweave' | transloco }}"
       (click)="onNavigateToCreateBlog($event)"
     >
-      <i-feather name="edit"></i-feather>
+      <i-feather name="edit" tooltip="Write a Blog Post"></i-feather>
     </button>
   </div>
   <div class="feed-create-post__right-btn-group">
@@ -211,8 +340,14 @@
     </button>
     <button
       class="feed-create-post__post-btn btn"
+      [disabled]="
+        (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
+        (currentPostModel.showPoll && !currentPostModel.pollForm.valid)
+      "
       [ngClass]="{
-        disabled: postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc,
+        disabled:
+          (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
+          (currentPostModel.showPoll && !currentPostModel.pollForm.valid),
         'btn-loading': submittingPost,
         wiggle: inTutorial,
         'feed-create-post__post-btn--in-modal': inModal

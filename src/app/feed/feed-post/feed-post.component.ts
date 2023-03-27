@@ -263,6 +263,7 @@ export class FeedPostComponent implements OnInit {
   };
   myReactions: Array<PostAssociation> = [];
   reactionsLoaded: boolean = false;
+  pollPost: boolean = false;
 
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -411,6 +412,9 @@ export class FeedPostComponent implements OnInit {
     this.setEmbedURLForPostContent();
     this.setURLForVideoContent();
     this.extractURLsFromPost();
+
+    this.pollPost = !!this.postContent.PostExtraData.PollOptions;
+
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }

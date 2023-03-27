@@ -21,6 +21,7 @@ export class SearchBarComponent implements OnInit {
   // If the results appear right under the bar.
   // If true, make the bottom border radii for the search bar 0 to connect with the results
   @Input() resultsUnderBar: boolean = false;
+  @Input() placeholderText: string = "";
   @Output() creatorToMessage = new EventEmitter<any>();
   @Output() searchUpdated = new EventEmitter<any>();
   searchText: string;

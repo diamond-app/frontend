@@ -10,6 +10,7 @@ import {
   ArrowUp,
   AtSign,
   Award,
+  BarChart2,
   Bell,
   Check,
   CheckCircle,
@@ -39,6 +40,7 @@ import {
   Key,
   Link,
   Link2,
+  List,
   Mail,
   MessageSquare,
   Monitor,
@@ -101,6 +103,7 @@ const icons = {
   ArrowUp,
   AtSign,
   Award,
+  BarChart2,
   Bell,
   BellNotification,
   Bitclout,
@@ -142,6 +145,7 @@ const icons = {
   LandingBullet3,
   Link,
   Link2,
+  List,
   Lock,
   Lock2,
   Mail,
@@ -179,6 +183,7 @@ const icons = {
   XSquare,
   Edit2,
   Twitter,
+  MyVote: CheckCircle,
 };
 
 @NgModule({
