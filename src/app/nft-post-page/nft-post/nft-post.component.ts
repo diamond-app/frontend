@@ -155,7 +155,7 @@ export class NftPostComponent {
     );
   }
 
-  refreshBidData(): Subscription {
+  refreshBidData() {
     this.refreshingBids = true;
     return this.backendApi
       .GetNFTBidsForNFTPost(

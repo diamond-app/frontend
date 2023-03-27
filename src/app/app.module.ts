@@ -11,7 +11,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import player from "lottie-web";
-import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
@@ -451,7 +450,6 @@ export function playerFactory() {
     MatTooltipModule,
     TextFieldModule,
     UiScrollModule,
-    AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),
     BsDropdownModule.forRoot(),
     PopoverModule.forRoot(),

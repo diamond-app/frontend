@@ -2,7 +2,8 @@ import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Subscription } from "rxjs";
+import { of } from "rxjs";
+import { catchError, finalize, tap } from "rxjs/operators";
 
 @Component({
   selector: "creator-diamonds",
@@ -33,19 +34,20 @@ export class CreatorDiamondsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchDiamonds();
+    this.fetchDiamonds().subscribe();
   }
 
   _handleTabClick(tab) {
     this.onChange(tab);
   }
 
-  fetchDiamonds(): Subscription {
+  fetchDiamonds() {
     this.isLoading = true;
+
     return this.backendApi
       .GetDiamondsForPublicKey(this.globalVars.localNode, this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
-      .subscribe(
-        (res) => {
+      .pipe(
+        tap((res) => {
           this.diamondSummaryList = res.DiamondSenderSummaryResponses;
 
           // Calculate the number of diamonds that have come from
@@ -77,14 +79,15 @@ export class CreatorDiamondsComponent implements OnInit {
             this.diamondSummaryList.push({ totalRow: true });
           }
           this.totalDiamonds = res.TotalDiamonds;
-        },
-        (err) => {
+        }),
+        catchError((err) => {
           this.globalVars._alertError(this.backendApi.parseProfileError(err));
-        }
-      )
-      .add(() => {
-        this.isLoading = false;
-      });
+          return of();
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      );
   }
   counter(num: number) {
     return Array(num);
@@ -95,7 +98,9 @@ export class CreatorDiamondsComponent implements OnInit {
       this.activeTab = event;
       this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
       this.loadingNewSelection = true;
-      this.fetchDiamonds().add(() => this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false)));
+      this.fetchDiamonds().subscribe(() =>
+        this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false))
+      );
     }
   }
 

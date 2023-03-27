@@ -249,7 +249,7 @@ export class FeedPostDropdownComponent implements OnInit {
 
   unfollowUser(event) {
     event.stopPropagation();
-    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check);
+    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check).subscribe();
   }
 
   addMultiplier() {

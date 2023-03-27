@@ -24,6 +24,7 @@ import {
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
+import { map, tap } from "rxjs/operators";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -136,36 +137,38 @@ export class CreatorProfileNftsComponent implements OnInit {
     this.datasource.adapter.reset();
   }
 
-  getNFTBids(): Subscription {
+  getNFTBids() {
     return this.backendApi
       .GetNFTBidsForUser(
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check
       )
-      .subscribe(
-        (res: {
-          PublicKeyBase58CheckToProfileEntryResponse: { [k: string]: ProfileEntryResponse };
-          PostHashHexToPostEntryResponse: { [k: string]: PostEntryResponse };
-          NFTBidEntries: NFTBidEntryResponse[];
-        }) => {
-          _.forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
-            value.ProfileEntryResponse =
-              res.PublicKeyBase58CheckToProfileEntryResponse[value.PosterPublicKeyBase58Check];
-            res.PostHashHexToPostEntryResponse[key] = value;
-          });
-          this.myBids = res.NFTBidEntries.map((bidEntry) => {
-            bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
-            return bidEntry;
-          });
-          this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
-          const sortDetails = this.sortFields[this.orderNFTsBy];
-          return _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
-        }
+      .pipe(
+        map(
+          (res: {
+            PublicKeyBase58CheckToProfileEntryResponse: { [k: string]: ProfileEntryResponse };
+            PostHashHexToPostEntryResponse: { [k: string]: PostEntryResponse };
+            NFTBidEntries: NFTBidEntryResponse[];
+          }) => {
+            _.forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
+              value.ProfileEntryResponse =
+                res.PublicKeyBase58CheckToProfileEntryResponse[value.PosterPublicKeyBase58Check];
+              res.PostHashHexToPostEntryResponse[key] = value;
+            });
+            this.myBids = res.NFTBidEntries.map((bidEntry) => {
+              bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
+              return bidEntry;
+            });
+            this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
+            const sortDetails = this.sortFields[this.orderNFTsBy];
+            return _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
+          }
+        )
       );
   }
 
-  getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null): Subscription {
+  getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null) {
     return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
@@ -174,26 +177,28 @@ export class CreatorProfileNftsComponent implements OnInit {
         isForSale,
         isPending
       )
-      .subscribe(
-        (res: {
-          NFTsMap: { [k: string]: { PostEntryResponse: PostEntryResponse; NFTEntryResponses: NFTEntryResponse[] } };
-        }) => {
-          this.nftResponse = [];
-          for (const k in res.NFTsMap) {
-            const responseElement = res.NFTsMap[k];
-            // Exclude NFTs created by profile from Gallery
-            if (
-              this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
-              responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.PublicKeyBase58Check
-            ) {
-              continue;
+      .pipe(
+        tap(
+          (res: {
+            NFTsMap: { [k: string]: { PostEntryResponse: PostEntryResponse; NFTEntryResponses: NFTEntryResponse[] } };
+          }) => {
+            this.nftResponse = [];
+            for (const k in res.NFTsMap) {
+              const responseElement = res.NFTsMap[k];
+              // Exclude NFTs created by profile from Gallery
+              if (
+                this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
+                responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.PublicKeyBase58Check
+              ) {
+                continue;
+              }
+              this.nftResponse.push(responseElement);
             }
-            this.nftResponse.push(responseElement);
+            this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
+            const sortDetails = this.sortFields[this.orderNFTsBy];
+            return _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
           }
-          this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
-          const sortDetails = this.sortFields[this.orderNFTsBy];
-          return _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
-        }
+        )
       );
   }
 
@@ -265,11 +270,11 @@ export class CreatorProfileNftsComponent implements OnInit {
       this.isLoading = true;
       this.infiniteScroller.reset();
       if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
-        return this.getNFTBids().add(() => {
+        return this.getNFTBids().subscribe(() => {
           this.resetDatasource(event);
         });
       } else {
-        return this.getNFTs(this.getIsForSaleValue(), this.getIsPendingValue()).add(() => {
+        return this.getNFTs(this.getIsForSaleValue(), this.getIsPendingValue()).subscribe(() => {
           this.resetDatasource(event);
         });
       }
