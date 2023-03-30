@@ -8,7 +8,6 @@ import {
   AccessGroupEntryResponse,
   BalanceEntryResponse,
   createAccessGroup,
-  DecryptedMessageEntryResponse,
   DeSoNetwork,
   getAllAccessGroupsOwned,
   identity,
@@ -124,10 +123,6 @@ export class GlobalVarsService {
   followFeedPosts = [];
   hotFeedPosts = [];
   tagFeedPosts = [];
-  decryptedMessages: DecryptedMessageEntryResponse[] | null = null;
-  messagesLoadedCallback = null;
-  messagesLoadedComponent = null;
-  loadingMessages = false;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
     decryptedMessgesMap: {},
@@ -148,7 +143,8 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp =
+    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -452,7 +448,6 @@ export class GlobalVarsService {
       });
 
       // Clear out the message inbox and BitcoinAPI
-      this.decryptedMessages = null;
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.
@@ -1230,7 +1225,7 @@ export class GlobalVarsService {
       if (environment.production) {
         this.localNode = hostname;
       } else {
-        this.localNode = `https://node.deso.org`;
+        this.localNode = `${hostname}:18001`;
       }
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
@@ -1437,5 +1432,21 @@ export class GlobalVarsService {
 
   windowIsPWA(): Boolean {
     return window.matchMedia("(display-mode: standalone)").matches;
+  }
+
+  getDesoNetworkFromURL(url: string) {
+    const parsedURL = new URL(url);
+
+    switch (parsedURL.hostname) {
+      case "node.deso.org":
+      case "diamondapp.com":
+      case "dev.diamondapp.com":
+        return DeSoNetwork.mainnet;
+      case "localhost":
+      case "test.deso.org":
+        return DeSoNetwork.testnet;
+      default:
+        return environment.production ? DeSoNetwork.mainnet : DeSoNetwork.testnet;
+    }
   }
 }

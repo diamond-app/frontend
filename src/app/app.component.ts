@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
       mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: { IsUnlimited: true },
       MinFeeRateNanosPerKB: 1000,
-      network: this.globalVars.isTestnet ? DeSoNetwork.testnet : DeSoNetwork.mainnet,
+      network: this.globalVars.getDesoNetworkFromURL(this.globalVars.localNode),
     });
 
     // log interaction events emitted by identity
@@ -346,7 +346,6 @@ export class AppComponent implements OnInit {
     });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
-    // QUESTION: do we actually need this DeleteIdentities call?
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);

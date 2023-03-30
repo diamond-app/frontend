@@ -15,7 +15,6 @@ import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/crea
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
@@ -96,7 +95,6 @@ class RouteNames {
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
   public static QUOTE_REPOSTS = "quote-reposts";
-  public static LIKES = "likes";
   public static REACTIONS = "reactions";
   public static POLL = "poll";
   public static TRENDS = "trends";
@@ -154,11 +152,6 @@ const routes: Routes = [
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.QUOTE_REPOSTS,
     component: QuoteRepostsPageComponent,
-    pathMatch: "full",
-  },
-  {
-    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.LIKES,
-    component: LikesPageComponent,
     pathMatch: "full",
   },
   {

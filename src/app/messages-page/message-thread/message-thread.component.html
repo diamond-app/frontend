@@ -16,7 +16,7 @@
       </div>
 
       <div class="text-center py-10px messages-thread-view__loader" *ngIf="loadingMore">
-        <i class="fas fa-spinner fs-24px fa-spin px-3"></i>
+        <simple-center-loader [height]="100" [diamondHeight]="40" [hideLoadingText]="true"></simple-center-loader>
       </div>
     </ng-template>
   </div>

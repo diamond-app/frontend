@@ -14,13 +14,8 @@ import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { of, Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import {
-  BackendApiService,
-  NFTBidEntryResponse,
-  NFTEntryResponse,
-  PostEntryResponse,
-  ProfileEntryResponse,
-} from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
+import { NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
@@ -151,8 +146,6 @@ export class CreatorProfileNftsComponent implements OnInit {
             res.PostHashHexToPostEntryResponse[key] = value;
           });
           this.myBids = res.NFTBidEntries.map((bidEntry) => {
-            // FIXME
-            // @ts-ignore
             bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
             return bidEntry;
           });
@@ -214,8 +207,8 @@ export class CreatorProfileNftsComponent implements OnInit {
     const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+      predicate: ({ $index, data }: { $index: number; data: any }) => {
+        let currentPost = data;
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
@@ -317,8 +310,8 @@ export class CreatorProfileNftsComponent implements OnInit {
           .subscribe(
             () => {
               return this.datasource.adapter.remove({
-                predicate: ({ data }) => {
-                  const currBidEntry = (data as any) as NFTBidEntryResponse;
+                predicate: ({ data }: { data: any }) => {
+                  const currBidEntry = data as NFTBidEntryResponse;
                   return (
                     currBidEntry.SerialNumber === bidEntry.SerialNumber &&
                     currBidEntry.BidAmountNanos === currBidEntry.BidAmountNanos &&

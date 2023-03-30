@@ -13,7 +13,7 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { pollForVideoReady } from "deso-protocol";
+import { pollForVideoReady, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -127,9 +127,6 @@ interface PostExtraData {
   PollWeightType?: PollWeightType;
   PollWeightTokenPublicKey?: string;
 }
-
-// show warning at 515 characters
-const SHOW_POST_LENGTH_WARNING_THRESHOLD = 515;
 
 @Component({
   selector: "feed-create-post",
@@ -530,25 +527,26 @@ export class FeedCreatePostComponent implements OnInit {
     this.currentPostModel.isUploadingMedia = true;
     // Set this so that the video upload progress bar shows up.
     this.currentPostModel.postVideoSrc = `https://lvpr.tv`;
-    let tusEndpoint, asset;
+
     try {
-      ({ tusEndpoint, asset } = await this.backendApi
-        // TODO: just use upload video directly
-        .UploadVideo(file, this.globalVars.loggedInUser.PublicKeyBase58Check)
-        .toPromise());
+      const { asset } = await uploadVideo({
+        file,
+        UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      });
+
+      this.currentPostModel.isUploadingMedia = false;
+      this.currentPostModel.isProcessingMedia = true;
+      this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
+      this.currentPostModel.assetId = asset.id;
+      this.currentPostModel.postImageSrc = "";
+      this.videoUploadPercentage = null;
+
+      return pollForVideoReady(asset.id);
     } catch (e) {
       this.currentPostModel.postVideoSrc = "";
       this.globalVars._alertError(JSON.stringify(e.error.error));
       return;
     }
-    this.currentPostModel.isUploadingMedia = false;
-    this.currentPostModel.isProcessingMedia = true;
-    this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
-    this.currentPostModel.assetId = asset.id;
-    this.currentPostModel.postImageSrc = "";
-    this.videoUploadPercentage = null;
-
-    return pollForVideoReady(asset.id);
   }
 
   hasAddCommentButton(): boolean {

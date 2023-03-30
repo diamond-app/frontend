@@ -825,7 +825,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container, .access-group-modal-container {
       border-radius: 0px;
     }
   }
@@ -4124,7 +4124,7 @@ creator-profile-nfts {
 
 .messages-thread-view__message-builder {
   position: fixed;
-  bottom: 16px; // offset for textarea padding
+  bottom: 0;
   height: 120px;
   width: 622px;
   background: var(--tile-bg);
@@ -4221,12 +4221,12 @@ creator-profile-nfts {
 }
 
 .messages-page {
-  height: calc(100vh - 75px);
+  height: calc(100vh - 60px);
   overflow: hidden;
 }
 
 .messages-page__content-area {
-  height: calc(100% - 100px);
+  height: calc(100% - 125px);
 }
 
 .messages-page__threads-list {
@@ -5425,7 +5425,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container, .access-group-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);

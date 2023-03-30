@@ -14,6 +14,8 @@ export class SimpleCenterLoaderComponent implements OnInit {
   @Input() spinnerColor: string = "gray";
   @Input() textColor: string = "gray";
   @Input() height = 400;
+  @Input() hideLoadingText: boolean = false;
+  @Input() diamondHeight: number;
   environment = environment;
 
   isDark: boolean = false;
@@ -50,6 +52,6 @@ export class SimpleCenterLoaderComponent implements OnInit {
   }
 
   getLoaderHeight() {
-    return `${(this.height / 4).toString()}px`;
+    return this.diamondHeight || this.height / 4;
   }
 }

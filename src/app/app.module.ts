@@ -216,9 +216,6 @@ import { CreateAccessGroupComponent } from "./messages-page/create-access-group/
 import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
 import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 import { PollComponent } from "./poll/poll.component";
 import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
@@ -339,9 +336,6 @@ export function playerFactory() {
     QuoteRepostsDetailsComponent,
     QuoteRepostsModalComponent,
     QuoteRepostsPageComponent,
-    LikesDetailsComponent,
-    LikesPageComponent,
-    LikesModalComponent,
     ReactionsDetailsComponent,
     ReactionsPageComponent,
     ReactionsModalComponent,

@@ -525,7 +525,6 @@ export class BackendApiService {
     return from(getTransaction({ TxnHashHex }));
   }
 
-  // TODO: do we need this?
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
       .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
@@ -1139,21 +1138,6 @@ export class BackendApiService {
         IsUnfollow,
       })
     ).pipe(map(mergeTxResponse));
-  }
-
-  CreateLike(ReaderPublicKeyBase58Check: string, LikedPostHashHex: string, IsUnlike: boolean): Observable<any> {
-    return from(
-      updateLikeStatus({
-        ReaderPublicKeyBase58Check,
-        LikedPostHashHex,
-        IsUnlike,
-      })
-    ).pipe(
-      map(({ constructedTransactionResponse, submittedTransactionResponse }) => ({
-        ...constructedTransactionResponse,
-        ...submittedTransactionResponse,
-      }))
-    );
   }
 
   CreatePostAssociation(

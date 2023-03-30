@@ -3,20 +3,14 @@
     <i-feather name="x"></i-feather>
   </div>
 </div>
-<div class="likes-modal-container">
+<div class="access-group-modal-container">
   <header class="border-bottom p-2">
     <h1 class="fs-17px font-weight-bold">Create Group Chat</h1>
   </header>
-  <form class="p-2" (submit)="this.createGroupChat($event)">
+  <form class="p-2" (submit)="createGroupChat($event)">
     <div class="form-group">
       <label for="accessGroupName">Group Name</label>
-      <input
-        type="text"
-        id="accessGroupName"
-        name="accessGroupName"
-        class="form-control"
-        [(ngModel)]="this.groupName"
-      />
+      <input type="text" id="accessGroupName" name="accessGroupName" class="form-control" [(ngModel)]="groupName" />
     </div>
     <div class="form-group" [ngStyle]="{ height: '72px' }">
       <label for="accessGroupMembers">Add Group Members</label>
@@ -24,12 +18,12 @@
         [showCloutavista]="false"
         [isSearchForUsersToMessage]="true"
         [startingSearchText]=""
-        (creatorToMessage)="this.onSearchItemSelected($event)"
+        (creatorToMessage)="onSearchItemSelected($event)"
         class="position-relative"
       ></search-bar>
     </div>
-    <div *ngIf="this.groupMembers.length > 0">
-      <div *ngFor="let member of this.groupMembers" class="d-flex align-items-center border p-2 mb-2">
+    <div *ngIf="groupMembers.length > 0">
+      <div *ngFor="let member of groupMembers" class="d-flex align-items-center border p-2 mb-2">
         <div
           class="messages-thread__avatar"
           [ngClass]="{
@@ -43,7 +37,7 @@
           <button
             aria-label="Remove group member"
             class="btn fc-red"
-            (click)="this.removeGroupMember(member.PublicKeyBase58Check)"
+            (click)="removeGroupMember(member.PublicKeyBase58Check)"
           >
             <i-feather name="trash-2"></i-feather>
           </button>
@@ -51,10 +45,10 @@
       </div>
     </div>
     <div class="d-flex">
-      <button class="btn btn-secondary ml-auto mr-2" (click)="this.bsModalRef.hide()">Cancel</button>
+      <button class="btn btn-secondary ml-auto mr-2" (click)="bsModalRef.hide()">Cancel</button>
       <button class="btn btn-primary">
-        <span *ngIf="this.isCreatingGroup"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
-        <span *ngIf="!this.isCreatingGroup">Create</span>
+        <span *ngIf="isCreatingGroup"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+        <span *ngIf="!isCreatingGroup">Create</span>
       </button>
     </div>
   </form>
