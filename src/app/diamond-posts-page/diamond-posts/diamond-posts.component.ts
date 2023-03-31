@@ -129,8 +129,8 @@ export class DiamondPostsComponent {
   async _prependComment(uiPostParent, newComment) {
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = data as any as PostEntryResponse;
+      predicate: ({ data }: { data: any }) => {
+        let currentPost = data as PostEntryResponse;
         if (currentPost.PostHashHex === uiPostParent.PostHashHex) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];

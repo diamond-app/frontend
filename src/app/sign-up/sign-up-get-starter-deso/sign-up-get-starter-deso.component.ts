@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { IdentityService } from "../../identity.service";
@@ -8,7 +8,7 @@ import { IdentityService } from "../../identity.service";
   templateUrl: "./sign-up-get-starter-deso.component.html",
   styleUrls: ["./sign-up-get-starter-deso.component.scss"],
 })
-export class SignUpGetStarterDeSoComponent implements OnInit {
+export class SignUpGetStarterDeSoComponent {
   static CREATE_PHONE_NUMBER_VERIFICATION_SCREEN = "create_phone_number_verification_screen";
   static COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN = "completed_phone_number_verification_screen";
 
@@ -25,8 +25,6 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
     private backendApi: BackendApiService,
     private identityService: IdentityService
   ) {}
-
-  ngOnInit(): void {}
 
   _setScreenToShow() {
     // TODO: refactor silly setInterval

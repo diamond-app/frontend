@@ -118,8 +118,8 @@ export class CreatorProfilePostsComponent {
     const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = data as any as PostEntryResponse;
+      predicate: ({ $index, data }: { $index: number; data: any }) => {
+        let currentPost = data as PostEntryResponse;
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
