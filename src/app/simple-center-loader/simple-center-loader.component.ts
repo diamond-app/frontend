@@ -1,7 +1,5 @@
-import { ApplicationRef, ChangeDetectorRef, Component, OnInit, Input, ViewEncapsulation } from "@angular/core";
-import { AnimationOptions } from "ngx-lottie";
+import { Component, OnInit, Input } from "@angular/core";
 import { environment } from "src/environments/environment";
-import { BackendApiService } from "../backend-api.service";
 
 @Component({
   selector: "simple-center-loader",
@@ -14,13 +12,12 @@ export class SimpleCenterLoaderComponent implements OnInit {
   @Input() spinnerColor: string = "gray";
   @Input() textColor: string = "gray";
   @Input() height = 400;
+  @Input() hideLoadingText: boolean = false;
+  @Input() diamondHeight: number;
   environment = environment;
 
   isDark: boolean = false;
 
-  options: AnimationOptions = {
-    path: "./assets/img/cloutLoader.json",
-  };
   constructor() {}
 
   ngOnInit() {
@@ -50,6 +47,6 @@ export class SimpleCenterLoaderComponent implements OnInit {
   }
 
   getLoaderHeight() {
-    return `${(this.height / 4).toString()}px`;
+    return this.diamondHeight || this.height / 4;
   }
 }

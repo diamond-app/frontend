@@ -164,12 +164,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       // Hit the backend with "Broadcast=false" to calculate network fees.
       this.backendApi
         .TransferCreatorCoin(
-          this.appData.localNode,
           this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
           this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -202,7 +200,6 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       // obtain amounts from backend without actually broadcasting
       this.backendApi
         .BuyOrSellCreatorCoin(
-          this.appData.localNode,
           this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.operationType() /*OperationType*/,
@@ -211,8 +208,6 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           0 /*DeSoToAddNanos*/,
           0 /*MinDeSoExpectedNanos*/,
           0 /*MinCreatorCoinExpectedNanos*/,
-
-          this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
         .subscribe(
@@ -413,12 +408,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         isFetching = true;
         this.backendApi
           .SendDeSoPreview(
-            this.appData.localNode,
             this.appData.loggedInUser.PublicKeyBase58Check,
             this.appData.loggedInUser.PublicKeyBase58Check,
             // A negative amount causes the max value to be returned as the spend amount.
-            -1,
-            this.appData.feeRateDeSoPerKB * 1e9 /* min fee rate */
+            -1
           )
           .subscribe(
             (response: any) => {

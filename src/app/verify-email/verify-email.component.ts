@@ -21,7 +21,7 @@ export class VerifyEmailComponent implements OnInit {
       const publicKey = params.publicKey;
       const emailHash = params.emailHash;
 
-      this.backendApi.VerifyEmail(this.globalVars.localNode, publicKey, emailHash).subscribe(
+      this.backendApi.VerifyEmail(publicKey, emailHash).subscribe(
         (res) => {
           this.globalVars._alertSuccess("Email verified successfully");
         },

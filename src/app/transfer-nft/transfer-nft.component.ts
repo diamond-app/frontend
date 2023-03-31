@@ -50,14 +50,10 @@ export class TransferNftComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendApi
-      .GetNFTEntriesForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.post.PostHashHex
-      )
+      .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.post.PostHashHex)
       .subscribe((res) => {
         this.transferableSerialNumbers = _.orderBy(
-          (res.NFTEntryResponses as NFTEntryResponse[]).filter(
+          res.NFTEntryResponses.filter(
             (nftEntryResponse) =>
               nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
               !nftEntryResponse.IsPending &&
@@ -92,7 +88,6 @@ export class TransferNftComponent implements OnInit {
       if (res.isConfirmed) {
         this.backendApi
           .TransferNFT(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.selectedCreator?.PublicKeyBase58Check,
             this.post.PostHashHex,
@@ -198,7 +193,11 @@ export class TransferNftComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.transferableSerialNumbers = _.orderBy(this.transferableSerialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.transferableSerialNumbers = _.orderBy(
+      this.transferableSerialNumbers,
+      [this.sortByField],
+      [this.sortByOrder]
+    ) as Array<NFTEntryResponse>;
   }
 
   _selectCreator(selectedCreator: ProfileEntryResponse) {

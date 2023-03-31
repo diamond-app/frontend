@@ -245,7 +245,6 @@ export class PostThreadComponent implements AfterViewInit {
     }
 
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       subCommentPostHashHex ?? this.postHashHexRouteParam /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       fetchParents,

@@ -40,13 +40,7 @@ export class FollowService {
     this.createFollowTxnBeingCalled = true;
 
     return this.backendApi
-      .CreateFollowTxn(
-        this.appData.localNode,
-        followerPublicKeyBase58Check,
-        followedPubKeyBase58Check,
-        !isFollow /*isUnfollow*/,
-        this.appData.feeRateDeSoPerKB * 1e9
-      )
+      .CreateFollowTxn(followerPublicKeyBase58Check, followedPubKeyBase58Check, !isFollow /*isUnfollow*/)
       .pipe(
         tap(() => {
           this._handleSuccessfulFollowTxn(isFollow, followedPubKeyBase58Check);

@@ -44,7 +44,6 @@ export class RepostsDetailsComponent implements OnInit {
 
     return this.backendApi
       .GetRepostsForPost(
-        this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
         this.pageSize,

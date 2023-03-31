@@ -19,7 +19,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
 
   @Input() serialNumbers: NFTEntryResponse[];
   // Which columns should be included. The string value determines what the column should be labeled
-  @Input() columns: { high?: string; min?: string, buyNow?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
+  @Input() columns: { high?: string; min?: string; buyNow?: string } = { high: "Highest Bid", min: "Min Bid Amount" };
   @Input() postHashHex: string;
   @Input() nftCreatorPublicKeyBase58Check: string;
   @Output() serialNumberSelected = new EventEmitter<NFTEntryResponse>();
@@ -55,7 +55,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
         this.serialNumbers,
         [this.BUY_NOW_PRICE_FIELD, this.SN_FIELD],
         [this.sortByOrder, this.sortByOrder]
-      );
+      ) as Array<NFTEntryResponse>;
     } else {
       this.updateBidSort(this.SN_FIELD);
     }
@@ -72,7 +72,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   }
 
   columnCount() {
-    const subtraction = "secondaryIndicator" in this.columns ? 1 : 0
+    const subtraction = "secondaryIndicator" in this.columns ? 1 : 0;
     return Object.keys(this.columns).length - subtraction;
   }
 
@@ -91,7 +91,11 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.sortedSerialNumbers = _.orderBy(this.serialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.sortedSerialNumbers = _.orderBy(
+      this.serialNumbers,
+      [this.sortByField],
+      [this.sortByOrder]
+    ) as Array<NFTEntryResponse>;
     this.infiniteScroller.reset();
     this.datasource.adapter.reload();
   }
@@ -122,6 +126,11 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
   };
 
   // We only set the infinite scroller to use window viewport when in mobile
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile(), 15);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    this.pageSize,
+    this.getPage,
+    this.globalVars.isMobile(),
+    15
+  );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { isNil, range } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
@@ -16,8 +17,6 @@ import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
-import { range, isNil } from "lodash";
-import { userInfo } from "os";
 
 @Component({
   selector: "settings",
@@ -239,7 +238,7 @@ export class SettingsComponent implements OnInit {
       );
       const utcOffset = getUTCOffset();
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(userPublicKey).pipe(
           catchError((err) => {
             return of(null);
           })
@@ -449,7 +448,6 @@ export class SettingsComponent implements OnInit {
     const utcOffset = getUTCOffset();
     this.backendApi
       .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/

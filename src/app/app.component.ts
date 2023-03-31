@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { configure, DeSoNetwork, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
@@ -7,7 +8,7 @@ import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
-import { BackendApiService, User } from "./backend-api.service";
+import { BackendApiService } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { IdentityService } from "./identity.service";
 import { ThemeService } from "./theme/theme.service";
@@ -34,29 +35,23 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
+    // NOTE: The deso-protocol configure call has to come *after* globalVars
+    // Init because it uses globalVars.localNode. There is no practical reason
+    // we need to store the localNode value in globalVars (or local storage),
+    // but it's an annoying and unrelated thing to refactor right now...
+    configure({
+      nodeURI: this.globalVars.localNode,
+      mediaURI: `https://${environment.uploadVideoHostname}`,
+      spendingLimitOptions: { IsUnlimited: true },
+      MinFeeRateNanosPerKB: 1000,
+      network: this.globalVars.getDesoNetworkFromURL(this.globalVars.localNode),
+    });
+
     // log interaction events emitted by identity
     window.addEventListener("message", (ev) => {
       if (!(ev.origin === environment.identityURL && ev.data?.category === "interaction-event")) return;
       const { object, event, data } = ev.data.payload;
       this.tracking.log(`identity : ${object} : ${event}`, data);
-    });
-
-    // Nuke the referrer so we don't leak anything
-    // We also have a meta tag in index.html that does this in a different way to make
-    // sure it's nuked.
-    //
-    //
-    // TODO: I'm pretty sure all of this could fail on IE so we should make sure people
-    // only use the app with chrome.
-    Object.defineProperty(document, "referrer", {
-      get() {
-        return "";
-      },
-    });
-    Object.defineProperty(document, "referer", {
-      get() {
-        return "";
-      },
     });
   }
   static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS = "js-app-component__dynamically-added-router-link-class";
@@ -108,7 +103,10 @@ export class AppComponent implements OnInit {
       return new Subscription();
     }
 
-    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+    // NOTE: we should subscribe to the identity instance instead of calling snapshot,
+    // but that would require a larger refactor.
+    const { currentUser, alternateUsers } = identity.snapshot();
+    const publicKeys = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
 
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
@@ -124,9 +122,9 @@ export class AppComponent implements OnInit {
     this.callingUpdateTopLevelData = true;
 
     return zip(
-      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      this.backendApi.GetUsersStateless([loggedInUserPublicKey], false),
       environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
-        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
+        ? this.backendApi.GetUserMetadata(loggedInUserPublicKey).pipe(
             catchError((err) => {
               console.error(err);
               return of(null);
@@ -170,9 +168,6 @@ export class AppComponent implements OnInit {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
-        // Setup messages for the logged in user
-        this.globalVars.SetupMessages();
-
         // Get unread notifications for the logged in user
         this.globalVars.GetUnreadNotifications();
 
@@ -206,23 +201,21 @@ export class AppComponent implements OnInit {
   }
 
   _updateAppState() {
-    this.backendApi
-      .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res: any) => {
-        this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
-        this.globalVars.diamondLevelMap = res.DiamondLevelMap;
-        this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
-        this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-        this.globalVars.showJumio = res.HasJumioIntegration;
-        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
-        this.globalVars.isTestnet = res.IsTestnet;
-        this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
-        this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
-        this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
-        this.globalVars.buyETHAddress = res.BuyETHAddress;
-        this.globalVars.nodes = res.Nodes;
-      });
+    this.backendApi.GetAppState(this.globalVars.loggedInUser?.PublicKeyBase58Check).subscribe((res: any) => {
+      this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
+      this.globalVars.diamondLevelMap = res.DiamondLevelMap;
+      this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
+      this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+      this.globalVars.showJumio = res.HasJumioIntegration;
+      this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
+      this.globalVars.isTestnet = res.IsTestnet;
+      this.identityService.isTestnet = res.IsTestnet;
+      this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
+      this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
+      this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+      this.globalVars.buyETHAddress = res.BuyETHAddress;
+      this.globalVars.nodes = res.Nodes;
+    });
   }
 
   _updateEverything = (
@@ -253,7 +246,7 @@ export class AppComponent implements OnInit {
           clearInterval(interval);
         }
         this.backendApi
-          .GetTxn(this.globalVars.localNode, waitTxn)
+          .GetTxn(waitTxn)
           .subscribe(
             (res: any) => {
               if (!res.TxnFound) {
@@ -345,7 +338,7 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
+    this.backendApi.GetUsersStateless(publicKeys, true).subscribe((res) => {
       if (!_.isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];
       }

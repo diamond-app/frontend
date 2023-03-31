@@ -1,12 +1,11 @@
 import { Component } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import * as _ from "lodash";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import { document } from "ngx-bootstrap/utils";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
+import { InfiniteScroller } from "src/app/infinite-scroller";
+import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "diamond-posts",
@@ -57,7 +56,6 @@ export class DiamondPostsComponent {
     const lastPostHashHex = this.pagedKeys[page];
     return this.backendApi
       .GetDiamondedPosts(
-        this.globalVars.localNode,
         "",
         this.receiverUsername,
         "",

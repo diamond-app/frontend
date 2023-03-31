@@ -1,0 +1,42 @@
+<div class="message-thread-view">
+  <div
+    class="p-2 messages-thread-view__scroll-container custom-scrollbar d-flex flex-column-reverse"
+    [ngClass]="{ 'justify-content-center': loading }"
+    #scrollContainer
+    (scroll)="debouncedOnScroll($event)"
+  >
+    <simple-center-loader *ngIf="loading; else threadList"></simple-center-loader>
+
+    <ng-template #threadList>
+      <div
+        *ngFor="let message of this.threadMessages; let index = index"
+        [ngClass]="{ 'mt-40px': index === threadMessages.length - 1 && !loadingMore }"
+      >
+        <message-bubble [message]="message" [publicKeyToProfileMap]="publicKeyToProfileMap"></message-bubble>
+      </div>
+
+      <div class="text-center py-10px messages-thread-view__loader" *ngIf="loadingMore">
+        <simple-center-loader [height]="100" [diamondHeight]="40" [hideLoadingText]="true"></simple-center-loader>
+      </div>
+    </ng-template>
+  </div>
+  <div class="border-top border-bottom messages-thread-view__message-builder d-flex align-items-end">
+    <textarea
+      class="w-100"
+      name="chatMessage"
+      placeholder="Write message here..."
+      (keypress)="this.onTextAreaKeyPress($event)"
+      [(ngModel)]="this.messageText"
+    ></textarea>
+    <div class="d-flex p-2" [ngClass]="{ 'align-items-center h-100': globalVars.isMobile() }">
+      <button
+        type="submit"
+        class="ml-auto btn btn-primary"
+        [disabled]="this.isSendingMessage"
+        (click)="this.submitMessage()"
+      >
+        {{ this.isSendingMessage ? "Sending..." : "Send" }}
+      </button>
+    </div>
+  </div>
+</div>

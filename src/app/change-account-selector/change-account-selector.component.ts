@@ -1,7 +1,9 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
+import { identity, User } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BackendApiService, User } from "../backend-api.service";
+import { from } from "rxjs";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { IdentityService } from "../identity.service";
 
@@ -27,10 +29,9 @@ export class ChangeAccountSelectorComponent {
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
-
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
-      const users = Object.keys(res?.users || {});
+    from(identity.logout()).subscribe(() => {
+      const { currentUser, alternateUsers } = identity.snapshot();
+      const users = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
 
       if (!users.length) {
         this.globalVars.userList = [];
@@ -47,7 +48,6 @@ export class ChangeAccountSelectorComponent {
         this.setUser(null);
       }
 
-      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
       this.globalVars.updateEverything().add(() => {
         if (!this.userInTutorial) {
           this.goHome();
@@ -58,7 +58,6 @@ export class ChangeAccountSelectorComponent {
 
   _switchToUser(user) {
     this.setUser(user);
-    this.globalVars.messageResponse = null;
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
     this.globalVars.updateEverything().add(() => {

@@ -7,7 +7,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2020",
+    "module": "esnext",
     "moduleResolution": "node",
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
@@ -22,32 +22,12 @@
     ],
     "lib": [
       "es2018",
-      "dom"
+      "dom",
+      "ES2020.BigInt"
     ],
     "paths": {
-      "models": [
-        "dist/models"
-      ],
-      "models/*": [
-        "dist/models/*"
-      ],
-      "crypto": [
-        "./node_modules/crypto-browserify"
-      ],
-      "stream": [
-        "./node_modules/stream-browserify"
-      ],
-      "assert": [
-        "./node_modules/assert"
-      ],
-      "http": [
-        "./node_modules/stream-http"
-      ],
-      "https": [
-        "./node_modules/https-browserify"
-      ],
-      "os": [
-        "./node_modules/os-browserify"
+      "models": ["dist/models"],
+      "models/*": ["dist/models/*"
       ]
     },
     "plugins": [

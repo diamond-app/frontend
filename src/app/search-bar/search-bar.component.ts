@@ -64,7 +64,7 @@ export class SearchBarComponent implements OnInit {
 
     // If we are searching for a public key, call get single profile with the public key.
     if (this.globalVars.isMaybePublicKey(requestedSearchText)) {
-      return this.backendApi.GetSingleProfile(this.globalVars.localNode, requestedSearchText, "").subscribe(
+      return this.backendApi.GetSingleProfile(requestedSearchText, "").subscribe(
         (res) => {
           this.tracking.log("search : creators : public-key");
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
@@ -101,7 +101,6 @@ export class SearchBarComponent implements OnInit {
 
     return this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         this.searchText.trim().replace(/^@/, "") /*UsernamePrefix*/,

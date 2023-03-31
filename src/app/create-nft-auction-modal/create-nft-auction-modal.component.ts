@@ -118,15 +118,13 @@ export class CreateNftAuctionModalComponent implements OnInit {
           if (val >= 0) {
             return this.backendApi
               .UpdateNFT(
-                this.globalVars.localNode,
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 this.post.PostHashHex,
                 val + 1,
                 true,
                 Math.trunc(this.minBidAmountDESO * 1e9),
                 this.isBuyNow,
-                Math.trunc(this.buyNowPriceDESO * 1e9),
-                this.globalVars.defaultFeeRateNanosPerKB
+                Math.trunc(this.buyNowPriceDESO * 1e9)
               )
               .pipe(
                 map((res) => {

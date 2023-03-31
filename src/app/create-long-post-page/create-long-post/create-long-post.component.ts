@@ -3,6 +3,7 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { waitForTransactionFound } from "deso-protocol";
 import { escape, has } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
@@ -10,7 +11,6 @@ import "quill-mention";
 import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { environment } from "src/environments/environment";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
 
 const RANDOM_MOVIE_QUOTES = [
@@ -115,11 +115,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       },
       renderItem: (item: MentionRenderItem) => {
         const profile = this.profilesByPublicKey[item.id];
-        const profPicURL = this.backendApi.GetSingleProfilePictureURL(
-          this.globalVars.localNode,
-          profile.PublicKeyBase58Check ?? "",
-          `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`
-        );
+        const profPicURL = this.backendApi.GetSingleProfilePictureURL(profile.PublicKeyBase58Check);
         return `<div class="menu-item">
           <div class="d-flex align-items-center">
             <img src="${escape(profPicURL)}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
@@ -181,7 +177,6 @@ export class CreateLongPostComponent implements AfterViewInit {
   async getUsersFromMentionPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
@@ -200,7 +195,6 @@ export class CreateLongPostComponent implements AfterViewInit {
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
     return this.backendApi
       .GetSinglePost(
-        this.globalVars.localNode,
         blogPostHashHex /*PostHashHex*/,
         this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
         false /*FetchParents */,
@@ -227,7 +221,7 @@ export class CreateLongPostComponent implements AfterViewInit {
         if (has(op, "insert.image") && op.insert.image.substring(0, 5) === "data:") {
           const newFile = dataURLtoFile(op.insert.image, "uploaded_image");
           const res = await this.backendApi
-            .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, newFile)
+            .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, newFile)
             .toPromise();
           op.insert.image = res.ImageURL;
         }
@@ -339,23 +333,19 @@ export class CreateLongPostComponent implements AfterViewInit {
       const permalink = `${window.location.origin}/u/${currentUserProfile.Username}/blog/${titleSlug}`;
       const postTx = await this.backendApi
         .SubmitPost(
-          this.globalVars.localNode,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
           this.editPostHashHex ?? "" /*PostHashHexToModify*/,
           "" /*ParentPostHashHex*/,
-          "" /*Title*/,
           {
             Body: `${postExtraData.Title}\n\n${postExtraData.Description}\n\nView this post at ${permalink}${
               entities ? `\n\nMentions: ${entities}` : ""
             }\n\n#blog`,
             ImageURLs: postExtraData.CoverImage ? [postExtraData.CoverImage] : [],
+            VideoURLs: null,
           } /*BodyObj*/,
           "" /*RepostedPostHashHex*/,
           postExtraData /*PostExtraData*/,
-          "" /*Sub*/,
-          false /*IsHidden*/,
-          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-          false
+          false /*IsHidden*/
         )
         .toPromise();
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
@@ -365,7 +355,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
-        await this.globalVars.waitForTransaction(postTx.TxnHashHex);
+        await waitForTransactionFound(postTx.TxnHashHex);
 
         const blogSlugMapJSON = JSON.stringify({
           ...existingSlugMappings,
@@ -374,8 +364,6 @@ export class CreateLongPostComponent implements AfterViewInit {
 
         await this.backendApi
           .UpdateProfile(
-            this.globalVars.localNode,
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             "",
             "",
@@ -384,7 +372,6 @@ export class CreateLongPostComponent implements AfterViewInit {
             this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
             1.25 * 100 * 100,
             false,
-            this.globalVars.feeRateDeSoPerKB * 1e9,
             { BlogSlugMap: blogSlugMapJSON }
           )
           .toPromise();
@@ -424,7 +411,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     }
 
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => res.ImageURL)
       .catch((err) => {

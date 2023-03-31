@@ -111,7 +111,7 @@ export class PlaceBidComponent implements OnInit {
         }),
       [this.sortByField],
       [this.sortByOrder]
-    );
+    ) as Array<NFTEntryResponse>;
   }
 
   updateBidAmountUSD(deSoAmount) {
@@ -154,12 +154,10 @@ export class PlaceBidComponent implements OnInit {
     this.placingBids = true;
     this.backendApi
       .CreateNFTBid(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        Math.trunc(this.bidAmountDeSo * 1e9),
-        this.globalVars.defaultFeeRateNanosPerKB
+        Math.trunc(this.bidAmountDeSo * 1e9)
       )
       .subscribe(
         (res) => {
@@ -279,7 +277,11 @@ export class PlaceBidComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.biddableSerialNumbers = _.orderBy(this.biddableSerialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.biddableSerialNumbers = _.orderBy(
+      this.biddableSerialNumbers,
+      [this.sortByField],
+      [this.sortByOrder]
+    ) as Array<NFTEntryResponse>;
   }
 
   bidAmountUSDFormatted() {

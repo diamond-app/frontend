@@ -1,19 +1,19 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { PostEntryResponse } from "deso-protocol";
+import { BsModalRef } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { finalize, map, switchMap, tap } from "rxjs/operators";
 import {
   AssociationReactionValue,
   AssociationType,
   BackendApiService,
   PostAssociationCountsResponse,
-  PostEntryResponse,
   ProfileEntryResponse,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { orderBy } from "lodash";
-import { finalize, map, switchMap, tap } from "rxjs/operators";
-import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "reactions-details",
@@ -52,22 +52,13 @@ export class ReactionsDetailsComponent implements OnInit {
     this.loading = true;
 
     this.backendApi
-      .GetSinglePost(
-        this.globalVars.localNode,
-        this.postHashHex,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        false,
-        0,
-        0,
-        false
-      )
+      .GetSinglePost(this.postHashHex, this.globalVars.loggedInUser?.PublicKeyBase58Check, false, 0, 0, false)
       .pipe(
         tap((res) => {
           this.post = res.PostFound;
         }),
         switchMap((res) => {
           return this.backendApi.GetPostAssociationsCounts(
-            this.globalVars.localNode,
             res.PostFound,
             AssociationType.reaction,
             Object.values(AssociationReactionValue),
@@ -98,7 +89,6 @@ export class ReactionsDetailsComponent implements OnInit {
 
     this.backendApi
       .GetAllPostAssociations(
-        this.globalVars.localNode,
         this.postHashHex,
         AssociationType.reaction,
         undefined,
@@ -115,7 +105,7 @@ export class ReactionsDetailsComponent implements OnInit {
             })),
             ({ profile }) => {
               const desoLockedNanos = profile?.CoinEntry?.DeSoLockedNanos || 0;
-              return ((profile as any)?.DESOBalanceNanos || 0) + desoLockedNanos;
+              return (profile?.DESOBalanceNanos || 0) + desoLockedNanos;
             },
             ["desc"]
           );

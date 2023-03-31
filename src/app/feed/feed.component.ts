@@ -160,28 +160,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnInit() {
     this._initializeFeeds();
     this.titleService.setTitle(`Feed - ${environment.node.name}`);
-    // this.fetchUserReferrals();
-  }
-
-  fetchUserReferrals() {
-    if (this.globalVars.loggedInUser) {
-      this.backendApi
-        .GetReferralInfoForUser(
-          environment.verificationEndpointHostname,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check
-        )
-        .subscribe(
-          (res: any) => {
-            const filteredReferrals = _.filter(res.ReferralInfoResponses, { IsActive: true });
-            if (filteredReferrals.length > 0) {
-              this.userReferral = _.orderBy(filteredReferrals, ["Info.ReferreeAmountUSDCents"], ["desc"])[0];
-            }
-          },
-          (err: any) => {
-            console.log(err);
-          }
-        );
-    }
   }
 
   ngAfterViewChecked() {
@@ -433,7 +411,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     return this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "", // Blank orderBy so we don't sort twice
@@ -484,7 +461,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.isLoadingFollowingOnPageLoad = true;
     this.backendApi
       .GetFollows(
-        this.appData.localNode,
         "" /* username */,
         this.appData.loggedInUser.PublicKeyBase58Check,
         false /* getEntriesFollowingPublicKey */
@@ -519,7 +495,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
     return this.backendApi
       .GetPostsStateless(
-        this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
         "newest" /*OrderBy*/,
@@ -578,7 +553,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
+      .GetHotFeed(readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
       .pipe(
         tap(
           (res) => {
@@ -628,13 +603,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");
     return this.backendApi
-      .GetHotFeed(
-        this.globalVars.localNode,
-        readerPubKey,
-        tagFeedPostHashes,
-        this.FeedComponent.NUM_TO_FETCH,
-        "#" + this.tag.toLowerCase()
-      )
+      .GetHotFeed(readerPubKey, tagFeedPostHashes, this.FeedComponent.NUM_TO_FETCH, "#" + this.tag.toLowerCase())
       .pipe(
         tap(
           (res) => {

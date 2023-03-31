@@ -1,6 +1,7 @@
 import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { decryptChatMessage, identity } from "deso-protocol";
+import { from, Observable, Subject } from "rxjs";
 import { TrackingService } from "src/app/tracking.service";
 import { v4 as uuid } from "uuid";
 
@@ -324,16 +325,34 @@ export class IdentityService {
     return this.send("encrypt", payload);
   }
 
-  decrypt(payload: {
-    accessLevel: number;
-    accessLevelHmac: string;
-    encryptedSeedHex: string;
-    encryptedMessages: any;
-    derivedPublicKeyBase58Check: string | undefined;
-    ownerPublicKeyBase58Check: string;
-    encryptedMessagingKeyRandomness: string | undefined;
-  }): Observable<any> {
-    return this.send("decrypt", payload);
+  decrypt(encryptedMessages: any): Observable<any> {
+    const { currentUser } = identity.snapshot();
+
+    if (!currentUser) {
+      throw new Error("you must be logged in to decrypt messages");
+    }
+
+    return from(
+      Promise.all(
+        encryptedMessages.map(async ({ EncryptedHex, PublicKey }) => {
+          const plaintext = decryptChatMessage(
+            currentUser.primaryDerivedKey.messagingPrivateKey,
+            PublicKey,
+            EncryptedHex
+          );
+          return [EncryptedHex, plaintext];
+        })
+      ).then((decryptedHexes: any) => {
+        let res: { [k: string]: string } = {};
+
+        decryptedHexes.forEach((decryptedHex) => {
+          const [key, value] = decryptedHex;
+          res[key] = value;
+        });
+
+        return res;
+      })
+    );
   }
 
   jwt(payload: { accessLevel: number; accessLevelHmac: string; encryptedSeedHex: string }): Observable<any> {
@@ -511,7 +530,5 @@ export class IdentityService {
   }
 
   // Respond to a received message
-  private respond(window: Window, id: string, payload: any): void {
-    window.postMessage({ id, service: "identity", payload }, "*");
-  }
+  private respond(window: Window, id: string, payload: any): void {}
 }

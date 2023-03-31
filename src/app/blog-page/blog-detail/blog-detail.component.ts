@@ -6,6 +6,8 @@ import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 import {
   AssociationReactionValue,
   AssociationType,
@@ -24,8 +26,6 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { forkJoin, of } from "rxjs";
-import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "app-blog-detail",
@@ -159,7 +159,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   getPost(postHashHex: string, commentOffset = 0, commentLimit = 20) {
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       postHashHex,
       this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
       false /*FetchParents */,
@@ -386,28 +385,23 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
         this.backendApi
           .SubmitPost(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
-            "" /*Title*/,
             {
               Body: this.currentPost.Body,
               ImageURLs: this.currentPost.ImageURLs,
+              VideoURLs: [],
             } /*BodyObj*/,
             "",
             this.currentPost.PostExtraData,
-            "" /*Sub*/,
-            isHidden /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            isHidden /*IsHidden*/
           )
           .subscribe(
             (response) => {
               this.tracking.log("post : hide");
               this.backendApi
                 .UpdateProfile(
-                  this.globalVars.localNode,
-                  this.globalVars.localNode,
                   this.globalVars.loggedInUser?.PublicKeyBase58Check,
                   "",
                   "",
@@ -416,7 +410,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
                   this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
                   1.25 * 100 * 100,
                   false,
-                  this.globalVars.feeRateDeSoPerKB * 1e9,
                   { BlogSlugMap: blogSlugMapJSON }
                 )
                 .subscribe(() => {
@@ -449,7 +442,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       if (response.isConfirmed) {
         this.backendApi
           .BlockPublicKey(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PosterPublicKeyBase58Check
           )
@@ -484,7 +476,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     try {
       if (username) {
-        const { Profile } = await this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username).toPromise();
+        const { Profile } = await this.backendApi.GetSingleProfile("", username).toPromise();
         if (!Profile?.ExtraData?.BlogSlugMap) {
           throw new Error(`No slug mapping for username ${username}`);
         }
@@ -507,7 +499,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   _fetchRecentPosts(profile: ProfileEntryResponse) {
     this.backendApi
       .GetPostsForPublicKey(
-        this.globalVars.localNode,
         "",
         profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
@@ -563,7 +554,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   private getPostReactionCounts() {
     return this.backendApi.GetPostAssociationsCounts(
-      this.globalVars.localNode,
       this.currentPost,
       AssociationType.reaction,
       Object.values(AssociationReactionValue)
@@ -579,7 +569,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.currentPostHashHex,
       AssociationType.reaction,
       this.globalVars.loggedInUser.PublicKeyBase58Check,

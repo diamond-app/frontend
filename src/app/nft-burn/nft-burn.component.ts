@@ -90,11 +90,9 @@ export class NftBurnComponent implements OnInit {
       if (res.isConfirmed) {
         this.backendApi
           .BurnNFT(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.post.PostHashHex,
-            this.selectedSerialNumber.SerialNumber,
-            this.globalVars.defaultFeeRateNanosPerKB
+            this.selectedSerialNumber.SerialNumber
           )
           .subscribe(
             (res) => {

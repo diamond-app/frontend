@@ -65,7 +65,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
     return this.backendApi
       .GetProfiles(
-        this.appData.localNode,
         fetchPubKey /*PublicKeyBase58Check*/,
         null /*Username*/,
         null /*UsernamePrefix*/,

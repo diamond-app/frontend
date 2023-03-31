@@ -51,22 +51,13 @@ export class PollDetailsComponent implements OnInit {
     this.loading = true;
 
     this.backendApi
-      .GetSinglePost(
-        this.globalVars.localNode,
-        this.postHashHex,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        false,
-        0,
-        0,
-        false
-      )
+      .GetSinglePost(this.postHashHex, this.globalVars.loggedInUser?.PublicKeyBase58Check, false, 0, 0, false)
       .pipe(
         tap((res) => {
           this.post = res.PostFound;
         }),
         switchMap((res) => {
           return this.backendApi.GetPostAssociationsCounts(
-            this.globalVars.localNode,
             res.PostFound,
             AssociationType.pollResponse,
             JSON.parse(this.post.PostExtraData.PollOptions),
@@ -97,7 +88,6 @@ export class PollDetailsComponent implements OnInit {
 
     this.backendApi
       .GetAllPostAssociations(
-        this.globalVars.localNode,
         this.postHashHex,
         AssociationType.pollResponse,
         undefined,
