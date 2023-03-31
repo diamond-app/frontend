@@ -5,10 +5,7 @@ import { THEMES, ACTIVE_THEME, Theme } from "./symbols";
 export class ThemeService {
   themeChange = new EventEmitter<Theme>();
 
-  constructor(
-    @Inject(THEMES) public themes: Theme[],
-    @Inject(ACTIVE_THEME) public theme: string
-  ) {}
+  constructor(@Inject(THEMES) public themes: Theme[], @Inject(ACTIVE_THEME) public theme: string) {}
 
   // Called in app-component ngOnInit
   init(): void {

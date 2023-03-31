@@ -86,21 +86,21 @@
   <div *ngIf="isOpen.minerInfo" class="ml-15px">
     Miner Status:
     <div
-      *ngIf="globalVars.nodeInfo.MinerPublicKeys != null && globalVars.nodeInfo.MinerPublicKeys.length > 0"
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys !== null && globalVars.nodeInfo.MinerPublicKeys.length > 0"
       class="font-weight-bold"
       style="color: green"
     >
       Currently Mining
     </div>
     <div
-      *ngIf="globalVars.nodeInfo.MinerPublicKeys == null || globalVars.nodeInfo.MinerPublicKeys.length == 0"
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys === null || globalVars.nodeInfo.MinerPublicKeys.length === 0"
       class="font-weight-bold"
       style="color: red"
     >
       Not Mining
     </div>
     Miner Public Keys:
-    <div *ngIf="globalVars.nodeInfo.MinerPublicKeys != null && globalVars.nodeInfo.MinerPublicKeys.length > 0">
+    <div *ngIf="globalVars.nodeInfo.MinerPublicKeys !== null && globalVars.nodeInfo.MinerPublicKeys.length > 0">
       <div *ngFor="let key of globalVars.nodeInfo.MinerPublicKeys; let ii = index" class="fc-blue d-flex">
         {{ key.slice(0, 15) }}...
         <div
@@ -115,7 +115,7 @@
       </div>
     </div>
     <div
-      *ngIf="globalVars.nodeInfo.MinerPublicKeys == null || globalVars.nodeInfo.MinerPublicKeys.length == 0"
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys === null || globalVars.nodeInfo.MinerPublicKeys.length === 0"
       class="fc-blue"
     >
       No miner public keys found.
@@ -156,11 +156,7 @@
       class="fc-blue border border-color-grey px-5px pt-5px"
       style="max-height: 150px; overflow-y: scroll; width: fit-content"
     >
-      <div
-        *ngIf="
-          globalVars.nodeInfo.DeSoOutboundPeers == null || globalVars.nodeInfo.DeSoOutboundPeers.length === 0
-        "
-      >
+      <div *ngIf="globalVars.nodeInfo.DeSoOutboundPeers === null || globalVars.nodeInfo.DeSoOutboundPeers.length === 0">
         Not connected to any outbound peers.
       </div>
       <div *ngFor="let peer of globalVars.nodeInfo.DeSoOutboundPeers; index as peerIndex">
@@ -194,11 +190,7 @@
       class="fc-blue border border-color-grey px-5px pt-5px"
       style="max-height: 150px; overflow-y: scroll; width: fit-content"
     >
-      <div
-        *ngIf="
-          globalVars.nodeInfo.DeSoInboundPeers == null || globalVars.nodeInfo.DeSoInboundPeers.length === 0
-        "
-      >
+      <div *ngIf="globalVars.nodeInfo.DeSoInboundPeers === null || globalVars.nodeInfo.DeSoInboundPeers.length === 0">
         Not connected to any inbound peers.
       </div>
       <div *ngFor="let peer of globalVars.nodeInfo.DeSoInboundPeers; index as peerIndex">
@@ -234,8 +226,7 @@
     >
       <div
         *ngIf="
-          globalVars.nodeInfo.DeSoUnconnectedPeers == null ||
-          globalVars.nodeInfo.DeSoUnconnectedPeers.length === 0
+          globalVars.nodeInfo.DeSoUnconnectedPeers === null || globalVars.nodeInfo.DeSoUnconnectedPeers.length === 0
         "
       >
         No other peers available.
@@ -268,15 +259,8 @@
     </div>
     Manual Connection:
     <div class="fc-blue d-flex align-items-center">
-      <input
-        [(ngModel)]="manualDeSoPeer"
-        placeholder="Enter an address."
-        style="width: 200px; border-radius: 3px"
-      />
-      <div
-        (click)="connectDeSoPeer(manualDeSoPeer)"
-        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
-      >
+      <input [(ngModel)]="manualDeSoPeer" placeholder="Enter an address." style="width: 200px; border-radius: 3px" />
+      <div (click)="connectDeSoPeer(manualDeSoPeer)" class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px">
         Connect
       </div>
     </div>

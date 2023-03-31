@@ -37,7 +37,7 @@ export class QuoteRepostsDetailsComponent implements OnInit {
 
   getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     this.loading = true;

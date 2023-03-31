@@ -196,7 +196,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     const startIdx = page * CreatorProfileNftsComponent.PAGE_SIZE;

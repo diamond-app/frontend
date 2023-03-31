@@ -52,7 +52,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
 

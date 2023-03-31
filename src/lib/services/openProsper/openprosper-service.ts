@@ -59,7 +59,6 @@ const API_HEADERS = {
   providedIn: "root",
 })
 export class OpenProsperService {
-
   constructor(private httpClient: HttpClient) {}
 
   getTrendingHashtagsPage(): Observable<OpenProsperHashtags[]> {

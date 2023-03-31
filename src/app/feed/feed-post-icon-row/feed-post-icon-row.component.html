@@ -4,7 +4,7 @@
     class="reactions-summary__container d-inline-flex text-secondary pt-10px"
     (click)="openReactionsDetails($event)"
   >
-    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue: sortReactionsByCount">
+    <ng-container *ngFor="let reaction of postReactionCounts.Counts | keyvalue : sortReactionsByCount">
       <div
         *ngIf="reaction.value > 0 && allowedReactions.includes(reaction.key)"
         class="reaction-summary__reaction-item mr-5px"

@@ -221,7 +221,10 @@
         </div>
       </div>
     </div>
-    <div class="d-flex align-items-center cursor-pointer pt-10px fs-16px fc-muted" (click)="showAdvancedRoyalties = !showAdvancedRoyalties">
+    <div
+      class="d-flex align-items-center cursor-pointer pt-10px fs-16px fc-muted"
+      (click)="showAdvancedRoyalties = !showAdvancedRoyalties"
+    >
       Advanced
       <i-feather *ngIf="!showAdvancedRoyalties" name="chevron-down" class="fs-0px fc-muted feather-medium"></i-feather>
       <i-feather *ngIf="showAdvancedRoyalties" name="chevron-up" class="fs-0px fc-muted feather-medium"></i-feather>
@@ -301,7 +304,9 @@
             </div>
           </div>
           <div
-            *ngIf="globalVars.isMobile() && additionalDESORoyalties.length > 0 && ii < additionalDESORoyalties.length - 1"
+            *ngIf="
+              globalVars.isMobile() && additionalDESORoyalties.length > 0 && ii < additionalDESORoyalties.length - 1
+            "
             class="w-100 border-bottom my-15px"
           ></div>
         </div>
@@ -393,7 +398,9 @@
             </div>
           </div>
           <div
-            *ngIf="globalVars.isMobile() && additionalCoinRoyalties.length > 0 && ii < additionalCoinRoyalties.length - 1"
+            *ngIf="
+              globalVars.isMobile() && additionalCoinRoyalties.length > 0 && ii < additionalCoinRoyalties.length - 1
+            "
             class="w-100 border-bottom my-15px"
           ></div>
         </div>
@@ -404,8 +411,8 @@
           class="fc-red"
           *ngIf="additionalCoinRoyalty.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
         >
-          Cannot specify an additional royalty to the post creator's coin. Please specify above in the Coin-Holder Royalty
-          section.
+          Cannot specify an additional royalty to the post creator's coin. Please specify above in the Coin-Holder
+          Royalty section.
         </div>
         <div class="fc-red" *ngIf="additionalCoinRoyalty.PublicKeyBase58Check && !additionalCoinRoyalty.Username">
           Additional Coin Royalties may only be specified for public key's that already have a profile.

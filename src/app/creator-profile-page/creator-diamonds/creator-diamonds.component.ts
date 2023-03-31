@@ -44,50 +44,48 @@ export class CreatorDiamondsComponent implements OnInit {
   fetchDiamonds() {
     this.isLoading = true;
 
-    return this.backendApi
-      .GetDiamondsForPublicKey(this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
-      .pipe(
-        tap((res) => {
-          this.diamondSummaryList = res.DiamondSenderSummaryResponses;
+    return this.backendApi.GetDiamondsForPublicKey(this.profile.PublicKeyBase58Check, this.showDiamondsGiven).pipe(
+      tap((res) => {
+        this.diamondSummaryList = res.DiamondSenderSummaryResponses;
 
-          // Calculate the number of diamonds that have come from
-          // anonymous sources, and reformat the list to remove the
-          // anonymous entries.
-          let diamondListWithoutAnon = [];
-          for (let ii = 0; ii < this.diamondSummaryList?.length; ii++) {
-            if (
-              !this.diamondSummaryList[ii].ProfileEntryResponse &&
-              this.diamondSummaryList[ii].SenderPublicKeyBase58Check
-            ) {
-              this.totalAnonDiamonds += this.diamondSummaryList[ii].TotalDiamonds;
-              this.totalAnonDiamondValue += this.sumDiamondValueForUser(this.diamondSummaryList[ii]);
+        // Calculate the number of diamonds that have come from
+        // anonymous sources, and reformat the list to remove the
+        // anonymous entries.
+        let diamondListWithoutAnon = [];
+        for (let ii = 0; ii < this.diamondSummaryList?.length; ii++) {
+          if (
+            !this.diamondSummaryList[ii].ProfileEntryResponse &&
+            this.diamondSummaryList[ii].SenderPublicKeyBase58Check
+          ) {
+            this.totalAnonDiamonds += this.diamondSummaryList[ii].TotalDiamonds;
+            this.totalAnonDiamondValue += this.sumDiamondValueForUser(this.diamondSummaryList[ii]);
 
-              if (this.diamondSummaryList[ii].HighestDiamondLevel > this.highestAnonDiamondLevel) {
-                this.highestAnonDiamondLevel = this.diamondSummaryList[ii].HighestDiamondLevel;
-              }
-            } else {
-              diamondListWithoutAnon.push(this.diamondSummaryList[ii]);
+            if (this.diamondSummaryList[ii].HighestDiamondLevel > this.highestAnonDiamondLevel) {
+              this.highestAnonDiamondLevel = this.diamondSummaryList[ii].HighestDiamondLevel;
             }
+          } else {
+            diamondListWithoutAnon.push(this.diamondSummaryList[ii]);
           }
-          this.diamondSummaryList = diamondListWithoutAnon;
+        }
+        this.diamondSummaryList = diamondListWithoutAnon;
 
-          if (this.totalAnonDiamonds) {
-            this.diamondSummaryList.push({ anonDiamondsRow: true });
-          }
+        if (this.totalAnonDiamonds) {
+          this.diamondSummaryList.push({ anonDiamondsRow: true });
+        }
 
-          if (this.diamondSummaryList.length) {
-            this.diamondSummaryList.push({ totalRow: true });
-          }
-          this.totalDiamonds = res.TotalDiamonds;
-        }),
-        catchError((err) => {
-          this.globalVars._alertError(this.backendApi.parseProfileError(err));
-          return of();
-        }),
-        finalize(() => {
-          this.isLoading = false;
-        })
-      );
+        if (this.diamondSummaryList.length) {
+          this.diamondSummaryList.push({ totalRow: true });
+        }
+        this.totalDiamonds = res.TotalDiamonds;
+      }),
+      catchError((err) => {
+        this.globalVars._alertError(this.backendApi.parseProfileError(err));
+        return of();
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    );
   }
   counter(num: number) {
     return Array(num);

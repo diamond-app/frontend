@@ -4,19 +4,24 @@
       <div class="mobile-creator-coin-info mr-2" *ngIf="creatorCoinTemplate">
         <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
       </div>
-      <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
+      <div
+        [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''"
+        *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock"
+      >
         <!-- Loading-->
         <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only">{{'follow_button.loading' | transloco}}</span>
+          <span class="sr-only">{{ "follow_button.loading" | transloco }}</span>
         </div>
       </div>
       <ng-template #beingCalledElseBlock>
         <!-- Actual link-->
         <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="isFollowing; else isFollowingElseBlock">
-          <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">{{ 'follow_button.unfollow' | transloco }}</a>
+          <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">
+            {{ "follow_button.unfollow" | transloco }}
+          </a>
         </div>
         <ng-template #isFollowingElseBlock>
-          <a class="" [ngClass]="followLinkClass" (click)="follow($event)">{{'follow_button.follow' | transloco}}</a>
+          <a class="" [ngClass]="followLinkClass" (click)="follow($event)">{{ "follow_button.follow" | transloco }}</a>
         </ng-template>
       </ng-template>
     </div>
@@ -25,10 +30,14 @@
   <ng-template #displayAsLinkElseBlock>
     <!-- Display as button -->
     <div *ngIf="isFollowing; else elseBlock">
-      <button [ngClass]="getUnfollowButtonClasses()" (click)="unfollow($event)">{{'follow_button.unfollow' | transloco}}</button>
+      <button [ngClass]="getUnfollowButtonClasses()" (click)="unfollow($event)">
+        {{ "follow_button.unfollow" | transloco }}
+      </button>
     </div>
     <ng-template #elseBlock>
-      <button [ngClass]="getFollowButtonClasses()" (click)="follow($event)">{{'follow_button.follow' | transloco}}</button>
+      <button [ngClass]="getFollowButtonClasses()" (click)="follow($event)">
+        {{ "follow_button.follow" | transloco }}
+      </button>
     </ng-template>
   </ng-template>
 </div>

@@ -154,7 +154,7 @@
         <div class="d-flex justify-content-center" [ngClass]="{ 'justify-content-between': globalVars.isMobile() }">
           <a
             class="link--unstyled"
-            *ngIf="followerCount != null"
+            *ngIf="followerCount !== null"
             [routerLink]="AppRoutingModule.userFollowersPath(profile.Username)"
             queryParamsHandling="merge"
           >
@@ -164,7 +164,7 @@
 
           <a
             class="link--unstyled"
-            *ngIf="followingCount != null"
+            *ngIf="followingCount !== null"
             [routerLink]="AppRoutingModule.userFollowingPath(profile.Username)"
             queryParamsHandling="merge"
           >
@@ -172,7 +172,7 @@
             <span class="fc-muted">{{ "creator_profile_top_card.following" | transloco }}&nbsp;&nbsp;&nbsp;</span>
           </a>
           <div>
-            <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+            <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number : "0.0-9" }}%</span>
             <span class="fc-muted">&nbsp;FR</span>
           </div>
         </div>

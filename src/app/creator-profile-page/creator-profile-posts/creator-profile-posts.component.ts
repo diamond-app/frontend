@@ -77,7 +77,7 @@ export class CreatorProfilePostsComponent {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;
@@ -119,7 +119,7 @@ export class CreatorProfilePostsComponent {
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+        let currentPost = data as any as PostEntryResponse;
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];

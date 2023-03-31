@@ -12,9 +12,11 @@
             [nftProfileUrl]="creatorCoinTrade.creatorProfile?.ExtraData?.NFTProfilePictureUrl"
           ></a>
           <div class="d-flex flex-column justify-content-center fc-default">
-            <div class="fs-24px">{{globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username)}} coin</div>
+            <div class="fs-24px">
+              {{ globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username) }} coin
+            </div>
             <div class="fs-17px">
-              <span>≈{{ globalVars.nanosToUSD(creatorCoinTrade.creatorProfile.CoinPriceDeSoNanos, 2) }} </span>
+              <span>≈{{ globalVars.nanosToUSD(creatorCoinTrade.creatorProfile.CoinPriceDeSoNanos, 2) }}</span>
               <span class="fc-muted">Coin Price</span>
             </div>
           </div>
@@ -31,7 +33,10 @@
       ></tab-selector>
 
       <!--Preview Header-->
-      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN && !inTutorial" class="mt-5px m-16px mint-nft__title">
+      <div
+        *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN && !inTutorial"
+        class="mt-5px m-16px mint-nft__title"
+      >
         Confirm Operation
       </div>
 
@@ -46,12 +51,14 @@
             [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
             [nftProfileUrl]="creatorCoinTrade.creatorProfile?.ExtraData?.NFTProfilePictureUrl"
           ></div>
-          <div class="ml-16px fs-20px font-weight-bold">{{ creatorCoinTrade.tradeType }} {{ creatorCoinTrade.creatorProfile.Username }} Coin</div>
+          <div class="ml-16px fs-20px font-weight-bold">
+            {{ creatorCoinTrade.tradeType }} {{ creatorCoinTrade.creatorProfile.Username }} Coin
+          </div>
         </div>
       </div>
 
       <!-- Content -->
-      <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_FORM_SCREEN">
         <trade-creator-form
           [inTutorial]="inTutorial"
           [creatorCoinTrade]="creatorCoinTrade"
@@ -62,7 +69,7 @@
         ></trade-creator-form>
       </div>
 
-      <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN">
         <trade-creator-preview
           [inTutorial]="inTutorial"
           [creatorCoinTrade]="creatorCoinTrade"
@@ -73,7 +80,7 @@
         ></trade-creator-preview>
       </div>
 
-      <div *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_COMPLETE_SCREEN">
         <trade-creator-complete
           [creatorCoinTrade]="creatorCoinTrade"
           (tradeAgainButtonClicked)="_onBackButtonClicked()"

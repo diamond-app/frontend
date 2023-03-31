@@ -37,7 +37,7 @@
   </div>
 </div>
 <div class="place-bid-rows mb-30px" *ngIf="!buyingNow">
-<!--    *ngFor="let nft of sortedSerialNumbers"-->
+  <!--    *ngFor="let nft of sortedSerialNumbers"-->
   <div
     #uiScroll
     *uiScroll="let nft of datasource"
@@ -46,7 +46,8 @@
   >
     <div
       [ngClass]="{ 'col-3': columnCount() === 2, 'col-5': columnCount() === 1 }"
-      class="mb-0px d-flex align-items-center">
+      class="mb-0px d-flex align-items-center"
+    >
       <button
         class="checkbox-circle radio mr-10px"
         [ngClass]="{ checked: selectedSerialNumber?.SerialNumber === nft.SerialNumber }"
@@ -57,19 +58,21 @@
     </div>
     <div *ngIf="includeColumn('high')" class="col-4 mb-0px d-flex align-items-center">
       <div>
-        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.HighestBidAmountNanos) }} DESO </div>
-        <div class="text-grey7 d-lg-inline-block d-block">( ~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2) }})</div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.HighestBidAmountNanos) }} DESO</div>
+        <div class="text-grey7 d-lg-inline-block d-block">
+          ( ~{{ globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2) }})
+        </div>
       </div>
     </div>
     <div *ngIf="includeColumn('min')" class="col-5 mb-0px d-flex align-items-center">
       <div>
-        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO</div>
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }})</div>
       </div>
     </div>
     <div *ngIf="includeColumn('buyNow')" class="col-5 mb-0px d-flex align-items-center">
       <div>
-        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO </div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO</div>
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.BuyNowPriceNanos, 2) }})</div>
       </div>
     </div>
@@ -83,4 +86,3 @@
   </div>
   <simple-center-loader *ngIf="buyingNow" [titleLoadingText]="'Processing'"></simple-center-loader>
 </div>
-

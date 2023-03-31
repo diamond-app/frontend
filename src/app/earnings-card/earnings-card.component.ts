@@ -26,8 +26,11 @@ export class EarningsCardComponent implements OnChanges, OnDestroy {
   }
 
   get nftRoyaltiesNanos() {
-    const { NFTOwnSecondarySaleNanos = 0, NFTOtherSecondarySaleNanos = 0, NFTRoyaltySplitSaleNanos = 0 } =
-      this.earningsDetail?.NFTEarningsBreakdown ?? {};
+    const {
+      NFTOwnSecondarySaleNanos = 0,
+      NFTOtherSecondarySaleNanos = 0,
+      NFTRoyaltySplitSaleNanos = 0,
+    } = this.earningsDetail?.NFTEarningsBreakdown ?? {};
     return NFTOwnSecondarySaleNanos + NFTOtherSecondarySaleNanos + NFTRoyaltySplitSaleNanos;
   }
 

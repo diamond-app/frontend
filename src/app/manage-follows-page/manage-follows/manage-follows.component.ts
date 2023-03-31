@@ -44,7 +44,7 @@ export class ManageFollowsComponent implements OnDestroy {
   };
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;

@@ -59,7 +59,7 @@ export class NftShowcaseComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     const startIdx = page * NftShowcaseComponent.PAGE_SIZE;

@@ -77,7 +77,7 @@ export class NftDropMgrComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     const startIdx = page * NftDropMgrComponent.PAGE_SIZE;

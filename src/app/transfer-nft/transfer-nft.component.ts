@@ -175,7 +175,7 @@ export class TransferNftComponent implements OnInit {
   lastPage = null;
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     const startIdx = page * TransferNftComponent.PAGE_SIZE;

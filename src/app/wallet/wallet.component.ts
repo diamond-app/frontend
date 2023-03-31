@@ -445,7 +445,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     if (this.inTutorial) {

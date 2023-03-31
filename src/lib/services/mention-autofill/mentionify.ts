@@ -38,7 +38,7 @@ const properties = [
   "MozTabSize",
 ];
 
-const isFirefox = typeof window !== "undefined" && window["mozInnerScreenX"] != null;
+const isFirefox = typeof window !== "undefined" && window["mozInnerScreenX"] !== null;
 
 /**
  * @param {HTMLTextAreaElement} element

@@ -49,7 +49,7 @@ export class DiamondPostsComponent {
   subscriptions = new Subscription();
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;
@@ -130,7 +130,7 @@ export class DiamondPostsComponent {
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+        let currentPost = data as any as PostEntryResponse;
         if (currentPost.PostHashHex === uiPostParent.PostHashHex) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];

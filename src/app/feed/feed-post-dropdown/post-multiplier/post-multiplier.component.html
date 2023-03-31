@@ -4,34 +4,33 @@
   </div>
 </div>
 <div class="buy-deso__container fc-secondary px-15px pb-15px">
-    <div class="fs-15px font-weight-bold mb-15px px-15px">
-      {{ 'feed_post_dropdown.new_post_multiplier' | transloco }}
-      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
-        <input
-          [(ngModel)]="postMultiplier" type="number" min="0"
-          class="form-control fs-15px lh-15px w-100"
-          placeholder="Enter new hot feed time decay blocks."
-        />
-        <button
-          *ngIf="!updatingPostMultiplier"
-          (click)="updatePostMultiplier()"
-          class="btn btn-outline-primary fs-15px ml-5px"
-          style="width: fit-content"
-        >
-        {{ 'feed_post_dropdown.update' | transloco }}
-        </button>
-        <button
-          *ngIf="updatingPostMultiplier"
-          class="btn btn-dark fs-15px ml-5px"
-          style="width: fit-content" disabled>
-          {{ 'feed_post_dropdown.updating' | transloco }}
-        </button>
-      </div>
-      <div *ngIf="errorUpdatingMultiplier" class="fc-red font-weight-normal">
-        {{ 'feed_post_dropdown.error_updating' | transloco }}
-      </div>
-      <div *ngIf="successfullyUpdatedMultiplier" class="fc-green font-weight-normal">
-        {{ 'feed_post_dropdown.updating_success' | transloco }}
-      </div>
+  <div class="fs-15px font-weight-bold mb-15px px-15px">
+    {{ "feed_post_dropdown.new_post_multiplier" | transloco }}
+    <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+      <input
+        [(ngModel)]="postMultiplier"
+        type="number"
+        min="0"
+        class="form-control fs-15px lh-15px w-100"
+        placeholder="Enter new hot feed time decay blocks."
+      />
+      <button
+        *ngIf="!updatingPostMultiplier"
+        (click)="updatePostMultiplier()"
+        class="btn btn-outline-primary fs-15px ml-5px"
+        style="width: fit-content"
+      >
+        {{ "feed_post_dropdown.update" | transloco }}
+      </button>
+      <button *ngIf="updatingPostMultiplier" class="btn btn-dark fs-15px ml-5px" style="width: fit-content" disabled>
+        {{ "feed_post_dropdown.updating" | transloco }}
+      </button>
     </div>
+    <div *ngIf="errorUpdatingMultiplier" class="fc-red font-weight-normal">
+      {{ "feed_post_dropdown.error_updating" | transloco }}
+    </div>
+    <div *ngIf="successfullyUpdatedMultiplier" class="fc-green font-weight-normal">
+      {{ "feed_post_dropdown.updating_success" | transloco }}
+    </div>
+  </div>
 </div>

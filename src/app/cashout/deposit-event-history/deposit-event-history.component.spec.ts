@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DepositEventHistoryComponent } from './deposit-event-history.component';
+import { DepositEventHistoryComponent } from "./deposit-event-history.component";
 
-describe('DepositEventHistoryComponent', () => {
+describe("DepositEventHistoryComponent", () => {
   let component: DepositEventHistoryComponent;
   let fixture: ComponentFixture<DepositEventHistoryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DepositEventHistoryComponent ]
-    })
-    .compileComponents();
+      declarations: [DepositEventHistoryComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('DepositEventHistoryComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

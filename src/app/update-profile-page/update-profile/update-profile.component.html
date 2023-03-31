@@ -61,7 +61,7 @@
           style="background-repeat: no-repeat; background-position: center; background-size: cover"
         >
           <div>
-            <div *ngIf="profilePicInput != null && profilePicInput.length > 0">
+            <div *ngIf="profilePicInput !== null && profilePicInput.length > 0">
               <div [style.background-image]="'url(' + getProfileImageToShow() + ')'"></div>
               <div *ngIf="profilePicInput">
                 <div class="update-profile__image" [style.background-image]="'url(' + getProfileImageToShow() + ')'">
@@ -115,7 +115,7 @@
             </div>
             <div>
               <div
-                *ngIf="profilePicInput == null || profilePicInput.length == 0"
+                *ngIf="profilePicInput === null || profilePicInput.length === 0"
                 [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
                 class="fs-13px text-grey5 mt-5px d-flex justify-content-center"
               >
@@ -172,12 +172,7 @@
             </div>
             <div class="update-profile__title">Subscribe to email notifications?</div>
             <div class="custom-control custom-switch custom-switch-lg">
-              <input
-                [(ngModel)]="subscribeToNotifs"
-                type="checkbox"
-                class="custom-control-input"
-                id="buyNowCheckbox"
-              />
+              <input [(ngModel)]="subscribeToNotifs" type="checkbox" class="custom-control-input" id="buyNowCheckbox" />
               <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
             </div>
           </div>

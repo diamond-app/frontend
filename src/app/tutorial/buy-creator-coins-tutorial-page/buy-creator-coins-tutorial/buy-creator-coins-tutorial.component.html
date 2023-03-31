@@ -22,9 +22,16 @@
     </div>
     <div class="w-100 d-flex flex-column align-items-center">
       <div [ngClass]="{ 'w-90': globalVars.isMobile(), 'w-70': !globalVars.isMobile() }">
-        <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">A creator coin is your way to show your appreciation</div>
-        <div class="fc-default fs-16px text-center mb-16px">Creator coins allow you to participate in a creator's upside as they grow their community.<br/><br/>
-          Find someone who is providing a lot of value? Reward them by buying a share of their coin!<br/><br/>
+        <div class="fc-default fs-24px font-weight-bold text-align-center w-100 mb-30px">
+          A creator coin is your way to show your appreciation
+        </div>
+        <div class="fc-default fs-16px text-center mb-16px">
+          Creator coins allow you to participate in a creator's upside as they grow their community.
+          <br />
+          <br />
+          Find someone who is providing a lot of value? Reward them by buying a share of their coin!
+          <br />
+          <br />
         </div>
       </div>
     </div>
@@ -47,7 +54,14 @@
       ></trade-creator>
     </div>
     <div class="w-100 d-flex justify-content-center">
-      <button *ngIf="userCanAffordCCBuy && globalVars.loggedInUser?.ProfileEntryResponse?.Username" (click)="skipTutorialStep()" style="width: 215px" class="plain-button">Skip and complete tutorial</button>
+      <button
+        *ngIf="userCanAffordCCBuy && globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+        (click)="skipTutorialStep()"
+        style="width: 215px"
+        class="plain-button"
+      >
+        Skip and complete tutorial
+      </button>
       <button
         *ngIf="!userCanAffordCCBuy || !globalVars.loggedInUser?.ProfileEntryResponse?.Username"
         (click)="skipTutorialStep()"

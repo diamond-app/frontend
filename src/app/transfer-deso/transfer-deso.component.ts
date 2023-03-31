@@ -114,7 +114,7 @@ export class TransferDeSoComponent implements OnInit {
       return;
     }
 
-    if (this.transferDeSoError != null && this.transferDeSoError !== "") {
+    if (this.transferDeSoError !== null && this.transferDeSoError !== "") {
       this.globalVars._alertError(this.transferDeSoError);
       return;
     }
@@ -183,13 +183,8 @@ export class TransferDeSoComponent implements OnInit {
               })
             ).subscribe(
               (res: any) => {
-                const {
-                  TotalInputNanos,
-                  SpendAmountNanos,
-                  ChangeAmountNanos,
-                  FeeNanos,
-                  TransactionIDBase58Check,
-                } = res;
+                const { TotalInputNanos, SpendAmountNanos, ChangeAmountNanos, FeeNanos, TransactionIDBase58Check } =
+                  res;
 
                 if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
                   this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
@@ -301,7 +296,7 @@ export class TransferDeSoComponent implements OnInit {
   }
 
   _extractError(err: any): string {
-    if (err.error != null && err.error.error != null) {
+    if (err.error !== null && err.error.error !== null) {
       // Is it obvious yet that I'm not a frontend gal?
       // TODO: Error handling between BE and FE needs a major redesign.
       let rawError = err.error.error;
@@ -322,7 +317,7 @@ export class TransferDeSoComponent implements OnInit {
         return rawError;
       }
     }
-    if (err.status != null && err.status != 200) {
+    if (err.status !== null && err.status != 200) {
       return Messages.CONNECTION_PROBLEM;
     }
     // If we get here we have no idea what went wrong so just alert the

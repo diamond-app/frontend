@@ -347,7 +347,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   showNoPostsFound() {
-    // activeTab == FeedComponent.GLOBAL_TAB && globalVars.postsToShow.length == 0 && !loadingPosts
+    // activeTab == FeedComponent.GLOBAL_TAB && globalVars.postsToShow.length === 0 && !loadingPosts
     return (
       this.postsToShow().length === 0 &&
       (this.activeTab === FeedComponent.GLOBAL_TAB ||
@@ -719,11 +719,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the current post (1) + the CommentCount comments/subcomments were hidden
     const decrementAmount = 1 + postEntryResponse.CommentCount;
 
-    if (parentPost != null) {
+    if (parentPost !== null) {
       parentPost.CommentCount -= decrementAmount;
     }
 
-    if (grandparentPost != null) {
+    if (grandparentPost !== null) {
       grandparentPost.CommentCount -= decrementAmount;
     }
 

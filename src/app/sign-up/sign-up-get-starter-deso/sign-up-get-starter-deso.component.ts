@@ -26,8 +26,7 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
     private identityService: IdentityService
   ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   _setScreenToShow() {
     // TODO: refactor silly setInterval

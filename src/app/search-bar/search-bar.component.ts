@@ -142,7 +142,7 @@ export class SearchBarComponent implements OnInit {
 
   _handleArrowKey(key: string) {
     // Don't do anything if the search box isn't open.
-    if (this.searchText.length == 0) return;
+    if (this.searchText.length === 0) return;
 
     if (key == "DOWN") {
       // Only update if we aren't at the end of the creator list.

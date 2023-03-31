@@ -1,16 +1,19 @@
 <div class="flex-grow-1">
   <div class="buy-deso__container">
     <div class="px-16px pb-16px">
-      <div class="mint-nft__title">{{ 'creators_leaderboard.buy_coin' | transloco }}</div>
-      <div class="mint-nft__sub-text">{{ 'creators_leaderboard.buy_coin_subtitle' | transloco }}</div>
+      <div class="mint-nft__title">{{ "creators_leaderboard.buy_coin" | transloco }}</div>
+      <div class="mint-nft__sub-text">{{ "creators_leaderboard.buy_coin_subtitle" | transloco }}</div>
     </div>
     <div>
       <!-- Headers -->
       <div class="fs-15px">
-        <div class="row px-15px no-gutters border-bottom py-15px justify-content-end fc-muted" style="margin-left: 0; margin-right: 0">
-          <div class="col-lg-5 col-8 mb-0">{{ 'creators_leaderboard.name' | transloco }}</div>
+        <div
+          class="row px-15px no-gutters border-bottom py-15px justify-content-end fc-muted"
+          style="margin-left: 0; margin-right: 0"
+        >
+          <div class="col-lg-5 col-8 mb-0">{{ "creators_leaderboard.name" | transloco }}</div>
           <div class="col-lg-7 col-4 mb-0 text-left" style="min-width: 100px">
-            <div class="pl-15px">{{ 'creators_leaderboard.price' | transloco }}</div>
+            <div class="pl-15px">{{ "creators_leaderboard.price" | transloco }}</div>
           </div>
         </div>
       </div>
@@ -77,9 +80,7 @@
                         [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
                       ></follow-button>
                     </div>
-                    <div *ngIf="!canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
-
-                    </div>
+                    <div *ngIf="!canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)"></div>
                   </div>
                 </div>
                 <button
