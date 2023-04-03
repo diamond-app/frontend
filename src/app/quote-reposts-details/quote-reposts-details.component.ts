@@ -8,12 +8,12 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "quote-reposts-details",
   templateUrl: "./quote-reposts-details.component.html",
+  styleUrls: ["./quote-reposts-details.component.scss"],
 })
 export class QuoteRepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
   @Input() bsModalRef;
   diamonds = [];
-  loading = false;
   errorLoading = false;
 
   constructor(
@@ -24,7 +24,6 @@ export class QuoteRepostsDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loading = true;
     if (!this.postHashHex) {
       this.postHashHex = this.route.snapshot.params.postHashHex;
     }
@@ -40,7 +39,6 @@ export class QuoteRepostsDetailsComponent implements OnInit {
     if (this.lastPage !== null && page > this.lastPage) {
       return [];
     }
-    this.loading = true;
     return this.backendApi
       .GetQuoteRepostsForPost(
         this.postHashHex,
@@ -61,8 +59,6 @@ export class QuoteRepostsDetailsComponent implements OnInit {
             this.lastPage = page;
           }
 
-          this.loading = false;
-
           // Return the page.
           return quoteRepostsPage;
         },
@@ -78,6 +74,6 @@ export class QuoteRepostsDetailsComponent implements OnInit {
     });
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile());
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
