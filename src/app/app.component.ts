@@ -102,15 +102,11 @@ export class AppComponent implements OnInit {
     }
 
     // NOTE: we should subscribe to the identity instance instead of calling snapshot,
-    // but that would require a larger refactor.
+    // but that would require a larger refactor and this works fine for now.
     const { currentUser, alternateUsers } = identity.snapshot();
     const publicKeys = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
 
-    let loggedInUserPublicKey =
-      this.globalVars.loggedInUser?.PublicKeyBase58Check ||
-      this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
-      publicKeys[0];
-
+    let loggedInUserPublicKey = currentUser?.publicKey;
     this.callingUpdateTopLevelData = true;
 
     return zip(
