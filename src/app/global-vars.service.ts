@@ -143,8 +143,7 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp =
-    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -1121,14 +1120,9 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.identityService
-      .launch("/get-free-deso", {
-        public_key: this.loggedInUser?.PublicKeyBase58Check,
-        // referralCode: this.referralCode(),
-      })
-      .subscribe(() => {
-        this.updateEverything();
-      });
+    identity.getDeso().then(() => {
+      this.updateEverything();
+    });
   }
 
   launchIdentityFlow(): Observable<any> {
@@ -1434,10 +1428,15 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  getDesoNetworkFromURL(url: string) {
-    const parsedURL = new URL(url);
+  getDesoNetworkFromURL(localNode: string) {
+    let hostname;
+    if (localNode.startsWith("http")) {
+      hostname = new URL(localNode).hostname;
+    } else {
+      hostname = localNode.split(":")[0];
+    }
 
-    switch (parsedURL.hostname) {
+    switch (hostname) {
       case "node.deso.org":
       case "diamondapp.com":
       case "dev.diamondapp.com":

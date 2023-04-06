@@ -1,8 +1,9 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { identity } from "deso-protocol";
+import { from, Observable } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
@@ -132,10 +133,6 @@ export class SetuService {
       throw new Error("Cannot get jwt without a logged in user");
     }
 
-    return this.identity
-      .jwt({
-        ...this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check),
-      })
-      .pipe(map(({ jwt }) => jwt));
+    return from(identity.jwt());
   }
 }

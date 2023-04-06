@@ -1,10 +1,11 @@
 //@ts-strict
 import { Component, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
-import { forkJoin, Observable, of, throwError } from "rxjs";
+import { identity, IdentityDerivePayload } from "deso-protocol";
+import { forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
-import { IdentityService, TransactionSpendingLimitResponse } from "src/app/identity.service";
+import { IdentityService } from "src/app/identity.service";
 import {
   GetCurrentSubscriptionsResponse,
   GetDerivedKeyStatusResponse,
@@ -105,51 +106,57 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       throw new Error("cannot generate a derived key without a logged in user");
     }
     const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
-    return this.identity
-      .launchDerive(
-        publicKey,
+    let derivedKey: string;
+    return from(
+      identity.derive(
         {
           GlobalDESOLimit: 1e9,
           TransactionCountLimitMap: {
             SUBMIT_POST: 1e6,
             AUTHORIZE_DERIVED_KEY: 1,
           },
-        } as TransactionSpendingLimitResponse,
-        365 * 10
+        },
+        {
+          ownerPublicKey: publicKey,
+          expirationDays: 365 * 10,
+        }
       )
-      .pipe(
-        switchMap((derivedKeyPayload) => {
-          return this.setu.updateDerivedKey({
-            derivedSeedHex: derivedKeyPayload.derivedSeedHex,
-            derivedPublicKey: derivedKeyPayload.derivedPublicKeyBase58Check,
-            publicKeyBase58Check: derivedKeyPayload.publicKeyBase58Check,
-            expirationBlock: derivedKeyPayload.expirationBlock,
-            accessSignature: derivedKeyPayload.accessSignature,
-            jwt: derivedKeyPayload.jwt,
-            derivedJwt: derivedKeyPayload.derivedJwt,
-            transactionSpendingLimitHex: derivedKeyPayload.transactionSpendingLimitHex,
-          });
-        }),
-        switchMap(({ TransactionHex }) => {
-          return this.identity.sign({
-            transactionHex: TransactionHex,
-            ...this.identity.identityServiceParamsForKey(publicKey),
-          });
-        }),
-        switchMap(({ signedTransactionHex }) => {
-          return this.setu.submitTx(signedTransactionHex);
-        }),
-        switchMap(() => {
-          return this.setu.changeSignedStatus({
-            public_key: publicKey,
-            derived_public_key: this.identity.identityServiceParamsForKey(
-              this.globalVars.loggedInUser?.PublicKeyBase58Check
-            )?.derivedPublicKeyBase58Check,
-          });
-        }),
-        takeWhile(() => !this.isDestroyed),
-        first()
-      );
+    ).pipe(
+      switchMap((derivedKeyPayload) => {
+        const payload = derivedKeyPayload as IdentityDerivePayload;
+        // derivedKey = payload.derivedPublicKeyBase58Check;
+        return this.setu.updateDerivedKey({
+          derivedSeedHex: payload.derivedSeedHex as string,
+          derivedPublicKey: payload.derivedPublicKeyBase58Check,
+          publicKeyBase58Check: payload.publicKeyBase58Check,
+          expirationBlock: payload.expirationBlock,
+          accessSignature: payload.accessSignature,
+          jwt: payload.jwt,
+          derivedJwt: payload.derivedJwt,
+          transactionSpendingLimitHex: payload.transactionSpendingLimitHex,
+        });
+      }),
+      switchMap(({ TransactionHex }) => {
+        return from(identity.signTx(TransactionHex));
+      }),
+      switchMap((signedTransactionHex) => {
+        return this.setu.submitTx(signedTransactionHex);
+      }),
+      switchMap(() => {
+        const { currentUser } = identity.snapshot();
+        if (!currentUser) throw new Error("no current user found in identity");
+        const derivedPublicKey = currentUser.primaryDerivedKey.derivedPublicKeyBase58Check;
+        return this.setu.changeSignedStatus({
+          public_key: publicKey,
+          derived_public_key: derivedPublicKey,
+          // this.identity.identityServiceParamsForKey(
+          //   this.globalVars.loggedInUser?.PublicKeyBase58Check
+          // )?.derivedPublicKeyBase58Check,
+        });
+      }),
+      takeWhile(() => !this.isDestroyed),
+      first()
+    );
   }
 
   /**
@@ -162,12 +169,11 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     if (!(this.globalVars.loggedInUser?.ProfileEntryResponse && this.twitterUserData)) {
       throw new Error("cannot sync tweets without a profile");
     }
-
+    // const params = this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check);
+    // debugger;
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
       public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-      derived_public_key: this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check)
-        ?.derivedPublicKeyBase58Check,
       twitter_username: this.twitterUserData.twitter_username,
       twitter_user_id: this.twitterUserData.twitter_user_id,
       subscription_type: "all_tweets" as SubscriptionType,

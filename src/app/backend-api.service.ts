@@ -99,7 +99,6 @@ import {
   transferCreatorCoin,
   transferNFT,
   updateFollowingStatus,
-  updateLikeStatus,
   updateNFT,
   updateProfile,
   updateUserGlobalMetadata,
@@ -839,17 +838,32 @@ export class BackendApiService {
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let request = UnencryptedUnlockableText
-      ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-          recipientPublicKey: ReceiverPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
+      ? from(
+          checkPartyAccessGroups({
+            SenderAccessGroupKeyName: "default-key",
+            RecipientAccessGroupKeyName: "default-key",
+            SenderPublicKeyBase58Check: SenderPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check: ReceiverPublicKeyBase58Check,
+          })
+        ).pipe(
+          switchMap((resp) => {
+            const identityState = identity.snapshot();
+            if (!identityState.currentUser) {
+              throw new Error("No identityState.currentUser");
+            }
+            return from(
+              encryptChatMessage(
+                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+                resp.RecipientAccessGroupPublicKeyBase58Check,
+                UnencryptedUnlockableText
+              )
+            );
+          })
+        )
+      : of("");
 
     return request.pipe(
-      switchMap((encrypted) => {
-        const EncryptedUnlockableText = encrypted.encryptedMessage;
+      switchMap((EncryptedUnlockableText) => {
         return from(
           transferNFT({
             SenderPublicKeyBase58Check,

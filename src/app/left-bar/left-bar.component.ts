@@ -1,5 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
+import { identity } from "@deso-core/identity";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
@@ -88,13 +89,10 @@ export class LeftBarComponent {
 
   launchLogoutFlow() {
     const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+    identity.logout().then((res) => {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
-        return res?.users && user?.PublicKeyBase58Check in res?.users;
+        return user.PublicKeyBase58Check !== publicKey;
       });
-      if (!res?.users) {
-        this.globalVars.userList = [];
-      }
       if (this.globalVars.userList.length === 0) {
         this.globalVars.setLoggedInUser(null);
       }

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { configure, DeSoNetwork, identity, User } from "deso-protocol";
+import { configure, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
@@ -301,21 +301,6 @@ export class AppComponent implements OnInit {
     this._updateAppState();
 
     this.loadApp();
-
-    this.identityService.info().subscribe((res) => {
-      this.globalVars.identityInfoResponse = res;
-      const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-      // If the browser is not supported, display the browser not supported screen.
-      if (!res.hasStorageAccess && isLoggedIn) {
-        this.tracking.log("storage-access : request");
-        this.globalVars.requestingStorageAccess = true;
-        this.identityService.storageGranted.subscribe(() => {
-          this.tracking.log("storage-access : grant");
-          this.globalVars.requestingStorageAccess = false;
-          this.loadApp();
-        });
-      }
-    });
 
     this.globalVars.pollUnreadNotifications();
 
