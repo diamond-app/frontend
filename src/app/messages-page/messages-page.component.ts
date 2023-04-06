@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   AccessGroupEntryResponse,
   ChatType,
@@ -13,7 +14,6 @@ import {
 import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
-import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../backend-api.service";
 
 @Component({
@@ -182,7 +182,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
         this.accessGroupsOwned = groups.AccessGroupsOwned ?? [];
         this.accessGroups = [...(groups.AccessGroupsMember ?? []), ...(groups.AccessGroupsOwned ?? [])];
         return Promise.all(
-          threads.MessageThreads.map((message) => identity.decryptMessage(message, this.accessGroups))
+          threads.MessageThreads?.map((message) => identity.decryptMessage(message, this.accessGroups)) ?? []
         ).then((decryptedMessages) => {
           if (this.isDestroyed) return;
           const groupsOwnedWithMessages = decryptedMessages.filter(
@@ -239,6 +239,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
       })
       .catch((err) => {
         this.globalVars._alertError(err?.error?.error ?? err?.message);
+        console.error(err);
       })
       .finally(() => {
         if (this.isDestroyed) return;
