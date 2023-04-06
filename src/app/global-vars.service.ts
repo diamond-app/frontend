@@ -436,8 +436,7 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     if (!isSameUserAsBefore) {
-      // Store the user in localStorage
-      this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
+      identity.setActiveUser(user?.PublicKeyBase58Check);
 
       this.tracking.identifyUser(user?.PublicKeyBase58Check, {
         username: user?.ProfileEntryResponse?.Username ?? "",
