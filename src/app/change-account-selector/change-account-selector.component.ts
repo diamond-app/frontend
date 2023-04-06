@@ -1,6 +1,6 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
-import { identity, User } from "deso-protocol";
+import { identity } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { from } from "rxjs";
 import { BackendApiService } from "../backend-api.service";
@@ -49,26 +49,14 @@ export class ChangeAccountSelectorComponent {
   }
 
   _switchToUser(user) {
-    this.setUser(user);
+    this.globalVars.setLoggedInUser(user);
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
     this.globalVars.updateEverything().add(() => {
-      if (!this.userInTutorial) {
-        this.goHome().then(() => {
-          const currentUrl = this.router.url;
-          this.router.navigateByUrl(currentUrl);
-        });
-      }
+      this.router.navigate([`/${this.globalVars.RouteNames.BROWSE}`], {
+        queryParamsHandling: "merge",
+      });
       this.globalVars.isLeftBarMobileOpen = false;
     });
-  }
-
-  private setUser(user: User) {
-    this.globalVars.setLoggedInUser(user);
-  }
-
-  private goHome() {
-    const pageUrl = `/${this.globalVars.RouteNames.BROWSE}`;
-    return this.router.navigate([pageUrl]);
   }
 }
