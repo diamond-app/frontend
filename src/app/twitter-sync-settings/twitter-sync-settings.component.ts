@@ -122,7 +122,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     ).pipe(
       switchMap((derivedKeyPayload) => {
         const payload = derivedKeyPayload as IdentityDerivePayload;
-        // derivedKey = payload.derivedPublicKeyBase58Check;
         return this.setu.updateDerivedKey({
           derivedSeedHex: payload.derivedSeedHex as string,
           derivedPublicKey: payload.derivedPublicKeyBase58Check,
