@@ -556,7 +556,7 @@ export class BackendApiService {
         SenderPublicKeyBase58Check,
         RecipientPublicKeyOrUsername,
         AmountNanos,
-      }).then((res) => ({ ...res.constructedTransactionResponse, ...res.submittedTransactionResponse }))
+      }).then(mergeTxResponse)
     );
   }
 
