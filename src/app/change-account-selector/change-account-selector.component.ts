@@ -28,29 +28,23 @@ export class ChangeAccountSelectorComponent {
 
   launchLogoutFlow() {
     from(identity.logout()).subscribe(() => {
-      const { currentUser, alternateUsers } = identity.snapshot();
-      const users = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
+      const { alternateUsers } = identity.snapshot();
+      const users = Object.keys(alternateUsers ?? {});
 
-      if (!users.length) {
-        this.globalVars.userList = [];
-      } else {
-        this.globalVars.userList = this.globalVars.userList.filter((user) => {
-          return users.includes(user?.PublicKeyBase58Check);
-        });
-      }
-
-      let loggedInUser = users?.[0];
-
-      if (this.globalVars.userList.length === 0) {
-        loggedInUser = null;
-        this.setUser(null);
-      }
-
-      this.globalVars.updateEverything().add(() => {
-        if (!this.userInTutorial) {
-          this.goHome();
-        }
+      this.globalVars.userList = this.globalVars.userList.filter((user) => {
+        return users.includes(user?.PublicKeyBase58Check);
       });
+
+      let newActiveUserKey = this.globalVars.userList[0]?.PublicKeyBase58Check;
+
+      if (newActiveUserKey) {
+        identity.setActiveUser(newActiveUserKey);
+      }
+
+      const newLoggedInUser =
+        this.globalVars.userList.find((user) => user?.PublicKeyBase58Check === newActiveUserKey) ?? null;
+
+      this._switchToUser(newLoggedInUser);
     });
   }
 

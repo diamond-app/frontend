@@ -435,19 +435,19 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
-    if (!isSameUserAsBefore) {
-      identity.setActiveUser(user?.PublicKeyBase58Check);
+    if (!isSameUserAsBefore && user) {
+      identity.setActiveUser(user.PublicKeyBase58Check);
 
-      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
-        username: user?.ProfileEntryResponse?.Username ?? "",
-        isVerified: user?.ProfileEntryResponse?.IsVerified,
+      this.tracking.identifyUser(user.PublicKeyBase58Check, {
+        username: user.ProfileEntryResponse?.Username ?? "",
+        isVerified: user.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.
-      for (const entry of this.loggedInUser?.UsersYouHODL || []) {
+      for (const entry of user.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
       this.followFeedPosts = [];
