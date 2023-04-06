@@ -335,6 +335,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
             }
           });
         } else {
+          if (!this.derivedKeyStatus) throw new Error("derivedKeyStatus is missing");
           this.tracking.log("twitter-sync : connect", {
             isOnboarding: this.isOnboarding,
             hasActiveSubscription: this.hasActiveSubscription,
