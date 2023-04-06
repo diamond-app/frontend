@@ -11,7 +11,6 @@ import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
-import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "left-bar",
@@ -38,7 +37,6 @@ export class LeftBarComponent {
   constructor(
     public globalVars: GlobalVarsService,
     private modalService: BsModalService,
-    private identityService: IdentityService,
     private backendApi: BackendApiService,
     private router: Router,
     private tracking: TrackingService
@@ -75,9 +73,8 @@ export class LeftBarComponent {
   getHelpMailToAttr(): string {
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
-    const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
     const bodyContent = encodeURIComponent(
-      `The below information helps support address your case.\nMy public key: ${pubKey} \nMy BTC Address: ${btcAddress}`
+      `The below information helps support address your case.\nMy public key: ${pubKey}`
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
     return `mailto:${environment.supportEmail}${body}`;

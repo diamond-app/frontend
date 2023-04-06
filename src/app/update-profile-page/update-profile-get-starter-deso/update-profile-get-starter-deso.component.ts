@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { Component } from "@angular/core";
+import { identity } from "deso-protocol";
+import { from } from "rxjs";
 import { RouteNames } from "../../app-routing.module";
-import { IdentityService } from "../../identity.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "update-profile-get-starter-deso",
@@ -11,7 +12,7 @@ import { IdentityService } from "../../identity.service";
 export class UpdateProfileGetStarterDeSoComponent {
   RouteNames = RouteNames;
 
-  constructor(public globalVars: GlobalVarsService, private identityService: IdentityService) {}
+  constructor(public globalVars: GlobalVarsService) {}
 
   // rounded to nearest integer
   minPurchaseAmountInUsdRoundedUp() {
@@ -25,12 +26,10 @@ export class UpdateProfileGetStarterDeSoComponent {
   }
 
   launchPhoneNumberVerification() {
-    this.identityService
-      .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res) => {
-        if (res.phoneNumberSuccess) {
-          this.globalVars.updateEverything();
-        }
-      });
+    from(identity.verifyPhoneNumber()).subscribe((res: any) => {
+      if (res.phoneNumberSuccess) {
+        this.globalVars.updateEverything();
+      }
+    });
   }
 }

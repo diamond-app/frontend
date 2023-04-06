@@ -112,7 +112,6 @@ import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
-import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
@@ -405,7 +404,7 @@ export interface PostAssociationsResponse {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(private httpClient: HttpClient) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";

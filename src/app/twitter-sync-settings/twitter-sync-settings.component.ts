@@ -5,7 +5,6 @@ import { identity, IdentityDerivePayload } from "deso-protocol";
 import { forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
-import { IdentityService } from "src/app/identity.service";
 import {
   GetCurrentSubscriptionsResponse,
   GetDerivedKeyStatusResponse,
@@ -50,7 +49,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
   constructor(
     public globalVars: GlobalVarsService,
     private setu: SetuService,
-    private identity: IdentityService,
     private router: Router,
     private tracking: TrackingService
   ) {
@@ -149,9 +147,6 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         return this.setu.changeSignedStatus({
           public_key: publicKey,
           derived_public_key: derivedPublicKey,
-          // this.identity.identityServiceParamsForKey(
-          //   this.globalVars.loggedInUser?.PublicKeyBase58Check
-          // )?.derivedPublicKeyBase58Check,
         });
       }),
       takeWhile(() => !this.isDestroyed),
@@ -169,11 +164,13 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
     if (!(this.globalVars.loggedInUser?.ProfileEntryResponse && this.twitterUserData)) {
       throw new Error("cannot sync tweets without a profile");
     }
-    // const params = this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check);
-    // debugger;
+
+    const { currentUser } = identity.snapshot();
+
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
       public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      derived_public_key: currentUser?.primaryDerivedKey.derivedPublicKeyBase58Check,
       twitter_username: this.twitterUserData.twitter_username,
       twitter_user_id: this.twitterUserData.twitter_user_id,
       subscription_type: "all_tweets" as SubscriptionType,
@@ -250,17 +247,21 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       }
 
       this.isProcessingSubscription = true;
+      const { currentUser } = identity.snapshot();
+
+      if (!currentUser) throw new Error("no current user found in identity");
+
       this.setu
         .unsubscribe({
           twitter_user_id: this.twitterUserData.twitter_user_id,
           public_key: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          derived_public_key: this.identity.identityServiceParamsForKey(
-            this.globalVars.loggedInUser?.PublicKeyBase58Check
-          )?.derivedPublicKeyBase58Check,
+          derived_public_key: currentUser.primaryDerivedKey.derivedPublicKeyBase58Check,
         })
         .pipe(finalize(() => (this.isProcessingSubscription = false)))
         .subscribe(
           (res) => {
+            if (!this.twitterUserData) throw new Error("twitterUserData is undefined");
+
             if (res.status === "success") {
               this.tracking.log("twitter-sync : unsubscribe", {
                 isOnboarding: this.isOnboarding,
@@ -272,6 +273,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
             }
           },
           (err) => {
+            if (!this.twitterUserData) throw new Error("twitterUserData is undefined");
             this.tracking.log("twitter-sync : unsubscribe", {
               error: err.error?.error,
               isOnboarding: this.isOnboarding,

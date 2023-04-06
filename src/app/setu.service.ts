@@ -5,7 +5,6 @@ import { identity } from "deso-protocol";
 import { from, Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
-import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
 
 const buildURL = (endpoint: string) => `${environment.setuAPI}/${endpoint}`;
@@ -35,7 +34,7 @@ export interface GetDerivedKeyStatusResponse {
   providedIn: "root",
 })
 export class SetuService {
-  constructor(private http: HttpClient, private identity: IdentityService, private globalVars: GlobalVarsService) {}
+  constructor(private http: HttpClient, private globalVars: GlobalVarsService) {}
 
   getDerivedKeyStatus(parentPublicKey: string): Observable<GetDerivedKeyStatusResponse> {
     return this.http.post<GetDerivedKeyStatusResponse>(buildURL("real-time-sync/get-derived-key-status"), {

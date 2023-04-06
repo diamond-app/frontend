@@ -5,15 +5,6 @@
 <canvas id="my-canvas-3"></canvas>
 <canvas id="my-canvas-4"></canvas>
 
-<!-- Identity service / storage access request -->
-<iframe
-  id="identity"
-  [src]="identityService.sanitizedIdentityServiceURL"
-  frameborder="0"
-  class="global__iframe"
-  [style.display]="globalVars.requestingStorageAccess ? 'block' : 'none'"
-></iframe>
-
 <!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
 <div
   class="main global__container bg-tile"

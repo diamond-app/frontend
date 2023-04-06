@@ -10,7 +10,6 @@ import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
 import { BackendApiService } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
-import { IdentityService } from "./identity.service";
 import { ThemeService } from "./theme/theme.service";
 
 @Component({
@@ -25,7 +24,6 @@ export class AppComponent implements OnInit {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
-    public identityService: IdentityService,
     private router: Router,
     private tracking: TrackingService
   ) {
@@ -112,12 +110,6 @@ export class AppComponent implements OnInit {
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
       this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
       publicKeys[0];
-
-    // If we recently added a new public key, log in the user and clear the value
-    if (this.identityService.identityServicePublicKeyAdded) {
-      loggedInUserPublicKey = this.identityService.identityServicePublicKeyAdded;
-      this.identityService.identityServicePublicKeyAdded = null;
-    }
 
     this.callingUpdateTopLevelData = true;
 
@@ -209,7 +201,6 @@ export class AppComponent implements OnInit {
       this.globalVars.showJumio = res.HasJumioIntegration;
       this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
       this.globalVars.isTestnet = res.IsTestnet;
-      this.identityService.isTestnet = res.IsTestnet;
       this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
       this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
       this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
@@ -311,18 +302,16 @@ export class AppComponent implements OnInit {
   loadApp() {
     // Load service worker for push notifications.
     this.globalVars.initializeWebPush();
-    this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
+    const { currentUser, alternateUsers } = identity.snapshot();
+    this.tracking.log("page : load", { isLoggedIn: !!currentUser });
 
-    this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
-    // Filter out invalid public keys
-    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
-    for (const publicKey of publicKeys) {
-      if (!publicKey.match(/^[a-zA-Z0-9]{54,55}$/)) {
-        delete this.identityService.identityServiceUsers[publicKey];
-      }
+    let publicKeys = [];
+    if (currentUser?.publicKey) {
+      publicKeys.push(currentUser?.publicKey);
     }
-    this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
-
+    if (alternateUsers) {
+      publicKeys.push(...Object.keys(alternateUsers));
+    }
     this.backendApi.GetUsersStateless(publicKeys, true).subscribe((res) => {
       if (!_.isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];

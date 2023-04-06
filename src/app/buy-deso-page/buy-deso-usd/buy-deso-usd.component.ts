@@ -10,7 +10,6 @@ import { WyreService } from "../../../lib/services/wyre/wyre";
 import { BackendApiService } from "../../backend-api.service";
 import { FeedComponent } from "../../feed/feed.component";
 import { GlobalVarsService } from "../../global-vars.service";
-import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
 
 @Component({
@@ -45,7 +44,6 @@ export class BuyDeSoUSDComponent implements OnInit {
   constructor(
     private globalVars: GlobalVarsService,
     private httpClient: HttpClient,
-    private identityService: IdentityService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
     private router: Router,

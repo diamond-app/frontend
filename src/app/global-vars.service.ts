@@ -33,7 +33,6 @@ import { BackendApiService, DeSoNode, PostEntryResponse, TutorialStatus } from "
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
-import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 
 export enum ConfettiSvg {
@@ -66,7 +65,6 @@ export class GlobalVarsService {
   constructor(
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
-    private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
     private apiInternal: ApiInternalService,
@@ -1236,16 +1234,6 @@ export class GlobalVarsService {
     });
 
     this.initializeLocalStorageGlobalVars();
-
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
-    if (!identityServiceURL) {
-      identityServiceURL = "https://identity.deso.org";
-      this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
-    }
-    this.identityService.identityServiceURL = identityServiceURL;
-    this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${identityServiceURL}/embed?v=2`
-    );
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {

@@ -5,7 +5,6 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { from } from "rxjs";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "change-account-selector",
@@ -20,7 +19,6 @@ export class ChangeAccountSelectorComponent {
     private renderer: Renderer2,
     private backendApi: BackendApiService,
     private modalService: BsModalService,
-    private identityService: IdentityService,
     private router: Router
   ) {}
 
