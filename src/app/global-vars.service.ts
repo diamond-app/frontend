@@ -430,6 +430,8 @@ export class GlobalVarsService {
 
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
+    if (window.localStorage.getItem("loggedInUser") && !user) {
+    }
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 

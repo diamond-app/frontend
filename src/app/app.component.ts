@@ -4,8 +4,10 @@ import { configure, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { IdentityMigrationModalComponent } from "src/app/identity-migration-modal/identity-migration-modal.component";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
 import { BackendApiService } from "./backend-api.service";
@@ -25,7 +27,8 @@ export class AppComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private router: Router,
-    private tracking: TrackingService
+    private tracking: TrackingService,
+    private modalService: BsModalService
   ) {
     this.globalVars.Init(
       null, // loggedInUser
@@ -101,18 +104,14 @@ export class AppComponent implements OnInit {
       return new Subscription();
     }
 
-    // NOTE: we should subscribe to the identity instance instead of calling snapshot,
-    // but that would require a larger refactor and this works fine for now.
-    const { currentUser, alternateUsers } = identity.snapshot();
-    const publicKeys = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
-
-    let loggedInUserPublicKey = currentUser?.publicKey;
     this.callingUpdateTopLevelData = true;
 
+    const { currentUser } = identity.snapshot();
+
     return zip(
-      this.backendApi.GetUsersStateless([loggedInUserPublicKey], false),
-      environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
-        ? this.backendApi.GetUserMetadata(loggedInUserPublicKey).pipe(
+      this.backendApi.GetUsersStateless([currentUser?.publicKey], false),
+      environment.verificationEndpointHostname && !isNil(currentUser?.publicKey)
+        ? this.backendApi.GetUserMetadata(currentUser?.publicKey).pipe(
             catchError((err) => {
               console.error(err);
               return of(null);
@@ -148,11 +147,11 @@ export class AppComponent implements OnInit {
           // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
         }
         // If the logged-in user wasn't in the list, add it to the list.
-        if (!loggedInUserFound && loggedInUserPublicKey) {
+        if (!loggedInUserFound && currentUser?.publicKey) {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
+        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && currentUser?.publicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -319,6 +318,14 @@ export class AppComponent implements OnInit {
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);
+
+    // Shows a message if the user was logged in via the legacy identity flow
+    // letting them know they will need to log in again.
+    if (!currentUser && window.localStorage.getItem("lastLoggedInUser")) {
+      this.modalService.show(IdentityMigrationModalComponent, {
+        class: "modal-dialog-centered buy-deso-modal",
+      });
+    }
   }
 
   installDD() {
