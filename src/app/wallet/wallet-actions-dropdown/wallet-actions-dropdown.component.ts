@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ProfileEntryResponse, TutorialStatus } from "../../backend-api.service";
+import { TutorialStatus } from "../../backend-api.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TransferDeSoComponent } from "../../transfer-deso/transfer-deso.component";
 import { TransferDesoModalComponent } from "../../transfer-deso/transfer-deso-modal/transfer-deso-modal.component";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "wallet-actions-dropdown",

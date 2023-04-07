@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
+import { NFTCollectionResponse } from "deso-protocol";
 import { uniqBy } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { BackendApiService, NFTCollectionResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 

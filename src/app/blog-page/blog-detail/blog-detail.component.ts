@@ -14,10 +14,7 @@ import {
   BackendApiService,
   PostAssociation,
   PostAssociationCountsResponse,
-  PostEntryResponse,
-  ProfileEntryResponse,
 } from "src/app/backend-api.service";
-import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
 import { TrackingService } from "src/app/tracking.service";
@@ -26,6 +23,7 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "app-blog-detail",
@@ -512,7 +510,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
         Posts.filter(
           (p: PostEntryResponse) =>
             !p.IsHidden &&
-            typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined" &&
+            typeof p.PostExtraData.BlogDeltaRtfFormat !== "undefined" &&
             p.PostHashHex !== this.currentPost.PostHashHex
         ).slice(0, 5)
       )

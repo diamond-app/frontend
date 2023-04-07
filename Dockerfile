@@ -6,7 +6,7 @@ WORKDIR /frontend
 RUN apk add git
 
 # use yarn to upgrade npm
-RUN yarn global add npm@7
+RUN yarn global add npm@9.2.0
 
 COPY ./package.json .
 COPY ./package-lock.json .

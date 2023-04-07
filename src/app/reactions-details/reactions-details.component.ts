@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { PostEntryResponse } from "deso-protocol";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { finalize, map, switchMap, tap } from "rxjs/operators";
@@ -9,7 +9,6 @@ import {
   AssociationType,
   BackendApiService,
   PostAssociationCountsResponse,
-  ProfileEntryResponse,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";

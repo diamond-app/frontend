@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { AssociationType, BackendApiService, PostAssociation } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { finalize, map, mergeMap, tap } from "rxjs/operators";
+import { finalize, map, tap } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PollModalComponent } from "./poll-modal/poll-modal.component";
 import { forkJoin, of } from "rxjs";

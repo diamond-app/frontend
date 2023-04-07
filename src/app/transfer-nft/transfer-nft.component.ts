@@ -6,8 +6,9 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "transfer-nft",

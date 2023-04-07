@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["@ethersproject", "@deso-core/identity", "@amplitude/analytics-browser"],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -159,5 +160,5 @@
         }
       }
     }
-  }
+  },
 }

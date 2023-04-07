@@ -3,8 +3,9 @@ import { ActivatedRoute } from "@angular/router";
 import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "creator-profile-posts",

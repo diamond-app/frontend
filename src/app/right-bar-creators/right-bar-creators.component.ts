@@ -4,9 +4,10 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
 import { map, switchMap, takeWhile } from "rxjs/operators";
 import { environment } from "../../environments/environment";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 export class RightBarTabOption {
   name: string;

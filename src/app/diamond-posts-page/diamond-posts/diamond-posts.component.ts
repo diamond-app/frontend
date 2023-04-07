@@ -4,8 +4,15 @@ import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+
+class DiamondsPost {
+  Post: PostEntryResponse;
+  // Boolean that is set to true when this is the first post at a given diamond level.
+  ShowDiamondDivider?: boolean;
+}
 
 @Component({
   selector: "diamond-posts",

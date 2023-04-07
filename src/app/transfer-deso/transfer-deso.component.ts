@@ -6,8 +6,9 @@ import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { RouteNames } from "../app-routing.module";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;

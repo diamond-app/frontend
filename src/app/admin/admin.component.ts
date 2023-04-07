@@ -5,8 +5,9 @@ import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -1300,8 +1301,6 @@ export class AdminComponent implements OnInit {
       if (res.isConfirmed) {
         this.submittingUpdateUsername = true;
         const creatorCoinBasisPoints = this.userProfileEntryResponseToUpdate?.CoinEntry?.CreatorBasisPoints || 10 * 100;
-        const stakeMultipleBasisPoints =
-          this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints || 1.25 * 100 * 100;
         return this.backendApi
           .UpdateProfile(
             this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
@@ -1311,7 +1310,7 @@ export class AdminComponent implements OnInit {
             "" /*NewDescription*/,
             "" /*NewProfilePic*/,
             creatorCoinBasisPoints /*NewCreatorBasisPoints*/,
-            stakeMultipleBasisPoints /*NewStakeMultipleBasisPoints*/,
+            1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
             false /*IsHidden*/
           )
           .subscribe(

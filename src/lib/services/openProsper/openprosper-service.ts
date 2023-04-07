@@ -1,7 +1,7 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
 export interface OpenProsperAPIResult<T> {

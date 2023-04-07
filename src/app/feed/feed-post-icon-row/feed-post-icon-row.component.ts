@@ -16,11 +16,11 @@ import {
   BackendApiService,
   PostAssociation,
   PostAssociationCountsResponse,
-  PostEntryResponse,
 } from "../../backend-api.service";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
+import { PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -249,7 +249,7 @@ export class FeedPostIconRowComponent {
       return;
     }
     if (!this.postContent.PostEntryReaderState) {
-      this.postContent.PostEntryReaderState = {};
+      this.postContent.PostEntryReaderState = null;
     }
 
     this.sendingRepostRequest = true;

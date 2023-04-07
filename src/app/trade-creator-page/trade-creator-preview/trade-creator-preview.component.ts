@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of } from "rxjs";
 import { TrackingService } from "src/app/tracking.service";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";

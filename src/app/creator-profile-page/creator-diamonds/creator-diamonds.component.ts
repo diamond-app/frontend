@@ -2,8 +2,9 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import { of } from "rxjs";
 import { catchError, finalize, tap } from "rxjs/operators";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "creator-diamonds",

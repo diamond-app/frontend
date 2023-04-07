@@ -9,8 +9,9 @@ import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-t
 import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
 import { dynamicMinValidator } from "../../../lib/validators/dynamic-min-validator";
 import { AppRoutingModule } from "../../app-routing.module";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "trade-creator-form",

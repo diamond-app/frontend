@@ -5,8 +5,9 @@ import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "manage-follows",

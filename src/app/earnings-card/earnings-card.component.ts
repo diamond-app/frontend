@@ -1,10 +1,10 @@
 //@ts-strict
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { finalize, first, takeWhile } from "rxjs/operators";
-import { ProfileEntryResponse } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { OpenProsperEarningsDetail, OpenProsperService } from "src/lib/services/openProsper/openprosper-service";
+import { OpenProsperEarningsDetail } from "src/lib/services/openProsper/openprosper-service";
 import { ApiInternalService } from "../api-internal.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "app-earnings-card",
