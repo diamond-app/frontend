@@ -1417,13 +1417,8 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  getDesoNetworkFromURL(localNode: string) {
-    let hostname;
-    if (localNode.startsWith("http")) {
-      hostname = new URL(localNode).hostname;
-    } else {
-      hostname = localNode.split(":")[0];
-    }
+  getDesoNetworkFromURL(nodeURI: string) {
+    const hostname = new URL(nodeURI).hostname;
 
     switch (hostname) {
       case "node.deso.org":
