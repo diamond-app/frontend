@@ -11,7 +11,7 @@ export class TrackingService {
 
   constructor() {
     if (environment.amplitude.key) {
-      init(environment.amplitude.key, window.localStorage.getItem("lastLoggedInUser") ?? undefined, {
+      init(environment.amplitude.key, window.localStorage.getItem("desoActivePublicKey") ?? undefined, {
         domain: environment.amplitude.domain,
         pageViewTracking: {
           trackHistoryChanges: "pathOnly",

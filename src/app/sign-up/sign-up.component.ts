@@ -1,13 +1,14 @@
 import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { identity } from "deso-protocol";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { from } from "rxjs";
 import { ApiInternalService } from "src/app/api-internal.service";
 import { TrackingService } from "src/app/tracking.service";
 import { AppComponent } from "../app.component";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { IdentityService } from "../identity.service";
 import { SignUpTransferDesoComponent } from "./sign-up-transfer-deso-module/sign-up-transfer-deso.component";
 
 @Component({
@@ -26,7 +27,6 @@ export class SignUpComponent implements OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
-    private identityService: IdentityService,
     private modalService: BsModalService,
     private apiInternal: ApiInternalService,
     private tracking: TrackingService
@@ -75,10 +75,7 @@ export class SignUpComponent implements OnDestroy {
         queryParams: { feedTab: "Following" },
         queryParamsHandling: "merge",
       });
-    } else if (
-      this.globalVars?.loggedInUser?.BalanceNanos === 0 &&
-      this.identityService.identityServiceUsers[this.globalVars.loggedInUser?.PublicKeyBase58Check] !== "METAMASK"
-    ) {
+    } else if (this.globalVars?.loggedInUser?.BalanceNanos === 0) {
       this.stepNum = 0;
       this.pollForUserValidated();
     } else {
@@ -87,15 +84,13 @@ export class SignUpComponent implements OnDestroy {
   }
 
   launchSMSVerification(): void {
-    this.identityService
-      .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res) => {
-        if (res.phoneNumberSuccess) {
-          this.globalVars.updateEverything().add(() => {
-            this.stepNum = 1;
-          });
-        }
-      });
+    from(identity.verifyPhoneNumber()).subscribe((res: any) => {
+      if (res.phoneNumberSuccess) {
+        this.globalVars.updateEverything().add(() => {
+          this.stepNum = 1;
+        });
+      }
+    });
   }
 
   launchTransferDesoModal() {

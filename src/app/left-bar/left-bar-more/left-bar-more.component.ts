@@ -7,7 +7,6 @@ import { AppRoutingModule } from "../../app-routing.module";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { GlobalVarsService } from "../../global-vars.service";
-import { IdentityService } from "../../identity.service";
 
 @Component({
   selector: "left-bar-more",
@@ -30,7 +29,6 @@ export class LeftBarMoreComponent implements AfterViewInit {
   constructor(
     public globalVars: GlobalVarsService,
     private modalService: BsModalService,
-    private identityService: IdentityService,
     private backendApi: BackendApiService,
     private renderer: Renderer2,
     private router: Router,
@@ -73,9 +71,8 @@ export class LeftBarMoreComponent implements AfterViewInit {
   getHelpMailToAttr(): string {
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
-    const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
     const bodyContent = encodeURIComponent(
-      `The below information helps support address your case.\nMy public key: ${pubKey} \nMy BTC Address: ${btcAddress}`
+      `The below information helps support address your case.\nMy public key: ${pubKey} \n`
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
     return `mailto:${environment.supportEmail}${body}`;

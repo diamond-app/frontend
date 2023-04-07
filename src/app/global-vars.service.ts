@@ -33,7 +33,6 @@ import { BackendApiService, DeSoNode, PostEntryResponse, TutorialStatus } from "
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
-import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 
 export enum ConfettiSvg {
@@ -66,7 +65,6 @@ export class GlobalVarsService {
   constructor(
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
-    private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
     private apiInternal: ApiInternalService,
@@ -143,8 +141,7 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp =
-    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -433,25 +430,26 @@ export class GlobalVarsService {
 
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
+    if (window.localStorage.getItem("loggedInUser") && !user) {
+    }
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
     this.loggedInUser = user;
 
-    if (!isSameUserAsBefore) {
-      // Store the user in localStorage
-      this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
+    if (!isSameUserAsBefore && user) {
+      identity.setActiveUser(user.PublicKeyBase58Check);
 
-      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
-        username: user?.ProfileEntryResponse?.Username ?? "",
-        isVerified: user?.ProfileEntryResponse?.IsVerified,
+      this.tracking.identifyUser(user.PublicKeyBase58Check, {
+        username: user.ProfileEntryResponse?.Username ?? "",
+        isVerified: user.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.
-      for (const entry of this.loggedInUser?.UsersYouHODL || []) {
+      for (const entry of user.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
       this.followFeedPosts = [];
@@ -1121,14 +1119,9 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.identityService
-      .launch("/get-free-deso", {
-        public_key: this.loggedInUser?.PublicKeyBase58Check,
-        // referralCode: this.referralCode(),
-      })
-      .subscribe(() => {
-        this.updateEverything();
-      });
+    identity.getDeso().then(() => {
+      this.updateEverything();
+    });
   }
 
   launchIdentityFlow(): Observable<any> {
@@ -1242,16 +1235,6 @@ export class GlobalVarsService {
     });
 
     this.initializeLocalStorageGlobalVars();
-
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
-    if (!identityServiceURL) {
-      identityServiceURL = "https://identity.deso.org";
-      this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
-    }
-    this.identityService.identityServiceURL = identityServiceURL;
-    this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${identityServiceURL}/embed?v=2`
-    );
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {
@@ -1434,10 +1417,15 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  getDesoNetworkFromURL(url: string) {
-    const parsedURL = new URL(url);
+  getDesoNetworkFromURL(localNode: string) {
+    let hostname;
+    if (localNode.startsWith("http")) {
+      hostname = new URL(localNode).hostname;
+    } else {
+      hostname = localNode.split(":")[0];
+    }
 
-    switch (parsedURL.hostname) {
+    switch (hostname) {
       case "node.deso.org":
       case "diamondapp.com":
       case "dev.diamondapp.com":

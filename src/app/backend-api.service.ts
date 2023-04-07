@@ -99,7 +99,6 @@ import {
   transferCreatorCoin,
   transferNFT,
   updateFollowingStatus,
-  updateLikeStatus,
   updateNFT,
   updateProfile,
   updateUserGlobalMetadata,
@@ -113,7 +112,6 @@ import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
-import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
@@ -406,7 +404,7 @@ export interface PostAssociationsResponse {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(private httpClient: HttpClient) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -558,7 +556,7 @@ export class BackendApiService {
         SenderPublicKeyBase58Check,
         RecipientPublicKeyOrUsername,
         AmountNanos,
-      }).then((res) => ({ ...res.constructedTransactionResponse, ...res.submittedTransactionResponse }))
+      }).then(mergeTxResponse)
     );
   }
 
@@ -839,17 +837,32 @@ export class BackendApiService {
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let request = UnencryptedUnlockableText
-      ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-          recipientPublicKey: ReceiverPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
+      ? from(
+          checkPartyAccessGroups({
+            SenderAccessGroupKeyName: "default-key",
+            RecipientAccessGroupKeyName: "default-key",
+            SenderPublicKeyBase58Check: SenderPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check: ReceiverPublicKeyBase58Check,
+          })
+        ).pipe(
+          switchMap((resp) => {
+            const identityState = identity.snapshot();
+            if (!identityState.currentUser) {
+              throw new Error("No identityState.currentUser");
+            }
+            return from(
+              encryptChatMessage(
+                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+                resp.RecipientAccessGroupPublicKeyBase58Check,
+                UnencryptedUnlockableText
+              )
+            );
+          })
+        )
+      : of("");
 
     return request.pipe(
-      switchMap((encrypted) => {
-        const EncryptedUnlockableText = encrypted.encryptedMessage;
+      switchMap((EncryptedUnlockableText) => {
         return from(
           transferNFT({
             SenderPublicKeyBase58Check,

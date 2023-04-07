@@ -16,8 +16,8 @@ import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
-import { RatingModule } from "ngx-bootstrap/rating";
 import { ProgressbarModule } from "ngx-bootstrap/progressbar";
+import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { QuillModule } from "ngx-quill";
@@ -67,8 +67,8 @@ import { CreatorProfileHodlersComponent } from "./creator-profile-page/creator-p
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorProfilePostsComponent } from "./creator-profile-page/creator-profile-posts/creator-profile-posts.component";
-import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
 import { CreatorProfileSimpleCardComponent } from "./creator-profile-page/creator-profile-row/creator-profile-simple-card.component";
+import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
@@ -95,15 +95,19 @@ import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter
 import { GetStarterDeSoComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
 import { GlobalVarsService } from "./global-vars.service";
 import { IconsModule } from "./icons/icons.module";
-import { IdentityService } from "./identity.service";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
+import { CreateAccessGroupComponent } from "./messages-page/create-access-group/create-access-group.component";
+import { MessageBubbleComponent } from "./messages-page/message-bubble/message-bubble.component";
+import { MessageThreadComponent } from "./messages-page/message-thread/message-thread.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { ThreadListItemComponent } from "./messages-page/thread-list-item/thread-list-item.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
@@ -130,6 +134,10 @@ import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/bu
 import { PlaceBidModalComponent } from "./place-bid/place-bid-modal/place-bid-modal.component";
 import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
 import { PlaceBidComponent } from "./place-bid/place-bid.component";
+import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
+import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
+import { PollComponent } from "./poll/poll.component";
 import { PostInteractionDetailsComponent } from "./post-interaction-details/post-interaction-details.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
 import { PostThreadComponent } from "./post-thread-page/post-thread/post-thread.component";
@@ -137,6 +145,7 @@ import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-repo
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
 import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
 import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
@@ -155,6 +164,7 @@ import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-mod
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
 import { Theme } from "./theme/symbols";
@@ -207,17 +217,7 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { MessageBubbleComponent } from "./messages-page/message-bubble/message-bubble.component";
-import { MessageThreadComponent } from "./messages-page/message-thread/message-thread.component";
-import { CreateAccessGroupComponent } from "./messages-page/create-access-group/create-access-group.component";
-import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
-import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
-import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
-import { LinkPreviewComponent } from "./link-preview/link-preview.component";
-import { PollComponent } from "./poll/poll.component";
-import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
-import { PollPageComponent } from "./poll/poll-page/poll-page.component";
-import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
+import { IdentityMigrationModalComponent } from './identity-migration-modal/identity-migration-modal.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -415,6 +415,7 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     PollDetailsComponent,
     PollPageComponent,
     PollModalComponent,
+    IdentityMigrationModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -453,7 +454,7 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     ScrollingModule,
     TranslocoRootModule,
   ],
-  providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
+  providers: [BackendApiService, GlobalVarsService, BsModalService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

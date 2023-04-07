@@ -1,5 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
+import { identity } from "@deso-core/identity";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
@@ -10,7 +11,6 @@ import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
-import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "left-bar",
@@ -37,7 +37,6 @@ export class LeftBarComponent {
   constructor(
     public globalVars: GlobalVarsService,
     private modalService: BsModalService,
-    private identityService: IdentityService,
     private backendApi: BackendApiService,
     private router: Router,
     private tracking: TrackingService
@@ -74,9 +73,8 @@ export class LeftBarComponent {
   getHelpMailToAttr(): string {
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
-    const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
     const bodyContent = encodeURIComponent(
-      `The below information helps support address your case.\nMy public key: ${pubKey} \nMy BTC Address: ${btcAddress}`
+      `The below information helps support address your case.\nMy public key: ${pubKey}`
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
     return `mailto:${environment.supportEmail}${body}`;
@@ -88,13 +86,10 @@ export class LeftBarComponent {
 
   launchLogoutFlow() {
     const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+    identity.logout().then((res) => {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
-        return res?.users && user?.PublicKeyBase58Check in res?.users;
+        return user.PublicKeyBase58Check !== publicKey;
       });
-      if (!res?.users) {
-        this.globalVars.userList = [];
-      }
       if (this.globalVars.userList.length === 0) {
         this.globalVars.setLoggedInUser(null);
       }
