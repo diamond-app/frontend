@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -14,6 +15,7 @@ import {
 import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
+import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
 
 @Component({
@@ -29,6 +31,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
   selectedThread: DecryptedMessageEntryResponse | null = null;
   accessGroups: AccessGroupEntryResponse[] = [];
   accessGroupsOwned: AccessGroupEntryResponse[] = [];
+  hasLegacyMessages: boolean = false;
 
   selectThread = (threadListItem: DecryptedMessageEntryResponse) => {
     this.selectedThread = threadListItem;
@@ -114,7 +117,8 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private route: ActivatedRoute,
     private router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private httpClient: HttpClient
   ) {}
 
   ngOnInit() {
@@ -142,6 +146,26 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           }
         });
       });
+
+      // Check if the user has legacy messages. If so, show a banner explaining
+      // why we no longer support them and how to access them.
+      if (!window.localStorage.getItem("dismissedLegacyMessagesBanner")) {
+        this.httpClient
+          .post<any>(`${environment.verificationEndpointHostname}/api/v0/get-messages-stateless`, {
+            PublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+            FetchAfterPublicKeyBase58Check: "",
+            NumToFetch: 1,
+            HoldersOnly: false,
+            HoldingsOnly: false,
+            FollowersOnly: false,
+            FollowingOnly: false,
+            SortAlgorithm: "time",
+            MinFeeRateNanosPerKB: this.globalVars.feeRateDeSoPerKB,
+          })
+          .subscribe((res) => {
+            this.hasLegacyMessages = res.OrderedContactsWithMessages.length > 0;
+          });
+      }
     }
   }
 
@@ -261,5 +285,10 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
         },
       },
     });
+  }
+
+  dismissLegacyMessagesBanner() {
+    this.hasLegacyMessages = false;
+    window.localStorage.setItem("dismissedLegacyMessagesBanner", "true");
   }
 }
