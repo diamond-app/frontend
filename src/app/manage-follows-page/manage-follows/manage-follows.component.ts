@@ -1,12 +1,12 @@
 import { Component, OnDestroy } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
+import { InfiniteScroller } from "src/app/infinite-scroller";
+import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { RouteNames, AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "manage-follows",
@@ -52,7 +52,6 @@ export class ManageFollowsComponent implements OnDestroy {
     // Get next page of follows using the last public key seen, as defined by fetchPubKey
     return this.backendApi
       .GetFollows(
-        this.appData.localNode,
         this.targetUsername,
         "" /* PublicKeyBase58Check */,
         this.getEntriesFollowingPublicKey,

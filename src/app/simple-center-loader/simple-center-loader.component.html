@@ -7,20 +7,20 @@
     *ngIf="!isDark"
     class="fc-secondary spinner-color"
     src="../../assets/diamond/spinner-light.svg"
-    height="100px"
-    width="100px"
+    [height]="getLoaderHeight()"
+    [width]="getLoaderHeight()"
   />
   <img
     *ngIf="isDark"
     class="fc-secondary spinner-color"
     src="../../assets/diamond/spinner-dark.svg"
-    height="100px"
-    width="100px"
+    [height]="getLoaderHeight()"
+    [width]="getLoaderHeight()"
   />
-  <div class="mt-12px fc-secondary">
+  <div class="mt-12px fc-secondary" *ngIf="!hideLoadingText">
     <div class="fc-secondary fs-24px text-align-center">
       <div *ngIf="titleLoadingText">{{ titleLoadingText }}</div>
-      <div *ngIf="!titleLoadingText">{{ 'loader.loading' | transloco }}</div>
+      <div *ngIf="!titleLoadingText">{{ "loader.loading" | transloco }}</div>
     </div>
     <div *ngIf="subtitleLoadingText">
       <div class="fc-secondary fs-15px text-center">{{ subtitleLoadingText }}</div>

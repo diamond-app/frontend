@@ -1,172 +1,128 @@
-// FYI: any request that needs the HttpOnly cookie to be sent (e.g. b/c the server
-// needs the seed phrase) needs the {withCredentials: true} option. It may also needed to
-// get the browser to save the cookie in the response.
-// https://github.com/github/fetch#sending-cookies
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { EMPTY, from, interval, Observable, of, throwError, zip } from "rxjs";
-import { catchError, concatMap, expand, filter, map, reduce, switchMap, take, tap, timeout } from "rxjs/operators";
+import {
+  acceptNFTBid,
+  acceptNFTTransfer,
+  adminGetAllUserGlobalMetadata,
+  adminGetBuyDesoFeeBasisPoints,
+  adminGetHotFeedAlgorithm,
+  adminGetHotFeedUserMultiplier,
+  adminGetMempoolStats,
+  adminGetNFTDrop,
+  adminGetUnfilteredHotFeed,
+  adminGetUSDCentsToDESOReserveExchangeRate,
+  adminGetUserAdminData,
+  adminGetUserGlobalMetadata,
+  adminGetUsernameVerificationAuditLog,
+  adminGetVerifiedUsers,
+  adminGetWyreWalletOrderQuotation,
+  adminGetWyreWalletOrderReservation,
+  adminGetWyreWalletOrdersForUser,
+  adminGrantVerificationBadge,
+  adminNodeControl,
+  adminPinPost,
+  adminRemoveNilPosts,
+  adminRemoveVerificationBadge,
+  adminReprocessBitcoinBlock,
+  adminSetBuyDesoFeeBasisPoints,
+  adminSetUSDCentsToDESOReserveExchangeRate,
+  adminSwapIdentity,
+  adminUpdateGlobalFeed,
+  adminUpdateGlobalParams,
+  adminUpdateHotFeedAlgorithm,
+  adminUpdateHotFeedPostMultiplier,
+  adminUpdateHotFeedUserMultiplier,
+  adminUpdateNFTDrop,
+  adminUpdateUserGlobalMetadata,
+  blockPublicKey,
+  buildProfilePictureUrl,
+  buildProxyImageURL,
+  burnNFT,
+  buyCreatorCoin,
+  checkPartyAccessGroups,
+  countPostAssociations,
+  createNFT,
+  createNFTBid,
+  createPostAssociation,
+  decryptChatMessage,
+  deletePostAssociation,
+  DeSoBodySchema,
+  encryptChatMessage,
+  getAllBidsForNFT,
+  getAppState,
+  getBlockTemplate,
+  GetBlockTemplateResponse,
+  getDiamondedPosts,
+  getDiamondsForPost,
+  getDiamondsForUser,
+  GetExchangeRateResponse,
+  getExchangeRates,
+  getFollowersForUser,
+  getFullTikTokURL,
+  getGlobalParams,
+  getHodlersForUser,
+  getHotFeed,
+  getLikesForPost,
+  getLinkPreview,
+  getNFTBidsForUser,
+  getNFTCollectionSummary,
+  getNFTEntriesForPost,
+  getNFTsForUser,
+  getNFTShowcase,
+  getNotifications,
+  getPostAssociations,
+  getPostsForUser,
+  getPostsStateless,
+  getProfiles,
+  getQuoteRepostsForPost,
+  getRepostsForPost,
+  getSinglePost,
+  getSingleProfile,
+  getTransaction,
+  GetTxnResponse,
+  getUnreadNotificationsCount,
+  getUserGlobalMetadata,
+  getUserMetadata,
+  getUsersStateless,
+  getVideoStatus,
+  HodlersSortType,
+  identity,
+  NFTBidEntryResponse as NFTBidEntry,
+  resendVerifyEmail,
+  sellCreatorCoin,
+  sendDeso,
+  SendDeSoResponse,
+  sendDiamonds,
+  setNotificationMetadata,
+  submitPost,
+  SubmitTransactionResponse,
+  transferCreatorCoin,
+  transferNFT,
+  updateFollowingStatus,
+  updateNFT,
+  updateProfile,
+  updateUserGlobalMetadata,
+  uploadImage,
+  uploadVideo,
+  UploadVideoV2Response,
+  User,
+  verifyEmail,
+} from "deso-protocol";
+import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
+import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
-  static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
-  static SendDeSoRoute = "/api/v0/send-deso";
-  static MinerControlRoute = "/api/v0/miner-control";
-
-  static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
-  static RoutePathSubmitPost = "/api/v0/submit-post";
-  static RoutePathUploadImage = "/api/v0/upload-image";
-  static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
-  static RoutePathUpdateProfile = "/api/v0/update-profile";
-  static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
-  static RoutePathGetProfiles = "/api/v0/get-profiles";
-  static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
-  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
-  static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
-  static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
-  static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
-  static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
-  static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
-  static GetAllMessagingGroupKeys = "/api/v0/get-all-messaging-group-keys";
-  static RoutePathCheckPartyMessagingKeys = "/api/v0/check-party-messaging-keys";
-  static RegisterGroupMessagingKey = "/api/v0/register-messaging-group-key";
-  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
-  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
-  static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
-  static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
-  static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
-  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
-  static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
-  static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
-  static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
-  static RoutePathGetNotifications = "/api/v0/get-notifications";
-  static RoutePathGetUnreadNotificationsCount = "/api/v0/get-unread-notifications-count";
-  static RoutePathSetNotificationMetadata = "/api/v0/set-notification-metadata";
-  static RoutePathGetAppState = "/api/v0/get-app-state";
-  static RoutePathGetSinglePost = "/api/v0/get-single-post";
-  static RoutePathSendPhoneNumberVerificationText = "/api/v0/send-phone-number-verification-text";
-  static RoutePathSubmitPhoneNumberVerificationCode = "/api/v0/submit-phone-number-verification-code";
-  static RoutePathBlockPublicKey = "/api/v0/block-public-key";
-  static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
-  static RoutePathGetTxn = "/api/v0/get-txn";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
-  static RoutePathSendDiamonds = "/api/v0/send-diamonds";
-  static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
-  static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
-  static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
-  static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
-  static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
-  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
-  static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
-  static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
-  static RoutePathGetUsernameForPublicKey = "/api/v0/get-user-name-for-public-key";
-  static RoutePathGetPublicKeyForUsername = "/api/v0/get-public-key-for-user-name";
-
-  // Verify
-  static RoutePathVerifyEmail = "/api/v0/verify-email";
-  static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
 
   // Tutorial
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
-  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
   static RoutePathUpdateTutorialStatus = "/api/v0/update-tutorial-status";
-
-  // Media
-  static RoutePathUploadVideo = "/api/v0/upload-video";
-  static RoutePathGetVideoStatus = "/api/v0/get-video-status";
-  static RoutePathGetLinkPreview = "/api/v0/link-preview";
-  static RoutePathProxyImage = "/api/v0/proxy-image";
-
-  // NFT routes.
-  static RoutePathCreateNft = "/api/v0/create-nft";
-  static RoutePathUpdateNFT = "/api/v0/update-nft";
-  static RoutePathCreateNFTBid = "/api/v0/create-nft-bid";
-  static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
-  static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
-  static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
-  static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
-  static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
-  static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
-  static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
-  static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
-  static RoutePathTransferNFT = "/api/v0/transfer-nft";
-  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
-  static RoutePathBurnNFT = "/api/v0/burn-nft";
-
-  // ETH
-  static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
-  static RoutePathQueryETHRPC = "/api/v0/query-eth-rpc";
-
-  // Admin routes.
-  static NodeControlRoute = "/api/v0/admin/node-control";
-  static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
-  static RoutePathSwapIdentity = "/api/v0/admin/swap-identity";
-  static RoutePathAdminUpdateUserGlobalMetadata = "/api/v0/admin/update-user-global-metadata";
-  static RoutePathAdminGetAllUserGlobalMetadata = "/api/v0/admin/get-all-user-global-metadata";
-  static RoutePathAdminGetUserGlobalMetadata = "/api/v0/admin/get-user-global-metadata";
-  static RoutePathAdminUpdateGlobalFeed = "/api/v0/admin/update-global-feed";
-  static RoutePathAdminPinPost = "/api/v0/admin/pin-post";
-  static RoutePathAdminRemoveNilPosts = "/api/v0/admin/remove-nil-posts";
-  static RoutePathAdminGetMempoolStats = "/api/v0/admin/get-mempool-stats";
-  static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
-  static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
-  static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
-  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
-  static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
-  static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
-  static RoutePathSetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathGetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathSetBuyDeSoFeeBasisPoints = "/api/v0/admin/set-buy-deso-fee-basis-points";
-  static RoutePathGetBuyDeSoFeeBasisPoints = "/api/v0/admin/get-buy-deso-fee-basis-points";
-  static RoutePathAdminGetGlobalParams = "/api/v0/admin/get-global-params";
-  static RoutePathGetGlobalParams = "/api/v0/get-global-params";
-  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
-  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
-  static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
-  static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
-  static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
-  static RoutePathAdminUpdateJumioDeSo = "/api/v0/admin/update-jumio-deso";
-  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
-  static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
-  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
-  static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
-  static RoutePathAdminGetUnfilteredHotFeed = "/api/v0/admin/get-unfiltered-hot-feed";
-  static RoutePathAdminGetHotFeedAlgorithm = "/api/v0/admin/get-hot-feed-algorithm";
-  static RoutePathAdminUpdateHotFeedAlgorithm = "/api/v0/admin/update-hot-feed-algorithm";
-  static RoutePathAdminUpdateHotFeedPostMultiplier = "/api/v0/admin/update-hot-feed-post-multiplier";
-  static RoutePathAdminUpdateHotFeedUserMultiplier = "/api/v0/admin/update-hot-feed-user-multiplier";
-  static RoutePathAdminGetHotFeedUserMultiplier = "/api/v0/admin/get-hot-feed-user-multiplier";
-
-  // Referral program admin routes.
-  static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
-  static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user";
-  static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash";
-  static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv";
-  static RoutePathAdminDownloadRefereeCSV = "/api/v0/admin/download-referee-csv";
-  static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv";
-
-  // Referral program non-admin routes
-  static RoutePathGetReferralInfoForUser = "/api/v0/get-referral-info-for-user";
-  static RoutePathGetReferralInfoForReferralHash = "/api/v0/get-referral-info-for-referral-hash";
-
-  static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
-
-  // Wyre routes.
-  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
-  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
-
-  // Associations
-  static RoutePathCreateUserAssociation = "/api/v0/user-associations/create";
-  static RoutePathCreatePostAssociation = "/api/v0/post-associations/create";
-  static RoutePathDeletePostAssociation = "/api/v0/post-associations/delete";
-  static RoutePathGetPostAssociations = "/api/v0/post-associations/query";
-  static RoutePathGetPostAssociationCounts = "/api/v0/post-associations/counts";
 }
+
+// TODO: migrate all these backend types to use deso-protocol-types
 
 export class Transaction {
   inputs: {
@@ -216,46 +172,6 @@ export enum TutorialStatus {
   FOLLOW_CREATORS = "FollowCreatorsComplete",
   DIAMOND = "GiveADiamondComplete",
   COMPLETE = "TutorialComplete",
-}
-
-export class User {
-  ProfileEntryResponse: ProfileEntryResponse;
-
-  PublicKeyBase58Check: string;
-  PublicKeysBase58CheckFollowedByUser: string[];
-  EncryptedSeedHex: string;
-
-  BalanceNanos: number;
-  UnminedBalanceNanos: number;
-
-  NumActionItems: any;
-  NumMessagesToRead: any;
-
-  UsersYouHODL: BalanceEntryResponse[];
-  UsersWhoHODLYouCount: number;
-
-  HasPhoneNumber: boolean;
-  CanCreateProfile: boolean;
-  HasEmail: boolean;
-  EmailVerified: boolean;
-  JumioVerified: boolean;
-  JumioReturned: boolean;
-  JumioFinishedTime: number;
-
-  ReferralInfoResponses: any;
-
-  IsFeaturedTutorialWellKnownCreator: boolean;
-  IsFeaturedTutorialUpAndComingCreator: boolean;
-
-  BlockedPubKeys: { [key: string]: object };
-
-  IsAdmin?: boolean;
-  IsSuperAdmin?: boolean;
-
-  TutorialStatus: TutorialStatus;
-  CreatorPurchasedInTutorialUsername?: string;
-  CreatorCoinsPurchasedInTutorial: number;
-  MustCompleteTutorial: boolean;
 }
 
 export class GetSinglePostResponse {
@@ -337,23 +253,6 @@ export class PostTxnBody {
   VideoURLs?: string[];
 }
 
-export class BalanceEntryResponse {
-  // The public keys are provided for the frontend
-  HODLerPublicKeyBase58Check: string;
-  // The public keys are provided for the frontend
-  CreatorPublicKeyBase58Check: string;
-
-  // Has the hodler purchased these creator coins
-  HasPurchased: boolean;
-  // How much this HODLer owns of a particular creator coin.
-  BalanceNanos: number;
-  // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
-  // This is used by the frontend to convey info about mining.
-  NetBalanceInMempool: number;
-
-  ProfileEntryResponse: ProfileEntryResponse;
-}
-
 export class NFTEntryResponse {
   OwnerPublicKeyBase58Check: string;
   ProfileEntryResponse: ProfileEntryResponse | undefined;
@@ -375,22 +274,12 @@ export class NFTEntryResponse {
   BuyNowPriceNanos: number;
 }
 
-export class NFTBidEntryResponse {
-  PublicKeyBase58Check: string;
-  ProfileEntryResponse: ProfileEntryResponse;
-  PostHashHex: string;
-  PostEntryResponse: PostEntryResponse | undefined;
-  SerialNumber: number;
-  BidAmountNanos: number;
-
-  HighestBidAmountNanos: number | undefined;
-  LowestBidAmountNanos: number | undefined;
-
-  BidderBalanceNanos: number;
-
+// TODO: fix this type. The additional fields here are added client side
+// and are not part of the backend schema.
+export type NFTBidEntryResponse = NFTBidEntry & {
   selected?: boolean;
   EarningsAmountNanos?: number;
-}
+};
 
 export class NFTCollectionResponse {
   AvailableSerialNumbers: number[];
@@ -515,7 +404,7 @@ export interface PostAssociationsResponse {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(private httpClient: HttpClient) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -569,20 +458,6 @@ export class BackendApiService {
     return JSON.parse(data);
   }
 
-  SetEncryptedMessagingKeyRandomnessForPublicKey(
-    publicKeyBase58Check: string,
-    encryptedMessagingKeyRandomness: string
-  ): void {
-    const users = this.GetStorage(this.IdentityUsersKey);
-    this.setIdentityServiceUsers({
-      ...users,
-      [publicKeyBase58Check]: {
-        ...users[publicKeyBase58Check],
-        encryptedMessagingKeyRandomness,
-      },
-    });
-  }
-
   // Assemble a URL to hit the BE with.
   _makeRequestURL(endpoint: string, routeName: string, adminPublicKey?: string): string {
     let queryURL = location.protocol + "//" + endpoint + routeName;
@@ -609,50 +484,13 @@ export class BackendApiService {
     return throwError(error);
   }
 
-  // Stores identity service users in identityService and localStorage
-  setIdentityServiceUsers(users: any, publicKeyAdded?: string) {
-    this.SetStorage(this.IdentityUsersKey, users);
-    this.identityService.identityServiceUsers = users;
-    this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
-  }
-
-  signAndSubmitTransaction(endpoint: string, request: Observable<any>, PublicKeyBase58Check: string): Observable<any> {
-    return request
-      .pipe(
-        switchMap((res) =>
-          this.identityService
-            .sign({
-              transactionHex: res.TransactionHex,
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-            })
-            .pipe(
-              switchMap((signed) => {
-                if (signed.approvalRequired) {
-                  return this.identityService
-                    .launch("/approve", {
-                      tx: res.TransactionHex,
-                    })
-                    .pipe(
-                      map((approved) => {
-                        this.setIdentityServiceUsers(approved.users);
-                        return { ...res, ...approved };
-                      })
-                    );
-                } else {
-                  return of({ ...res, ...signed });
-                }
-              })
-            )
-        )
-      )
-      .pipe(
-        switchMap((res) =>
-          this.SubmitTransaction(endpoint, res.signedTransactionHex).pipe(
-            map((broadcasted) => ({ ...res, ...broadcasted }))
-          )
-        )
-      )
-      .pipe(catchError(this._handleError));
+  signAndSubmitTransaction(request: Observable<any>): Observable<any> {
+    return request.pipe(
+      switchMap((res) => {
+        return from(identity.signAndSubmit(res.TransactionHex));
+      }),
+      catchError(this._handleError)
+    );
   }
 
   get(endpoint: string, path: string) {
@@ -664,70 +502,25 @@ export class BackendApiService {
   }
 
   jwtPost(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(publicKey),
-    });
+    return from(identity.jwt()).pipe(switchMap((JWT) => this.post(endpoint, path, { JWT, ...body })));
+  }
 
-    return request.pipe(
-      switchMap((signed) => {
-        body = {
-          JWT: signed.jwt,
-          ...body,
-        };
+  GetExchangeRate(): Observable<GetExchangeRateResponse> {
+    return from(getExchangeRates());
+  }
 
-        return this.post(endpoint, path, body).pipe(map((res) => ({ ...res, ...signed })));
+  GetBlockTemplate(PublicKeyBase58Check: string): Observable<GetBlockTemplateResponse> {
+    return from(
+      getBlockTemplate({
+        PublicKeyBase58Check,
+        NumHeaders: 0,
+        HeaderVersion: 1,
       })
     );
   }
 
-  GetExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.ExchangeRateRoute);
-  }
-
-  // Use empty string to return all top categories.
-  GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
-  }
-
-  SendPhoneNumberVerificationText(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    PhoneNumber: string,
-    PhoneNumberCountryCode: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSendPhoneNumberVerificationText, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-    });
-  }
-
-  SubmitPhoneNumberVerificationCode(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    PhoneNumber: string,
-    PhoneNumberCountryCode: string,
-    VerificationCode: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-      VerificationCode,
-    });
-  }
-
-  GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
-      PublicKeyBase58Check,
-      HeaderVersion: 1,
-    });
-  }
-
-  GetTxn(endpoint: string, TxnHashHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetTxn, {
-      TxnHashHex,
-    });
+  GetTxn(TxnHashHex: string): Observable<GetTxnResponse> {
+    return from(getTransaction({ TxnHashHex }));
   }
 
   DeleteIdentities(endpoint: string): Observable<any> {
@@ -736,419 +529,59 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
-  ExchangeBitcoin(
-    endpoint: string,
-    LatestBitcionAPIResponse: any,
-    BTCDepositAddress: string,
-    PublicKeyBase58Check: string,
-    BurnAmountSatoshis: number,
-    FeeRateSatoshisPerKB: number,
-    Broadcast: boolean
-  ): Observable<any> {
-    // Check if the user is logged in with a derived key and operating as the owner key.
-    const DerivedPublicKeyBase58Check =
-      this.identityService.identityServiceUsers[PublicKeyBase58Check]?.derivedPublicKeyBase58Check;
-
-    let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
-      PublicKeyBase58Check,
-      DerivedPublicKeyBase58Check,
-      BurnAmountSatoshis,
-      LatestBitcionAPIResponse,
-      BTCDepositAddress,
-      FeeRateSatoshisPerKB,
-      Broadcast: false,
-    });
-
-    if (Broadcast) {
-      req = req.pipe(
-        switchMap((res) =>
-          this.identityService
-            .burn({
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-              unsignedHashes: res.UnsignedHashes,
-            })
-            .pipe(map((signed) => ({ ...res, ...signed })))
-        )
-      );
-
-      req = req.pipe(
-        switchMap((res) =>
-          this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
-            PublicKeyBase58Check,
-            DerivedPublicKeyBase58Check,
-            BurnAmountSatoshis,
-            LatestBitcionAPIResponse,
-            BTCDepositAddress,
-            FeeRateSatoshisPerKB,
-            SignedHashes: res.signedHashes,
-            Broadcast,
-          }).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
-        )
-      );
-    }
-
-    return req.pipe(catchError(this._handleError));
-  }
-
-  // TODO: Use Broadcast bool isntead
   SendDeSoPreview(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
-    AmountNanos: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.SendDeSoRoute, {
-      SenderPublicKeyBase58Check,
-      RecipientPublicKeyOrUsername,
-      AmountNanos: Math.floor(AmountNanos),
-      MinFeeRateNanosPerKB,
-    });
+    AmountNanos: number
+  ): Observable<SendDeSoResponse> {
+    return from(
+      sendDeso(
+        {
+          SenderPublicKeyBase58Check,
+          RecipientPublicKeyOrUsername,
+          AmountNanos,
+        },
+        { broadcast: false }
+      ).then((res) => res.constructedTransactionResponse)
+    );
   }
 
   SendDeSo(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
-    AmountNanos: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.SendDeSoPreview(
-      endpoint,
-      SenderPublicKeyBase58Check,
-      RecipientPublicKeyOrUsername,
-      AmountNanos,
-      MinFeeRateNanosPerKB
+    AmountNanos: number
+  ): Observable<SendDeSoResponse & SubmitTransactionResponse> {
+    return from(
+      sendDeso({
+        SenderPublicKeyBase58Check,
+        RecipientPublicKeyOrUsername,
+        AmountNanos,
+      }).then(mergeTxResponse)
     );
-
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
-  }
-
-  SubmitTransaction(endpoint: string, TransactionHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathSubmitTransaction, {
-      TransactionHex,
-    });
-  }
-
-  SendMessage(
-    endpoint: string,
-    SenderPublicKeyBase58Check: string,
-    RecipientPublicKeyBase58Check: string,
-    MessageText: string,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    // First check if either sender or recipient has registered the "default-key" messaging group key.
-    // In V3 messages, we expect users to migrate to the V3 messages, which means they'll have the default
-    // key registered on-chain. We want to automatically send messages to this default key is it's registered.
-    // To check the messaging key we call the RoutePathCheckPartyMessaging keys backend API route.
-    let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
-      SenderPublicKeyBase58Check,
-      SenderMessagingKeyName: this.DefaultKey,
-      RecipientPublicKeyBase58Check,
-      RecipientMessagingKeyName: this.DefaultKey,
-    })
-      .pipe(
-        switchMap((partyMessagingKeys) => {
-          // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
-          const callEncrypt$ = (encryptedMessagingKeyRandomness?: string) => {
-            let payload = {
-              ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-              recipientPublicKey: partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
-              senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
-              message: MessageText,
-            };
-            if (encryptedMessagingKeyRandomness) {
-              payload = { ...payload, encryptedMessagingKeyRandomness };
-            }
-            return this.identityService.encrypt(payload);
-          };
-
-          const callRegisterGroupMessagingKey$ = (res: {
-            messagingPublicKeyBase58Check: string;
-            messagingKeySignature: string;
-          }) => {
-            return this.RegisterGroupMessagingKey(
-              endpoint,
-              SenderPublicKeyBase58Check,
-              res.messagingPublicKeyBase58Check,
-              "default-key",
-              res.messagingKeySignature,
-              [],
-              {},
-              MinFeeRateNanosPerKB
-            );
-          };
-
-          const launchDefaultMessagingKey$ = () =>
-            from(
-              SwalHelper.fire({
-                html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
-                showCancelButton: false,
-              })
-            ).pipe(
-              switchMap((res) => {
-                if (res.isConfirmed) {
-                  return this.identityService
-                    .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
-                    .pipe(timeout(45000));
-                } else {
-                  throwError("Default Messaging Key required to encrypt messages");
-                }
-              })
-            );
-
-          const submitEncryptedMessage$ = (encrypted: any) => {
-            // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
-            // sendMessage transaction.
-            const EncryptedMessageText = encrypted.encryptedMessage;
-            // Determine whether to use V3 messaging group key names for sender or recipient.
-            const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
-            const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
-            const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
-            const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
-            return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
-              SenderPublicKeyBase58Check,
-              RecipientPublicKeyBase58Check,
-              EncryptedMessageText,
-              SenderMessagingGroupKeyName,
-              RecipientMessagingGroupKeyName,
-              MinFeeRateNanosPerKB,
-            }).pipe(
-              map((request) => {
-                return { ...request };
-              })
-            );
-          };
-          // call encrypt and see what happens
-          return callEncrypt$().pipe(
-            switchMap((res: any) => {
-              // Verify we have the messaging key
-              return of({
-                isMissingRandomness: res?.encryptedMessage === "" && res?.requiresEncryptedMessagingKeyRandomness,
-                res,
-              });
-            }),
-            switchMap(({ isMissingRandomness, res }) => {
-              if (!isMissingRandomness) {
-                // easy pz return early
-                return submitEncryptedMessage$(res);
-              }
-              // otherwise, launch
-              return launchDefaultMessagingKey$().pipe(
-                switchMap((res) => {
-                  if (!res.encryptedMessagingKeyRandomness) {
-                    return throwError("Error getting encrypted messaging key randomness");
-                  }
-                  this.SetEncryptedMessagingKeyRandomnessForPublicKey(
-                    SenderPublicKeyBase58Check,
-                    res.encryptedMessagingKeyRandomness
-                  );
-                  return this.GetDefaultKey(endpoint, SenderPublicKeyBase58Check).pipe(
-                    switchMap((defaultKey) => {
-                      return of({ defaultKey, res });
-                    }),
-                    switchMap(({ defaultKey, res }) => {
-                      return !defaultKey
-                        ? callRegisterGroupMessagingKey$(res).pipe(
-                            switchMap((groupMessagingKeyResponse) => {
-                              if (!groupMessagingKeyResponse) {
-                                throwError("Error creating default key");
-                              }
-                              return of(res);
-                            })
-                          )
-                        : of(res);
-                    }),
-                    switchMap((_) => {
-                      partyMessagingKeys.SenderMessagingKeyName = "default-key";
-                      partyMessagingKeys.IsSenderMessagingKey = true;
-                      return callEncrypt$().pipe(
-                        switchMap((res) => {
-                          if (res?.encryptedMessage && !res?.requiresEncryptedMessagingKeyRandomness) {
-                            return submitEncryptedMessage$(res.encryptedMessage);
-                          }
-                          return throwError("Error submitting messaging");
-                        })
-                      );
-                    })
-                  );
-                })
-              );
-            })
-          );
-        })
-      )
-      .pipe(catchError(this._handleError));
-    return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
-  }
-
-  RegisterGroupMessagingKey(
-    endpoint: string,
-    OwnerPublicKeyBase58Check: string,
-    MessagingPublicKeyBase58Check: string,
-    MessagingGroupKeyName: string,
-    MessagingKeySignatureHex: string,
-    MessagingGroupMembers: MessagingGroupMemberResponse[],
-    ExtraData: { [k: string]: string },
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RegisterGroupMessagingKey, {
-      OwnerPublicKeyBase58Check,
-      MessagingPublicKeyBase58Check,
-      MessagingGroupKeyName,
-      MessagingKeySignatureHex,
-      MessagingGroupMembers,
-      ExtraData,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, OwnerPublicKeyBase58Check);
   }
 
   // User-related functions.
   GetUsersStateless(
-    endpoint: string,
     PublicKeysBase58Check: string[],
     SkipForLeaderboard: boolean = false
   ): Observable<GetUsersStatelessResponse> {
-    return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
-      PublicKeysBase58Check,
-      SkipForLeaderboard,
-    });
-  }
-
-  getAllTransactionOutputs(tx: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      // If the tx doesn't have more outputs then return.
-      if (!tx.next_outputs || tx.outputs.length < 20) {
-        resolve(tx);
-        return;
-      }
-
-      // Else query the next_output and add the new outputs to the tx.
-      // Do this recursively until everything has been fetched.
-      this.httpClient
-        .get<any>(tx.next_outputs + `&token=${this.blockCypherToken}`)
-        .pipe(
-          map((res) => {
-            return res;
-          }),
-          catchError(this._handleError)
-        )
-        .subscribe(
-          (res) => {
-            // Add the next_outputs to the back of the txn
-            if (res.outputs) {
-              for (let ii = 0; ii < res.outputs.length; ii++) {
-                tx.outputs.push(res.outputs[ii]);
-              }
-            }
-
-            // If there are more outputs, then we do a dirty hack. We change
-            // the next_outputs of the current txn to the next_outputs of the
-            // response. Then call this function recursively to add the
-            // remaining outputs.
-            // BlockCypher also
-            // doesn't tell us when a transaction is out of outputs, so we have
-            // to assume it has more outputs if its at the maximum number of outputs,
-            // which is 20 for BlockCypher.
-            if (res.outputs.length >= 20) {
-              tx.next_outputs = res.next_outputs;
-              this.getAllTransactionOutputs(tx).then(
-                (res) => {
-                  resolve(res);
-                },
-                (err) => {
-                  console.error(err);
-                  resolve(tx);
-                }
-              );
-            } else {
-              resolve(tx);
-            }
-          },
-          (err) => {
-            console.error(err);
-            resolve(err);
-          }
-        );
-    });
-  }
-
-  GetBitcoinAPIInfo(bitcoinAddr: string, isTestnet: boolean): Observable<any> {
-    let endpoint = `https://api.blockcypher.com/v1/btc/main/addrs/${bitcoinAddr}/full?token=${this.blockCypherToken}`;
-    if (isTestnet) {
-      endpoint = `https://api.blockcypher.com/v1/btc/test3/addrs/${bitcoinAddr}/full?token=${this.blockCypherToken}`;
-    }
-
-    return this.httpClient.get<any>(endpoint).pipe(
-      map((res) => {
-        // If the response has no transactions or if the final balance is zero
-        // then just return it.
-        if (!res.txs || !res.final_balance) {
-          return new Promise((resolve, reject) => {
-            resolve(res);
-          });
-        }
-
-        // For each transaction, continuously fetch its outputs until we
-        // run out of them.
-        const txnPromises = [];
-        // TODO: This causes us to hit rate limits if there are too many
-        // transactions in the backlog. We should fix this at some point.
-        for (let ii = 0; ii < res.txs.length; ii++) {
-          txnPromises.push(this.getAllTransactionOutputs(res.txs[ii]));
-        }
-
-        return Promise.all(txnPromises).then((xxx) => res);
-      }),
-      catchError(this._handleError)
-    );
-  }
-
-  UploadImage(endpoint: string, UserPublicKeyBase58Check: string, file: File): Observable<any> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(UserPublicKeyBase58Check),
-    });
-    return request.pipe(
-      switchMap((signed) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", UserPublicKeyBase58Check);
-        formData.append("JWT", signed.jwt);
-
-        return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
+    return from(
+      getUsersStateless({
+        PublicKeysBase58Check,
+        SkipForLeaderboard,
       })
     );
   }
 
-  UploadVideo(
-    endpoint: string,
-    file: File,
-    publicKeyBase58Check: string
-  ): Observable<{
-    tusEndpoint: string;
-    asset: {
-      id: string;
-      playbackId: string;
-    };
-  }> {
-    const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(publicKeyBase58Check),
-    });
-    return request.pipe(
-      switchMap((signed) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", publicKeyBase58Check);
-        formData.append("JWT", signed.jwt);
+  UploadImage(UserPublicKeyBase58Check: string, file: File): Observable<any> {
+    return from(uploadImage({ UserPublicKeyBase58Check, file }, { nodeURI: "https://node.deso.org" }));
+  }
 
-        return this.post(endpoint, BackendRoutes.RoutePathUploadVideo, formData);
-      })
-    );
+  UploadVideo(file: File, publicKeyBase58Check: string): Observable<UploadVideoV2Response> {
+    return from(uploadVideo({ file, UserPublicKeyBase58Check: publicKeyBase58Check }));
   }
 
   CreateNft(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     NumCopies: number,
@@ -1160,105 +593,89 @@ export class BackendApiService {
     IsBuyNow: boolean,
     BuyNowPriceNanos: number,
     AdditionalDESORoyaltiesMap: { [k: string]: number },
-    AdditionalCoinRoyaltiesMap: { [k: string]: number },
-    MinFeeRateNanosPerKB: number
+    AdditionalCoinRoyaltiesMap: { [k: string]: number }
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      NumCopies,
-      NFTRoyaltyToCreatorBasisPoints,
-      NFTRoyaltyToCoinBasisPoints,
-      HasUnlockable,
-      IsForSale,
-      MinBidAmountNanos,
-      IsBuyNow,
-      BuyNowPriceNanos,
-      AdditionalDESORoyaltiesMap,
-      AdditionalCoinRoyaltiesMap,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      createNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        NumCopies,
+        NFTRoyaltyToCreatorBasisPoints,
+        NFTRoyaltyToCoinBasisPoints,
+        HasUnlockable,
+        IsForSale,
+        MinBidAmountNanos,
+        IsBuyNow,
+        BuyNowPriceNanos,
+        AdditionalDESORoyaltiesMap,
+        AdditionalCoinRoyaltiesMap,
+      })
+    );
   }
 
   UpdateNFT(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
     IsForSale: boolean,
     MinBidAmountNanos: number,
     IsBuyNow: boolean,
-    BuyNowPriceNanos: number,
-    MinFeeRateNanosPerKB: number
+    BuyNowPriceNanos: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      IsForSale,
-      MinBidAmountNanos,
-      IsBuyNow,
-      BuyNowPriceNanos,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      updateNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+        IsForSale,
+        MinBidAmountNanos,
+        IsBuyNow,
+        BuyNowPriceNanos,
+      })
+    );
   }
 
   CreateNFTBid(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
-    BidAmountNanos: number,
-    MinFeeRateNanosPerKB: number
+    BidAmountNanos: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNFTBid, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      BidAmountNanos,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      createNFTBid({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+        BidAmountNanos,
+      })
+    );
   }
 
-  BurnNFT(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
-    NFTPostHashHex: string,
-    SerialNumber: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathBurnNFT, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  BurnNFT(UpdaterPublicKeyBase58Check: string, NFTPostHashHex: string, SerialNumber: number): Observable<any> {
+    return from(
+      burnNFT({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+      })
+    );
   }
 
   AcceptNFTTransfer(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
-    SerialNumber: number,
-    MinFeeRateNanosPerKB: number
+    SerialNumber: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      acceptNFTTransfer({
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+      })
+    );
   }
 
   AcceptNFTBid(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     NFTPostHashHex: string,
     SerialNumber: number,
@@ -1268,128 +685,150 @@ export class BackendApiService {
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let request = UnencryptedUnlockableText
-      ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
-          recipientPublicKey: BidderPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
-    request = request.pipe(
-      switchMap((encrypted) => {
-        const EncryptedMessageText = encrypted.encryptedMessage;
-        return this.post(endpoint, BackendRoutes.RoutePathAcceptNFTBid, {
-          UpdaterPublicKeyBase58Check,
-          NFTPostHashHex,
-          SerialNumber,
-          BidderPublicKeyBase58Check,
-          BidAmountNanos,
-          EncryptedUnlockableText: EncryptedMessageText,
-          MinFeeRateNanosPerKB,
-        }).pipe(
-          map((request) => {
-            return { ...request };
+      ? from(
+          checkPartyAccessGroups({
+            SenderAccessGroupKeyName: "default-key",
+            RecipientAccessGroupKeyName: "default-key",
+            SenderPublicKeyBase58Check: UpdaterPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check: BidderPublicKeyBase58Check,
           })
-        );
+        ).pipe(
+          switchMap((resp) => {
+            const identityState = identity.snapshot();
+            if (!identityState.currentUser) {
+              throw new Error("No identityState.currentUser");
+            }
+            return from(
+              encryptChatMessage(
+                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+                resp.RecipientAccessGroupPublicKeyBase58Check,
+                UnencryptedUnlockableText
+              )
+            );
+          })
+        )
+      : of("");
+    return request.pipe(
+      switchMap((EncryptedUnlockableText) => {
+        return from(
+          acceptNFTBid({
+            UpdaterPublicKeyBase58Check,
+            NFTPostHashHex,
+            SerialNumber,
+            BidderPublicKeyBase58Check,
+            BidAmountNanos,
+            EncryptedUnlockableText,
+            MinFeeRateNanosPerKB,
+          })
+        ).pipe(map(mergeTxResponse));
       })
     );
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   DecryptUnlockableTexts(
     ReaderPublicKeyBase58Check: string,
     UnlockableNFTEntryResponses: NFTEntryResponse[]
   ): Observable<any> {
-    return this.identityService
-      .decrypt({
-        ...this.identityService.identityServiceParamsForKey(ReaderPublicKeyBase58Check),
-        encryptedMessages: UnlockableNFTEntryResponses.map((unlockableNFTEntryResponses) => ({
-          EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
-          PublicKey: unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
-        })),
+    const lastOwnerPublicKey = UnlockableNFTEntryResponses[0]?.LastOwnerPublicKeyBase58Check;
+    if (!lastOwnerPublicKey) {
+      throw new Error("lastOwnerPublicKey missing");
+    }
+
+    return from(
+      checkPartyAccessGroups({
+        SenderAccessGroupKeyName: "default-key",
+        RecipientAccessGroupKeyName: "default-key",
+        SenderPublicKeyBase58Check: lastOwnerPublicKey,
+        RecipientPublicKeyBase58Check: ReaderPublicKeyBase58Check,
       })
-      .pipe(
-        map((decrypted) => {
-          for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
-            unlockableNFTEntryResponse.DecryptedUnlockableText =
-              decrypted.decryptedHexes[unlockableNFTEntryResponse.EncryptedUnlockableText];
-          }
-          return UnlockableNFTEntryResponses;
-        })
-      )
-      .pipe(catchError(this._handleError));
+    ).pipe(
+      switchMap((resp) => {
+        const identityState = identity.snapshot();
+        if (!identityState.currentUser) {
+          throw new Error("No identityState.currentUser");
+        }
+        return forkJoin(
+          UnlockableNFTEntryResponses.map((nft) => {
+            return decryptChatMessage(
+              identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+              resp.SenderAccessGroupPublicKeyBase58Check,
+              nft.EncryptedUnlockableText
+            );
+          })
+        );
+      }),
+      map((decryptedText) => {
+        for (let i = 0; i < UnlockableNFTEntryResponses.length; i++) {
+          UnlockableNFTEntryResponses[i].DecryptedUnlockableText = decryptedText[i];
+        }
+        return UnlockableNFTEntryResponses;
+      }),
+      catchError(this._handleError)
+    );
   }
 
-  GetNFTBidsForNFTPost(
-    endpoint: string,
-    ReaderPublicKeyBase58Check: string,
-    PostHashHex: string
-  ): Observable<NFTBidData> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForNFTPost, {
-      ReaderPublicKeyBase58Check,
-      PostHashHex,
-    });
+  GetNFTBidsForNFTPost(ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return from(
+      getAllBidsForNFT({
+        ReaderPublicKeyBase58Check,
+        PostHashHex,
+      })
+    );
   }
 
   GetNFTsForUser(
-    endpoint: string,
     UserPublicKeyBase58Check: string,
     ReaderPublicKeyBase58Check: string,
     IsForSale: boolean | null = null,
     IsPending: boolean | null = null
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTsForUser, {
-      UserPublicKeyBase58Check,
-      ReaderPublicKeyBase58Check,
-      IsForSale,
-      IsPending,
-    });
+    return from(
+      getNFTsForUser({
+        UserPublicKeyBase58Check,
+        ReaderPublicKeyBase58Check,
+        IsForSale,
+        IsPending,
+      })
+    );
   }
 
-  GetNFTBidsForUser(
-    endpoint: string,
-    UserPublicKeyBase58Check: string,
-    ReaderPublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForUser, {
-      UserPublicKeyBase58Check,
-      ReaderPublicKeyBase58Check,
-    });
-  }
-
-  GetNFTShowcase(
-    endpoint: string,
-    UserPublicKeyBase58Check: string,
-    ReaderPublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTShowcase, {
-      UserPublicKeyBase58Check,
-      ReaderPublicKeyBase58Check,
-    });
-  }
-
-  GetNextNFTShowcase(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
-      UserPublicKeyBase58Check,
-    });
+  GetNFTBidsForUser(UserPublicKeyBase58Check: string, ReaderPublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getNFTBidsForUser({
+        UserPublicKeyBase58Check,
+        ReaderPublicKeyBase58Check,
+      })
+    );
   }
 
   GetNFTCollectionSummary(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTCollectionSummary, {
-      ReaderPublicKeyBase58Check,
-      PostHashHex,
-    });
+    return from(
+      getNFTCollectionSummary({
+        ReaderPublicKeyBase58Check,
+        PostHashHex,
+      })
+    );
   }
 
-  GetNFTEntriesForNFTPost(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTEntriesForPostHash, {
-      ReaderPublicKeyBase58Check,
-      PostHashHex,
-    });
+  GetNFTEntriesForNFTPost(ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return from(
+      getNFTEntriesForPost({
+        ReaderPublicKeyBase58Check,
+        PostHashHex,
+      })
+    );
   }
 
+  GetNFTShowcase(ReaderPublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getNFTShowcase({
+        ReaderPublicKeyBase58Check,
+      })
+    );
+  }
+
+  // TODO: make sure our encrypt/decrypt stuff works right here.
   TransferNFT(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     ReceiverPublicKeyBase58Check: string,
     NFTPostHashHex: string,
@@ -1398,67 +837,69 @@ export class BackendApiService {
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let request = UnencryptedUnlockableText
-      ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-          recipientPublicKey: ReceiverPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
-    request = request.pipe(
-      switchMap((encrypted) => {
-        const EncryptedUnlockableText = encrypted.encryptedMessage;
-        return this.post(endpoint, BackendRoutes.RoutePathTransferNFT, {
-          SenderPublicKeyBase58Check,
-          ReceiverPublicKeyBase58Check,
-          NFTPostHashHex,
-          SerialNumber,
-          EncryptedUnlockableText,
-          MinFeeRateNanosPerKB,
-        }).pipe(
-          map((request) => {
-            return { ...request };
+      ? from(
+          checkPartyAccessGroups({
+            SenderAccessGroupKeyName: "default-key",
+            RecipientAccessGroupKeyName: "default-key",
+            SenderPublicKeyBase58Check: SenderPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check: ReceiverPublicKeyBase58Check,
           })
-        );
+        ).pipe(
+          switchMap((resp) => {
+            const identityState = identity.snapshot();
+            if (!identityState.currentUser) {
+              throw new Error("No identityState.currentUser");
+            }
+            return from(
+              encryptChatMessage(
+                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+                resp.RecipientAccessGroupPublicKeyBase58Check,
+                UnencryptedUnlockableText
+              )
+            );
+          })
+        )
+      : of("");
+
+    return request.pipe(
+      switchMap((EncryptedUnlockableText) => {
+        return from(
+          transferNFT({
+            SenderPublicKeyBase58Check,
+            ReceiverPublicKeyBase58Check,
+            NFTPostHashHex,
+            SerialNumber,
+            EncryptedUnlockableText,
+            MinFeeRateNanosPerKB,
+          })
+        ).pipe(map(mergeTxResponse));
       })
     );
-
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
   SubmitPost(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     PostHashHexToModify: string,
     ParentStakeID: string,
-    Title: string,
-    BodyObj: PostTxnBody,
+    BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    Sub: string,
-    IsHidden: boolean,
-    MinFeeRateNanosPerKB: number,
-    InTutorial: boolean = false
+    IsHidden: boolean
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
-      UpdaterPublicKeyBase58Check,
-      PostHashHexToModify,
-      ParentStakeID,
-      Title,
-      BodyObj,
-      RepostedPostHashHex,
-      PostExtraData,
-      Sub,
-      IsHidden,
-      MinFeeRateNanosPerKB,
-      InTutorial,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      submitPost({
+        UpdaterPublicKeyBase58Check,
+        PostHashHexToModify,
+        ParentStakeID,
+        BodyObj,
+        RepostedPostHashHex,
+        PostExtraData,
+        IsHidden,
+      })
+    );
   }
 
   GetPostsStateless(
-    endpoint: string,
     PostHashHex: string,
     ReaderPublicKeyBase58Check: string,
     OrderBy: string,
@@ -1473,41 +914,38 @@ export class BackendApiService {
     PostsByDESOMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetPostsStateless, {
-      PostHashHex,
-      ReaderPublicKeyBase58Check,
-      OrderBy,
-      StartTstampSecs,
-      PostContent,
-      NumToFetch,
-      FetchSubcomments,
-      GetPostsForFollowFeed,
-      GetPostsForGlobalWhitelist,
-      GetPostsByDESO,
-      MediaRequired,
-      PostsByDESOMinutesLookback,
-      AddGlobalFeedBool,
-    });
+    return from(
+      getPostsStateless({
+        PostHashHex,
+        ReaderPublicKeyBase58Check,
+        OrderBy,
+        StartTstampSecs,
+        PostContent,
+        NumToFetch,
+        FetchSubcomments,
+        GetPostsForFollowFeed,
+        GetPostsForGlobalWhitelist,
+        GetPostsByDESO,
+        MediaRequired,
+        PostsByDESOMinutesLookback,
+        AddGlobalFeedBool,
+      })
+    );
   }
 
-  GetHotFeed(
-    endpoint: string,
-    ReaderPublicKeyBase58Check: string,
-    SeenPosts,
-    ResponseLimit,
-    Tag?: string
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
-      ReaderPublicKeyBase58Check,
-      SeenPosts,
-      ResponseLimit,
-      SortByNew: false,
-      Tag,
-    });
+  GetHotFeed(ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit, Tag?: string): Observable<any> {
+    return from(
+      getHotFeed({
+        ReaderPublicKeyBase58Check,
+        SeenPosts,
+        ResponseLimit,
+        SortByNew: false,
+        Tag,
+      })
+    );
   }
 
   GetSinglePost(
-    endpoint: string,
     PostHashHex: string,
     ReaderPublicKeyBase58Check: string,
     FetchParents: boolean = true,
@@ -1518,21 +956,22 @@ export class BackendApiService {
     ThreadLeafLimit: number | undefined = undefined,
     LoadAuthorThread: boolean | undefined = undefined
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetSinglePost, {
-      PostHashHex,
-      ReaderPublicKeyBase58Check,
-      FetchParents,
-      CommentOffset,
-      CommentLimit,
-      AddGlobalFeedBool,
-      ThreadLevelLimit,
-      ThreadLeafLimit,
-      LoadAuthorThread,
-    });
+    return from(
+      getSinglePost({
+        PostHashHex,
+        ReaderPublicKeyBase58Check,
+        FetchParents,
+        CommentOffset,
+        CommentLimit,
+        AddGlobalFeedBool,
+        ThreadLevelLimit,
+        ThreadLeafLimit,
+        LoadAuthorThread,
+      })
+    );
   }
 
   GetProfiles(
-    endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     UsernamePrefix: string,
@@ -1544,58 +983,45 @@ export class BackendApiService {
     FetchUsersThatHODL: boolean,
     AddGlobalFeedBool: boolean = false
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetProfiles, {
-      PublicKeyBase58Check,
-      Username,
-      UsernamePrefix,
-      Description,
-      OrderBy,
-      NumToFetch,
-      ReaderPublicKeyBase58Check,
-      ModerationType,
-      FetchUsersThatHODL,
-      AddGlobalFeedBool,
-    });
+    return from(
+      getProfiles({
+        PublicKeyBase58Check,
+        Username,
+        UsernamePrefix,
+        Description,
+        OrderBy,
+        NumToFetch,
+        ReaderPublicKeyBase58Check,
+        ModerationType,
+        FetchUsersThatHODL,
+        AddGlobalFeedBool,
+      })
+    );
   }
 
-  GetSingleProfile(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    Username: string,
-    NoErrorOnMissing: boolean = false
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
-      PublicKeyBase58Check,
-      Username,
-      NoErrorOnMissing,
-    });
+  GetSingleProfile(PublicKeyBase58Check: string, Username: string, NoErrorOnMissing: boolean = false): Observable<any> {
+    return from(
+      getSingleProfile({
+        PublicKeyBase58Check,
+        Username,
+        NoErrorOnMissing,
+      })
+    );
   }
 
-  // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
-  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
-    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
-      // @ts-ignore
+  GetSingleProfilePicture(PublicKeyBase58Check: string): Observable<Blob> {
+    return this.httpClient.get(this.GetSingleProfilePictureURL(PublicKeyBase58Check), {
       responseType: "blob",
     });
   }
 
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
-    return this._makeRequestURL(
-      endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture +
-        "/" +
-        PublicKeyBase58Check +
-        "?" +
-        (fallback ?? this.GetDefaultProfilePictureURL(endpoint))
-    );
-  }
-
-  GetDefaultProfilePictureURL(endpoint: string): string {
-    return this._makeRequestURL(endpoint, "/assets/img/default-profile-pic.png");
+  GetSingleProfilePictureURL(PublicKeyBase58Check?: string): string {
+    return buildProfilePictureUrl(PublicKeyBase58Check, {
+      fallbackImageUrl: `${window.location.origin}/assets/img/default-profile-pic.png`,
+    });
   }
 
   GetPostsForPublicKey(
-    endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     ReaderPublicKeyBase58Check: string,
@@ -1603,18 +1029,19 @@ export class BackendApiService {
     NumToFetch: number,
     MediaRequired: boolean
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
-      PublicKeyBase58Check,
-      Username,
-      ReaderPublicKeyBase58Check,
-      LastPostHashHex,
-      NumToFetch,
-      MediaRequired,
-    });
+    return from(
+      getPostsForUser({
+        PublicKeyBase58Check,
+        Username,
+        ReaderPublicKeyBase58Check,
+        LastPostHashHex,
+        NumToFetch,
+        MediaRequired,
+      })
+    );
   }
 
   GetDiamondedPosts(
-    endpoint: string,
     ReceiverPublicKeyBase58Check: string,
     ReceiverUsername: string,
     SenderPublicKeyBase58Check: string,
@@ -1623,19 +1050,20 @@ export class BackendApiService {
     StartPostHashHex: string,
     NumToFetch: number
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondedPosts, {
-      ReceiverPublicKeyBase58Check,
-      ReceiverUsername,
-      SenderPublicKeyBase58Check,
-      SenderUsername,
-      ReaderPublicKeyBase58Check,
-      StartPostHashHex,
-      NumToFetch,
-    });
+    return from(
+      getDiamondedPosts({
+        ReceiverPublicKeyBase58Check,
+        ReceiverUsername,
+        SenderPublicKeyBase58Check,
+        SenderUsername,
+        ReaderPublicKeyBase58Check,
+        StartPostHashHex,
+        NumToFetch,
+      })
+    );
   }
 
   GetHodlersForPublicKey(
-    endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     LastPublicKeyBase58Check: string,
@@ -1643,23 +1071,23 @@ export class BackendApiService {
     FetchHodlings: boolean = false,
     FetchAll: boolean = false,
     IsDAOCoin: boolean = false,
-    SortType: string = "coin_balance"
+    SortType: HodlersSortType = HodlersSortType.coin_balance
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetHodlersForPublicKey, {
-      PublicKeyBase58Check,
-      Username,
-      LastPublicKeyBase58Check,
-      NumToFetch,
-      FetchHodlings,
-      FetchAll,
-      IsDAOCoin,
-      SortType,
-    });
+    return from(
+      getHodlersForUser({
+        PublicKeyBase58Check,
+        Username,
+        LastPublicKeyBase58Check,
+        NumToFetch,
+        FetchHodlings,
+        FetchAll,
+        IsDAOCoin,
+        SortType,
+      })
+    );
   }
 
   UpdateProfile(
-    verificationNodeEndpoint: string,
-    localNodeEndpoint: string,
     // Specific fields
     UpdaterPublicKeyBase58Check: string,
     // Optional: Only needed when updater public key != profile public key
@@ -1671,7 +1099,6 @@ export class BackendApiService {
     NewStakeMultipleBasisPoints: number,
     IsHidden: boolean,
     // End specific fields
-    MinFeeRateNanosPerKB: number,
     ExtraData: {
       [key: string]: string;
     } = {}
@@ -1679,307 +1106,81 @@ export class BackendApiService {
     NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
     NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
 
-    const request = this.post(verificationNodeEndpoint, BackendRoutes.RoutePathUpdateProfile, {
-      UpdaterPublicKeyBase58Check,
-      ProfilePublicKeyBase58Check,
-      NewUsername,
-      NewDescription,
-      NewProfilePic,
-      NewCreatorBasisPoints,
-      NewStakeMultipleBasisPoints,
-      IsHidden,
-      MinFeeRateNanosPerKB,
-      ExtraData,
-    }).pipe(
-      switchMap((res) => {
-        // We need to wait until the profile creation has been comped.
-        if (res.CompProfileCreationTxnHashHex) {
-          return interval(500)
-            .pipe(
-              concatMap((iteration) =>
-                zip(this.GetTxn(localNodeEndpoint, res.CompProfileCreationTxnHashHex), of(iteration))
-              )
-            )
-            .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
-            .pipe(take(1))
-            .pipe(switchMap(() => of(res)));
-        } else {
-          return of(res);
-        }
+    return from(
+      updateProfile({
+        UpdaterPublicKeyBase58Check,
+        ProfilePublicKeyBase58Check,
+        NewUsername,
+        NewDescription,
+        NewProfilePic,
+        NewCreatorBasisPoints,
+        NewStakeMultipleBasisPoints,
+        IsHidden,
+        ExtraData,
       })
-    );
-    return this.signAndSubmitTransaction(verificationNodeEndpoint, request, UpdaterPublicKeyBase58Check);
+    ).pipe(map(mergeTxResponse));
   }
 
   GetFollows(
-    endpoint: string,
     Username: string,
     PublicKeyBase58Check: string,
     GetEntriesFollowingUsername: boolean,
     LastPublicKeyBase58Check: string = "",
     NumToFetch: number = 50
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetFollowsStateless, {
-      Username,
-      PublicKeyBase58Check,
-      GetEntriesFollowingUsername,
-      LastPublicKeyBase58Check,
-      NumToFetch,
-    });
+    return from(
+      getFollowersForUser({
+        Username,
+        PublicKeyBase58Check,
+        GetEntriesFollowingUsername,
+        LastPublicKeyBase58Check,
+        NumToFetch,
+      })
+    );
   }
 
   CreateFollowTxn(
-    endpoint: string,
     FollowerPublicKeyBase58Check: string,
     FollowedPublicKeyBase58Check: string,
-    IsUnfollow: boolean,
-    MinFeeRateNanosPerKB: number
+    IsUnfollow: boolean
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateFollowTxnStateless, {
-      FollowerPublicKeyBase58Check,
-      FollowedPublicKeyBase58Check,
-      IsUnfollow,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
-  }
-
-  GetMessages(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    FetchAfterPublicKeyBase58Check: string = "",
-    NumToFetch: number = 25,
-    HoldersOnly: boolean = false,
-    HoldingsOnly: boolean = false,
-    FollowersOnly: boolean = false,
-    FollowingOnly: boolean = false,
-    SortAlgorithm: string = "time",
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
-      PublicKeyBase58Check,
-      FetchAfterPublicKeyBase58Check,
-      NumToFetch,
-      HoldersOnly,
-      HoldingsOnly,
-      FollowersOnly,
-      FollowingOnly,
-      SortAlgorithm,
-    });
-    // create an array of messages to decrypt
-    req = req.pipe(
-      map((res) => {
-        // This array contains encrypted messages with public keys
-        // Public keys of the other party involved in the correspondence
-        const encryptedMessages = res.OrderedContactsWithMessages.flatMap((thread) =>
-          thread.Messages.flatMap((message) => ({
-            EncryptedHex: message.EncryptedText,
-            PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
-            IsSender: message.IsSender,
-            Legacy: !message.V2 && (!message.Version || message.Version < 2),
-            Version: message.Version,
-            SenderMessagingPublicKey: message.SenderMessagingPublicKey,
-            SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
-            RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
-            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName,
-          }))
-        );
-        return { ...res, encryptedMessages };
+    return from(
+      updateFollowingStatus({
+        FollowerPublicKeyBase58Check,
+        FollowedPublicKeyBase58Check,
+        IsUnfollow,
       })
-    );
-    const launchDefaultMessagingKey$ = () =>
-      from(
-        SwalHelper.fire({
-          html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
-          showCancelButton: false,
-        })
-      ).pipe(
-        switchMap((res) => {
-          if (res.isConfirmed) {
-            return this.identityService.launchDefaultMessagingKey(PublicKeyBase58Check).pipe(timeout(45000));
-          } else {
-            throwError("Default Messaging Key required to encrypt messages");
-          }
-        })
-      );
-
-    const callRegisterGroupMessagingKey$ = (res: {
-      messagingPublicKeyBase58Check: string;
-      messagingKeySignature: string;
-    }) => {
-      return this.RegisterGroupMessagingKey(
-        endpoint,
-        PublicKeyBase58Check,
-        res.messagingPublicKeyBase58Check,
-        "default-key",
-        res.messagingKeySignature,
-        [],
-        {},
-        MinFeeRateNanosPerKB
-      );
-    };
-
-    const addDecryptedMessagesToMessagePayload = (res, decryptedHexes, wrap) => {
-      res.OrderedContactsWithMessages.forEach((threads) =>
-        threads.Messages.forEach((message) => {
-          message.DecryptedText = decryptedHexes.decryptedHexes[message.EncryptedText];
-        })
-      );
-      return wrap ? of({ ...res, ...decryptedHexes }) : { ...res, ...decryptedHexes };
-    };
-
-    // decrypt all the messages
-    req = req
-      .pipe(
-        switchMap((res) => {
-          return this.identityService
-            .decrypt({
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-              encryptedMessages: res.encryptedMessages,
-              // encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
-            })
-            .pipe(
-              map((decryptedResponse) => {
-                if (decryptedResponse?.requiresEncryptedMessagingKeyRandomness === true) {
-                  // go get the key
-                  return launchDefaultMessagingKey$().pipe(
-                    switchMap((defaultMessagingKeyResponse) => {
-                      if (defaultMessagingKeyResponse.encryptedMessagingKeyRandomness) {
-                        this.SetEncryptedMessagingKeyRandomnessForPublicKey(
-                          PublicKeyBase58Check,
-                          defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
-                        );
-                        return this.GetDefaultKey(endpoint, PublicKeyBase58Check).pipe(
-                          switchMap((defaultKey) => {
-                            return of({
-                              defaultKey,
-                              defaultMessagingKeyResponse,
-                            });
-                          }),
-                          switchMap(({ defaultKey, defaultMessagingKeyResponse }) => {
-                            return !defaultKey
-                              ? callRegisterGroupMessagingKey$(defaultMessagingKeyResponse).pipe(
-                                  switchMap((groupMessagingKeyResponse) => {
-                                    if (!groupMessagingKeyResponse) {
-                                      throwError("Error creating default key");
-                                    }
-                                    return of(defaultMessagingKeyResponse);
-                                  })
-                                )
-                              : of(defaultMessagingKeyResponse);
-                          }),
-                          switchMap((_) => {
-                            return this.identityService
-                              .decrypt({
-                                ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-                                encryptedMessages: res.encryptedMessages,
-
-                                encryptedMessagingKeyRandomness:
-                                  defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
-                              })
-                              .pipe(
-                                map((decryptedHexes) =>
-                                  addDecryptedMessagesToMessagePayload(res, decryptedHexes, false)
-                                )
-                              );
-                          })
-                        );
-                      }
-                    })
-                  );
-                } else if (decryptedResponse.decryptedHexes) {
-                  return addDecryptedMessagesToMessagePayload(res, decryptedResponse, true);
-                } else {
-                  throw "something went wrong with decrypting";
-                }
-              })
-            );
-        })
-      )
-      .pipe(
-        switchMap((t) => {
-          return t;
-        })
-      );
-    return req.pipe(catchError(this._handleError));
-  }
-
-  GetAllMessagingGroupKeys(
-    endpoint: string,
-    OwnerPublicKeyBase58Check: string
-  ): Observable<GetAllMessagingGroupKeysResponse> {
-    return this.post(endpoint, BackendRoutes.GetAllMessagingGroupKeys, {
-      OwnerPublicKeyBase58Check,
-    });
-  }
-
-  GetDefaultKey(endpoint: string, publicKeyBase58Check: string): Observable<MessagingGroupEntryResponse | null> {
-    return this.GetAllMessagingGroupKeys(endpoint, publicKeyBase58Check).pipe(
-      map((res) => {
-        const defaultKeys = res.MessagingGroupEntries.filter((messagingGroup: MessagingGroupEntryResponse) => {
-          return messagingGroup.MessagingGroupKeyName === "default-key";
-        });
-        return defaultKeys.length ? defaultKeys[0] : null;
-      })
-    );
-  }
-
-  CreateLike(
-    endpoint: string,
-    ReaderPublicKeyBase58Check: string,
-    LikedPostHashHex: string,
-    IsUnlike: boolean,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateLikeStateless, {
-      ReaderPublicKeyBase58Check,
-      LikedPostHashHex,
-      IsUnlike,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
+    ).pipe(map(mergeTxResponse));
   }
 
   CreatePostAssociation(
-    Endpoint: string,
     TransactorPublicKeyBase58Check: string,
     PostHashHex: string,
     AssociationType: AssociationType,
     AssociationValue: AssociationValue
   ): Observable<any> {
-    const request = this.post(Endpoint, BackendRoutes.RoutePathCreatePostAssociation, {
-      TransactorPublicKeyBase58Check,
-      PostHashHex,
-      AppPublicKeyBase58Check: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
-      AssociationType,
-      AssociationValue,
-      ExtraData: {},
-      MinFeeRateNanosPerKB: 1000,
-      TransactionFees: [],
-    });
-
-    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
+    return from(
+      createPostAssociation({
+        TransactorPublicKeyBase58Check,
+        PostHashHex,
+        AppPublicKeyBase58Check: BackendApiService.DIAMOND_APP_PUBLIC_KEY,
+        AssociationType,
+        AssociationValue,
+      })
+    ).pipe(map(mergeTxResponse));
   }
 
-  DeletePostAssociation(
-    Endpoint: string,
-    TransactorPublicKeyBase58Check: string,
-    AssociationID: string
-  ): Observable<any> {
-    const request = this.post(Endpoint, BackendRoutes.RoutePathDeletePostAssociation, {
-      TransactorPublicKeyBase58Check,
-      AssociationID,
-      MinFeeRateNanosPerKB: 1000,
-      TransactionFees: [],
-    });
-
-    return this.signAndSubmitTransaction(Endpoint, request, TransactorPublicKeyBase58Check);
+  DeletePostAssociation(TransactorPublicKeyBase58Check: string, AssociationID: string): Observable<any> {
+    return from(
+      deletePostAssociation({
+        TransactorPublicKeyBase58Check,
+        AssociationID,
+      })
+    ).pipe(map(mergeTxResponse));
   }
 
+  // TODO: add associations data calls
   GetAllPostAssociations(
-    Endpoint: string,
     PostHashHex: string,
     AssociationType: AssociationType,
     TransactorPublicKeyBase58Check?: string,
@@ -1992,7 +1193,6 @@ export class BackendApiService {
 
     const fetchAssociationsChunk = (LastSeenAssociationID?: string) => {
       return this.GetPostAssociations(
-        Endpoint,
         PostHashHex,
         AssociationType,
         TransactorPublicKeyBase58Check,
@@ -2029,41 +1229,44 @@ export class BackendApiService {
   }
 
   GetPostAssociations(
-    Endpoint: string,
     PostHashHex: string,
     AssociationType: AssociationType,
     TransactorPublicKeyBase58Check?: string,
-    AssociationValues?: AssociationValue | Array<AssociationValue>,
+    AssociationValues?: AssociationValue | AssociationValue[],
     LastSeenAssociationID?: string,
     Limit: number = 100,
     IncludeTransactorProfile: boolean = false
-  ): Observable<PostAssociationsResponse> {
+  ) {
     const isArray = AssociationValues && Array.isArray(AssociationValues);
 
-    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociations, {
-      TransactorPublicKeyBase58Check,
-      PostHashHex,
-      AssociationType: AssociationType,
-      AssociationValue: isArray ? undefined : AssociationValues,
-      AssociationValues: isArray ? AssociationValues : undefined,
-      LastSeenAssociationID,
-      Limit,
-      IncludeTransactorProfile,
-    });
+    return from(
+      getPostAssociations({
+        TransactorPublicKeyBase58Check,
+        PostHashHex,
+        AssociationType: AssociationType,
+        ...(isArray && { AssociationValues: AssociationValues as string[] }),
+        ...(!isArray && AssociationValues && { AssociationValue: AssociationValues as string }),
+        LastSeenAssociationID,
+        Limit,
+        IncludeTransactorProfile,
+      })
+    );
   }
 
+  // TODO: add associations data calls
   GetPostAssociationsCounts(
-    Endpoint: string,
     Post: PostEntryResponse,
     AssociationType: AssociationType,
     AssociationValues: Array<AssociationValue>,
     SkipLegacyLikes: boolean = false
   ): Observable<PostAssociationCountsResponse> {
-    return this.post(Endpoint, BackendRoutes.RoutePathGetPostAssociationCounts, {
-      PostHashHex: Post.PostHashHex,
-      AssociationType,
-      AssociationValues,
-    }).pipe(
+    return from(
+      countPostAssociations({
+        PostHashHex: Post.PostHashHex,
+        AssociationType,
+        AssociationValues,
+      })
+    ).pipe(
       map((response) => {
         if (SkipLegacyLikes) {
           return response;
@@ -2083,99 +1286,100 @@ export class BackendApiService {
   }
 
   SendDiamonds(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     ReceiverPublicKeyBase58Check: string,
     DiamondPostHashHex: string,
-    DiamondLevel: number,
-    MinFeeRateNanosPerKB: number,
-    InTutorial: boolean = false
+    DiamondLevel: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathSendDiamonds, {
-      SenderPublicKeyBase58Check,
-      ReceiverPublicKeyBase58Check,
-      DiamondPostHashHex,
-      DiamondLevel,
-      MinFeeRateNanosPerKB,
-      InTutorial,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    return from(
+      sendDiamonds({
+        SenderPublicKeyBase58Check,
+        ReceiverPublicKeyBase58Check,
+        DiamondPostHashHex,
+        DiamondLevel,
+      })
+    ).pipe(
+      map((res) => ({
+        ...res.constructedTransactionResponse,
+        ...res.submittedTransactionResponse,
+      }))
+    );
   }
 
-  GetDiamondsForPublicKey(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    FetchYouDiamonded: boolean = false
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
-      PublicKeyBase58Check,
-      FetchYouDiamonded,
-    });
+  GetDiamondsForPublicKey(PublicKeyBase58Check: string, FetchYouDiamonded: boolean = false): Observable<any> {
+    return from(
+      getDiamondsForUser({
+        PublicKeyBase58Check,
+        FetchYouDiamonded,
+      })
+    );
   }
 
   GetLikesForPost(
-    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
-      PostHashHex,
-      Offset,
-      Limit,
-      ReaderPublicKeyBase58Check,
-    });
+    return from(
+      getLikesForPost({
+        PostHashHex,
+        Offset,
+        Limit,
+        ReaderPublicKeyBase58Check,
+      })
+    );
   }
 
   GetDiamondsForPost(
-    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
-      PostHashHex,
-      Offset,
-      Limit,
-      ReaderPublicKeyBase58Check,
-    });
+    return from(
+      getDiamondsForPost({
+        PostHashHex,
+        Offset,
+        Limit,
+        ReaderPublicKeyBase58Check,
+      })
+    );
   }
 
   GetRepostsForPost(
-    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetRepostsForPost, {
-      PostHashHex,
-      Offset,
-      Limit,
-      ReaderPublicKeyBase58Check,
-    });
+    return from(
+      getRepostsForPost({
+        PostHashHex,
+        Offset,
+        Limit,
+        ReaderPublicKeyBase58Check,
+      })
+    );
   }
 
   GetQuoteRepostsForPost(
-    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRepostsForPost, {
-      PostHashHex,
-      Offset,
-      Limit,
-      ReaderPublicKeyBase58Check,
-    });
+    return from(
+      getQuoteRepostsForPost({
+        PostHashHex,
+        Offset,
+        Limit,
+        ReaderPublicKeyBase58Check,
+      })
+    );
   }
 
   BuyOrSellCreatorCoin(
-    endpoint: string,
     // The public key of the user who is making the buy/sell.
     UpdaterPublicKeyBase58Check: string,
     // The public key of the profile that the purchaser is trying
@@ -2199,9 +1403,7 @@ export class BackendApiService {
     // them to zero turns off the check. Give it your best shot, Ivan.
     MinDeSoExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
-    MinFeeRateNanosPerKB: number,
-    Broadcast: boolean,
-    InTutorial: boolean = false
+    broadcast: boolean = true
   ): Observable<any> {
     DeSoToSellNanos = Math.floor(DeSoToSellNanos);
     CreatorCoinToSellNanos = Math.floor(CreatorCoinToSellNanos);
@@ -2209,82 +1411,72 @@ export class BackendApiService {
     MinDeSoExpectedNanos = Math.floor(MinDeSoExpectedNanos);
     MinCreatorCoinExpectedNanos = Math.floor(MinCreatorCoinExpectedNanos);
 
-    let request = this.post(endpoint, BackendRoutes.RoutePathBuyOrSellCreatorCoin, {
-      UpdaterPublicKeyBase58Check,
-      CreatorPublicKeyBase58Check,
-      OperationType,
-      DeSoToSellNanos,
-      CreatorCoinToSellNanos,
-      DeSoToAddNanos,
-      MinDeSoExpectedNanos,
-      MinCreatorCoinExpectedNanos,
-      MinFeeRateNanosPerKB,
-      // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
-      InTutorial: Broadcast ? InTutorial : false,
-    });
-
-    if (Broadcast) {
-      request = this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    if (OperationType === "buy") {
+      return from(
+        buyCreatorCoin(
+          {
+            UpdaterPublicKeyBase58Check,
+            CreatorPublicKeyBase58Check,
+            DeSoToSellNanos,
+            DeSoToAddNanos,
+            MinDeSoExpectedNanos,
+            MinCreatorCoinExpectedNanos,
+          },
+          {
+            broadcast,
+          }
+        )
+      ).pipe(map(mergeTxResponse));
     }
-
-    return request;
+    if (OperationType === "sell") {
+      return from(
+        sellCreatorCoin(
+          {
+            UpdaterPublicKeyBase58Check,
+            CreatorPublicKeyBase58Check,
+            CreatorCoinToSellNanos,
+            DeSoToAddNanos,
+            MinDeSoExpectedNanos,
+            MinCreatorCoinExpectedNanos,
+          },
+          { broadcast }
+        )
+      ).pipe(map(mergeTxResponse));
+    }
   }
 
   TransferCreatorCoin(
-    endpoint: string,
     SenderPublicKeyBase58Check: string,
     CreatorPublicKeyBase58Check: string,
     ReceiverUsernameOrPublicKeyBase58Check: string,
     CreatorCoinToTransferNanos: number,
-    MinFeeRateNanosPerKB: number,
-    Broadcast: boolean
+    broadcast: boolean = true
   ): Observable<any> {
-    CreatorCoinToTransferNanos = Math.floor(CreatorCoinToTransferNanos);
-
-    const routeName = BackendRoutes.RoutePathTransferCreatorCoin;
-    let request = this.post(endpoint, routeName, {
-      SenderPublicKeyBase58Check,
-      CreatorPublicKeyBase58Check,
-      ReceiverUsernameOrPublicKeyBase58Check,
-      CreatorCoinToTransferNanos,
-      MinFeeRateNanosPerKB,
-    });
-
-    if (Broadcast) {
-      request = this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
-    }
-
-    return request;
+    return from(
+      transferCreatorCoin(
+        {
+          SenderPublicKeyBase58Check,
+          CreatorPublicKeyBase58Check,
+          ReceiverUsernameOrPublicKeyBase58Check,
+          CreatorCoinToTransferNanos: Math.floor(CreatorCoinToTransferNanos),
+        },
+        { broadcast }
+      )
+    ).pipe(map(mergeTxResponse));
   }
 
   BlockPublicKey(
-    endpoint: string,
     PublicKeyBase58Check: string,
     BlockPublicKeyBase58Check: string,
     Unblock: boolean = false
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathBlockPublicKey, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      BlockPublicKeyBase58Check,
-      Unblock,
-    });
-  }
-
-  MarkContactMessagesRead(
-    endpoint: string,
-    UserPublicKeyBase58Check: string,
-    ContactPublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
-      UserPublicKeyBase58Check,
-      ContactPublicKeyBase58Check,
-    });
-  }
-
-  MarkAllMessagesRead(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
-      UserPublicKeyBase58Check,
-    });
+    return from(
+      blockPublicKey({
+        BlockPublicKeyBase58Check,
+        PublicKeyBase58Check,
+        Unblock,
+      })
+    );
   }
 
   // Note that FetchStartIndex < 0 means "fetch me the latest notifications."
@@ -2293,194 +1485,165 @@ export class BackendApiService {
   // the list and re-fetch. The endpoint will return NumToFetch notifications
   // that include all notifications that are currently in the mempool.
   GetNotifications(
-    endpoint: string,
     PublicKeyBase58Check: string,
     FetchStartIndex: number,
     NumToFetch: number,
     FilteredOutNotificationCategories: {}
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNotifications, {
-      PublicKeyBase58Check,
-      FetchStartIndex,
-      NumToFetch,
-      FilteredOutNotificationCategories,
-    });
+    return from(
+      getNotifications(
+        {
+          PublicKeyBase58Check,
+          FetchStartIndex,
+          NumToFetch,
+          FilteredOutNotificationCategories,
+        },
+        {
+          nodeURI: "https://node.deso.org",
+        }
+      )
+    );
   }
 
   SetNotificationsMetadata(
-    endpoint: string,
     PublicKeyBase58Check: string,
     LastSeenIndex: number,
     LastUnreadNotificationIndex: number,
     UnreadNotifications: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetNotificationMetadata, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      LastSeenIndex,
-      LastUnreadNotificationIndex,
-      UnreadNotifications,
-    });
+    return from(
+      setNotificationMetadata(
+        {
+          PublicKeyBase58Check,
+          LastSeenIndex,
+          LastUnreadNotificationIndex,
+          UnreadNotifications,
+        },
+        {
+          nodeURI: "https://node.deso.org",
+        }
+      )
+    );
   }
 
-  GetUnreadNotificationsCount(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetUnreadNotificationsCount, {
-      PublicKeyBase58Check,
-    });
+  GetUnreadNotificationsCount(PublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getUnreadNotificationsCount(
+        {
+          PublicKeyBase58Check,
+        },
+        {
+          nodeURI: "https://node.deso.org",
+        }
+      )
+    );
   }
 
-  GetAppState(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetAppState, {
-      PublicKeyBase58Check,
-    });
+  GetAppState(PublicKeyBase58Check: string): Observable<any> {
+    return from(
+      getAppState({
+        PublicKeyBase58Check,
+      })
+    );
   }
 
   UpdateUserGlobalMetadata(
-    endpoint: string,
     UserPublicKeyBase58Check: string,
     Email: string,
     MessageReadStateUpdatesByContact: any
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateUserGlobalMetadata, UserPublicKeyBase58Check, {
-      UserPublicKeyBase58Check,
-      Email,
-      MessageReadStateUpdatesByContact,
-    });
+    return from(updateUserGlobalMetadata({ UserPublicKeyBase58Check, Email, MessageReadStateUpdatesByContact }));
   }
 
-  GetUserGlobalMetadata(
-    endpoint: string,
-    // The public key of the user to update.
-    UserPublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetUserGlobalMetadata, UserPublicKeyBase58Check, {
-      UserPublicKeyBase58Check,
-    });
+  GetUserGlobalMetadata(UserPublicKeyBase58Check: string): Observable<any> {
+    return from(getUserGlobalMetadata({ UserPublicKeyBase58Check }));
   }
 
-  ResendVerifyEmail(endpoint: string, PublicKey: string) {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathResendVerifyEmail, PublicKey, {
-      PublicKey,
-    });
+  ResendVerifyEmail(PublicKey: string) {
+    return from(
+      resendVerifyEmail({
+        PublicKey,
+      })
+    );
   }
 
-  VerifyEmail(endpoint: string, PublicKey: string, EmailHash: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
-      PublicKey,
-      EmailHash,
-    });
+  VerifyEmail(PublicKey: string, EmailHash: string): Observable<any> {
+    return from(
+      verifyEmail({
+        PublicKey,
+        EmailHash,
+      })
+    );
   }
 
-  GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
+  GetUserMetadata(PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
+    return from(getUserMetadata({ PublicKeyBase58Check }, { nodeURI: "https://node.deso.org" }));
   }
 
-  GetUsernameForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<string> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUsernameForPublicKey + "/" + PublicKeyBase58Check);
+  AdminGetVerifiedUsers(): Observable<any> {
+    return from(adminGetVerifiedUsers());
   }
 
-  GetPublicKeyForUsername(endpoint: string, Username: string): Observable<string> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetPublicKeyForUsername + "/" + Username);
+  AdminGetUsernameVerificationAuditLogs(Username: string): Observable<any> {
+    return from(
+      adminGetUsernameVerificationAuditLog({
+        Username,
+      })
+    );
   }
 
-  GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetJumioStatusForPublicKey, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-    });
+  AdminGrantVerificationBadge(UsernameToVerify: string): Observable<any> {
+    return from(
+      adminGrantVerificationBadge({
+        UsernameToVerify,
+      })
+    );
   }
 
-  SubmitETHTx(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-    Tx: any,
-    ToSign: string[],
-    SignedHashes: string[]
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathSubmitETHTx, {
-      PublicKeyBase58Check,
-      Tx,
-      ToSign,
-      SignedHashes,
-    });
+  AdminRemoveVerificationBadge(UsernameForWhomToRemoveVerification: string): Observable<any> {
+    return from(
+      adminRemoveVerificationBadge({
+        UsernameForWhomToRemoveVerification,
+      })
+    );
   }
 
-  QueryETHRPC(endpoint: string, Method: string, Params: string[], PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathQueryETHRPC, PublicKeyBase58Check, {
-      Method,
-      Params,
-      PublicKeyBase58Check,
-    });
+  AdminGetUserAdminData(UserPublicKeyBase58Check: string): Observable<any> {
+    return from(
+      adminGetUserAdminData({
+        UserPublicKeyBase58Check,
+      })
+    );
   }
 
-  AdminGetVerifiedUsers(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetVerifiedUsers, AdminPublicKey, {
-      AdminPublicKey,
-    });
+  NodeControl(Address: string, OperationType: string): Observable<any> {
+    return from(
+      adminNodeControl({
+        Address,
+        OperationType,
+      })
+    );
   }
 
-  AdminGetUsernameVerificationAuditLogs(endpoint: string, AdminPublicKey: string, Username: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUsernameVerificationAuditLogs, AdminPublicKey, {
-      AdminPublicKey,
-      Username,
-    });
+  UpdateMiner(MinerPublicKeys: string): Observable<any> {
+    return from(
+      adminNodeControl({
+        Address: "",
+        MinerPublicKeys,
+        OperationType: "update_miner",
+      })
+    );
   }
 
-  AdminGrantVerificationBadge(endpoint: string, AdminPublicKey: string, UsernameToVerify: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGrantVerificationBadge, AdminPublicKey, {
-      AdminPublicKey,
-      UsernameToVerify,
-    });
-  }
-
-  AdminRemoveVerificationBadge(
-    endpoint: string,
-    AdminPublicKey: string,
-    UsernameForWhomToRemoveVerification: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminRemoveVerificationBadge, AdminPublicKey, {
-      AdminPublicKey,
-      UsernameForWhomToRemoveVerification,
-    });
-  }
-
-  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
-      AdminPublicKey,
-      UserPublicKeyBase58Check,
-    });
-  }
-
-  NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
-      AdminPublicKey,
-      Address,
-      OperationType,
-    });
-  }
-
-  UpdateMiner(endpoint: string, AdminPublicKey: string, MinerPublicKeys: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
-      AdminPublicKey,
-      MinerPublicKeys,
-      OperationType: "update_miner",
-    });
-  }
-
-  AdminGetUserGlobalMetadata(
-    endpoint: string,
-    AdminPublicKey: string,
-    // The public key of the user for whom we'd like to get global metadata
-    UserPublicKeyBase58Check: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
-      UserPublicKeyBase58Check,
-    });
+  AdminGetUserGlobalMetadata(UserPublicKeyBase58Check: string): Observable<any> {
+    return from(
+      adminGetUserGlobalMetadata({
+        UserPublicKeyBase58Check,
+      })
+    );
   }
 
   AdminUpdateUserGlobalMetadata(
-    endpoint: string,
-    AdminPublicKey: string,
-    // The public key of the user to update.
     UserPublicKeyBase58Check: string,
     Username: string,
     IsBlacklistUpdate: boolean,
@@ -2490,121 +1653,103 @@ export class BackendApiService {
     WhitelistPosts: boolean,
     RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
-      IsBlacklistUpdate,
-      RemoveEverywhere,
-      RemoveFromLeaderboard,
-      IsWhitelistUpdate,
-      WhitelistPosts,
-      RemovePhoneNumberMetadata,
-      AdminPublicKey,
-    });
-  }
-
-  AdminGetAllUserGlobalMetadata(endpoint: string, AdminPublicKey: string, NumToFetch: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
-      NumToFetch,
-    });
-  }
-
-  AdminPinPost(endpoint: string, AdminPublicKey: string, PostHashHex: string, UnpinPost: boolean): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminPinPost, AdminPublicKey, {
-      AdminPublicKey,
-      PostHashHex,
-      UnpinPost,
-    });
-  }
-
-  AdminUpdateGlobalFeed(
-    endpoint: string,
-    AdminPublicKey: string,
-    PostHashHex: string,
-    RemoveFromGlobalFeed: boolean
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateGlobalFeed, AdminPublicKey, {
-      AdminPublicKey,
-      PostHashHex,
-      RemoveFromGlobalFeed,
-    });
-  }
-
-  AdminRemoveNilPosts(endpoint: string, AdminPublicKey: string, NumPostsToSearch: number = 1000): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminRemoveNilPosts, AdminPublicKey, {
-      AdminPublicKey,
-      NumPostsToSearch,
-    });
-  }
-
-  AdminReprocessBitcoinBlock(
-    endpoint: string,
-    AdminPublicKey: string,
-    blockHashOrBlockHeight: string
-  ): Observable<any> {
-    return this.jwtPost(
-      endpoint,
-      `${BackendRoutes.ReprocessBitcoinBlockRoute}/${blockHashOrBlockHeight}`,
-      AdminPublicKey,
-      {
-        AdminPublicKey,
-      }
+    return from(
+      adminUpdateUserGlobalMetadata({
+        UserPublicKeyBase58Check,
+        Username,
+        IsBlacklistUpdate,
+        RemoveEverywhere,
+        RemoveFromLeaderboard,
+        IsWhitelistUpdate,
+        WhitelistPosts,
+        RemovePhoneNumberMetadata,
+      })
     );
   }
 
-  AdminGetMempoolStats(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetMempoolStats, AdminPublicKey, {
-      AdminPublicKey,
-    });
+  AdminGetAllUserGlobalMetadata(NumToFetch: number): Observable<any> {
+    return from(
+      adminGetAllUserGlobalMetadata({
+        NumToFetch,
+      })
+    );
+  }
+
+  AdminPinPost(PostHashHex: string, UnpinPost: boolean): Observable<any> {
+    return from(
+      adminPinPost({
+        PostHashHex,
+        UnpinPost,
+      })
+    );
+  }
+
+  AdminUpdateGlobalFeed(PostHashHex: string, RemoveFromGlobalFeed: boolean): Observable<any> {
+    return from(
+      adminUpdateGlobalFeed({
+        PostHashHex,
+        RemoveFromGlobalFeed,
+      })
+    );
+  }
+
+  AdminRemoveNilPosts(NumPostsToSearch: number = 1000): Observable<any> {
+    return from(
+      adminRemoveNilPosts({
+        NumPostsToSearch,
+      })
+    );
+  }
+
+  AdminReprocessBitcoinBlock(blockHashOrBlockHeight: string): Observable<any> {
+    return from(adminReprocessBitcoinBlock(blockHashOrBlockHeight));
+  }
+
+  AdminGetMempoolStats(): Observable<any> {
+    return from(adminGetMempoolStats());
   }
 
   SwapIdentity(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     FromUsernameOrPublicKeyBase58Check: string,
     ToUsernameOrPublicKeyBase58Check: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathSwapIdentity, UpdaterPublicKeyBase58Check, {
-      UpdaterPublicKeyBase58Check,
-      FromUsernameOrPublicKeyBase58Check,
-      ToUsernameOrPublicKeyBase58Check,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      adminSwapIdentity({
+        UpdaterPublicKeyBase58Check,
+        FromUsernameOrPublicKeyBase58Check,
+        ToUsernameOrPublicKeyBase58Check,
+        MinFeeRateNanosPerKB,
+      })
+    );
   }
 
-  SetUSDCentsToDeSoReserveExchangeRate(
-    endpoint: string,
-    AdminPublicKey: string,
-    USDCentsPerDeSo: number
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate, AdminPublicKey, {
-      AdminPublicKey,
-      USDCentsPerDeSo,
-    });
+  SetUSDCentsToDeSoReserveExchangeRate(USDCentsPerDeSo: number): Observable<any> {
+    return from(
+      adminSetUSDCentsToDESOReserveExchangeRate({
+        USDCentsPerDeSo,
+      })
+    );
   }
 
-  GetUSDCentsToDeSoReserveExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate);
+  GetUSDCentsToDeSoReserveExchangeRate(): Observable<any> {
+    return from(adminGetUSDCentsToDESOReserveExchangeRate());
   }
 
-  SetBuyDeSoFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDeSoFeeBasisPoints: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints, AdminPublicKey, {
-      AdminPublicKey,
-      BuyDeSoFeeBasisPoints,
-    });
+  SetBuyDeSoFeeBasisPoints(BuyDeSoFeeBasisPoints: number): Observable<any> {
+    return from(
+      adminSetBuyDesoFeeBasisPoints({
+        BuyDeSoFeeBasisPoints,
+      })
+    );
   }
 
-  GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetBuyDeSoFeeBasisPoints);
+  GetBuyDeSoFeeBasisPoints(): Observable<any> {
+    return from(adminGetBuyDesoFeeBasisPoints());
   }
 
   UpdateGlobalParams(
-    endpoint: string,
     UpdaterPublicKeyBase58Check: string,
     USDCentsPerBitcoin: number,
     CreateProfileFeeNanos: number,
@@ -2613,298 +1758,128 @@ export class BackendApiService {
     CreateNFTFeeNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateGlobalParams, UpdaterPublicKeyBase58Check, {
-      UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      CreateProfileFeeNanos,
-      MaxCopiesPerNFT,
-      CreateNFTFeeNanos,
-      MinimumNetworkFeeNanosPerKB,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return from(
+      adminUpdateGlobalParams({
+        UpdaterPublicKeyBase58Check,
+        USDCentsPerBitcoin,
+        CreateProfileFeeNanos,
+        MaxCopiesPerNFT,
+        CreateNFTFeeNanos,
+        MinimumNetworkFeeNanosPerKB,
+        MinFeeRateNanosPerKB,
+      })
+    );
   }
 
-  GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetGlobalParams, {
-      UpdaterPublicKeyBase58Check,
-    });
+  GetGlobalParams(): Observable<any> {
+    return from(getGlobalParams());
   }
 
-  AdminGetNFTDrop(endpoint: string, UpdaterPublicKeyBase58Check: string, DropNumber: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetNFTDrop, UpdaterPublicKeyBase58Check, {
-      DropNumber,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+  AdminGetNFTDrop(DropNumber: number): Observable<any> {
+    return from(
+      adminGetNFTDrop({
+        DropNumber,
+      })
+    );
   }
 
   AdminUpdateNFTDrop(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
     DropNumber: number,
     DropTstampNanos: number,
     IsActive: boolean,
     NFTHashHexToAdd: string,
     NFTHashHexToRemove: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateNFTDrop, UpdaterPublicKeyBase58Check, {
-      DropNumber,
-      DropTstampNanos,
-      IsActive,
-      NFTHashHexToAdd,
-      NFTHashHexToRemove,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+    return from(
+      adminUpdateNFTDrop({
+        DropNumber,
+        DropTstampNanos,
+        IsActive,
+        NFTHashHexToAdd,
+        NFTHashHexToRemove,
+      })
+    );
   }
 
-  EvictUnminedBitcoinTxns(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check,
-    BitcoinTxnHashes: string[],
-    DryRun: boolean
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
-      BitcoinTxnHashes,
-      DryRun,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-  }
-
-  GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
-      TikTokShortVideoID,
-    }).pipe(
+  GetFullTikTokURL(TikTokShortVideoID: string): Observable<any> {
+    return from(
+      getFullTikTokURL({
+        TikTokShortVideoID,
+      })
+    ).pipe(
       map((res) => {
         return res.FullTikTokURL;
       })
     );
   }
 
-  AdminResetJumioAttemptsForPublicKey(
-    endpoint: string,
-    AdminPublicKey: string,
-    PublicKeyBase58Check: string,
-    Username: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKey, {
-      AdminPublicKey,
-      PublicKeyBase58Check,
-      Username,
-    });
+  AdminGetUnfilteredHotFeed(ResponseLimit: number, SeenPosts: Array<string>): Observable<any> {
+    return from(
+      adminGetUnfilteredHotFeed({
+        ResponseLimit,
+        SeenPosts,
+      })
+    );
   }
 
-  AdminUpdateJumioDeSo(endpoint: string, AdminPublicKey: string, DeSoNanos: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioDeSo, AdminPublicKey, {
-      DeSoNanos,
-      AdminPublicKey,
-    });
-  }
-
-  AdminJumioCallback(
-    endpoint: string,
-    AdminPublicKey: string,
-    PublicKeyBase58Check: string,
-    Username: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminJumioCallback, AdminPublicKey, {
-      PublicKeyBase58Check,
-      Username,
-      AdminPublicKey,
-    });
-  }
-
-  AdminGetUnfilteredHotFeed(
-    endpoint: string,
-    AdminPublicKey: string,
-    ResponseLimit: number,
-    SeenPosts: Array<string>
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUnfilteredHotFeed, AdminPublicKey, {
-      AdminPublicKey,
-      ResponseLimit,
-      SeenPosts,
-    });
-  }
-
-  AdminGetHotFeedAlgorithm(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedAlgorithm, AdminPublicKey, {
-      AdminPublicKey,
-    });
+  AdminGetHotFeedAlgorithm(): Observable<any> {
+    return from(adminGetHotFeedAlgorithm());
   }
 
   AdminUpdateHotFeedAlgorithm(
-    endpoint: string,
-    AdminPublicKey: string,
     InteractionCap: number,
     InteractionCapTag: number,
     TimeDecayBlocks: number,
     TimeDecayBlocksTag: number,
     TxnTypeMultiplierMap: { [txnType: number]: number }
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
-      AdminPublicKey,
-      InteractionCap,
-      InteractionCapTag,
-      TimeDecayBlocks,
-      TimeDecayBlocksTag,
-      TxnTypeMultiplierMap,
-    });
+    return from(
+      adminUpdateHotFeedAlgorithm({
+        InteractionCap,
+        InteractionCapTag,
+        TimeDecayBlocks,
+        TimeDecayBlocksTag,
+        TxnTypeMultiplierMap,
+      })
+    );
   }
 
-  AdminUpdateHotFeedPostMultiplier(
-    endpoint: string,
-    AdminPublicKey: string,
-    PostHashHex: string,
-    Multiplier: number
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedPostMultiplier, AdminPublicKey, {
-      AdminPublicKey,
-      PostHashHex,
-      Multiplier,
-    });
+  AdminUpdateHotFeedPostMultiplier(PostHashHex: string, Multiplier: number): Observable<any> {
+    return from(
+      adminUpdateHotFeedPostMultiplier({
+        PostHashHex,
+        Multiplier,
+      })
+    );
   }
 
   AdminUpdateHotFeedUserMultiplier(
-    endpoint: string,
-    AdminPublicKey: string,
     Username: string,
     InteractionMultiplier: number,
     PostsMultiplier: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedUserMultiplier, AdminPublicKey, {
-      AdminPublicKey,
-      Username,
-      InteractionMultiplier,
-      PostsMultiplier,
-    });
+    return from(
+      adminUpdateHotFeedUserMultiplier({
+        Username,
+        InteractionMultiplier,
+        PostsMultiplier,
+      })
+    );
   }
 
-  AdminGetHotFeedUserMultiplier(endpoint: string, AdminPublicKey: string, Username: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedUserMultiplier, AdminPublicKey, {
-      AdminPublicKey,
-      Username,
-    });
+  AdminGetHotFeedUserMultiplier(Username: string): Observable<any> {
+    return from(
+      adminGetHotFeedUserMultiplier({
+        Username,
+      })
+    );
   }
 
-  AdminCreateReferralHash(
-    endpoint: string,
-    AdminPublicKey: string,
-    UserPublicKeyBase58Check: string,
-    Username: string,
-    ReferrerAmountUSDCents: number,
-    RefereeAmountUSDCents: number,
-    MaxReferrals: number,
-    RequiresJumio: boolean
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminCreateReferralHash, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
-      ReferrerAmountUSDCents,
-      RefereeAmountUSDCents,
-      MaxReferrals,
-      RequiresJumio,
-      AdminPublicKey,
-    });
-  }
-
-  AdminUpdateReferralHash(
-    endpoint: string,
-    AdminPublicKey: string,
-    ReferralHashBase58: string,
-    ReferrerAmountUSDCents: number,
-    RefereeAmountUSDCents: number,
-    MaxReferrals: number,
-    RequiresJumio: boolean,
-    IsActive: boolean
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateReferralHash, AdminPublicKey, {
-      ReferralHashBase58,
-      ReferrerAmountUSDCents,
-      RefereeAmountUSDCents,
-      MaxReferrals,
-      RequiresJumio,
-      IsActive,
-      AdminPublicKey,
-    });
-  }
-
-  AdminGetAllReferralInfoForUser(
-    endpoint: string,
-    AdminPublicKey: string,
-    UserPublicKeyBase58Check: string,
-    Username: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllReferralInfoForUser, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
-      AdminPublicKey,
-    });
-  }
-
-  AdminDownloadReferralCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadReferralCSV, AdminPublicKey, {
-      AdminPublicKey,
-    });
-  }
-
-  AdminDownloadRefereeCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadRefereeCSV, AdminPublicKey, {
-      AdminPublicKey,
-    });
-  }
-
-  AdminUploadReferralCSV(endpoint: string, AdminPublicKey: string, CSVRows: Array<Array<String>>): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, AdminPublicKey, {
-      AdminPublicKey,
-      CSVRows,
-    });
-  }
-
-  GetReferralInfoForUser(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetReferralInfoForUser, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-    });
-  }
-
-  GetReferralInfoForReferralHash(
-    endpoint: string,
-    ReferralHash: string
-  ): Observable<{ ReferralInfoResponse: any; CountrySignUpBonus: CountryLevelSignUpBonus }> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetReferralInfoForReferralHash, {
-      ReferralHash,
-    });
-  }
-
-  AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
-      PublicKeyBase58Check,
-      AdminPublicKey,
-    });
-  }
-
-  AdminUpdateTutorialCreators(
-    endpoint: string,
-    AdminPublicKey: string,
-    PublicKeyBase58Check: string,
-    IsRemoval: boolean,
-    IsWellKnown: boolean
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateTutorialCreators, AdminPublicKey, {
-      PublicKeyBase58Check,
-      IsRemoval,
-      IsWellKnown,
-      AdminPublicKey,
-    });
-  }
-
-  GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
-      ResponseLimit,
-      PublicKeyBase58Check,
-    });
-  }
-
+  /**
+   * This is for the legacy tutorial thing. I don't *think* we can remove it
+   * since I think we still need it to set the users tutorial status to
+   * complete. I forget whether the backend already does this or not.
+   */
   UpdateTutorialStatus(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -2920,54 +1895,40 @@ export class BackendApiService {
     });
   }
 
-  AdminGetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, PublicKeyBase58Check, {
-      ResponseLimit,
-      PublicKeyBase58Check,
-      AdminPublicKey: PublicKeyBase58Check,
-    });
-  }
-
-  GetWyreWalletOrderForPublicKey(
-    endpoint: string,
-    AdminPublicKeyBase58Check: string,
-    PublicKeyBase58Check: string,
-    Username: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
-      AdminPublicKey: AdminPublicKeyBase58Check,
-      PublicKeyBase58Check,
-      Username,
-    });
+  GetWyreWalletOrderForPublicKey(PublicKeyBase58Check: string, Username: string): Observable<any> {
+    return from(
+      adminGetWyreWalletOrdersForUser({
+        PublicKeyBase58Check,
+        Username,
+      })
+    );
   }
 
   // Wyre
-  GetWyreWalletOrderQuotation(
-    endpoint: string,
-    SourceAmount: number,
-    Country: string,
-    SourceCurrency: string
-  ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
-      SourceAmount,
-      Country,
-      SourceCurrency,
-    });
+  GetWyreWalletOrderQuotation(SourceAmount: number, Country: string, SourceCurrency: string): Observable<any> {
+    return from(
+      adminGetWyreWalletOrderQuotation({
+        SourceAmount,
+        Country,
+        SourceCurrency,
+      })
+    );
   }
 
   GetWyreWalletOrderReservation(
-    endpoint: string,
     ReferenceId: string,
     SourceAmount: number,
     Country: string,
     SourceCurrency: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
-      ReferenceId,
-      SourceAmount,
-      Country,
-      SourceCurrency,
-    });
+    return from(
+      adminGetWyreWalletOrderReservation({
+        ReferenceId,
+        SourceAmount,
+        Country,
+        SourceCurrency,
+      })
+    );
   }
 
   // Tutorial Endpoints
@@ -2984,16 +1945,16 @@ export class BackendApiService {
     });
   }
 
-  GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
-    return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
+  GetVideoStatus(videoId: string): Observable<any> {
+    return from(getVideoStatus({ videoId }));
   }
 
-  GetLinkPreview(endpoint: string, url: string): Observable<any> {
-    return this.get(endpoint, `${BackendRoutes.RoutePathGetLinkPreview}?url=${encodeURIComponent(url)}`);
+  GetLinkPreview(url: string): Observable<any> {
+    return from(getLinkPreview(url));
   }
 
-  ConstructProxyImageUrl(endpoint: string, url: string): string {
-    return `${endpoint}/${BackendRoutes.RoutePathProxyImage}?url=${encodeURIComponent(url)}`;
+  ConstructProxyImageUrl(url: string): string {
+    return buildProxyImageURL(url);
   }
 
   // Error parsing
@@ -3043,4 +2004,8 @@ export class BackendApiService {
     }
     return errorMessage;
   }
+}
+
+function mergeTxResponse({ constructedTransactionResponse, submittedTransactionResponse }) {
+  return { ...constructedTransactionResponse, ...submittedTransactionResponse };
 }

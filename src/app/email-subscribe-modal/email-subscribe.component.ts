@@ -2,12 +2,11 @@
 import { Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { switchMap } from "rxjs/operators";
 import {
   ApiInternalService,
   AppUser,
   SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
-  SUBSCRIBED_PUSH_APP_USER_DEFAULTS
+  SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
@@ -47,7 +46,7 @@ export class EmailSubscribeComponent {
       this.apiInternal
         .createAppUser(
           this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ?? "",
           this.globalVars.lastSeenNotificationIdx,
           utcOffset,
           localHourToUtcHour(20),
@@ -79,7 +78,7 @@ export class EmailSubscribeComponent {
     this.apiInternal
       .createAppUser(
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+        this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ?? "",
         this.globalVars.lastSeenNotificationIdx,
         utcOffset,
         localHourToUtcHour(20),

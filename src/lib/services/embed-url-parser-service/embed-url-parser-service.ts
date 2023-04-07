@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { BackendApiService } from "../../../app/backend-api.service";
-import { GlobalVarsService } from "../../../app/global-vars.service";
 import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
+import { BackendApiService } from "../../../app/backend-api.service";
+import { GlobalVarsService } from "../../../app/global-vars.service";
 
 @Injectable({
   providedIn: "root",
@@ -155,7 +155,7 @@ export class EmbedUrlParserService {
       if (!match || !match[2]) {
         return of(false);
       }
-      return backendApi.GetFullTikTokURL(globalVars.localNode, match[2]).pipe(
+      return backendApi.GetFullTikTokURL(match[2]).pipe(
         map((res) => {
           return this.extractTikTokVideoID(res);
         })

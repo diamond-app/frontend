@@ -55,7 +55,7 @@ export class NftDropMgrComponent implements OnInit {
     // Get the latest NFT drop
     this.loading = true;
     this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .AdminGetNFTDrop(-1 /*DropNumber*/)
       .subscribe(
         (res: any) => {
           this.dropEntry = res.DropEntry;
@@ -146,11 +146,7 @@ export class NftDropMgrComponent implements OnInit {
     this.loading = true;
     this.loadingNewDrop = true;
     this.backendApi
-      .AdminGetNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        nextDropNumber /*DropNumber*/
-      )
+      .AdminGetNFTDrop(nextDropNumber /*DropNumber*/)
       .subscribe(
         (res: any) => {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
@@ -175,11 +171,7 @@ export class NftDropMgrComponent implements OnInit {
     this.loading = true;
     this.loadingNewDrop = true;
     this.backendApi
-      .AdminGetNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        prevDropNumber /*DropNumber*/
-      )
+      .AdminGetNFTDrop(prevDropNumber /*DropNumber*/)
       .subscribe(
         (res: any) => {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
@@ -201,8 +193,6 @@ export class NftDropMgrComponent implements OnInit {
     this.settingDate = true;
     this.backendApi
       .AdminUpdateNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropNumber,
         this.dropTime.getTime() * 1e6,
         false /*IsActive*/,
@@ -233,8 +223,6 @@ export class NftDropMgrComponent implements OnInit {
     this.togglingActivation = true;
     this.backendApi
       .AdminUpdateNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropEntry.DropNumber,
         this.dropEntry.DropTstampNanos,
         !this.dropEntry.IsActive /*IsActive*/,
@@ -262,8 +250,6 @@ export class NftDropMgrComponent implements OnInit {
     this.addingNFT = true;
     this.backendApi
       .AdminUpdateNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.dropEntry.DropNumber,
         this.dropEntry.DropTstampNanos,
         this.dropEntry.IsActive /*IsActive*/,
@@ -306,8 +292,6 @@ export class NftDropMgrComponent implements OnInit {
         this.nftBeingRemoved = postHashHex;
         this.backendApi
           .AdminUpdateNFTDrop(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.dropEntry.DropNumber,
             this.dropEntry.DropTstampNanos,
             this.dropEntry.IsActive /*IsActive*/,

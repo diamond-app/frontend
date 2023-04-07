@@ -1,10 +1,10 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { identity } from "deso-protocol";
+import { from, Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "src/app/backend-api.service";
-import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
 import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services/openProsper/openprosper-service";
 
@@ -154,15 +154,11 @@ export class ApiInternalService {
    */
   private creatorEarningsCache: Record<string, OpenProsperEarningsDetail> = {};
 
-  constructor(
-    private httpClient: HttpClient,
-    private identity: IdentityService,
-    private backendAPI: BackendApiService
-  ) {}
+  constructor(private httpClient: HttpClient, private backendAPI: BackendApiService) {}
 
   getAppUser(publicKey: string, emailJwt: string = ""): Observable<any> {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
-    return this.getAuthHeaders(emailJwt, publicKey).pipe(
+    return this.getAuthHeaders(publicKey, { emailJwt }).pipe(
       switchMap((headers) =>
         this.httpClient.get<any>(buildUrl(`${ENDPOINTS.appUser}/${publicKey}${queryParams}`), { headers })
       )
@@ -185,14 +181,14 @@ export class ApiInternalService {
       DigestSendAtHourLocalTime,
       UserTimezoneUtcOffset,
     };
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders(PublicKeyBase58check).pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.appUser), payload, { headers }))
     );
   }
 
   updateAppUser(payload: AppUser, emailJwt: string = "") {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
-    return this.getAuthHeaders(emailJwt, payload.PublicKeyBase58check).pipe(
+    return this.getAuthHeaders(payload.PublicKeyBase58check, { emailJwt }).pipe(
       switchMap((headers) =>
         this.httpClient.put<any>(
           buildUrl(`${ENDPOINTS.appUser}/${payload.PublicKeyBase58check}${queryParams}`),
@@ -204,7 +200,7 @@ export class ApiInternalService {
   }
 
   onboardingEmailSubscribe(PublicKeyBase58Check: string): Observable<any> {
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
       switchMap((headers) =>
         this.httpClient.post<any>(buildUrl("onboarding-email-subscription"), { PublicKeyBase58Check }, { headers })
       )
@@ -223,16 +219,16 @@ export class ApiInternalService {
       AuthKey,
       P256dhKey,
     };
-    return this.getAuthHeaders().pipe(
+    return this.getAuthHeaders(UserPublicKeyBase58check).pipe(
       switchMap((headers) => this.httpClient.post<any>(buildUrl(ENDPOINTS.pushNotifSubscription), payload, { headers }))
     );
   }
 
   private getAuthHeaders(
-    emailJwt: string = "",
-    publicKey: string = ""
+    publicKey: string,
+    { emailJwt }: { emailJwt?: string } = {}
   ): Observable<{ Authorization: string; "Diamond-Public-Key-Base58-Check": string }> {
-    if (emailJwt !== "") {
+    if (emailJwt) {
       return new Observable((observer) => {
         observer.next({
           Authorization: `Bearer ${emailJwt}`,
@@ -242,17 +238,9 @@ export class ApiInternalService {
       });
     }
 
-    const loggedInUserKey = this.backendAPI.GetStorage(this.backendAPI.LastLoggedInUserKey);
-    return this.identity
-      .jwt({
-        ...this.identity.identityServiceParamsForKey(loggedInUserKey),
-      })
-      .pipe(
-        map(({ jwt }) => ({
-          Authorization: `Bearer ${jwt}`,
-          "Diamond-Public-Key-Base58-Check": loggedInUserKey,
-        }))
-      );
+    return from(identity.jwt()).pipe(
+      map((jwt) => ({ Authorization: `Bearer ${jwt}`, "Diamond-Public-Key-Base58-Check": publicKey }))
+    );
   }
 
   /**

@@ -48,11 +48,7 @@
           [notificationType]="'messages'"
           [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
           [buttonLabel]="t('left_bar.messages')"
-          [iconName]="
-            globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads > 0
-              ? 'message-notification'
-              : 'message-square'
-          "
+          [iconName]="'message-square'"
         ></left-bar-button>
         <left-bar-button
           *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"

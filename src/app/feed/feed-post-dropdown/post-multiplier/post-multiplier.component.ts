@@ -25,12 +25,7 @@ export class PostMultiplierComponent implements OnInit {
   updatePostMultiplier() {
     this.updatingPostMultiplier = true;
     this.backendApi
-      .AdminUpdateHotFeedPostMultiplier(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.post.PostHashHex,
-        this.postMultiplier
-      )
+      .AdminUpdateHotFeedPostMultiplier(this.post.PostHashHex, this.postMultiplier)
       .subscribe(
         (res) => {
           this.successfullyUpdatedMultiplier = true;

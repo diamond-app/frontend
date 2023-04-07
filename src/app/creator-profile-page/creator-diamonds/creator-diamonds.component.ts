@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { Component, Input, OnInit } from "@angular/core";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "creator-diamonds",
@@ -43,7 +43,7 @@ export class CreatorDiamondsComponent implements OnInit {
   fetchDiamonds(): Subscription {
     this.isLoading = true;
     return this.backendApi
-      .GetDiamondsForPublicKey(this.globalVars.localNode, this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
+      .GetDiamondsForPublicKey(this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
       .subscribe(
         (res) => {
           this.diamondSummaryList = res.DiamondSenderSummaryResponses;

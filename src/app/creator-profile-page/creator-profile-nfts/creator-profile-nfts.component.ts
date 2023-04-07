@@ -14,13 +14,8 @@ import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { of, Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import {
-  BackendApiService,
-  NFTBidEntryResponse,
-  NFTEntryResponse,
-  PostEntryResponse,
-  ProfileEntryResponse,
-} from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
+import { NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
@@ -138,11 +133,7 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   getNFTBids(): Subscription {
     return this.backendApi
-      .GetNFTBidsForUser(
-        this.globalVars.localNode,
-        this.profile.PublicKeyBase58Check,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check
-      )
+      .GetNFTBidsForUser(this.profile.PublicKeyBase58Check, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe(
         (res: {
           PublicKeyBase58CheckToProfileEntryResponse: { [k: string]: ProfileEntryResponse };
@@ -168,7 +159,6 @@ export class CreatorProfileNftsComponent implements OnInit {
   getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null): Subscription {
     return this.backendApi
       .GetNFTsForUser(
-        this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         isForSale,
@@ -217,8 +207,8 @@ export class CreatorProfileNftsComponent implements OnInit {
     const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+      predicate: ({ $index, data }: { $index: number; data: any }) => {
+        let currentPost = data;
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
@@ -312,18 +302,16 @@ export class CreatorProfileNftsComponent implements OnInit {
       if (res.isConfirmed) {
         this.backendApi
           .CreateNFTBid(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             bidEntry.PostEntryResponse.PostHashHex,
             bidEntry.SerialNumber,
-            0,
-            this.globalVars.defaultFeeRateNanosPerKB
+            0
           )
           .subscribe(
             () => {
               return this.datasource.adapter.remove({
-                predicate: ({ data }) => {
-                  const currBidEntry = (data as any) as NFTBidEntryResponse;
+                predicate: ({ data }: { data: any }) => {
+                  const currBidEntry = data as NFTBidEntryResponse;
                   return (
                     currBidEntry.SerialNumber === bidEntry.SerialNumber &&
                     currBidEntry.BidAmountNanos === currBidEntry.BidAmountNanos &&

@@ -1,6 +1,7 @@
 import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { waitForTransactionFound } from "deso-protocol";
 import * as _ from "lodash";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -8,7 +9,6 @@ import { ToastrService } from "ngx-toastr";
 import { FeedCreatePostModalComponent } from "src/app/feed/feed-create-post-modal/feed-create-post-modal.component";
 import RouteNamesService from "src/app/route-names.service";
 import { TrackingService } from "src/app/tracking.service";
-import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
@@ -82,53 +82,49 @@ export class FeedPostDropdownComponent implements OnInit {
 
   dropNFT() {
     // Get the latest drop so that we can update it.
-    this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, -1 /*DropNumber*/)
-      .subscribe(
-        (res: any) => {
-          if (res.DropEntry.DropTstampNanos == 0) {
-            this.globalVars._alertError("There are no drops. Make one in the admin NFT tab.");
-            return;
-          }
-
-          let currentTime = new Date();
-          if (res.DropEntry.DropTstampNanos / 1e6 < currentTime.getTime()) {
-            SwalHelper.fire({
-              target: this.globalVars.getTargetComponentSelector(),
-              html:
-                `The latest drop has already dropped.  Add this NFT to the active drop? ` +
-                `If you would like to make a new drop, make one in the NFT admin tab first.`,
-              showCancelButton: true,
-              showConfirmButton: true,
-              focusConfirm: true,
-              customClass: {
-                confirmButton: "btn btn-light",
-                cancelButton: "btn btn-light no",
-              },
-              confirmButtonText: "Yes",
-              cancelButtonText: "No",
-              reverseButtons: true,
-            }).then(async (alertRes: any) => {
-              if (alertRes.isConfirmed) {
-                this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
-              }
-            });
-            return;
-          }
-
-          this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
-        },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+    this.backendApi.AdminGetNFTDrop(-1 /*DropNumber*/).subscribe(
+      (res: any) => {
+        if (res.DropEntry.DropTstampNanos == 0) {
+          this.globalVars._alertError("There are no drops. Make one in the admin NFT tab.");
+          return;
         }
-      );
+
+        let currentTime = new Date();
+        if (res.DropEntry.DropTstampNanos / 1e6 < currentTime.getTime()) {
+          SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
+            html:
+              `The latest drop has already dropped.  Add this NFT to the active drop? ` +
+              `If you would like to make a new drop, make one in the NFT admin tab first.`,
+            showCancelButton: true,
+            showConfirmButton: true,
+            focusConfirm: true,
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            reverseButtons: true,
+          }).then(async (alertRes: any) => {
+            if (alertRes.isConfirmed) {
+              this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
+            }
+          });
+          return;
+        }
+
+        this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
+      },
+      (error) => {
+        this.globalVars._alertError(error.error.error);
+      }
+    );
   }
 
   addNFTToLatestDrop(latestDrop: any, postHash: string) {
     this.backendApi
       .AdminUpdateNFTDrop(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         latestDrop.DropNumber,
         latestDrop.DropTstampNanos,
         latestDrop.IsActive /*IsActive*/,
@@ -305,8 +301,6 @@ export class FeedPostDropdownComponent implements OnInit {
     event.stopPropagation();
     this.backendApi
       .UpdateProfile(
-        this.globalVars.localNode,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -315,13 +309,12 @@ export class FeedPostDropdownComponent implements OnInit {
         this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9,
         { PinnedPostHashHex: isPinned ? this.post.PostHashHex : "" }
       )
       .toPromise()
       .then((res) => {
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
-        return this.globalVars.waitForTransaction(res.TxnHashHex);
+        return waitForTransactionFound(res.TxnHashHex);
       })
       .then(() => {
         if (isPinned) {
@@ -339,26 +332,22 @@ export class FeedPostDropdownComponent implements OnInit {
 
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
-        "" /*Title*/,
         {
           Body: this.post.Body,
           ImageURLs: this.post.ImageURLs ? this.post.ImageURLs : [],
+          VideoURLs: null,
         } /*BodyObj*/,
         "" /*RepostedPostHashHex*/,
         postExtraData /*PostExtraData*/,
-        "" /*Sub*/,
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        false
+        false /*IsHidden*/
       )
       .toPromise()
       .then((res) => {
         this.globalVars._alertSuccess(`Successfully ${isPinned ? "pinned" : "unpinned"} post`);
-        return this.globalVars.waitForTransaction(res.TxnHashHex);
+        return waitForTransactionFound(res.TxnHashHex);
       })
       .then(() => {
         if (isPinned) {
@@ -479,8 +468,6 @@ export class FeedPostDropdownComponent implements OnInit {
   makeNFTProfilePic(event): void {
     this.backendApi
       .UpdateProfile(
-        environment.verificationEndpointHostname,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -489,7 +476,6 @@ export class FeedPostDropdownComponent implements OnInit {
         this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
         {
           NFTProfilePicturePostHashHex: this.post.PostHashHex,
           NFTProfilePictureUrl: this.post.ImageURLs[0],

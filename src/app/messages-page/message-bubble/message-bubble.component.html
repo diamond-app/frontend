@@ -1,0 +1,88 @@
+<div class="mb-10px d-flex px-5px" [ngClass]="{ 'justify-content-end': message.IsSender }">
+  <!--                                         -->
+  <!-- LOGGED-IN USER *IS* THE MESSAGE SENDER. -->
+  <!--                                         -->
+  <div *ngIf="message.IsSender" class="message-bubble__wrapper">
+    <div class="d-flex">
+      <!--"Pre-wrap" allows us to render new lines properly-->
+      <!--"overflow-wrap" prevents long words from overflowing messages container (such as URLs)-->
+      <!-- The messages are received from the backend encrypted. If we have the unencrypted
+           text stored we use that instead. -->
+      <div
+        class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
+      >
+        <div
+          class="disable-scrollbars"
+          [ngClass]="{ 'fc-red': this.hasError }"
+          style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
+          [innerHTML]="this.messageText | sanitizeAndAutoLink"
+        ></div>
+      </div>
+      <div
+        *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+        [ngClass]="{
+          nft__avatar: globalVars?.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
+        }"
+        class="message__avatar ml-15px"
+        [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"
+        [nftProfileUrl]="globalVars.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
+      ></div>
+
+      <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
+      <div
+        *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+        class="message__avatar-placeholder ml-15px"
+      ></div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
+        <span>{{ globalVars.convertTstampToDateOrTime(message.MessageInfo.TimestampNanos) }}</span>
+      </div>
+      <div class="message__avatar-placeholder ml-15px"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!message.IsSender" class="message-bubble__wrapper">
+    <!--                                             -->
+    <!-- LOGGED-IN USER *IS NOT* THE MESSAGE SENDER. -->
+    <!--                                             -->
+    <div class="d-flex">
+      <div
+        [tooltip]="publicKeyToProfileMap[message.SenderInfo.OwnerPublicKeyBase58Check]?.Username"
+        container="body"
+        placement="top"
+        [adaptivePosition]="false"
+        *ngIf="profile && nextMessage ? message.IsSender != nextMessage.IsSender : true"
+        class="message__avatar mr-15px cursor-pointer"
+        [avatar]="message.SenderInfo.OwnerPublicKeyBase58Check"
+        [routerLink]="['/' + globalVars.RouteNames.INBOX_PREFIX]"
+        [queryParams]="{ username: publicKeyToProfileMap[message.SenderInfo.OwnerPublicKeyBase58Check]?.Username }"
+      ></div>
+      <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
+      <div
+        *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+        class="message__avatar-placeholder ml-15px"
+      ></div>
+      <!--"Pre-wrap" allows us to render new lines properly-->
+      <!-- Messages that the user receives can be returned from the backend unencrypted. -->
+      <div
+        class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey disable-scrollbars"
+      >
+        <div
+          class="disable-scrollbars"
+          style="white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word"
+          [ngClass]="{ 'fc-red': this.hasError }"
+          [innerHTML]="this.messageText | sanitizeAndAutoLink"
+        ></div>
+      </div>
+    </div>
+    <!-- Consider whether or not to show the timestamp. -->
+    <div class="d-flex">
+      <div class="message__avatar-placeholder ml-15px"></div>
+      <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
+        {{ globalVars.convertTstampToDateOrTime(message.MessageInfo.TimestampNanos) }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import {
   ChangeDetectorRef,
   Component,
@@ -11,27 +12,28 @@ import {
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import Autolinker from "autolinker";
 import * as _ from "lodash";
 import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { environment } from "../../../environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { FollowService } from "../../../lib/services/follow/follow.service";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import {
+  AssociationReactionValue,
+  AssociationType,
   BackendApiService,
   NFTEntryResponse,
-  PostEntryResponse,
   PostAssociation,
-  AssociationType,
   PostAssociationCountsResponse,
-  AssociationReactionValue,
+  PostEntryResponse,
 } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
@@ -39,11 +41,6 @@ import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creat
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { forkJoin, of } from "rxjs";
-import { finalize } from "rxjs/operators";
-import { HttpClient } from "@angular/common/http";
-import Autolinker from "autolinker";
-
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
  * but that approach was deprecated and there is not currently an interim
@@ -124,7 +121,6 @@ export class FeedPostComponent implements OnInit {
     private followService: FollowService,
     private translocoService: TranslocoService,
     private http: HttpClient,
-    private streamService: CloudflareStreamService,
     public tracking: TrackingService
   ) {
     // Change detection on posts is a very expensive process so we detach and perform
@@ -279,11 +275,7 @@ export class FeedPostComponent implements OnInit {
 
   getNFTEntries() {
     this.backendApi
-      .GetNFTEntriesForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.postContent.PostHashHex
-      )
+      .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.postContent.PostHashHex)
       .subscribe((res) => {
         this.nftEntryResponses = res.NFTEntryResponses;
         this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
@@ -602,17 +594,13 @@ export class FeedPostComponent implements OnInit {
         this.ref.detectChanges();
         this.backendApi
           .SubmitPost(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
-            "" /*Title*/,
             { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
             this._post.RepostedPostEntryResponse?.PostHashHex || "",
             {},
-            "" /*Sub*/,
-            true /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            true /*IsHidden*/
           )
           .subscribe(
             (response) => {
@@ -644,11 +632,7 @@ export class FeedPostComponent implements OnInit {
     }).then((response: any) => {
       if (response.isConfirmed) {
         this.backendApi
-          .BlockPublicKey(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.post.PosterPublicKeyBase58Check
-          )
+          .BlockPublicKey(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.post.PosterPublicKeyBase58Check)
           .subscribe(
             () => {
               this.tracking.log("profile : block", {
@@ -720,12 +704,7 @@ export class FeedPostComponent implements OnInit {
     const postHashHex = this.post.PostHashHex;
     const inGlobalFeed = this.post.InGlobalFeed;
     this.backendApi
-      .AdminUpdateGlobalFeed(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        postHashHex,
-        inGlobalFeed /*RemoveFromGlobalFeed*/
-      )
+      .AdminUpdateGlobalFeed(postHashHex, inGlobalFeed /*RemoveFromGlobalFeed*/)
       .subscribe(
         (res) => {
           this.post.InGlobalFeed = !this.post.InGlobalFeed;
@@ -755,12 +734,7 @@ export class FeedPostComponent implements OnInit {
     const postHashHex = this._post.PostHashHex;
     const isPostPinned = this._post.IsPinned;
     this.backendApi
-      .AdminPinPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        postHashHex,
-        isPostPinned
-      )
+      .AdminPinPost(postHashHex, isPostPinned)
       .subscribe(
         (res) => {
           this._post.IsPinned = isPostPinned;
@@ -807,44 +781,6 @@ export class FeedPostComponent implements OnInit {
       }
       this.livepeerVideo = true;
       this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
-      // const videoId = this.postContent.PostExtraData?.LivepeerAssetId
-      // // const videoId = this.streamService.extractVideoID(this.postContent.VideoURLs[0]);
-      // if (videoId && videoId != "") {
-      //   this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoId).subscribe(
-      //     (res) => {
-      //       console.log("Here is the res: ", res);
-      //       const duration = res?.videoSpec?.duration;
-      //       if (duration && _.isNumber(duration)) {
-      //         console.log("Here is the duration: ", duration);
-      //         console.log("Here is the duration: ", duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD);
-      //         this.videoURL =
-      //           duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD || this.keepVideoPaused
-      //             ? this.postContent.VideoURLs[0]
-      //             : this.postContent.VideoURLs[0] + "?autoplay=true&muted=true&loop=true&controls=false";
-      //
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         if (res?.videoSpec?.tracks?.length > 0 && res?.videoSpec?.tracks?.[0]?.width === "video") {
-      //           const trackDetails = res.videoSpec.tracks[res.videoSpec.tracks.length - 1];
-      //           this.sourceVideoAspectRatio = trackDetails.width / trackDetails.height;
-      //         }
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         this.showVideoControls = duration > FeedPostComponent.AUTOPLAY_LOOP_SEC_THRESHOLD;
-      //         this.ref.detectChanges();
-      //         console.log("Here is the video url: ", this.videoURL);
-      //         // this.initializeStream();
-      //         this.setVideoControllerHeight(20);
-      //         console.log("Here is the video url: ", this.videoURL);
-      //       }
-      //     },
-      //     (err) => {
-      //       this.videoURL = this.postContent.VideoURLs[0];
-      //       this.showVideoControls = true;
-      //       this.ref.detectChanges();
-      //       this.initializeStream();
-      //       this.setVideoControllerHeight(20);
-      //     }
-      //   );
-      // }
     }
   }
 
@@ -1111,7 +1047,6 @@ export class FeedPostComponent implements OnInit {
 
   private getPostReactionCounts() {
     return this.backendApi.GetPostAssociationsCounts(
-      this.globalVars.localNode,
       this.postContent,
       AssociationType.reaction,
       Object.values(AssociationReactionValue)
@@ -1127,7 +1062,6 @@ export class FeedPostComponent implements OnInit {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.postContent.PostHashHex,
       AssociationType.reaction,
       this.globalVars.loggedInUser?.PublicKeyBase58Check,

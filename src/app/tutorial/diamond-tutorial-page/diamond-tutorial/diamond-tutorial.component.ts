@@ -34,15 +34,7 @@ export class DiamondTutorialComponent implements OnInit {
     this.globalVars.preventBackButton();
     this.titleService.setTitle(`Diamond Tutorial - ${environment.node.name}`);
     this.backendApi
-      .GetSinglePost(
-        this.globalVars.localNode,
-        this.postHashHex,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        false,
-        0,
-        0,
-        false
-      )
+      .GetSinglePost(this.postHashHex, this.globalVars.loggedInUser?.PublicKeyBase58Check, false, 0, 0, false)
       .subscribe((res) => {
         this.post = res.PostFound;
         this.initiateIntro();

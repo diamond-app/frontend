@@ -50,11 +50,7 @@ export class TransferNftComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendApi
-      .GetNFTEntriesForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.post.PostHashHex
-      )
+      .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.post.PostHashHex)
       .subscribe((res) => {
         this.transferableSerialNumbers = _.orderBy(
           (res.NFTEntryResponses as NFTEntryResponse[]).filter(
@@ -92,7 +88,6 @@ export class TransferNftComponent implements OnInit {
       if (res.isConfirmed) {
         this.backendApi
           .TransferNFT(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.selectedCreator?.PublicKeyBase58Check,
             this.post.PostHashHex,

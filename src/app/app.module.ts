@@ -12,16 +12,16 @@ import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import player from "lottie-web";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
+import { AlertModule } from "ngx-bootstrap/alert";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
-import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
-import { AlertModule } from "ngx-bootstrap/alert";
-import { RatingModule } from "ngx-bootstrap/rating";
 import { ProgressbarModule } from "ngx-bootstrap/progressbar";
+import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { LottieModule } from "ngx-lottie";
 import { QuillModule } from "ngx-quill";
 import { ToastrModule } from "ngx-toastr";
@@ -32,8 +32,6 @@ import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
-import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
-import { AdminTutorialComponent } from "./admin/admin-tutorial/admin-tutorial.component";
 import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { AdminComponent } from "./admin/admin.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -72,8 +70,8 @@ import { CreatorProfileHodlersComponent } from "./creator-profile-page/creator-p
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorProfilePostsComponent } from "./creator-profile-page/creator-profile-posts/creator-profile-posts.component";
-import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
 import { CreatorProfileSimpleCardComponent } from "./creator-profile-page/creator-profile-row/creator-profile-simple-card.component";
+import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
 import { CreatorsLeaderboardModalComponent } from "./creators-leaderboard/creators-leaderboard-modal/creators-leaderboard-modal.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
@@ -100,24 +98,21 @@ import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter
 import { GetStarterDeSoComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
 import { GlobalVarsService } from "./global-vars.service";
 import { IconsModule } from "./icons/icons.module";
-import { IdentityService } from "./identity.service";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
 import { LeftBarMoreComponent } from "./left-bar/left-bar-more/left-bar-more.component";
 import { LeftBarComponent } from "./left-bar/left-bar.component";
-import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
-import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
-import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
+import { LinkPreviewComponent } from "./link-preview/link-preview.component";
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
+// Modular Themes for DeSo by Carsen Klock @carsenk
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
-import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
-import { MessageComponent } from "./messages-page/message/message.component";
-import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
-import { MessagesInboxComponent } from "./messages-page/messages-inbox/messages-inbox.component";
+import { CreateAccessGroupComponent } from "./messages-page/create-access-group/create-access-group.component";
+import { MessageBubbleComponent } from "./messages-page/message-bubble/message-bubble.component";
+import { MessageThreadComponent } from "./messages-page/message-thread/message-thread.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
-import { MessagesThreadViewComponent } from "./messages-page/messages-thread-view/messages-thread-view.component";
-import { MessagesThreadComponent } from "./messages-page/messages-thread/messages-thread.component";
+import { ThreadListItemComponent } from "./messages-page/thread-list-item/thread-list-item.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { MintNftComponent } from "./mint-nft/mint-nft.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
@@ -142,14 +137,20 @@ import { BuyNowConfirmationComponent } from "./place-bid/buy-now-confirmation/bu
 import { PlaceBidModalComponent } from "./place-bid/place-bid-modal/place-bid-modal.component";
 import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
 import { PlaceBidComponent } from "./place-bid/place-bid.component";
+import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
+import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
+import { PollComponent } from "./poll/poll.component";
 import { PostInteractionDetailsComponent } from "./post-interaction-details/post-interaction-details.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
 import { PostThreadComponent } from "./post-thread-page/post-thread/post-thread.component";
 import { QuoteRepostsDetailsComponent } from "./quote-reposts-details/quote-reposts-details.component";
 import { QuoteRepostsModalComponent } from "./quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
-import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-program-mgr.component";
-import { ReferralsComponent } from "./referrals/referrals.component";
+import { ReactionsDetailsComponent } from "./reactions-details/reactions-details.component";
+import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
+import { ReactionsModalComponent } from "./reactions-details/reactions-modal/reactions-modal.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
 import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
 import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
@@ -166,10 +167,10 @@ import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-mod
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
+import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { TermsOfServiceComponent } from "./terms-of-service/terms-of-service.component";
 import { Theme } from "./theme/symbols";
-// Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { TopBarMobileHamburgerMenuComponent } from "./top-bar-mobile/top-bar-mobile-hamburger-menu/top-bar-mobile-hamburger-menu.component";
 import { TopBarMobileHeaderComponent } from "./top-bar-mobile/top-bar-mobile-header/top-bar-mobile-header.component";
@@ -219,17 +220,7 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
-import { ReactionsImageComponent } from "./reactions-details/reactions-image/reactions-image.component";
-import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
-import { LikesDetailsComponent } from "./likes-details/likes-details.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
-import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
-import { LinkPreviewComponent } from "./link-preview/link-preview.component";
-import { PollComponent } from "./poll/poll.component";
-import { PollDetailsComponent } from "./poll/poll-details/poll-details.component";
-import { PollPageComponent } from "./poll/poll-page/poll-page.component";
-import { PollModalComponent } from "./poll/poll-modal/poll-modal.component";
+import { IdentityMigrationModalComponent } from './identity-migration-modal/identity-migration-modal.component';
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -305,11 +296,6 @@ export function playerFactory() {
     TransferDesoModalComponent,
     BuyDeSoLoggedOutComponent,
     BuyDeSoCompleteComponent,
-    MessagesInboxComponent,
-    MessagesThreadComponent,
-    MessageComponent,
-    MessagesThreadViewComponent,
-    MessageRecipientModalComponent,
     FeedCreatePostModalComponent,
     TopBarMobileNavigationControlComponent,
     TopBarMobileHeaderComponent,
@@ -350,15 +336,11 @@ export function playerFactory() {
     QuoteRepostsDetailsComponent,
     QuoteRepostsModalComponent,
     QuoteRepostsPageComponent,
-    LikesDetailsComponent,
-    LikesPageComponent,
-    LikesModalComponent,
     ReactionsDetailsComponent,
     ReactionsPageComponent,
     ReactionsModalComponent,
     ReactionsImageComponent,
     SimpleProfileCardComponent,
-    MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
     DiamondPostsComponent,
     CountdownTimerComponent,
@@ -394,11 +376,7 @@ export function playerFactory() {
     LinkPreviewComponent,
     NftShowcaseComponent,
     VerifyEmailComponent,
-    AdminJumioComponent,
     JumioStatusComponent,
-    ReferralProgramMgrComponent,
-    ReferralsComponent,
-    AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,
     BuyCreatorCoinsConfirmTutorialComponent,
@@ -432,10 +410,19 @@ export function playerFactory() {
     WelcomeModalComponent,
     LoggedOutEmptyStateComponent,
     SwipeToChooseComponent,
+    ThreadListItemComponent,
+    MessageBubbleComponent,
+    MessageThreadComponent,
+    CreateAccessGroupComponent,
     PollComponent,
     PollDetailsComponent,
     PollPageComponent,
     PollModalComponent,
+    PollComponent,
+    PollDetailsComponent,
+    PollPageComponent,
+    PollModalComponent,
+    IdentityMigrationModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -477,7 +464,7 @@ export function playerFactory() {
     ScrollingModule,
     TranslocoRootModule,
   ],
-  providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
+  providers: [BackendApiService, GlobalVarsService, BsModalService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

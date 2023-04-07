@@ -1,9 +1,10 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
+import { identity } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BackendApiService, User } from "../backend-api.service";
+import { from } from "rxjs";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "change-account-selector",
@@ -18,7 +19,6 @@ export class ChangeAccountSelectorComponent {
     private renderer: Renderer2,
     private backendApi: BackendApiService,
     private modalService: BsModalService,
-    private identityService: IdentityService,
     private router: Router
   ) {}
 
@@ -27,57 +27,36 @@ export class ChangeAccountSelectorComponent {
   }
 
   launchLogoutFlow() {
-    const publicKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
+    from(identity.logout()).subscribe(() => {
+      const { alternateUsers } = identity.snapshot();
+      const users = Object.keys(alternateUsers ?? {});
 
-    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
-      const users = Object.keys(res?.users || {});
-
-      if (!users.length) {
-        this.globalVars.userList = [];
-      } else {
-        this.globalVars.userList = this.globalVars.userList.filter((user) => {
-          return users.includes(user?.PublicKeyBase58Check);
-        });
-      }
-
-      let loggedInUser = users?.[0];
-
-      if (this.globalVars.userList.length === 0) {
-        loggedInUser = null;
-        this.setUser(null);
-      }
-
-      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
-      this.globalVars.updateEverything().add(() => {
-        if (!this.userInTutorial) {
-          this.goHome();
-        }
+      this.globalVars.userList = this.globalVars.userList.filter((user) => {
+        return users.includes(user?.PublicKeyBase58Check);
       });
+
+      let newActiveUserKey = this.globalVars.userList[0]?.PublicKeyBase58Check;
+
+      if (newActiveUserKey) {
+        identity.setActiveUser(newActiveUserKey);
+      }
+
+      const newLoggedInUser =
+        this.globalVars.userList.find((user) => user?.PublicKeyBase58Check === newActiveUserKey) ?? null;
+
+      this._switchToUser(newLoggedInUser);
     });
   }
 
   _switchToUser(user) {
-    this.setUser(user);
-    this.globalVars.messageResponse = null;
+    this.globalVars.setLoggedInUser(user);
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
     this.globalVars.updateEverything().add(() => {
-      if (!this.userInTutorial) {
-        this.goHome().then(() => {
-          const currentUrl = this.router.url;
-          this.router.navigateByUrl(currentUrl);
-        });
-      }
+      this.router.navigate([`/${this.globalVars.RouteNames.BROWSE}`], {
+        queryParamsHandling: "merge",
+      });
       this.globalVars.isLeftBarMobileOpen = false;
     });
-  }
-
-  private setUser(user: User) {
-    this.globalVars.setLoggedInUser(user);
-  }
-
-  private goHome() {
-    const pageUrl = `/${this.globalVars.RouteNames.BROWSE}`;
-    return this.router.navigate([pageUrl]);
   }
 }

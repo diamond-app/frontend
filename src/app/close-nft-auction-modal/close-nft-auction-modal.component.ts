@@ -34,15 +34,13 @@ export class CloseNftAuctionModalComponent {
         concatMap((nftEntry) => {
           return this.backendApi
             .UpdateNFT(
-              this.globalVars.localNode,
               this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.post.PostHashHex,
               nftEntry.SerialNumber,
               false,
               nftEntry.MinBidAmountNanos,
               false,
-              0,
-              this.globalVars.defaultFeeRateNanosPerKB
+              0
             )
             .pipe(
               map((res) => {

@@ -13,18 +13,18 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { pollForVideoReady, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+
 import Timer = NodeJS.Timer;
 import {
   AbstractControl,
@@ -128,9 +128,6 @@ interface PostExtraData {
   PollWeightTokenPublicKey?: string;
 }
 
-// show warning at 515 characters
-const SHOW_POST_LENGTH_WARNING_THRESHOLD = 515;
-
 @Component({
   selector: "feed-create-post",
   templateUrl: "./feed-create-post.component.html",
@@ -144,7 +141,6 @@ export class FeedCreatePostComponent implements OnInit {
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
   videoStreamInterval: Timer | null = null;
-  fallbackProfilePicURL: string | undefined;
   maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
@@ -190,7 +186,6 @@ export class FeedCreatePostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: CloudflareStreamService,
     private translocoService: TranslocoService,
     private modalService: BsModalService,
     private tracking: TrackingService
@@ -208,7 +203,6 @@ export class FeedCreatePostComponent implements OnInit {
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
@@ -236,13 +230,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
     // we do a basic _.escape anyways just to be extra safe.
-    const profPicURL = _.escape(
-      this.backendApi.GetSingleProfilePictureURL(
-        this.globalVars.localNode,
-        user.PublicKeyBase58Check ?? "",
-        this.fallbackProfilePicURL
-      )
-    );
+    const profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(user.PublicKeyBase58Check));
     div.innerHTML = `
       <div class="d-flex align-items-center">
         <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
@@ -262,7 +250,6 @@ export class FeedCreatePostComponent implements OnInit {
   ngOnInit() {
     this.isReply = !this.isQuote && !!this.parentPost;
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
-    this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
       this.currentPostModel.text = "It's Diamond time!";
     }
@@ -389,20 +376,13 @@ export class FeedCreatePostComponent implements OnInit {
     const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
-        "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
         postExtraData,
-        "" /*Sub*/,
-        // TODO: Should we have different values for creator basis points and stake multiple?
-        // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        this.inTutorial
+        false /*IsHidden*/
       )
       .toPromise()
       .then((response) => {
@@ -528,7 +508,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         this.currentPostModel.postImageSrc = res.ImageURL;
@@ -547,58 +527,26 @@ export class FeedCreatePostComponent implements OnInit {
     this.currentPostModel.isUploadingMedia = true;
     // Set this so that the video upload progress bar shows up.
     this.currentPostModel.postVideoSrc = `https://lvpr.tv`;
-    let tusEndpoint, asset;
+
     try {
-      ({ tusEndpoint, asset } = await this.backendApi
-        .UploadVideo(environment.uploadVideoHostname, file, this.globalVars.loggedInUser.PublicKeyBase58Check)
-        .toPromise());
+      const { asset } = await uploadVideo({
+        file,
+        UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      });
+
+      this.currentPostModel.isUploadingMedia = false;
+      this.currentPostModel.isProcessingMedia = true;
+      this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
+      this.currentPostModel.assetId = asset.id;
+      this.currentPostModel.postImageSrc = "";
+      this.videoUploadPercentage = null;
+
+      return pollForVideoReady(asset.id);
     } catch (e) {
       this.currentPostModel.postVideoSrc = "";
       this.globalVars._alertError(JSON.stringify(e.error.error));
       return;
     }
-    this.currentPostModel.isUploadingMedia = false;
-    this.currentPostModel.isProcessingMedia = true;
-    this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
-    this.currentPostModel.assetId = asset.id;
-    this.currentPostModel.postImageSrc = "";
-    this.videoUploadPercentage = null;
-    return new Promise((resolve, reject) => {
-      this.pollForReadyToStream(resolve);
-    });
-  }
-
-  pollForReadyToStream(onReadyToStream: Function): void {
-    let attempts = 0;
-    let numTries = 1200;
-    let timeoutMillis = 500;
-    this.videoStreamInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        clearInterval(this.videoStreamInterval!);
-        return;
-      }
-      this.streamService
-        .checkVideoStatusByURL(this.currentPostModel.assetId)
-        .then(([readyToStream, clearPoll, failed]) => {
-          if (readyToStream) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-          if (failed) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            this.currentPostModel.postVideoSrc = "";
-            this.globalVars._alertError("Video failed to upload. Please try again.");
-            return;
-          }
-          if (clearPoll) {
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-        });
-      attempts++;
-    }, timeoutMillis);
   }
 
   hasAddCommentButton(): boolean {

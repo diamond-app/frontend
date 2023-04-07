@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AssociationType, BackendApiService, PostAssociation, User } from "../backend-api.service";
+import { AssociationType, BackendApiService, PostAssociation } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { finalize, map, mergeMap, tap } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -9,6 +9,7 @@ import { forkJoin, of } from "rxjs";
 import { groupBy, keyBy, mapValues, sum } from "lodash";
 import { PollWeightType } from "../feed/feed-create-post/feed-create-post.component";
 import { environment } from "../../environments/environment";
+import { User } from "deso-protocol";
 
 interface PollVoteWeights {
   Weights: { [option: string]: number };
@@ -73,7 +74,6 @@ export class PollComponent implements OnInit {
 
     this.backendApi
       .CreatePostAssociation(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         AssociationType.pollResponse,
@@ -96,7 +96,6 @@ export class PollComponent implements OnInit {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.post.PostHashHex,
       AssociationType.pollResponse,
       this.globalVars.loggedInUser?.PublicKeyBase58Check,
@@ -109,18 +108,11 @@ export class PollComponent implements OnInit {
 
     if (pollType === PollWeightType.desoBalance) {
       return this.backendApi
-        .GetAllPostAssociations(
-          this.globalVars.localNode,
-          this.post.PostHashHex,
-          AssociationType.pollResponse,
-          undefined,
-          this.pollOptions,
-          true
-        )
+        .GetAllPostAssociations(this.post.PostHashHex, AssociationType.pollResponse, undefined, this.pollOptions, true)
         .pipe(
           map(({ Associations, PublicKeyToProfileEntryResponse }) => {
             const userBalanceByKey = Object.values(PublicKeyToProfileEntryResponse).reduce(
-              (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: (curr as any).DESOBalanceNanos }),
+              (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: curr.DESOBalanceNanos }),
               {}
             );
 
@@ -146,14 +138,13 @@ export class PollComponent implements OnInit {
 
       return forkJoin([
         this.backendApi.GetAllPostAssociations(
-          this.globalVars.localNode,
           this.post.PostHashHex,
           AssociationType.pollResponse,
           undefined,
           this.pollOptions
         ),
-        this.backendApi.GetHodlersForPublicKey(this.globalVars.localNode, tokenKey, "", "", 100000, false, true, true),
-        this.backendApi.GetUsersStateless(this.globalVars.localNode, [tokenKey], true),
+        this.backendApi.GetHodlersForPublicKey(tokenKey, "", "", 100000, false, true, true),
+        this.backendApi.GetUsersStateless([tokenKey], true),
       ]).pipe(
         tap((results) => {
           const [_, { Hodlers }, { UserList }] = results;
@@ -199,13 +190,7 @@ export class PollComponent implements OnInit {
     }
 
     return this.backendApi
-      .GetPostAssociationsCounts(
-        this.globalVars.localNode,
-        this.post,
-        AssociationType.pollResponse,
-        this.pollOptions,
-        true
-      )
+      .GetPostAssociationsCounts(this.post, AssociationType.pollResponse, this.pollOptions, true)
       .pipe(
         map((e) => {
           return {

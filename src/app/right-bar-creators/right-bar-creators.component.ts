@@ -46,9 +46,7 @@ export class RightBarCreatorsComponent implements OnInit, OnDestroy {
             router.url.startsWith(`/u/${username}`) &&
             username !== this.globalVars.loggedInUser?.ProfileEntryResponse.Username
           ) {
-            return this.backendApi
-              .GetSingleProfile(this.globalVars.localNode, "", username)
-              .pipe(map((res) => res.Profile));
+            return this.backendApi.GetSingleProfile("", username).pipe(map((res) => res.Profile));
           } else {
             return of(this.globalVars.loggedInUser?.ProfileEntryResponse);
           }

@@ -4,13 +4,21 @@ import { Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import ConfettiGenerator from "confetti-js";
+import {
+  AccessGroupEntryResponse,
+  BalanceEntryResponse,
+  createAccessGroup,
+  DeSoNetwork,
+  getAllAccessGroupsOwned,
+  identity,
+  User,
+} from "deso-protocol";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { Observable, Observer, of, Subscription } from "rxjs";
-import { catchError, first, share, switchMap } from "rxjs/operators";
+import { from, Observable, Observer, of, Subscription } from "rxjs";
+import { catchError, share } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
-import { fromWei, Hex, toBN } from "web3-utils";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -21,22 +29,11 @@ import { OpenProsperService } from "../lib/services/openProsper/openprosper-serv
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 import { ApiInternalService, AppUser } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
-import {
-  BackendApiService,
-  BalanceEntryResponse,
-  DeSoNode,
-  MessagingGroupEntryResponse,
-  PostEntryResponse,
-  TutorialStatus,
-  User,
-} from "./backend-api.service";
+import { BackendApiService, DeSoNode, PostEntryResponse, TutorialStatus } from "./backend-api.service";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
-import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import Timer = NodeJS.Timer;
-import { SettingsComponent } from "./settings/settings.component";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -68,7 +65,6 @@ export class GlobalVarsService {
   constructor(
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
-    private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
     private apiInternal: ApiInternalService,
@@ -101,18 +97,6 @@ export class GlobalVarsService {
 
   desoToUSDExchangeRateToDisplay = "Fetching...";
 
-  // We keep information regarding the messages tab in global vars for smooth
-  // transitions to and from messages.
-  messageNotificationCount = 0;
-  messagesSortAlgorithm = "time";
-  messagesPerFetch = 25;
-  openSettingsTray = false;
-  newMessagesFromPage = 0;
-  messagesRequestsHoldersOnly = false;
-  messagesRequestsHoldingsOnly = false;
-  messagesRequestsFollowersOnly = false;
-  messagesRequestsFollowedOnly = false;
-
   // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
@@ -124,7 +108,7 @@ export class GlobalVarsService {
 
   // We track logged-in state
   loggedInUser: User;
-  loggedInUserDefaultKey: MessagingGroupEntryResponse;
+  loggedInUserDefaultKey: AccessGroupEntryResponse;
   userList: User[] = [];
 
   // Temporarily track tutorial status here until backend it flowing
@@ -137,10 +121,6 @@ export class GlobalVarsService {
   followFeedPosts = [];
   hotFeedPosts = [];
   tagFeedPosts = [];
-  messageResponse = null;
-  messagesLoadedCallback = null;
-  messagesLoadedComponent = null;
-  loadingMessages = false;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
     decryptedMessgesMap: {},
@@ -151,7 +131,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
+  youHodlMap: Record<string, BalanceEntryResponse> = {};
 
   // Map of diamond level to deso nanos.
   diamondLevelMap = {};
@@ -161,8 +141,7 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp =
-    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -295,31 +274,7 @@ export class GlobalVarsService {
         { name: "NFT royalty", appUserField: "ReceiveNftRoyalty" },
       ],
     },
-  }
-
-  SetupMessages() {
-    // If there's no loggedInUser, we set the notification count to zero
-    if (!this.loggedInUser) {
-      this.messageNotificationCount = 0;
-      return;
-    }
-
-    // If a message response already exists, we skip this step
-    if (this.messageResponse) {
-      return;
-    }
-
-    let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
-    if (storedTab === null) {
-      storedTab = "My Holders";
-      this.backendApi.SetStorage("mostRecentMessagesTab", storedTab);
-    }
-
-    // Set the filters most recently used and load the messages
-    this.SetMessagesFilter(storedTab);
-    // We don't have a great way to wait for the identity iFrame, so we retry this function until it works.
-    this.LoadInitialMessages(0, 10);
-  }
+  };
 
   pollUnreadNotifications() {
     // this.GetUnreadNotifications();
@@ -330,95 +285,26 @@ export class GlobalVarsService {
 
   GetUnreadNotifications() {
     if (this.loggedInUser) {
-      this.backendApi
-        .GetUnreadNotificationsCount("https://node.deso.org", this.loggedInUser.PublicKeyBase58Check)
-        .toPromise()
-        .then(
-          (res) => {
-            this.unreadNotifications = res.NotificationsCount;
-            this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
-            if (res.UpdateMetadata) {
-              this.backendApi
-                .SetNotificationsMetadata(
-                  "https://node.deso.org",
-                  this.loggedInUser.PublicKeyBase58Check,
-                  -1,
-                  res.LastUnreadNotificationIndex,
-                  res.NotificationsCount
-                )
-                .toPromise();
-            }
-          },
-          (err) => {
-            console.error(this.backendApi.stringifyError(err));
-          }
-        );
-    }
-  }
-
-  SetMessagesFilter(tabName: any) {
-    // Set the request parameters if it's a known tab.
-    // Custom is set in the filter menu component and saved in local storage.
-    if (tabName !== "Custom") {
-      this.messagesRequestsHoldersOnly = tabName === "Holders";
-      this.messagesRequestsHoldingsOnly = false;
-      this.messagesRequestsFollowersOnly = false;
-      this.messagesRequestsFollowedOnly = false;
-      this.messagesSortAlgorithm = "time";
-    } else {
-      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
-      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
-      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
-      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
-      this.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
-    }
-  }
-
-  LoadInitialMessages(retryCount: number, maxRetries) {
-    if (!this.loggedInUser) {
-      return;
-    }
-    this.loadingMessages = true;
-
-    return this.backendApi
-      .GetMessages(
-        this.localNode,
-        this.loggedInUser.PublicKeyBase58Check,
-        "",
-        this.messagesPerFetch,
-        this.messagesRequestsHoldersOnly,
-        this.messagesRequestsHoldingsOnly,
-        this.messagesRequestsFollowersOnly,
-        this.messagesRequestsFollowedOnly,
-        this.messagesSortAlgorithm,
-        this.feeRateDeSoPerKB * 1e9
-      )
-      .subscribe(
+      this.backendApi.GetUnreadNotificationsCount(this.loggedInUser.PublicKeyBase58Check).subscribe(
         (res) => {
-          if (this.pauseMessageUpdates) {
-            // We pause message updates when a user sends a messages so that we can
-            // wait for it to be sent before updating the thread.  If we do not do this the
-            // temporary message place holder would disappear until "GetMessages()" finds it.
-          } else {
-            this.messageResponse = res;
-
-            // Update the number of new messages so we know when to stop scrolling
-            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
-            if (this.messagesLoadedCallback !== null) {
-              this.messagesLoadedCallback(this.messagesLoadedComponent, res);
-            }
+          this.unreadNotifications = res.NotificationsCount;
+          this.lastSeenNotificationIdx = res.LastUnreadNotificationIndex;
+          if (res.UpdateMetadata) {
+            this.backendApi
+              .SetNotificationsMetadata(
+                this.loggedInUser.PublicKeyBase58Check,
+                -1,
+                res.LastUnreadNotificationIndex,
+                res.NotificationsCount
+              )
+              .subscribe();
           }
-          this.loadingMessages = false;
         },
         (err) => {
-          console.log("Error getting messages: ", err);
-          if (retryCount < maxRetries) {
-            this.LoadInitialMessages(retryCount + 1, maxRetries);
-          }
           console.error(this.backendApi.stringifyError(err));
-          this.loadingMessages = false;
         }
       );
+    }
   }
 
   _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {
@@ -535,41 +421,35 @@ export class GlobalVarsService {
 
   userInTutorial(user: User): boolean {
     return (
-      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+      user &&
+      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
+        user.TutorialStatus as TutorialStatus
+      ) < 0
     );
   }
 
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
+    if (window.localStorage.getItem("loggedInUser") && !user) {
+    }
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
-    if (isSameUserAsBefore) {
-      user.ReferralInfoResponses = this.loggedInUser.ReferralInfoResponses;
-    }
-
     this.loggedInUser = user;
 
-    // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
-      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
-    }
+    if (!isSameUserAsBefore && user) {
+      identity.setActiveUser(user.PublicKeyBase58Check);
 
-    if (!isSameUserAsBefore) {
-      // Store the user in localStorage
-      this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
-
-      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
-        username: user?.ProfileEntryResponse?.Username ?? "",
-        isVerified: user?.ProfileEntryResponse?.IsVerified,
+      this.tracking.identifyUser(user.PublicKeyBase58Check, {
+        username: user.ProfileEntryResponse?.Username ?? "",
+        isVerified: user.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI
-      this.messageResponse = null;
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.
-      for (const entry of this.loggedInUser?.UsersYouHODL || []) {
+      for (const entry of user.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
       this.followFeedPosts = [];
@@ -669,68 +549,50 @@ export class GlobalVarsService {
   }
 
   getLoggedInUserDefaultKey(): Subscription {
-    return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe((res) => {
-      // NOTE: We only trigger the prompt if the user is not in the sign-up
-      // flow. Twitter sync is also excluded because it is part of the sign-up
-      // flow. There is an edge case where a user may have already signed up and
-      // they land directly on the twitter sync page from an external link. In
-      // this case, I think it makes sense to also prevent showing the messaging
-      // key prompt until after the twitter sync flow is complete.
-      if (!res && !(this.userSigningUp || this.router.url === "/sign-up" || this.router.url === "/twitter-sync")) {
-        SwalHelper.fire({
-          html: "In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.",
-          showCancelButton: false,
-        }).then(({ isConfirmed }) => {
-          this.tracking.log(`default-messaging-key-prompt : ${isConfirmed ? "confirmed" : "cancelled"}`);
-          if (isConfirmed) {
-            this.launchIdentityMessagingKey();
-          }
-        });
-      } else {
-        this.loggedInUserDefaultKey = res;
-      }
-    });
-  }
+    if (!this.loggedInUser) {
+      throw new Error("Cannot get default key for user that is not logged in");
+    }
 
-  launchIdentityMessagingKey(): Observable<any> {
-    const obs$ = this.identityService.launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check).pipe(
-      switchMap((res) => {
-        if (!res) return of(null);
-        this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
-          this.loggedInUser.PublicKeyBase58Check,
-          res.encryptedMessagingKeyRandomness
+    return from(
+      getAllAccessGroupsOwned({
+        PublicKeyBase58Check: this.loggedInUser.PublicKeyBase58Check,
+      }).then((res) => {
+        const defaultMessagingGroup = res?.AccessGroupsOwned?.find(
+          (group) => group.AccessGroupKeyName === "default-key"
         );
-        return this.backendApi
-          .RegisterGroupMessagingKey(
-            this.localNode,
-            this.loggedInUser.PublicKeyBase58Check,
-            res.messagingPublicKeyBase58Check,
-            "default-key",
-            res.messagingKeySignature,
-            [],
-            {},
-            this.feeRateDeSoPerKB * 1e9
-          )
-          .pipe(
-            switchMap((res) => {
-              if (!res) return of(null);
-              return this.backendApi.GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check);
-            })
-          );
-      }),
-      first(),
-      share()
-    );
+        if (defaultMessagingGroup) {
+          return defaultMessagingGroup;
+        } else {
+          const { currentUser } = identity.snapshot();
 
-    // TODO: error handling
-    obs$.subscribe((messagingGroupEntryResponse) => {
-      this.tracking.log("default-messaging-key : create");
-      if (messagingGroupEntryResponse) {
-        this.loggedInUserDefaultKey = messagingGroupEntryResponse;
-      }
+          if (!currentUser) {
+            throw new Error("Cannot create an access group without an identity user.");
+          }
+
+          // if they don't have a default messaging group yet, we'll create it for them under the hood.
+          return createAccessGroup({
+            AccessGroupOwnerPublicKeyBase58Check: this.loggedInUser.PublicKeyBase58Check,
+            AccessGroupPublicKeyBase58Check: currentUser.primaryDerivedKey.messagingPublicKeyBase58Check,
+            AccessGroupKeyName: "default-key",
+          }).then(() => {
+            return getAllAccessGroupsOwned({
+              PublicKeyBase58Check: this.loggedInUser?.PublicKeyBase58Check,
+            }).then((res) => {
+              const defaultMessagingGroup = res?.AccessGroupsOwned?.find(
+                (group) => group.AccessGroupKeyName === "default-key"
+              );
+              if (defaultMessagingGroup) {
+                return defaultMessagingGroup;
+              } else {
+                throw new Error("Failed to create default messaging group");
+              }
+            });
+          });
+        }
+      })
+    ).subscribe((defaultMessagingGroup) => {
+      this.loggedInUserDefaultKey = defaultMessagingGroup;
     });
-
-    return obs$;
   }
 
   preventBackButton() {
@@ -817,8 +679,8 @@ export class GlobalVarsService {
     return this.loggedInUser?.IsSuperAdmin;
   }
 
-  networkName(): string {
-    return this.isTestnet ? "testnet" : "mainnet";
+  networkName(): DeSoNetwork {
+    return this.isTestnet ? DeSoNetwork.testnet : DeSoNetwork.mainnet;
   }
 
   getUSDForDiamond(index: number): string {
@@ -918,9 +780,8 @@ export class GlobalVarsService {
   }
 
   // Used to convert uint256 Hex balances for DAO coins to standard units.
-  hexNanosToStandardUnit(hexNanos: Hex): number {
-    const result = fromWei(toBN(hexNanos), "ether").toString();
-    return parseFloat(result);
+  hexNanosToStandardUnit(hexNanos: string): number {
+    return parseFloat((BigInt(hexNanos) / BigInt(1e18)).toString());
   }
 
   isMobile(): boolean {
@@ -1258,52 +1119,13 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.identityService
-      .launch("/get-free-deso", {
-        public_key: this.loggedInUser?.PublicKeyBase58Check,
-        // referralCode: this.referralCode(),
-      })
-      .subscribe(() => {
-        this.updateEverything();
-      });
+    identity.getDeso().then(() => {
+      this.updateEverything();
+    });
   }
 
   launchIdentityFlow(): Observable<any> {
-    let obs$: Observable<any>;
-
-    if (
-      !(
-        this.identityInfoResponse &&
-        this.identityInfoResponse.hasStorageAccess &&
-        this.identityInfoResponse.browserSupported
-      )
-    ) {
-      this.tracking.log("storage-access : request");
-      this.requestingStorageAccess = true;
-      obs$ = this.identityService.storageGranted.pipe(share());
-
-      obs$.subscribe(() => {
-        this.tracking.log("storage-access : grant");
-        // TODO: make sure we actually use the status returned from the tap to unlock response.
-        this.identityInfoResponse.hasStorageAccess = true;
-        this.requestingStorageAccess = false;
-      });
-    }
-
-    obs$ = obs$
-      ? obs$.pipe(
-          switchMap(() =>
-            this.identityService.launch("/log-in", { accessLevelRequest: "4", hideJumio: true, getFreeDeso: true })
-          ),
-          share()
-        )
-      : this.identityService
-          .launch("/log-in", {
-            accessLevelRequest: "4",
-            hideJumio: true,
-            getFreeDeso: true,
-          })
-          .pipe(share());
+    let obs$: Observable<any> = from(identity.login()).pipe(share());
 
     obs$.subscribe((res) => {
       this.userSigningUp = res.signedUp;
@@ -1312,7 +1134,6 @@ export class GlobalVarsService {
           phoneNumberSuccess: res.phoneNumberSuccess,
         }),
       });
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
       });
@@ -1402,6 +1223,7 @@ export class GlobalVarsService {
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
+
     route.queryParams.subscribe((queryParams) => {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
@@ -1409,22 +1231,10 @@ export class GlobalVarsService {
         if (!inAppBrowser) {
           this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
         }
-        this.getReferralUSDCents();
       }
     });
 
     this.initializeLocalStorageGlobalVars();
-    this.getReferralUSDCents();
-
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
-    if (!identityServiceURL) {
-      identityServiceURL = "https://identity.deso.org";
-      this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
-    }
-    this.identityService.identityServiceURL = identityServiceURL;
-    this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${identityServiceURL}/embed?v=2`
-    );
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {
@@ -1453,7 +1263,6 @@ export class GlobalVarsService {
       const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
       this.backendApi
         .GetProfiles(
-          this.localNode,
           null /*PublicKeyBase58Check*/,
           null /*Username*/,
           null /*UsernamePrefix*/,
@@ -1502,8 +1311,8 @@ export class GlobalVarsService {
   }
 
   _updateDeSoExchangeRate() {
-    this.backendApi.GetExchangeRate(this.localNode).subscribe(
-      (res: any) => {
+    this.backendApi.GetExchangeRate().subscribe(
+      (res) => {
         // BTC
         this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
         this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
@@ -1544,78 +1353,8 @@ export class GlobalVarsService {
 
   resentVerifyEmail = false;
   resendVerifyEmail() {
-    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.backendApi.ResendVerifyEmail(this.loggedInUser.PublicKeyBase58Check).subscribe();
     this.resentVerifyEmail = true;
-  }
-
-  startTutorialAlert(): void {
-    Swal.fire({
-      target: this.getTargetComponentSelector(),
-      title: "Congrats!",
-      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
-      showConfirmButton: true,
-      // Only show skip option to admins
-      showCancelButton: !!this.loggedInUser?.IsAdmin,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-      confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
-      // User must skip or start tutorial
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then((res) => {
-      this.backendApi
-        .StartOrSkipTutorial(
-          this.localNode,
-          this.loggedInUser?.PublicKeyBase58Check,
-          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
-        )
-        .subscribe((response) => {
-          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
-          if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.BUY_CREATOR]);
-          }
-        });
-    });
-  }
-
-  jumioFailedAlert(): void {
-    Swal.fire({
-      target: this.getTargetComponentSelector(),
-      title: "Identity Validation Failed",
-      html: "We're sorry, your validation failed. Would you like to validate with a phone number instead?",
-      showConfirmButton: true,
-      // Only show skip option to admins
-      showCancelButton: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-      confirmButtonText: "Validate Via Phone Number",
-      cancelButtonText: "Skip",
-      // User must skip or start tutorial
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then((res) => {
-      if (res.isConfirmed) {
-        this.launchSMSValidation();
-      } else {
-        this.router.navigate(["/" + this.RouteNames.BROWSE]);
-      }
-    });
-  }
-
-  launchSMSValidation(): void {
-    this.identityService.launchPhoneNumberVerification(this.loggedInUser?.PublicKeyBase58Check).subscribe((res) => {
-      if (res.phoneNumberSuccess) {
-        this.updateEverything();
-      }
-    });
   }
 
   skipTutorial(tutorialComponent): void {
@@ -1651,55 +1390,6 @@ export class GlobalVarsService {
     });
   }
 
-  jumioInterval: Timer = null;
-  // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
-  pollLoggedInUserForJumio(publicKey: string): void {
-    if (this.jumioInterval) {
-      clearInterval(this.jumioInterval);
-    }
-    let attempts = 0;
-    let numTries = 120;
-    let timeoutMillis = 5000;
-    this.jumioInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        clearInterval(this.jumioInterval);
-        return;
-      }
-      this.backendApi
-        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
-        .subscribe(
-          (res: any) => {
-            if (res.JumioVerified) {
-              let user: User;
-              this.userList.forEach((userInList, idx) => {
-                if (userInList.PublicKeyBase58Check === publicKey) {
-                  this.userList[idx].JumioVerified = res.JumioVerified;
-                  this.userList[idx].JumioReturned = res.JumioReturned;
-                  this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
-                  this.userList[idx].BalanceNanos = res.BalanceNanos;
-                  this.userList[idx].MustCompleteTutorial = true;
-                  user = this.userList[idx];
-                }
-              });
-              if (user) {
-                this.setLoggedInUser(user);
-              }
-              clearInterval(this.jumioInterval);
-              return;
-            }
-            // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
-            if (res.JumioReturned) {
-              this.jumioFailedAlert();
-              clearInterval(this.jumioInterval);
-            }
-          },
-          (error) => {
-            clearInterval(this.jumioInterval);
-          }
-        )
-        .add(() => attempts++);
-    }, timeoutMillis);
-  }
   // Add possessive apostrophe
   addOwnershipApostrophe(input: string): string {
     if (!input) {
@@ -1723,65 +1413,28 @@ export class GlobalVarsService {
     return freeDesoMessage !== "$0" ? freeDesoMessage : "starter $DESO";
   }
 
-  getReferralUSDCents(): void {
-    const referralHash = localStorage.getItem("referralCode");
-    if (referralHash) {
-      this.backendApi
-        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
-        .subscribe((res) => {
-          const referralInfo = res.ReferralInfoResponse.Info;
-          const countrySignUpBonus = res.CountrySignUpBonus;
-          if (!countrySignUpBonus.AllowCustomReferralAmount) {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
-          } else if (
-            res.ReferralInfoResponse.IsActive &&
-            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
-          ) {
-            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
-          } else {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
-          }
-        });
-    }
-  }
-
   windowIsPWA(): Boolean {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  waitForTransaction(waitTxn: string): Promise<void> {
-    // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
-    // There is a success and error callback so that the caller gets feedback on the polling.
-    return new Promise((resolve, reject) => {
-      if (waitTxn !== "") {
-        let attempts = 0;
-        let numTries = 160;
-        let timeoutMillis = 750;
-        // Set an interval to repeat
-        let interval = setInterval(() => {
-          if (attempts >= numTries) {
-            reject(new Error("Polling aborted. Reached maximum retries."));
-            clearInterval(interval);
-          }
-          this.backendApi
-            .GetTxn(this.localNode, waitTxn)
-            .subscribe(
-              (res: Record<string, any>) => {
-                if (res.TxnFound) {
-                  clearInterval(interval);
-                  resolve();
-                }
-              },
-              (error) => {
-                clearInterval(interval);
-                reject(error);
-              }
-            )
-            .add(() => attempts++);
-        }, timeoutMillis) as any;
-      } else {
-        reject(new Error("No waitTxn was provided."));
-      }
-    });
+  getDesoNetworkFromURL(localNode: string) {
+    let hostname;
+    if (localNode.startsWith("http")) {
+      hostname = new URL(localNode).hostname;
+    } else {
+      hostname = localNode.split(":")[0];
+    }
+
+    switch (hostname) {
+      case "node.deso.org":
+      case "diamondapp.com":
+      case "dev.diamondapp.com":
+        return DeSoNetwork.mainnet;
+      case "localhost":
+      case "test.deso.org":
+        return DeSoNetwork.testnet;
+      default:
+        return environment.production ? DeSoNetwork.mainnet : DeSoNetwork.testnet;
+    }
   }
 }

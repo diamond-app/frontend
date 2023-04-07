@@ -95,7 +95,6 @@ export class NftPostComponent {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       this.nftPostHashHex /*PostHashHex*/,
       readerPubKey /*ReaderPublicKeyBase58Check*/,
       fetchParents,
@@ -158,14 +157,10 @@ export class NftPostComponent {
   refreshBidData(): Subscription {
     this.refreshingBids = true;
     return this.backendApi
-      .GetNFTBidsForNFTPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.nftPost.PostHashHex
-      )
+      .GetNFTBidsForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.nftPost.PostHashHex)
       .subscribe(
         (res) => {
-          this.nftBidData = res;
+          this.nftBidData = res as NFTBidData;
           if (!this.nftBidData.BidEntryResponses) {
             this.nftBidData.BidEntryResponses = [];
           }
@@ -467,12 +462,10 @@ export class NftPostComponent {
       if (res.isConfirmed) {
         this.backendApi
           .CreateNFTBid(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.nftPost.PostHashHex,
             bidEntry.SerialNumber,
-            0,
-            this.globalVars.defaultFeeRateNanosPerKB
+            0
           )
           .subscribe(
             (res) => {

@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { updateProfile } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { forkJoin, Observable, of } from "rxjs";
+import { forkJoin, from, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import {
   ApiInternalService,
   AppUser,
   NEW_APP_USER_DEFAULTS,
-  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS, SUBSCRIBED_FULL_APP_USER_DEFAULTS
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
 } from "src/app/api-internal.service";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
@@ -142,15 +143,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
       if (profileEntryResponse) {
-        this.backendApi
-          .GetSingleProfilePicture(
-            this.globalVars.localNode,
-            profileEntryResponse?.PublicKeyBase58Check,
-            this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
-          )
-          .subscribe((res) => {
-            this._readImageFileToProfilePicInput(res);
-          });
+        this.backendApi.GetSingleProfilePicture(profileEntryResponse?.PublicKeyBase58Check).subscribe((res) => {
+          this._readImageFileToProfilePicInput(res);
+        });
       }
 
       // If they don't have CreatorBasisPoints set, use the default.
@@ -162,10 +157,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _getUserMetadata() {
     this.backendApi
-      .GetUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
-      )
+      .GetUserGlobalMetadata(this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/)
       .subscribe(
         (res) => {
           this.emailAddress = res.Email;
@@ -188,7 +180,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   _updateEmail() {
     this.backendApi
       .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
@@ -210,8 +201,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       profileEntryResponse?.Username !== this.usernameInput ? this.usernameInput : "";
     this.profileUpdates.descriptionUpdate =
       profileEntryResponse?.Description !== this.descriptionInput ? this.descriptionInput : "";
-    this.profileUpdates.profilePicUpdate =
-      profileEntryResponse?.ProfilePic !== this.profilePicInput ? this.profilePicInput : "";
+    this.profileUpdates.profilePicUpdate = this.profilePicInput;
     this.profileUpdates.highQualityProfilePicUpdate =
       profileEntryResponse?.ExtraData?.HighQualityProfilePictureUrl !== this.highQualityProfPicUrl
         ? this.highQualityProfPicUrl
@@ -255,24 +245,21 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   //
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
-    return this.backendApi.UpdateProfile(
-      environment.verificationEndpointHostname,
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-      "" /*ProfilePublicKeyBase58Check*/,
-      // Start params
-      this.profileUpdates.usernameUpdate /*NewUsername*/,
-      this.profileUpdates.descriptionUpdate /*NewDescription*/,
-      this.profileUpdates.profilePicUpdate /*NewProfilePic*/,
-      this.founderRewardInput * 100 /*NewCreatorBasisPoints*/,
-      1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
-      false /*IsHidden*/,
-      // End params
-      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
-      {
-        LargeProfilePicURL: this.profileUpdates.highQualityProfilePicUpdate,
-        FeaturedImageURL: this.profileUpdates.coverPhotoUpdate,
-      }
+    return from(
+      updateProfile({
+        UpdaterPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        ProfilePublicKeyBase58Check: "",
+        NewUsername: this.profileUpdates.usernameUpdate,
+        NewDescription: this.profileUpdates.descriptionUpdate,
+        NewProfilePic: this.profileUpdates.profilePicUpdate,
+        NewCreatorBasisPoints: this.founderRewardInput * 100,
+        NewStakeMultipleBasisPoints: 1.25 * 100 * 100,
+        IsHidden: false,
+        ExtraData: {
+          LargeProfilePicURL: this.profileUpdates.highQualityProfilePicUpdate,
+          FeaturedImageURL: this.profileUpdates.coverPhotoUpdate,
+        },
+      })
     );
   }
 
@@ -352,7 +339,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         })
       )
       .subscribe(
-        async ([updateProfileResponse]) => {
+        ([{ submittedTransactionResponse }]) => {
           // if (subscriptionObject !== undefined) {
           //   await this.globalVars.subscribeUserToWebPushNotifications(subscriptionObject).toPromise();
           // }
@@ -361,13 +348,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           // TODO: create or update app user record here
           // This updates things like the username that shows up in the dropdown.
           this.globalVars.updateEverything(
-            updateProfileResponse.TxnHashHex,
+            submittedTransactionResponse.TxnHashHex,
             this._updateProfileSuccess,
             this._updateProfileFailure,
             this
           );
         },
         (err) => {
+          console.error(err);
           const parsedError = this.backendApi.parseProfileError(err);
           const lowBalance = parsedError.indexOf("insufficient");
           this.tracking.log("profile : update", { error: parsedError, lowBalance });
@@ -452,7 +440,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     if (username !== this.globalVars.loggedInUser?.ProfileEntryResponse?.Username) {
-      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username, true).subscribe(
+      this.backendApi.GetSingleProfile("", username, true).subscribe(
         (res) => {
           if (!isNil(res)) {
             this.usernameValidationError = `${username} is already in use`;
@@ -470,6 +458,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return Observable;
     };
   }
+
   _handleFileInput(files: FileList, fileType: string) {
     let fileToUpload = files.item(0);
     if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
@@ -506,7 +495,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         if (fileType === "profile") {
@@ -555,8 +544,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
     this.backendApi
       .UpdateProfile(
-        environment.verificationEndpointHostname,
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         "",
         "",
@@ -565,7 +552,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints,
         1.25 * 100 * 100,
         false,
-        this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/,
         fieldsToRemove
       )
       .subscribe(() => {

@@ -24,12 +24,11 @@ export class BlogPageComponent implements AfterViewInit {
     // items and filter to only blog posts
     this.pendingPageData = Promise.all([
       this.backendApi
-        .GetSingleProfile(this.globalVars.localNode, "", route.snapshot.params.username)
+        .GetSingleProfile("", route.snapshot.params.username)
         .toPromise()
         .then(({ Profile }) => Profile),
       this.backendApi
         .GetPostsForPublicKey(
-          this.globalVars.localNode,
           "",
           route.snapshot.params.username,
           this.globalVars.loggedInUser?.PublicKeyBase58Check,

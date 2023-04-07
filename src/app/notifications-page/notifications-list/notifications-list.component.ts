@@ -121,7 +121,6 @@ export class NotificationsListComponent implements OnInit {
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
       .GetNotifications(
-        "https://node.deso.org",
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
@@ -136,7 +135,6 @@ export class NotificationsListComponent implements OnInit {
           if (fetchStartIndex === -1) {
             this.backendApi
               .SetNotificationsMetadata(
-                "https://node.deso.org",
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,
@@ -557,17 +555,15 @@ export class NotificationsListComponent implements OnInit {
       const postHash = nftTransferMeta.NFTPostHashHex;
       // TODO: Fix backend response for profiles returned from NFT transfer notifications
       if (actor.Username === "annonymous") {
-        this.backendApi
-          .GetSingleProfile(this.globalVars.localNode, txnMeta.TransactorPublicKeyBase58Check, "")
-          .subscribe((user) => {
-            if (user?.Profile?.Username) {
-              const actorName =
-                user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
-              result.action = `${actorName} transferred an NFT to you`;
-              result.actor = user.Profile;
-              result.post.ProfileEntryResponse = user.Profile;
-            }
-          });
+        this.backendApi.GetSingleProfile(txnMeta.TransactorPublicKeyBase58Check, "").subscribe((user) => {
+          if (user?.Profile?.Username) {
+            const actorName =
+              user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
+            result.action = `${actorName} transferred an NFT to you`;
+            result.actor = user.Profile;
+            result.post.ProfileEntryResponse = user.Profile;
+          }
+        });
       }
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
@@ -580,11 +576,7 @@ export class NotificationsListComponent implements OnInit {
       result.iconClass = "fc-blue";
       result.link = AppRoutingModule.nftPath(postHash);
       this.backendApi
-        .GetNFTEntriesForNFTPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          result.post.PostHashHex
-        )
+        .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, result.post.PostHashHex)
         .subscribe((res) => {
           const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (
