@@ -5,6 +5,7 @@ import { environment } from "src/environments/environment";
 import { BackendApiService } from "../../../backend-api.service";
 import { GlobalVarsService } from "../../../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";
+
 @Component({
   selector: "buy-creator-coins-confirm-tutorial",
   templateUrl: "./buy-creator-coins-confirm-tutorial.component.html",
