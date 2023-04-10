@@ -5,8 +5,6 @@ import { catchError, finalize, tap } from "rxjs/operators";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "creator-diamonds",

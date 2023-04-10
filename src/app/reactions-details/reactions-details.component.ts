@@ -9,11 +9,11 @@ import {
   AssociationType,
   BackendApiService,
   PostAssociationCountsResponse,
-  ProfileEntryResponse,
 } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { orderBy } from "lodash";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "reactions-details",

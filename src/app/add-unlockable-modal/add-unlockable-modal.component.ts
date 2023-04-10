@@ -5,9 +5,9 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { of } from "rxjs";
 import { concatMap, last, map } from "rxjs/operators";
-import { BackendApiService, NFTBidEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
+import { NFTEntryResponse, PostEntryResponse, NFTBidEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "add-unlockable-modal",
