@@ -1,9 +1,9 @@
 // @ts-strict
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
+import { sortBy } from "lodash";
 import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
 import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { sortBy } from "lodash";
 
 @Component({
   selector: "creator-profile-blog-posts",
@@ -31,7 +31,6 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
     this.loadingFirstPage = true;
     this.backendApi
       .GetPostsForPublicKey(
-        this.globalVars.localNode,
         "",
         this.profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,

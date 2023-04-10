@@ -1,18 +1,22 @@
-// @ts-strict
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { isNil, range } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
-import { ApiInternalService, AppUser } from "src/app/api-internal.service";
+import {
+  ApiInternalService,
+  AppUser,
+  SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+  SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
+} from "src/app/api-internal.service";
 import { environment } from "src/environments/environment";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ThemeService } from "../theme/theme.service";
-import { range } from "lodash";
 
 @Component({
   selector: "settings",
@@ -20,12 +24,163 @@ import { range } from "lodash";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
+  notificationCategories = this.globalVars.notificationCategories;
+
+  notificationDetailsExpanded = false;
+
+  getSortedNotificationCategories() {
+    return Object.keys(this.notificationCategories).sort((a, b) => {
+      return this.notificationCategories[a].order - this.notificationCategories[b].order;
+    });
+  }
+
+  categorySelected(category: string, notificationChannel: string): boolean {
+    if (isNil(this.appUser)) {
+      return false;
+    }
+    return this.notificationCategories[category].notificationTypes.every((notificationType) => {
+      return this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`];
+    });
+  }
+
+  categoryPartiallySelected(category: string, notificationChannel: string): boolean {
+    if (isNil(this.appUser)) {
+      return false;
+    }
+    if (this.categorySelected(category, notificationChannel)) {
+      return false;
+    }
+    return this.notificationCategories[category].notificationTypes.some((notificationType) => {
+      return this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`];
+    });
+  }
+
+  // Define a function to toggle whether a category is shown.
+  toggleCategoryHidden(category: string): void {
+    this.notificationCategories[category].isHidden = !this.notificationCategories[category].isHidden;
+  }
+
+  // Define a function to toggle the user's subscription to all notifications in a category
+  toggleCategory(category: string, notificationChannel: string): void {
+    if (this.appUser === null) {
+      return;
+    }
+    const currentCategoryStatus = this.categorySelected(category, notificationChannel);
+    // Create copy of appUser to revert to if the API call fails.
+    const originalAppUser = { ...this.appUser };
+
+    for (let notificationType of this.notificationCategories[category].notificationTypes) {
+      this.appUser[`${notificationType.appUserField}${notificationChannel}Notif`] = !currentCategoryStatus;
+    }
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (!currentCategoryStatus && notificationChannel === "Push") {
+      this.globalVars.createWebPushEndpointAndSubscribe();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser = originalAppUser;
+      }
+    );
+  }
+
+  // Define a function to toggle the user's subscription to a specific notification type
+  toggleNotificationType(notificationType: string, notificationChannel: string): void {
+    if (this.appUser === null) {
+      return;
+    }
+
+    this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
+      `${notificationType}${notificationChannel}Notif`
+    ];
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (this.appUser[`${notificationType}${notificationChannel}Notif`] && notificationChannel === "Push") {
+      this.globalVars.createWebPushEndpointAndSubscribe();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
+          `${notificationType}${notificationChannel}Notif`
+        ];
+      }
+    );
+  }
+
+  // Define a function to toggle the user's subscription to a specific notification type.
+  notificationChecked(notificationType: string, notificationChannel: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+    return this.appUser[`${notificationType}${notificationChannel}Notif`];
+  }
+
+  toggleNotificationDigest(digestType: string, notificationChannel: string) {
+    if (this.appUser === null) {
+      return;
+    }
+
+    this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
+      `Receive${notificationChannel}${digestType}Digest`
+    ];
+
+    // If the user is subscribing, subscribe them to push notifications.
+    if (this.appUser[`Receive${notificationChannel}${digestType}Digest`] && notificationChannel === "Push") {
+      this.globalVars.createWebPushEndpointAndSubscribe();
+    }
+
+    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
+      () => {},
+      () => {
+        if (!this.appUser) return;
+        this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
+          `Receive${notificationChannel}${digestType}Digest`
+        ];
+      }
+    );
+  }
+
+  notificationDigestChecked(digestType: string, notificationChannel: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+
+    return this.appUser[`Receive${notificationChannel}${digestType}Digest`];
+  }
+
+  notificationDigestDisabled(digestType: string): boolean {
+    if (this.appUser === null) {
+      return false;
+    }
+
+    if (digestType === "Earnings") {
+      return this.appUser.EarningsDigestFrequency === 0;
+    } else {
+      return this.appUser.ActivityDigestFrequency === 0;
+    }
+  }
+
+  showNotificationAdvancedSettings(): boolean {
+    if (!this.appUser) {
+      return false;
+    }
+    return (
+      this.globalVars.userHasSubscribedToNotificationChannel("Email", this.appUser) ||
+      this.globalVars.userHasSubscribedToNotificationChannel("Push", this.appUser)
+    );
+  }
+
   emailAddress = "";
   showEmailPrompt: boolean = false;
   environment = environment;
   selectedLanguage?: string;
   appUser?: AppUser | null;
-  isSelectEmailsDropdownOpen: boolean = false;
   isValidEmail: boolean = true;
   isSavingEmail: boolean = false;
   onlyShowEmailSettings: boolean = false;
@@ -41,30 +196,6 @@ export class SettingsComponent implements OnInit {
     value: localHour,
     text: `${localHour.toString().padStart(2, "0")}:00`,
   }));
-  txEmailSettings = [
-    { field: "ReceiveLikeNotif", text: "Like" },
-    { field: "ReceiveCoinPurchaseNotif", text: "Creator coin purchase" },
-    { field: "ReceiveFollowNotif", text: "Follow" },
-    { field: "ReceiveBasicTransferNotif", text: "Received DESO" },
-    { field: "ReceiveCommentNotif", text: "Post comment" },
-    { field: "ReceiveDmNotif", text: "Received message" },
-    { field: "ReceiveDiamondNotif", text: "Received diamonds" },
-    { field: "ReceiveRepostNotif", text: "Repost" },
-    { field: "ReceiveQuoteRepostNotif", text: "Quote repost" },
-    { field: "ReceiveMentionNotif", text: "@Mentioned" },
-    { field: "ReceiveNftBidNotif", text: "NFT bid" },
-    { field: "ReceiveNftPurchaseNotif", text: "NFT purchased" },
-    { field: "ReceiveNftBidAcceptedNotif", text: "NFT bid accepted" },
-    { field: "ReceiveNftRoyaltyNotif", text: "Received NFT royalty" },
-  ];
-
-  get allTxSettingsSelected() {
-    return !!this.appUser && !this.txEmailSettings.find(({ field }) => !this.appUser[field]);
-  }
-
-  get allTxSettingsUnselected() {
-    return !this.appUser || !this.txEmailSettings.find(({ field }) => this.appUser[field]);
-  }
 
   @Input() isModal: boolean = true;
 
@@ -107,7 +238,7 @@ export class SettingsComponent implements OnInit {
       );
       const utcOffset = getUTCOffset();
       if (!!loggedInUser?.ProfileEntryResponse) {
-        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(this.globalVars.localNode, userPublicKey).pipe(
+        const getUserMetadataObs = this.backendApi.GetUserGlobalMetadata(userPublicKey).pipe(
           catchError((err) => {
             return of(null);
           })
@@ -115,6 +246,7 @@ export class SettingsComponent implements OnInit {
         forkJoin([getAppUserObs, getUserMetadataObs])
           .pipe(
             switchMap(([appUser, userMetadata]) => {
+              this.emailAddress = userMetadata.Email;
               if (appUser === null && loggedInUser?.ProfileEntryResponse) {
                 if (userMetadata.Email.length > 0) {
                   // This case should only happen if there was an error when creating
@@ -163,6 +295,7 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("In settings");
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
     this.selectedLanguage = this.translocoService.getActiveLang();
     this.globalVars.updateEverything().add(() => {
@@ -189,10 +322,6 @@ export class SettingsComponent implements OnInit {
     this.globalVars.updateEverything();
   }
 
-  toggleEmailDropdown() {
-    this.isSelectEmailsDropdownOpen = !this.isSelectEmailsDropdownOpen;
-  }
-
   updateDigestFrequency(ev: Event) {
     if (!this.appUser || !ev?.target) return;
     const inputEl = ev.target as HTMLInputElement;
@@ -204,6 +333,17 @@ export class SettingsComponent implements OnInit {
     }
 
     this.appUser = { ...this.appUser, [digestSetting]: Number(inputEl.value) };
+
+    // If the user has set digest frequency to 0, we disable that digest across all channels.
+    if (Number(inputEl.value) === 0) {
+      if (digestSetting === "ActivityDigestFrequency") {
+        this.appUser.ReceivePushActivityDigest = false;
+        this.appUser.ReceiveEmailActivityDigest = false;
+      } else {
+        this.appUser.ReceivePushEarningsDigest = false;
+        this.appUser.ReceiveEmailEarningsDigest = false;
+      }
+    }
 
     this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
       () => {},
@@ -245,48 +385,6 @@ export class SettingsComponent implements OnInit {
     );
   }
 
-  updateTxEmailSetting(ev: Event) {
-    if (!this.appUser || !ev?.target) return;
-    const inputEl = ev.target as HTMLInputElement;
-    const fieldName = inputEl.name as keyof AppUser;
-    const originalValue = this.appUser[fieldName];
-
-    if (typeof originalValue === "undefined") {
-      throw new Error(`invalid email setting: ${fieldName}`);
-    }
-
-    this.appUser = { ...this.appUser, [fieldName]: inputEl.checked };
-    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-      () => {},
-      () => {
-        if (!this.appUser) return;
-        this.appUser = {
-          ...this.appUser,
-          [fieldName]: originalValue,
-        };
-      }
-    );
-  }
-
-  toggleSelectAllTxEmailSettings(select: boolean) {
-    if (!this.appUser) return;
-    const originalAppUser = { ...this.appUser };
-    const settings = this.txEmailSettings.reduce((res, { field }) => {
-      res[field] = select;
-      return res;
-    }, {} as Record<string, boolean>);
-
-    this.appUser = { ...this.appUser, ...settings };
-
-    this.apiInternal.updateAppUser(this.appUser, this.emailJwt).subscribe(
-      () => {},
-      () => {
-        if (!this.appUser) return;
-        this.appUser = originalAppUser;
-      }
-    );
-  }
-
   isDigestSendAtTimeSelected(localHour: number) {
     return (
       localHourToUtcHour(this.appUser.DigestSendAtHourLocalTime, this.appUser.UserTimezoneUtcOffset * 60) ===
@@ -296,6 +394,42 @@ export class SettingsComponent implements OnInit {
 
   onEmailChange() {
     this.isValidEmail = true;
+  }
+
+  subscribeToPushNotifications() {
+    const utcOffset = getUTCOffset();
+    if (!this.appUser) {
+      this.apiInternal
+        .createAppUser(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+          this.globalVars.lastSeenNotificationIdx,
+          utcOffset,
+          localHourToUtcHour(20),
+          SUBSCRIBED_PUSH_APP_USER_DEFAULTS
+        )
+        .subscribe((appUser) => {
+          this.appUser = appUser;
+          this.globalVars.createWebPushEndpointAndSubscribe();
+        });
+    } else {
+      console.log("Updating");
+      this.apiInternal
+        .updateAppUser(
+          {
+            ...this.appUser,
+            ...SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
+            UserTimezoneUtcOffset: utcOffset,
+            DigestSendAtHourLocalTime: localHourToUtcHour(20),
+          },
+          this.emailJwt
+        )
+        .subscribe((appUser) => {
+          console.log("Here is the app user: ", appUser);
+          this.appUser = appUser;
+          this.globalVars.createWebPushEndpointAndSubscribe();
+        });
+    }
   }
 
   onEmailSubmit(ev: Event) {
@@ -310,23 +444,36 @@ export class SettingsComponent implements OnInit {
     }
 
     this.isSavingEmail = true;
+
     const utcOffset = getUTCOffset();
     this.backendApi
       .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
       )
       .pipe(
         switchMap(() => {
-          return this.apiInternal.createAppUser(
-            this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-            this.globalVars.lastSeenNotificationIdx,
-            utcOffset,
-            localHourToUtcHour(20)
-          );
+          if (!this.appUser) {
+            return this.apiInternal.createAppUser(
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
+              this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+              this.globalVars.lastSeenNotificationIdx,
+              utcOffset,
+              localHourToUtcHour(20),
+              SUBSCRIBED_EMAIL_APP_USER_DEFAULTS
+            );
+          } else {
+            return this.apiInternal.updateAppUser(
+              {
+                ...this.appUser,
+                ...SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
+                UserTimezoneUtcOffset: utcOffset,
+                DigestSendAtHourLocalTime: localHourToUtcHour(20),
+              },
+              this.emailJwt
+            );
+          }
         })
       )
       .subscribe(

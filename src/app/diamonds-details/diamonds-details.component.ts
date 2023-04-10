@@ -42,7 +42,6 @@ export class DiamondsDetailsComponent implements OnInit {
     this.loading = true;
     return this.backendApi
       .GetDiamondsForPost(
-        this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
         this.pageSize,

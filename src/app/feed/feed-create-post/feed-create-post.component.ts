@@ -13,19 +13,28 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
+import { pollForVideoReady, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import * as tus from "tus-js-client";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
-import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, BackendRoutes, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+
 import Timer = NodeJS.Timer;
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -57,11 +66,17 @@ class PostModel {
   constructedEmbedURL = "";
   showEmbedURL = false;
   showImageLink = false;
+  showPoll = false;
   isMentionified = false;
   placeHolderText: string;
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
+  pollForm: FormGroup = new FormGroup({
+    options: new FormArray([]),
+  });
+  pollType: PollWeightType = PollWeightType.unweighted;
+  pollWeightTokenProfile: ProfileEntryResponse | null = null;
   private quotes = RANDOM_MOVIE_QUOTES.slice();
 
   /**
@@ -96,15 +111,22 @@ class PostModel {
   }
 }
 
+export enum PollWeightType {
+  unweighted = "unweighted",
+  desoBalance = "deso_balance",
+  desoTokenBalance = "deso_token_balance",
+}
+
 interface PostExtraData {
   EmbedVideoURL?: string;
   Node?: string;
   Language?: string;
   LivepeerAssetId?: string;
+  PollOptions?: string; // saving it as string since the API cannot save the array structure in PostExtraData
+  PollExpirationBlockHeight?: string; // this field is ignored for now
+  PollWeightType?: PollWeightType;
+  PollWeightTokenPublicKey?: string;
 }
-
-// show warning at 515 characters
-const SHOW_POST_LENGTH_WARNING_THRESHOLD = 515;
 
 @Component({
   selector: "feed-create-post",
@@ -119,11 +141,25 @@ export class FeedCreatePostComponent implements OnInit {
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
   videoStreamInterval: Timer | null = null;
-  fallbackProfilePicURL: string | undefined;
   maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
   embedUrlParserService = EmbedUrlParserService;
+
+  readonly REQUIRED_POLL_OPTIONS: number = 2;
+  readonly MAX_POLL_OPTIONS: number = 5;
+  readonly MAX_POLL_CHARACTERS: number = 50;
+  readonly POLL_WEIGHT_TYPE_LABELS = {
+    [PollWeightType.unweighted]: "Simple poll",
+    [PollWeightType.desoBalance]: "Weight By DeSo Balance",
+    [PollWeightType.desoTokenBalance]: "Weight By Token Balance",
+  };
+  readonly POLL_WEIGHT_TYPE_LABELS_SELECTED = {
+    [PollWeightType.unweighted]: "Simple poll",
+    [PollWeightType.desoBalance]: "DeSo Balance",
+    [PollWeightType.desoTokenBalance]: "Token Balance",
+  };
+  readonly POLL_WEIGHT_TYPE = PollWeightType;
 
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
@@ -140,6 +176,9 @@ export class FeedCreatePostComponent implements OnInit {
   @ViewChildren("autosizables") autosizables: QueryList<CdkTextareaAutosize> | undefined;
   @ViewChildren("textareas") textAreas: QueryList<ElementRef<HTMLTextAreaElement>> | undefined;
   @ViewChildren("menus") menus: QueryList<ElementRef<HTMLDivElement>> | undefined;
+  // Ref is used only to `.focus()` an poll input from TypeScript.
+  // The rest of operations should go through the ReactiveForms
+  @ViewChildren("pollOptionsRef") pollOptionsRef: QueryList<ElementRef<HTMLInputElement>> | undefined;
 
   constructor(
     private router: Router,
@@ -147,7 +186,6 @@ export class FeedCreatePostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: CloudflareStreamService,
     private translocoService: TranslocoService,
     private modalService: BsModalService,
     private tracking: TrackingService
@@ -158,10 +196,13 @@ export class FeedCreatePostComponent implements OnInit {
   // Functions for the mention autofill component
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
 
+  get pollOptions() {
+    return this.currentPostModel.pollForm.controls.options as FormArray;
+  }
+
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
     const profiles = await this.backendApi
       .GetProfiles(
-        this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
         prefix.trim().replace(/^@/, "") /*UsernamePrefix*/,
@@ -189,13 +230,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
     // we do a basic _.escape anyways just to be extra safe.
-    const profPicURL = _.escape(
-      this.backendApi.GetSingleProfilePictureURL(
-        this.globalVars.localNode,
-        user.PublicKeyBase58Check ?? "",
-        this.fallbackProfilePicURL
-      )
-    );
+    const profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(user.PublicKeyBase58Check));
     div.innerHTML = `
       <div class="d-flex align-items-center">
         <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
@@ -215,7 +250,6 @@ export class FeedCreatePostComponent implements OnInit {
   ngOnInit() {
     this.isReply = !this.isQuote && !!this.parentPost;
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
-    this.fallbackProfilePicURL = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
     if (this.inTutorial) {
       this.currentPostModel.text = "It's Diamond time!";
     }
@@ -311,6 +345,21 @@ export class FeedCreatePostComponent implements OnInit {
       postExtraData.Language = this.translocoService.getActiveLang();
     }
 
+    if (post.showPoll) {
+      postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e) => e && e.trim()));
+      postExtraData.PollExpirationBlockHeight = ""; // leaving it empty for now since it's unused
+      postExtraData.PollWeightType = this.currentPostModel.pollType;
+
+      if (this.currentPostModel.pollType === PollWeightType.desoTokenBalance) {
+        if (!this.currentPostModel.pollWeightTokenProfile) {
+          this.globalVars._alertError("A DeSo Token Profile must be selected to create this poll type.");
+          return;
+        }
+
+        postExtraData.PollWeightTokenPublicKey = this.currentPostModel.pollWeightTokenProfile.PublicKeyBase58Check;
+      }
+    }
+
     const bodyObj = {
       Body: post.text,
       ImageURLs: post.postImageSrc ? [post.postImageSrc] : [],
@@ -327,23 +376,17 @@ export class FeedCreatePostComponent implements OnInit {
     const action = this.postToEdit ? "edit" : "create";
     this.backendApi
       .SubmitPost(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
-        "" /*Title*/,
         bodyObj /*BodyObj*/,
         repostedPostHashHex,
         postExtraData,
-        "" /*Sub*/,
-        // TODO: Should we have different values for creator basis points and stake multiple?
-        // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        this.inTutorial
+        false /*IsHidden*/
       )
       .toPromise()
-      .then((response) => {
+      .then((desoJsResponse) => {
+        const response = desoJsResponse.submittedTransactionResponse;
         this.tracking.log(`post : ${action}`, {
           type: postType,
           hasText: bodyObj.Body.length > 0,
@@ -466,7 +509,7 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     return this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
+      .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => {
         this.currentPostModel.postImageSrc = res.ImageURL;
@@ -485,58 +528,26 @@ export class FeedCreatePostComponent implements OnInit {
     this.currentPostModel.isUploadingMedia = true;
     // Set this so that the video upload progress bar shows up.
     this.currentPostModel.postVideoSrc = `https://lvpr.tv`;
-    let tusEndpoint, asset;
+
     try {
-      ({ tusEndpoint, asset } = await this.backendApi
-        .UploadVideo(environment.uploadVideoHostname, file, this.globalVars.loggedInUser.PublicKeyBase58Check)
-        .toPromise());
+      const { asset } = await uploadVideo({
+        file,
+        UserPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      });
+
+      this.currentPostModel.isUploadingMedia = false;
+      this.currentPostModel.isProcessingMedia = true;
+      this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
+      this.currentPostModel.assetId = asset.id;
+      this.currentPostModel.postImageSrc = "";
+      this.videoUploadPercentage = null;
+
+      return pollForVideoReady(asset.id);
     } catch (e) {
       this.currentPostModel.postVideoSrc = "";
       this.globalVars._alertError(JSON.stringify(e.error.error));
       return;
     }
-    this.currentPostModel.isUploadingMedia = false;
-    this.currentPostModel.isProcessingMedia = true;
-    this.currentPostModel.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
-    this.currentPostModel.assetId = asset.id;
-    this.currentPostModel.postImageSrc = "";
-    this.videoUploadPercentage = null;
-    return new Promise((resolve, reject) => {
-      this.pollForReadyToStream(resolve);
-    });
-  }
-
-  pollForReadyToStream(onReadyToStream: Function): void {
-    let attempts = 0;
-    let numTries = 1200;
-    let timeoutMillis = 500;
-    this.videoStreamInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        clearInterval(this.videoStreamInterval!);
-        return;
-      }
-      this.streamService
-        .checkVideoStatusByURL(this.currentPostModel.assetId)
-        .then(([readyToStream, clearPoll, failed]) => {
-          if (readyToStream) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-          if (failed) {
-            onReadyToStream();
-            clearInterval(this.videoStreamInterval!);
-            this.currentPostModel.postVideoSrc = "";
-            this.globalVars._alertError("Video failed to upload. Please try again.");
-            return;
-          }
-          if (clearPoll) {
-            clearInterval(this.videoStreamInterval!);
-            return;
-          }
-        });
-      attempts++;
-    }, timeoutMillis);
   }
 
   hasAddCommentButton(): boolean {
@@ -586,6 +597,64 @@ export class FeedCreatePostComponent implements OnInit {
     } else {
       this.router.navigate(["/" + this.globalVars.RouteNames.CREATE_LONG_POST]);
     }
+  }
+
+  private uniqPollOptionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value.trim() === "") {
+        return null;
+      }
+
+      const duplicates = this.pollOptions.controls
+        .map((e) => e.value)
+        .filter((e) => e.toLowerCase().trim() === control.value.toLowerCase().trim());
+
+      return duplicates.length < 2 ? null : { uniq: "Options must be unique" };
+    };
+  }
+
+  private getNewPollOptionFormItem(required: boolean = false) {
+    const validators = [Validators.maxLength(this.MAX_POLL_CHARACTERS), this.uniqPollOptionValidator()];
+    if (required) {
+      validators.push(Validators.required);
+    }
+    return new FormControl("", validators);
+  }
+
+  togglePoll() {
+    const newState = !this.currentPostModel.showPoll;
+    this.currentPostModel.showPoll = newState;
+
+    if (newState) {
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.pollOptions.push(this.getNewPollOptionFormItem(true));
+      this.changeRef.detectChanges();
+      this.autoFocusTextArea();
+    } else {
+      this.pollOptions.clear();
+    }
+
+    this.changeRef.detectChanges();
+  }
+
+  addPollOption() {
+    this.pollOptions.push(this.getNewPollOptionFormItem());
+    this.changeRef.detectChanges();
+    this.pollOptionsRef.last.nativeElement.focus();
+  }
+
+  removePollOption(index: number) {
+    this.pollOptions.removeAt(index);
+    this.changeRef.detectChanges();
+  }
+
+  keepPollWeightsOrder() {
+    // keeps original order when iterating thought *ngFor with `keyvalue` pipe
+    return 0;
+  }
+
+  onPollTokenProfileSelected(profile: ProfileEntryResponse) {
+    this.currentPostModel.pollWeightTokenProfile = profile;
   }
 
   private autoFocusTextArea() {

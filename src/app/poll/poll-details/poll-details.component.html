@@ -1,0 +1,34 @@
+<div class="poll-modal-container">
+  <div *ngIf="!globalVars.isMobile()" class="w-100 d-flex align-items-center border-bottom fc-secondary">
+    <div class="p-15px fs-25px font-weight-bold d-flex align-items-center">
+      <div class="fs-17px font-weight-bold">Voted By</div>
+    </div>
+  </div>
+
+  <div class="flex-grow-1">
+    <tab-selector [tabs]="voteTabs" [activeTab]="activeVoteTab" [highlightTab]="true" (tabClick)="selectTab($event)">
+      <ng-template let-tabItem #tabItem>
+        <div>
+          {{ tabItem }}
+          <b class="ml-2">({{ postVoteCounts.Counts[tabItem] }})</b>
+        </div>
+      </ng-template>
+    </tab-selector>
+
+    <div *ngIf="usersReacted.length > 0">
+      <div #uiScroll *uiScroll="let user of datasource">
+        <simple-profile-card
+          [profile]="user.profile"
+          [pubKeyBase58Check]="user.publicKey"
+          [followButtonOppositeSide]="true"
+          [hideFollowLink]="true"
+          [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
+        ></simple-profile-card>
+      </div>
+    </div>
+  </div>
+  <!-- Spacer for PWA Apps -->
+  <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
+  <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+</div>

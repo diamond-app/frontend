@@ -10,6 +10,11 @@
 # Serve static files
 file_server
 
+# Serve service-worker.js
+handle /service-worker.js {
+    file_server
+}
+
 # Fallback to index.html for everything but assets
 @html {
   not path *.js *.css *.png *.jpg *.svg *.pdf *.gif *.eot *.ttf *.woff *.woff2 *.webmanifest *.json

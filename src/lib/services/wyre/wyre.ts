@@ -49,7 +49,6 @@ export class WyreService {
 
   makeWalletOrderReservation(sourceAmount: number, country: string, fiatCurrency: string): Observable<any> {
     return this.backendApi.GetWyreWalletOrderReservation(
-      this.globalVars.localNode,
       this.globalVars.loggedInUser?.PublicKeyBase58Check,
       sourceAmount,
       country,
@@ -58,7 +57,7 @@ export class WyreService {
   }
 
   makeWalletOrderQuotation(sourceAmount: number, country: string, fiatCurrency: string): Observable<any> {
-    return this.backendApi.GetWyreWalletOrderQuotation(this.globalVars.localNode, sourceAmount, country, fiatCurrency);
+    return this.backendApi.GetWyreWalletOrderQuotation(sourceAmount, country, fiatCurrency);
   }
 
   getSupportedFiatCurrencies(): { [k: string]: string } {

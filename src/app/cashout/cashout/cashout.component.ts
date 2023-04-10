@@ -11,6 +11,7 @@ import {
   Ticker,
 } from "src/app/megaswap.service";
 import { TrackingService } from "src/app/tracking.service";
+import { environment } from "../../../environments/environment";
 
 const LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY = "lastUsedMegaswapCashOutAddresses";
 
@@ -166,6 +167,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
       .createDepositAddresses({
         DestinationAddress: (ev.target as HTMLInputElement).value.trim(),
         DestinationTicker: this.destinationTicker,
+        AffiliateAddress: environment.megaswapAffiliateAddress,
       })
       .pipe(
         takeWhile(() => !this.isDestroyed),
@@ -233,13 +235,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
     const amountNanos = this.amountToCashOutInputValue * 1e9;
     const depositAddress = this.depositAddresses.DepositAddresses[this.depositTicker];
     this.backend
-      .SendDeSo(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        depositAddress,
-        amountNanos,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
+      .SendDeSo(this.globalVars.loggedInUser?.PublicKeyBase58Check, depositAddress, amountNanos)
       .pipe(
         switchMap(() => this.megaswap.pollNewDeposits({ DepositTicker: this.depositTicker, DepositAddress })),
         switchMap(() => this.megaswap.getDeposits({ DepositTicker: this.depositTicker, DepositAddress })),

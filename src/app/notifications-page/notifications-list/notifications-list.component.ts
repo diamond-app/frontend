@@ -8,7 +8,12 @@ import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { TrackingService } from "src/app/tracking.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import {
+  AssociationReactionValue,
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
@@ -116,7 +121,6 @@ export class NotificationsListComponent implements OnInit {
     const fetchStartIndex = this.pagedIndexes[page];
     return this.backendApi
       .GetNotifications(
-        "https://node.deso.org",
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
         NotificationsListComponent.PAGE_SIZE /*NumToFetch*/,
@@ -131,7 +135,6 @@ export class NotificationsListComponent implements OnInit {
           if (fetchStartIndex === -1) {
             this.backendApi
               .SetNotificationsMetadata(
-                "https://node.deso.org",
                 this.globalVars.loggedInUser?.PublicKeyBase58Check,
                 res.LastSeenIndex,
                 res.LastSeenIndex,
@@ -552,17 +555,15 @@ export class NotificationsListComponent implements OnInit {
       const postHash = nftTransferMeta.NFTPostHashHex;
       // TODO: Fix backend response for profiles returned from NFT transfer notifications
       if (actor.Username === "annonymous") {
-        this.backendApi
-          .GetSingleProfile(this.globalVars.localNode, txnMeta.TransactorPublicKeyBase58Check, "")
-          .subscribe((user) => {
-            if (user?.Profile?.Username) {
-              const actorName =
-                user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
-              result.action = `${actorName} transferred an NFT to you`;
-              result.actor = user.Profile;
-              result.post.ProfileEntryResponse = user.Profile;
-            }
-          });
+        this.backendApi.GetSingleProfile(txnMeta.TransactorPublicKeyBase58Check, "").subscribe((user) => {
+          if (user?.Profile?.Username) {
+            const actorName =
+              user.Profile.Username !== "anonymous" ? user.Profile.Username : txnMeta.TransactorPublicKeyBase58Check;
+            result.action = `${actorName} transferred an NFT to you`;
+            result.actor = user.Profile;
+            result.post.ProfileEntryResponse = user.Profile;
+          }
+        });
       }
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
@@ -575,11 +576,7 @@ export class NotificationsListComponent implements OnInit {
       result.iconClass = "fc-blue";
       result.link = AppRoutingModule.nftPath(postHash);
       this.backendApi
-        .GetNFTEntriesForNFTPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          result.post.PostHashHex
-        )
+        .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, result.post.PostHashHex)
         .subscribe((res) => {
           const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (
@@ -700,8 +697,29 @@ export class NotificationsListComponent implements OnInit {
         coinTransferMeta.CreatorUsername
       } ${this.globalVars.pluralize(amount, "coin")}`;
       return result;
-    }
+    } else if (
+      txnMeta.TxnType === "CREATE_POST_ASSOCIATION" &&
+      txnMeta.CreatePostAssociationTxindexMetadata.AssociationType &&
+      Object.values(AssociationReactionValue).includes(txnMeta.CreatePostAssociationTxindexMetadata.AssociationValue)
+    ) {
+      const postHash = txnMeta.CreatePostAssociationTxindexMetadata.PostHashHex;
 
+      result.icon = "smile";
+      result.category = "reaction";
+      result.iconClass = "fc-blue";
+
+      const truncatedPost = this.truncatePost(postHash);
+      const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+      if (!truncatedPost) {
+        return null;
+      }
+
+      result.action = `${actorName} sent <img class="mx-1" src="assets/reactions/${txnMeta.CreatePostAssociationTxindexMetadata.AssociationValue.toLowerCase()}.png" alt="reaction" width="16" height="16" /> reaction to your post  ${postContent}`;
+      result.actionDetails = postContent;
+      result.link = AppRoutingModule.postPath(postHash);
+
+      return result;
+    }
     // If we don't recognize the transaction type we return null
     return null;
   }

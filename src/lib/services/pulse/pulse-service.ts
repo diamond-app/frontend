@@ -1,10 +1,11 @@
-import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
-import { Observable, of } from "rxjs";
-import { GlobalVarsService } from "../../../app/global-vars.service";
-import { map, switchMap } from "rxjs/operators";
+import { Injectable } from "@angular/core";
+import { ProfileEntryResponse, User } from "deso-protocol";
 import * as _ from "lodash";
+import { Observable, of } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
+import { BackendApiService } from "../../../app/backend-api.service";
+import { GlobalVarsService } from "../../../app/global-vars.service";
 
 class PulseLeaderboardResult {
   public_key: string;
@@ -40,7 +41,6 @@ export class HashtagResponse {
   Count: number;
   AccountCount: number;
 }
-
 
 export const LeaderboardToDataAttribute = {
   [PulseLeaderboardType.DeSoLocked]: "net_change_24h_bitclout_nanos",
@@ -113,7 +113,6 @@ export class PulseService {
     }
     return this.backendApi
       .GetUsersStateless(
-        this.globalVars.localNode,
         results.map((result) => result.public_key),
         true
       )

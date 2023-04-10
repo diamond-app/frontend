@@ -1,10 +1,10 @@
 //@ts-strict
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { identity } from "deso-protocol";
+import { from, Observable } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
-import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
 
 const buildURL = (endpoint: string) => `${environment.setuAPI}/${endpoint}`;
@@ -34,7 +34,7 @@ export interface GetDerivedKeyStatusResponse {
   providedIn: "root",
 })
 export class SetuService {
-  constructor(private http: HttpClient, private identity: IdentityService, private globalVars: GlobalVarsService) {}
+  constructor(private http: HttpClient, private globalVars: GlobalVarsService) {}
 
   getDerivedKeyStatus(parentPublicKey: string): Observable<GetDerivedKeyStatusResponse> {
     return this.http.post<GetDerivedKeyStatusResponse>(buildURL("real-time-sync/get-derived-key-status"), {
@@ -132,10 +132,6 @@ export class SetuService {
       throw new Error("Cannot get jwt without a logged in user");
     }
 
-    return this.identity
-      .jwt({
-        ...this.identity.identityServiceParamsForKey(this.globalVars.loggedInUser?.PublicKeyBase58Check),
-      })
-      .pipe(map(({ jwt }) => jwt));
+    return from(identity.jwt());
   }
 }

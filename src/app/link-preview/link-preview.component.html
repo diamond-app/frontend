@@ -1,0 +1,21 @@
+<a [href]="link" (click)="handleClick($event)" target="_blank">
+  <div
+    *ngIf="showCard"
+    class="d-flex background-color-secondary br-10px border-color-grey border"
+    style="height: 125px"
+  >
+    <img
+      *ngIf="image !== ''"
+      class="w-30"
+      [src]="proxyImageUrl"
+      style="max-height: 125px; overflow: hidden; border-radius: 10px 0px 0px 10px; object-fit: cover"
+    />
+    <div [ngClass]="{ 'w-70': image != '', 'w-100': image == '' }" class="d-flex flex-column align-items-start p-10px">
+      <p class="fs-12px single-line-no-overflow-ellipsis">{{ displayLink }}</p>
+      <p class="mb-1 fs-15px single-line-no-overflow-ellipsis">
+        <b>{{ title }}</b>
+      </p>
+      <p class="mb-0 fs-12px link-preview-description">{{ description }}</p>
+    </div>
+  </div>
+</a>

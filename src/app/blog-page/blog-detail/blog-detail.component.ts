@@ -6,6 +6,8 @@ import { TranslocoService } from "@ngneat/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
+import { forkJoin, of } from "rxjs";
+import { finalize } from "rxjs/operators";
 import {
   AssociationReactionValue,
   AssociationType,
@@ -24,8 +26,6 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { forkJoin, of } from "rxjs";
-import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "app-blog-detail",
@@ -159,7 +159,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   getPost(postHashHex: string, commentOffset = 0, commentLimit = 20) {
     return this.backendApi.GetSinglePost(
-      this.globalVars.localNode,
       postHashHex,
       this.globalVars.loggedInUser?.PublicKeyBase58Check ?? "" /*ReaderPublicKeyBase58Check*/,
       false /*FetchParents */,
@@ -346,11 +345,13 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     await this.datasource.adapter.prepend(thread);
   }
 
-  hidePost() {
+  hidePost(isHidden: boolean) {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Hide post?",
-      html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
+      title: isHidden ? "Hide post?" : "Unhide post?",
+      html: isHidden
+        ? `The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`
+        : "This post will be added back to your profile, search results, and the feeds of anyone who follows you.",
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-light",
@@ -359,29 +360,61 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        this.currentPost.IsHidden = true;
+        this.currentPost.IsHidden = isHidden;
+
+        const titleSlug = this.currentPost.PostExtraData?.BlogTitleSlug;
+        let existingSlugMappings = JSON.parse(
+          this.globalVars.loggedInUser.ProfileEntryResponse.ExtraData?.BlogSlugMap ?? "{}"
+        );
+
+        let blogSlugMapJSON;
+
+        if (isHidden) {
+          for (let slug in existingSlugMappings) {
+            if (existingSlugMappings[slug] === this.currentPost.PostHashHex) {
+              delete existingSlugMappings[slug];
+            }
+          }
+          blogSlugMapJSON = JSON.stringify(existingSlugMappings);
+        } else {
+          blogSlugMapJSON = JSON.stringify({
+            ...existingSlugMappings,
+            [titleSlug]: this.currentPost.PostHashHex,
+          });
+        }
 
         this.backendApi
           .SubmitPost(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
-            "" /*Title*/,
             {
               Body: this.currentPost.Body,
               ImageURLs: this.currentPost.ImageURLs,
+              VideoURLs: [],
             } /*BodyObj*/,
             "",
             this.currentPost.PostExtraData,
-            "" /*Sub*/,
-            true /*IsHidden*/,
-            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
+            isHidden /*IsHidden*/
           )
           .subscribe(
             (response) => {
               this.tracking.log("post : hide");
-              this.postDeleted.emit(response.PostEntryResponse);
+              this.backendApi
+                .UpdateProfile(
+                  this.globalVars.loggedInUser?.PublicKeyBase58Check,
+                  "",
+                  "",
+                  "",
+                  "",
+                  this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints || 100 * 100,
+                  1.25 * 100 * 100,
+                  false,
+                  { BlogSlugMap: blogSlugMapJSON }
+                )
+                .subscribe(() => {
+                  this.postDeleted.emit(response.PostEntryResponse);
+                });
             },
             (err) => {
               console.error(err);
@@ -409,7 +442,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       if (response.isConfirmed) {
         this.backendApi
           .BlockPublicKey(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.currentPost.PosterPublicKeyBase58Check
           )
@@ -444,7 +476,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     try {
       if (username) {
-        const { Profile } = await this.backendApi.GetSingleProfile(this.globalVars.localNode, "", username).toPromise();
+        const { Profile } = await this.backendApi.GetSingleProfile("", username).toPromise();
         if (!Profile?.ExtraData?.BlogSlugMap) {
           throw new Error(`No slug mapping for username ${username}`);
         }
@@ -467,7 +499,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   _fetchRecentPosts(profile: ProfileEntryResponse) {
     this.backendApi
       .GetPostsForPublicKey(
-        this.globalVars.localNode,
         "",
         profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
@@ -523,7 +554,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   private getPostReactionCounts() {
     return this.backendApi.GetPostAssociationsCounts(
-      this.globalVars.localNode,
       this.currentPost,
       AssociationType.reaction,
       Object.values(AssociationReactionValue)
@@ -539,7 +569,6 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     return this.backendApi.GetPostAssociations(
-      this.globalVars.localNode,
       this.currentPostHashHex,
       AssociationType.reaction,
       this.globalVars.loggedInUser.PublicKeyBase58Check,
@@ -555,3 +584,17 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.myReactions = reactions;
   }
 }
+
+// Naively copied this from here:
+// https://gist.github.com/codeguy/6684588?permalink_comment_id=3332719#gistcomment-3332719
+// Tested with a few edge cases (special chars, weird spacing, etc) and it did
+// fine. May need to revisit if it doesn't handle some edge case properly.
+const stringToSlug = (str: string) =>
+  str
+    .normalize("NFD") // split an accented letter in the base letter and the acent
+    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+    .trim()
+    .replace(/\s+/g, "-") // replace all spaces with -
+    .replace(/-+/g, "-"); // replace multiple - with a single -

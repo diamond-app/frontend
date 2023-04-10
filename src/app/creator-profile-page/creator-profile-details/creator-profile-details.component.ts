@@ -112,7 +112,6 @@ export class CreatorProfileDetailsComponent implements OnInit {
         delete this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check];
         this.backendApi
           .BlockPublicKey(
-            this.globalVars.localNode,
             this.globalVars.loggedInUser?.PublicKeyBase58Check,
             this.profile.PublicKeyBase58Check,
             true /* unblock */
@@ -160,11 +159,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
         this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check] = {};
         Promise.all([
           this.backendApi
-            .BlockPublicKey(
-              this.globalVars.localNode,
-              this.globalVars.loggedInUser?.PublicKeyBase58Check,
-              this.profile.PublicKeyBase58Check
-            )
+            .BlockPublicKey(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.profile.PublicKeyBase58Check)
             .subscribe(
               () => {
                 this.tracking.log("profile : block", {
@@ -198,7 +193,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     }
 
     this.loading = true;
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
+    this.backendApi.GetSingleProfile("", this.userName).subscribe(
       (res) => {
         if (!res || res.IsBlacklisted) {
           this.loading = false;

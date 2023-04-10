@@ -60,12 +60,10 @@ export class BuyNowConfirmationComponent {
     this.buyingNFT = true;
     this.backendApi
       .CreateNFTBid(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        this.selectedSerialNumber.BuyNowPriceNanos,
-        this.globalVars.defaultFeeRateNanosPerKB
+        this.selectedSerialNumber.BuyNowPriceNanos
       )
       .subscribe(
         (res) => {

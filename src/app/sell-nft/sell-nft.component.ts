@@ -111,7 +111,6 @@ export class SellNftComponent implements OnInit {
         concatMap((bidEntry) => {
           return this.backendApi
             .AcceptNFTBid(
-              this.globalVars.localNode,
               this.globalVars.loggedInUser?.PublicKeyBase58Check,
               this.post.PostHashHex,
               bidEntry.SerialNumber,

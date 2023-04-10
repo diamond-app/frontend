@@ -241,8 +241,7 @@ $green-font-color: #19B028;
 .w-10 { width: 10% }
 .w-15 { width: 15% }
 .w-20 { width: 20% }
-//why w-30 is 10%? cc @zordon @jacksondean
-.w-30 { width: 10% }
+.w-30 { width: 30% }
 .w-29 { width: 29% }
 .w-40 { width: 40% }
 .w-50 { width: 50% }
@@ -759,7 +758,7 @@ i-feather[name="check-circle"] {
     .messages-thread-view__message-builder {
       position: fixed;
       top: auto;
-      bottom: 0px;
+      bottom: 60px;
       width: 100%;
     }
   }
@@ -826,7 +825,7 @@ i-feather[name="check-circle"] {
     #header-content-spacer {
       margin-top: 54px !important;
     }
-    .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+    .poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container, .access-group-modal-container {
       border-radius: 0px;
     }
   }
@@ -1780,7 +1779,6 @@ app-landing-page {
 
 // Set a width, height, and border on desktop
 .global__desktop .global__content__inner {
-  min-height: 100vh;
   width: $global__content__width;
   border-left: var(--border) solid 1px;
   border-right: var(--border) solid 1px;
@@ -4078,8 +4076,11 @@ creator-profile-nfts {
 
 .messages-thread__container {
   background: var(--background);
-  &.messages-inbox__selected-thread {
-    background: var(--text-inverted);
+  &--selected {
+    background: var(--nft-section-bg);
+  }
+  &:hover {
+    background: var(--nft-section-bg);
   }
 }
 
@@ -4098,6 +4099,10 @@ creator-profile-nfts {
   width: 100%;
   max-width: 600px;
   border-right: solid 1px var(--background-secondary);
+}
+
+.message-bubble__wrapper {
+  max-width: 80%;
 }
 
 .messages-thread__border-radius {
@@ -4119,17 +4124,22 @@ creator-profile-nfts {
 
 .messages-thread-view__message-builder {
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
   height: 120px;
-  width: 593px;
+  width: 622px;
   background: var(--tile-bg);
   border-top: 1px solid var(--border);
+
   textarea {
-    padding: 16px;
+    height: 100%;
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
     border: none;
     border-radius: 0px;
     resize: none;
     outline: none;
+    font-size: 15px;
     &:focus {
       outline: none;
       -webkit-box-shadow: none;
@@ -4210,8 +4220,69 @@ creator-profile-nfts {
   color: var(--text-secondary);
 }
 
+.messages-page {
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.messages-page__content-area {
+  height: calc(100% - 125px);
+}
+
+.messages-page__threads-list {
+  width: 351px;
+  flex: none;
+
+  &.mobile {
+    width: 100%;
+  }
+
+  &.mobile-hidden {
+    display: none;
+  }
+}
+
+.messages-page__threads-area {
+  width: calc(100% - 351px);
+
+  $mobile-header-height: 60px;
+
+  .messages-page__mobile-thread-header {
+    height: $mobile-header-height;
+    background: var(--tile-secondary-bg);
+  }
+
+  .messages-thread-view__scroll-container {
+    overflow-y: scroll;
+    height: calc(100vh - 298px);
+  }
+
+  &.mobile {
+    width: 100%;
+
+    .messages-thread-view__scroll-container {
+      overflow-y: scroll;
+      height: calc(100vh - 298px - #{$mobile-header-height});
+    }
+  }
+}
+
 .message-thread__unread-light-blue {
   background-color: var(--unread);
+}
+
+.messages-thread__timestamp {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-left: auto;
+  padding: 4px 0 0 4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.message-thread-view {
+  position: relative;
+  height: calc(100vh - 162px);
 }
 
 .admin__get-user-admin-data-line {
@@ -5354,7 +5425,7 @@ creator-profile-hodlers {
   height: 56px;
 }
 
-.reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.poll-modal-container, .reactions-modal-container, .likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container, .access-group-modal-container {
   background-color: var(--tile-bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -6431,5 +6502,54 @@ sell-nft-modal {
   }
   & em {
     color: var(--text-secondary);
+  }
+}
+
+.link-preview-description {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -moz-box-lines: 3;
+  box-lines: 3;
+}
+
+.single-line-no-overflow-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.progressbar__progress {
+  background-color: var(--secalt);
+
+  [role="progressbar"] {
+    background-color: var(--borderheavy);
+  }
+}
+
+.progressbar__label [name="my-vote"] svg {
+  vertical-align: inherit;
+}
+
+.poll-modal-container tab-selector .tab-selector__container {
+  min-height: 50px;
+  height: auto !important;
+  overflow: auto;
+
+  .tab-selector__tab-content {
+    min-height: 50px;
+  }
+
+  button {
+    min-height: 50px;
+    height: auto !important;
   }
 }

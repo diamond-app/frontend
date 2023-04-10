@@ -27,23 +27,9 @@
 
     <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.INBOX_PREFIX">
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
-        <i-feather
-          [name]="
-            globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0
-              ? 'message-notification'
-              : 'message-square'
-          "
-          class="feather-medium"
-        ></i-feather>
+        <i-feather name="message-square" class="feather-medium"></i-feather>
         <div class="mt-5px">
           {{ "bottom_bar_mobile.messages" | transloco }}
-          <span *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0">
-            ({{
-              globalVars.messageResponse.NumberOfUnreadThreads > 999
-                ? "999+"
-                : globalVars.messageResponse.NumberOfUnreadThreads
-            }})
-          </span>
         </div>
       </div>
     </bottom-bar-mobile-tab>

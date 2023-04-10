@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { environment } from "src/environments/environment";
+import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.service";
+import { GlobalVarsService } from "../../../global-vars.service";
 
 @Component({
   selector: "buy-creator-coins-confirm-tutorial",
@@ -23,7 +23,7 @@ export class BuyCreatorCoinsConfirmTutorialComponent implements OnInit {
   ) {
     this.route.params.subscribe((params) => {
       this.username = params.username;
-      this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe((res) => {
+      this.backendApi.GetSingleProfile("", params.username).subscribe((res) => {
         // How do we want to handle the profile not found or blacklisted case in the tutorial?
         if (!res || res.IsBlacklisted) {
           this.loading = false;

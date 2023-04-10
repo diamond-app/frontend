@@ -20,6 +20,9 @@
       class="mt-4 p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px br-10px"
     >
       {{ "feed_post.removed_by_author" | transloco }}
+      <button *ngIf="globalVars.loggedInUser?.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check" class="btn btn-primary ml-2" (click)="hidePost(false)">
+        Unhide
+      </button>
     </div>
     <article *ngIf="!isLoading && !!currentPost && !currentPost.IsHidden" class="position-relative">
       <feed-post-dropdown
@@ -28,7 +31,7 @@
         [post]="currentPost"
         [postContent]="currentPost"
         [nftEntryResponses]="nftEntryResponses"
-        (postHidden)="hidePost()"
+        (postHidden)="hidePost(true)"
         (userBlocked)="blockUser()"
         (toggleGlobalFeed)="_addPostToGlobalFeed()"
       ></feed-post-dropdown>

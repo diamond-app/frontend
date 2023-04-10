@@ -66,12 +66,10 @@ export class MintNftComponent {
       this.postHashHex = params.postHashHex;
     });
     this.globalVars = _globalVars;
-    this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res) => {
-        this.createNFTFeeNanos = res.CreateNFTFeeNanos;
-        this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
-      });
+    this.backendApi.GetGlobalParams().subscribe((res) => {
+      this.createNFTFeeNanos = res.CreateNFTFeeNanos;
+      this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
+    });
   }
 
   hasUnreasonableTotalRoyalties(): boolean {
@@ -320,7 +318,6 @@ export class MintNftComponent {
     const minBidAmountDesoNanos = Math.trunc(this.minBidAmountDESO * 1e9);
     this.backendApi
       .CreateNft(
-        this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.postHashHex,
         numCopiesToMint,
@@ -332,8 +329,7 @@ export class MintNftComponent {
         this.isBuyNow,
         buyNowPriceDesoNanos,
         additionalDESORoyaltiesMap,
-        additionalCoinRoyaltiesMap,
-        this.globalVars.defaultFeeRateNanosPerKB
+        additionalCoinRoyaltiesMap
       )
       .subscribe(
         (res) => {

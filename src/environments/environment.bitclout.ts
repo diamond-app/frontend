@@ -3,6 +3,8 @@ export const environment = {
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "https://node.deso.org",
   uploadVideoHostname: "media.deso.org",
+  webPushServerVapidPublicKey:
+    "BBt2v52sa0J-1D6w25XGk-eXqSOWdnfddV256XXI1B-UZlfX-HSIDzv4TkXbTLhHHNjDc45yZ8jsZWsXWg2CbF0",
   identityURL: "https://identity.bitclout.com",
   supportEmail: "node.admin@bitclout.com",
   dd: {
@@ -23,5 +25,7 @@ export const environment = {
   },
   megaswapURL: "https://megaswap.xyz",
   megaswapAPI: "https://megaswap.dev",
+  megaswapAffiliateAddress: "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL",
+  openfundURL: "https://openfund.com",
   setuAPI: "https://web3setu.co.in",
 };

@@ -15,7 +15,6 @@ import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/crea
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
 import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
-import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
@@ -27,7 +26,7 @@ import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.comp
 import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
 import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
-import { ReferralsComponent } from "./referrals/referrals.component";
+import { ReactionsPageComponent } from "./reactions-details/reactions-page/reactions-page.component";
 import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
 import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
 import { SettingsPageComponent } from "./settings/settings-page/settings-page.component";
@@ -49,7 +48,7 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
-import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { PollPageComponent } from "./poll/poll-page/poll-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -96,8 +95,8 @@ class RouteNames {
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
   public static QUOTE_REPOSTS = "quote-reposts";
-  public static LIKES = "likes";
   public static REACTIONS = "reactions";
+  public static POLL = "poll";
   public static TRENDS = "trends";
   public static REFERRALS = "referrals";
   public static NFT = "nft";
@@ -123,7 +122,6 @@ const routes: Routes = [
   { path: RouteNames.BUY_DESO + "/:ticker", component: BuyDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
-  { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.TWITTER_SYNC, component: TwitterSyncPageComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
@@ -157,11 +155,6 @@ const routes: Routes = [
     pathMatch: "full",
   },
   {
-    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.LIKES,
-    component: LikesPageComponent,
-    pathMatch: "full",
-  },
-  {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REACTIONS,
     component: ReactionsPageComponent,
     pathMatch: "full",
@@ -169,6 +162,11 @@ const routes: Routes = [
   {
     path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.DIAMONDS,
     component: DiamondsPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.POLL,
+    component: PollPageComponent,
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/" + RouteNames.BLOG, component: BlogPageComponent, pathMatch: "full" },

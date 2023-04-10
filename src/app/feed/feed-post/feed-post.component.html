@@ -446,6 +446,14 @@
                   </div>
                 </div>
 
+                <!-- Poll -->
+                <div *ngIf="pollPost" class="w-100">
+                  <poll [post]="postContent"></poll>
+                </div>
+
+                <div *ngIf="showLinkPreview()" class="mt-10px">
+                  <link-preview [link]="linkPreviewUrl"></link-preview>
+                </div>
                 <!-- Embedded Content -->
                 <div
                   *ngIf="constructedEmbedURL"
