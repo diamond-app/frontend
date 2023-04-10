@@ -12,6 +12,7 @@ import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
+import { createHash } from "crypto-browserify";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -269,8 +270,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       );
       return;
     }
-
-    const titleSlug = stringToSlug(this.model.Title);
+    const titleSlug = tilteToSlug(this.model.Title);
     const existingSlugMappings = JSON.parse(currentUserProfile.ExtraData?.BlogSlugMap ?? "{}");
 
     // check that there is not a collision with a previous article slug
@@ -503,3 +503,14 @@ const stringToSlug = (str: string) =>
     .trim()
     .replace(/\s+/g, "-") // replace all spaces with -
     .replace(/-+/g, "-"); // replace multiple - with a single -
+
+// stringToSlug removes all non-alphabetic characters from title.
+// An i18n title was converted by stringToSlug, then slug may be empty.
+// So when slug is empty, title converted to SHA1 hash is used as slug.
+const tilteToSlug = (title: string) => {
+  const slug = stringToSlug(title);
+  if (slug) {
+    return slug;
+  }
+  return createHash("SHA1").update(title).digest("hex");
+}
