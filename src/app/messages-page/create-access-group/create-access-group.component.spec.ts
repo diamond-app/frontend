@@ -8,8 +8,9 @@ describe("CreateAccessGroupComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateAccessGroupComponent],
-    }).compileComponents();
+      declarations: [ CreateAccessGroupComponent ]
+    })
+    .compileComponents();
   });
 
   beforeEach(() => {
@@ -18,7 +19,7 @@ describe("CreateAccessGroupComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

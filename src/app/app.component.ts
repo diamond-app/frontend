@@ -40,12 +40,15 @@ export class AppComponent implements OnInit {
     // Init because it uses globalVars.localNode. There is no practical reason
     // we need to store the localNode value in globalVars (or local storage),
     // but it's an annoying and unrelated thing to refactor right now...
+    const nodeURI = this.globalVars.localNode.startsWith("http")
+      ? this.globalVars.localNode
+      : `https://${this.globalVars.localNode}`;
     configure({
-      nodeURI: this.globalVars.localNode,
+      nodeURI,
       mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: { IsUnlimited: true },
       MinFeeRateNanosPerKB: 1000,
-      network: this.globalVars.getDesoNetworkFromURL(this.globalVars.localNode),
+      network: this.globalVars.getDesoNetworkFromURL(nodeURI),
     });
 
     // log interaction events emitted by identity

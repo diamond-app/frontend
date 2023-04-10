@@ -83,16 +83,11 @@ import {
   getUnreadNotificationsCount,
   getUserGlobalMetadata,
   getUserMetadata,
-  GetUserMetadataResponse,
-  GetUsersResponse,
   getUsersStateless,
   getVideoStatus,
   HodlersSortType,
   identity,
   NFTBidEntryResponse as NFTBidEntry,
-  NFTEntryResponse,
-  PostEntryResponse,
-  ProfileEntryResponse,
   resendVerifyEmail,
   sellCreatorCoin,
   sendDeso,
@@ -110,6 +105,7 @@ import {
   uploadImage,
   uploadVideo,
   UploadVideoV2Response,
+  User,
   verifyEmail,
 } from "deso-protocol";
 import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
@@ -126,6 +122,45 @@ export class BackendRoutes {
   static RoutePathUpdateTutorialStatus = "/api/v0/update-tutorial-status";
 }
 
+// TODO: migrate all these backend types to use deso-protocol-types
+
+export class Transaction {
+  inputs: {
+    txID: string;
+    index: number;
+  }[];
+  outputs: {
+    amountNanos: number;
+    publicKeyBase58Check: string;
+  }[];
+
+  txnType: string;
+  publicKeyBase58Check: string;
+  signatureBytesHex: string;
+}
+
+export class ProfileEntryResponse {
+  Username: string;
+  Description: string;
+  ProfilePic?: string;
+  CoinEntry?: {
+    DeSoLockedNanos: number;
+    CoinWatermarkNanos: number;
+    CoinsInCirculationNanos: number;
+    CreatorBasisPoints: number;
+  };
+  CoinPriceDeSoNanos?: number;
+  StakeMultipleBasisPoints?: number;
+  PublicKeyBase58Check: string;
+  UsersThatHODL?: any;
+  Posts?: PostEntryResponse[];
+  IsReserved?: boolean;
+  IsVerified?: boolean;
+  ExtraData?: {
+    [key: string]: string;
+  };
+}
+
 export enum TutorialStatus {
   EMPTY = "",
   STARTED = "TutorialStarted",
@@ -139,11 +174,189 @@ export enum TutorialStatus {
   COMPLETE = "TutorialComplete",
 }
 
+export class GetSinglePostResponse {
+  PostFound: PostEntryResponse;
+}
+
+export class PostEntryResponse {
+  PostHashHex: string;
+  PosterPublicKeyBase58Check: string;
+  ParentStakeID: string;
+  Body: string;
+  RepostedPostHashHex: string;
+  ImageURLs: string[];
+  VideoURLs: string[];
+  RepostPost: PostEntryResponse;
+  CreatorBasisPoints: number;
+  StakeMultipleBasisPoints: number;
+  TimestampNanos: number;
+  IsHidden: boolean;
+  ConfirmationBlockHeight: number;
+  // PostEntryResponse of the post that this post reposts.
+  RepostedPostEntryResponse: PostEntryResponse;
+  // The profile associated with this post.
+  ProfileEntryResponse: ProfileEntryResponse;
+  // The comments associated with this post.
+  Comments: PostEntryResponse[];
+  LikeCount: number;
+  RepostCount: number;
+  QuoteRepostCount: number;
+  DiamondCount: number;
+  // Information about the reader's state w/regard to this post (e.g. if they liked it).
+  PostEntryReaderState?: PostEntryReaderState;
+  // True if this post hash hex is in the global feed.
+  InGlobalFeed: boolean;
+  InHotFeed: boolean;
+  CommentCount: number;
+  // A list of parent posts for this post (ordered: root -> closest parent post).
+  ParentPosts: PostEntryResponse[];
+  InMempool: boolean;
+  IsPinned: boolean;
+  DiamondsFromSender?: number;
+  NumNFTCopies: number;
+  NumNFTCopiesForSale: number;
+  NumNFTCopiesBurned?: number;
+  HasUnlockable: boolean;
+  IsNFT: boolean;
+  NFTRoyaltyToCoinBasisPoints: number;
+  NFTRoyaltyToCreatorBasisPoints: number;
+  HotnessScore: number;
+  PostMultiplier: number;
+  PostExtraData: Record<string, any>;
+  AdditionalDESORoyaltiesMap: { [k: string]: number };
+  AdditionalCoinRoyaltiesMap: { [k: string]: number };
+}
+
+export class DiamondsPost {
+  Post: PostEntryResponse;
+  // Boolean that is set to true when this is the first post at a given diamond level.
+  ShowDiamondDivider?: boolean;
+}
+
+export class PostEntryReaderState {
+  // This is true if the reader has liked the associated post.
+  LikedByReader?: boolean;
+
+  // This is true if the reader has reposted the associated post.
+  RepostedByReader?: boolean;
+
+  // This is the post hash hex of the repost
+  RepostPostHashHex?: string;
+
+  // Level of diamond the user gave this post.
+  DiamondLevelBestowed?: number;
+}
+
+export class PostTxnBody {
+  Body?: string;
+  ImageURLs?: string[];
+  VideoURLs?: string[];
+}
+
+export class NFTEntryResponse {
+  OwnerPublicKeyBase58Check: string;
+  ProfileEntryResponse: ProfileEntryResponse | undefined;
+  PostEntryResponse: PostEntryResponse | undefined;
+  SerialNumber: number;
+  IsForSale: boolean;
+  IsPending?: boolean;
+  IsBuyNow: boolean;
+  MinBidAmountNanos: number;
+  LastAcceptedBidAmountNanos: number;
+
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
+
+  // only populated when the reader is the owner of the nft and there is an unlockable.
+  LastOwnerPublicKeyBase58Check: string | undefined;
+  EncryptedUnlockableText: string | undefined;
+  DecryptedUnlockableText: string | undefined;
+  BuyNowPriceNanos: number;
+}
+
 // TODO: fix this type. The additional fields here are added client side
 // and are not part of the backend schema.
 export type NFTBidEntryResponse = NFTBidEntry & {
   selected?: boolean;
   EarningsAmountNanos?: number;
+};
+
+export class NFTCollectionResponse {
+  AvailableSerialNumbers: number[];
+  PostEntryResponse: PostEntryResponse;
+  ProfileEntryResponse: ProfileEntryResponse;
+  NumCopiesForSale: number;
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
+}
+
+export class NFTBidData {
+  PostEntryResponse: PostEntryResponse;
+  NFTEntryResponses: NFTEntryResponse[];
+  BidEntryResponses: NFTBidEntryResponse[];
+}
+
+export class DeSoNode {
+  Name: string;
+  URL: string;
+  Owner: string;
+}
+
+type GetUserMetadataResponse = {
+  HasPhoneNumber: boolean;
+  CanCreateProfile: boolean;
+  BlockedPubKeys: { [k: string]: any };
+  HasEmail: boolean;
+  EmailVerified: boolean;
+  JumioFinishedTime: number;
+  JumioVerified: boolean;
+  JumioReturned: boolean;
+};
+
+type GetUsersStatelessResponse = {
+  UserList: User[];
+  DefaultFeeRateNanosPerKB: number;
+  ParamUpdaters: { [k: string]: boolean };
+};
+
+type CountryLevelSignUpBonus = {
+  AllowCustomReferralAmount: boolean;
+  ReferralAmountOverrideUSDCents: number;
+  AllowCustomKickbackAmount: boolean;
+  KickbackAmountOverrideUSDCents: number;
+};
+
+export type MessagingGroupMember = {
+  GroupMemberPublicKeyBase58Check: string;
+  GroupMemberKeyName: string;
+  EncryptedKey: string;
+};
+
+export type MessagingGroupEntryResponse = {
+  GroupOwnerPublicKeyBase58Check: string;
+  MessagingPublicKeyBase58Check: string;
+  MessagingGroupKeyName: string;
+  MessagingGroupMembers: MessagingGroupMember[];
+  EncryptedKey: string;
+  ExtraData: { [k: string]: string };
+};
+
+export type GetAllMessagingGroupKeysResponse = {
+  MessagingGroupEntries: MessagingGroupEntryResponse[];
+};
+
+export type MessagingGroupMemberResponse = {
+  // GroupMemberPublicKeyBase58Check is the main public key of the group member.
+  GroupMemberPublicKeyBase58Check: string;
+
+  // GroupMemberKeyName is the key name of the member that we encrypt the group messaging public key to. The group
+  // messaging public key should not be confused with the GroupMemberPublicKeyBase58Check, the former is the public
+  // key of the whole group, while the latter is the public key of the group member.
+  GroupMemberKeyName: string;
+
+  // EncryptedKey is the encrypted private key corresponding to the group messaging public key that's encrypted
+  // to the member's registered messaging key labeled with GroupMemberKeyName.
+  EncryptedKey: string;
 };
 
 export enum AssociationType {
@@ -198,12 +411,30 @@ export class BackendApiService {
   static SELL_CREATOR_COIN_OPERATION_TYPE = "sell";
   static DIAMOND_APP_PUBLIC_KEY = "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL";
 
+  // TODO: Cleanup - this should be a configurable value on the node. Leaving it in the frontend
+  // is fine for now because BlockCypher has strong anti-abuse measures in place.
+  blockCypherToken = "cd455c8a5d404bb0a23880b72f56aa86";
+
   // Store sent messages and associated metadata in localStorage
   MessageMetaKey = "messageMetaKey";
+
+  // Store the identity users in localStorage
+  IdentityUsersKey = "identityUsers";
 
   // Store last local node URL in localStorage
   LastLocalNodeKey = "lastLocalNodeV2";
 
+  // Store last logged in user public key in localStorage
+  LastLoggedInUserKey = "lastLoggedInUser";
+
+  // Store the last identity service URL in localStorage
+  LastIdentityServiceKey = "lastIdentityServiceURL";
+
+  // Messaging V3 default key name.
+  DefaultKey = "default-key";
+
+  // Store whether user has dismissed email notifications in localStorage
+  EmailNotificationsDismissalKey = "emailNotificationsDismissedAt";
   PushNotificationsDismissalKey = "pushNotificationsDismissedAt";
 
   // TODO: Wipe all this data when transition is complete
@@ -298,7 +529,11 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
-  SendDeSoPreview(SenderPublicKeyBase58Check: string, RecipientPublicKeyOrUsername: string, AmountNanos: number) {
+  SendDeSoPreview(
+    SenderPublicKeyBase58Check: string,
+    RecipientPublicKeyOrUsername: string,
+    AmountNanos: number
+  ): Observable<SendDeSoResponse> {
     return from(
       sendDeso(
         {
@@ -329,7 +564,7 @@ export class BackendApiService {
   GetUsersStateless(
     PublicKeysBase58Check: string[],
     SkipForLeaderboard: boolean = false
-  ): Observable<GetUsersResponse> {
+  ): Observable<GetUsersStatelessResponse> {
     return from(
       getUsersStateless({
         PublicKeysBase58Check,
@@ -523,10 +758,10 @@ export class BackendApiService {
         );
       }),
       map((decryptedText) => {
-        return UnlockableNFTEntryResponses.map((e, i) => ({
-          ...e,
-          DecryptedUnlockableText: decryptedText[i],
-        }));
+        for (let i = 0; i < UnlockableNFTEntryResponses.length; i++) {
+          UnlockableNFTEntryResponses[i].DecryptedUnlockableText = decryptedText[i];
+        }
+        return UnlockableNFTEntryResponses;
       }),
       catchError(this._handleError)
     );

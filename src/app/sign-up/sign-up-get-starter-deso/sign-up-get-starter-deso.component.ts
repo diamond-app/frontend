@@ -23,6 +23,8 @@ export class SignUpGetStarterDeSoComponent {
 
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
+  ngOnInit(): void {}
+
   _setScreenToShow() {
     // TODO: refactor silly setInterval
     let interval = setInterval(() => {

@@ -13,22 +13,12 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "types": [
-      "node",
-      "jest"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom",
-      "ES2020.BigInt"
-    ],
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["esnext", "dom", "ES2020.BigInt"],
     "paths": {
       "models": ["dist/models"],
-      "models/*": ["dist/models/*"
-      ]
+      "models/*": ["dist/models/*"]
     },
     "plugins": [
       {

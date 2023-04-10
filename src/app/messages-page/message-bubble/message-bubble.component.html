@@ -19,7 +19,7 @@
         ></div>
       </div>
       <div
-        *ngIf="nextMessage ? message.IsSender !== nextMessage.IsSender : true"
+        *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
         [ngClass]="{
           nft__avatar: globalVars?.loggedInUser?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
         }"
@@ -30,13 +30,13 @@
 
       <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
       <div
-        *ngIf="nextMessage ? message.IsSender === nextMessage.IsSender : false"
+        *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
         class="message__avatar-placeholder ml-15px"
       ></div>
     </div>
 
     <div class="d-flex justify-content-end">
-      <div *ngIf="nextMessage ? message.IsSender !== nextMessage.IsSender : true" class="fs-12px fc-muted">
+      <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
         <span>{{ globalVars.convertTstampToDateOrTime(message.MessageInfo.TimestampNanos) }}</span>
       </div>
       <div class="message__avatar-placeholder ml-15px"></div>
@@ -61,7 +61,7 @@
       ></div>
       <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
       <div
-        *ngIf="nextMessage ? message.IsSender === nextMessage.IsSender : false"
+        *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
         class="message__avatar-placeholder ml-15px"
       ></div>
       <!--"Pre-wrap" allows us to render new lines properly-->
@@ -80,7 +80,7 @@
     <!-- Consider whether or not to show the timestamp. -->
     <div class="d-flex">
       <div class="message__avatar-placeholder ml-15px"></div>
-      <div *ngIf="nextMessage ? message.IsSender !== nextMessage.IsSender : true" class="fs-12px fc-muted">
+      <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
         {{ globalVars.convertTstampToDateOrTime(message.MessageInfo.TimestampNanos) }}
       </div>
     </div>

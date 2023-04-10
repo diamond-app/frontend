@@ -11,6 +11,21 @@
 
 <ng-template #messages>
   <app-page [hideSidebar]="true">
+    <div *ngIf="this.hasLegacyMessages" class="p-3 text-center background-color-light-grey position-relative">
+      <div class="d-flex">
+        <button class="messages-page__banner-dismiss-btn">
+          <i-feather name="x" class="feather-medium fs-0px" (click)="this.dismissLegacyMessagesBanner()"></i-feather>
+        </button>
+      </div>
+      <p class="mb-3">
+        <strong>Diamond now supports encrypted group chats</strong>
+        🎉
+      </p>
+      Click the plus button to create a new group. Due to the upgrade, we're no longer able to support previously sent
+      messages. But don't worry! You can still access all your old conversations by visiting
+      <a href="https://node.deso.org" target="_blank" rel="noopener noreferrer">node.deso.org</a>
+      .
+    </div>
     <section class="messages-page">
       <header class="border-bottom pt-3 pb-2 px-3">
         <h1 class="font-weight-bold fs-24px mb-2" *ngIf="!globalVars.isMobile()">Messages</h1>

@@ -8,8 +8,9 @@ describe("IdentityMigrationModalComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [IdentityMigrationModalComponent],
-    }).compileComponents();
+      declarations: [ IdentityMigrationModalComponent ]
+    })
+    .compileComponents();
   });
 
   beforeEach(() => {
@@ -18,7 +19,7 @@ describe("IdentityMigrationModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
