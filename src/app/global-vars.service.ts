@@ -1417,7 +1417,10 @@ export class GlobalVarsService {
   }
 
   windowIsPWA(): Boolean {
-    return window.matchMedia("(display-mode: standalone)").matches;
+    const isInWebAppiOS = (window.navigator as any).standalone === true;
+    const isInWebAppChrome = window.matchMedia("(display-mode: standalone)").matches;
+
+    return isInWebAppiOS || isInWebAppChrome;
   }
 
   getDesoNetworkFromURL(nodeURI: string) {

@@ -20,6 +20,8 @@ import { ThemeService } from "./theme/theme.service";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
+  public showInstallPWA: boolean;
+
   constructor(
     private ref: ChangeDetectorRef,
     private themeService: ThemeService,
@@ -59,10 +61,6 @@ export class AppComponent implements OnInit {
     });
   }
   static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS = "js-app-component__dynamically-added-router-link-class";
-
-  showUsernameTooltip = false;
-
-  desoToUSDExchangeRateToDisplay = "fetching...";
 
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
@@ -277,6 +275,9 @@ export class AppComponent implements OnInit {
     // Load the theme
     this.themeService.init();
 
+    // Show install PWA dialog on mobile
+    this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
+
     // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
@@ -292,6 +293,10 @@ export class AppComponent implements OnInit {
     this.loadApp();
 
     this.globalVars.pollUnreadNotifications();
+
+    this.backendApi.WatchStorage().subscribe(() => {
+      this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
+    });
 
     this.installDD();
     introJs().start();
@@ -347,5 +352,9 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
+  }
+
+  closeInstallPWA() {
+    this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
   }
 }

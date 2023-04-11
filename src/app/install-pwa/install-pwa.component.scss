@@ -1,0 +1,52 @@
+$install-pwa-X-padding: 20px;
+$arrow-down-icon-wrapper-size: 50px;
+
+:host {
+  width: auto !important;
+}
+
+.install-pwa {
+  background: var(--norm);
+  z-index: 3000;
+  left: $install-pwa-X-padding;
+  right: $install-pwa-X-padding;
+  bottom: 60px;
+
+  h6 {
+    color: var(--text-inverted);
+  }
+
+  .arrow-close__wrapper {
+    right: 5px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+
+    .arrow-close__icon {
+      color: var(--text-inverted);
+    }
+  }
+
+  img, .arrow-down-icon__wrapper {
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  .text-glow {
+    color: var(--glow);
+    font-weight: bold;
+  }
+
+  img {
+    top: -25px;
+  }
+
+  .arrow-down-icon__wrapper {
+    width: $arrow-down-icon-wrapper-size;
+    height: $arrow-down-icon-wrapper-size;
+    bottom: -($arrow-down-icon-wrapper-size / 2);
+    border-radius: 12px;
+    background: var(--norm);
+    color: var(--text-inverted);
+  }
+}

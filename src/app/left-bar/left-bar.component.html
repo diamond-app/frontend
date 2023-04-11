@@ -100,10 +100,24 @@
         class="mr-20px mb-20px"
         style="margin-top: auto"
       ></change-account-selector>
+
+      <div *ngIf="isMobile && !globalVars.windowIsPWA()">
+        <div
+          class="card p-2 mx-2 my-4 d-flex flex-row align-items-center border bg-light"
+          (click)="addAppToHomeScreen()"
+        >
+          <img src="/assets/diamond/icon-192.png" alt="diamong-logo" width="45" class="rounded" />
+          <div class="card-text ml-2">
+            <p class="font-weight-bold small">Download Diamond Mobile</p>
+            <p class="text-secondary small">Add To Your Homescreen</p>
+          </div>
+        </div>
+      </div>
+
       <div *ngIf="this.globalVars.loggedInUser && isMobile" style="margin-top: auto">
         <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
           <div class="d-flex align-items-center">
-            <img src="assets/diamond/desologo.svg" width="14px" height="14px" />
+            <img src="assets/diamond/desologo.svg" width="14" height="14" />
             <span>≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
           </div>
           <a href="/buy-deso" class="fc-blue fs-15px font-weight-bold">{{ "left_bar.buy" | transloco }}</a>

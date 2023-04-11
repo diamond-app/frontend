@@ -13,5 +13,9 @@
   (touchmove)="preventScroll($event)"
 >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
+  <install-pwa
+    *ngIf="globalVars.isMobile() && !globalVars.windowIsPWA() && showInstallPWA"
+    (closePanel)="closeInstallPWA()"
+  ></install-pwa>
   <!--  <simple-center-loader *ngIf="globalVars.loadingInitialAppState"></simple-center-loader>-->
 </div>

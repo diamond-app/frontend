@@ -218,6 +218,7 @@ import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.comp
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
 import { IdentityMigrationModalComponent } from "./identity-migration-modal/identity-migration-modal.component";
+import { InstallPwaComponent } from "./install-pwa/install-pwa.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -416,6 +417,7 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     PollPageComponent,
     PollModalComponent,
     IdentityMigrationModalComponent,
+    InstallPwaComponent,
   ],
   imports: [
     BrowserModule,
