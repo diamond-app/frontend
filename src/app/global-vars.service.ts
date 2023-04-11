@@ -1127,17 +1127,23 @@ export class GlobalVarsService {
   launchIdentityFlow(): Observable<any> {
     let obs$: Observable<any> = from(identity.login()).pipe(share());
 
-    obs$.subscribe((res) => {
-      this.userSigningUp = res.signedUp;
-      this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
-        ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
-          phoneNumberSuccess: res.phoneNumberSuccess,
-        }),
-      });
-      this.updateEverything().add(() => {
-        this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
-      });
-    });
+    obs$.subscribe(
+      (res) => {
+        this.userSigningUp = res.signedUp;
+        this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
+          ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
+            phoneNumberSuccess: res.phoneNumberSuccess,
+          }),
+        });
+        this.updateEverything().add(() => {
+          this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
+        });
+      },
+      (error) => {
+        this.tracking.log(`identity : login`, { error });
+        this._alertError(error.toString());
+      }
+    );
 
     return obs$;
   }
