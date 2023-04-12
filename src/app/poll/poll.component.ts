@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AssociationType, BackendApiService, PostAssociation } from "../backend-api.service";
+import { AssociationType, BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { finalize, map, tap } from "rxjs/operators";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -9,7 +9,7 @@ import { forkJoin, of } from "rxjs";
 import { groupBy, keyBy, mapValues, sum } from "lodash";
 import { PollWeightType } from "../feed/feed-create-post/feed-create-post.component";
 import { environment } from "../../environments/environment";
-import { User } from "deso-protocol";
+import { PostAssociationResponse, User } from "deso-protocol";
 
 interface PollVoteWeights {
   Weights: { [option: string]: number };
@@ -29,7 +29,7 @@ export class PollComponent implements OnInit {
   pollOptions: Array<string> = [];
   pollVoteWeights: PollVoteWeights = { Weights: {}, Total: 0 };
   pollWeightTokenProfile: User | null = null;
-  myVotes: Array<PostAssociation> = [];
+  myVotes: Array<PostAssociationResponse> = [];
   processedVote: string = "";
   isUserHoldingPollToken: boolean = false;
 

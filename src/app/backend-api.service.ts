@@ -90,10 +90,8 @@ import {
   getVideoStatus,
   HodlersSortType,
   identity,
-  NFTBidEntryResponse as NFTBidEntry,
   NFTEntryResponse,
   PostEntryResponse,
-  ProfileEntryResponse,
   resendVerifyEmail,
   sellCreatorCoin,
   sendDeso,
@@ -111,7 +109,6 @@ import {
   uploadImage,
   uploadVideo,
   UploadVideoV2Response,
-  User,
   verifyEmail,
 } from "deso-protocol";
 import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
@@ -142,7 +139,6 @@ export enum TutorialStatus {
 }
 
 export enum AssociationType {
-  // TODO: add more types when needed
   reaction = "REACTION",
   pollResponse = "POLL_RESPONSE",
 }
@@ -159,28 +155,6 @@ export enum AssociationReactionValue {
 
 // TODO: other association values can be added as Value1 | Value2 etc.
 export type AssociationValue = AssociationReactionValue | string;
-
-export interface PostAssociation {
-  AppPublicKeyBase58Check: string;
-  AssociationID: string;
-  AssociationType: AssociationType;
-  AssociationValue: AssociationValue;
-  BlockHeight: number;
-  ExtraData: any;
-  PostHashHex: string;
-  TransactorPublicKeyBase58Check: string;
-}
-
-export interface PostAssociationCountsResponse {
-  Counts: { [key in AssociationValue]?: number };
-  Total: number;
-}
-
-export interface PostAssociationsResponse {
-  Associations: Array<PostAssociation>;
-  PostHashHexToPostEntryResponse: { [postHex: string]: PostEntryResponse };
-  PublicKeyToProfileEntryResponse: { [publicKey: string]: ProfileEntryResponse };
-}
 
 @Injectable({
   providedIn: "root",
@@ -264,19 +238,6 @@ export class BackendApiService {
     }
     // return an observable with a user-facing error message
     return throwError(error);
-  }
-
-  signAndSubmitTransaction(request: Observable<any>): Observable<any> {
-    return request.pipe(
-      switchMap((res) => {
-        return from(identity.signAndSubmit(res.TransactionHex));
-      }),
-      catchError(this._handleError)
-    );
-  }
-
-  get(endpoint: string, path: string) {
-    return this.httpClient.get<any>(this._makeRequestURL(endpoint, path)).pipe(catchError(this._handleError));
   }
 
   post(endpoint: string, path: string, body: any): Observable<any> {
@@ -952,7 +913,7 @@ export class BackendApiService {
     ).pipe(map(mergeTxResponse));
   }
 
-  DeletePostAssociation(TransactorPublicKeyBase58Check: string, AssociationID: string): Observable<any> {
+  DeletePostAssociation(TransactorPublicKeyBase58Check: string, AssociationID: string) {
     return from(
       deletePostAssociation({
         TransactorPublicKeyBase58Check,
@@ -1035,13 +996,12 @@ export class BackendApiService {
     );
   }
 
-  // TODO: add associations data calls
   GetPostAssociationsCounts(
     Post: PostEntryResponse,
     AssociationType: AssociationType,
     AssociationValues: Array<AssociationValue>,
     SkipLegacyLikes: boolean = false
-  ): Observable<PostAssociationCountsResponse> {
+  ) {
     return from(
       countPostAssociations({
         PostHashHex: Post.PostHashHex,

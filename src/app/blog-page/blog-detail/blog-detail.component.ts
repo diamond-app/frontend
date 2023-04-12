@@ -8,13 +8,7 @@ import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { forkJoin, of } from "rxjs";
 import { finalize } from "rxjs/operators";
-import {
-  AssociationReactionValue,
-  AssociationType,
-  BackendApiService,
-  PostAssociation,
-  PostAssociationCountsResponse,
-} from "src/app/backend-api.service";
+import { AssociationReactionValue, AssociationType, BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
 import { TrackingService } from "src/app/tracking.service";
@@ -23,7 +17,12 @@ import { environment } from "src/environments/environment";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
 import { FollowService } from "src/lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
-import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import {
+  AssociationCountsResponse,
+  PostAssociationResponse,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from "deso-protocol";
 
 @Component({
   selector: "app-blog-detail",
@@ -43,11 +42,11 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   isScrollingUp: boolean = false;
   previousPageYOffset = 0;
   boundDetectScrollDirection?: () => void;
-  postReactionCounts: PostAssociationCountsResponse = {
+  postReactionCounts: AssociationCountsResponse = {
     Counts: {},
     Total: 0,
   };
-  myReactions: Array<PostAssociation> = [];
+  myReactions: Array<PostAssociationResponse> = [];
   reactionsLoaded: boolean = false;
 
   datasource = new Datasource<Thread>({
@@ -574,11 +573,11 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateReactionCounts(counts: PostAssociationCountsResponse) {
+  updateReactionCounts(counts: AssociationCountsResponse) {
     this.postReactionCounts = counts;
   }
 
-  updateMyReactions(reactions: Array<PostAssociation>) {
+  updateMyReactions(reactions: Array<PostAssociationResponse>) {
     this.myReactions = reactions;
   }
 }

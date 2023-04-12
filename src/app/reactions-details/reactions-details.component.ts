@@ -4,16 +4,11 @@ import { PostEntryResponse } from "deso-protocol";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { finalize, map, switchMap, tap } from "rxjs/operators";
-import {
-  AssociationReactionValue,
-  AssociationType,
-  BackendApiService,
-  PostAssociationCountsResponse,
-} from "../backend-api.service";
+import { AssociationReactionValue, AssociationType, BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { orderBy } from "lodash";
-import { ProfileEntryResponse } from "deso-protocol";
+import { ProfileEntryResponse, AssociationCountsResponse } from "deso-protocol";
 
 @Component({
   selector: "reactions-details",
@@ -27,7 +22,7 @@ export class ReactionsDetailsComponent implements OnInit {
   loading = false;
   reactionTabs: Array<AssociationReactionValue> = [];
   activeReactionTab: AssociationReactionValue | null = null;
-  postReactionCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
+  postReactionCounts: AssociationCountsResponse = { Counts: {}, Total: 0 };
   usersReacted: Array<{ publicKey: string; profile: ProfileEntryResponse | null }> = [];
 
   // Infinite scroll metadata.
@@ -66,7 +61,7 @@ export class ReactionsDetailsComponent implements OnInit {
           );
         })
       )
-      .subscribe((c: PostAssociationCountsResponse) => {
+      .subscribe((c: AssociationCountsResponse) => {
         this.postReactionCounts = c;
         this.reactionTabs = this.processTabs(c.Counts);
         this.selectTab(this.reactionTabs[0]);

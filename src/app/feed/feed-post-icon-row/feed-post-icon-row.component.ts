@@ -10,17 +10,11 @@ import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import {
-  AssociationReactionValue,
-  AssociationType,
-  BackendApiService,
-  PostAssociation,
-  PostAssociationCountsResponse,
-} from "../../backend-api.service";
+import { AssociationReactionValue, AssociationType, BackendApiService } from "../../backend-api.service";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
-import { PostEntryResponse } from "deso-protocol";
+import { PostAssociationResponse, AssociationCountsResponse, PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -38,14 +32,14 @@ export class FeedPostIconRowComponent {
   @Input() hideNumbers: boolean = false;
   // Will need additional inputs if we walk through actions other than diamonds.
   @Input() inTutorial: boolean = false;
-  @Input() postReactionCounts: PostAssociationCountsResponse;
-  @Input() myReactions: Array<PostAssociation> = [];
+  @Input() postReactionCounts: AssociationCountsResponse;
+  @Input() myReactions: Array<PostAssociationResponse> = [];
   @Input() hideSummary: boolean = false;
 
   @Output() diamondSent = new EventEmitter();
   @Output() userReacted = new EventEmitter();
-  @Output() updateReactionCounts = new EventEmitter<PostAssociationCountsResponse>();
-  @Output() updateMyReactions = new EventEmitter<Array<PostAssociation>>();
+  @Output() updateReactionCounts = new EventEmitter<AssociationCountsResponse>();
+  @Output() updateMyReactions = new EventEmitter<Array<PostAssociationResponse>>();
 
   sendingRepostRequest = false;
 
@@ -702,7 +696,7 @@ export class FeedPostIconRowComponent {
         ? this.myReactions.filter((e) => e.AssociationValue !== value)
         : [
             ...this.myReactions,
-            { AssociationType: AssociationType.reaction, AssociationValue: value } as PostAssociation,
+            { AssociationType: AssociationType.reaction, AssociationValue: value } as PostAssociationResponse,
           ]
     );
 
