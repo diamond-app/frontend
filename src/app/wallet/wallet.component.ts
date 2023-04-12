@@ -115,7 +115,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     this.globalVars.loggedInUser.UsersYouHODL.map((balanceEntryResponse: BalanceEntryResponse) => {
-      if (balanceEntryResponse.NetBalanceInMempool != 0) {
+      if (balanceEntryResponse.NetBalanceInMempool !== 0) {
         this.hasUnminedCreatorCoins = true;
       }
       // If you purchased the coin or the balance entry response if for your creator coin, show it in the purchased tab.

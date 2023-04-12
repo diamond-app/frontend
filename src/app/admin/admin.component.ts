@@ -928,10 +928,11 @@ export class AdminComponent implements OnInit {
   }
 
   extractError(err: any): string {
-    if (err.error !== null && err.error.error !== null) {
+    const rawError = err?.error?.error;
+
+    if (rawError) {
       // Is it obvious yet that I'm not a frontend gal?
       // TODO: Error handling between BE and FE needs a major redesign.
-      const rawError = err.error.error;
       if (rawError.includes("password")) {
         return Messages.INCORRECT_PASSWORD;
       } else if (rawError.includes("not sufficient")) {
@@ -947,7 +948,7 @@ export class AdminComponent implements OnInit {
         return rawError;
       }
     }
-    if (err.status !== null && err.status !== 200) {
+    if (err?.status && err?.status !== 200) {
       return Messages.CONNECTION_PROBLEM;
     }
     // If we get here we have no idea what went wrong so just alert the
