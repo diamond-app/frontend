@@ -220,7 +220,8 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { IdentityMigrationModalComponent } from './identity-migration-modal/identity-migration-modal.component';
+import { IdentityMigrationModalComponent } from "./identity-migration-modal/identity-migration-modal.component";
+import { FeedPostImageModalComponent } from "./feed/feed-post-image-modal/feed-post-image-modal.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -423,6 +424,7 @@ export function playerFactory() {
     PollPageComponent,
     PollModalComponent,
     IdentityMigrationModalComponent,
+    FeedPostImageModalComponent,
   ],
   imports: [
     BrowserModule,

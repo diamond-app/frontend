@@ -84,7 +84,7 @@ export class PostThreadComponent implements AfterViewInit {
     private backendApi: BackendApiService,
     private toastr: ToastrService,
     private titleService: Title,
-    private location: Location,
+    public location: Location,
     private transloco: TranslocoService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
