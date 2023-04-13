@@ -385,8 +385,7 @@ export class FeedCreatePostComponent implements OnInit {
         false /*IsHidden*/
       )
       .toPromise()
-      .then((desoJsResponse) => {
-        const response = desoJsResponse.submittedTransactionResponse;
+      .then((response) => {
         this.tracking.log(`post : ${action}`, {
           type: postType,
           hasText: bodyObj.Body.length > 0,
