@@ -349,14 +349,14 @@ export class CreateLongPostComponent implements AfterViewInit {
         )
         .toPromise();
 
-      const submittedPostHashHex = postTx.submittedTransactionResponse.PostEntryResponse.PostHashHex;
+      const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
 
       // if this is a new post, or the author updates the title of an existing
       // post, update the user's profile with a mapping from postHashHex to url
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
-        await waitForTransactionFound(postTx.submittedTransactionResponse.TxnHashHex);
+        await waitForTransactionFound(postTx.TxnHashHex);
 
         const blogSlugMapJSON = JSON.stringify({
           ...existingSlugMappings,
