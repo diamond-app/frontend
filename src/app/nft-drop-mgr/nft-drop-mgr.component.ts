@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { isNil } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
@@ -77,7 +78,7 @@ export class NftDropMgrComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     const startIdx = page * NftDropMgrComponent.PAGE_SIZE;

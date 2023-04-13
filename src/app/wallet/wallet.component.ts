@@ -3,6 +3,7 @@ import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BalanceEntryResponse } from "deso-protocol";
 import * as introJs from "intro.js/intro";
+import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { document } from "ngx-bootstrap/utils";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
@@ -445,7 +446,7 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     if (this.inTutorial) {

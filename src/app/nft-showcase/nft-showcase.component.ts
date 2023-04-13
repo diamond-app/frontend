@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { NFTCollectionResponse } from "deso-protocol";
-import { uniqBy } from "lodash";
+import { isNil, uniqBy } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -60,7 +60,7 @@ export class NftShowcaseComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     const startIdx = page * NftShowcaseComponent.PAGE_SIZE;

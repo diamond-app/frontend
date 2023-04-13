@@ -154,7 +154,7 @@
         <div class="d-flex justify-content-center" [ngClass]="{ 'justify-content-between': globalVars.isMobile() }">
           <a
             class="link--unstyled"
-            *ngIf="followerCount !== null"
+            *ngIf="followerCount !== undefined && followerCount !== null"
             [routerLink]="AppRoutingModule.userFollowersPath(profile.Username)"
             queryParamsHandling="merge"
           >
@@ -164,7 +164,7 @@
 
           <a
             class="link--unstyled"
-            *ngIf="followingCount !== null"
+            *ngIf="followingCount !== undefined && followingCount !== null"
             [routerLink]="AppRoutingModule.userFollowingPath(profile.Username)"
             queryParamsHandling="merge"
           >

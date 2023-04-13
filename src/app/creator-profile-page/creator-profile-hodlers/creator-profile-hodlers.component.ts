@@ -4,6 +4,7 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { isNil } from "lodash";
 
 @Component({
   selector: "creator-profile-hodlers",
@@ -20,7 +21,7 @@ export class CreatorProfileHodlersComponent {
   @Input() profile: ProfileEntryResponse;
 
   showTotal = false;
-  lastPage = null;
+  lastPage: number = null;
   loadingFirstPage = true;
   loadingNextPage = false;
   pagedKeys = {
@@ -28,7 +29,7 @@ export class CreatorProfileHodlersComponent {
   };
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;
