@@ -172,6 +172,7 @@
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed()"
             (toggleBlogPin)="toggleBlogPinnedStatus($event)"
+            (postFrozen)="ref.detectChanges()"
           ></feed-post-dropdown>
         </div>
 
@@ -316,6 +317,7 @@
                   (togglePostPin)="_pinPostToGlobalFeed($event)"
                   (pauseVideos)="emitPause($event)"
                   (toggleBlogPin)="toggleBlogPinnedStatus($event)"
+                  (postFrozen)="ref.detectChanges()"
                 ></feed-post-dropdown>
               </div>
 
@@ -635,18 +637,37 @@
         <div class="d-flex flex-column justify-content-between">
           <div class="d-flex">
             <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
-            <div
-              *ngIf="!showAvailableSerialNumbers"
-              class="cursor-pointer"
-              (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              (mouseenter)="tooltipDetectChanges()"
-              (mouseleave)="tooltipDetectChanges()"
-              [matTooltip]="mOfNNFTTooltip"
-              #NFTMOfNTooltip="matTooltip"
-            >
-              {{ postContent.NumNFTCopiesForSale }} {{ "feed_post.of" | transloco }} {{ postContent.NumNFTCopies }}
-              {{ "feed_post.for_sale" | transloco }}
+            <div class="d-flex">
+              <div
+                *ngIf="!showAvailableSerialNumbers"
+                class="cursor-pointer"
+                (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                (mouseenter)="tooltipDetectChanges()"
+                (mouseleave)="tooltipDetectChanges()"
+                [matTooltip]="mOfNNFTTooltip"
+                #NFTMOfNTooltip="matTooltip"
+              >
+                {{ postContent.NumNFTCopiesForSale }} {{ "feed_post.of" | transloco }} {{ postContent.NumNFTCopies }}
+                {{ "feed_post.for_sale" | transloco }}
+              </div>
+
+              <ng-container *ngIf="postContent.PostExtraData.IsFrozen">
+                <span>&nbsp;&#x2981;&nbsp;</span>
+
+                <div
+                  *ngIf="!showAvailableSerialNumbers"
+                  class="cursor-pointer"
+                  (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
+                  matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                  (mouseenter)="tooltipDetectChanges()"
+                  (mouseleave)="tooltipDetectChanges()"
+                  [matTooltip]="frozenNFTTooltip"
+                  #NFTMOfNTooltip="matTooltip"
+                >
+                  Frozen
+                </div>
+              </ng-container>
             </div>
             <span
               *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
