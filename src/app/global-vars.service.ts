@@ -1233,7 +1233,6 @@ export class GlobalVarsService {
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
     }
 
-    this.localNode = "https://node.deso.org";
     route.queryParams.subscribe((queryParams) => {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
