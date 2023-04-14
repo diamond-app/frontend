@@ -225,6 +225,7 @@ export class PostEntryResponse {
   PostExtraData: Record<string, any>;
   AdditionalDESORoyaltiesMap: { [k: string]: number };
   AdditionalCoinRoyaltiesMap: { [k: string]: number };
+  IsFrozen: boolean;
 }
 
 export class DiamondsPost {
@@ -533,7 +534,7 @@ export class BackendApiService {
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number
-  ): Observable<SendDeSoResponse> {
+  ): Observable<any> {
     return from(
       sendDeso(
         {
@@ -884,7 +885,8 @@ export class BackendApiService {
     BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    IsHidden: boolean
+    IsHidden: boolean,
+    IsFrozen?: boolean
   ): Observable<any> {
     return from(
       submitPost({
@@ -895,6 +897,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
+        IsFrozen,
       })
     );
   }

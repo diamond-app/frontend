@@ -577,7 +577,6 @@ export class FeedPostDropdownComponent implements OnInit {
       if (alertRes.isDenied) {
         this.tracking.log("nft-freeze : click");
         const postExtraData = this.post.PostExtraData;
-        postExtraData["IsFrozen"] = "1";
 
         return this.backendApi
           .SubmitPost(
@@ -591,10 +590,12 @@ export class FeedPostDropdownComponent implements OnInit {
             },
             "",
             postExtraData,
-            false
+            false,
+            true
           )
           .subscribe(
             () => {
+              this.post.IsFrozen = true;
               this.globalVars._alertSuccess(
                 "Your NFT was successfully frozen and will not be modifiable in the future"
               );
