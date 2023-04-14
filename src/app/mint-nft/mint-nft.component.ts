@@ -348,9 +348,10 @@ export class MintNftComponent {
           });
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
         },
-        (err) => {
-          this.globalVars._alertError(err.error.error);
-          this.tracking.log("nft : create", { error: err.error.error });
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
+          this.tracking.log("nft : create", { error: e.toString() });
           this.minting = false;
         }
       );

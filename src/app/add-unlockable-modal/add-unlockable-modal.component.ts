@@ -80,7 +80,7 @@ export class AddUnlockableModalComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
+          this.globalVars._alertError(this.backendApi.parseErrorMessage(err));
         }
       )
       .add(() => {

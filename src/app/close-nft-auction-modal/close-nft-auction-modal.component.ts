@@ -70,8 +70,8 @@ export class CloseNftAuctionModalComponent {
         },
         (err) => {
           console.error(err);
-          const parsedError = this.backendApi.parseMessageError(err);
-          this.globalVars._alertError(this.backendApi.parseMessageError(err));
+          const parsedError = this.backendApi.parseErrorMessage(err);
+          this.globalVars._alertError(this.backendApi.parseErrorMessage(err));
           this.tracking.log("nft-auction : close", {
             error: parsedError,
           });

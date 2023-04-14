@@ -277,7 +277,7 @@ export class FeedPostIconRowComponent {
         (err) => {
           console.error(err);
           this.sendingRepostRequest = false;
-          const parsedError = this.backendApi.parsePostError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           this.tracking.log("post : repost", { error: err });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
@@ -324,7 +324,7 @@ export class FeedPostIconRowComponent {
         (err) => {
           console.error(err);
           this.sendingRepostRequest = false;
-          const parsedError = this.backendApi.parsePostError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           this.tracking.log("post : unrepost", { error: parsedError });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();
@@ -477,7 +477,7 @@ export class FeedPostIconRowComponent {
             return this.globalVars._alertError("DeSo is under heavy load. Please try again in one minute.");
           }
           this.sendingDiamonds = false;
-          const parsedError = this.backendApi.parseProfileError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           this.tracking.log("diamonds: send", { error: parsedError });
           this.globalVars._alertError(parsedError);
         }
@@ -726,7 +726,7 @@ export class FeedPostIconRowComponent {
         (err) => {
           console.error(err);
           this.sendingRepostRequest = false;
-          const parsedError = this.backendApi.parsePostError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           this.tracking.log("post : react", { error: err });
           this.globalVars._alertError(parsedError);
           this.ref.detectChanges();

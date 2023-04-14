@@ -206,12 +206,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           }
         );
       },
-      (err) => {
+      (e) => {
         this.tracking.log("twitter-sync : create-subscription", {
-          error: err.error?.error,
+          error: e.toString(),
           isOnboarding: this.isOnboarding,
         });
-        this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
+        this.globalVars._alertError(e.toString() ?? "Something went wrong! Please try again.");
       }
     );
   }
@@ -271,14 +271,14 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
               window.localStorage.removeItem(buildLocalStorageKey(this.globalVars.loggedInUser?.PublicKeyBase58Check));
             }
           },
-          (err) => {
+          (e) => {
             if (!this.twitterUserData) throw new Error("twitterUserData is undefined");
             this.tracking.log("twitter-sync : unsubscribe", {
-              error: err.error?.error,
+              error: e.toString(),
               isOnboarding: this.isOnboarding,
               twitterHandle: this.twitterUserData.twitter_username,
             });
-            this.globalVars._alertError(err.error?.error ?? "Something went wrong! Please try again.");
+            this.globalVars._alertError(e.toString() ?? "Something went wrong! Please try again.");
           }
         );
     });
@@ -344,9 +344,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           });
         }
       },
-      (err) => {
-        this.tracking.log("twitter-sync : get-subscription-error", { error: err.error?.error });
-        this.globalVars._alertError(err.error?.error ?? "Something went wrong! Try reloading the page.");
+      (e) => {
+        this.tracking.log("twitter-sync : get-subscription-error", { error: e.toString() });
+        this.globalVars._alertError(e.toString() ?? "Something went wrong! Try reloading the page.");
         this.setuSubscriptions = undefined;
         this.derivedKeyStatus = undefined;
       }

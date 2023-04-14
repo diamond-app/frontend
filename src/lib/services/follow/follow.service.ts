@@ -46,8 +46,9 @@ export class FollowService {
           this._handleSuccessfulFollowTxn(isFollow, followedPubKeyBase58Check);
           this._notifyFollowChangeObservers(followedPubKeyBase58Check);
         }),
-        catchError((error) => {
-          let errorString = error.error.error || "";
+        catchError((e) => {
+          console.error(e);
+          let errorString = e.toString() || "";
           if (errorString.includes(this.RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS)) {
             // If the user is already following, then set our button to reflect that.
             // Note: a common way this can currently happen is if there are multiple
@@ -59,7 +60,7 @@ export class FollowService {
           } else {
             // TODO: RuleErrorInputSpendsNonexistentUtxo is a problem ... we need a lock in the server endpoint
             // TODO: there's prob some "out of funds" error which is a problem
-            const parsedError = this.backendApi.parseMessageError(error);
+            const parsedError = this.backendApi.parseErrorMessage(e);
             this.tracking.log(`profile : ${isFollow ? "follow" : "unfollow"}`, { error: parsedError });
             this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
           }

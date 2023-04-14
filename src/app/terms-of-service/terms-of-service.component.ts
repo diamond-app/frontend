@@ -25,6 +25,8 @@ export class TermsOfServiceComponent {
           this.hasScrolled = true;
         }, 250);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

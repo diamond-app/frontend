@@ -292,11 +292,9 @@ export class TransferDeSoComponent implements OnInit {
   }
 
   _extractError(err: any): string {
-    const rawError = err.error.error;
+    const rawError = err.toString();
 
     if (rawError) {
-      // Is it obvious yet that I'm not a frontend gal?
-      // TODO: Error handling between BE and FE needs a major redesign.
       if (rawError.includes("password")) {
         return Messages.INCORRECT_PASSWORD;
       } else if (rawError.includes("not sufficient")) {

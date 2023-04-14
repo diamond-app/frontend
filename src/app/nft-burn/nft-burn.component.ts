@@ -118,11 +118,9 @@ export class NftBurnComponent implements OnInit {
                 positionClass: "toast-bottom-center",
               });
             },
-            (err) => {
-              console.error(err);
-              this.tracking.log("nft : burn", {
-                error: err.error?.error,
-              });
+            (e) => {
+              console.error(e);
+              this.tracking.log("nft : burn", { error: e.toString() });
             }
           )
           .add(() => {

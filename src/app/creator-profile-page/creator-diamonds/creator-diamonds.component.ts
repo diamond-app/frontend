@@ -79,8 +79,9 @@ export class CreatorDiamondsComponent implements OnInit {
         }
         this.totalDiamonds = res.TotalDiamonds;
       }),
-      catchError((err) => {
-        this.globalVars._alertError(this.backendApi.parseProfileError(err));
+      catchError((e) => {
+        console.error(e);
+        this.globalVars._alertError(this.backendApi.parseErrorMessage(e));
         return of();
       }),
       finalize(() => {

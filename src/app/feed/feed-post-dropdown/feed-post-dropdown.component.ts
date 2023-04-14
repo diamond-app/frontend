@@ -116,8 +116,9 @@ export class FeedPostDropdownComponent implements OnInit {
 
         this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
       },
-      (error) => {
-        this.globalVars._alertError(error.error.error);
+      (e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
       }
     );
   }
@@ -135,8 +136,9 @@ export class FeedPostDropdownComponent implements OnInit {
         (res: any) => {
           this.globalVars._alertSuccess("Successfully added NFT to drop #" + latestDrop.DropNumber.toString());
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       );
   }
@@ -397,7 +399,7 @@ export class FeedPostDropdownComponent implements OnInit {
     try {
       navigator.share({ url: this._getPostUrl() });
     } catch (err) {
-      console.error("Share failed:", err.message);
+      console.error("Share failed:", err.toString());
     }
   }
 
