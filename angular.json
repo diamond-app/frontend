@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "deso-frontend": {
+    "diamond-app": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -20,7 +20,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -46,7 +45,13 @@
               "./node_modules/aos/dist/aos.js",
               "./node_modules/quill/dist/quill.core.js",
               "./src/lib/services/stream/cloudflare-stream-embedded.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -60,9 +65,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -78,23 +81,24 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "deso-frontend:build"
+            "browserTarget": "diamond-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "deso-frontend:build:production"
+              "browserTarget": "diamond-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "deso-frontend:build"
+            "browserTarget": "diamond-app:build"
           }
         },
         "test": {
@@ -127,7 +131,7 @@
         }
       }
     },
-    "deso-frontend-e2e": {
+    "diamond-app-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -136,11 +140,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "deso-frontend:serve"
+            "devServerTarget": "diamond-app:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "deso-frontend:serve:production"
+              "devServerTarget": "diamond-app:serve:production"
             }
           }
         },
@@ -156,5 +160,4 @@
       }
     }
   },
-  "defaultProject": "deso-frontend"
 }

@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TwitterSyncPageComponent } from './twitter-sync-page.component';
+import { TwitterSyncPageComponent } from "./twitter-sync-page.component";
 
-describe('TwitterSyncPageComponent', () => {
+describe("TwitterSyncPageComponent", () => {
   let component: TwitterSyncPageComponent;
   let fixture: ComponentFixture<TwitterSyncPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TwitterSyncPageComponent ]
-    })
-    .compileComponents();
+      declarations: [TwitterSyncPageComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('TwitterSyncPageComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

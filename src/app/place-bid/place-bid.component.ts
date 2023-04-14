@@ -3,13 +3,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import * as _ from "lodash";
-import { isNumber } from "lodash";
+import { isNil, isNumber } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { BuyDesoModalComponent } from "../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
+import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "place-bid",
@@ -111,7 +112,7 @@ export class PlaceBidComponent implements OnInit {
         }),
       [this.sortByField],
       [this.sortByOrder]
-    );
+    ) as Array<NFTEntryResponse>;
   }
 
   updateBidAmountUSD(deSoAmount) {
@@ -259,7 +260,7 @@ export class PlaceBidComponent implements OnInit {
   lastPage = null;
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     const startIdx = page * PlaceBidComponent.PAGE_SIZE;
@@ -277,7 +278,11 @@ export class PlaceBidComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.biddableSerialNumbers = _.orderBy(this.biddableSerialNumbers, [this.sortByField], [this.sortByOrder]);
+    this.biddableSerialNumbers = _.orderBy(
+      this.biddableSerialNumbers,
+      [this.sortByField],
+      [this.sortByOrder]
+    ) as Array<NFTEntryResponse>;
   }
 
   bidAmountUSDFormatted() {

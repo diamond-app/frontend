@@ -67,7 +67,7 @@
   </div>
 
   <!-- Posts -->
-  <div *ngIf="profile && activeTab == 'Posts' && !loading">
+  <div *ngIf="profile && activeTab === 'Posts' && !loading">
     <creator-profile-posts
       [profile]="profile"
       [showProfileAsReserved]="showProfileAsReserved()"
@@ -84,7 +84,7 @@
   </div>
 
   <!-- Blog -->
-  <div *ngIf="profile && activeTab == 'Blog' && !loading">
+  <div *ngIf="profile && activeTab === 'Blog' && !loading">
     <creator-profile-blog-posts
       [profile]="profile"
       [showProfileAsReserved]="showProfileAsReserved()"
@@ -103,7 +103,7 @@
   <!-- Creator Coin Info -->
   <div
     class="w-100 d-flex flex-column creator-profile-details__coin-container"
-    *ngIf="activeTab == 'Creator Coin' && !loading"
+    *ngIf="activeTab === 'Creator Coin' && !loading"
   >
     <div
       *ngIf="profile.PublicKeyBase58Check !== globalVars?.loggedInUser?.PublicKeyBase58Check"
@@ -141,13 +141,13 @@
   </div>
 
   <!-- Diamonds -->
-  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Diamonds' && !loading">
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab === 'Diamonds' && !loading">
     <creator-diamonds [profile]="profile"></creator-diamonds>
     <div class="w-100 p-35px"></div>
   </div>
 
   <!-- NFTs -->
-  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'NFTs' && !loading">
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab === 'NFTs' && !loading">
     <creator-profile-nfts
       [profile]="profile"
       [showProfileAsReserved]="showProfileAsReserved()"

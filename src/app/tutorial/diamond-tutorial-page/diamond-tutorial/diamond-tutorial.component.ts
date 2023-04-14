@@ -5,8 +5,9 @@ import * as introJs from "intro.js/intro";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { RouteNames } from "../../../app-routing.module";
-import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../../backend-api.service";
 import { GlobalVarsService } from "../../../global-vars.service";
+import { PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "diamond-tutorial",

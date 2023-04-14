@@ -1,11 +1,11 @@
-<!--Desktop menu-->
+<!-- These `canvas` tags are used by this.globalVars.celebrate() function to trigger confetti animations. -->
+<!-- We use 5 different elements to be able to run 5 animations simultaneously. -->
 <canvas id="my-canvas-0"></canvas>
 <canvas id="my-canvas-1"></canvas>
 <canvas id="my-canvas-2"></canvas>
 <canvas id="my-canvas-3"></canvas>
 <canvas id="my-canvas-4"></canvas>
 
-<!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
 <div
   class="main global__container bg-tile"
   [ngClass]="globalVars.userIsDragging ? 'unselectable' : ''"
@@ -13,5 +13,4 @@
   (touchmove)="preventScroll($event)"
 >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
-  <!--  <simple-center-loader *ngIf="globalVars.loadingInitialAppState"></simple-center-loader>-->
 </div>

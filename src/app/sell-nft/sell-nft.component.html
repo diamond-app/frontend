@@ -1,62 +1,62 @@
 <div app-theme class="nft-modal-container">
   <div *ngIf="!globalVars.isMobile()" class="mint-nft__section border-bottom" style="padding: 16px 12px">
     <div (click)="location.back()" class="cursor-pointer">
-      <i-feather
-        name="arrow-left"
-        class="feather-medium mr-12px position-relative"
-        style="top: -2px"
-      ></i-feather>
-      <span class="font-weight-bold fs-17px">{{ 'sell_nft.back_to_nft' | transloco }}</span>
+      <i-feather name="arrow-left" class="feather-medium mr-12px position-relative" style="top: -2px"></i-feather>
+      <span class="font-weight-bold fs-17px">{{ "sell_nft.back_to_nft" | transloco }}</span>
     </div>
   </div>
   <div *ngIf="selectedBidEntries?.length">
     <div class="fs-15px fc-muted mint-nft__section">
-      <div class="mint-nft__title">{{ 'sell_nft.sell_an_nft' | transloco }}</div>
-      <span>You are about to sell your NFT to </span>
+      <div class="mint-nft__title">{{ "sell_nft.sell_an_nft" | transloco }}</div>
+      <span>You are about to sell your NFT to</span>
       <span class="fc-default" *ngIf="bidEntryUsernames.length === 1">@{{ bidEntryUsernames[0] }}</span>
       <span *ngIf="bidEntryUsernames.length === 2">
         <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
-        <span> {{ 'sell_nft.and' | transloco }} </span>
+        <span>{{ "sell_nft.and" | transloco }}</span>
         <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
       </span>
       <span *ngIf="bidEntryUsernames.length === 3">
         <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
-        <span>, </span>
+        <span>,</span>
         <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
-        <span> {{ 'sell_nft.and' | transloco }} </span>
+        <span>{{ "sell_nft.and" | transloco }}</span>
         <span class="fc-default">@{{ bidEntryUsernames[2] }}</span>
       </span>
       <span *ngIf="bidEntryUsernames.length > 3">
         <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
-        <span>, </span>
+        <span>,</span>
         <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
-        <span> {{ 'sell_nft.and' | transloco }} </span>
+        <span>{{ "sell_nft.and" | transloco }}</span>
         <span class="fc-default">@{{ bidEntryUsernames.length - 2 }}</span>
       </span>
-      <span>. {{ 'sell_nft.are_you_sure' | transloco }}</span>
+      <span>. {{ "sell_nft.are_you_sure" | transloco }}</span>
     </div>
 
     <div class="px-40px" [ngClass]="{ 'px-16px': globalVars.isMobile() }">
       <div>
         <div
           class="d-flex align-items-center fs-14px link--unstyled"
-          *ngFor="let bidEntry of selectedBidEntries; let i = index">
-          <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between align-items-center sell-nft__row secalt-bg br-10px">
+          *ngFor="let bidEntry of selectedBidEntries; let i = index"
+        >
+          <div
+            *ngIf="!globalVars.isMobile()"
+            class="d-flex justify-content-between align-items-center sell-nft__row secalt-bg br-10px"
+          >
             <div class="d-flex flex-column col-2 border-right">
-              <div class="font-weight-bold">{{ 'sell_nft.number' | transloco }}</div>
+              <div class="font-weight-bold">{{ "sell_nft.number" | transloco }}</div>
               <div>#{{ bidEntry.SerialNumber }}</div>
             </div>
             <div class="d-flex flex-column col-4 border-right px-16px">
-              <div class="font-weight-bold">{{ 'sell_nft.selling_price' | transloco }}</div>
+              <div class="font-weight-bold">{{ "sell_nft.selling_price" | transloco }}</div>
               <div>
-                <span>{{ globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 3) }} $DESO </span>
+                <span>{{ globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 3) }} $DESO</span>
                 <span>(~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 0) }})</span>
               </div>
             </div>
             <div class="d-flex flex-column col-4 border-right px-16px">
-              <div class="font-weight-bold">{{ 'sell_nft.earnings' | transloco }}</div>
+              <div class="font-weight-bold">{{ "sell_nft.earnings" | transloco }}</div>
               <div>
-                <span>{{ globalVars.nanosToDeSo(bidEntry.EarningsAmountNanos, 3) }} $DESO </span>
+                <span>{{ globalVars.nanosToDeSo(bidEntry.EarningsAmountNanos, 3) }} $DESO</span>
                 <span>(~{{ globalVars.nanosToUSD(bidEntry.EarningsAmountNanos, 0) }})</span>
               </div>
             </div>
@@ -68,10 +68,13 @@
               ></i-feather>
             </div>
           </div>
-          <div *ngIf="globalVars.isMobile()" class="d-flex justify-content-between align-items-center sell-nft__row pb-0">
+          <div
+            *ngIf="globalVars.isMobile()"
+            class="d-flex justify-content-between align-items-center sell-nft__row pb-0"
+          >
             <div class="d-flex flex-column col-11 pr-30px">
               <div class="d-flex justify-content-between border-bottom pb-5px">
-                <div class="font-weight-bold">{{ 'sell_nft.number' | transloco }}</div>
+                <div class="font-weight-bold">{{ "sell_nft.number" | transloco }}</div>
                 <div>#{{ bidEntry.SerialNumber }}</div>
               </div>
               <div class="d-flex justify-content-between border-bottom py-5px">
@@ -82,7 +85,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-between pt-5px">
-                <div class="font-weight-bold">{{ 'sell_nft.earnings' | transloco }}</div>
+                <div class="font-weight-bold">{{ "sell_nft.earnings" | transloco }}</div>
                 <div>
                   <span>{{ globalVars.nanosToDeSo(bidEntry.EarningsAmountNanos, 5) }} $DESO</span>
                   <span>~{{ globalVars.nanosToUSD(bidEntry.EarningsAmountNanos, 0) }}</span>
@@ -104,22 +107,18 @@
       </div>
     </div>
     <div class="d-flex fs-15px px-40px pb-40px" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
-      <span class="font-weight-bold">{{ 'sell_nft.creator_royalty' | transloco }}:&nbsp;</span>
-      <span class="mr-30px">{{ post.NFTRoyaltyToCreatorBasisPoints / (100 * 100) * 100 }}%</span>
-      <span class="font-weight-bold">{{ 'sell_nft.coinholder_royalty' | transloco }}:&nbsp;</span>
-      <span>{{ post.NFTRoyaltyToCoinBasisPoints / (100 * 100) * 100 }}%</span>
+      <span class="font-weight-bold">{{ "sell_nft.creator_royalty" | transloco }}:&nbsp;</span>
+      <span class="mr-30px">{{ (post.NFTRoyaltyToCreatorBasisPoints / (100 * 100)) * 100 }}%</span>
+      <span class="font-weight-bold">{{ "sell_nft.coinholder_royalty" | transloco }}:&nbsp;</span>
+      <span>{{ (post.NFTRoyaltyToCoinBasisPoints / (100 * 100)) * 100 }}%</span>
     </div>
   </div>
   <div *ngIf="!selectedBidEntries?.length">
-    {{ 'select_one_bid' | transloco }}
+    {{ "select_one_bid" | transloco }}
   </div>
 </div>
 <div [ngClass]="{ 'floating-bottom-bar': globalVars.isMobile() }">
-  <button
-    [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
-    (click)="sellNFT()"
-    class="mint-nft__create-btn"
-  >
+  <button [disabled]="sellNFTDisabled || !selectedBidEntries?.length" (click)="sellNFT()" class="mint-nft__create-btn">
     {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
   </button>
 </div>

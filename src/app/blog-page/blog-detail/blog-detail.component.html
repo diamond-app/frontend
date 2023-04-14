@@ -20,7 +20,11 @@
       class="mt-4 p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px br-10px"
     >
       {{ "feed_post.removed_by_author" | transloco }}
-      <button *ngIf="globalVars.loggedInUser?.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check" class="btn btn-primary ml-2" (click)="hidePost(false)">
+      <button
+        *ngIf="globalVars.loggedInUser?.PublicKeyBase58Check === currentPost.PosterPublicKeyBase58Check"
+        class="btn btn-primary ml-2"
+        (click)="hidePost(false)"
+      >
         Unhide
       </button>
     </div>
@@ -161,7 +165,7 @@
           <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
           <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
           <feed-post
-            *ngIf="thread.parent.ProfileEntryResponse != null"
+            *ngIf="thread.parent.ProfileEntryResponse"
             [includePaddingOnPost]="true"
             [post]="thread.parent"
             [parentPost]="currentPost"
@@ -182,7 +186,7 @@
               <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
               <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
               <feed-post
-                *ngIf="subcommentPost.ProfileEntryResponse != null"
+                *ngIf="subcommentPost.ProfileEntryResponse"
                 [includePaddingOnPost]="true"
                 [post]="subcommentPost"
                 [parentPost]="thread.children[j - 1] || thread.parent"

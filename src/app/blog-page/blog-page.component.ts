@@ -1,9 +1,9 @@
 // @ts-strict
 import { AfterViewInit, Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "src/app/backend-api.service";
-import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
+import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "app-blog-page",
@@ -38,9 +38,7 @@ export class BlogPageComponent implements AfterViewInit {
         )
         .toPromise()
         .then(({ Posts }) =>
-          Posts.filter(
-            (p: PostEntryResponse) => typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined"
-          )
+          Posts.filter((p: PostEntryResponse) => typeof p.PostExtraData.BlogDeltaRtfFormat !== "undefined")
         ),
     ]);
   }
@@ -48,7 +46,7 @@ export class BlogPageComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.pendingPageData.then(([ProfileEntryResponse, posts]) => {
       this.profile = ProfileEntryResponse;
-      const pinnedPostIndex = posts.findIndex((p) => JSON.parse(p.PostExtraData?.BlogPostIsPinned ?? false));
+      const pinnedPostIndex = posts.findIndex((p) => JSON.parse(p.PostExtraData?.BlogPostIsPinned ?? "false"));
       const pinnedPost = pinnedPostIndex > 0 ? posts[pinnedPostIndex] : null;
       const sortedPosts = pinnedPost
         ? [...posts.slice(0, pinnedPostIndex), ...posts.slice(pinnedPostIndex + 1)]

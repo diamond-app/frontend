@@ -1,6 +1,7 @@
-import { FormControl, Validators } from "@angular/forms";
-import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
+import { UntypedFormControl, Validators } from "@angular/forms";
+import { BackendApiService } from "../../app/backend-api.service";
 import { GlobalVarsService } from "../../app/global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 export class CreatorCoinTrade {
   static BUY_VERB = "Buy";
@@ -37,8 +38,8 @@ export class CreatorCoinTrade {
   networkFeeNanos: number = 0;
 
   // Amount shown in the trade creator form component.
-  amount: FormControl;
-  transferRecipient: FormControl = new FormControl(null, [Validators.required]);
+  amount: UntypedFormControl;
+  transferRecipient: UntypedFormControl = new UntypedFormControl(null, [Validators.required]);
   showUsernameError: boolean = false;
   showPubKeyError: boolean = false;
   showCannotSendToSelfError: boolean = false;

@@ -3,8 +3,9 @@ import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { AssociationReactionValue, ProfileEntryResponse } from "../backend-api.service";
+import { AssociationReactionValue } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 import { TradeCreatorModalComponent } from "../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 
 @Component({

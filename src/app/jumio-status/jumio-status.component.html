@@ -6,28 +6,43 @@
   }"
 >
   <!-- User completed Jumio flow, but we haven't received the Jumio callback yet-->
-  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && !globalVars.loggedInUser.JumioReturned"
-       class="d-flex align-items-center font-weight-normal justify-content-between">
+  <div
+    *ngIf="globalVars.loggedInUser.JumioFinishedTime && !globalVars.loggedInUser.JumioReturned"
+    class="d-flex align-items-center font-weight-normal justify-content-between"
+  >
     <div>
       <i-feather name="clock"></i-feather>
-      <span>{{ 'jumio_status.your_free' | transloco }} <free-deso-message></free-deso-message> {{ 'jumio_status.will_arive_in_a_minute' | transloco }}.</span>
+      <span>
+        {{ "jumio_status.your_free" | transloco }}
+        <free-deso-message></free-deso-message>
+        {{ "jumio_status.will_arive_in_a_minute" | transloco }}.
+      </span>
     </div>
   </div>
   <!-- User hasn't tried jumio flow -->
-  <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="globalVars.launchGetFreeDESOFlow(true)"
-       class="d-flex align-items-center font-weight-normal justify-content-between">
+  <div
+    *ngIf="!globalVars.loggedInUser.JumioFinishedTime"
+    (click)="globalVars.launchGetFreeDESOFlow(true)"
+    class="d-flex align-items-center font-weight-normal justify-content-between"
+  >
     <div class="cursor-pointer">
       <i-feather name="gift" class="position-relative" style="top: -2px"></i-feather>
-      <span>{{ message | transloco }} {{ 'jumio_status.your_free' | transloco }} <free-deso-message></free-deso-message></span>
+      <span>
+        {{ message | transloco }} {{ "jumio_status.your_free" | transloco }}
+        <free-deso-message></free-deso-message>
+      </span>
       <i-feather (click)="hideFreeMoneyBanner($event)" name="x" class="right-20px" style="margin-top: -2px"></i-feather>
     </div>
   </div>
   <!-- User tried Jumio but verification failed-->
-  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned" (click)="globalVars.launchGetFreeDESOFlow(false)"
-       class="d-flex align-items-center font-weight-normal justify-content-between">
+  <div
+    *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned"
+    (click)="globalVars.launchGetFreeDESOFlow(false)"
+    class="d-flex align-items-center font-weight-normal justify-content-between"
+  >
     <div class="cursor-pointer">
       <i-feather name="gift"></i-feather>
-      <span>{{ 'jumio_status.robot_check_failed' | transloco }}</span>
+      <span>{{ "jumio_status.robot_check_failed" | transloco }}</span>
       <i-feather (click)="hideFreeMoneyBanner($event)" name="x"></i-feather>
     </div>
   </div>

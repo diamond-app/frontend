@@ -1,16 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import {
-  TRANSLOCO_LOADER,
   Translation,
-  TranslocoLoader,
   TRANSLOCO_CONFIG,
+  TRANSLOCO_LOADER,
   translocoConfig,
+  TranslocoLoader,
   TranslocoModule,
 } from "@ngneat/transloco";
-import {
-  TRANSLOCO_PERSIST_LANG_STORAGE,
-  TranslocoPersistLangModule,
-} from '@ngneat/transloco-persist-lang';
+import { TRANSLOCO_PERSIST_LANG_STORAGE, TranslocoPersistLangModule } from "@ngneat/transloco-persist-lang";
 import { Injectable, NgModule } from "@angular/core";
 import { environment } from "../environments/environment";
 

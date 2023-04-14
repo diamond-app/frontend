@@ -28,7 +28,7 @@
         </div>
       </div>
       <div
-        *ngIf="!isLoading && diamondSummaryList.length == 0"
+        *ngIf="!isLoading && diamondSummaryList.length === 0"
         class="row no-gutters pt-10px creator-diamonds__no-diamonds"
       >
         <div class="d-flex justify-content-center w-100">
@@ -50,11 +50,11 @@
             <div
               class="link--unstyled cursor-pointer diamond-row"
               [routerLink]="[
-              '/' + globalVars.RouteNames.USER_PREFIX,
-              showDiamondsGiven ? row.ProfileEntryResponse.Username : profile.Username,
-              globalVars.RouteNames.DIAMONDS,
-              showDiamondsGiven ? profile.Username : row.ProfileEntryResponse.Username,
-            ]"
+                '/' + globalVars.RouteNames.USER_PREFIX,
+                showDiamondsGiven ? row.ProfileEntryResponse.Username : profile.Username,
+                globalVars.RouteNames.DIAMONDS,
+                showDiamondsGiven ? profile.Username : row.ProfileEntryResponse.Username
+              ]"
             >
               <div class="row no-gutters py-10px border-bottom mb-0">
                 <div class="col-5 d-flex align-items-left mb-0">

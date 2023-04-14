@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { LoggedOutEmptyStateComponent } from './logged-out-empty-state.component';
+import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state.component";
 
-describe('LoggedOutEmptyStateComponent', () => {
+describe("LoggedOutEmptyStateComponent", () => {
   let component: LoggedOutEmptyStateComponent;
   let fixture: ComponentFixture<LoggedOutEmptyStateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoggedOutEmptyStateComponent ]
-    })
-    .compileComponents();
+      declarations: [LoggedOutEmptyStateComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('LoggedOutEmptyStateComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

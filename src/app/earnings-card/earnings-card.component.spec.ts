@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EarningsCardComponent } from './earnings-card.component';
+import { EarningsCardComponent } from "./earnings-card.component";
 
-describe('EarningsCardComponent', () => {
+describe("EarningsCardComponent", () => {
   let component: EarningsCardComponent;
   let fixture: ComponentFixture<EarningsCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EarningsCardComponent ]
-    })
-    .compileComponents();
+      declarations: [EarningsCardComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('EarningsCardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

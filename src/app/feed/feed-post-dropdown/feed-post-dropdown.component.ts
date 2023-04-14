@@ -1,7 +1,7 @@
 import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { waitForTransactionFound } from "deso-protocol";
+import { NFTEntryResponse, PostEntryResponse, waitForTransactionFound } from "deso-protocol";
 import * as _ from "lodash";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -11,7 +11,7 @@ import RouteNamesService from "src/app/route-names.service";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FollowService } from "../../../lib/services/follow/follow.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
@@ -245,7 +245,7 @@ export class FeedPostDropdownComponent implements OnInit {
 
   unfollowUser(event) {
     event.stopPropagation();
-    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check);
+    this.followService._toggleFollow(false, this.post.PosterPublicKeyBase58Check).subscribe();
   }
 
   addMultiplier() {

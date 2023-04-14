@@ -62,7 +62,7 @@
     <div class="change-account-selector_list_accounts">
       <div *ngFor="let user of globalVars.userList; let rowNum = index">
         <div
-          *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
+          *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check !== globalVars.loggedInUser.PublicKeyBase58Check"
           (click)="_switchToUser(user)"
           class="change-account-selector_list__inner pt-10px pb-10px pl-10px pr-10px d-flex align-items-center"
         >

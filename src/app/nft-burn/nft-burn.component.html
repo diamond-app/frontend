@@ -6,7 +6,8 @@
   <div *ngIf="!loading">
     <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
       <div class="fs-15px text-grey5">
-        You are about to permanently burn your NFT. <b>This NFT will no longer exist - this action cannot be undone.</b>
+        You are about to permanently burn your NFT.
+        <b>This NFT will no longer exist - this action cannot be undone.</b>
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
@@ -16,11 +17,17 @@
         </div>
         <div class="col-5 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
           <span>Highest Bid</span>
-          <span class="mt-5px">{{ globalVars.nanosToDeSo(highBid) }} DESO (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
+          <span class="mt-5px">
+            {{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
+          </span>
         </div>
         <div class="col-5 d-flex flex-column m-16px">
           <span>Min Bid Amount</span>
-          <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
+          <span class="mt-5px">
+            {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{
+              globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
+            }})
+          </span>
         </div>
       </div>
 
@@ -35,9 +42,7 @@
         <div class="nft-modal-bid-details d-flex flex-column justify-content-center p-16px">
           <div class="border-bottom pb-10px d-flex justify-content-between">
             <span class="font-weight-bold">Highest Bid</span>
-            <span>
-              {{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
-            </span>
+            <span>{{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
           </div>
           <div class="pt-10px d-flex justify-content-between">
             <span class="font-weight-bold">Min Bid Amount</span>
@@ -64,7 +69,7 @@
         [contentShouldLinkToThread]="false"
       ></feed-post>
 
-      <div *ngFor="let error of errors" class="error-container" style="white-space: pre-line;">
+      <div *ngFor="let error of errors" class="error-container" style="white-space: pre-line">
         <i-feather name="alert-circle" class="feather-large"></i-feather>
         {{ error }}
       </div>
@@ -86,11 +91,9 @@
           {{ burningNft ? "Burning NFT" : "Burn NFT" }}
         </button>
       </div>
-
     </div>
 
-
-    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+    <div *ngIf="filteredSerialNumbers?.length" [ngClass]="{ 'd-none': !isSelectingSerialNumber }">
       <div class="nft-modal__subtitle">Choose the serial number you wish to burn.</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number

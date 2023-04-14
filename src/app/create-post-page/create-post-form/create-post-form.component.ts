@@ -4,7 +4,6 @@ import { Router } from "@angular/router";
 import { FeedComponent } from "../../feed/feed.component";
 import { TutorialStatus } from "../../backend-api.service";
 import * as introJs from "intro.js/intro";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "create-post-form",

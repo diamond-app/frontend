@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CreateAccessGroupComponent } from './create-access-group.component';
+import { CreateAccessGroupComponent } from "./create-access-group.component";
 
-describe('CreateAccessGroupComponent', () => {
+describe("CreateAccessGroupComponent", () => {
   let component: CreateAccessGroupComponent;
   let fixture: ComponentFixture<CreateAccessGroupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateAccessGroupComponent ]
-    })
-    .compileComponents();
+      declarations: [CreateAccessGroupComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('CreateAccessGroupComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
