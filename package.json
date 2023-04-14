@@ -34,7 +34,7 @@
     "autolinker": "^3.14.2",
     "confetti-js": "github:deso-protocol/confetti-js",
     "currency-symbol-map": "^5.0.1",
-    "deso-protocol": "^1.1.12",
+    "deso-protocol": "^1.1.13",
     "intro.js": "^4.2.2",
     "lodash": "^4.17.15",
     "lottie-web": "^5.7.13",

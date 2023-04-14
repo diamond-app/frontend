@@ -528,11 +528,7 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
-  SendDeSoPreview(
-    SenderPublicKeyBase58Check: string,
-    RecipientPublicKeyOrUsername: string,
-    AmountNanos: number
-  ): Observable<SendDeSoResponse> {
+  SendDeSoPreview(SenderPublicKeyBase58Check: string, RecipientPublicKeyOrUsername: string, AmountNanos: number) {
     return from(
       sendDeso(
         {
