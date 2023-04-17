@@ -629,7 +629,7 @@ export class BackendApiService {
     RepostedPostHashHex: string,
     PostExtraData: any,
     IsHidden: boolean,
-    IsFrozen?: boolean
+    IsFrozen: boolean = false
   ): Observable<any> {
     return from(
       submitPost({
