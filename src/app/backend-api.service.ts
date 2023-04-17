@@ -1699,8 +1699,18 @@ export class BackendApiService {
   }
 
   // Error parsing
-  stringifyError(err): string {
-    return err.toString() || JSON.stringify(err);
+  stringifyError(err: any): string {
+    const message = err?.toString();
+
+    if (message) {
+      return message;
+    }
+
+    if (err) {
+      return JSON.stringify(err);
+    }
+
+    return "Whoops! Something went wrong. Please try again in one minute.";
   }
 
   parseErrorMessage(err): string {
