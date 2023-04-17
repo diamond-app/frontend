@@ -20,8 +20,6 @@ import { ThemeService } from "./theme/theme.service";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  public showInstallPWA: boolean;
-
   constructor(
     private ref: ChangeDetectorRef,
     private themeService: ThemeService,
