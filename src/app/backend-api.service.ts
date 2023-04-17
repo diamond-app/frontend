@@ -628,7 +628,8 @@ export class BackendApiService {
     BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    IsHidden: boolean
+    IsHidden: boolean,
+    IsFrozen: boolean = false
   ): Observable<any> {
     return from(
       submitPost({
@@ -639,6 +640,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
+        IsFrozen,
       }).then(mergeTxResponse)
     );
   }
