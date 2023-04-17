@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+// @ts-strict
+import { Component, Input } from "@angular/core";
 
 @Component({
   selector: "install-pwa",
@@ -6,5 +7,5 @@ import { Component, EventEmitter, Output } from "@angular/core";
   styleUrls: ["./install-pwa.component.scss"],
 })
 export class InstallPwaComponent {
-  @Output() closePanel = new EventEmitter<any>();
+  @Input() closePanel = () => {};
 }

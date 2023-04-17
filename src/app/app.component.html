@@ -15,6 +15,6 @@
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
   <install-pwa
     *ngIf="globalVars.isMobile() && !globalVars.windowIsPWA() && showInstallPWA"
-    (closePanel)="closeInstallPWA()"
+    [closePanel]="closeInstallPWA"
   ></install-pwa>
 </div>

@@ -350,8 +350,8 @@ export class AppComponent implements OnInit {
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
   }
 
-  closeInstallPWA() {
+  closeInstallPWA = () => {
     this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
     this.showInstallPWA = false;
-  }
+  };
 }
