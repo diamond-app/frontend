@@ -79,7 +79,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         this.creatorCoinTrade.amount.valid &&
         this.creatorCoinTrade.transferRecipient &&
         this.creatorCoinTrade.transferRecipient.valid &&
-        this.creatorCoinTrade.networkFeeNanos != 0 &&
+        this.creatorCoinTrade.networkFeeNanos !== 0 &&
         !this.isUpdatingAmounts
       ) {
         return true;
@@ -332,7 +332,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     // if the user has set the amount previously (e.g. because he clicked review and then went
     // back), populate the amount
     let assetToSellAmount = this.creatorCoinTrade.assetToSellAmount();
-    if (assetToSellAmount != 0) {
+    if (assetToSellAmount !== 0) {
       let amount = this.creatorCoinTrade.convertAmount(
         assetToSellAmount /* input amount */,
         this.creatorCoinTrade.assetToSellCurrency() /* input currency */,

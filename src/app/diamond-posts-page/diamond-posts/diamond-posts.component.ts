@@ -7,6 +7,7 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { isNil } from "lodash";
 
 class DiamondsPost {
   Post: PostEntryResponse;
@@ -56,7 +57,7 @@ export class DiamondPostsComponent {
   subscriptions = new Subscription();
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;

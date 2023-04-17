@@ -719,11 +719,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // the current post (1) + the CommentCount comments/subcomments were hidden
     const decrementAmount = 1 + postEntryResponse.CommentCount;
 
-    if (parentPost !== null) {
+    if (parentPost) {
       parentPost.CommentCount -= decrementAmount;
     }
 
-    if (grandparentPost !== null) {
+    if (grandparentPost) {
       grandparentPost.CommentCount -= decrementAmount;
     }
 

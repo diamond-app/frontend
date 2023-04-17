@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { AssociationType, BackendApiService, PostAssociationCountsResponse } from "../../backend-api.service";
+import { AssociationType, BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
 import { orderBy } from "lodash";
 import { finalize, map, switchMap, tap } from "rxjs/operators";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { PostEntryResponse, ProfileEntryResponse, AssociationCountsResponse } from "deso-protocol";
 
 @Component({
   selector: "poll-details",
@@ -21,7 +21,7 @@ export class PollDetailsComponent implements OnInit {
   loading = false;
   voteTabs: Array<string> = [];
   activeVoteTab: string | null = null;
-  postVoteCounts: PostAssociationCountsResponse = { Counts: {}, Total: 0 };
+  postVoteCounts: AssociationCountsResponse = { Counts: {}, Total: 0 };
   usersReacted: Array<{ publicKey: string; profile: ProfileEntryResponse | null }> = [];
 
   // Infinite scroll metadata.
@@ -60,7 +60,7 @@ export class PollDetailsComponent implements OnInit {
           );
         })
       )
-      .subscribe((c: PostAssociationCountsResponse) => {
+      .subscribe((c: AssociationCountsResponse) => {
         this.postVoteCounts = c;
         this.voteTabs = this.processTabs(c.Counts);
         this.selectTab(this.voteTabs[0]);

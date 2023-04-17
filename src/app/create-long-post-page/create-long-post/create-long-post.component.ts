@@ -348,6 +348,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           false /*IsHidden*/
         )
         .toPromise();
+
       const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
 
       // if this is a new post, or the author updates the title of an existing

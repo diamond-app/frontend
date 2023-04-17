@@ -90,7 +90,6 @@ import {
   getVideoStatus,
   HodlersSortType,
   identity,
-  NFTBidEntryResponse as NFTBidEntry,
   NFTEntryResponse,
   PostEntryResponse,
   ProfileEntryResponse,
@@ -101,7 +100,6 @@ import {
   sendDiamonds,
   setNotificationMetadata,
   submitPost,
-  SubmitTransactionResponse,
   transferCreatorCoin,
   transferNFT,
   updateFollowingStatus,
@@ -111,7 +109,6 @@ import {
   uploadImage,
   uploadVideo,
   UploadVideoV2Response,
-  User,
   verifyEmail,
 } from "deso-protocol";
 import { EMPTY, forkJoin, from, Observable, of, Subject, throwError } from "rxjs";
@@ -142,7 +139,6 @@ export enum TutorialStatus {
 }
 
 export enum AssociationType {
-  // TODO: add more types when needed
   reaction = "REACTION",
   pollResponse = "POLL_RESPONSE",
 }
@@ -159,28 +155,6 @@ export enum AssociationReactionValue {
 
 // TODO: other association values can be added as Value1 | Value2 etc.
 export type AssociationValue = AssociationReactionValue | string;
-
-export interface PostAssociation {
-  AppPublicKeyBase58Check: string;
-  AssociationID: string;
-  AssociationType: AssociationType;
-  AssociationValue: AssociationValue;
-  BlockHeight: number;
-  ExtraData: any;
-  PostHashHex: string;
-  TransactorPublicKeyBase58Check: string;
-}
-
-export interface PostAssociationCountsResponse {
-  Counts: { [key in AssociationValue]?: number };
-  Total: number;
-}
-
-export interface PostAssociationsResponse {
-  Associations: Array<PostAssociation>;
-  PostHashHexToPostEntryResponse: { [postHex: string]: PostEntryResponse };
-  PublicKeyToProfileEntryResponse: { [publicKey: string]: ProfileEntryResponse };
-}
 
 @Injectable({
   providedIn: "root",
@@ -276,19 +250,6 @@ export class BackendApiService {
     return throwError(error);
   }
 
-  signAndSubmitTransaction(request: Observable<any>): Observable<any> {
-    return request.pipe(
-      switchMap((res) => {
-        return from(identity.signAndSubmit(res.TransactionHex));
-      }),
-      catchError(this._handleError)
-    );
-  }
-
-  get(endpoint: string, path: string) {
-    return this.httpClient.get<any>(this._makeRequestURL(endpoint, path)).pipe(catchError(this._handleError));
-  }
-
   post(endpoint: string, path: string, body: any): Observable<any> {
     return this.httpClient.post<any>(this._makeRequestURL(endpoint, path), body).pipe(catchError(this._handleError));
   }
@@ -342,7 +303,7 @@ export class BackendApiService {
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number
-  ): Observable<SendDeSoResponse & SubmitTransactionResponse> {
+  ): Observable<SendDeSoResponse> {
     return from(
       sendDeso({
         SenderPublicKeyBase58Check,
@@ -401,7 +362,7 @@ export class BackendApiService {
         BuyNowPriceNanos,
         AdditionalDESORoyaltiesMap,
         AdditionalCoinRoyaltiesMap,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -423,7 +384,7 @@ export class BackendApiService {
         MinBidAmountNanos,
         IsBuyNow,
         BuyNowPriceNanos,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -439,7 +400,7 @@ export class BackendApiService {
         NFTPostHashHex,
         SerialNumber,
         BidAmountNanos,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -449,7 +410,7 @@ export class BackendApiService {
         UpdaterPublicKeyBase58Check,
         NFTPostHashHex,
         SerialNumber,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -463,7 +424,7 @@ export class BackendApiService {
         UpdaterPublicKeyBase58Check,
         NFTPostHashHex,
         SerialNumber,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -687,7 +648,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -962,7 +923,7 @@ export class BackendApiService {
     ).pipe(map(mergeTxResponse));
   }
 
-  DeletePostAssociation(TransactorPublicKeyBase58Check: string, AssociationID: string): Observable<any> {
+  DeletePostAssociation(TransactorPublicKeyBase58Check: string, AssociationID: string) {
     return from(
       deletePostAssociation({
         TransactorPublicKeyBase58Check,
@@ -1045,13 +1006,12 @@ export class BackendApiService {
     );
   }
 
-  // TODO: add associations data calls
   GetPostAssociationsCounts(
     Post: PostEntryResponse,
     AssociationType: AssociationType,
     AssociationValues: Array<AssociationValue>,
     SkipLegacyLikes: boolean = false
-  ): Observable<PostAssociationCountsResponse> {
+  ) {
     return from(
       countPostAssociations({
         PostHashHex: Post.PostHashHex,
@@ -1090,12 +1050,7 @@ export class BackendApiService {
         DiamondPostHashHex,
         DiamondLevel,
       })
-    ).pipe(
-      map((res) => ({
-        ...res.constructedTransactionResponse,
-        ...res.submittedTransactionResponse,
-      }))
-    );
+    ).pipe(map(mergeTxResponse));
   }
 
   GetDiamondsForPublicKey(PublicKeyBase58Check: string, FetchYouDiamonded: boolean = false): Observable<any> {
