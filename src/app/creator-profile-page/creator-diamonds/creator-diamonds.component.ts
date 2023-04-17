@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Subscription } from "rxjs";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { of } from "rxjs";
+import { catchError, finalize, tap } from "rxjs/operators";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "creator-diamonds",
@@ -33,58 +35,58 @@ export class CreatorDiamondsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchDiamonds();
+    this.fetchDiamonds().subscribe();
   }
 
   _handleTabClick(tab) {
     this.onChange(tab);
   }
 
-  fetchDiamonds(): Subscription {
+  fetchDiamonds() {
     this.isLoading = true;
-    return this.backendApi
-      .GetDiamondsForPublicKey(this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
-      .subscribe(
-        (res) => {
-          this.diamondSummaryList = res.DiamondSenderSummaryResponses;
 
-          // Calculate the number of diamonds that have come from
-          // anonymous sources, and reformat the list to remove the
-          // anonymous entries.
-          let diamondListWithoutAnon = [];
-          for (let ii = 0; ii < this.diamondSummaryList?.length; ii++) {
-            if (
-              !this.diamondSummaryList[ii].ProfileEntryResponse &&
-              this.diamondSummaryList[ii].SenderPublicKeyBase58Check
-            ) {
-              this.totalAnonDiamonds += this.diamondSummaryList[ii].TotalDiamonds;
-              this.totalAnonDiamondValue += this.sumDiamondValueForUser(this.diamondSummaryList[ii]);
+    return this.backendApi.GetDiamondsForPublicKey(this.profile.PublicKeyBase58Check, this.showDiamondsGiven).pipe(
+      tap((res) => {
+        this.diamondSummaryList = res.DiamondSenderSummaryResponses;
 
-              if (this.diamondSummaryList[ii].HighestDiamondLevel > this.highestAnonDiamondLevel) {
-                this.highestAnonDiamondLevel = this.diamondSummaryList[ii].HighestDiamondLevel;
-              }
-            } else {
-              diamondListWithoutAnon.push(this.diamondSummaryList[ii]);
+        // Calculate the number of diamonds that have come from
+        // anonymous sources, and reformat the list to remove the
+        // anonymous entries.
+        let diamondListWithoutAnon = [];
+        for (let ii = 0; ii < this.diamondSummaryList?.length; ii++) {
+          if (
+            !this.diamondSummaryList[ii].ProfileEntryResponse &&
+            this.diamondSummaryList[ii].SenderPublicKeyBase58Check
+          ) {
+            this.totalAnonDiamonds += this.diamondSummaryList[ii].TotalDiamonds;
+            this.totalAnonDiamondValue += this.sumDiamondValueForUser(this.diamondSummaryList[ii]);
+
+            if (this.diamondSummaryList[ii].HighestDiamondLevel > this.highestAnonDiamondLevel) {
+              this.highestAnonDiamondLevel = this.diamondSummaryList[ii].HighestDiamondLevel;
             }
+          } else {
+            diamondListWithoutAnon.push(this.diamondSummaryList[ii]);
           }
-          this.diamondSummaryList = diamondListWithoutAnon;
-
-          if (this.totalAnonDiamonds) {
-            this.diamondSummaryList.push({ anonDiamondsRow: true });
-          }
-
-          if (this.diamondSummaryList.length) {
-            this.diamondSummaryList.push({ totalRow: true });
-          }
-          this.totalDiamonds = res.TotalDiamonds;
-        },
-        (err) => {
-          this.globalVars._alertError(this.backendApi.parseProfileError(err));
         }
-      )
-      .add(() => {
+        this.diamondSummaryList = diamondListWithoutAnon;
+
+        if (this.totalAnonDiamonds) {
+          this.diamondSummaryList.push({ anonDiamondsRow: true });
+        }
+
+        if (this.diamondSummaryList.length) {
+          this.diamondSummaryList.push({ totalRow: true });
+        }
+        this.totalDiamonds = res.TotalDiamonds;
+      }),
+      catchError((err) => {
+        this.globalVars._alertError(this.backendApi.parseProfileError(err));
+        return of();
+      }),
+      finalize(() => {
         this.isLoading = false;
-      });
+      })
+    );
   }
   counter(num: number) {
     return Array(num);
@@ -95,7 +97,9 @@ export class CreatorDiamondsComponent implements OnInit {
       this.activeTab = event;
       this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
       this.loadingNewSelection = true;
-      this.fetchDiamonds().add(() => this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false)));
+      this.fetchDiamonds().subscribe(() =>
+        this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false))
+      );
     }
   }
 

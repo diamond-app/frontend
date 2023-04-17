@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { ProfileEntryResponse } from "../../backend-api.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "transfer-deso-modal",

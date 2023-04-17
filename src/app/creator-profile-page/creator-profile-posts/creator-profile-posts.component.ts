@@ -3,8 +3,10 @@ import { ActivatedRoute } from "@angular/router";
 import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { isNil } from "lodash";
 
 @Component({
   selector: "creator-profile-posts",
@@ -77,7 +79,7 @@ export class CreatorProfilePostsComponent {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;
@@ -118,8 +120,8 @@ export class CreatorProfilePostsComponent {
     const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+      predicate: ({ $index, data }: { $index: number; data: any }) => {
+        let currentPost = data as PostEntryResponse;
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];

@@ -1,7 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../backend-api.service";
 
 @Component({
   selector: "trade-creator-page",

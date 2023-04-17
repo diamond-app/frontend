@@ -1,5 +1,4 @@
 import { AbstractControl, ValidatorFn } from "@angular/forms";
-import { minValidator } from "./min-validator";
 
 // Uses a function getMinFunction to compute the max and evaluates the max against
 // the current value

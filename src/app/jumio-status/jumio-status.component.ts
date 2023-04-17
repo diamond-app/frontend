@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { TranslocoService } from "@ngneat/transloco";

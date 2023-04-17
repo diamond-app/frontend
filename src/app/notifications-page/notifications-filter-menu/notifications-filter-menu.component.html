@@ -1,13 +1,18 @@
 <div class="fs-16px messages-filter-menu__container border" *transloco="let t">
   <div class="mr-15px ml-15px pt-15px pb-15px font-weight-bold d-flex align-items-center justify-content-between">
-    <span>{{ t('notifications.filter.notification_settings') }}</span>
+    <span>{{ t("notifications.filter.notification_settings") }}</span>
     <i-feather name="x" class="fs-0px feather-medium cursor-pointer" (click)="closeFilter.emit()"></i-feather>
   </div>
 
   <div class="w-100 border-color-grey border-bottom"></div>
 
   <div class="p-15px">
-    <span class="messages-filter-menu__title" style="margin-left: 0px">{{ t('notifications.filter.only_show') }}<a (click)="selectAllOrNone()" class="ml-5px fs-12px">({{ allSelected() ? t('notifications.filter.select_none') : t('notifications.filter.select_all') }})</a></span>
+    <span class="messages-filter-menu__title" style="margin-left: 0px">
+      {{ t("notifications.filter.only_show") }}
+      <a (click)="selectAllOrNone()" class="ml-5px fs-12px">
+        ({{ allSelected() ? t("notifications.filter.select_none") : t("notifications.filter.select_all") }})
+      </a>
+    </span>
     <div class="mt-10px d-flex flex-row align-items-center">
       <button
         class="checkbox-circle mr-10px"
@@ -17,7 +22,7 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="heart" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.likes') }}</span>
+      <span>{{ t("notifications.filter.likes") }}</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -29,7 +34,7 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="diamond" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.diamonds') }}</span>
+      <span>{{ t("notifications.filter.diamonds") }}</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -41,7 +46,7 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="coin" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.creator_coin') }} / $DESO</span>
+      <span>{{ t("notifications.filter.creator_coin") }} / $DESO</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -53,7 +58,7 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="user" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.follows') }}</span>
+      <span>{{ t("notifications.filter.follows") }}</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -65,7 +70,7 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="message-square" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.mentions_replies_reposts') }}</span>
+      <span>{{ t("notifications.filter.mentions_replies_reposts") }}</span>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
@@ -77,12 +82,12 @@
         <i-feather name="check"></i-feather>
       </button>
       <i-feather name="award" class="feather-medium fs-0px mr-5px"></i-feather>
-      <span>{{ t('notifications.filter.nft') }}</span>
+      <span>{{ t("notifications.filter.nft") }}</span>
     </div>
   </div>
   <div class="w-100 border-color-grey border-bottom"></div>
   <div class="p-15px">
-    <span class="messages-filter-menu__title" style="margin-left: 0px">{{ t('notifications.filter.view') }}</span>
+    <span class="messages-filter-menu__title" style="margin-left: 0px">{{ t("notifications.filter.view") }}</span>
     <div class="mt-10px d-flex flex-row align-items-center">
       <button
         class="checkbox-circle mr-10px"
@@ -91,13 +96,13 @@
       >
         <i-feather name="check"></i-feather>
       </button>
-      <span>{{ t('notifications.filter.expanded') }}</span>
+      <span>{{ t("notifications.filter.expanded") }}</span>
     </div>
   </div>
   <div class="d-flex flex-center w-100 pb-15px">
     <div class="w-100 messages-filter-menu__buttons">
-      <button class="btn" (click)="updateSettings()">{{ t('notifications.filter.update') }}</button>
-      <a class="cursor-pointer fc-muted" (click)="closeFilter.emit()">{{ t('notifications.filter.cancel') }}</a>
+      <button class="btn" (click)="updateSettings()">{{ t("notifications.filter.update") }}</button>
+      <a class="cursor-pointer fc-muted" (click)="closeFilter.emit()">{{ t("notifications.filter.cancel") }}</a>
     </div>
   </div>
 </div>

@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { IdentityMigrationModalComponent } from './identity-migration-modal.component';
+import { IdentityMigrationModalComponent } from "./identity-migration-modal.component";
 
-describe('IdentityMigrationModalComponent', () => {
+describe("IdentityMigrationModalComponent", () => {
   let component: IdentityMigrationModalComponent;
   let fixture: ComponentFixture<IdentityMigrationModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ IdentityMigrationModalComponent ]
-    })
-    .compileComponents();
+      declarations: [IdentityMigrationModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('IdentityMigrationModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

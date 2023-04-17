@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { Component, OnInit } from "@angular/core";
+import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 

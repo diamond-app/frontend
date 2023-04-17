@@ -2,14 +2,14 @@ import { LocationStrategy } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
-import * as introJs from "intro.js/intro.js";
 import { isNil } from "lodash";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../../lib/helpers/swal-helper";
 import { AppRoutingModule } from "../../../app-routing.module";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../../backend-api.service";
 import { FeedComponent } from "../../../feed/feed.component";
 import { GlobalVarsService } from "../../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -17,7 +17,6 @@ import { GlobalVarsService } from "../../../global-vars.service";
   styleUrls: ["./buy-creator-coins-tutorial.component.scss"],
 })
 export class BuyCreatorCoinsTutorialComponent implements OnInit {
-  introJS = introJs();
   // Whether the "buy" button should wiggle to prompt the user to click it
   tutorialWiggle = false;
   static PAGE_SIZE = 100;

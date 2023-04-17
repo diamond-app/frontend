@@ -13,7 +13,7 @@
     <simple-center-loader *ngIf="loadingFirstPage"></simple-center-loader>
 
     <div
-      *ngIf="totalFollowerCount == 0 && !datasource.adapter.isLoading"
+      *ngIf="totalFollowerCount === 0 && !datasource.adapter.isLoading"
       class="fs-15px d-flex justify-content-left w-100 p-15px"
     >
       Nobody yet
@@ -53,7 +53,9 @@
             >
               {{ profileEntry.Username }}
             </a>
-            <span *ngIf="profileEntry?.IsVerified" class="ml-1 d-inline-block align-center text-primary"><i class="fas fa-check-circle fa-md align-middle"></i></span>
+            <span *ngIf="profileEntry?.IsVerified" class="ml-1 d-inline-block align-center text-primary">
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
             <!-- Coin price-->
             <!-- Hidden on mobile, UI gets too crowded otherwise -->
             <a
@@ -98,5 +100,4 @@
     <div class="global__bottom-bar-mobile-height"></div>
     <div class="global__bottom-bar-mobile-height"></div>
   </div>
-
 </div>

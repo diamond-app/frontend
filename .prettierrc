@@ -3,5 +3,5 @@
     "tabWidth": 2,
     "useTabs": false,
     "quoteProps": "as-needed",
-    "htmlWhitespaceSensitivity": "ignore",
+    "htmlWhitespaceSensitivity": "ignore"
 }

@@ -1,5 +1,3 @@
-import { environment } from "../../environments/environment";
-
 const cleanErrorMessages = [
   {
     searchString: "RuleErrorFollowEntryAlreadyExists",

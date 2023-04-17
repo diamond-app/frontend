@@ -5,9 +5,10 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/creator-profile-top-card.component";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "creator-profile-details",

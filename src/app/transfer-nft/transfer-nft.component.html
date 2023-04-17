@@ -4,14 +4,12 @@
   </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
-      <div class="fs-15px text-grey5">
-        You are about to transfer the NFT shown below.
-      </div>
+    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{ 'd-none': isSelectingSerialNumber }">
+      <div class="fs-15px text-grey5">You are about to transfer the NFT shown below.</div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
-          <span class="m-16px">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
-          <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
+        <span class="m-16px">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
+        <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
       </div>
 
       <div *ngIf="globalVars.isMobile()">
@@ -39,9 +37,7 @@
       ></simple-profile-card>
 
       <div *ngIf="this.post.HasUnlockable">
-        <div class="fs-15px pt-15px pb-30px text-grey5">
-          This NFT includes unlockable content. Enter it below.
-        </div>
+        <div class="fs-15px pt-15px pb-30px text-grey5">This NFT includes unlockable content. Enter it below.</div>
 
         <textarea
           class="fs-15px lh-18px br-8px form-control mb-30px"
@@ -91,11 +87,9 @@
         [contentShouldLinkToThread]="false"
         [keepVideoPaused]="true"
       ></feed-post>
-
     </div>
 
-
-    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{ 'd-none': !isSelectingSerialNumber }">
       <div class="nft-modal__subtitle">These are the serial numbers that are transferable</div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number

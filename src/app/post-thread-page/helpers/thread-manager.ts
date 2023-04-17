@@ -1,5 +1,5 @@
 // @ts-strict
-import { PostEntryResponse } from "src/app/backend-api.service";
+import { PostEntryResponse } from "deso-protocol";
 
 export type Thread = {
   parent: PostEntryResponse;

@@ -10,16 +10,9 @@
   </div>
   <div class="w-100 border-bottom"></div>
   <div class="d-flex align-items-center">
-    <button
-      class="w-100 danger-button fs-15px br-12px m-16px"
-      (click)="closeAuction()"
-      [disabled]="closingAuction"
-    >
+    <button class="w-100 danger-button fs-15px br-12px m-16px" (click)="closeAuction()" [disabled]="closingAuction">
       {{ closingAuction ? "Closing auctions" : "Close my auctions" }}
     </button>
-    <div *ngIf="closingAuction" class="pl-15px fs-15px">
-      {{ auctionCounter }} of {{ auctionTotal }} closed
-    </div>
+    <div *ngIf="closingAuction" class="pl-15px fs-15px">{{ auctionCounter }} of {{ auctionTotal }} closed</div>
   </div>
-
 </div>

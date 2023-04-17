@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CashoutModalComponent } from './cashout-modal.component';
+import { CashoutModalComponent } from "./cashout-modal.component";
 
-describe('CashoutModalComponent', () => {
+describe("CashoutModalComponent", () => {
   let component: CashoutModalComponent;
   let fixture: ComponentFixture<CashoutModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CashoutModalComponent ]
-    })
-    .compileComponents();
+      declarations: [CashoutModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('CashoutModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

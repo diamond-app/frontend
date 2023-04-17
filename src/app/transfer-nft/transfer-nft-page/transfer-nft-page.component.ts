@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { PostEntryResponse } from "../../backend-api.service";
+import { PostEntryResponse } from "deso-protocol";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 

@@ -1,4 +1,4 @@
-<div *ngIf="globalVars.nodeInfo != null">
+<div *ngIf="globalVars.nodeInfo">
   <!-- Selector -->
   <div class="fs-15px border-bottom border-color-grey">
     <div class="m-15px">
@@ -20,7 +20,7 @@
   <div
     style="overflow-y: scroll"
     class="disable-scrollbars"
-    *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts"
+    *ngIf="activeTab === 'Posts' && adminPosts.length !== 0 && !loadingPosts"
   >
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
@@ -33,7 +33,7 @@
       (tabClick)="_postTabClicked($event)"
     ></tab-selector>
     <div
-      *ngIf="activePostTab == POSTS_BY_DESO_TAB"
+      *ngIf="activePostTab === POSTS_BY_DESO_TAB"
       class="w-100 px-15px py-5px fs-15px border-bottom border-color-grey d-flex"
       style="justify-content: flex-start; align-items: center"
     >
@@ -82,7 +82,7 @@
       </div>
     </ng-template>
     <div
-      *ngIf="!loadingPosts && activePostTab == 'Posts'"
+      *ngIf="!loadingPosts && activePostTab === 'Posts'"
       class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
       (click)="_loadPosts()"
     >
@@ -92,17 +92,17 @@
   </div>
 
   <div
-    *ngIf="activeTab == 'Posts' && adminPosts.length == 0 && !loadingPosts"
+    *ngIf="activeTab === 'Posts' && adminPosts.length === 0 && !loadingPosts"
     class="d-flex flex-column align-items-center justify-content-center"
     style="height: 400px"
   >
     <div class="fc-muted fs-15px">No posts found.</div>
   </div>
 
-  <simple-center-loader *ngIf="activeTab == 'Posts' && loadingPosts"></simple-center-loader>
+  <simple-center-loader *ngIf="activeTab === 'Posts' && loadingPosts"></simple-center-loader>
 
   <!-- Hot Feed -->
-  <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Hot Feed'">
+  <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab === 'Hot Feed'">
     <div
       *ngIf="globalVars.showSuperAdminTools()"
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
@@ -385,7 +385,7 @@
       Select posts below to whitelist.
     </div>
 
-    <simple-center-loader *ngIf="loadingHotFeed && hotFeedPosts.length == 0; else showHotFeed"></simple-center-loader>
+    <simple-center-loader *ngIf="loadingHotFeed && hotFeedPosts.length === 0; else showHotFeed"></simple-center-loader>
     <ng-template #showHotFeed>
       <div *ngFor="let post of hotFeedPosts; let ii = index">
         <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
@@ -419,7 +419,7 @@
   </div>
 
   <!-- Profile Blacklisting -->
-  <div *ngIf="activeTab == 'Profiles'" class="w-100 d-flex flex-column">
+  <div *ngIf="activeTab === 'Profiles'" class="w-100 d-flex flex-column">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -647,7 +647,7 @@
           <span class="fc-blue">{{ userMetadataMapLength }}</span>
           UserMetadata entries ---
         </div>
-        <div *ngFor="let item of userMetadataMap | keyvalue: descOrder">
+        <div *ngFor="let item of userMetadataMap | keyvalue : descOrder">
           <ul class="mb-5px">
             <li>
               <span *ngIf="usernameMap[item.key]" class="font-weight-bold fc-blue">{{ usernameMap[item.key] }}:</span>
@@ -782,7 +782,7 @@
   </div>
 
   <!-- Network Info -->
-  <div *ngIf="activeTab == 'Network'">
+  <div *ngIf="activeTab === 'Network'">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -792,7 +792,7 @@
   </div>
 
   <!-- Mempool Info -->
-  <div *ngIf="activeTab == 'Mempool'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
+  <div *ngIf="activeTab === 'Mempool'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -858,18 +858,18 @@
   </div>
 
   <!-- Tutorial -->
-  <div *ngIf="activeTab == 'Tutorial'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
+  <div *ngIf="activeTab === 'Tutorial'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <admin-tutorial></admin-tutorial>
   </div>
 
   <!-- NFTs -->
-  <div *ngIf="activeTab == 'NFTs'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
+  <div *ngIf="activeTab === 'NFTs'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <nft-drop-mgr></nft-drop-mgr>
   </div>
 
   <!-- Super Info -->
   <div
-    *ngIf="activeTab == 'Super' && globalVars.showSuperAdminTools()"
+    *ngIf="activeTab === 'Super' && globalVars.showSuperAdminTools()"
     class="w-100 d-flex flex-column disable-scrollbars"
     style="overflow-y: scroll"
   >
@@ -1243,13 +1243,13 @@
   </div>
 
   <!-- Wyre Info -->
-  <div *ngIf="activeTab == 'Wyre'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
+  <div *ngIf="activeTab === 'Wyre'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <admin-wyre></admin-wyre>
   </div>
 </div>
 
 <div
-  *ngIf="!globalVars.showAdminTools() || (activeTab == 'Super' && !globalVars.showSuperAdminTools())"
+  *ngIf="!globalVars.showAdminTools() || (activeTab === 'Super' && !globalVars.showSuperAdminTools())"
   class="d-flex flex-column align-items-center justify-content-center p-15px font-italic"
   style="height: 600px"
 >

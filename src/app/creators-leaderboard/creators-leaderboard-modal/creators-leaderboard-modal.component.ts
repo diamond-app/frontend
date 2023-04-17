@@ -7,7 +7,5 @@ import { BsModalRef } from "ngx-bootstrap/modal";
   styleUrls: ["./creators-leaderboard-modal.component.scss"],
 })
 export class CreatorsLeaderboardModalComponent {
-  constructor(
-    public bsModalRef: BsModalRef,
-  ) {}
+  constructor(public bsModalRef: BsModalRef) {}
 }

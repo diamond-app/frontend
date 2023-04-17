@@ -4,8 +4,16 @@ import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
-import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { isNil } from "lodash";
+
+class DiamondsPost {
+  Post: PostEntryResponse;
+  // Boolean that is set to true when this is the first post at a given diamond level.
+  ShowDiamondDivider?: boolean;
+}
 
 @Component({
   selector: "diamond-posts",
@@ -49,7 +57,7 @@ export class DiamondPostsComponent {
   subscriptions = new Subscription();
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;
@@ -129,8 +137,8 @@ export class DiamondPostsComponent {
   async _prependComment(uiPostParent, newComment) {
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element }) => {
-        let currentPost = (data as any) as PostEntryResponse;
+      predicate: ({ data }: { data: any }) => {
+        let currentPost = data as PostEntryResponse;
         if (currentPost.PostHashHex === uiPostParent.PostHashHex) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];

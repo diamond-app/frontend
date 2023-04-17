@@ -3,8 +3,9 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse } from "deso-protocol";
 
 export type ProfileUpdates = {
   usernameUpdate: string;

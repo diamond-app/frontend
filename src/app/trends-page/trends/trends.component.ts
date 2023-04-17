@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { isNil } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
@@ -91,7 +92,7 @@ export class TrendsComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
 

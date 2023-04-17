@@ -2,7 +2,7 @@ import { Location } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { AppRoutingModule } from "../../app-routing.module";
-import { ProfileEntryResponse } from "../../backend-api.service";
+import { ProfileEntryResponse } from "deso-protocol";
 import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({

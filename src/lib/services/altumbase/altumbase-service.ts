@@ -117,10 +117,7 @@ export class AltumbaseService {
       .pipe(
         map((res: any) => {
           if (!skipFilters) {
-            res.UserList = _.filter(
-              res.UserList,
-              (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
-            );
+            res.UserList = _.filter(res.UserList, (o) => o.ProfileEntryResponse && !o.IsGraylisted && !o.IsBlacklisted);
           }
 
           return res.UserList.map((user: User, index: number) => {

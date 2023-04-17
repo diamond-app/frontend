@@ -1,14 +1,11 @@
-import { Injectable, Inject, EventEmitter } from "@angular/core";
-import { THEMES, ACTIVE_THEME, Theme } from "./symbols";
+import { EventEmitter, Inject, Injectable } from "@angular/core";
+import { ACTIVE_THEME, Theme, THEMES } from "./symbols";
 
 @Injectable()
 export class ThemeService {
   themeChange = new EventEmitter<Theme>();
 
-  constructor(
-    @Inject(THEMES) public themes: Theme[],
-    @Inject(ACTIVE_THEME) public theme: string
-  ) {}
+  constructor(@Inject(THEMES) public themes: Theme[], @Inject(ACTIVE_THEME) public theme: string) {}
 
   // Called in app-component ngOnInit
   init(): void {

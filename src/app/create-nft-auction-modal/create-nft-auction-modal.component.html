@@ -3,12 +3,7 @@
 
   <div *ngIf="!post.HasUnlockable" class="d-flex justify-content-start align-items-center fs-15px mt-10px mb-8px">
     <div class="custom-control custom-switch custom-switch-lg">
-      <input
-        [(ngModel)]="isBuyNow"
-        type="checkbox"
-        class="custom-control-input"
-        id="buyNowCheckbox"
-      />
+      <input [(ngModel)]="isBuyNow" type="checkbox" class="custom-control-input" id="buyNowCheckbox" />
       <label class="custom-control-label mt-2px" for="buyNowCheckbox"></label>
     </div>
     <div>Sell as "Buy Now" NFT</div>
@@ -17,13 +12,7 @@
   <div *ngIf="isBuyNow">
     <div class="mint-nft__sub-title">Buy Now Price</div>
     <div class="d-flex mb-16px">
-      <div
-        class="d-flex"
-        dropdown
-        (click)="$event.stopPropagation()"
-        container="body"
-        style="align-items: center"
-      >
+      <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
         <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
           {{ buyNowCurrency }}
           <i-feather name="chevron-down" class="feather-small"></i-feather>
@@ -32,13 +21,13 @@
           <div>
             <a
               class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="buyNowCurrency='USD'"
+              (click)="buyNowCurrency = 'USD'"
             >
               USD
             </a>
             <a
               class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="buyNowCurrency='DESO'"
+              (click)="buyNowCurrency = 'DESO'"
             >
               DESO
             </a>
@@ -63,13 +52,7 @@
 
   <div class="mint-nft__sub-title">Minimum Bid</div>
   <div class="d-flex mb-16px">
-    <div
-      class="d-flex"
-      dropdown
-      (click)="$event.stopPropagation()"
-      container="body"
-      style="align-items: center"
-    >
+    <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
       <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
         {{ minBidCurrency }}
         <i-feather name="chevron-down" class="feather-small"></i-feather>
@@ -78,13 +61,13 @@
         <div>
           <a
             class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="minBidCurrency='USD'"
+            (click)="minBidCurrency = 'USD'"
           >
             USD
           </a>
           <a
             class="dropdown-menu-item fs-14px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="minBidCurrency='DESO'"
+            (click)="minBidCurrency = 'DESO'"
           >
             DESO
           </a>
@@ -107,16 +90,17 @@
   </div>
 
   <div class="container fs-15px pb-30px px-0px">
-    <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
-         style="opacity: 50%">
+    <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border" style="opacity: 50%">
       <div class="col-5 mb-0px fc-blue cursor-pointer" (click)="toggleSelectAll($event)">
-        {{ 'create_nft_auction_modal.select_all' | transloco }}
+        {{ "create_nft_auction_modal.select_all" | transloco }}
       </div>
-      <div class="col-7 mb-0px">{{ 'create_nft_auction_modal.last_price' | transloco }}</div>
+      <div class="col-7 mb-0px">{{ "create_nft_auction_modal.last_price" | transloco }}</div>
     </div>
     <div style="max-height: 250px; overflow-y: scroll">
-      <div *ngFor="let nft of mySerialNumbersNotForSale()"
-           class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
+      <div
+        *ngFor="let nft of mySerialNumbersNotForSale()"
+        class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border"
+      >
         <div class="col-5 mb-0px d-flex align-items-center">
           <div class="custom-control custom-switch custom-switch-lg cursor-pointer">
             <input
@@ -125,14 +109,18 @@
               class="custom-control-input"
               id="{{ 'snCheckbox_' + nft.SerialNumber }}"
             />
-            <label class="custom-control-label" style="margin-top: 4px" for="{{ 'snCheckbox_' + nft.SerialNumber }}"></label>
+            <label
+              class="custom-control-label"
+              style="margin-top: 4px"
+              for="{{ 'snCheckbox_' + nft.SerialNumber }}"
+            ></label>
           </div>
-          <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
+          <span class="lh-15px">&nbsp;#{{ nft.SerialNumber }}</span>
         </div>
         <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
           <div>
-            {{globalVars.nanosToDeSo(nft.LastAcceptedBidAmountNanos)}} DESO
-            <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
+            {{ globalVars.nanosToDeSo(nft.LastAcceptedBidAmountNanos) }} DESO
+            <span class="text-grey7">(~{{ globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2) }})</span>
           </div>
         </div>
       </div>
@@ -148,9 +136,11 @@
     >
       {{ createAuctionText() }}
     </button>
-    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} {{ 'create_nft_auction_modal.counter_of' | transloco }} {{ auctionTotal }} {{ 'create_nft_auction_modal.counter_auctions' | transloco }}</div>
+    <div *ngIf="creatingAuction" class="pl-15px fs-15px">
+      {{ auctionCounter }} {{ "create_nft_auction_modal.counter_of" | transloco }} {{ auctionTotal }}
+      {{ "create_nft_auction_modal.counter_auctions" | transloco }}
+    </div>
   </div>
-
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
 </div>

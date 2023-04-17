@@ -1,73 +1,61 @@
 <!-- Posts -->
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
-<div
-  class="fs-15px text-grey5 font-weight-bold d-flex flex-column"
-  *ngIf="!isLoading"
->
+<div class="fs-15px text-grey5 font-weight-bold d-flex flex-column" *ngIf="!isLoading">
   <div
     class="creator-profile-nfts__header d-flex justify-content-between align-items-center"
     [ngClass]="{ 'card-view': cardView }"
   >
     <div class="d-flex align-items-center">
-      <div
-        class="d-flex"
-        dropdown
-        (click)="$event.stopPropagation()"
-        container="body"
-        style="align-items: center"
-      >
+      <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
         <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
           {{ activeTab }}
           <i-feather name="chevron-down" class="feather-small"></i-feather>
         </button>
-        <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu background-color-white" *dropdownMenu>
+        <div
+          class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu background-color-white"
+          *dropdownMenu
+        >
           <div>
             <a
               class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_GALLERY)"
             >
-              {{ 'creator_profile_nfts.gallery' | transloco }}
+              {{ "creator_profile_nfts.gallery" | transloco }}
             </a>
             <a
               *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
               class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_BIDS)"
             >
-              {{ 'creator_profile_nfts.my_bids' | transloco }}
+              {{ "creator_profile_nfts.my_bids" | transloco }}
             </a>
             <a
               class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.FOR_SALE)"
             >
-              {{ 'creator_profile_nfts.for_sale' | transloco }}
+              {{ "creator_profile_nfts.for_sale" | transloco }}
             </a>
             <a
               *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
               class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.TRANSFERABLE)"
             >
-              {{ 'creator_profile_nfts.transferable' | transloco }}
+              {{ "creator_profile_nfts.transferable" | transloco }}
             </a>
             <a
               *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
               class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
               (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_PENDING_TRANSFERS)"
             >
-              {{ 'creator_profile_nfts.pending' | transloco }}
+              {{ "creator_profile_nfts.pending" | transloco }}
             </a>
           </div>
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <div
-          class="d-flex"
-          dropdown
-          (click)="$event.stopPropagation()"
-          container="body"
-          style="align-items: center"
-        >
+        <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
           <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
-            {{ 'creator_profile_nfts.order_by' | transloco }}
+            {{ "creator_profile_nfts.order_by" | transloco }}
             {{
               orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_ASC ||
               orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_DESC
@@ -91,47 +79,33 @@
                 class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_RECENT)"
               >
-              {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_RECENT }}
+                {{ "creator_profile_nfts.order_by" | transloco }} {{ CreatorProfileNftsComponent.ORDER_RECENT }}
               </a>
               <a
                 class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_POPULAR)"
               >
-              {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_POPULAR }}
+                {{ "creator_profile_nfts.order_by" | transloco }} {{ CreatorProfileNftsComponent.ORDER_POPULAR }}
               </a>
               <a
                 class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_DESC)"
               >
-              {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}
-                <i-feather name="arrow-down" class="feather-xsmall position-relative" style="top:-2px"></i-feather>
+                {{ "creator_profile_nfts.order_by" | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}
+                <i-feather name="arrow-down" class="feather-xsmall position-relative" style="top: -2px"></i-feather>
               </a>
               <a
                 class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
                 (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_ASC)"
               >
-              {{ 'creator_profile_nfts.order_by' | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}
-                <i-feather name="arrow-up" class="feather-xsmall position-relative" style="top:-2px"></i-feather>
+                {{ "creator_profile_nfts.order_by" | transloco }} {{ CreatorProfileNftsComponent.ORDER_PRICE }}
+                <i-feather name="arrow-up" class="feather-xsmall position-relative" style="top: -2px"></i-feather>
               </a>
             </div>
           </div>
         </div>
       </div>
     </div>
-<!--    This is the compact / expanded switcher. Unclear if it's providing value-->
-<!--    <i-feather-->
-<!--      *ngIf="-->
-<!--        !showProfileAsReserved &&-->
-<!--        !isLoading &&-->
-<!--        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||-->
-<!--          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))-->
-<!--      "-->
-<!--      name="credit-card"-->
-<!--      class="cursor-pointer position-relative"-->
-<!--      style="right: 16px; transform: 'rotate(180deg)'"-->
-<!--      (click)="cardView = !cardView"-->
-<!--      [ngClass]="{ 'fc-blue': cardView }"-->
-<!--    ></i-feather>-->
   </div>
 </div>
 <div
@@ -146,8 +120,10 @@
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span *ngIf="profileBelongsToLoggedInUser()">{{ 'creator_profile_nfts.no_nfts_for_sale' | transloco }}</span>
-    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} {{ 'creator_profile_nfts.on_platform_no_nfts' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser()">{{ "creator_profile_nfts.no_nfts_for_sale" | transloco }}</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">
+      @{{ profile.Username }} {{ "creator_profile_nfts.on_platform_no_nfts" | transloco }}
+    </span>
   </div>
 </div>
 <div
@@ -162,13 +138,18 @@
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span *ngIf="profileBelongsToLoggedInUser()">{{ 'creator_profile_nfts.no_nfts_purchased' | transloco }}</span>
-    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} {{ 'creator_profile_nfts.no_nfts_acquired' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser()">{{ "creator_profile_nfts.no_nfts_purchased" | transloco }}</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">
+      @{{ profile.Username }} {{ "creator_profile_nfts.no_nfts_acquired" | transloco }}
+    </span>
   </div>
 </div>
 <div
   *ngIf="
-    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.TRANSFERABLE
+    !showProfileAsReserved &&
+    !isLoading &&
+    !nftResponse?.length &&
+    activeTab === CreatorProfileNftsComponent.TRANSFERABLE
   "
   class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
 >
@@ -178,13 +159,18 @@
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span *ngIf="profileBelongsToLoggedInUser()">{{ 'creator_profile_nfts.no_nfts_transferable' | transloco }}</span>
-    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} {{ 'creator_profile_nfts.no_nfts_transferable_yet' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser()">{{ "creator_profile_nfts.no_nfts_transferable" | transloco }}</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">
+      @{{ profile.Username }} {{ "creator_profile_nfts.no_nfts_transferable_yet" | transloco }}
+    </span>
   </div>
 </div>
 <div
   *ngIf="
-    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
+    !showProfileAsReserved &&
+    !isLoading &&
+    !nftResponse?.length &&
+    activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
   "
   class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
 >
@@ -194,8 +180,10 @@
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span *ngIf="profileBelongsToLoggedInUser()">{{ 'creator_profile_nfts.no_nfts_pending' | transloco }}</span>
-    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} {{ 'creator_profile_nfts.no_nfts_pending_yet' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser()">{{ "creator_profile_nfts.no_nfts_pending" | transloco }}</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">
+      @{{ profile.Username }} {{ "creator_profile_nfts.no_nfts_pending_yet" | transloco }}
+    </span>
   </div>
 </div>
 <div
@@ -208,14 +196,17 @@
     </div>
   </div>
   <div class="d-flex justify-content-center w-100">
-    <span *ngIf="profileBelongsToLoggedInUser()">{{ 'creator_profile_nfts.no_bids' | transloco }}</span>
-    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} {{ 'creator_profile_nfts.no_bids_yet' | transloco }}</span>
+    <span *ngIf="profileBelongsToLoggedInUser()">{{ "creator_profile_nfts.no_bids" | transloco }}</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">
+      @{{ profile.Username }} {{ "creator_profile_nfts.no_bids_yet" | transloco }}
+    </span>
   </div>
 </div>
 <div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div
-      #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
+      #uiScroll
+      *uiScroll="let nftEntry of datasource; let index = index"
       [ngClass]="{
         'card-view': cardView,
         'bid-view': activeTab === CreatorProfileNftsComponent.MY_BIDS,
@@ -254,7 +245,7 @@
                 nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos
               "
             >
-              {{ 'creator_profile_nfts.highest' | transloco }}
+              {{ "creator_profile_nfts.highest" | transloco }}
             </span>
             <div
               class="d-flex align-items-center justify-content-center mr-10px"
@@ -268,17 +259,17 @@
                     : '0px'
               }"
             >
-              {{ 'creator_profile_nfts.serial' | transloco }} #{{ nftEntry.SerialNumber }}
+              {{ "creator_profile_nfts.serial" | transloco }} #{{ nftEntry.SerialNumber }}
             </div>
             <div class="d-flex align-items-center">
-              {{ 'creator_profile_nfts.bid' | transloco }}:
+              {{ "creator_profile_nfts.bid" | transloco }}:
               <span class="px-5px">{{ globalVars.nanosToDeSo(nftEntry.BidAmountNanos, 5) }} $DESO</span>
               <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
             </div>
           </div>
           <div class="d-flex cursor-pointer" (click)="cancelBid(nftEntry)">
             <i-feather name="x" class="feather-small"></i-feather>
-            <span class="ml-10px">{{ 'creator_profile_nfts.cancel' | transloco }}</span>
+            <span class="ml-10px">{{ "creator_profile_nfts.cancel" | transloco }}</span>
           </div>
         </div>
       </div>

@@ -13,7 +13,7 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { pollForVideoReady, uploadVideo } from "deso-protocol";
+import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -23,14 +23,12 @@ import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-
-import Timer = NodeJS.Timer;
+import { BackendApiService } from "../../backend-api.service";
 import {
   AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -72,8 +70,8 @@ class PostModel {
   isUploadingMedia = false;
   isProcessingMedia = false;
   editPostHashHex = "";
-  pollForm: FormGroup = new FormGroup({
-    options: new FormArray([]),
+  pollForm: UntypedFormGroup = new UntypedFormGroup({
+    options: new UntypedFormArray([]),
   });
   pollType: PollWeightType = PollWeightType.unweighted;
   pollWeightTokenProfile: ProfileEntryResponse | null = null;
@@ -140,8 +138,6 @@ export class FeedCreatePostComponent implements OnInit {
   currentPostModel = new PostModel();
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
-  videoStreamInterval: Timer | null = null;
-  maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
   embedUrlParserService = EmbedUrlParserService;
@@ -197,7 +193,7 @@ export class FeedCreatePostComponent implements OnInit {
   resolveFn = (prefix: string) => this.getUsersFromPrefix(prefix);
 
   get pollOptions() {
-    return this.currentPostModel.pollForm.controls.options as FormArray;
+    return this.currentPostModel.pollForm.controls.options as UntypedFormArray;
   }
 
   async getUsersFromPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
@@ -385,8 +381,7 @@ export class FeedCreatePostComponent implements OnInit {
         false /*IsHidden*/
       )
       .toPromise()
-      .then((desoJsResponse) => {
-        const response = desoJsResponse.submittedTransactionResponse;
+      .then((response) => {
         this.tracking.log(`post : ${action}`, {
           type: postType,
           hasText: bodyObj.Body.length > 0,
@@ -618,7 +613,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (required) {
       validators.push(Validators.required);
     }
-    return new FormControl("", validators);
+    return new UntypedFormControl("", validators);
   }
 
   togglePoll() {

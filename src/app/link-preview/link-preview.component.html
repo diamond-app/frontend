@@ -10,7 +10,10 @@
       [src]="proxyImageUrl"
       style="max-height: 125px; overflow: hidden; border-radius: 10px 0px 0px 10px; object-fit: cover"
     />
-    <div [ngClass]="{ 'w-70': image != '', 'w-100': image == '' }" class="d-flex flex-column align-items-start p-10px">
+    <div
+      [ngClass]="{ 'w-70': image !== '', 'w-100': image === '' }"
+      class="d-flex flex-column align-items-start p-10px"
+    >
       <p class="fs-12px single-line-no-overflow-ellipsis">{{ displayLink }}</p>
       <p class="mb-1 fs-15px single-line-no-overflow-ellipsis">
         <b>{{ title }}</b>

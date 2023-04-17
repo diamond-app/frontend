@@ -1,10 +1,7 @@
 <!-- Top Bar -->
 <div *ngIf="nftPost" style="padding-bottom: 20vh" class="d-flex flex-column">
   <div class="post-thread__container">
-    <div
-      *ngIf="!globalVars.isMobile()"
-      class="d-flex align-items-center justify-content-between post-thread__header"
-    >
+    <div *ngIf="!globalVars.isMobile()" class="d-flex align-items-center justify-content-between post-thread__header">
       <div class="d-flex align-items-center">
         <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
@@ -38,14 +35,21 @@
   </div>
   <div class="nft-post-details" *ngIf="!loading">
     <div>
-      <tab-selector [tabs]="tabs" [activeTab]="activeTab" [buttonSelector]="false" (tabClick)="_handleTabClick($event)"></tab-selector>
+      <tab-selector
+        [tabs]="tabs"
+        [activeTab]="activeTab"
+        [buttonSelector]="false"
+        (tabClick)="_handleTabClick($event)"
+      ></tab-selector>
     </div>
     <div *ngIf="showBidsView">
       <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px d-flex justify-content-between align-items-center">
         There are no bids yet.
         <button
           *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length"
-          class="plain-button" style="width: 165px" (click)="closeAuction()"
+          class="plain-button"
+          style="width: 165px"
+          (click)="closeAuction()"
         >
           <i-feather name="alert-octagon" class="feather-small mr-5px"></i-feather>
           <span>Close my auction</span>
@@ -63,7 +67,11 @@
             </button>
             Select {{ nftBidData.NFTEntryResponses.length > 1 ? "All" : "Highest" }}
           </div>
-          <div *ngIf="activeTab !== NftPostComponent.MY_AUCTIONS" class="col-5 mb-0 p-0 cursor-pointer" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)">
+          <div
+            *ngIf="activeTab !== NftPostComponent.MY_AUCTIONS"
+            class="col-5 mb-0 p-0 cursor-pointer"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)"
+          >
             Bidder
             <i-feather
               class="feather-small"
@@ -85,7 +93,7 @@
           </div>
           <div
             class="p-0 mb-0 text-align-center cursor-pointer d-flex justify-content-end"
-            [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+            [ngClass]="{ 'col-7': nftPost.NumNFTCopies === 1, 'col-5': nftPost.NumNFTCopies > 1 }"
             (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_PRICE)"
           >
             <div>
@@ -103,13 +111,18 @@
           <div [ngClass]="{ 'nft-auction-table-container': activeTab === NftPostComponent.MY_AUCTIONS }">
             <div
               class="px-16px d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
-              *ngFor="let bidEntry of bids; let i = index">
+              *ngFor="let bidEntry of bids; let i = index"
+            >
               <div class="row no-gutters w-100">
                 <div class="col-5 d-flex align-items-center mb-0 p-0">
                   <!-- checkbox or radio button -->
                   <button
                     class="checkbox-circle mr-16px"
-                    *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies >= 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
+                    *ngIf="
+                      activeTab === NftPostComponent.MY_AUCTIONS &&
+                      nftPost.NumNFTCopies >= 1 &&
+                      userOwnsSerialNumber(bidEntry.SerialNumber)
+                    "
                     [ngClass]="{ checked: bidEntry.selected, radio: nftPost.NumNFTCopies === 1 }"
                     (click)="bidEntry.selected = !bidEntry.selected; checkSelectedBidEntries(bidEntry)"
                   >
@@ -136,10 +149,14 @@
                     <div class="d-flex">
                       <div
                         class="fc-default font-weight-bold text-truncate fs-14px"
-                        style="max-width: 120px;"
+                        style="max-width: 120px"
                         [ngClass]="{ 'cursor-pointer': !!bidEntry.ProfileEntryResponse?.Username }"
                         [style.pointer-events]="!!bidEntry.ProfileEntryResponse?.Username ? 'auto' : 'none'"
-                        [routerLink]="bidEntry.ProfileEntryResponse?.Username ? ['/' + globalVars.RouteNames.USER_PREFIX, bidEntry.ProfileEntryResponse.Username] : []"
+                        [routerLink]="
+                          bidEntry.ProfileEntryResponse?.Username
+                            ? ['/' + globalVars.RouteNames.USER_PREFIX, bidEntry.ProfileEntryResponse.Username]
+                            : []
+                        "
                       >
                         {{ bidEntry.ProfileEntryResponse?.Username || bidEntry.PublicKeyBase58Check }}
                       </div>
@@ -151,18 +168,23 @@
                         [matTooltip]="'This account is verified'"
                         #tooltip="matTooltip"
                       >
-                  <i class="fas fa-check-circle fa-md align-middle"></i>
-                </span>
+                        <i class="fas fa-check-circle fa-md align-middle"></i>
+                      </span>
                     </div>
                     <div class="text-grey9" *ngIf="bidEntry.ProfileEntryResponse">
                       {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                     </div>
                   </div>
                 </div>
-                <div class="col-2 d-flex align-items-center justify-content-center mb-0 p-0" *ngIf="nftPost.NumNFTCopies > 1">{{ bidEntry.SerialNumber > 0 && "#" + bidEntry.SerialNumber.toString() }}</div>
+                <div
+                  class="col-2 d-flex align-items-center justify-content-center mb-0 p-0"
+                  *ngIf="nftPost.NumNFTCopies > 1"
+                >
+                  {{ bidEntry.SerialNumber > 0 && "#" + bidEntry.SerialNumber.toString() }}
+                </div>
                 <div
                   class="d-flex align-items-center mb-0 justify-content-end p-0"
-                  [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+                  [ngClass]="{ 'col-7': nftPost.NumNFTCopies === 1, 'col-5': nftPost.NumNFTCopies > 1 }"
                 >
                   <span class="mr-20px">{{ globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 5) }} $DESO</span>
                   <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
@@ -201,15 +223,22 @@
     <div *ngIf="activeTab === NftPostComponent.OWNERS">
       <div *ngIf="!loading">
         <div class="px-16px d-flex align-items-center fs-14px py-15px border-bottom border-color-grey link--unstyled">
-          <div class="col-5 mb-0 p-0 cursor-pointer" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)">
-           Owner
+          <div
+            class="col-5 mb-0 p-0 cursor-pointer"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)"
+          >
+            Owner
             <i-feather
               class="feather-small"
               *ngIf="sortByField === NftPostComponent.SORT_BY_USERNAME"
               name="{{ sortDescending ? 'arrow-down' : 'arrow-up' }}"
             ></i-feather>
           </div>
-          <div class="col-2 mb-0 p-0 text-align-center cursor-pointer" *ngIf="nftPost.NumNFTCopies > 1" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_EDITION)">
+          <div
+            class="col-2 mb-0 p-0 text-align-center cursor-pointer"
+            *ngIf="nftPost.NumNFTCopies > 1"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_EDITION)"
+          >
             Edition
             <i-feather
               class="feather-small"
@@ -217,7 +246,11 @@
               name="{{ sortDescending ? 'arrow-down' : 'arrow-up' }}"
             ></i-feather>
           </div>
-          <div class="d-flex justify-content-end p-0 cursor-pointer mb-0" [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_PRICE)">
+          <div
+            class="d-flex justify-content-end p-0 cursor-pointer mb-0"
+            [ngClass]="{ 'col-7': nftPost.NumNFTCopies === 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_PRICE)"
+          >
             <span>Last Price</span>
             <i-feather
               class="feather-small"
@@ -229,7 +262,8 @@
         <div>
           <div
             class="px-16px d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
-            *ngFor="let owner of owners; let i = index">
+            *ngFor="let owner of owners; let i = index"
+          >
             <div class="row no-gutters w-100">
               <div class="col-5 mb-0 d-flex align-items-center mb-0 p-0">
                 <!-- Avatar -->
@@ -249,7 +283,11 @@
                       class="fc-default font-weight-bold text-truncate holdings__name fs-14px"
                       [ngClass]="{ 'cursor-pointer': !!owner.ProfileEntryResponse?.Username }"
                       [style.pointer-events]="!!owner.ProfileEntryResponse?.Username ? 'auto' : 'none'"
-                      [routerLink]="owner.ProfileEntryResponse?.Username ? ['/' + globalVars.RouteNames.USER_PREFIX, owner.ProfileEntryResponse.Username] : []"
+                      [routerLink]="
+                        owner.ProfileEntryResponse?.Username
+                          ? ['/' + globalVars.RouteNames.USER_PREFIX, owner.ProfileEntryResponse.Username]
+                          : []
+                      "
                     >
                       {{ owner.ProfileEntryResponse?.Username || owner.OwnerPublicKeyBase58Check }}
                     </div>
@@ -261,18 +299,23 @@
                       [matTooltip]="'This account is verified'"
                       #tooltip="matTooltip"
                     >
-                <i class="fas fa-check-circle fa-md align-middle"></i>
-              </span>
+                      <i class="fas fa-check-circle fa-md align-middle"></i>
+                    </span>
                   </div>
                   <div class="text-grey9" *ngIf="owner.ProfileEntryResponse">
                     {{ globalVars.nanosToUSD(owner.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                   </div>
                 </div>
               </div>
-              <div class="col-2 d-flex align-items-center justify-content-center mb-0 p-0" *ngIf="nftPost.NumNFTCopies > 1">{{ owner.SerialNumber > 0 && "#" + owner.SerialNumber.toString() }}</div>
+              <div
+                class="col-2 d-flex align-items-center justify-content-center mb-0 p-0"
+                *ngIf="nftPost.NumNFTCopies > 1"
+              >
+                {{ owner.SerialNumber > 0 && "#" + owner.SerialNumber.toString() }}
+              </div>
               <div
                 class="d-flex align-items-center mb-0 justify-content-end p-0"
-                [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+                [ngClass]="{ 'col-7': nftPost.NumNFTCopies === 1, 'col-5': nftPost.NumNFTCopies > 1 }"
               >
                 <span class="mr-20px">{{ globalVars.nanosToDeSo(owner.LastAcceptedBidAmountNanos, 5) }} $DESO</span>
                 <span>~{{ globalVars.nanosToUSD(owner.LastAcceptedBidAmountNanos, 2) }}</span>
@@ -280,8 +323,6 @@
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
     <div *ngIf="!loading && activeTab === NftPostComponent.THREAD && !reloadingThread">
@@ -294,7 +335,6 @@
         *ngIf="nftPost.CommentCount || nftPost.ParentStakeID"
       ></post-thread>
     </div>
-
   </div>
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
   <div class="global__bottom-bar-mobile-height"></div>

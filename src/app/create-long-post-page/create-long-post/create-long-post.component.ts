@@ -3,12 +3,12 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { waitForTransactionFound } from "deso-protocol";
+import { GetSinglePostResponse, ProfileEntryResponse, waitForTransactionFound } from "deso-protocol";
 import { escape, has } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import "quill-mention";
-import { BackendApiService, GetSinglePostResponse, ProfileEntryResponse } from "src/app/backend-api.service";
+import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
@@ -155,7 +155,7 @@ export class CreateLongPostComponent implements AfterViewInit {
       try {
         const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
         if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
-          const editPostData = editPost.PostFound?.PostExtraData as BlogPostExtraData;
+          const editPostData = editPost.PostFound?.PostExtraData;
           const contentDelta = JSON.parse(editPostData.BlogDeltaRtfFormat);
           Object.assign(this.model, { ...editPostData, ContentDelta: contentDelta });
           this.contentAsPlainText = contentDelta.ops.reduce(
@@ -349,14 +349,14 @@ export class CreateLongPostComponent implements AfterViewInit {
         )
         .toPromise();
 
-      const submittedPostHashHex = postTx.submittedTransactionResponse.PostEntryResponse.PostHashHex;
+      const submittedPostHashHex = postTx.PostEntryResponse.PostHashHex;
 
       // if this is a new post, or the author updates the title of an existing
       // post, update the user's profile with a mapping from postHashHex to url
       // slug
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
-        await waitForTransactionFound(postTx.submittedTransactionResponse.TxnHashHex);
+        await waitForTransactionFound(postTx.TxnHashHex);
 
         const blogSlugMapJSON = JSON.stringify({
           ...existingSlugMappings,
@@ -388,7 +388,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           positionClass: "toast-bottom-center",
         }
       );
-    } catch (e) {
+    } catch (e: any) {
       this.globalVars._alertError(
         `Whoops, something went wrong...${e?.error?.error ? JSON.stringify(e.error.error) : e.toString()}`
       );

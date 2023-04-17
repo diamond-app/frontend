@@ -8,14 +8,10 @@ import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { TrackingService } from "src/app/tracking.service";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import {
-  AssociationReactionValue,
-  BackendApiService,
-  NFTEntryResponse,
-  PostEntryResponse,
-} from "../../backend-api.service";
+import { AssociationReactionValue, BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "app-notifications-list",
