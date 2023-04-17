@@ -349,9 +349,9 @@ export class MintNftComponent {
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
           this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex]);
         },
-        (err) => {
-          const message = err?.message || "There is a problem happened when creating your NFT.";
-
+        (e) => {
+          console.error(e);
+          const message = e.toString();
           this.globalVars._alertError(message);
           this.tracking.log("nft : create", { error: message });
           this.minting = false;

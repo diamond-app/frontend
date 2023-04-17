@@ -108,12 +108,10 @@ export class NetworkInfoComponent implements OnInit {
       });
   }
 
-  _extractError(err: any): string {
-    const rawError = err?.error?.error;
+  _extractError(e: any): string {
+    const rawError = e.toString();
 
     if (rawError) {
-      // Is it obvious yet that I'm not a frontend gal?
-      // TODO: Error handling between BE and FE needs a major redesign.
       if (rawError.includes("password")) {
         return NetworkConstants.INCORRECT_PASSWORD;
       } else if (rawError.includes("not sufficient")) {
@@ -122,12 +120,12 @@ export class NetworkInfoComponent implements OnInit {
         return rawError;
       }
     }
-    if (err?.status && err?.status !== 200) {
+    if (e?.status && e?.status !== 200) {
       return NetworkConstants.CONNECTION_PROBLEM;
     }
     // If we get here we have no idea what went wrong so just alert the
     // errorString.
-    return sprintf(JSON.stringify(err));
+    return sprintf(JSON.stringify(e));
   }
 
   disconnectDeSoPeer(peerAddr: string) {

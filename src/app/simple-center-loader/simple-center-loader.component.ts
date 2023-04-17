@@ -33,7 +33,9 @@ export class SimpleCenterLoaderComponent implements OnInit {
     try {
       xhr.open("HEAD", urlToFile, false);
       xhr.send();
-    } catch (error) {}
+    } catch (e) {
+      console.error(e);
+    }
 
     if (xhr.status === 404) {
       return false;

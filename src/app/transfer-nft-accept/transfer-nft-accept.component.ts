@@ -82,11 +82,9 @@ export class TransferNftAcceptComponent {
             positionClass: "toast-bottom-center",
           });
         },
-        (err) => {
-          console.error(err);
-          this.tracking.log("nft : accept", {
-            error: err.error?.error,
-          });
+        (e) => {
+          console.error(e);
+          this.tracking.log("nft : accept", { error: e.toString() });
         }
       )
       .add(() => {

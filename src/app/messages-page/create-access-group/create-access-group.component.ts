@@ -149,7 +149,8 @@ export class CreateAccessGroupComponent {
       });
       this.bsModalRef.hide();
     } catch (e) {
-      this.globalVars._alertError(e?.error?.error ?? e?.message);
+      console.error(e);
+      this.globalVars._alertError(e.toString());
       return;
     }
 

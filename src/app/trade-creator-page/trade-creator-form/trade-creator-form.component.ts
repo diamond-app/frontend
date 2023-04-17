@@ -182,18 +182,21 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             this.creatorCoinTrade.networkFeeNanos = response.FeeNanos;
             this.isUpdatingAmounts = false;
           },
-          (err) => {
+          (e) => {
             this.isUpdatingAmounts = false;
-            console.error(err);
+            console.error(e);
+
+            const rawError = e.toString() || "";
+
             // If we didn't find the profile, show the 'couldn't find username' error text.
-            if (err.error?.error?.indexOf("TransferCreatorCoin: Problem getting profile for username") >= 0) {
+            if (rawError.indexOf("TransferCreatorCoin: Problem getting profile for username") >= 0) {
               this.creatorCoinTrade.showUsernameError = true;
-            } else if (err.error?.error?.indexOf("TransferCreatorCoin: Problem decoding receiver public key") >= 0) {
+            } else if (rawError.indexOf("TransferCreatorCoin: Problem decoding receiver public key") >= 0) {
               this.creatorCoinTrade.showPubKeyError = true;
-            } else if (err.error?.error?.indexOf("TransferCreatorCoin: Sender and receiver cannot be the same") >= 0) {
+            } else if (rawError.indexOf("TransferCreatorCoin: Sender and receiver cannot be the same") >= 0) {
               this.creatorCoinTrade.showCannotSendToSelfError = true;
             } else {
-              this.appData._alertError(this.backendApi.parseProfileError(err));
+              this.appData._alertError(this.backendApi.parseErrorMessage(e));
             }
           }
         );
@@ -228,7 +231,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             this.isUpdatingAmounts = false;
             // TODO: creator coin buys: rollbar
             console.error(err);
-            this.appData._alertError(this.backendApi.parseProfileError(err));
+            this.appData._alertError(this.backendApi.parseErrorMessage(err));
           }
         );
     }

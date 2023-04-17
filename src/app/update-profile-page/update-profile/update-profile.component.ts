@@ -356,7 +356,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         },
         (err) => {
           console.error(err);
-          const parsedError = this.backendApi.parseProfileError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           const lowBalance = parsedError.indexOf("insufficient");
           this.tracking.log("profile : update", { error: parsedError, lowBalance });
           this.updateProfileBeingCalled = false;
@@ -504,8 +504,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           this.coverPhotoUrl = res.ImageURL;
         }
       })
-      .catch((err) => {
-        this.globalVars._alertError(JSON.stringify(err.error.error));
+      .catch((e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
       });
   }
 

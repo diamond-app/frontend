@@ -88,7 +88,7 @@ export class BuyNowConfirmationComponent {
         },
         (err) => {
           console.error(err);
-          const parsedError = this.backendApi.parseMessageError(err);
+          const parsedError = this.backendApi.parseErrorMessage(err);
           this.globalVars._alertError(parsedError);
           this.tracking.log("nft-buy-now : submit", { error: parsedError });
         }

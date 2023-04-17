@@ -611,9 +611,9 @@ export class FeedPostComponent implements OnInit {
               this.tracking.log("post : hide");
               this.postDeleted.emit(response.PostEntryResponse);
             },
-            (err) => {
-              console.error(err);
-              const parsedError = this.backendApi.parsePostError(err);
+            (e) => {
+              console.error(e);
+              const parsedError = this.backendApi.parseErrorMessage(e);
               this.tracking.log("post : hide", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }
@@ -720,8 +720,9 @@ export class FeedPostComponent implements OnInit {
           });
           this.ref.detectChanges();
         },
-        (err) => {
-          this.globalVars._alertError(JSON.stringify(err.error));
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e);
         }
       )
       .add(() => {
@@ -749,8 +750,9 @@ export class FeedPostComponent implements OnInit {
           });
           this.ref.detectChanges();
         },
-        (err) => {
-          this.globalVars._alertError(JSON.stringify(err.error));
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e);
         }
       )
       .add(() => {

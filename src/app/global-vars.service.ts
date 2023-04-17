@@ -369,7 +369,8 @@ export class GlobalVarsService {
         userVisibleOnly: true,
         applicationServerKey: applicationServerKey,
       });
-    } catch (error) {
+    } catch (e) {
+      console.error(e);
       this.tracking.log("browser-push-notification-prompt : deny");
       return;
     }
@@ -1392,8 +1393,9 @@ export class GlobalVarsService {
             this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
             this.router.navigate([RouteNames.BROWSE]);
           },
-          (err) => {
-            this._alertError(err.error.error);
+          (e) => {
+            console.error(e);
+            this._alertError(e.toString());
           }
         );
         tutorialComponent.tutorialCleanUp();
