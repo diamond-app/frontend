@@ -347,11 +347,13 @@ export class MintNftComponent {
             buyNowPriceDesoNanos,
           });
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex]);
         },
         (e) => {
           console.error(e);
-          this.globalVars._alertError(e.toString());
-          this.tracking.log("nft : create", { error: e.toString() });
+          const message = e.toString();
+          this.globalVars._alertError(message);
+          this.tracking.log("nft : create", { error: message });
           this.minting = false;
         }
       );

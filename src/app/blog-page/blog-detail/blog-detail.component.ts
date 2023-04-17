@@ -96,7 +96,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   @Output() userBlocked = new EventEmitter();
 
   constructor(
-    private backendApi: BackendApiService,
+    public backendApi: BackendApiService,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,

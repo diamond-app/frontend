@@ -196,6 +196,8 @@ export class BackendApiService {
   LegacyUserListKey = "userList";
   LegacySeedListKey = "seedList";
 
+  ShowInstallPWAPanelKey = "showInstallPWA";
+
   SetStorage(key: string, value: any) {
     localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
   }
@@ -206,7 +208,7 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-    if (data === "") {
+    if (data === null || data === "") {
       return null;
     }
 
@@ -627,7 +629,8 @@ export class BackendApiService {
     BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    IsHidden: boolean
+    IsHidden: boolean,
+    IsFrozen: boolean = false
   ): Observable<any> {
     return from(
       submitPost({
@@ -638,6 +641,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
+        IsFrozen,
       }).then(mergeTxResponse)
     );
   }

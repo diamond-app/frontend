@@ -142,7 +142,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     private router: Router,
     private titleService: Title,
     private toastr: ToastrService,
-    private location: Location,
+    public location: Location,
     private modalService: BsModalService
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;

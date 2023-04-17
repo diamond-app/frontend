@@ -35,6 +35,7 @@ export class FeedPostDropdownComponent implements OnInit {
   @Output() togglePostPin = new EventEmitter();
   @Output() toggleBlogPin = new EventEmitter();
   @Output() pauseVideos = new EventEmitter();
+  @Output() postFrozen = new EventEmitter();
 
   @ViewChild(BsDropdownDirective) dropdown: BsDropdownDirective;
 
@@ -557,5 +558,63 @@ export class FeedPostDropdownComponent implements OnInit {
         },
       });
     }
+  }
+
+  freezeNFT() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      html: `Freezing your NFT means it will be permanently locked on DeSo and will no longer allow the ability to make edits.`,
+      showCancelButton: true,
+      showDenyButton: true,
+      showConfirmButton: false,
+      focusDeny: true,
+      customClass: {
+        cancelButton: "btn btn-light no",
+        denyButton: "btn btn-danger",
+      },
+      cancelButtonText: "Cancel",
+      denyButtonText: "Freeze NFT",
+      reverseButtons: true,
+    }).then(async (alertRes: any) => {
+      if (alertRes.isDenied) {
+        this.tracking.log("nft-freeze : click");
+        const postExtraData = this.post.PostExtraData;
+
+        return this.backendApi
+          .SubmitPost(
+            this.globalVars.loggedInUser?.PublicKeyBase58Check,
+            this.postContent.PostHashHex,
+            "",
+            {
+              Body: this.post.Body,
+              ImageURLs: this.post.ImageURLs ? this.post.ImageURLs : [],
+              VideoURLs: this.post.VideoURLs ? this.post.VideoURLs : [],
+            },
+            "",
+            postExtraData,
+            false,
+            true
+          )
+          .subscribe(
+            () => {
+              this.post.IsFrozen = true;
+              this.globalVars._alertSuccess(
+                "Your NFT was successfully frozen and will not be modifiable in the future"
+              );
+
+              this.tracking.log("nft-freeze : success");
+
+              this.postFrozen.emit();
+            },
+            (err) => {
+              const parsedError = this.backendApi.stringifyError(err);
+              this.globalVars._alertError(parsedError);
+
+              this.tracking.log("nft-freeze : error");
+            }
+          );
+      }
+    });
+    return;
   }
 }

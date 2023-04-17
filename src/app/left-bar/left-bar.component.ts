@@ -109,4 +109,10 @@ export class LeftBarComponent {
   closeLeftBar() {
     this.closeMobile.emit(true);
   }
+
+  addAppToHomeScreen() {
+    this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, true);
+    this.globalVars.showInstallPWA = true;
+    this.globalVars.isLeftBarMobileOpen = false;
+  }
 }

@@ -79,7 +79,7 @@ export class NftPostComponent {
     private changeRef: ChangeDetectorRef,
     private modalService: BsModalService,
     private titleService: Title,
-    private location: Location,
+    public location: Location,
     private toastr: ToastrService,
     private tracking: TrackingService
   ) {

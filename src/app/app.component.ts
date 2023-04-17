@@ -60,10 +60,6 @@ export class AppComponent implements OnInit {
   }
   static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS = "js-app-component__dynamically-added-router-link-class";
 
-  showUsernameTooltip = false;
-
-  desoToUSDExchangeRateToDisplay = "fetching...";
-
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
   callingUpdateTopLevelData = false;
