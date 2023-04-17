@@ -9,6 +9,7 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "reposts-details",
   templateUrl: "./reposts-details.component.html",
+  styleUrls: ["reposts-details.component.scss"],
 })
 export class RepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
@@ -80,6 +81,6 @@ export class RepostsDetailsComponent implements OnInit {
     });
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile());
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

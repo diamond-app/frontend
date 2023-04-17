@@ -9,11 +9,11 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "diamonds-details",
   templateUrl: "./diamonds-details.component.html",
+  styleUrls: ["./diamonds-details.component.scss"],
 })
 export class DiamondsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
   diamonds = [];
-  loading = false;
   errorLoading = false;
 
   constructor(
@@ -24,7 +24,6 @@ export class DiamondsDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loading = true;
     if (!this.postHashHex) {
       this.postHashHex = this.route.snapshot.params.postHashHex;
     }
@@ -40,7 +39,7 @@ export class DiamondsDetailsComponent implements OnInit {
     if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
-    this.loading = true;
+
     return this.backendApi
       .GetDiamondsForPost(
         this.postHashHex,
@@ -60,9 +59,6 @@ export class DiamondsDetailsComponent implements OnInit {
           if (diamondSendersPage.length < this.pageSize) {
             this.lastPage = page;
           }
-
-          this.loading = false;
-
           // Return the page.
           return diamondSendersPage;
         },
@@ -78,6 +74,6 @@ export class DiamondsDetailsComponent implements OnInit {
     });
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile());
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

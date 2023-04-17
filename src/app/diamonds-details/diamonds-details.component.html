@@ -6,15 +6,24 @@
   </div>
 
   <div class="flex-grow-1">
-    <div #uiScroll *uiScroll="let diamond of datasource">
-      <simple-profile-card
-        [profile]="diamond.DiamondSenderProfile"
-        [diamondLevel]="diamond.DiamondLevel"
-      ></simple-profile-card>
+    <div
+      [ngClass]="{
+        'diamonds-modal-container__list_wrapper': !globalVars.isMobile()
+      }"
+    >
+      <div #uiScroll *uiScroll="let diamond of datasource">
+        <simple-profile-card
+          [profile]="diamond.DiamondSenderProfile"
+          [diamondLevel]="diamond.DiamondLevel"
+        ></simple-profile-card>
+      </div>
     </div>
   </div>
   <!-- Spacer for PWA Apps -->
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
-  <simple-center-loader *ngIf="loading"></simple-center-loader>
+  <simple-center-loader
+    *ngIf="datasource.adapter.isLoading && datasource.adapter.itemsCount === 0"
+    class="x-and-y-centerized"
+  ></simple-center-loader>
 </div>
