@@ -1,3 +1,5 @@
+import { isNil } from "lodash";
+
 const properties = [
   "direction",
   "boxSizing",
@@ -38,7 +40,7 @@ const properties = [
   "MozTabSize",
 ];
 
-const isFirefox = typeof window !== "undefined" && window["mozInnerScreenX"] !== null;
+const isFirefox = typeof window !== "undefined" && !isNil(window["mozInnerScreenX"]);
 
 /**
  * @param {HTMLTextAreaElement} element

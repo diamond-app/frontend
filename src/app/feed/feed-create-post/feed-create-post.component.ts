@@ -13,7 +13,7 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { pollForVideoReady, uploadVideo } from "deso-protocol";
+import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -23,9 +23,7 @@ import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-
-import Timer = NodeJS.Timer;
+import { BackendApiService } from "../../backend-api.service";
 import {
   AbstractControl,
   UntypedFormArray,
@@ -140,8 +138,6 @@ export class FeedCreatePostComponent implements OnInit {
   currentPostModel = new PostModel();
   videoUploadPercentage: string | null = null;
   postSubmitPercentage: string | null = null;
-  videoStreamInterval: Timer | null = null;
-  maxPostLength = GlobalVarsService.MAX_POST_LENGTH;
   globalVars: GlobalVarsService;
   submittedPost: PostEntryResponse | null = null;
   embedUrlParserService = EmbedUrlParserService;

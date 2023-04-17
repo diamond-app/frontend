@@ -91,7 +91,7 @@
     <div class="main cloutavista-button" *ngIf="showCloutavista">
       <a
         index="-2"
-        [ngClass]="{ 'search-bar__selected-color': 'Cloutavista' === creatorSelected }"
+        [ngClass]="{ 'search-bar__selected-color': creatorSelected === 'Cloutavista' }"
         (mouseover)="_handleMouseOver('Cloutavista', -2)"
         (mouseout)="_handleMouseOut('Cloutavista', -2)"
         href="https://www.cloutavista.com/deso/posts?text={{ searchText }}"

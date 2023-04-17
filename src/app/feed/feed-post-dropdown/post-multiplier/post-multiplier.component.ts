@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { BackendApiService, PostEntryResponse } from "../../../backend-api.service";
+import { BackendApiService } from "../../../backend-api.service";
 import { GlobalVarsService } from "../../../global-vars.service";
+import { PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "post-multiplier",

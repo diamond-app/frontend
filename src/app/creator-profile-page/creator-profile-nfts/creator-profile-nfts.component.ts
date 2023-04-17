@@ -20,6 +20,7 @@ import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
 import { map, tap } from "rxjs/operators";
+import { isNil } from "lodash";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -196,7 +197,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     const startIdx = page * CreatorProfileNftsComponent.PAGE_SIZE;

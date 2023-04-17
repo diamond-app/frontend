@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "nft-burn-modal",

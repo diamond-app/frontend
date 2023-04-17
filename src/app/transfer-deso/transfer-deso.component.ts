@@ -1,15 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { sendDeso } from "deso-protocol";
-import { from } from "rxjs";
 import { sprintf } from "sprintf-js";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { RouteNames } from "../app-routing.module";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -114,7 +113,7 @@ export class TransferDeSoComponent implements OnInit {
       return;
     }
 
-    if (this.transferDeSoError !== null && this.transferDeSoError !== "") {
+    if (this.transferDeSoError) {
       this.globalVars._alertError(this.transferDeSoError);
       return;
     }
@@ -175,51 +174,47 @@ export class TransferDeSoComponent implements OnInit {
         }).then((res: any) => {
           if (res.isConfirmed) {
             const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9;
-            from(
-              sendDeso({
-                SenderPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-                RecipientPublicKeyOrUsername: this.payToPublicKey,
-                AmountNanos: amountToSend,
-              })
-            ).subscribe(
-              (res: any) => {
-                const { TotalInputNanos, SpendAmountNanos, ChangeAmountNanos, FeeNanos, TransactionIDBase58Check } =
-                  res;
+            this.backendApi
+              .SendDeSo(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.payToPublicKey, amountToSend)
+              .subscribe(
+                (res: any) => {
+                  const { TotalInputNanos, SpendAmountNanos, ChangeAmountNanos, FeeNanos, TransactionIDBase58Check } =
+                    res;
 
-                if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                  this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
-                  this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
-                  return null;
+                  if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
+                    this.tracking.log("deso : send", { error: Messages.CONNECTION_PROBLEM });
+                    this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
+                    return null;
+                  }
+
+                  this.tracking.log("deso : send", {
+                    amountToSend,
+                    receiverPublicKey: this.payToPublicKey,
+                    TotalInputNanos,
+                    ChangeAmountNanos,
+                    FeeNanos,
+                  });
+
+                  this.transferDeSoError = "";
+                  this.networkFee = res.FeeNanos / 1e9;
+                  this.transferAmount = 0.0;
+                  this.maxSendAmount = 0.0;
+
+                  // This will update the user's balance.
+                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
+                },
+                (error) => {
+                  this.sendingDeSo = false;
+                  console.error(error);
+                  this.transferDeSoError = this._extractError(error);
+                  this.tracking.log("bitpop : send", { error: this.transferDeSoError });
+                  this.globalVars._alertError(
+                    this.transferDeSoError,
+                    false,
+                    this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
+                  );
                 }
-
-                this.tracking.log("deso : send", {
-                  amountToSend,
-                  receiverPublicKey: this.payToPublicKey,
-                  TotalInputNanos,
-                  ChangeAmountNanos,
-                  FeeNanos,
-                });
-
-                this.transferDeSoError = "";
-                this.networkFee = res.FeeNanos / 1e9;
-                this.transferAmount = 0.0;
-                this.maxSendAmount = 0.0;
-
-                // This will update the user's balance.
-                this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
-              },
-              (error) => {
-                this.sendingDeSo = false;
-                console.error(error);
-                this.transferDeSoError = this._extractError(error);
-                this.tracking.log("bitpop : send", { error: this.transferDeSoError });
-                this.globalVars._alertError(
-                  this.transferDeSoError,
-                  false,
-                  this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
-                );
-              }
-            );
+              );
 
             return;
           } else {
@@ -244,6 +239,7 @@ export class TransferDeSoComponent implements OnInit {
     comp.globalVars._alertSuccess(sprintf("Successfully completed transaction."));
     comp.sendingDeSo = false;
   }
+
   _sendDeSoFailure(comp: any) {
     comp.appData._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
     comp.sendingDeSo = false;
@@ -296,10 +292,11 @@ export class TransferDeSoComponent implements OnInit {
   }
 
   _extractError(err: any): string {
-    if (err.error !== null && err.error.error !== null) {
+    const rawError = err.error.error;
+
+    if (rawError) {
       // Is it obvious yet that I'm not a frontend gal?
       // TODO: Error handling between BE and FE needs a major redesign.
-      let rawError = err.error.error;
       if (rawError.includes("password")) {
         return Messages.INCORRECT_PASSWORD;
       } else if (rawError.includes("not sufficient")) {
@@ -317,7 +314,7 @@ export class TransferDeSoComponent implements OnInit {
         return rawError;
       }
     }
-    if (err.status !== null && err.status != 200) {
+    if (err?.status && err?.status !== 200) {
       return Messages.CONNECTION_PROBLEM;
     }
     // If we get here we have no idea what went wrong so just alert the

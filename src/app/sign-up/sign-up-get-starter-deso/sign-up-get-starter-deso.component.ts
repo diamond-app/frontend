@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { identity } from "deso-protocol";
+import { from } from "rxjs";
 import { BackendApiService } from "../../backend-api.service";
-import { IdentityService } from "../../identity.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "sign-up-get-starter-deso",
@@ -20,11 +21,9 @@ export class SignUpGetStarterDeSoComponent {
   screenToShow = null;
   SignUpGetStarterDeSoComponent = SignUpGetStarterDeSoComponent;
 
-  constructor(
-    public globalVars: GlobalVarsService,
-    private backendApi: BackendApiService,
-    private identityService: IdentityService
-  ) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+
+  ngOnInit(): void {}
 
   _setScreenToShow() {
     // TODO: refactor silly setInterval
@@ -49,14 +48,12 @@ export class SignUpGetStarterDeSoComponent {
   }
 
   openIdentityPhoneNumberVerification(): void {
-    this.identityService
-      .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
-      .subscribe((res) => {
-        if (res.phoneNumberSuccess) {
-          this.globalVars.updateEverything().add(() => {
-            this.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
-          });
-        }
-      });
+    from(identity.verifyPhoneNumber()).subscribe((res: any) => {
+      if (res.phoneNumberSuccess) {
+        this.globalVars.updateEverything().add(() => {
+          this.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+        });
+      }
+    });
   }
 }

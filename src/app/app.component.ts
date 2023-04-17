@@ -1,16 +1,17 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { configure, DeSoNetwork, identity, User } from "deso-protocol";
+import { configure, identity, User } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
 import * as _ from "lodash";
 import { isNil } from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { IdentityMigrationModalComponent } from "src/app/identity-migration-modal/identity-migration-modal.component";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
 import { BackendApiService } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
-import { IdentityService } from "./identity.service";
 import { ThemeService } from "./theme/theme.service";
 
 @Component({
@@ -25,9 +26,9 @@ export class AppComponent implements OnInit {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
-    public identityService: IdentityService,
     private router: Router,
-    private tracking: TrackingService
+    private tracking: TrackingService,
+    private modalService: BsModalService
   ) {
     this.globalVars.Init(
       null, // loggedInUser
@@ -39,12 +40,15 @@ export class AppComponent implements OnInit {
     // Init because it uses globalVars.localNode. There is no practical reason
     // we need to store the localNode value in globalVars (or local storage),
     // but it's an annoying and unrelated thing to refactor right now...
+    const nodeURI = this.globalVars.localNode.startsWith("http")
+      ? this.globalVars.localNode
+      : `https://${this.globalVars.localNode}`;
     configure({
-      nodeURI: this.globalVars.localNode,
+      nodeURI,
       mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: { IsUnlimited: true },
       MinFeeRateNanosPerKB: 1000,
-      network: this.globalVars.getDesoNetworkFromURL(this.globalVars.localNode),
+      network: this.globalVars.getDesoNetworkFromURL(nodeURI),
     });
 
     // log interaction events emitted by identity
@@ -103,28 +107,14 @@ export class AppComponent implements OnInit {
       return new Subscription();
     }
 
-    // NOTE: we should subscribe to the identity instance instead of calling snapshot,
-    // but that would require a larger refactor.
-    const { currentUser, alternateUsers } = identity.snapshot();
-    const publicKeys = Object.keys(alternateUsers ?? {}).concat(currentUser?.publicKey ?? []);
-
-    let loggedInUserPublicKey =
-      this.globalVars.loggedInUser?.PublicKeyBase58Check ||
-      this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
-      publicKeys[0];
-
-    // If we recently added a new public key, log in the user and clear the value
-    if (this.identityService.identityServicePublicKeyAdded) {
-      loggedInUserPublicKey = this.identityService.identityServicePublicKeyAdded;
-      this.identityService.identityServicePublicKeyAdded = null;
-    }
-
     this.callingUpdateTopLevelData = true;
 
+    const { currentUser } = identity.snapshot();
+
     return zip(
-      this.backendApi.GetUsersStateless([loggedInUserPublicKey], false),
-      environment.verificationEndpointHostname && !isNil(loggedInUserPublicKey)
-        ? this.backendApi.GetUserMetadata(loggedInUserPublicKey).pipe(
+      this.backendApi.GetUsersStateless([currentUser?.publicKey], false),
+      environment.verificationEndpointHostname && !isNil(currentUser?.publicKey)
+        ? this.backendApi.GetUserMetadata(currentUser?.publicKey).pipe(
             catchError((err) => {
               console.error(err);
               return of(null);
@@ -160,11 +150,11 @@ export class AppComponent implements OnInit {
           // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
         }
         // If the logged-in user wasn't in the list, add it to the list.
-        if (!loggedInUserFound && loggedInUserPublicKey) {
+        if (!loggedInUserFound && currentUser?.publicKey) {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
+        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && currentUser?.publicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -209,7 +199,6 @@ export class AppComponent implements OnInit {
       this.globalVars.showJumio = res.HasJumioIntegration;
       this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
       this.globalVars.isTestnet = res.IsTestnet;
-      this.identityService.isTestnet = res.IsTestnet;
       this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
       this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
       this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
@@ -302,21 +291,6 @@ export class AppComponent implements OnInit {
 
     this.loadApp();
 
-    this.identityService.info().subscribe((res) => {
-      this.globalVars.identityInfoResponse = res;
-      const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-      // If the browser is not supported, display the browser not supported screen.
-      if (!res.hasStorageAccess && isLoggedIn) {
-        this.tracking.log("storage-access : request");
-        this.globalVars.requestingStorageAccess = true;
-        this.identityService.storageGranted.subscribe(() => {
-          this.tracking.log("storage-access : grant");
-          this.globalVars.requestingStorageAccess = false;
-          this.loadApp();
-        });
-      }
-    });
-
     this.globalVars.pollUnreadNotifications();
 
     this.installDD();
@@ -326,18 +300,16 @@ export class AppComponent implements OnInit {
   loadApp() {
     // Load service worker for push notifications.
     this.globalVars.initializeWebPush();
-    this.tracking.log("page : load", { isLoggedIn: !!localStorage.getItem("lastLoggedInUser") });
+    const { currentUser, alternateUsers } = identity.snapshot();
+    this.tracking.log("page : load", { isLoggedIn: !!currentUser });
 
-    this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
-    // Filter out invalid public keys
-    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
-    for (const publicKey of publicKeys) {
-      if (!publicKey.match(/^[a-zA-Z0-9]{54,55}$/)) {
-        delete this.identityService.identityServiceUsers[publicKey];
-      }
+    let publicKeys = [];
+    if (currentUser?.publicKey) {
+      publicKeys.push(currentUser?.publicKey);
     }
-    this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
-
+    if (alternateUsers) {
+      publicKeys.push(...Object.keys(alternateUsers));
+    }
     this.backendApi.GetUsersStateless(publicKeys, true).subscribe((res) => {
       if (!_.isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];
@@ -349,6 +321,14 @@ export class AppComponent implements OnInit {
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);
+
+    // Shows a message if the user was logged in via the legacy identity flow
+    // letting them know they will need to log in again.
+    if (!currentUser && window.localStorage.getItem("lastLoggedInUser")) {
+      this.modalService.show(IdentityMigrationModalComponent, {
+        class: "modal-dialog-centered buy-deso-modal",
+      });
+    }
   }
 
   installDD() {

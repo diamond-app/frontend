@@ -1,5 +1,5 @@
-import { Injectable, Inject, EventEmitter } from "@angular/core";
-import { THEMES, ACTIVE_THEME, Theme } from "./symbols";
+import { EventEmitter, Inject, Injectable } from "@angular/core";
+import { ACTIVE_THEME, Theme, THEMES } from "./symbols";
 
 @Injectable()
 export class ThemeService {

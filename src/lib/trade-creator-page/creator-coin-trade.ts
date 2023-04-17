@@ -1,6 +1,7 @@
 import { UntypedFormControl, Validators } from "@angular/forms";
-import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
+import { BackendApiService } from "../../app/backend-api.service";
 import { GlobalVarsService } from "../../app/global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 export class CreatorCoinTrade {
   static BUY_VERB = "Buy";

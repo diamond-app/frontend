@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import * as _ from "lodash";
 import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { NFTEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "nft-select-serial-number",

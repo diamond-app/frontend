@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { isNil } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -8,12 +9,12 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "quote-reposts-details",
   templateUrl: "./quote-reposts-details.component.html",
-  styleUrls: ["./quote-reposts-details.component.scss"],
 })
 export class QuoteRepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
   @Input() bsModalRef;
   diamonds = [];
+  loading = false;
   errorLoading = false;
 
   constructor(
@@ -24,6 +25,7 @@ export class QuoteRepostsDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
     if (!this.postHashHex) {
       this.postHashHex = this.route.snapshot.params.postHashHex;
     }
@@ -36,9 +38,10 @@ export class QuoteRepostsDetailsComponent implements OnInit {
 
   getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
+    this.loading = true;
     return this.backendApi
       .GetQuoteRepostsForPost(
         this.postHashHex,
@@ -58,6 +61,8 @@ export class QuoteRepostsDetailsComponent implements OnInit {
           if (quoteRepostsPage.length < this.pageSize) {
             this.lastPage = page;
           }
+
+          this.loading = false;
 
           // Return the page.
           return quoteRepostsPage;

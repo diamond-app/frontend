@@ -27,6 +27,7 @@
     "@angular/platform-browser": "^15.2.4",
     "@angular/platform-browser-dynamic": "^15.2.4",
     "@angular/router": "^15.2.4",
+    "@angular/service-worker": "^15.2.6",
     "@ngneat/transloco": "^2.23.5",
     "@ngneat/transloco-persist-lang": "^1.0.4",
     "angular-feather": "^6.1.0",
@@ -34,7 +35,7 @@
     "autolinker": "^3.14.2",
     "confetti-js": "github:deso-protocol/confetti-js",
     "currency-symbol-map": "^5.0.1",
-    "deso-protocol": "^1.1.5",
+    "deso-protocol": "^1.1.12",
     "intro.js": "^4.2.2",
     "lodash": "^4.17.15",
     "ngx-bootstrap": "^6.2.0",
@@ -47,7 +48,7 @@
     "rxjs-compat": "^6.6.3",
     "sprintf-js": "^1.1.2",
     "sweetalert2": "^10.15.5",
-    "tslib": "^2.5.0",
+    "tslib": "^2.4.0",
     "tus-js-client": "^2.3.0",
     "webpack": "^4.41.2",
     "zone.js": "~0.11.4"
@@ -94,7 +95,6 @@
   },
   "main": "main.js",
   "volta": {
-    "node": "16.19.0",
-    "npm": "7.24.2"
+    "node": "19.9.0"
   }
 }

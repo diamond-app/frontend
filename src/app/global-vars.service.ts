@@ -9,8 +9,10 @@ import {
   BalanceEntryResponse,
   createAccessGroup,
   DeSoNetwork,
+  DeSoNode,
   getAllAccessGroupsOwned,
   identity,
+  PostEntryResponse,
   User,
 } from "deso-protocol";
 import { isNil } from "lodash";
@@ -29,11 +31,10 @@ import { OpenProsperService } from "../lib/services/openProsper/openprosper-serv
 import { HashtagResponse, LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 import { ApiInternalService, AppUser } from "./api-internal.service";
 import { RouteNames } from "./app-routing.module";
-import { BackendApiService, DeSoNode, PostEntryResponse, TutorialStatus } from "./backend-api.service";
+import { BackendApiService, TutorialStatus } from "./backend-api.service";
 import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/direct-to-native-browser-modal.component";
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
-import { IdentityService } from "./identity.service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 
 export enum ConfettiSvg {
@@ -66,7 +67,6 @@ export class GlobalVarsService {
   constructor(
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
-    private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient,
     private apiInternal: ApiInternalService,
@@ -433,25 +433,26 @@ export class GlobalVarsService {
 
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
+    if (window.localStorage.getItem("loggedInUser") && !user) {
+    }
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
     this.loggedInUser = user;
 
-    if (!isSameUserAsBefore) {
-      // Store the user in localStorage
-      this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
+    if (!isSameUserAsBefore && user) {
+      identity.setActiveUser(user.PublicKeyBase58Check);
 
-      this.tracking.identifyUser(user?.PublicKeyBase58Check, {
-        username: user?.ProfileEntryResponse?.Username ?? "",
-        isVerified: user?.ProfileEntryResponse?.IsVerified,
+      this.tracking.identifyUser(user.PublicKeyBase58Check, {
+        username: user.ProfileEntryResponse?.Username ?? "",
+        isVerified: user.ProfileEntryResponse?.IsVerified,
       });
 
       // Clear out the message inbox and BitcoinAPI
       this.latestBitcoinAPIResponse = null;
 
       // Fix the youHodl / hodlYou maps.
-      for (const entry of this.loggedInUser?.UsersYouHODL || []) {
+      for (const entry of user.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
       this.followFeedPosts = [];
@@ -1121,30 +1122,31 @@ export class GlobalVarsService {
   }
 
   launchJumioVerification() {
-    this.identityService
-      .launch("/get-free-deso", {
-        public_key: this.loggedInUser?.PublicKeyBase58Check,
-        // referralCode: this.referralCode(),
-      })
-      .subscribe(() => {
-        this.updateEverything();
-      });
+    identity.getDeso().then(() => {
+      this.updateEverything();
+    });
   }
 
   launchIdentityFlow(): Observable<any> {
     let obs$: Observable<any> = from(identity.login()).pipe(share());
 
-    obs$.subscribe((res) => {
-      this.userSigningUp = res.signedUp;
-      this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
-        ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
-          phoneNumberSuccess: res.phoneNumberSuccess,
-        }),
-      });
-      this.updateEverything().add(() => {
-        this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
-      });
-    });
+    obs$.subscribe(
+      (res) => {
+        this.userSigningUp = res.signedUp;
+        this.tracking.log(`identity : ${res.signedUp ? "signup" : "login"}`, {
+          ...((res.signedUp || typeof res.phoneNumberSuccess !== "undefined") && {
+            phoneNumberSuccess: res.phoneNumberSuccess,
+          }),
+        });
+        this.updateEverything().add(() => {
+          this.flowRedirect(res.signedUp || res.phoneNumberSuccess);
+        });
+      },
+      (error) => {
+        this.tracking.log(`identity : login`, { error });
+        this._alertError(error.toString());
+      }
+    );
 
     return obs$;
   }
@@ -1242,16 +1244,6 @@ export class GlobalVarsService {
     });
 
     this.initializeLocalStorageGlobalVars();
-
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
-    if (!identityServiceURL) {
-      identityServiceURL = "https://identity.deso.org";
-      this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
-    }
-    this.identityService.identityServiceURL = identityServiceURL;
-    this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${identityServiceURL}/embed?v=2`
-    );
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {
@@ -1434,10 +1426,10 @@ export class GlobalVarsService {
     return window.matchMedia("(display-mode: standalone)").matches;
   }
 
-  getDesoNetworkFromURL(url: string) {
-    const parsedURL = new URL(url);
+  getDesoNetworkFromURL(nodeURI: string) {
+    const hostname = new URL(nodeURI).hostname;
 
-    switch (parsedURL.hostname) {
+    switch (hostname) {
       case "node.deso.org":
       case "diamondapp.com":
       case "dev.diamondapp.com":

@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn } from "@angular/forms";
+import { ValidatorFn } from "@angular/forms";
 import { dynamicMinValidator } from "./dynamic-min-validator";
 
 // Angular's Validators.min(0) is >= 0 (i.e. returns true for 0)

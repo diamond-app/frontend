@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { isNil } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -8,7 +9,6 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "reposts-details",
   templateUrl: "./reposts-details.component.html",
-  styleUrls: ["reposts-details.component.scss"],
 })
 export class RepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
@@ -38,7 +38,7 @@ export class RepostsDetailsComponent implements OnInit {
 
   getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loading = true;
@@ -80,6 +80,6 @@ export class RepostsDetailsComponent implements OnInit {
     });
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, this.globalVars.isMobile());
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

@@ -6,8 +6,10 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { isNil } from "lodash";
 
 @Component({
   selector: "transfer-nft",
@@ -175,7 +177,7 @@ export class TransferNftComponent implements OnInit {
   lastPage = null;
 
   getPage(page: number) {
-    if (this.lastPage !== null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     const startIdx = page * TransferNftComponent.PAGE_SIZE;

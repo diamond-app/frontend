@@ -8,7 +8,6 @@ import {
   Output,
   TemplateRef,
 } from "@angular/core";
-import { round } from "lodash";
 import { GlobalVarsService } from "../global-vars.service";
 import { TranslocoService } from "@ngneat/transloco";
 

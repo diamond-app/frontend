@@ -24,7 +24,7 @@ import { ThemeService } from "../theme/theme.service";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-  notificationCategories = this.globalVars.notificationCategories;
+  notificationCategories = {};
 
   notificationDetailsExpanded = false;
 
@@ -205,6 +205,8 @@ export class SettingsComponent implements OnInit {
     private apiInternal: ApiInternalService,
     private route: ActivatedRoute
   ) {
+    this.notificationCategories = this.globalVars.notificationCategories;
+
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams?.emailSettings && queryParams?.emailSettings === "true") {
         this.onlyShowEmailSettings = true;

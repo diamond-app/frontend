@@ -149,7 +149,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       }
 
       // If they don't have CreatorBasisPoints set, use the default.
-      if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints !== null) {
+      if (!isNil(this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints)) {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
       }
     }

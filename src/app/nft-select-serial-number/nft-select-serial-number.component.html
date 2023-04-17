@@ -65,13 +65,13 @@
     </div>
     <div *ngIf="includeColumn('min')" class="col-5 mb-0px d-flex align-items-center">
       <div>
-        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO</div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO&nbsp;</div>
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }})</div>
       </div>
     </div>
     <div *ngIf="includeColumn('buyNow')" class="col-5 mb-0px d-flex align-items-center">
       <div>
-        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO</div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO&nbsp;</div>
         <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.BuyNowPriceNanos, 2) }})</div>
       </div>
     </div>

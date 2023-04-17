@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { trigger, state, style, animate, transition } from "@angular/animations";
+import { Component, Input } from "@angular/core";
+import { animate, style, transition, trigger } from "@angular/animations";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({

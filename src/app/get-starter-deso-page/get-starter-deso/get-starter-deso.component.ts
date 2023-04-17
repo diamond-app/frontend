@@ -1,6 +1,4 @@
 import { Component } from "@angular/core";
-import { BackendApiService } from "src/app/backend-api.service";
-import { RouteNames } from "../../app-routing.module";
 
 @Component({
   selector: "get-starter-deso",

@@ -5,21 +5,25 @@ import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { Subscription } from "rxjs";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
-import {
-  BackendApiService,
-  NFTBidData,
-  NFTBidEntryResponse,
-  NFTEntryResponse,
-  PostEntryResponse,
-} from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
+import { NFTBidEntryResponse as NFTBidEntryResponseProtocol, NFTEntryResponse, PostEntryResponse } from "deso-protocol";
+
+interface NFTBidEntryResponse extends NFTBidEntryResponseProtocol {
+  selected?: boolean;
+}
+
+export class NFTBidData {
+  PostEntryResponse: PostEntryResponse;
+  NFTEntryResponses: NFTEntryResponse[];
+  BidEntryResponses: NFTBidEntryResponse[];
+}
 
 @Component({
   selector: "nft-post",

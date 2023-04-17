@@ -5,7 +5,6 @@ import { identity } from "deso-protocol";
 import { from, Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "src/app/backend-api.service";
-import { IdentityService } from "src/app/identity.service";
 import { environment } from "src/environments/environment";
 import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services/openProsper/openprosper-service";
 
@@ -155,11 +154,7 @@ export class ApiInternalService {
    */
   private creatorEarningsCache: Record<string, OpenProsperEarningsDetail> = {};
 
-  constructor(
-    private httpClient: HttpClient,
-    private identity: IdentityService,
-    private backendAPI: BackendApiService
-  ) {}
+  constructor(private httpClient: HttpClient, private backendAPI: BackendApiService) {}
 
   getAppUser(publicKey: string, emailJwt: string = ""): Observable<any> {
     const queryParams = emailJwt === "" ? "" : "?emailJwt=true";
