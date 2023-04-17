@@ -60,9 +60,7 @@
               class="rounded-circle overflow-hidden"
               height="40"
               width="40"
-              [src]="
-                backendApi.GetSingleProfilePictureURL(globalVars.localNode, currentPost.PosterPublicKeyBase58Check)
-              "
+              [src]="backendApi.GetSingleProfilePictureURL(currentPost.PosterPublicKeyBase58Check)"
               alt=""
             />
             {{ currentPost.ProfileEntryResponse.Username }}
