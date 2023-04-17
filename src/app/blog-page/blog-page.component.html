@@ -36,7 +36,7 @@
           class="rounded-circle overflow-hidden border border-dark mr-1"
           height="24"
           width="24"
-          [src]="backendApi.GetSingleProfilePictureURL(globalVars.localNode, profile.PublicKeyBase58Check)"
+          [src]="backendApi.GetSingleProfilePictureURL(profile.PublicKeyBase58Check)"
           alt=""
         />
         {{ profile.Username }}

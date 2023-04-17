@@ -226,7 +226,7 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,

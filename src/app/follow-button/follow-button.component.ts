@@ -101,7 +101,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private _changeRef: ChangeDetectorRef,
     private backendApi: BackendApiService,
     private followService: FollowService,

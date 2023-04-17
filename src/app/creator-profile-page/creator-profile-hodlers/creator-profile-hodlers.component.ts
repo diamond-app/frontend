@@ -16,7 +16,7 @@ export class CreatorProfileHodlersComponent {
   static WINDOW_VIEWPORT = true;
   static BUFFER_SIZE = 5; // todo anna: do we want 5 or default?
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   @Input() profile: ProfileEntryResponse;
 

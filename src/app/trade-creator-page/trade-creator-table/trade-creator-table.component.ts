@@ -21,7 +21,7 @@ export class TradeCreatorTableComponent {
   appData: GlobalVarsService;
   buyVerb = CreatorCoinTrade.BUY_VERB;
 
-  constructor(public globalVars: GlobalVarsService, private followService: FollowService) {
+  constructor(public globalVars: GlobalVarsService, public followService: FollowService) {
     this.appData = globalVars;
   }
 }
