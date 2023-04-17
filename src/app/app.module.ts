@@ -103,6 +103,9 @@ import { LeftBarComponent } from "./left-bar/left-bar.component";
 import { LinkPreviewComponent } from "./link-preview/link-preview.component";
 import { LoggedOutEmptyStateComponent } from "./logged-out-empty-state/logged-out-empty-state.component";
 // Modular Themes for DeSo by Carsen Klock @carsenk
+import { FeedPostImageModalComponent } from "./feed/feed-post-image-modal/feed-post-image-modal.component";
+import { IdentityMigrationModalComponent } from "./identity-migration-modal/identity-migration-modal.component";
+import { InstallPwaComponent } from "./install-pwa/install-pwa.component";
 import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows-page.component";
 import { ManageFollowsComponent } from "./manage-follows-page/manage-follows/manage-follows.component";
 import { CreateAccessGroupComponent } from "./messages-page/create-access-group/create-access-group.component";
@@ -217,8 +220,6 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { IdentityMigrationModalComponent } from "./identity-migration-modal/identity-migration-modal.component";
-import { InstallPwaComponent } from "./install-pwa/install-pwa.component";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -418,6 +419,7 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     PollModalComponent,
     IdentityMigrationModalComponent,
     InstallPwaComponent,
+    FeedPostImageModalComponent,
   ],
   imports: [
     BrowserModule,
