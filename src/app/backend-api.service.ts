@@ -196,6 +196,8 @@ export class BackendApiService {
   LegacyUserListKey = "userList";
   LegacySeedListKey = "seedList";
 
+  ShowInstallPWAPanelKey = "showInstallPWA";
+
   SetStorage(key: string, value: any) {
     localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
   }
@@ -206,7 +208,7 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-    if (data === "") {
+    if (data === null || data === "") {
       return null;
     }
 
