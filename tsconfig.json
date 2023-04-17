@@ -24,6 +24,7 @@
       {
         "name": "typescript-strict-plugin"
       }
-    ]
+    ],
+    "useDefineForClassFields": false
   }
 }
