@@ -275,9 +275,6 @@ export class AppComponent implements OnInit {
     // Load the theme
     this.themeService.init();
 
-    // Show install PWA dialog on mobile
-    this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
-
     // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
@@ -349,9 +346,4 @@ export class AppComponent implements OnInit {
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
   }
-
-  closeInstallPWA = () => {
-    this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
-    this.showInstallPWA = false;
-  };
 }

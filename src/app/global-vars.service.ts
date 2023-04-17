@@ -73,7 +73,9 @@ export class GlobalVarsService {
     private locationStrategy: LocationStrategy,
     private modalService: BsModalService,
     private tracking: TrackingService
-  ) {}
+  ) {
+    this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
+  }
 
   static MAX_POST_LENGTH = 560;
 
@@ -236,6 +238,8 @@ export class GlobalVarsService {
   identityInfoResponse?: any;
 
   browserSupportsWebPush: boolean = false;
+
+  showInstallPWA: boolean = false;
 
   // All notification categories, and their respective notification types.
   notificationCategories = {
@@ -1444,4 +1448,9 @@ export class GlobalVarsService {
         return environment.production ? DeSoNetwork.mainnet : DeSoNetwork.testnet;
     }
   }
+
+  closeInstallPWA = () => {
+    this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
+    this.showInstallPWA = false;
+  };
 }

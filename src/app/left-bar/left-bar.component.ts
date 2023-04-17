@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { identity } from "@deso-core/identity";
 import { filter } from "lodash";
@@ -112,6 +112,7 @@ export class LeftBarComponent {
 
   addAppToHomeScreen() {
     this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, true);
+    this.globalVars.showInstallPWA = true;
     this.globalVars.isLeftBarMobileOpen = false;
   }
 }

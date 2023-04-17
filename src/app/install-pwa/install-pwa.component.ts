@@ -1,5 +1,6 @@
 // @ts-strict
 import { Component, Input } from "@angular/core";
+import { GlobalVarsService } from "src/app/global-vars.service";
 
 @Component({
   selector: "install-pwa",
@@ -8,4 +9,6 @@ import { Component, Input } from "@angular/core";
 })
 export class InstallPwaComponent {
   @Input() closePanel = () => {};
+
+  constructor(public globalVars: GlobalVarsService) {}
 }
