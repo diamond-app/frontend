@@ -21,6 +21,8 @@ $arrow-down-icon-wrapper-size: 50px;
     top: 5px;
     width: 30px;
     height: 30px;
+    border: none;
+    background-color: transparent;
 
     .arrow-close__icon {
       color: var(--text-inverted);
