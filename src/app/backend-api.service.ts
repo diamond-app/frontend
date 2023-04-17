@@ -92,7 +92,6 @@ import {
   identity,
   NFTEntryResponse,
   PostEntryResponse,
-  ProfileEntryResponse,
   resendVerifyEmail,
   sellCreatorCoin,
   sendDeso,
@@ -111,7 +110,7 @@ import {
   UploadVideoV2Response,
   verifyEmail,
 } from "deso-protocol";
-import { EMPTY, forkJoin, from, Observable, of, Subject, throwError } from "rxjs";
+import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -199,25 +198,17 @@ export class BackendApiService {
 
   ShowInstallPWAPanelKey = "showInstallPWA";
 
-  StorageSub = new Subject();
-
   SetStorage(key: string, value: any) {
     localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
-    this.StorageSub.next({ [key]: value });
   }
 
   RemoveStorage(key: string) {
     localStorage.removeItem(key);
-    this.StorageSub.next({ [key]: "" });
-  }
-
-  WatchStorage() {
-    return this.StorageSub.asObservable();
   }
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-    if (data === "") {
+    if (data === null || data === "") {
       return null;
     }
 

@@ -294,10 +294,6 @@ export class AppComponent implements OnInit {
 
     this.globalVars.pollUnreadNotifications();
 
-    this.backendApi.WatchStorage().subscribe(() => {
-      this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
-    });
-
     this.installDD();
     introJs().start();
   }
@@ -356,5 +352,6 @@ export class AppComponent implements OnInit {
 
   closeInstallPWA() {
     this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
+    this.showInstallPWA = false;
   }
 }
