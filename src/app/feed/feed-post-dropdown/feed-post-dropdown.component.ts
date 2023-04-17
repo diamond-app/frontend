@@ -400,7 +400,7 @@ export class FeedPostDropdownComponent implements OnInit {
     try {
       navigator.share({ url: this._getPostUrl() });
     } catch (err) {
-      console.error("Share failed:", err.toString());
+      console.error("Share failed:", err);
     }
   }
 
