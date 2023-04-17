@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { PostInteractionDetailsComponent } from './post-interaction-details.component';
+import { PostInteractionDetailsComponent } from "./post-interaction-details.component";
 
-describe('PostInteractionDetailsComponent', () => {
+describe("PostInteractionDetailsComponent", () => {
   let component: PostInteractionDetailsComponent;
   let fixture: ComponentFixture<PostInteractionDetailsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PostInteractionDetailsComponent ]
-    })
-    .compileComponents();
+      declarations: [PostInteractionDetailsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('PostInteractionDetailsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

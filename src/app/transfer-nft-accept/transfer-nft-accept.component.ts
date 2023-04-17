@@ -5,8 +5,9 @@ import { isNumber } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "transfer-nft-accept",

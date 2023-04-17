@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CashoutComponent } from './cashout.component';
+import { CashoutComponent } from "./cashout.component";
 
-describe('CashoutComponent', () => {
+describe("CashoutComponent", () => {
   let component: CashoutComponent;
   let fixture: ComponentFixture<CashoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CashoutComponent ]
-    })
-    .compileComponents();
+      declarations: [CashoutComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('CashoutComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

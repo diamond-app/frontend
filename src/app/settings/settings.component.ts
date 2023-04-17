@@ -24,7 +24,7 @@ import { ThemeService } from "../theme/theme.service";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-  notificationCategories = this.globalVars.notificationCategories;
+  notificationCategories = {};
 
   notificationDetailsExpanded = false;
 
@@ -93,9 +93,8 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
-      `${notificationType}${notificationChannel}Notif`
-    ];
+    this.appUser[`${notificationType}${notificationChannel}Notif`] =
+      !this.appUser[`${notificationType}${notificationChannel}Notif`];
 
     // If the user is subscribing, subscribe them to push notifications.
     if (this.appUser[`${notificationType}${notificationChannel}Notif`] && notificationChannel === "Push") {
@@ -106,9 +105,8 @@ export class SettingsComponent implements OnInit {
       () => {},
       () => {
         if (!this.appUser) return;
-        this.appUser[`${notificationType}${notificationChannel}Notif`] = !this.appUser[
-          `${notificationType}${notificationChannel}Notif`
-        ];
+        this.appUser[`${notificationType}${notificationChannel}Notif`] =
+          !this.appUser[`${notificationType}${notificationChannel}Notif`];
       }
     );
   }
@@ -126,9 +124,8 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
-      `Receive${notificationChannel}${digestType}Digest`
-    ];
+    this.appUser[`Receive${notificationChannel}${digestType}Digest`] =
+      !this.appUser[`Receive${notificationChannel}${digestType}Digest`];
 
     // If the user is subscribing, subscribe them to push notifications.
     if (this.appUser[`Receive${notificationChannel}${digestType}Digest`] && notificationChannel === "Push") {
@@ -139,9 +136,8 @@ export class SettingsComponent implements OnInit {
       () => {},
       () => {
         if (!this.appUser) return;
-        this.appUser[`Receive${notificationChannel}${digestType}Digest`] = !this.appUser[
-          `Receive${notificationChannel}${digestType}Digest`
-        ];
+        this.appUser[`Receive${notificationChannel}${digestType}Digest`] =
+          !this.appUser[`Receive${notificationChannel}${digestType}Digest`];
       }
     );
   }
@@ -209,6 +205,8 @@ export class SettingsComponent implements OnInit {
     private apiInternal: ApiInternalService,
     private route: ActivatedRoute
   ) {
+    this.notificationCategories = this.globalVars.notificationCategories;
+
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams?.emailSettings && queryParams?.emailSettings === "true") {
         this.onlyShowEmailSettings = true;

@@ -1,8 +1,7 @@
 // @ts-strict
 import { Component, Input } from "@angular/core";
-import { DecryptedMessageEntryResponse, PublicKeyToProfileEntryResponseMap } from "deso-protocol";
-import { ProfileEntryResponse } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { DecryptedMessageEntryResponse, ProfileEntryResponse, PublicKeyToProfileEntryResponseMap } from "deso-protocol";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "message-bubble",

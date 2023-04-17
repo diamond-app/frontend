@@ -12,7 +12,7 @@ $landing-page-highlight: #00faff;
 @import "bootstrap-overrides";
 
 // regular style toast
-@import '~ngx-toastr/toastr';
+@import 'node_modules/ngx-toastr/toastr';
 
 @font-face {
   font-family: 'Gilroy';
@@ -4223,6 +4223,10 @@ creator-profile-nfts {
 .messages-page {
   height: calc(100vh - 60px);
   overflow: hidden;
+
+  &.has-banner {
+    height: calc(100vh - 210px);
+  }
 }
 
 .messages-page__content-area {
@@ -4254,7 +4258,7 @@ creator-profile-nfts {
 
   .messages-thread-view__scroll-container {
     overflow-y: scroll;
-    height: calc(100vh - 298px);
+    height: calc(100% - 110px);
   }
 
   &.mobile {
@@ -4262,7 +4266,7 @@ creator-profile-nfts {
 
     .messages-thread-view__scroll-container {
       overflow-y: scroll;
-      height: calc(100vh - 298px - #{$mobile-header-height});
+      height: calc(100% - 110px - #{$mobile-header-height});
     }
   }
 }
@@ -4282,7 +4286,7 @@ creator-profile-nfts {
 
 .message-thread-view {
   position: relative;
-  height: calc(100vh - 162px);
+  height: 100%;
 }
 
 .admin__get-user-admin-data-line {

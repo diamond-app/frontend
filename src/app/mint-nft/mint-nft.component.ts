@@ -1,11 +1,12 @@
 import { Location } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ProfileEntryResponse } from "deso-protocol";
 import { isNumber } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
 type AdditionalRoyalty = {

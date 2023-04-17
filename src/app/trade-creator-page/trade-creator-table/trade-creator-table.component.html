@@ -1,6 +1,9 @@
 <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer(); else elseBlock">
   <!-- Amount you're transferring -->
-  <div *ngIf="!displayForCreatorForm" class="py-3 border-bottom d-flex justify-content-between flex-wrap align-items-center">
+  <div
+    *ngIf="!displayForCreatorForm"
+    class="py-3 border-bottom d-flex justify-content-between flex-wrap align-items-center"
+  >
     <span>Recipient</span>
 
     <div class="d-inline-block" style="max-width: 70%; overflow-wrap: anywhere">
@@ -18,7 +21,7 @@
     <span>You're transferring</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.amount.value | number: "0.0-9" }}
+      {{ creatorCoinTrade.amount.value | number : "0.0-9" }}
       {{ creatorCoinTrade.assetToSellString() }}
     </div>
   </div>
@@ -51,7 +54,7 @@
 
     <div class="d-inline-block" id="tutorial-amount-purchasing">
       <span *ngIf="!inTutorial || !creatorCoinTrade.isBuyingCreatorCoin">
-        {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetToSellAmount() | number : "0.0-9" }}
         {{ creatorCoinTrade.assetToSellString() }}
       </span>
 
@@ -68,7 +71,7 @@
 
     <div class="d-inline-block" id="tutorial-amount-selling">
       <span *ngIf="!inTutorial || creatorCoinTrade.isBuyingCreatorCoin">
-        {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetReturnedAmount() | number : "0.0-9" }}
         {{ creatorCoinTrade.assetReturnedString() }}
       </span>
 
@@ -109,7 +112,7 @@
     </div>
     <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }" class="text-grey5">
       @{{ creatorCoinTrade.creatorProfile.Username }} will receive
-      <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+      <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number : "0.0-9" }}%</span>
       of your purchase as a
       <span style="white-space: nowrap">
         founder reward

@@ -19,7 +19,10 @@
 <div class="w-100 border-bottom"></div>
 <div class="p-16px">
   <!-- Transfer Recipient Box -->
-  <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer()" [ngStyle]="{ 'margin-bottom': creatorCoinTrade?.transferRecipient?.value ? '16px' : '32px' }">
+  <div
+    *ngIf="creatorCoinTrade.isCreatorCoinTransfer()"
+    [ngStyle]="{ 'margin-bottom': creatorCoinTrade?.transferRecipient?.value ? '16px' : '32px' }"
+  >
     <div class="mint-nft__sub-title mt-0px" style="margin-top: 0px">Recipient</div>
 
     <div *ngIf="creatorCoinTrade.amount">
@@ -36,7 +39,8 @@
         [profile]="creatorCoinTrade.transferRecipient.value"
         [singleColumn]="true"
         [hideFollowLink]="true"
-        *ngIf="creatorCoinTrade.transferRecipient.value"></simple-profile-card>
+        *ngIf="creatorCoinTrade.transferRecipient.value"
+      ></simple-profile-card>
     </div>
 
     <div class="text-danger text-left fs-14px mt-2">
@@ -52,13 +56,7 @@
 
   <div class="mint-nft__sub-title">Amount</div>
   <div class="d-flex">
-    <div
-      class="d-flex"
-      dropdown
-      (click)="$event.stopPropagation()"
-      container="body"
-      style="align-items: center"
-    >
+    <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
       <button *ngIf="creatorCoinTrade.tradeType === buyTab" class="mint-nft__dropdown-btn" role="button" dropdownToggle>
         {{ creatorCoinTrade.selectedCurrency }}
         <i-feather name="chevron-down" class="feather-small"></i-feather>
@@ -86,7 +84,9 @@
         placeholder="0"
       />
       <span class="mint-nft__floating-span fc-blue cursor-pointer" (click)="_maxButtonClicked()">Max</span>
-      <span *ngIf="creatorCoinTrade.tradeType !== buyTab" class="mint-nft__floating-span" style="right: 80px">{{creatorCoinTrade.creatorProfile.Username}} coin</span>
+      <span *ngIf="creatorCoinTrade.tradeType !== buyTab" class="mint-nft__floating-span" style="right: 80px">
+        {{ creatorCoinTrade.creatorProfile.Username }} coin
+      </span>
     </div>
   </div>
   <!-- Slippage error box -->
@@ -108,7 +108,7 @@
 
     <div *ngIf="creatorCoinTrade.amount.errors.exclusiveMin" class="mt-10px error-container">
       <i-feather name="alert-circle" class="feather-large"></i-feather>
-      Amount must be greater than {{ this._minAmount() | number: "0.0-9" }}
+      Amount must be greater than {{ this._minAmount() | number : "0.0-9" }}
       (to cover fees)
     </div>
 
@@ -116,7 +116,7 @@
       <i-feather name="alert-circle" class="feather-large mr-5px"></i-feather>
       <div *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock">
         Amount must be less than
-        {{ this._maxAmount() | number: "0.0-6" }}
+        {{ this._maxAmount() | number : "0.0-6" }}
         (your balance net of fees)
       </div>
       <ng-template #elseBlock>Amount must be less than your balance plus fees</ng-template>

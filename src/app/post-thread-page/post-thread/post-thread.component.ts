@@ -8,7 +8,8 @@ import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { environment } from "src/environments/environment";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
+import { PostEntryResponse } from "deso-protocol";
 import { GlobalVarsService } from "../../global-vars.service";
 import { Thread, ThreadManager } from "../helpers/thread-manager";
 

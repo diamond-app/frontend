@@ -2,8 +2,9 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, 
 import { Router } from "@angular/router";
 import * as _ from "lodash";
 import { TrackingService } from "src/app/tracking.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -86,7 +87,11 @@ export class SearchBarComponent implements OnInit {
             this.searchUpdated.emit(this.loading);
             // a 404 occurs for anonymous public keys.
             if (err.status === 404 && this.globalVars.isMaybePublicKey(requestedSearchText)) {
-              const anonProfile = { PublicKeyBase58Check: requestedSearchText, Username: "", Description: "" };
+              const anonProfile = {
+                PublicKeyBase58Check: requestedSearchText,
+                Username: "",
+                Description: "",
+              } as ProfileEntryResponse;
               this.creators = [anonProfile];
               // If starting search text is set, we handle the selection of the creator.
               this._handleCreatorSelect(anonProfile);
@@ -142,7 +147,7 @@ export class SearchBarComponent implements OnInit {
 
   _handleArrowKey(key: string) {
     // Don't do anything if the search box isn't open.
-    if (this.searchText.length == 0) return;
+    if (this.searchText.length === 0) return;
 
     if (key == "DOWN") {
       // Only update if we aren't at the end of the creator list.

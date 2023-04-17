@@ -64,13 +64,18 @@
           <span *ngIf="this.isSavingEmail"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
           <span
             *ngIf="
-              !this.isSavingEmail && (this.emailAddress === '' || !globalVars.userHasSubscribedToNotificationChannel('Email', appUser))
+              !this.isSavingEmail &&
+              (this.emailAddress === '' || !globalVars.userHasSubscribedToNotificationChannel('Email', appUser))
             "
           >
             Subscribe
           </span>
           <span
-            *ngIf="!this.isSavingEmail && this.emailAddress !== '' && globalVars.userHasSubscribedToNotificationChannel('Email', appUser)"
+            *ngIf="
+              !this.isSavingEmail &&
+              this.emailAddress !== '' &&
+              globalVars.userHasSubscribedToNotificationChannel('Email', appUser)
+            "
           >
             Update
           </span>

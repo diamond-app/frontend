@@ -5,8 +5,10 @@ import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
+import { isNil } from "lodash";
 
 @Component({
   selector: "manage-follows",
@@ -44,7 +46,7 @@ export class ManageFollowsComponent implements OnDestroy {
   };
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
+    if (!isNil(this.lastPage) && page > this.lastPage) {
       return [];
     }
     this.loadingNextPage = true;

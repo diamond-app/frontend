@@ -26,21 +26,15 @@ import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-se
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import {
-  AssociationReactionValue,
-  AssociationType,
-  BackendApiService,
-  NFTEntryResponse,
-  PostAssociation,
-  PostAssociationCountsResponse,
-  PostEntryResponse,
-} from "../../backend-api.service";
+import { AssociationReactionValue, AssociationType, BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { NFTEntryResponse, PostAssociationResponse, PostEntryResponse, AssociationCountsResponse } from "deso-protocol";
+
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
  * but that approach was deprecated and there is not currently an interim
@@ -55,6 +49,10 @@ const DEPRECATED_CUSTOM_ATTRIBUTIONS = {
     link: "https://web3setu.com",
   },
 };
+
+export interface DecryptedNFTEntryResponse extends NFTEntryResponse {
+  DecryptedUnlockableText?: string;
+}
 
 @Component({
   selector: "feed-post",
@@ -242,7 +240,7 @@ export class FeedPostComponent implements OnInit {
   mySerialNumbersNotForSale: NFTEntryResponse[];
   serialNumbersDisplay: string;
   nftEntryResponses: NFTEntryResponse[];
-  decryptableNFTEntryResponses: NFTEntryResponse[];
+  decryptableNFTEntryResponses: DecryptedNFTEntryResponse[];
   isFollowing: boolean;
   showReadMoreRollup = false;
   showRestOfPost = false;
@@ -260,11 +258,11 @@ export class FeedPostComponent implements OnInit {
   streamPlayer: any;
   imageLoaded: boolean = false;
   embedLoaded: boolean = false;
-  postReactionCounts: PostAssociationCountsResponse = {
+  postReactionCounts: AssociationCountsResponse = {
     Counts: {},
     Total: 0,
   };
-  myReactions: Array<PostAssociation> = [];
+  myReactions: Array<PostAssociationResponse> = [];
   reactionsLoaded: boolean = false;
   pollPost: boolean = false;
 
@@ -1075,12 +1073,12 @@ export class FeedPostComponent implements OnInit {
     );
   }
 
-  updateReactionCounts(counts: PostAssociationCountsResponse) {
+  updateReactionCounts(counts: AssociationCountsResponse) {
     this.postReactionCounts = counts;
     this.ref.detectChanges();
   }
 
-  updateMyReactions(reactions: Array<PostAssociation>) {
+  updateMyReactions(reactions: Array<PostAssociationResponse>) {
     this.myReactions = reactions;
     this.ref.detectChanges();
   }

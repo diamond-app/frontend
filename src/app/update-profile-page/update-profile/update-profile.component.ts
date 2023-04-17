@@ -149,7 +149,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       }
 
       // If they don't have CreatorBasisPoints set, use the default.
-      if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {
+      if (!isNil(this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints)) {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
       }
     }
@@ -212,7 +212,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _setProfileErrors(): boolean {
     let hasErrors = false;
-    if (this.usernameInput.length == 0) {
+    if (this.usernameInput.length === 0) {
       this.profileUpdateErrors.usernameError = true;
       hasErrors = true;
     } else {
@@ -221,7 +221,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
     if (
       this.profilePicInput == null ||
-      this.profilePicInput.length == 0 ||
+      this.profilePicInput.length === 0 ||
       this.profilePicInput.length > 5 * 1024 * 1024 //
     ) {
       this.profileUpdateErrors.profilePicError = true;

@@ -1,9 +1,9 @@
 // @ts-strict
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { sortBy } from "lodash";
-import { BlogPostExtraData } from "src/app/create-long-post-page/create-long-post/create-long-post.component";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "creator-profile-blog-posts",
@@ -41,9 +41,7 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
       .toPromise()
       .then(({ Posts }) =>
         // Filter to only posts that have a blog post rich text extra data field.
-        Posts.filter(
-          (p: PostEntryResponse) => typeof (p.PostExtraData as BlogPostExtraData).BlogDeltaRtfFormat !== "undefined"
-        )
+        Posts.filter((p: PostEntryResponse) => typeof p.PostExtraData.BlogDeltaRtfFormat !== "undefined")
       )
       .then((posts) => {
         this.blogPosts = this.sortPosts(

@@ -8,9 +8,10 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
 import { environment } from "src/environments/environment";
 import { AppRoutingModule, RouteNames } from "../../../app-routing.module";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../../backend-api.service";
 import { BuyDesoModalComponent } from "../../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";
 import { GlobalVarsService } from "../../../global-vars.service";
+import { ProfileEntryResponse } from "deso-protocol";
 
 @Component({
   selector: "buy-deso-tutorial",

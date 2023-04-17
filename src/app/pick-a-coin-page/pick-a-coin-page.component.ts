@@ -19,7 +19,7 @@ export class PickACoinPageComponent implements OnInit {
 
   ngOnInit() {
     for (let creator of this.usersYouHODL()) {
-      if (creator.NetBalanceInMempool != 0) {
+      if (creator.NetBalanceInMempool !== 0) {
         this.hasUnminedCreatorCoins = true;
       }
     }

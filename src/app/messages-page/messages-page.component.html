@@ -1,4 +1,4 @@
-<app-page *ngIf="!this.globalVars.loggedInUser; else messages">
+<app-page *ngIf="!globalVars.loggedInUser; else messages">
   <app-logged-out-empty-state
     [headingText]="'Fully encrypted end-to-end messaging. For anywhere on DeSo.'"
     [subheadingText]="
@@ -11,10 +11,10 @@
 
 <ng-template #messages>
   <app-page [hideSidebar]="true">
-    <div *ngIf="this.hasLegacyMessages" class="p-3 text-center background-color-light-grey position-relative">
+    <div *ngIf="hasLegacyMessages" class="p-3 text-center background-color-light-grey position-relative">
       <div class="d-flex">
         <button class="messages-page__banner-dismiss-btn">
-          <i-feather name="x" class="feather-medium fs-0px" (click)="this.dismissLegacyMessagesBanner()"></i-feather>
+          <i-feather name="x" class="feather-medium fs-0px" (click)="dismissLegacyMessagesBanner()"></i-feather>
         </button>
       </div>
       <p class="mb-3">
@@ -26,7 +26,7 @@
       <a href="https://node.deso.org" target="_blank" rel="noopener noreferrer">node.deso.org</a>
       .
     </div>
-    <section class="messages-page">
+    <section class="messages-page" [ngClass]="{ 'has-banner': hasLegacyMessages }">
       <header class="border-bottom pt-3 pb-2 px-3">
         <h1 class="font-weight-bold fs-24px mb-2" *ngIf="!globalVars.isMobile()">Messages</h1>
         <div class="d-flex align-items-center">
@@ -36,12 +36,12 @@
               [showCloutavista]="false"
               [isSearchForUsersToMessage]="true"
               [startingSearchText]=""
-              [messagingAccessGroups]="this.accessGroups"
-              (creatorToMessage)="this.onSearchItemSelected($event)"
+              [messagingAccessGroups]="accessGroups"
+              (creatorToMessage)="onSearchItemSelected($event)"
               class="position-relative"
             ></search-bar>
           </div>
-          <button class="ml-auto btn btn-primary" (click)="this.openCreateAccessGroupModal()">
+          <button class="ml-auto btn btn-primary" (click)="openCreateAccessGroupModal()">
             <i-feather *ngIf="globalVars.isMobile; else btnText" name="plus"></i-feather>
             <ng-template #btnText>Create Group</ng-template>
           </button>
@@ -53,11 +53,11 @@
           [ngClass]="{ 'mobile-hidden': globalVars.isMobile() && selectedThread, mobile: globalVars.isMobile() }"
         >
           <thread-list-item
-            *ngFor="let item of this.threadPreviewList"
+            *ngFor="let item of threadPreviewList"
             [listItem]="item"
-            [publicKeyToProfileMap]="this.publicKeyToProfileMap"
-            [onItemClick]="this.selectThread"
-            [isSelected]="this.selectedThread === item"
+            [publicKeyToProfileMap]="publicKeyToProfileMap"
+            [onItemClick]="selectThread"
+            [isSelected]="selectedThread === item"
           ></thread-list-item>
         </div>
         <div class="messages-page__threads-area" [ngClass]="{ mobile: globalVars.isMobile() }">
@@ -65,7 +65,7 @@
             *ngIf="globalVars.isMobile() && selectedThread"
             class="messages-page__mobile-thread-header d-flex align-items-center justify-content-between px-4"
           >
-            <div (click)="this.selectedThread = null" class="d-inline-block cursor-pointer w-10">
+            <div (click)="selectedThread = null" class="d-inline-block cursor-pointer w-10">
               <i-feather name="chevron-left"></i-feather>
             </div>
 
@@ -75,9 +75,9 @@
           </header>
 
           <message-thread
-            [threadHead]="this.selectedThread"
-            [publicKeyToProfileMap]="this.publicKeyToProfileMap"
-            [accessGroups]="this.accessGroups"
+            [threadHead]="selectedThread"
+            [publicKeyToProfileMap]="publicKeyToProfileMap"
+            [accessGroups]="accessGroups"
           ></message-thread>
         </div>
       </div>

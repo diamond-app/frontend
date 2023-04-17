@@ -146,7 +146,7 @@
 
                 <ul *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-autoclose">
                   <li
-                    *ngFor="let item of POLL_WEIGHT_TYPE_LABELS | keyvalue: keepPollWeightsOrder"
+                    *ngFor="let item of POLL_WEIGHT_TYPE_LABELS | keyvalue : keepPollWeightsOrder"
                     (click)="currentPostModel.pollType = item.key"
                     role="menuitem"
                     class="cursor-pointer"

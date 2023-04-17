@@ -117,8 +117,8 @@ export class MessageThreadComponent implements OnChanges, OnDestroy {
       throw new Error("Cannot load messages without an existing thread.");
     }
 
-    const startTimestampNanosString = this.threadMessages[this.threadMessages.length - 1]?.MessageInfo
-      ?.TimestampNanosString;
+    const startTimestampNanosString =
+      this.threadMessages[this.threadMessages.length - 1]?.MessageInfo?.TimestampNanosString;
 
     switch (this.threadHead.ChatType) {
       case ChatType.DM:

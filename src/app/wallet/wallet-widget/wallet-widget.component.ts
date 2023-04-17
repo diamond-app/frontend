@@ -9,9 +9,7 @@ export class WalletWidgetComponent {
   constructor(public globalVars: GlobalVarsService) {}
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(
-        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.DeSoLockedNanos
-      ),
+      this.globalVars.nanosToUSDNumber(this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.DeSoLockedNanos),
       3,
       true
     );

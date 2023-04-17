@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of } from "rxjs";
 import { TrackingService } from "src/app/tracking.service";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
@@ -123,22 +122,24 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = ExpectedCreatorCoinReturnedNanos || 0;
           this.creatorCoinTrade.expectedDeSoReturnedNanos = ExpectedDeSoReturnedNanos || 0;
 
-          const observable =
+          if (
             this.creatorCoinTrade.followCreator &&
             !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) &&
             this.appData.loggedInUser.PublicKeyBase58Check !==
               this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
             this.creatorCoinTrade.tradeType === CreatorCoinTrade.BUY_VERB
-              ? this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
-              : of(null).subscribe();
-          observable.add(() => {
-            this.appData.updateEverything(
-              response.TxnHashHex,
-              this._creatorCoinSuccess,
-              this._creatorCoinFailure,
-              this
-            );
-          });
+          ) {
+            this.followService
+              ._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
+              .subscribe(() => {
+                this.appData.updateEverything(
+                  response.TxnHashHex,
+                  this._creatorCoinSuccess,
+                  this._creatorCoinFailure,
+                  this
+                );
+              });
+          }
         },
         (response) => {
           this._handleRequestErrors(response);
