@@ -99,7 +99,6 @@ import {
   sendDiamonds,
   setNotificationMetadata,
   submitPost,
-  SubmitTransactionResponse,
   transferCreatorCoin,
   transferNFT,
   updateFollowingStatus,
@@ -294,7 +293,7 @@ export class BackendApiService {
     SenderPublicKeyBase58Check: string,
     RecipientPublicKeyOrUsername: string,
     AmountNanos: number
-  ): Observable<SendDeSoResponse & SubmitTransactionResponse> {
+  ): Observable<SendDeSoResponse> {
     return from(
       sendDeso({
         SenderPublicKeyBase58Check,
@@ -353,7 +352,7 @@ export class BackendApiService {
         BuyNowPriceNanos,
         AdditionalDESORoyaltiesMap,
         AdditionalCoinRoyaltiesMap,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -375,7 +374,7 @@ export class BackendApiService {
         MinBidAmountNanos,
         IsBuyNow,
         BuyNowPriceNanos,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -391,7 +390,7 @@ export class BackendApiService {
         NFTPostHashHex,
         SerialNumber,
         BidAmountNanos,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -401,7 +400,7 @@ export class BackendApiService {
         UpdaterPublicKeyBase58Check,
         NFTPostHashHex,
         SerialNumber,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -415,7 +414,7 @@ export class BackendApiService {
         UpdaterPublicKeyBase58Check,
         NFTPostHashHex,
         SerialNumber,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -639,7 +638,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
-      })
+      }).then(mergeTxResponse)
     );
   }
 
@@ -1041,12 +1040,7 @@ export class BackendApiService {
         DiamondPostHashHex,
         DiamondLevel,
       })
-    ).pipe(
-      map((res) => ({
-        ...res.constructedTransactionResponse,
-        ...res.submittedTransactionResponse,
-      }))
-    );
+    ).pipe(map(mergeTxResponse));
   }
 
   GetDiamondsForPublicKey(PublicKeyBase58Check: string, FetchYouDiamonded: boolean = false): Observable<any> {

@@ -48,6 +48,7 @@ export class FollowService {
         }),
         catchError((e) => {
           console.error(e);
+
           let errorString = e.toString() || "";
           if (errorString.includes(this.RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS)) {
             // If the user is already following, then set our button to reflect that.
