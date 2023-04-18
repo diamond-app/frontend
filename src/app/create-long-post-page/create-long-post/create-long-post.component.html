@@ -2,9 +2,24 @@
   <simple-center-loader [height]="200"></simple-center-loader>
 </div>
 <div *ngIf="!isLoadingEditModel" class="create-long-post__form-container">
-  <form (submit)="submit($event)" (input)="onFormInput($event)">
+  <button
+    class="editor-content__close-btn btn btn-sm"
+    [ngClass]="editorState === 'collapsed' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+    (click)="toggleEditorFocus(editorState === 'collapsed' ? 'expanded' : 'collapsed', titleInput)"
+  >
+    <i-feather [name]="editorState === 'collapsed' ? 'edit-3' : 'corner-up-left'" class="feather-small"></i-feather>
+    <span class="ml-1 editor-content__close-btn-text">
+      {{ editorState === "collapsed" ? "Editor mode" : "Back to publish" }}
+    </span>
+  </button>
+
+  <form (submit)="submit($event)" (input)="onFormInput($event)" [@heightAnimation]="editorState">
     <div class="create-long-post__form-header">
-      <h3><strong>Create Blog Post</strong></h3>
+      <h3>
+        <strong>
+          {{ globalVars.isMobile() ? "Blog Post" : "Create Blog Post" }}
+        </strong>
+      </h3>
       <div class="create-long-post__primary-actions">
         <button
           *ngIf="this.editPostHashHex"
@@ -56,7 +71,7 @@
         class="border rounded text-center d-flex justify-content-center align-items-center position-relative bg-light"
         tabindex="0"
         [ngStyle]="{
-          height: !coverImgSrc ? '300px' : 'auto',
+          height: '300px',
           width: '100%',
           overflow: 'hidden'
         }"
@@ -98,13 +113,14 @@
       </div>
     </div>
   </form>
-  <div class="editor-content" [ngStyle]="{ minHeight: '500px' }">
+  <div class="editor-content" [ngClass]="{ focused: editorState === 'expanded' }">
     <quill-editor
       [required]="true"
       [modules]="quillModules"
       [(ngModel)]="model.ContentDelta"
       format="object"
       [placeholder]="placeholder | transloco"
+      (onFocus)="toggleEditorFocus('expanded')"
       (onContentChanged)="onContentChange($event)"
       [formats]="[
         'bold',
@@ -121,7 +137,7 @@
         'indent',
         'mention'
       ]"
-      style="display: block"
+      style="display: block; height: 100%"
     ></quill-editor>
   </div>
 </div>

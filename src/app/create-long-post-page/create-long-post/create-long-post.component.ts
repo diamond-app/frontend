@@ -1,4 +1,5 @@
 // @ts-strict
+import { animate, state, style, transition, trigger } from "@angular/animations";
 import { Location } from "@angular/common";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
@@ -76,6 +77,25 @@ interface MentionRenderItem {
   selector: "create-long-post",
   templateUrl: "./create-long-post.component.html",
   styleUrls: ["./create-long-post.component.scss"],
+  animations: [
+    trigger("heightAnimation", [
+      state(
+        "expanded",
+        style({
+          height: "0",
+          transform: "translateY(-540px)",
+        })
+      ),
+      state(
+        "collapsed",
+        style({
+          height: "*",
+          transform: "translateY(0)",
+        })
+      ),
+      transition("expanded <=> collapsed", animate("500ms ease-in-out")),
+    ]),
+  ],
 })
 export class CreateLongPostComponent implements AfterViewInit {
   @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
@@ -89,6 +109,7 @@ export class CreateLongPostComponent implements AfterViewInit {
   isLoadingEditModel: boolean;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   contentAsPlainText?: string;
+  editorState: "collapsed" | "expanded" = "collapsed";
   private profilesByPublicKey: Record<string, ProfileEntryResponse> = {};
 
   quillModules = {
@@ -489,6 +510,15 @@ export class CreateLongPostComponent implements AfterViewInit {
     this.imagePreviewDataURL = undefined;
     this.coverImageFile = undefined;
     this.model.CoverImage = "";
+  }
+
+  toggleEditorFocus(state: "collapsed" | "expanded", ref?: HTMLElement) {
+    if (ref) {
+      setTimeout(() => {
+        ref.focus();
+      }, 0);
+    }
+    this.editorState = state;
   }
 }
 
