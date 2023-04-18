@@ -111,7 +111,11 @@ export class ReactionsDetailsComponent implements OnInit {
       )
       .subscribe((users: any) => {
         this.usersReacted = users;
-        this.infiniteScroller = new InfiniteScroller(this.pageSize, this.getPage.bind(this), false);
+        this.infiniteScroller = new InfiniteScroller(
+          this.pageSize,
+          this.getPage.bind(this),
+          this.globalVars.isMobile()
+        );
         this.datasource = this.infiniteScroller.getDatasource();
       });
   }

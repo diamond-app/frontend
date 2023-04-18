@@ -6557,3 +6557,16 @@ sell-nft-modal {
     height: auto !important;
   }
 }
+
+.x-and-y-centerized {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.details-modal__list-wrapper {
+  max-height: 50vh;
+  height: 500px;
+  overflow-y: auto;
+}
