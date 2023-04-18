@@ -19,5 +19,8 @@
   </div>
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
-  <simple-center-loader *ngIf="loading" class="x-and-y-centerized"></simple-center-loader>
+  <simple-center-loader
+    *ngIf="datasource.adapter.isLoading && datasource.adapter.itemsCount === 0"
+    class="x-and-y-centerized"
+  ></simple-center-loader>
 </div>
