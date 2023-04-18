@@ -6,20 +6,29 @@
   </div>
 
   <div class="flex-grow-1">
-    <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
-      <feed-post
-        *ngIf="!post.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
-        [post]="post"
-        [includePaddingOnPost]="true"
-        [parentPost]="post.parentPost"
-        [contentShouldLinkToThread]="true"
-        [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
-        [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
-      ></feed-post>
+    <div
+      [ngClass]="{
+        'details-modal__list-wrapper': !globalVars.isMobile()
+      }"
+    >
+      <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
+        <feed-post
+          *ngIf="!post.IsHidden && !(post.IsNFT && post.NumNFTCopies === post.NumNFTCopiesBurned)"
+          [post]="post"
+          [includePaddingOnPost]="true"
+          [parentPost]="post.parentPost"
+          [contentShouldLinkToThread]="true"
+          [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [containerModalRef]="globalVars.isMobile() ? null : bsModalRef"
+        ></feed-post>
+      </div>
     </div>
   </div>
   <!-- Bottom spacer for PWA apps-->
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
-  <simple-center-loader *ngIf="loading"></simple-center-loader>
+  <simple-center-loader
+    *ngIf="datasource.adapter.isLoading && datasource.adapter.itemsCount === 0"
+    class="x-and-y-centerized"
+  ></simple-center-loader>
 </div>
