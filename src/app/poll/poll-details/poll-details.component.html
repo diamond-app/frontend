@@ -15,7 +15,7 @@
       </ng-template>
     </tab-selector>
 
-    <div *ngIf="usersReacted.length > 0" [ngClass]="{ 'poll-modal-container__list_wrapper': !globalVars.isMobile() }">
+    <div *ngIf="usersReacted.length > 0" [ngClass]="{ 'details-modal__list-wrapper': !globalVars.isMobile() }">
       <div #uiScroll *uiScroll="let user of datasource">
         <simple-profile-card
           [profile]="user.profile"

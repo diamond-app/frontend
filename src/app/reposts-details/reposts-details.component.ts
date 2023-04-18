@@ -9,7 +9,6 @@ import { InfiniteScroller } from "../infinite-scroller";
 @Component({
   selector: "reposts-details",
   templateUrl: "./reposts-details.component.html",
-  styleUrls: ["reposts-details.component.scss"],
 })
 export class RepostsDetailsComponent implements OnInit {
   @Input() postHashHex: string;
