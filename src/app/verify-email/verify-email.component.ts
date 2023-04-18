@@ -25,8 +25,9 @@ export class VerifyEmailComponent implements OnInit {
         (res) => {
           this.globalVars._alertSuccess("Email verified successfully");
         },
-        (err) => {
-          this.globalVars._alertError("Failed to verify email: " + err.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError("Failed to verify email: " + e.toString());
         }
       );
 

@@ -142,7 +142,7 @@ export class CreateLongPostComponent implements AfterViewInit {
     private router: Router,
     private titleService: Title,
     private toastr: ToastrService,
-    private location: Location,
+    public location: Location,
     private modalService: BsModalService
   ) {
     this.isLoadingEditModel = !!this.route.snapshot.params?.postHashHex;
@@ -164,6 +164,7 @@ export class CreateLongPostComponent implements AfterViewInit {
           );
         }
       } catch (e) {
+        console.error(e);
         // This is assuming 404 which might hide other types of errors, but this is currently what the
         // post thread page does...
         this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
@@ -389,9 +390,8 @@ export class CreateLongPostComponent implements AfterViewInit {
         }
       );
     } catch (e: any) {
-      this.globalVars._alertError(
-        `Whoops, something went wrong...${e?.error?.error ? JSON.stringify(e.error.error) : e.toString()}`
-      );
+      console.error(e);
+      this.globalVars._alertError(`Whoops, something went wrong...${e.toString()}`);
     }
 
     this.isSubmittingPost = false;
@@ -415,8 +415,9 @@ export class CreateLongPostComponent implements AfterViewInit {
       .UploadImage(this.globalVars.loggedInUser?.PublicKeyBase58Check, file)
       .toPromise()
       .then((res) => res.ImageURL)
-      .catch((err) => {
-        this.globalVars._alertError(JSON.stringify(err.error.error));
+      .catch((e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
         return "";
       });
   }

@@ -108,7 +108,8 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
       this.threadPreviewList.unshift(threadListItem);
       this.selectThread(threadListItem);
     } catch (e) {
-      this.globalVars._alertError(e?.error?.error ?? e?.message);
+      console.error(e);
+      this.globalVars._alertError(e.toString());
     }
   };
 
@@ -261,9 +262,9 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           return this.threadPreviewList;
         });
       })
-      .catch((err) => {
-        this.globalVars._alertError(err?.error?.error ?? err?.message);
-        console.error(err);
+      .catch((e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
       })
       .finally(() => {
         if (this.isDestroyed) return;

@@ -35,8 +35,9 @@ export class AdminWyreComponent {
         (res) => {
           this.wyreOrders = res.WyreWalletOrderMetadataResponses;
         },
-        (err) => {
-          this.globalVars._alertError(err.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => (this.loadingWyreOrders = false));

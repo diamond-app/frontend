@@ -429,8 +429,8 @@ export class FeedCreatePostComponent implements OnInit {
 
         this.submittedPost = null;
       })
-      .catch((err) => {
-        const parsedError = this.backendApi.parsePostError(err);
+      .catch((e) => {
+        const parsedError = this.backendApi.parseErrorMessage(e);
         this.globalVars._alertError(parsedError);
         this.tracking.log(`post : ${action}`, {
           error: parsedError,
@@ -510,8 +510,9 @@ export class FeedCreatePostComponent implements OnInit {
         this.currentPostModel.postImageSrc = res.ImageURL;
         this.currentPostModel.postVideoSrc = "";
       })
-      .catch((err) => {
-        this.globalVars._alertError(JSON.stringify(err.error.error));
+      .catch((e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
       });
   }
 
@@ -538,9 +539,10 @@ export class FeedCreatePostComponent implements OnInit {
       this.videoUploadPercentage = null;
 
       return pollForVideoReady(asset.id);
-    } catch (e) {
+    } catch (e: any) {
+      console.error(e);
       this.currentPostModel.postVideoSrc = "";
-      this.globalVars._alertError(JSON.stringify(e.error.error));
+      this.globalVars._alertError(e.toString());
       return;
     }
   }

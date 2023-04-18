@@ -196,6 +196,8 @@ export class BackendApiService {
   LegacyUserListKey = "userList";
   LegacySeedListKey = "seedList";
 
+  ShowInstallPWAPanelKey = "showInstallPWA";
+
   SetStorage(key: string, value: any) {
     localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
   }
@@ -206,7 +208,7 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-    if (data === "") {
+    if (data === null || data === "") {
       return null;
     }
 
@@ -233,7 +235,8 @@ export class BackendApiService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
-      console.error(`Backend returned code ${error.status}, ` + `body was: ${JSON.stringify(error.error)}`);
+
+      console.error(`Backend returned code ${error.status}, ` + `body was: ${JSON.stringify(error)}`);
     }
     // return an observable with a user-facing error message
     return throwError(error);
@@ -626,7 +629,8 @@ export class BackendApiService {
     BodyObj: DeSoBodySchema,
     RepostedPostHashHex: string,
     PostExtraData: any,
-    IsHidden: boolean
+    IsHidden: boolean,
+    IsFrozen: boolean = false
   ): Observable<any> {
     return from(
       submitPost({
@@ -637,6 +641,7 @@ export class BackendApiService {
         RepostedPostHashHex,
         PostExtraData,
         IsHidden,
+        IsFrozen,
       }).then(mergeTxResponse)
     );
   }
@@ -1694,51 +1699,30 @@ export class BackendApiService {
   }
 
   // Error parsing
-  stringifyError(err): string {
-    if (err && err.error && err.error.error) {
-      return err.error.error;
+  stringifyError(err: any): string {
+    const message = err?.toString();
+
+    if (message) {
+      return message;
+    }
+
+    if (err) {
+      return JSON.stringify(err);
+    }
+
+    return "Whoops! Something went wrong. Please try again in one minute.";
+  }
+
+  parseErrorMessage(err): string {
+    if (err.status === 0) {
+      return `${environment.node.name} is experiencing heavy load. Please try again in one minute.`;
+    }
+
+    if (err?.message) {
+      return parseCleanErrorMsg(err.message);
     }
 
     return JSON.stringify(err);
-  }
-
-  parsePostError(err): string {
-    if (err.status === 0) {
-      return `${environment.node.name} is experiencing heavy load. Please try again in one minute.`;
-    }
-
-    let errorMessage = JSON.stringify(err);
-    if (err && err.error && err.error.error) {
-      errorMessage = err.error.error;
-      errorMessage = parseCleanErrorMsg(errorMessage);
-    }
-    return errorMessage;
-  }
-
-  parseProfileError(err): string {
-    if (err.status === 0) {
-      return `${environment.node.name} is experiencing heavy load. Please try again in one minute.`;
-    }
-
-    let errorMessage = JSON.stringify(err);
-    if (err && err.error && err.error.error) {
-      errorMessage = err.error.error;
-      errorMessage = parseCleanErrorMsg(errorMessage);
-    }
-    return errorMessage;
-  }
-
-  parseMessageError(err): string {
-    if (err.status === 0) {
-      return `${environment.node.name} is experiencing heavy load. Please try again in one minute.`;
-    }
-
-    let errorMessage = JSON.stringify(err);
-    if (err && err.error && err.error.error) {
-      errorMessage = err.error.error;
-      errorMessage = parseCleanErrorMsg(errorMessage);
-    }
-    return errorMessage;
   }
 }
 

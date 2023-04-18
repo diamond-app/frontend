@@ -76,6 +76,17 @@
       <a
         *ngIf="
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
+          post.IsNFT &&
+          !post.IsFrozen
+        "
+        class="dropdown-menu-item d-block link--unstyled feed-post__dropdown-menu-item"
+        (click)="freezeNFT()"
+      >
+        Freeze NFT
+      </a>
+      <a
+        *ngIf="
+          globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
           !post.IsNFT &&
           !post.ParentStakeID
         "

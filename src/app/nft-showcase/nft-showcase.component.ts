@@ -50,8 +50,9 @@ export class NftShowcaseComponent implements OnInit {
           }
           this.lastPage = Math.floor(this.nftCollections?.length / NftShowcaseComponent.PAGE_SIZE);
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => {

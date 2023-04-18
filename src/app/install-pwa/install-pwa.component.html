@@ -1,0 +1,41 @@
+<div class="install-pwa position-fixed rounded shadow-lg">
+  <button
+    class="arrow-close__wrapper position-absolute text-center"
+    aria-label="Dismiss add Diamond to Homescreen"
+    (click)="globalVars.closeInstallPWA()"
+  >
+    <i-feather name="x" class="arrow-close__icon feather-xsmall"></i-feather>
+  </button>
+
+  <img
+    src="/assets/diamond/icon-192.png"
+    width="50"
+    alt="diamond-icon"
+    class="rounded border border-white position-absolute shadow"
+  />
+
+  <section class="text-center py-40px rounded shadow-lg">
+    <h6 class="font-bold">Add Diamond to Your Homescreen</h6>
+
+    <div class="py-3 small text-secondary">
+      <div class="pb-2">Get access to Diamond Mobile and push notifications</div>
+
+      <div class="pb-1">
+        1. Click on the
+        <span class="text-glow">
+          <i-feather name="share" class="feather-small"></i-feather>
+          Share
+        </span>
+        icon
+      </div>
+      <div class="pb-1">
+        2. Click on
+        <span class="text-glow">Add To Home Screen</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="arrow-down-icon__wrapper position-absolute d-flex align-items-center justify-content-center shadow-lg">
+    <i-feather name="arrow-down"></i-feather>
+  </div>
+</div>

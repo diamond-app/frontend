@@ -199,8 +199,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
       return this.appData._alertError("DeSo is under heavy load. Please try again in one minute.");
     }
 
-    const errorMessage = response.error.error;
-    const parsedError = this.backendApi.parseProfileError(response);
+    const errorMessage = response.toString();
+    const parsedError = this.backendApi.parseErrorMessage(response);
 
     const hasSlippageError =
       errorMessage.includes(this.DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR) ||

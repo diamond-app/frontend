@@ -73,7 +73,9 @@ export class GlobalVarsService {
     private locationStrategy: LocationStrategy,
     private modalService: BsModalService,
     private tracking: TrackingService
-  ) {}
+  ) {
+    this.showInstallPWA = this.backendApi.GetStorage(this.backendApi.ShowInstallPWAPanelKey) ?? true;
+  }
 
   static MAX_POST_LENGTH = 560;
 
@@ -237,6 +239,8 @@ export class GlobalVarsService {
 
   browserSupportsWebPush: boolean = false;
 
+  showInstallPWA: boolean = false;
+
   // All notification categories, and their respective notification types.
   notificationCategories = {
     "Social Engagement": {
@@ -365,7 +369,8 @@ export class GlobalVarsService {
         userVisibleOnly: true,
         applicationServerKey: applicationServerKey,
       });
-    } catch (error) {
+    } catch (e) {
+      console.error(e);
       this.tracking.log("browser-push-notification-prompt : deny");
       return;
     }
@@ -1388,8 +1393,9 @@ export class GlobalVarsService {
             this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
             this.router.navigate([RouteNames.BROWSE]);
           },
-          (err) => {
-            this._alertError(err.error.error);
+          (e) => {
+            console.error(e);
+            this._alertError(e.toString());
           }
         );
         tutorialComponent.tutorialCleanUp();
@@ -1423,7 +1429,10 @@ export class GlobalVarsService {
   }
 
   windowIsPWA(): Boolean {
-    return window.matchMedia("(display-mode: standalone)").matches;
+    const isInWebAppiOS = (window.navigator as any).standalone === true;
+    const isInWebAppChrome = window.matchMedia("(display-mode: standalone)").matches;
+
+    return isInWebAppiOS || isInWebAppChrome;
   }
 
   getDesoNetworkFromURL(nodeURI: string) {
@@ -1441,4 +1450,9 @@ export class GlobalVarsService {
         return environment.production ? DeSoNetwork.mainnet : DeSoNetwork.testnet;
     }
   }
+
+  closeInstallPWA = () => {
+    this.backendApi.SetStorage(this.backendApi.ShowInstallPWAPanelKey, false);
+    this.showInstallPWA = false;
+  };
 }

@@ -9,5 +9,5 @@ import { GlobalVarsService } from "../../global-vars.service";
 export class CreatorProfileSimpleCardComponent {
   @Input() profile: any;
 
-  constructor(private globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService) {}
 }

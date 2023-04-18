@@ -154,9 +154,9 @@ export class CreateNftAuctionModalComponent implements OnInit {
           this.bsModalRef.hide();
           this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
         },
-        (err) => {
-          console.error(err);
-          const parsedError = this.backendApi.parseMessageError(err);
+        (e) => {
+          console.error(e);
+          const parsedError = this.backendApi.parseErrorMessage(e);
           this.globalVars._alertError(parsedError);
           this.tracking.log("nft-auction : create", { error: parsedError });
         }

@@ -182,8 +182,8 @@ export class CashoutComponent implements OnDestroy, OnChanges {
             this.createAddrsErrorMessage = "";
           }
         },
-        (err) => {
-          const megaswapApiErrorMessage = err?.error?.error;
+        (e) => {
+          const megaswapApiErrorMessage = e.toString();
           if (typeof megaswapApiErrorMessage === "string") {
             this.createAddrsErrorMessage = megaswapApiErrorMessage.includes("not a valid public address")
               ? `Please enter a valid ${this.destinationTicker} address.`
@@ -255,9 +255,9 @@ export class CashoutComponent implements OnDestroy, OnChanges {
 
           this._onDepositEventsFetched(res);
         },
-        (err) => {
+        (e) => {
           this.tracking.log("cash-out : submit", {
-            error: err,
+            error: e,
             amountNanos,
             depositTicker: this.depositTicker,
             depositAddress,
@@ -265,7 +265,7 @@ export class CashoutComponent implements OnDestroy, OnChanges {
             destinationAddress: this.depositAddresses.DestinationAddress,
           });
 
-          const maybeMegaswapError = err?.error?.error;
+          const maybeMegaswapError = e.toString();
           this.cashOutErrorMessage =
             typeof maybeMegaswapError === "string"
               ? maybeMegaswapError

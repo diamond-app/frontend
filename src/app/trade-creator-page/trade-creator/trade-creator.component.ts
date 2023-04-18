@@ -217,16 +217,15 @@ export class TradeCreatorComponent implements OnInit {
           operationType: this.tradeType,
         });
       },
-      (err) => {
-        console.error(err);
-        console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
-        this.tracking.log("creator-coin-trade-modal : open", { error: err.error?.error });
+      (e) => {
+        console.error(e);
+        this.tracking.log("creator-coin-trade-modal : open", { error: e.toString() });
       }
     );
   }
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
@@ -265,7 +264,7 @@ export class TradeCreatorComponent implements OnInit {
       (err) => {
         if (!this.inTutorial) {
           console.error(err);
-          this.appData._alertError(this.backendApi.parseProfileError(err));
+          this.appData._alertError(this.backendApi.parseErrorMessage(err));
         }
       }
     );
@@ -292,7 +291,7 @@ export class TradeCreatorComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.appData._alertError(this.backendApi.parseProfileError(err));
+          this.appData._alertError(this.backendApi.parseErrorMessage(err));
         }
       );
     }

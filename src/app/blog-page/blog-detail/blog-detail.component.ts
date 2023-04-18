@@ -96,7 +96,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   @Output() userBlocked = new EventEmitter();
 
   constructor(
-    private backendApi: BackendApiService,
+    public backendApi: BackendApiService,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
@@ -413,9 +413,9 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
                   this.postDeleted.emit(response.PostEntryResponse);
                 });
             },
-            (err) => {
-              console.error(err);
-              const parsedError = this.backendApi.parsePostError(err);
+            (e) => {
+              console.error(e);
+              const parsedError = this.backendApi.parseErrorMessage(e);
               this.tracking.log("post : hide", { error: parsedError });
               this.globalVars._alertError(parsedError);
             }

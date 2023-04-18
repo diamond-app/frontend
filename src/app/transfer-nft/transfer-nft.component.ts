@@ -121,7 +121,7 @@ export class TransferNftComponent implements OnInit {
             },
             (err) => {
               console.error(err);
-              const parsedError = this.backendApi.parseMessageError(err);
+              const parsedError = this.backendApi.parseErrorMessage(err);
               this.globalVars._alertError(parsedError);
               this.tracking.log("nft : transfer", { error: parsedError });
             }

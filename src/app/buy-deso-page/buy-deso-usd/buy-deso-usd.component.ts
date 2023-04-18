@@ -131,8 +131,9 @@ export class BuyDeSoUSDComponent implements OnInit {
           this.globalVars._alertError(res.message);
         }
       },
-      (err) => {
-        this.globalVars._alertError(err.error.message);
+      (e) => {
+        console.error(e);
+        this.globalVars._alertError(e.toString());
       }
     );
   }
@@ -151,8 +152,9 @@ export class BuyDeSoUSDComponent implements OnInit {
       (res) => {
         this.parseQuotation(res);
       },
-      (err) => {
-        this.quotationError = err.error.message;
+      (e) => {
+        console.error(e);
+        this.quotationError = e.toString();
       }
     );
   }

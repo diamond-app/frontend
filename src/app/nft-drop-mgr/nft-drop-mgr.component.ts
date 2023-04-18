@@ -68,8 +68,9 @@ export class NftDropMgrComponent implements OnInit {
             this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
           }
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => {
@@ -207,8 +208,9 @@ export class NftDropMgrComponent implements OnInit {
             this.latestDropNumber = res.DropEntry.DropNumber;
           }
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => {
@@ -234,8 +236,9 @@ export class NftDropMgrComponent implements OnInit {
         (res: any) => {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => {
@@ -261,8 +264,9 @@ export class NftDropMgrComponent implements OnInit {
         (res: any) => {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
         },
-        (error) => {
-          this.globalVars._alertError(error.error.error);
+        (e) => {
+          console.error(e);
+          this.globalVars._alertError(e.toString());
         }
       )
       .add(() => {
@@ -303,8 +307,9 @@ export class NftDropMgrComponent implements OnInit {
             (res: any) => {
               this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
             },
-            (error) => {
-              this.globalVars._alertError(error.error.error);
+            (e) => {
+              console.error(e);
+              this.globalVars._alertError(e.toString());
             }
           )
           .add(() => {
