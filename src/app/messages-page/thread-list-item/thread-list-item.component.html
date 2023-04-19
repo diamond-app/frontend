@@ -5,7 +5,20 @@
   tabindex="0"
   (click)="onItemClick(listItem)"
 >
-  <div class="messages-thread__avatar" [avatar]="previewPublicKey"></div>
+  <div>
+    <ng-container *ngIf="isGroupChat; else dmChatAvatar">
+      <img
+        [src]="'https://icotar.com/initials/' + initials + '?s=' + chatImageSize"
+        [width]="chatImageSize"
+        class="rounded-circle"
+        [alt]="chatName"
+      />
+    </ng-container>
+
+    <ng-template #dmChatAvatar>
+      <div class="messages-thread__avatar" [avatar]="previewPublicKey"></div>
+    </ng-template>
+  </div>
   <div class="ml-3 messages-thread__ellipsis-restriction fs-15px">
     <span class="font-weight-bold" [title]="chatName">
       {{ chatName }}
