@@ -5,3 +5,22 @@
 .publish-btn {
   margin-left: auto;
 }
+
+.editor-content__close-btn {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 999;
+
+  @media (max-width: 992px) {
+    // TODO: remove this when top header height is fixed
+    top: 5px;
+  }
+
+  @media (max-width: 630px) {
+    // Leave only the icon
+    .editor-content__close-btn-text {
+      display: none;
+    }
+  }
+}
