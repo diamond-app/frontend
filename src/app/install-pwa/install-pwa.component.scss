@@ -1,10 +1,6 @@
 $install-pwa-X-padding: 20px;
 $arrow-down-icon-wrapper-size: 50px;
 
-:host {
-  width: auto !important;
-}
-
 .install-pwa {
   background: var(--norm);
   z-index: 3000;
