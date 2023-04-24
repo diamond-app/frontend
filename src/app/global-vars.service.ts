@@ -1227,6 +1227,8 @@ export class GlobalVarsService {
 
     this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
 
+    this.localNode = "https://node.deso.org";
+
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
       if (environment.production) {
