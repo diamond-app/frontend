@@ -16,6 +16,7 @@ export interface DraftBlogPostResponse {
   PostDescription: string;
   PostDelta: string;
   CoverPhotoUrl: string;
+  LastUpdatedAt?: string;
 }
 
 const ENDPOINTS = Object.freeze({
@@ -286,6 +287,20 @@ export class ApiInternalService {
     );
   }
 
+  getSavedDraftBlogPosts(PublicKeyBase58Check: string): Observable<Array<DraftBlogPostResponse>> {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) =>
+        this.httpClient
+          .get<Array<DraftBlogPostResponse>>(buildUrl(`drafts/blog/${PublicKeyBase58Check}`), { headers })
+          .pipe(
+            catchError(() => {
+              return of([]);
+            })
+          )
+      )
+    );
+  }
+
   saveDraftBlogPost(
     PublicKeyBase58Check: string,
     draftBlogPost: DraftBlogPostResponse
@@ -294,6 +309,12 @@ export class ApiInternalService {
       switchMap((headers) =>
         this.httpClient.post<DraftBlogPostResponse>(buildUrl("drafts/blog"), draftBlogPost, { headers })
       )
+    );
+  }
+
+  deleteDraftBlogPost(draftId: string, PublicKeyBase58Check: string) {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) => this.httpClient.delete(buildUrl(`drafts/blog/${draftId}`), { headers }))
     );
   }
 }

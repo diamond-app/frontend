@@ -1,0 +1,36 @@
+<div class="drafts-view-table m-16px custom-scrollbar" [ngClass]="{ mobile: globalVars.isMobile() }">
+  <div class="d-flex flex-column w-100">
+    <div class="drafts-view-table__header border-bottom py-10px">
+      {{ title }}
+    </div>
+
+    <div class="d-flex flex-wrap border-bottom py-10px" *ngFor="let draft of draftsList">
+      <div class="flex-grow-1 drafts-view-table__draft-info">
+        <div class="text-truncate">
+          <div *ngIf="draft.Id === activeDraftId" class="badge badge-primary mr-1">ACTIVE</div>
+
+          <span class="drafts-view-table__draft-name">
+            {{ draft.PostTitle || MISSING_TITLE_DRAFT_NAME }}
+          </span>
+        </div>
+
+        <div class="text-muted">Last updated on {{ draft.formattedDate }}</div>
+      </div>
+
+      <div class="drafts-view-table__actions text-right px-1">
+        <button class="btn p-0" (click)="viewDraft.emit(draft)">
+          <i-feather name="edit" class="mr-2"></i-feather>
+        </button>
+
+        <button
+          *ngIf="!draft.IsDefault"
+          (click)="deleteDraft.emit(draft.Id)"
+          class="btn p-2"
+          [disabled]="draft.Id === activeDraftId"
+        >
+          <i-feather name="trash-2"></i-feather>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

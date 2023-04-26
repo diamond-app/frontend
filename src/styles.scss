@@ -6397,11 +6397,42 @@ sell-nft-modal {
   border-right: none;
   position: fixed;
   padding-right: 50px;
+  background: var(--tile-bg);
+  border-color: var(--border);
+
+  .ql-stroke {
+    fill: none;
+    stroke: var(--text);
+  }
+
+  .ql-fill {
+    fill: var(--text);
+    stroke: none;
+  }
+
+  .ql-picker {
+    color: var(--text);
+
+    &.ql-expanded .ql-picker-options {
+      border-color: var(--text);
+      background: var(--tile-bg);
+    }
+  }
 
   @media (max-width: 992px) {
     top: 47px;
     width: 100%;
   }
+}
+
+.ql-container .ql-tooltip {
+  background: var(--tile-bg);
+  color: var(--text);
+}
+
+.ql-editor.ql-blank:before {
+  // Quill's placeholder
+  color: var(--grey);
 }
 
 .ql-editor ul > li.ql-indent-1::before {
@@ -6426,7 +6457,7 @@ sell-nft-modal {
   padding: 8px 14px;
 }
 .editor-content {
-  height: calc(100% - 540px);
+  height: calc(100% - 560px);
   position: relative;
 
   &.focused {
@@ -6595,4 +6626,8 @@ sell-nft-modal {
 
 .ql-container.ql-snow {
   height: 100%;
+}
+
+.new-draft-blog-modal-container {
+  width: 600px !important;
 }

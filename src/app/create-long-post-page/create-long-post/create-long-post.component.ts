@@ -12,9 +12,12 @@ import "quill-mention";
 import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { dataURLtoFile, fileToDataURL } from "src/lib/helpers/data-url-helpers";
-import { finalize } from "rxjs/operators";
+import { dataURLtoFile } from "src/lib/helpers/data-url-helpers";
+import { finalize, mergeMap, tap } from "rxjs/operators";
 import { ApiInternalService, DraftBlogPostResponse } from "../../api-internal.service";
+import { of } from "rxjs";
+import { ManageDraftsModalComponent } from "../manage-drafts-modal/manage-drafts-modal.component";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -85,7 +88,7 @@ interface MentionRenderItem {
         "expanded",
         style({
           height: "0",
-          transform: "translateY(-540px)",
+          transform: "translateY(-560px)",
         })
       ),
       state(
@@ -103,16 +106,19 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
   @ViewChild("coverImgInput") coverImgInput?: ElementRef<HTMLInputElement>;
   @ViewChild("titleInput") titleInput?: ElementRef<HTMLInputElement>;
 
-  imagePreviewDataURL?: string;
   coverImageFile?: File;
   model = new FormModel();
   isDraggingFileOverDropZone = false;
   isSubmittingPost = false;
   isLoading: boolean;
+  isDraftSaving: boolean = false;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   contentAsPlainText?: string;
   editorState: "collapsed" | "expanded" = "collapsed";
   editedDraftBlogPostId: string = "";
+  defaultDraftBlogPost: DraftBlogPostResponse | null = null;
+  lastAutoSavedAt: string = "";
+  isAutoSaving: boolean = false;
   private profilesByPublicKey: Record<string, ProfileEntryResponse> = {};
   private autoSaveDraftBlogPostInterval: number = -1;
 
@@ -155,7 +161,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
   };
 
   get coverImgSrc() {
-    return this.imagePreviewDataURL ?? this.model.CoverImage;
+    return this.model.CoverImage;
   }
 
   get editPostHashHex() {
@@ -164,7 +170,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
 
   constructor(
     private backendApi: BackendApiService,
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
@@ -182,22 +188,148 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
 
   autoSaveDraftBlogPost() {
     this.autoSaveDraftBlogPostInterval = window.setInterval(() => {
-      if (this.isSubmittingPost) {
+      if (this.isSubmittingPost || this.isDraftSaving) {
         return;
       }
 
-      this.apiInternalService
-        .saveDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check, {
-          Id: this.editedDraftBlogPostId || undefined,
-          IsDefault: true, // TODO: change this when adding named draft posts
-          UserPublicKeyBase58check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-          PostTitle: this.model.Title,
-          PostDescription: this.model.Description,
-          PostDelta: JSON.stringify(this.model.ContentDelta),
-          CoverPhotoUrl: this.model.CoverImage,
-        })
-        .subscribe();
+      this.isAutoSaving = true;
+
+      const isDefault = this.editedDraftBlogPostId === this.defaultDraftBlogPost?.Id;
+
+      this.saveDraftBlogPost(isDefault)
+        .pipe(
+          finalize(() => {
+            setTimeout(() => {
+              this.isAutoSaving = false;
+            }, 500);
+          })
+        )
+        .subscribe((res) => {
+          if (res.LastUpdatedAt) {
+            this.lastAutoSavedAt = this.formatDraftDate(res.LastUpdatedAt, true);
+          }
+        });
     }, this.AUTO_SAVE_DRAFT_TIME);
+  }
+
+  newDraftBlogPost() {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: `Create New Blog Post`,
+      html: `You have un-stashed changes in your working draft "${
+        this.defaultDraftBlogPost?.PostTitle || "Untitled"
+      }" - would you like to save these changes before starting a new blog? This draft will be discarded otherwise.`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      focusConfirm: true,
+      customClass: {
+        popup: "new-draft-blog-modal-container",
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Save & Create New",
+      cancelButtonText: "Discard & Create New",
+      reverseButtons: true,
+    }).then((res: any) => {
+      if (res.dismiss === "backdrop") {
+        // When user just clicked outside the modal dialog we do nothing
+        return;
+      }
+
+      this.isDraftSaving = true;
+
+      if (res.isConfirmed) {
+        if (!this.defaultDraftBlogPost) {
+          return;
+        }
+
+        // Save the current draft to a named draft post
+        this.editedDraftBlogPostId = "";
+
+        this.saveDraftBlogPost(false, {
+          Title: this.defaultDraftBlogPost.PostTitle,
+          Description: this.defaultDraftBlogPost.PostDescription,
+          CoverImage: this.defaultDraftBlogPost.CoverPhotoUrl,
+          ContentDelta: this.defaultDraftBlogPost.PostDelta,
+        } as FormModel)
+          .pipe(
+            finalize(() => {
+              this.isDraftSaving = false;
+            }),
+            mergeMap((res) => {
+              if (!res.Id) {
+                // TODO: add error handling
+                return of();
+              }
+
+              this.editedDraftBlogPostId = this.defaultDraftBlogPost?.Id || "";
+
+              // Reset the default draft
+              return this.saveDraftBlogPost(true, {
+                Title: "",
+                Description: "",
+                ContentDelta: {},
+                CoverImage: "",
+              } as FormModel);
+            })
+          )
+          .subscribe((res) => {
+            this.setSavedDraftBlogPost(res);
+          });
+      } else {
+        this.editedDraftBlogPostId = this.defaultDraftBlogPost?.Id || "";
+
+        return this.saveDraftBlogPost(true, {
+          Title: "",
+          Description: "",
+          ContentDelta: {},
+          CoverImage: "",
+        } as FormModel)
+          .pipe(
+            finalize(() => {
+              this.isDraftSaving = false;
+            })
+          )
+          .subscribe((res) => {
+            this.setSavedDraftBlogPost(res);
+          });
+      }
+    });
+  }
+
+  saveDraftBlogPost(IsDefault: boolean = true, postData: FormModel = this.model) {
+    return this.apiInternalService
+      .saveDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check, {
+        Id: this.editedDraftBlogPostId || undefined,
+        IsDefault,
+        UserPublicKeyBase58check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+        PostTitle: postData.Title,
+        PostDescription: postData.Description,
+        PostDelta: JSON.stringify(postData.ContentDelta),
+        CoverPhotoUrl: postData.CoverImage,
+      })
+      .pipe(
+        tap((res) => {
+          if (IsDefault) {
+            this.defaultDraftBlogPost = res;
+          }
+        })
+      );
+  }
+
+  manageDrafts() {
+    this.modalService.show(ManageDraftsModalComponent, {
+      initialState: {
+        onViewDraft: (draft: DraftBlogPostResponse) => {
+          window.clearInterval(this.autoSaveDraftBlogPostInterval);
+          this.setSavedDraftBlogPost(draft);
+          this.autoSaveDraftBlogPost();
+        },
+        formatDate: this.formatDraftDate,
+        activeDraftId: this.editedDraftBlogPostId,
+      },
+      class: "modal-dialog-centered",
+    });
   }
 
   async ngOnInit() {
@@ -236,11 +368,10 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           (draft) => {
-            this.editedDraftBlogPostId = draft?.Id ?? "";
-            this.autoSaveDraftBlogPost();
-
             if (!!draft) {
+              this.defaultDraftBlogPost = draft;
               this.setSavedDraftBlogPost(draft);
+              this.autoSaveDraftBlogPost();
             }
           },
           (e) => {
@@ -433,11 +564,11 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
         await waitForTransactionFound(postTx.TxnHashHex).then(() => {
-          // reset the draft
+          // remove the draft when published
           return this.apiInternalService
             .saveDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check, {
               Id: this.editedDraftBlogPostId,
-              IsDefault: true, // TODO: change this whem adding named draft posts
+              IsDefault: this.editedDraftBlogPostId === this.defaultDraftBlogPost?.Id,
               UserPublicKeyBase58check: this.globalVars.loggedInUser.PublicKeyBase58Check,
               PostTitle: "",
               PostDescription: "",
@@ -572,7 +703,6 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
       return "";
     }
 
-    this.imagePreviewDataURL = await fileToDataURL(file);
     this.coverImageFile = file;
 
     try {
@@ -587,7 +717,6 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
 
   onRemoveCoverImg(ev: Event) {
     ev.preventDefault();
-    this.imagePreviewDataURL = undefined;
     this.coverImageFile = undefined;
     this.model.CoverImage = "";
   }
@@ -601,11 +730,29 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
     this.editorState = state;
   }
 
+  formatDraftDate(draftDate: string, withSeconds: boolean = false) {
+    const date = new Date(draftDate);
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const hour = date.getHours() % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
+    const second = date.getSeconds().toString().padStart(2, "0");
+    const period = date.getHours() < 12 ? "am" : "pm";
+
+    return `${day}/${month}/${year} @ ${hour}:${minute}${withSeconds ? `:${second}` : ""}${period}`;
+  }
+
   private setSavedDraftBlogPost(draft: DraftBlogPostResponse) {
     this.model.Title = draft.PostTitle;
     this.model.Description = draft.PostDescription;
     this.model.ContentDelta = draft.PostDelta ? JSON.parse(draft.PostDelta) : {};
     this.model.CoverImage = draft.CoverPhotoUrl;
+
+    this.editedDraftBlogPostId = draft?.Id ?? "";
+
+    this.lastAutoSavedAt = "";
   }
 }
 

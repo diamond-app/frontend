@@ -17,30 +17,55 @@
 
     <form (submit)="submit($event)" (input)="onFormInput($event)" [@heightAnimation]="editorState">
       <div class="create-long-post__form-header">
-        <h3>
-          <strong>
-            {{ globalVars.isMobile() ? "Blog Post" : "Create Blog Post" }}
-          </strong>
+        <h3 class="font-weight-bold">
+          {{ globalVars.isMobile() ? "Blog" : "Create Blog Post" }}
         </h3>
+
         <div class="create-long-post__primary-actions">
+          <small class="link text-muted mr-10px" (click)="manageDrafts()">
+            <span>View drafts</span>
+          </small>
+
           <button
-            *ngIf="this.editPostHashHex"
+            *ngIf="editPostHashHex"
             type="button"
-            class="ml-auto btn-secondary mr-2 rounded editor-publish-button"
+            class="ml-auto btn-secondary mr-10px rounded editor-publish-button"
             (click)="location.back()"
           >
-            <span *ngIf="!this.isSubmittingPost">Cancel</span>
+            <span *ngIf="!isSubmittingPost">Cancel</span>
           </button>
+
           <button
-            class="ml-auto btn-primary rounded editor-publish-button"
-            type="submit"
-            [disabled]="this.isSubmittingPost"
+            *ngIf="!editPostHashHex"
+            type="button"
+            class="ml-auto btn btn-outline-secondary mr-10px"
+            (click)="newDraftBlogPost()"
           >
-            <span *ngIf="this.isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
-            <span *ngIf="!this.isSubmittingPost">Publish</span>
+            <span *ngIf="!isSubmittingPost">
+              <i-feather name="plus"></i-feather>
+              <span *ngIf="!globalVars.isMobile()">New blog</span>
+            </span>
+          </button>
+
+          <button class="ml-auto btn btn-primary rounded" type="submit" [disabled]="isSubmittingPost">
+            <span *ngIf="isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+            <span *ngIf="!isSubmittingPost">Publish</span>
           </button>
         </div>
       </div>
+
+      <div class="create-long-post__form-header pt-0" style="height: 20px">
+        <small class="create-long-post__draft-auto-saved" [ngClass]="{ mobile: globalVars.isMobile() }">
+          <ng-container *ngIf="lastAutoSavedAt">
+            Draft auto-saved at {{ lastAutoSavedAt }}
+
+            <span *ngIf="isAutoSaving"><i class="fas fa-spinner fa-spin px-1"></i></span>
+          </ng-container>
+
+          <span *ngIf="!lastAutoSavedAt">You are editing a draft</span>
+        </small>
+      </div>
+
       <div class="d-flex align-items-start p-4 pb-0" [ngStyle]="{ paddingBottom: 0 }">
         <div [ngStyle]="{ 'flex-grow': 1 }">
           <input
