@@ -62,7 +62,7 @@ export class RightBarCreatorsComponent implements OnInit, OnDestroy {
   selectedOptionWidth: string;
   activeRightTabOption: RightBarTabOption;
   RightBarCreatorsComponent = RightBarCreatorsComponent;
-  static RightBarTabKey = "RightBarTab";
+  static RightBarTabKey = "RightBarTab/v2";
 
   static GAINERS: RightBarTabOption = {
     name: "right_bar.creators.top_daily_gainers",
@@ -95,10 +95,12 @@ export class RightBarCreatorsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const defaultTab = this.globalVars.loggedInUser
-      ? this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey)
-      : RightBarCreatorsComponent.DIAMONDS.name;
+      ? this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey) || RightBarCreatorsComponent.ALL_TIME.name
+      : null;
+
     this.activeTab =
       defaultTab in RightBarCreatorsComponent.chartMap ? defaultTab : RightBarCreatorsComponent.HASHTAGS.name;
+
     this.selectTab(true);
   }
 
