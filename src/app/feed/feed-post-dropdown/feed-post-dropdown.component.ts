@@ -442,7 +442,7 @@ export class FeedPostDropdownComponent implements OnInit {
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
 
     const path = this.router.createUrlTree(pathArray, { queryParams: currentQueryParams }).toString();
-    const origin = (this.platformLocation as any).location.origin;
+    const origin = (this.platformLocation as any)._location.origin;
 
     return origin + path;
   }
