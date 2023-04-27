@@ -13,7 +13,7 @@ import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
 import { dataURLtoFile } from "src/lib/helpers/data-url-helpers";
-import { finalize, mergeMap, tap } from "rxjs/operators";
+import { catchError, finalize, mergeMap, tap } from "rxjs/operators";
 import { ApiInternalService, DraftBlogPostResponse } from "../../api-internal.service";
 import { of } from "rxjs";
 import { ManageDraftsModalComponent } from "../manage-drafts-modal/manage-drafts-modal.component";
@@ -205,7 +205,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe((res) => {
-          if (res.LastUpdatedAt) {
+          if (res?.LastUpdatedAt) {
             this.lastAutoSavedAt = this.formatDraftDate(res.LastUpdatedAt, true);
           }
         });
@@ -256,12 +256,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
             finalize(() => {
               this.isDraftSaving = false;
             }),
-            mergeMap((res) => {
-              if (!res.Id) {
-                // TODO: add error handling
-                return of();
-              }
-
+            mergeMap(() => {
               this.editedDraftBlogPostId = this.defaultDraftBlogPost?.Id || "";
 
               // Reset the default draft
@@ -313,6 +308,11 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
           if (IsDefault) {
             this.defaultDraftBlogPost = res;
           }
+        }),
+        catchError((e: any) => {
+          console.error(e);
+          this.globalVars._alertError(e);
+          return of(null);
         })
       );
   }
@@ -357,27 +357,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
         this.titleInput?.nativeElement?.focus();
       }
     } else {
-      this.isLoading = true;
-
-      this.apiInternalService
-        .getDefaultDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check)
-        .pipe(
-          finalize(() => {
-            this.isLoading = false;
-          })
-        )
-        .subscribe(
-          (draft) => {
-            if (!!draft) {
-              this.defaultDraftBlogPost = draft;
-              this.setSavedDraftBlogPost(draft);
-              this.autoSaveDraftBlogPost();
-            }
-          },
-          (e) => {
-            console.error(e);
-          }
-        );
+      this.getDefaultDraftBlogPost();
     }
   }
 
@@ -397,6 +377,30 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
       )
       .toPromise();
     return profiles.ProfilesFound as ProfileEntryResponse[];
+  }
+
+  async getDefaultDraftBlogPost() {
+    this.isLoading = true;
+
+    return this.apiInternalService
+      .getDefaultDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(
+        (draft) => {
+          if (!!draft) {
+            this.defaultDraftBlogPost = draft;
+            this.setSavedDraftBlogPost(draft);
+            this.autoSaveDraftBlogPost();
+          }
+        },
+        (e) => {
+          console.error(e);
+        }
+      );
   }
 
   async getBlogPostToEdit(blogPostHashHex: string): Promise<GetSinglePostResponse> {
@@ -564,21 +568,36 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
       if (!this.editPostHashHex || !existingSlugMappings[titleSlug]) {
         // first, wait for the submitPost tx to show up to prevent any utxo double spend errors.
         await waitForTransactionFound(postTx.TxnHashHex).then(() => {
+          if (this.editPostHashHex) {
+            return;
+          }
+
           // remove the draft when published
-          return this.apiInternalService
-            .saveDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check, {
-              Id: this.editedDraftBlogPostId,
-              IsDefault: this.editedDraftBlogPostId === this.defaultDraftBlogPost?.Id,
-              UserPublicKeyBase58check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-              PostTitle: "",
-              PostDescription: "",
-              PostDelta: "",
-              CoverPhotoUrl: "",
-            })
-            .subscribe((res) => {
-              // reset the blog post on the UI
-              this.setSavedDraftBlogPost(res);
-            });
+          const IsDefault = this.editedDraftBlogPostId === this.defaultDraftBlogPost?.Id;
+
+          if (IsDefault) {
+            // If user posts a default post, we simply reset it
+            return this.apiInternalService
+              .saveDraftBlogPost(this.globalVars.loggedInUser.PublicKeyBase58Check, {
+                Id: this.editedDraftBlogPostId,
+                IsDefault,
+                UserPublicKeyBase58check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+                PostTitle: "",
+                PostDescription: "",
+                PostDelta: "",
+                CoverPhotoUrl: "",
+              })
+              .subscribe((res) => {
+                this.setSavedDraftBlogPost(res);
+              });
+          } else {
+            // If user posts a saved draft, we delete this draft, fetch the default one and show it on the UI
+            return this.apiInternalService
+              .deleteDraftBlogPost(this.editedDraftBlogPostId, this.globalVars.loggedInUser.PublicKeyBase58Check)
+              .subscribe(() => {
+                this.getDefaultDraftBlogPost();
+              });
+          }
         });
 
         const blogSlugMapJSON = JSON.stringify({
@@ -744,7 +763,11 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
     return `${day}/${month}/${year} @ ${hour}:${minute}${withSeconds ? `:${second}` : ""}${period}`;
   }
 
-  private setSavedDraftBlogPost(draft: DraftBlogPostResponse) {
+  private setSavedDraftBlogPost(draft: DraftBlogPostResponse | null) {
+    if (!draft) {
+      return;
+    }
+
     this.model.Title = draft.PostTitle;
     this.model.Description = draft.PostDescription;
     this.model.ContentDelta = draft.PostDelta ? JSON.parse(draft.PostDelta) : {};

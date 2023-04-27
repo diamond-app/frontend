@@ -22,30 +22,25 @@
         </h3>
 
         <div class="create-long-post__primary-actions">
-          <small class="link text-muted mr-10px" (click)="manageDrafts()">
-            <span>View drafts</span>
-          </small>
-
           <button
             *ngIf="editPostHashHex"
             type="button"
-            class="ml-auto btn-secondary mr-10px rounded editor-publish-button"
+            class="ml-auto btn btn-secondary mr-10px rounded editor-publish-button"
             (click)="location.back()"
           >
             <span *ngIf="!isSubmittingPost">Cancel</span>
           </button>
 
-          <button
-            *ngIf="!editPostHashHex"
-            type="button"
-            class="ml-auto btn btn-outline-secondary mr-10px"
-            (click)="newDraftBlogPost()"
-          >
-            <span *ngIf="!isSubmittingPost">
+          <ng-container *ngIf="!editPostHashHex">
+            <small class="link text-muted mr-10px" (click)="manageDrafts()">
+              <span>View drafts</span>
+            </small>
+
+            <button type="button" class="ml-auto btn btn-outline-secondary mr-10px" (click)="newDraftBlogPost()">
               <i-feather name="plus"></i-feather>
               <span *ngIf="!globalVars.isMobile()">New blog</span>
-            </span>
-          </button>
+            </button>
+          </ng-container>
 
           <button class="ml-auto btn btn-primary rounded" type="submit" [disabled]="isSubmittingPost">
             <span *ngIf="isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>

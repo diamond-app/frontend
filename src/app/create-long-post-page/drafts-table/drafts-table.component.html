@@ -4,6 +4,8 @@
       {{ title }}
     </div>
 
+    <div *ngIf="!draftsList.length" class="small text-muted mt-1">No drafts found</div>
+
     <div class="d-flex flex-wrap border-bottom py-10px" *ngFor="let draft of draftsList">
       <div class="flex-grow-1 drafts-view-table__draft-info">
         <div class="text-truncate">
