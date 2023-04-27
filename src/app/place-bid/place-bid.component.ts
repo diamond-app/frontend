@@ -2,8 +2,11 @@ import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import * as _ from "lodash";
-import { isNil, isNumber } from "lodash";
+import isNil from "lodash/isNil";
+import isNumber from "lodash/isNumber";
+import filter from "lodash/filter";
+import values from "lodash/values";
+import orderBy from "lodash/orderBy";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
@@ -76,11 +79,11 @@ export class PlaceBidComponent implements OnInit {
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
+        this.availableSerialNumbers = values(res.SerialNumberToNFTEntryResponse);
         this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
         this.getBiddableSerialNumbers();
-        const hasAuctionNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: false }).length > 0;
-        const hasBuyNowNFTs = _.filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
+        const hasAuctionNFTs = filter(this.biddableSerialNumbers, { IsBuyNow: false }).length > 0;
+        const hasBuyNowNFTs = filter(this.biddableSerialNumbers, { IsBuyNow: true }).length > 0;
         // Only show tabs if there are buy now SNs
         this.showTabs = hasBuyNowNFTs;
         // If there are Buy Now SNs available for purchase, set the tab to buy now, otherwise default to auctions
@@ -100,7 +103,7 @@ export class PlaceBidComponent implements OnInit {
   }
 
   getBiddableSerialNumbers() {
-    this.biddableSerialNumbers = _.orderBy(
+    this.biddableSerialNumbers = orderBy(
       this.availableSerialNumbers
         .filter(
           (nftEntryResponse) =>
@@ -278,7 +281,7 @@ export class PlaceBidComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.biddableSerialNumbers = _.orderBy(
+    this.biddableSerialNumbers = orderBy(
       this.biddableSerialNumbers,
       [this.sortByField],
       [this.sortByOrder]

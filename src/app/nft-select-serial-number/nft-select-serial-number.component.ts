@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
-import * as _ from "lodash";
+import orderBy from "lodash/orderBy";
 import { Location } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
 import { InfiniteScroller } from "../infinite-scroller";
@@ -52,7 +52,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
     if ("buyNow" in this.columns) {
       this.sortByField = this.BUY_NOW_PRICE_FIELD;
       this.sortByOrder = "asc";
-      this.sortedSerialNumbers = _.orderBy(
+      this.sortedSerialNumbers = orderBy(
         this.serialNumbers,
         [this.BUY_NOW_PRICE_FIELD, this.SN_FIELD],
         [this.sortByOrder, this.sortByOrder]
@@ -92,7 +92,7 @@ export class NftSelectSerialNumberComponent implements OnInit, OnChanges {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.sortedSerialNumbers = _.orderBy(
+    this.sortedSerialNumbers = orderBy(
       this.serialNumbers,
       [this.sortByField],
       [this.sortByOrder]

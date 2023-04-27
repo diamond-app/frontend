@@ -1,7 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
-import { difference, isEmpty } from "lodash";
+import truncate from "lodash/truncate";
+import isNil from "lodash/isNil";
+import cloneDeep from "lodash/cloneDeep";
+import difference from "lodash/difference";
+import isEmpty from "lodash/isEmpty";
+import filter from "lodash/filter";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
@@ -66,7 +70,7 @@ export class NotificationsListComponent implements OnInit {
       : filterOutParamsFromQuery;
 
     const savedNotivicationViewPreference = this.backendApi.GetStorage("notificationViewPreference");
-    this.expandNotifications = !_.isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
+    this.expandNotifications = !isNil(savedNotivicationViewPreference) ? savedNotivicationViewPreference : true;
     this.filteredOutSet = savedNotificationFilterPreferences ? savedNotificationFilterPreferences : new Set();
     // Set this here, rather than calling a whole updateEverything call
     this.globalVars.unreadNotifications = 0;
@@ -371,7 +375,7 @@ export class NotificationsListComponent implements OnInit {
           result.iconClass = "fc-blue";
           const repostAction = post.Body === "" ? "Reposting" : "Quote reposting";
           const repostedPost = post.RepostedPostEntryResponse;
-          const truncatedPost = _.truncate(_.escape(`${repostedPost.Body} ${repostedPost.ImageURLs?.[0] || ""}`));
+          const truncatedPost = truncate(escape(`${repostedPost.Body} ${repostedPost.ImageURLs?.[0] || ""}`));
           const repostedPostContent = `<i class="fc-muted">${truncatedPost}</i>`;
           // Repost
           result.link = AppRoutingModule.postPath(postHash);
@@ -563,7 +567,7 @@ export class NotificationsListComponent implements OnInit {
       }
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
-      if (_.isNil(result.post.ProfileEntryResponse)) {
+      if (isNil(result.post.ProfileEntryResponse)) {
         result.post.ProfileEntryResponse = result.actor;
       }
       result.action = `${actorName} transferred an NFT to you`;
@@ -574,7 +578,7 @@ export class NotificationsListComponent implements OnInit {
       this.backendApi
         .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, result.post.PostHashHex)
         .subscribe((res) => {
-          const transferNFTEntryResponses = _.filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+          const transferNFTEntryResponses = filter(res.NFTEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
             return (
               nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
               nftEntryResponse.IsPending
@@ -725,7 +729,7 @@ export class NotificationsListComponent implements OnInit {
     if (!post) {
       return null;
     }
-    return _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
+    return truncate(escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
   }
 
   pauseAllVideos(isPaused) {
@@ -769,7 +773,7 @@ export class NotificationsListComponent implements OnInit {
         if ($index === index) {
           newComment.parentPost = currentNotification.post;
           currentNotification.post.Comments = currentNotification.post.Comments || [];
-          currentNotification.post.Comments.unshift(_.cloneDeep(newComment));
+          currentNotification.post.Comments.unshift(cloneDeep(newComment));
           currentNotification.post = this.globalVars.incrementCommentCount(currentNotification.post);
           return [currentNotification];
         } else if (

@@ -1,7 +1,8 @@
 import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import * as _ from "lodash";
+import orderBy from "lodash/orderBy";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
@@ -9,7 +10,6 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { NFTEntryResponse, PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
-import { isNil } from "lodash";
 
 @Component({
   selector: "transfer-nft",
@@ -54,7 +54,7 @@ export class TransferNftComponent implements OnInit {
     this.backendApi
       .GetNFTEntriesForNFTPost(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.post.PostHashHex)
       .subscribe((res) => {
-        this.transferableSerialNumbers = _.orderBy(
+        this.transferableSerialNumbers = orderBy(
           res.NFTEntryResponses.filter(
             (nftEntryResponse) =>
               nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
@@ -195,7 +195,7 @@ export class TransferNftComponent implements OnInit {
       this.sortByOrder = "asc";
     }
     this.sortByField = sortField;
-    this.transferableSerialNumbers = _.orderBy(
+    this.transferableSerialNumbers = orderBy(
       this.transferableSerialNumbers,
       [this.sortByField],
       [this.sortByOrder]

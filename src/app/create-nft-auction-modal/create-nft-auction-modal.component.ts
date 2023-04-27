@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { filter, isNumber } from "lodash";
+import filter from "lodash/filter";
+import isNumber from "lodash/isNumber";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
 import { concatMap, last, map } from "rxjs/operators";

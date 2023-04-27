@@ -970,9 +970,6 @@ input.bs-timepicker-field {
   font-weight: 500;
 }
 
-app-landing-page {
-  background: white;
-}
 @keyframes slideInFromTopRight {
   0% {
     transform: translate(-100px, 0px) rotate(0deg);
@@ -1024,12 +1021,6 @@ app-landing-page {
 
 .appear {
   animation: .5s ease 0s 1 appear forwards;
-}
-
-app-landing-page {
-  .aos-init {
-    z-index: 1;
-  }
 }
 
 .landing-page-top-bar {

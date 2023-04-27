@@ -8,7 +8,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as introJs from "intro.js/intro.js";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Subscription } from "rxjs";
 import { TrackingService } from "src/app/tracking.service";

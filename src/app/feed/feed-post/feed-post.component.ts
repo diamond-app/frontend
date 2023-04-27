@@ -13,8 +13,6 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import Autolinker from "autolinker";
-import * as _ from "lodash";
-import { filter } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { forkJoin, of } from "rxjs";
@@ -34,6 +32,10 @@ import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept/trans
 import { FeedPostIconRowComponent } from "../feed-post-icon-row/feed-post-icon-row.component";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 import { NFTEntryResponse, PostAssociationResponse, PostEntryResponse, AssociationCountsResponse } from "deso-protocol";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
+import filter from "lodash/filter";
+import isNil from "lodash/isNil";
 
 /**
  * NOTE: This was previously handled by updating the node list in the core repo,
@@ -319,8 +321,8 @@ export class FeedPostComponent implements OnInit {
         );
         this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
         this.ref.detectChanges();
-        this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-        const lowestBidObject = _.minBy(this.availableSerialNumbers, (availableSerialNumber) => {
+        this.highBid = maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        const lowestBidObject = minBy(this.availableSerialNumbers, (availableSerialNumber) => {
           return Math.max(availableSerialNumber?.HighestBidAmountNanos, availableSerialNumber?.MinBidAmountNanos);
         });
         this.lowBid = Math.max(lowestBidObject?.HighestBidAmountNanos || 0, lowestBidObject?.MinBidAmountNanos || 0);
@@ -336,7 +338,7 @@ export class FeedPostComponent implements OnInit {
         } else if (this.nftEntryResponses.length > 1) {
           const buyNowNFTs = filter(this.availableSerialNumbers, (SN) => SN.BuyNowPriceNanos > 0);
           if (buyNowNFTs.length > 0) {
-            this.nftBuyNowPriceNanos = _.minBy(buyNowNFTs, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
+            this.nftBuyNowPriceNanos = minBy(buyNowNFTs, "BuyNowPriceNanos")?.BuyNowPriceNanos || 0;
           }
         }
         this.ref.detectChanges();
@@ -897,7 +899,7 @@ export class FeedPostComponent implements OnInit {
 
   acceptTransfer(event) {
     event.stopPropagation();
-    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+    const transferNFTEntryResponses = filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
         nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
         nftEntryResponse.IsPending
@@ -927,7 +929,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     this.tracking.log("nft-buy-button : click");
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
-      if (_.isNil(this.globalVars.loggedInUser)) {
+      if (isNil(this.globalVars.loggedInUser)) {
         this.backendApi.SetStorage(
           "signUpRedirect",
           `/${this.globalVars.RouteNames.NFT}/${this.postContent.PostHashHex}`

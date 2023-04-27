@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import * as _ from "lodash";
+import debounce from "lodash/debounce";
 import { TrackingService } from "src/app/tracking.service";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
@@ -45,7 +45,7 @@ export class SearchBarComponent implements OnInit {
     this.creatorSelected = "";
     this.selectedCreatorIndex = -1; // -1 represents no creator being selected.
     this._setUpClickOutListener();
-    this.debouncedSearchFunction = _.debounce(this._searchUsernamePrefix.bind(this), DEBOUNCE_TIME_MS);
+    this.debouncedSearchFunction = debounce(this._searchUsernamePrefix.bind(this), DEBOUNCE_TIME_MS);
   }
 
   ngOnInit() {

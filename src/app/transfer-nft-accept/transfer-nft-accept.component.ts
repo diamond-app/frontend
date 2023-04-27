@@ -1,7 +1,7 @@
 import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";

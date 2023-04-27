@@ -14,7 +14,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
-import * as _ from "lodash";
+import escape from "lodash/escape";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { TrackingService } from "src/app/tracking.service";
@@ -225,12 +225,12 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
-    // we do a basic _.escape anyways just to be extra safe.
-    const profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(user.PublicKeyBase58Check));
+    // we do a basic escape anyways just to be extra safe.
+    const profPicURL = escape(this.backendApi.GetSingleProfilePictureURL(user.PublicKeyBase58Check));
     div.innerHTML = `
       <div class="d-flex align-items-center">
         <img src="${profPicURL}" height="30px" width="30px" style="border-radius: 10px" class="mr-5px">
-        <p>${_.escape(user.Username)}</p>
+        <p>${escape(user.Username)}</p>
         ${user.IsVerified ? `<i class="fas fa-check-circle fa-md ml-5px fc-blue"></i>` : ""}
       </div>`;
     div.onclick = setItem;

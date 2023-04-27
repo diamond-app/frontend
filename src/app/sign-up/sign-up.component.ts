@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { identity } from "deso-protocol";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { from } from "rxjs";
 import { ApiInternalService } from "src/app/api-internal.service";

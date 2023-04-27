@@ -13,7 +13,7 @@ import {
   sendMessage,
 } from "deso-protocol";
 import { GlobalVarsService } from "src/app/global-vars.service";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 
 const THREAD_PAGE_SIZE = 10;
 const SCROLL_DEBOUNCE_MS = 150;

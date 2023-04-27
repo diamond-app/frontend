@@ -1,6 +1,6 @@
 import * as sweetalert2 from "sweetalert2";
 import Swal, { SweetAlertOptions } from "sweetalert2";
-import * as _ from "lodash";
+import escape from "lodash/escape";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
 
@@ -41,12 +41,12 @@ export class SwalHelper {
   ): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
     // Feel free to add more classes here as needed
     let escapedCustomClass = {
-      confirmButton: _.escape(options?.customClass?.confirmButton),
-      denyButton: _.escape(options?.customClass?.denyButton),
-      cancelButton: _.escape(options?.customClass?.cancelButton),
+      confirmButton: escape(options?.customClass?.confirmButton),
+      denyButton: escape(options?.customClass?.denyButton),
+      cancelButton: escape(options?.customClass?.cancelButton),
     };
 
-    let escapedIcon = _.escape(options.icon as string) as sweetalert2.SweetAlertIcon;
+    let escapedIcon = escape(options.icon as string) as sweetalert2.SweetAlertIcon;
 
     let escapedOptions = {
       icon: escapedIcon,
@@ -68,7 +68,7 @@ export class SwalHelper {
     for (let field of SwalHelper.ESCAPED_FIELDS) {
       if (options[field] !== undefined) {
         if (escapeFields) {
-          escapedOptions[field] = _.escape(options[field]);
+          escapedOptions[field] = escape(options[field]);
         } else {
           escapedOptions[field] = options[field];
         }

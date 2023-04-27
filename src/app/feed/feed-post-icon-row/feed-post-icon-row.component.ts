@@ -2,7 +2,6 @@ import { KeyValue, PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
-import { debounce, includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { finalize } from "rxjs/operators";
@@ -15,6 +14,11 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { ReactionsModalComponent } from "../../reactions-details/reactions-modal/reactions-modal.component";
 import { PostAssociationResponse, AssociationCountsResponse, PostEntryResponse } from "deso-protocol";
+import debounce from "lodash/debounce";
+import includes from "lodash/includes";
+import isNil from "lodash/isNil";
+import round from "lodash/round";
+import set from "lodash/set";
 
 @Component({
   selector: "feed-post-icon-row",

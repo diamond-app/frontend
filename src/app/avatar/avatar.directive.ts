@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, OnChanges } from "@angular/core";
-import * as _ from "lodash";
+import escape from "lodash/escape";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -30,8 +30,8 @@ export class AvatarDirective implements OnChanges {
     }
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
-    // we do a basic _.escape anyways just to be extra safe.
-    const profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(this.avatar));
+    // we do a basic escape anyways just to be extra safe.
+    const profPicURL = escape(this.backendApi.GetSingleProfilePictureURL(this.avatar));
 
     // Set the URL on the element.
     this.setURLOnElement(profPicURL + cacheBuster);

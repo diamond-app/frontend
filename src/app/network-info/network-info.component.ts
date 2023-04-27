@@ -1,14 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
 class NetworkConstants {
-  static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;
-  static TOTAL_deso_INVALID = `The total DeSo is currently an invalid value. Is your balance insufficient?`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
 }
 
@@ -99,7 +96,7 @@ export class NetworkInfoComponent implements OnInit {
           });
         },
         (error) => {
-          this.globalVars._alertError(sprintf("Problem updating the miner. Debug output: %s", JSON.stringify(error)));
+          this.globalVars._alertError(`Problem updating the miner. Debug output: ${JSON.stringify(error)}`);
           return;
         }
       )
@@ -125,7 +122,7 @@ export class NetworkInfoComponent implements OnInit {
     }
     // If we get here we have no idea what went wrong so just alert the
     // errorString.
-    return sprintf(JSON.stringify(e));
+    return JSON.stringify(JSON.stringify(e));
   }
 
   disconnectDeSoPeer(peerAddr: string) {
@@ -237,7 +234,7 @@ export class NetworkInfoComponent implements OnInit {
           });
         },
         (error) => {
-          this.globalVars._alertError(sprintf("Problem updating the miner. Debug output: %s", JSON.stringify(error)));
+          this.globalVars._alertError(`Problem updating the miner. Debug output: ${JSON.stringify(error)}`);
         }
       )
       .add(() => {

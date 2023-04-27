@@ -1,5 +1,5 @@
 import { Router } from "@angular/router";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { GlobalVarsService } from "../app/global-vars.service";
 import RouteNamesService from "../app/route-names.service";
 import { SwalHelper } from "./helpers/swal-helper";

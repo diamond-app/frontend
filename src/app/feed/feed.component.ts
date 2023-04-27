@@ -10,7 +10,6 @@ import {
 } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import PullToRefresh from "pulltorefreshjs";
 import { Subscription } from "rxjs";
@@ -21,6 +20,9 @@ import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { FeedPostComponent } from "./feed-post/feed-post.component";
+import filter from "lodash/filter";
+import map from "lodash/map";
+import cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "feed",
@@ -253,7 +255,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // Remove / re-add the parentPost from postsToShow, to force
     // angular to re-render now that we've updated the comment count
-    this.postsToShow()[parentPostIndex] = _.cloneDeep(parentPost);
+    this.postsToShow()[parentPostIndex] = cloneDeep(parentPost);
   }
 
   userBlocked() {
@@ -430,10 +432,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           (res) => {
             if (lastPostHash !== "") {
               this.globalVars.postsToShow = this.globalVars.postsToShow.concat(
-                _.filter(res.PostsFound, { IsPinned: false })
+                filter(res.PostsFound, { IsPinned: false })
               );
             } else {
-              this.globalVars.postsToShow = _.filter(res.PostsFound, { IsPinned: false });
+              this.globalVars.postsToShow = filter(res.PostsFound, { IsPinned: false });
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH - 1) {
               // I'm not sure what the expected behavior is for the global feed. It may sometimes
@@ -551,7 +553,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
-    const hotFeedPostHashes = _.map(this.globalVars.hotFeedPosts, "PostHashHex");
+    const hotFeedPostHashes = map(this.globalVars.hotFeedPosts, "PostHashHex");
     return this.backendApi
       .GetHotFeed(readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
       .pipe(
@@ -601,7 +603,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       readerPubKey = this.globalVars.loggedInUser?.PublicKeyBase58Check;
     }
 
-    const tagFeedPostHashes = _.map(this.globalVars.tagFeedPosts, "PostHashHex");
+    const tagFeedPostHashes = map(this.globalVars.tagFeedPosts, "PostHashHex");
     return this.backendApi
       .GetHotFeed(readerPubKey, tagFeedPostHashes, this.FeedComponent.NUM_TO_FETCH, "#" + this.tag.toLowerCase())
       .pipe(
@@ -609,7 +611,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           (res) => {
             if (res.HotFeedPage) {
               // Filter out pinned posts.
-              const hotFeedPage = _.filter(
+              const hotFeedPage = filter(
                 res.HotFeedPage,
                 (hotFeedResult) =>
                   !hotFeedResult.IsPinned || hotFeedResult.Body.toLowerCase().includes("#" + this.tag.toLowerCase())

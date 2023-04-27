@@ -8,7 +8,7 @@ import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 
 @Component({
   selector: "manage-follows",

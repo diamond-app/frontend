@@ -2,7 +2,8 @@ import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { UntypedFormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
+import debounce from "lodash/debounce";
+import bind from "lodash/bind";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
@@ -346,7 +347,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
 
     // Wait 700 ms before calling _executeUpdateAmounts to allow the user to finish typing.
     // This makes the UX a little slower, but reduces server calls.
-    let debouncedExecuteUpdateAmounts = _.debounce(_.bind(this._executeUpdateAmounts, this), 700);
+    let debouncedExecuteUpdateAmounts = debounce(bind(this._executeUpdateAmounts, this), 700);
     let onValueChange = () => {
       // We run _beforeExecuteUpdateAmounts here so we don't debounce if unnecessary.
       if (!this._beforeExecuteUpdateAmounts()) return;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";

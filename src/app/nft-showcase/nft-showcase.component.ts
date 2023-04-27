@@ -1,10 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { NFTCollectionResponse } from "deso-protocol";
-import { isNil, uniqBy } from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
+import isNil from "lodash/isNil";
+import uniqBy from "lodash/uniqBy";
 
 @Component({
   selector: "nft-showcase",

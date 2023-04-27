@@ -15,7 +15,7 @@ import {
   PostEntryResponse,
   User,
 } from "deso-protocol";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { from, Observable, Observer, of, Subscription } from "rxjs";
 import { catchError, share } from "rxjs/operators";
