@@ -14,6 +14,8 @@ export class ThreadListItemComponent {
   @Input() isSelected: boolean = false;
   @Input() onItemClick: (threadListItem: DecryptedMessageEntryResponse) => void = () => {};
 
+  readonly chatImageSize: number = 40;
+
   get isGroupChat() {
     return this.listItem?.ChatType === ChatType.GROUPCHAT;
   }
@@ -33,6 +35,14 @@ export class ThreadListItemComponent {
     return this.isGroupChat
       ? this.listItem?.RecipientInfo.AccessGroupKeyName
       : this.profile?.Username || this.previewPublicKey;
+  }
+
+  get initials() {
+    // Generate initials instead of passing the real names for the chats for security reasons
+    return (this.chatName || "")
+      .split(" ")
+      .map((e) => e.replace(/[^\w\s]|_/g, "").slice(0, 3))
+      .join(" ");
   }
 
   constructor(public globalVars: GlobalVarsService) {}
