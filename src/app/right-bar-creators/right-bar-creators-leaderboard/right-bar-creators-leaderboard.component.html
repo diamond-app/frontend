@@ -1,5 +1,6 @@
 <div class="trend-entry" *transloco="let t">
-  <div *ngIf="activeTab !== RightBarCreatorsComponent.HASHTAGS.name">
+  <!--  <div *ngIf="activeTab !== RightBarCreatorsComponent.HASHTAGS.name">-->
+  <div>
     <a
       *ngFor="
         let profileEntryResponse of activeTab === RightBarCreatorsComponent.GAINERS.name
@@ -76,28 +77,28 @@
       </div>
     </a>
   </div>
-  <div *ngIf="activeTab === RightBarCreatorsComponent.HASHTAGS.name">
-    <a
-      *ngFor="let hashTag of globalVars.hashtagLeaderboard"
-      (click)="navigateToHashtag(hashTag.Hashtag)"
-      queryParamsHandling="merge"
-      class="link--unstyled d-flex align-items-center"
-    >
-      <div class="trend-holder d-flex align-items-center">
-        <div>
-          <div class="d-flex">
-            <div class="trend-name" style="flex-grow: 1">
-              <span>{{ hashTag.Hashtag }}</span>
-            </div>
-          </div>
-        </div>
+  <!--  <div *ngIf="activeTab === RightBarCreatorsComponent.HASHTAGS.name">-->
+  <!--    <a-->
+  <!--      *ngFor="let hashTag of globalVars.hashtagLeaderboard"-->
+  <!--      (click)="navigateToHashtag(hashTag.Hashtag)"-->
+  <!--      queryParamsHandling="merge"-->
+  <!--      class="link&#45;&#45;unstyled d-flex align-items-center"-->
+  <!--    >-->
+  <!--      <div class="trend-holder d-flex align-items-center">-->
+  <!--        <div>-->
+  <!--          <div class="d-flex">-->
+  <!--            <div class="trend-name" style="flex-grow: 1">-->
+  <!--              <span>{{ hashTag.Hashtag }}</span>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>-->
 
-        <div class="d-flex flex-column trend-end" style="align-items: flex-end">
-          <div class="text-grey5 fs-15px">
-            {{ hashTag.Count }}
-          </div>
-        </div>
-      </div>
-    </a>
-  </div>
+  <!--        <div class="d-flex flex-column trend-end" style="align-items: flex-end">-->
+  <!--          <div class="text-grey5 fs-15px">-->
+  <!--            {{ hashTag.Count }}-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </a>-->
+  <!--  </div>-->
 </div>
