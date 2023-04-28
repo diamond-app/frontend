@@ -12,7 +12,6 @@ import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { CollapseModule } from "ngx-bootstrap/collapse";
-import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
@@ -441,7 +440,6 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     AlertModule.forRoot(),
     RatingModule.forRoot(),
     ProgressbarModule.forRoot(),
-    BsDatepickerModule.forRoot(),
     TooltipModule.forRoot(),
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),

@@ -335,4 +335,19 @@ export class NftDropMgrComponent implements OnInit {
     }
     this.isUpdatable = canUpdateDrop;
   }
+
+  setDropTime(e) {
+    const newDate = e.target.valueAsDate;
+
+    // make a copy of the existing date object
+    const updatedDate = new Date(this.dropTime.getTime());
+
+    // modify date-month-year
+    updatedDate.setDate(newDate.getDate());
+    updatedDate.setMonth(newDate.getMonth());
+    updatedDate.setFullYear(newDate.getFullYear());
+
+    // assign the updated date
+    this.dropTime = updatedDate;
+  }
 }

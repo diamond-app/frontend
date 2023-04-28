@@ -85,12 +85,13 @@
 
           <!-- Embedded Content -->
           <div class="feed-post__embed-container" *ngIf="postModels[i].constructedEmbedURL">
-            <i
-              class="icon-close feed-post__image-delete"
+            <i-feather
+              name="x-circle"
+              class="feed-post__image-delete"
               (click)="
                 postModels[i].embedURL = ''; postModels[i].showEmbedURL = false; postModels[i].constructedEmbedURL = ''
               "
-            ></i>
+            ></i-feather>
             <iframe
               [height]="embedUrlParserService.getEmbedHeight(postModels[i].constructedEmbedURL)"
               class="feed-post__image"

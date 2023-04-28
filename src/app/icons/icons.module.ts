@@ -74,6 +74,7 @@ import {
   UserX,
   Video,
   X,
+  XCircle,
   XSquare,
 } from "angular-feather/icons";
 import {
@@ -187,6 +188,7 @@ const icons = {
   UserX,
   Video,
   X,
+  XCircle,
   XSquare,
   Edit2,
   Edit3,

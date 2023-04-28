@@ -74,10 +74,10 @@
 
     <div class="d-flex align-items-center justify-content-center mb-0">
       <div *ngIf="diamondLevel > 0" class="d-flex">
-        <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
+        <i-feather *ngFor="let diamond of counter(diamondLevel)" name="diamond"></i-feather>
       </div>
       <div *ngIf="showRepostIcon">
-        <i class="icon-repost fs-32px d-block fc-green"></i>
+        <i-feather name="repeat" class="fc-green"></i-feather>
       </div>
       <div *ngIf="showTutorialBuy" (click)="openBuyCreatorCoinModal($event)">
         <button

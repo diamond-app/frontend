@@ -2509,12 +2509,6 @@ sign-up {
   }
 }
 
-trends {
-  .icon-diamond {
-    margin-left: 0px !important;
-  }
-}
-
 .trends-scroll-container {
   height: calc(100vh - 210px) !important;
 }
@@ -2759,6 +2753,10 @@ bs-dropdown-container {
   font-size: 19px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 20px;
+
+  svg {
+    vertical-align: baseline;
+  }
 }
 
 .feed-post-icon-row__icon {
@@ -2836,26 +2834,11 @@ bs-dropdown-container {
   }
 }
 
-.feed-post-icon-row__icon.icon-heart-fill{
-  svg {
-    fill: currentColor;
-  }
-}
-
 /* diamond button hover animation */
 .feed-post-icon-row__icon.diamond-icon{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
-  }
-}
-
-/* copy link button hover animation */
-.feed-post-icon-row__icon.icon-link{
-  &:hover{
-    background-color: $link-btn-hover;
-    color: $link-btn-color;
-
   }
 }
 
@@ -6586,4 +6569,15 @@ sell-nft-modal {
 
 .ql-container.ql-snow {
   height: 100%;
+}
+
+.creator-leaderboard__diamond-icon {
+  position: relative;
+  top: 1px;
+  width: 20px !important;
+  height: 20px !important;
+
+  svg {
+    vertical-align: baseline;
+  }
 }
