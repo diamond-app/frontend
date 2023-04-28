@@ -1,0 +1,12 @@
+.manage-drafts-modal-container {
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background: var(--tile-bg);
+  background-clip: padding-box;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-radius: 6px;
+  outline: 0;
+  position: relative;
+}

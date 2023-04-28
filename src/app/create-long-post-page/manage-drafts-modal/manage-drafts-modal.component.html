@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+<div app-theme class="manage-drafts-modal-container">
+  <h5 class="m-16px mb-2 font-weight-bold">
+    Drafts
+    <span *ngIf="!loading">({{ unsavedDrafts.length + userDrafts.length }})</span>
+  </h5>
+
+  <div class="mb-16px mx-16px fs-15px fc-muted">Manage your saved drafts</div>
+
+  <simple-center-loader *ngIf="loading; else contentReady"></simple-center-loader>
+
+  <ng-template #contentReady>
+    <drafts-table
+      title="Working Draft"
+      [draftsList]="unsavedDrafts"
+      [activeDraftId]="activeDraftId"
+      (viewDraft)="viewDraft($event)"
+    />
+    <drafts-table
+      title="User Drafts"
+      [draftsList]="userDrafts"
+      [activeDraftId]="activeDraftId"
+      (deleteDraft)="deleteDraft($event)"
+      (viewDraft)="viewDraft($event)"
+    />
+  </ng-template>
+</div>

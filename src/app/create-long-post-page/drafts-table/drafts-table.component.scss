@@ -1,0 +1,38 @@
+$actions-width: 100px;
+$max-table-height: 400px;
+$max-table-mobile-height: 250px;
+
+.drafts-view-table {
+  max-height: $max-table-height;
+  overflow: auto;
+
+  &.mobile {
+    max-height: $max-table-mobile-height;
+  }
+
+  .drafts-view-table__header {
+    z-index: 10;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    background: var(--tile-bg);
+  }
+
+  .drafts-view-table__draft-info {
+    position: relative;
+    max-width: calc(100% - #{$actions-width});
+
+    .badge {
+      position: relative;
+      top: -1px;
+    }
+  }
+
+  .drafts-view-table__actions {
+    width: $actions-width;
+
+    .btn {
+      color: var(--norm);
+    }
+  }
+}

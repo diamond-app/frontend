@@ -1,143 +1,166 @@
-<div *ngIf="isLoadingEditModel" class="mt-5">
+<div *ngIf="isLoading; else blogPost" class="mt-5">
   <simple-center-loader [height]="200"></simple-center-loader>
 </div>
-<div *ngIf="!isLoadingEditModel" class="create-long-post__form-container">
-  <button
-    class="editor-content__close-btn btn btn-sm"
-    [ngClass]="editorState === 'collapsed' ? 'btn-outline-primary' : 'btn-outline-secondary'"
-    (click)="toggleEditorFocus(editorState === 'collapsed' ? 'expanded' : 'collapsed', titleInput)"
-  >
-    <i-feather [name]="editorState === 'collapsed' ? 'edit-3' : 'corner-up-left'" class="feather-small"></i-feather>
-    <span class="ml-1 editor-content__close-btn-text">
-      {{ editorState === "collapsed" ? "Editor mode" : "Back to publish" }}
-    </span>
-  </button>
 
-  <form (submit)="submit($event)" (input)="onFormInput($event)" [@heightAnimation]="editorState">
-    <div class="create-long-post__form-header">
-      <h3>
-        <strong>
-          {{ globalVars.isMobile() ? "Blog Post" : "Create Blog Post" }}
-        </strong>
-      </h3>
-      <div class="create-long-post__primary-actions">
-        <button
-          *ngIf="this.editPostHashHex"
-          type="button"
-          class="ml-auto btn-secondary mr-2 rounded editor-publish-button"
-          (click)="location.back()"
-        >
-          <span *ngIf="!this.isSubmittingPost">Cancel</span>
-        </button>
-        <button
-          class="ml-auto btn-primary rounded editor-publish-button"
-          type="submit"
-          [disabled]="this.isSubmittingPost"
-        >
-          <span *ngIf="this.isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
-          <span *ngIf="!this.isSubmittingPost">Publish</span>
-        </button>
-      </div>
-    </div>
-    <div class="d-flex align-items-start p-4 pb-0" [ngStyle]="{ paddingBottom: 0 }">
-      <div [ngStyle]="{ 'flex-grow': 1 }">
-        <input
-          #titleInput
-          [required]="true"
-          [(ngModel)]="model.Title"
-          name="blogTitle"
-          type="text"
-          placeholder="Headline..."
-          class="mb-2 p-2 px-3 rounded font-weight-bold fs-24px"
-          autocomplete="off"
-          autofocus="true"
-        />
-        <input
-          [(ngModel)]="model.Description"
-          name="blogTagline"
-          type="text"
-          placeholder="Description..."
-          class="rounded p-2 px-3"
-          autocomplete="off"
-        />
-      </div>
-    </div>
-    <div class="pl-4 pr-4 pb-4" [ngStyle]="{ paddingTop: 0 }">
-      <div
-        (drop)="onDropImg($event)"
-        (dragover)="onDragOver($event)"
-        (dragenter)="onDragEnter($event)"
-        (dragleave)="onDragLeave($event)"
-        class="border rounded text-center d-flex justify-content-center align-items-center position-relative bg-light"
-        tabindex="0"
-        [ngStyle]="{
-          height: '300px',
-          width: '100%',
-          overflow: 'hidden'
-        }"
-      >
-        <input #coverImgInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
-        <div *ngIf="coverImgSrc" class="position-absolute p-2" [ngStyle]="{ top: 0, right: 0 }">
+<ng-template #blogPost>
+  <div class="create-long-post__form-container">
+    <button
+      class="editor-content__close-btn btn btn-sm"
+      [ngClass]="editorState === 'collapsed' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+      (click)="toggleEditorFocus(editorState === 'collapsed' ? 'expanded' : 'collapsed', titleInput)"
+    >
+      <i-feather [name]="editorState === 'collapsed' ? 'edit-3' : 'corner-up-left'" class="feather-small"></i-feather>
+      <span class="ml-1 editor-content__close-btn-text">
+        {{ editorState === "collapsed" ? "Editor mode" : "Back to publish" }}
+      </span>
+    </button>
+
+    <form (submit)="submit($event)" (input)="onFormInput($event)" [@heightAnimation]="editorState">
+      <div class="create-long-post__form-header">
+        <h3 class="font-weight-bold">
+          {{ globalVars.isMobile() ? "Blog" : "Create Blog Post" }}
+        </h3>
+
+        <div class="create-long-post__primary-actions">
           <button
+            *ngIf="editPostHashHex"
             type="button"
-            class="rounded-circle mr-1 p-2"
-            (click)="onClickSelectFile($event)"
-            aria-label="Change cover image"
+            class="ml-auto btn btn-secondary mr-10px rounded editor-publish-button"
+            (click)="location.back()"
           >
-            <i-feather name="edit-2"></i-feather>
+            <span *ngIf="!isSubmittingPost">Cancel</span>
           </button>
-          <button
-            type="button"
-            class="rounded-circle p-2"
-            (click)="onRemoveCoverImg($event)"
-            aria-label="Remove cover image"
-          >
-            <i-feather name="x"></i-feather>
+
+          <ng-container *ngIf="!editPostHashHex">
+            <small class="link text-muted mr-10px" (click)="manageDrafts()">
+              <span>View drafts</span>
+            </small>
+
+            <button type="button" class="ml-auto btn btn-outline-secondary mr-10px" (click)="newDraftBlogPost()">
+              <i-feather name="plus"></i-feather>
+              <span *ngIf="!globalVars.isMobile()">New blog</span>
+            </button>
+          </ng-container>
+
+          <button class="ml-auto btn btn-primary rounded" type="submit" [disabled]="isSubmittingPost">
+            <span *ngIf="isSubmittingPost"><i class="fas fa-spinner fa-spin ml-5px"></i></span>
+            <span *ngIf="!isSubmittingPost">Publish</span>
           </button>
         </div>
-        <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
-        <span *ngIf="!coverImgSrc">
-          <p class="w-60 mb-3" [ngStyle]="{ margin: '0 auto' }">
-            Add a cover image that compliments your blog post. Drag a file into this area or select a file from your
-            computer.
-          </p>
-          <button
-            type="button"
-            [ngClass]="{ 'btn-success': isDraggingFileOverDropZone }"
-            (click)="onClickSelectFile($event)"
-            class="ml-auto btn-primary rounded editor-publish-button"
-          >
-            Select File
-          </button>
-        </span>
       </div>
+
+      <div class="create-long-post__form-header pt-0" style="height: 20px">
+        <small class="create-long-post__draft-auto-saved" [ngClass]="{ mobile: globalVars.isMobile() }">
+          <ng-container *ngIf="lastAutoSavedAt">
+            Draft auto-saved at {{ lastAutoSavedAt }}
+
+            <span *ngIf="isAutoSaving"><i class="fas fa-spinner fa-spin px-1"></i></span>
+          </ng-container>
+
+          <span *ngIf="!lastAutoSavedAt">You are editing a draft</span>
+        </small>
+      </div>
+
+      <div class="d-flex align-items-start p-4 pb-0" [ngStyle]="{ paddingBottom: 0 }">
+        <div [ngStyle]="{ 'flex-grow': 1 }">
+          <input
+            #titleInput
+            [required]="true"
+            [(ngModel)]="model.Title"
+            name="blogTitle"
+            type="text"
+            placeholder="Headline..."
+            class="mb-2 p-2 px-3 rounded font-weight-bold fs-24px"
+            autocomplete="off"
+            autofocus="true"
+          />
+          <input
+            [(ngModel)]="model.Description"
+            name="blogTagline"
+            type="text"
+            placeholder="Description..."
+            class="rounded p-2 px-3"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <div class="pl-4 pr-4 pb-4" [ngStyle]="{ paddingTop: 0 }">
+        <div
+          (drop)="onDropImg($event)"
+          (dragover)="onDragOver($event)"
+          (dragenter)="onDragEnter($event)"
+          (dragleave)="onDragLeave($event)"
+          class="border rounded text-center d-flex justify-content-center align-items-center position-relative bg-light"
+          tabindex="0"
+          [ngStyle]="{
+            height: '300px',
+            width: '100%',
+            overflow: 'hidden'
+          }"
+        >
+          <input #coverImgInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
+          <div *ngIf="coverImgSrc" class="position-absolute p-2" [ngStyle]="{ top: 0, right: 0 }">
+            <button
+              type="button"
+              class="rounded-circle mr-1 p-2"
+              (click)="onClickSelectFile($event)"
+              aria-label="Change cover image"
+            >
+              <i-feather name="edit-2"></i-feather>
+            </button>
+            <button
+              type="button"
+              class="rounded-circle p-2"
+              (click)="onRemoveCoverImg($event)"
+              aria-label="Remove cover image"
+            >
+              <i-feather name="x"></i-feather>
+            </button>
+          </div>
+          <img *ngIf="coverImgSrc" [src]="coverImgSrc" class="w-100" />
+          <span *ngIf="!coverImgSrc">
+            <p class="w-60 mb-3" [ngStyle]="{ margin: '0 auto' }">
+              Add a cover image that compliments your blog post. Drag a file into this area or select a file from your
+              computer.
+            </p>
+            <button
+              type="button"
+              [ngClass]="{ 'btn-success': isDraggingFileOverDropZone }"
+              (click)="onClickSelectFile($event)"
+              class="ml-auto btn-primary rounded editor-publish-button"
+            >
+              Select File
+            </button>
+          </span>
+        </div>
+      </div>
+    </form>
+    <div class="editor-content" [ngClass]="{ focused: editorState === 'expanded' }">
+      <quill-editor
+        [required]="true"
+        [modules]="quillModules"
+        [(ngModel)]="model.ContentDelta"
+        format="object"
+        [placeholder]="placeholder | transloco"
+        (onFocus)="toggleEditorFocus('expanded')"
+        (onContentChanged)="onContentChange($event)"
+        [formats]="[
+          'bold',
+          'italic',
+          'underline',
+          'strike',
+          'list',
+          'header',
+          'link',
+          'image',
+          'blockquote',
+          'code-block',
+          'script',
+          'indent',
+          'mention'
+        ]"
+        style="display: block; height: 100%"
+      ></quill-editor>
     </div>
-  </form>
-  <div class="editor-content" [ngClass]="{ focused: editorState === 'expanded' }">
-    <quill-editor
-      [required]="true"
-      [modules]="quillModules"
-      [(ngModel)]="model.ContentDelta"
-      format="object"
-      [placeholder]="placeholder | transloco"
-      (onFocus)="toggleEditorFocus('expanded')"
-      (onContentChanged)="onContentChange($event)"
-      [formats]="[
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'list',
-        'header',
-        'link',
-        'image',
-        'blockquote',
-        'code-block',
-        'script',
-        'indent',
-        'mention'
-      ]"
-      style="display: block; height: 100%"
-    ></quill-editor>
   </div>
-</div>
+</ng-template>

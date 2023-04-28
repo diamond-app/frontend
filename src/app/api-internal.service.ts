@@ -3,10 +3,21 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { identity } from "deso-protocol";
 import { from, Observable, of } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { catchError, map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "src/app/backend-api.service";
 import { environment } from "src/environments/environment";
 import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services/openProsper/openprosper-service";
+
+export interface DraftBlogPostResponse {
+  Id?: string;
+  IsDefault: boolean;
+  UserPublicKeyBase58check: string;
+  PostTitle: string;
+  PostDescription: string;
+  PostDelta: string;
+  CoverPhotoUrl: string;
+  LastUpdatedAt?: string;
+}
 
 const ENDPOINTS = Object.freeze({
   appUser: "app-user",
@@ -260,5 +271,50 @@ export class ApiInternalService {
           return r.value;
         })
       );
+  }
+
+  getDefaultDraftBlogPost(PublicKeyBase58Check: string): Observable<DraftBlogPostResponse | null> {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) =>
+        this.httpClient
+          .get<DraftBlogPostResponse>(buildUrl(`drafts/blog/default/${PublicKeyBase58Check}`), { headers })
+          .pipe(
+            catchError(() => {
+              return of(null);
+            })
+          )
+      )
+    );
+  }
+
+  getSavedDraftBlogPosts(PublicKeyBase58Check: string): Observable<Array<DraftBlogPostResponse>> {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) =>
+        this.httpClient
+          .get<Array<DraftBlogPostResponse>>(buildUrl(`drafts/blog/${PublicKeyBase58Check}`), { headers })
+          .pipe(
+            catchError(() => {
+              return of([]);
+            })
+          )
+      )
+    );
+  }
+
+  saveDraftBlogPost(
+    PublicKeyBase58Check: string,
+    draftBlogPost: DraftBlogPostResponse
+  ): Observable<DraftBlogPostResponse> {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) =>
+        this.httpClient.post<DraftBlogPostResponse>(buildUrl("drafts/blog"), draftBlogPost, { headers })
+      )
+    );
+  }
+
+  deleteDraftBlogPost(draftId: string, PublicKeyBase58Check: string) {
+    return this.getAuthHeaders(PublicKeyBase58Check).pipe(
+      switchMap((headers) => this.httpClient.delete(buildUrl(`drafts/blog/${draftId}`), { headers }))
+    );
   }
 }
