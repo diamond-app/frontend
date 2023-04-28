@@ -606,9 +606,9 @@ export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
     return `https://explorer.deso.org/?public-key=${this.globalVars.loggedInUser?.PublicKeyBase58Check}`;
   }
 
-  getOpenProsperLink() {
-    return this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
-      ? `https://openprosper.com/u/${this.globalVars.loggedInUser.ProfileEntryResponse.Username}/transactions`
-      : `https://openprosper.com/pk/${this.globalVars.loggedInUser?.PublicKeyBase58Check}/transactions`;
-  }
+  // getOpenProsperLink() {
+  //   return this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
+  //     ? `https://openprosper.com/u/${this.globalVars.loggedInUser.ProfileEntryResponse.Username}/transactions`
+  //     : `https://openprosper.com/pk/${this.globalVars.loggedInUser?.PublicKeyBase58Check}/transactions`;
+  // }
 }
