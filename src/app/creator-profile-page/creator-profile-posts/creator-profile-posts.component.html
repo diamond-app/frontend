@@ -1,5 +1,5 @@
 <!-- Posts -->
-<simple-center-loader [height]="200" *ngIf="loadingFirstPage && datasource.adapter.isLoading"></simple-center-loader>
+<simple-center-loader size="m" *ngIf="loadingFirstPage && datasource.adapter.isLoading"></simple-center-loader>
 <div
   *ngIf="
     !showProfileAsReserved && !loadingFirstPage && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0

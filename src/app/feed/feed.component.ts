@@ -333,6 +333,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       return this.loadingFirstBatchOfFollowFeedPosts;
     } else if (this.activeTab === FeedComponent.TAG_TAB) {
       return this.loadingFirstBatchOfTagFeedPosts;
+    } else if (this.activeTab === FeedComponent.HOT_TAB) {
+      return this.loadingFirstBatchOfHotFeedPosts;
     } else {
       return this.loadingFirstBatchOfGlobalFeedPosts;
     }

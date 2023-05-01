@@ -1,29 +1,33 @@
 <div
   class="d-flex flex-column align-items-center justify-content-center loading-container"
-  [ngStyle]="{ height: getHeight() }"
+  [ngStyle]="{ height: getHeight() + 'px' }"
   (click)="reload()"
 >
-  <img
-    *ngIf="!isDark"
-    class="fc-secondary spinner-color"
-    src="../../assets/diamond/spinner-light.svg"
-    [height]="getLoaderHeight()"
-    [width]="getLoaderHeight()"
-  />
-  <img
-    *ngIf="isDark"
-    class="fc-secondary spinner-color"
-    src="../../assets/diamond/spinner-dark.svg"
-    [height]="getLoaderHeight()"
-    [width]="getLoaderHeight()"
-  />
-  <div class="mt-12px fc-secondary" *ngIf="!hideLoadingText">
-    <div class="fc-secondary fs-24px text-align-center">
+  <div class="position-relative" style="margin-top: 50px">
+    <div class="ticks" [ngClass]="size">
+      <div class="tick-wrapper">
+        <div class="tick tick-1"></div>
+      </div>
+
+      <div class="tick-wrapper">
+        <div class="tick tick-2"></div>
+      </div>
+
+      <div class="tick-wrapper">
+        <div class="tick tick-3"></div>
+      </div>
+    </div>
+
+    <i-feather
+      name="diamond"
+      [ngStyle]="{ width: getLoaderHeight() + 'px', height: getLoaderHeight() + 'px' }"
+    ></i-feather>
+  </div>
+
+  <div class="mt-12px loader-text" *ngIf="!hideLoadingText">
+    <div class="text-align-center" [ngClass]="'fs-' + getFontSize() + 'px'">
       <div *ngIf="titleLoadingText">{{ titleLoadingText }}</div>
       <div *ngIf="!titleLoadingText">{{ "loader.loading" | transloco }}</div>
-    </div>
-    <div *ngIf="subtitleLoadingText">
-      <div class="fc-secondary fs-15px text-center">{{ subtitleLoadingText }}</div>
     </div>
   </div>
 </div>
