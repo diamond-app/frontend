@@ -41,6 +41,7 @@ export class SwalHelper {
   ): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
     // Feel free to add more classes here as needed
     let escapedCustomClass = {
+      popup: escape(options?.customClass?.popup),
       confirmButton: escape(options?.customClass?.confirmButton),
       denyButton: escape(options?.customClass?.denyButton),
       cancelButton: escape(options?.customClass?.cancelButton),

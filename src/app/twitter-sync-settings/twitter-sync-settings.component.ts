@@ -207,11 +207,12 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         );
       },
       (e) => {
+        const message = e?.error?.error ?? "Whoops, something went wrong! Please try again.";
         this.tracking.log("twitter-sync : create-subscription", {
-          error: e.toString(),
+          error: message,
           isOnboarding: this.isOnboarding,
         });
-        this.globalVars._alertError(e.toString() ?? "Something went wrong! Please try again.");
+        this.globalVars._alertError(message);
       }
     );
   }
@@ -273,12 +274,13 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
           },
           (e) => {
             if (!this.twitterUserData) throw new Error("twitterUserData is undefined");
+            const message = e?.error?.error ?? "Whoops, something went wrong! Please try again.";
             this.tracking.log("twitter-sync : unsubscribe", {
-              error: e.toString(),
+              error: message,
               isOnboarding: this.isOnboarding,
               twitterHandle: this.twitterUserData.twitter_username,
             });
-            this.globalVars._alertError(e.toString() ?? "Something went wrong! Please try again.");
+            this.globalVars._alertError(message);
           }
         );
     });
@@ -345,8 +347,9 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         }
       },
       (e) => {
-        this.tracking.log("twitter-sync : get-subscription-error", { error: e.toString() });
-        this.globalVars._alertError(e.toString() ?? "Something went wrong! Try reloading the page.");
+        const message = e?.error?.error ?? "Whoops, something went wrong! Please try again.";
+        this.tracking.log("twitter-sync : get-subscription-error", { error: message });
+        this.globalVars._alertError(message);
         this.setuSubscriptions = undefined;
         this.derivedKeyStatus = undefined;
       }
