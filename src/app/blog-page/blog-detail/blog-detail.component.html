@@ -1,4 +1,4 @@
-<app-page [simpleTopBar]="true" [title]="title" hideSidebar="true">
+<ng-container>
   <div class="post-thread__container">
     <button *ngIf="this.isScrollingUp" class="blog-detail__scroll-to-top btn btn-secondary" (click)="scrollToTop()">
       <i-feather name="arrow-up"></i-feather>
@@ -224,4 +224,4 @@
   <!-- Bottom spacer for PWA apps-->
   <div *ngIf="globalVars.windowIsPWA() && globalVars.isMobile()" class="mt-20px"></div>
   <div class="blog-detail__bottom-spacer"></div>
-</app-page>
+</ng-container>

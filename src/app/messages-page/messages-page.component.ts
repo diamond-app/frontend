@@ -17,6 +17,7 @@ import { GlobalVarsService } from "src/app/global-vars.service";
 import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
 import { environment } from "src/environments/environment";
 import { BackendApiService } from "../backend-api.service";
+import { PageLayoutService } from "../../page-layout.service";
 
 @Component({
   selector: "app-messages-page",
@@ -119,8 +120,18 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private backendApi: BackendApiService,
-    private httpClient: HttpClient
-  ) {}
+    private httpClient: HttpClient,
+    private pageLayoutService: PageLayoutService
+  ) {
+    // TODO: not sure if this will work
+    if (this.globalVars.loggedInUser) {
+      this.pageLayoutService.updateConfig({
+        hideSidebar: true,
+      });
+    } else {
+      this.pageLayoutService.updateConfig();
+    }
+  }
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {

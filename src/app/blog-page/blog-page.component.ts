@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
+import { PageLayoutService } from "../../page-layout.service";
 
 @Component({
   selector: "app-blog-page",
@@ -18,8 +19,13 @@ export class BlogPageComponent implements AfterViewInit {
   constructor(
     public backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private pageLayoutService: PageLayoutService
   ) {
+    this.pageLayoutService.updateConfig({
+      hideSidebar: true,
+    });
+
     // For now we have no way to fetch only the blog posts. We just fetch the last 1000
     // items and filter to only blog posts
     this.pendingPageData = Promise.all([

@@ -1,4 +1,4 @@
-<app-page *ngIf="!globalVars.loggedInUser; else messages">
+<ng-container *ngIf="!globalVars.loggedInUser; else messages">
   <app-logged-out-empty-state
     [headingText]="'Fully encrypted end-to-end messaging. For anywhere on DeSo.'"
     [subheadingText]="
@@ -7,79 +7,77 @@
     [buttonText]="'Sign up on Diamond'"
     [imgSrc]="'/assets/diamond/messages-teaser.png'"
   ></app-logged-out-empty-state>
-</app-page>
+</ng-container>
 
 <ng-template #messages>
-  <app-page [hideSidebar]="true">
-    <div *ngIf="hasLegacyMessages" class="p-3 text-center background-color-light-grey position-relative">
-      <div class="d-flex">
-        <button class="messages-page__banner-dismiss-btn">
-          <i-feather name="x" class="feather-medium fs-0px" (click)="dismissLegacyMessagesBanner()"></i-feather>
+  <div *ngIf="hasLegacyMessages" class="p-3 text-center background-color-light-grey position-relative">
+    <div class="d-flex">
+      <button class="messages-page__banner-dismiss-btn">
+        <i-feather name="x" class="feather-medium fs-0px" (click)="dismissLegacyMessagesBanner()"></i-feather>
+      </button>
+    </div>
+    <p class="mb-3">
+      <strong>Diamond now supports encrypted group chats</strong>
+      🎉
+    </p>
+    Click the plus button to create a new group. Due to the upgrade, we're no longer able to support previously sent
+    messages. But don't worry! You can still access all your old conversations by visiting
+    <a href="https://node.deso.org" target="_blank" rel="noopener noreferrer">node.deso.org</a>
+    .
+  </div>
+  <section class="messages-page" [ngClass]="{ 'has-banner': hasLegacyMessages }">
+    <header class="border-bottom pt-3 pb-2 px-3">
+      <h1 class="font-weight-bold fs-24px mb-2" *ngIf="!globalVars.isMobile()">Messages</h1>
+      <div class="d-flex align-items-center">
+        <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
+          <!-- TODO: Make it where we can search access group names and eth addresses in addition to deso profiles -->
+          <search-bar
+            [showCloutavista]="false"
+            [isSearchForUsersToMessage]="true"
+            [startingSearchText]=""
+            (creatorToMessage)="onSearchItemSelected($event)"
+            class="position-relative"
+          ></search-bar>
+        </div>
+        <button class="ml-auto btn btn-primary" (click)="openCreateAccessGroupModal()">
+          <i-feather *ngIf="globalVars.isMobile; else btnText" name="plus"></i-feather>
+          <ng-template #btnText>Create Group</ng-template>
         </button>
       </div>
-      <p class="mb-3">
-        <strong>Diamond now supports encrypted group chats</strong>
-        🎉
-      </p>
-      Click the plus button to create a new group. Due to the upgrade, we're no longer able to support previously sent
-      messages. But don't worry! You can still access all your old conversations by visiting
-      <a href="https://node.deso.org" target="_blank" rel="noopener noreferrer">node.deso.org</a>
-      .
-    </div>
-    <section class="messages-page" [ngClass]="{ 'has-banner': hasLegacyMessages }">
-      <header class="border-bottom pt-3 pb-2 px-3">
-        <h1 class="font-weight-bold fs-24px mb-2" *ngIf="!globalVars.isMobile()">Messages</h1>
-        <div class="d-flex align-items-center">
-          <div class="position-relative flex-grow-1 mr-4" [ngStyle]="{ height: '40px' }">
-            <!-- TODO: Make it where we can search access group names and eth addresses in addition to deso profiles -->
-            <search-bar
-              [showCloutavista]="false"
-              [isSearchForUsersToMessage]="true"
-              [startingSearchText]=""
-              (creatorToMessage)="onSearchItemSelected($event)"
-              class="position-relative"
-            ></search-bar>
-          </div>
-          <button class="ml-auto btn btn-primary" (click)="openCreateAccessGroupModal()">
-            <i-feather *ngIf="globalVars.isMobile; else btnText" name="plus"></i-feather>
-            <ng-template #btnText>Create Group</ng-template>
-          </button>
-        </div>
-      </header>
-      <div class="d-flex messages-page__content-area">
-        <div
-          class="overflow-auto custom-scrollbar messages-page__threads-list border-right"
-          [ngClass]="{ 'mobile-hidden': globalVars.isMobile() && selectedThread, mobile: globalVars.isMobile() }"
-        >
-          <thread-list-item
-            *ngFor="let item of threadPreviewList"
-            [listItem]="item"
-            [publicKeyToProfileMap]="publicKeyToProfileMap"
-            [onItemClick]="selectThread"
-            [isSelected]="selectedThread === item"
-          ></thread-list-item>
-        </div>
-        <div class="messages-page__threads-area" [ngClass]="{ mobile: globalVars.isMobile() }">
-          <header
-            *ngIf="globalVars.isMobile() && selectedThread"
-            class="messages-page__mobile-thread-header d-flex align-items-center justify-content-between px-4"
-          >
-            <div (click)="selectedThread = null" class="d-inline-block cursor-pointer w-10">
-              <i-feather name="chevron-left"></i-feather>
-            </div>
-
-            <span class="px-4 font-weight-semibold">{{ chatNameFromThread }}</span>
-
-            <div class="messages-thread__avatar" [avatar]="previewPublicKey"></div>
-          </header>
-
-          <message-thread
-            [threadHead]="selectedThread"
-            [publicKeyToProfileMap]="publicKeyToProfileMap"
-            [accessGroups]="accessGroups"
-          ></message-thread>
-        </div>
+    </header>
+    <div class="d-flex messages-page__content-area">
+      <div
+        class="overflow-auto custom-scrollbar messages-page__threads-list border-right"
+        [ngClass]="{ 'mobile-hidden': globalVars.isMobile() && selectedThread, mobile: globalVars.isMobile() }"
+      >
+        <thread-list-item
+          *ngFor="let item of threadPreviewList"
+          [listItem]="item"
+          [publicKeyToProfileMap]="publicKeyToProfileMap"
+          [onItemClick]="selectThread"
+          [isSelected]="selectedThread === item"
+        ></thread-list-item>
       </div>
-    </section>
-  </app-page>
+      <div class="messages-page__threads-area" [ngClass]="{ mobile: globalVars.isMobile() }">
+        <header
+          *ngIf="globalVars.isMobile() && selectedThread"
+          class="messages-page__mobile-thread-header d-flex align-items-center justify-content-between px-4"
+        >
+          <div (click)="selectedThread = null" class="d-inline-block cursor-pointer w-10">
+            <i-feather name="chevron-left"></i-feather>
+          </div>
+
+          <span class="px-4 font-weight-semibold">{{ chatNameFromThread }}</span>
+
+          <div class="messages-thread__avatar" [avatar]="previewPublicKey"></div>
+        </header>
+
+        <message-thread
+          [threadHead]="selectedThread"
+          [publicKeyToProfileMap]="publicKeyToProfileMap"
+          [accessGroups]="accessGroups"
+        ></message-thread>
+      </div>
+    </div>
+  </section>
 </ng-template>

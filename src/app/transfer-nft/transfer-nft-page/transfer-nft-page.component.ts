@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { PostEntryResponse } from "deso-protocol";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
+import { PageLayoutService } from "../../../page-layout.service";
 
 @Component({
   selector: "transfer-nft-page",
@@ -14,7 +15,18 @@ export class TransferNftPageComponent implements OnInit {
   postHashHex: string;
   post: PostEntryResponse;
 
-  constructor(private globalVars: GlobalVarsService, private router: Router, public activatedRoute: ActivatedRoute) {}
+  constructor(
+    private globalVars: GlobalVarsService,
+    private router: Router,
+    public activatedRoute: ActivatedRoute,
+    private pageLayoutService: PageLayoutService
+  ) {
+    this.pageLayoutService.updateConfig({
+      simpleTopBar: true,
+      showBottomBar: false,
+      title: this.title,
+    });
+  }
 
   ngOnInit(): void {
     const state = window.history.state;

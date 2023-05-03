@@ -3,7 +3,6 @@ import { ScrollingModule } from "@angular/cdk/scrolling";
 import { TextFieldModule } from "@angular/cdk/text-field";
 import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
@@ -13,13 +12,11 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertModule } from "ngx-bootstrap/alert";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 import { RatingModule } from "ngx-bootstrap/rating";
 import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
-import { QuillModule } from "ngx-quill";
 import { ToastrModule } from "ngx-toastr";
 import { UiScrollModule } from "ngx-ui-scroll";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
@@ -33,7 +30,6 @@ import { AdminComponent } from "./admin/admin.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
-import { BackendApiService } from "./backend-api.service";
 import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
 import { BlogDetailComponent } from "./blog-page/blog-detail/blog-detail.component";
 import { BlogPageComponent } from "./blog-page/blog-page.component";
@@ -54,8 +50,6 @@ import { ChangeAccountSelectorComponent } from "./change-account-selector/change
 import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
 import { CommentModalComponent } from "./comment-modal/comment-modal.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
-import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
-import { CreateLongPostComponent } from "./create-long-post-page/create-long-post/create-long-post.component";
 import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
 import { CreatePostFormComponent } from "./create-post-page/create-post-form/create-post-form.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
@@ -92,8 +86,6 @@ import { FollowButtonComponent } from "./follow-button/follow-button.component";
 import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
 import { GetStarterDeSoComponent } from "./get-starter-deso-page/get-starter-deso/get-starter-deso.component";
-import { GlobalVarsService } from "./global-vars.service";
-import { IconsModule } from "./icons/icons.module";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { LeftBarMobileComponent } from "./left-bar-mobile/left-bar-mobile.component";
 import { LeftBarButtonComponent } from "./left-bar/left-bar-button/left-bar-button.component";
@@ -164,7 +156,6 @@ import { SettingsComponent } from "./settings/settings.component";
 import { SignUpGetStarterDeSoComponent } from "./sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component";
 import { SignUpTransferDesoComponent } from "./sign-up/sign-up-transfer-deso-module/sign-up-transfer-deso.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
-import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
 import { SwipeToChooseComponent } from "./swipe-to-choose/swipe-to-choose.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
@@ -193,7 +184,6 @@ import { TransferNftAcceptComponent } from "./transfer-nft-accept/transfer-nft-a
 import { TransferNftModalComponent } from "./transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
 import { TransferNftPageComponent } from "./transfer-nft/transfer-nft-page/transfer-nft-page.component";
 import { TransferNftComponent } from "./transfer-nft/transfer-nft.component";
-import { TranslocoRootModule } from "./transloco-root.module";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
@@ -219,8 +209,7 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { WalletComponent } from "./wallet/wallet.component";
 import { WelcomeModalComponent } from "./welcome-modal/welcome-modal.component";
-import { ManageDraftsModalComponent } from "./create-long-post-page/manage-drafts-modal/manage-drafts-modal.component";
-import { DraftsTableComponent } from "./create-long-post-page/drafts-table/drafts-table.component";
+import { SharedModule } from "../shared/shared.module";
 
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
@@ -277,7 +266,6 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     NotificationsPageComponent,
     NotificationsFilterMenuComponent,
     SearchBarComponent,
-    SimpleCenterLoaderComponent,
     ChangeAccountSelectorComponent,
     RightBarSignupComponent,
     TradeCreatorTableComponent,
@@ -391,8 +379,6 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     TransferNftPageComponent,
     TransferNftComponent,
     FreeDesoMessageComponent,
-    CreateLongPostComponent,
-    CreateLongPostPageComponent,
     BlogPageComponent,
     BlogDetailComponent,
     CreatorProfileBlogPostsComponent,
@@ -421,19 +407,16 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     IdentityMigrationModalComponent,
     InstallPwaComponent,
     FeedPostImageModalComponent,
-    ManageDraftsModalComponent,
-    DraftsTableComponent,
   ],
   imports: [
+    SharedModule,
     BrowserModule,
     DragDropModule,
     AppRoutingModule,
-    FormsModule,
     MatSelectModule,
     MatFormFieldModule,
     MatProgressBarModule,
     HttpClientModule,
-    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatTooltipModule,
     TextFieldModule,
@@ -447,20 +430,14 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
     TooltipModule.forRoot(),
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
-    QuillModule.forRoot({
-      format: "text",
-    }),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
-    IconsModule,
     ScrollingModule,
-    TranslocoRootModule,
   ],
-  providers: [BackendApiService, GlobalVarsService, BsModalService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

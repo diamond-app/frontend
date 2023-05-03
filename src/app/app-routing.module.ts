@@ -8,7 +8,7 @@ import { TwitterSyncPageComponent } from "src/app/twitter-sync-page/twitter-sync
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
-import { CreateLongPostPageComponent } from "./create-long-post-page/create-long-post-page.component";
+import { CreateLongPostPageComponent } from "../blog-post/create-long-post-page/create-long-post-page.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorsLeaderboardAppPageComponent } from "./creators-leaderboard/creators-leaderboard-app-page/creators-leaderboard-app-page.component";
@@ -141,7 +141,11 @@ const routes: Routes = [
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
-  { path: RouteNames.CREATE_LONG_POST, component: CreateLongPostPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.CREATE_LONG_POST,
+    loadChildren: () => import("../blog-post/blog-post.module").then((e) => e.BlogPostModule),
+    pathMatch: "full",
+  },
   { path: RouteNames.EDIT_LONG_POST + "/:postHashHex", component: CreateLongPostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   {

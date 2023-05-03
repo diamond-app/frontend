@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { PageLayoutService } from "../../page-layout.service";
 
 @Component({
   selector: "creator-profile-page",
@@ -6,5 +7,9 @@ import { Component } from "@angular/core";
   styleUrls: ["./creator-profile-page.component.scss"],
 })
 export class CreatorProfilePageComponent {
-  constructor() {}
+  constructor(private pageLayoutService: PageLayoutService) {
+    this.pageLayoutService.updateConfig({
+      showPostButton: true,
+    });
+  }
 }

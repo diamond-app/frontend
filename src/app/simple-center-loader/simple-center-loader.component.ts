@@ -58,7 +58,6 @@ export class SimpleCenterLoaderComponent implements OnInit {
   }
 
   getFontSize() {
-    console.log(this.size);
     switch (this.size) {
       case "s":
         return 16;
