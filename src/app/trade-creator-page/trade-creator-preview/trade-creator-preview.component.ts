@@ -139,6 +139,13 @@ export class TradeCreatorPreviewComponent implements OnInit {
                   this
                 );
               });
+          } else {
+            this.appData.updateEverything(
+              response.TxnHashHex,
+              this._creatorCoinSuccess,
+              this._creatorCoinFailure,
+              this
+            );
           }
         },
         (response) => {
