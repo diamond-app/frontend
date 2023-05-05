@@ -46,7 +46,59 @@ export class AppComponent implements OnInit {
     configure({
       nodeURI,
       mediaURI: `https://${environment.uploadVideoHostname}`,
-      spendingLimitOptions: { IsUnlimited: true },
+      spendingLimitOptions: {
+        GlobalDESOLimit: 1e9,
+        TransactionCountLimitMap: {
+          UPDATE_PROFILE: "UNLIMITED",
+          CREATE_NFT: "UNLIMITED",
+          UPDATE_NFT: "UNLIMITED",
+          SUBMIT_POST: "UNLIMITED",
+          NEW_MESSAGE: "UNLIMITED",
+          BASIC_TRANSFER: "UNLIMITED",
+        },
+        CreatorCoinOperationLimitMap: {
+          "": { any: "UNLIMITED" },
+        },
+        AssociationLimitMap: [
+          {
+            AssociationClass: "Post",
+            AssociationType: "",
+            AppScopeType: "Any",
+            AppPublicKeyBase58Check: "",
+            AssociationOperation: "Any",
+            OpCount: "UNLIMITED",
+          },
+          {
+            AssociationClass: "User",
+            AssociationType: "",
+            AppPublicKeyBase58Check: "",
+            AppScopeType: "Any",
+            AssociationOperation: "Any",
+            OpCount: "UNLIMITED",
+          },
+        ],
+        AccessGroupLimitMap: [
+          {
+            AccessGroupOwnerPublicKeyBase58Check: "",
+            ScopeType: "Any",
+            AccessGroupKeyName: "",
+            OperationType: "Any",
+            OpCount: "UNLIMITED",
+          },
+        ],
+        AccessGroupMemberLimitMap: [
+          {
+            AccessGroupOwnerPublicKeyBase58Check: "",
+            ScopeType: "Any",
+            AccessGroupKeyName: "",
+            OperationType: "Any",
+            OpCount: "UNLIMITED",
+          },
+        ],
+        NFTOperationLimitMap: {
+          "": { 0: { any: "UNLIMITED" } },
+        },
+      },
       MinFeeRateNanosPerKB: 1000,
       network: this.globalVars.getDesoNetworkFromURL(nodeURI),
     });

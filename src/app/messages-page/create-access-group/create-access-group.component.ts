@@ -113,12 +113,19 @@ export class CreateAccessGroupComponent {
         })
       );
 
-      await addAccessGroupMembers({
-        AccessGroupOwnerPublicKeyBase58Check: loggedInUserPublicKey,
-        AccessGroupKeyName: groupName,
-        AccessGroupMemberList: groupMemberList,
-        MinFeeRateNanosPerKB: 1000,
-      });
+      await addAccessGroupMembers(
+        {
+          AccessGroupOwnerPublicKeyBase58Check: loggedInUserPublicKey,
+          AccessGroupKeyName: groupName,
+          AccessGroupMemberList: groupMemberList,
+          MinFeeRateNanosPerKB: 1000,
+        },
+        {
+          // We don't need to check permissions here because we already checked when we made the call to
+          // create the access group.
+          checkPermissions: false,
+        }
+      );
 
       const identityState = identity.snapshot();
       const TimestampNanos = Date.now() * 1e6;
