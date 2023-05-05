@@ -11,15 +11,6 @@ import {
   QueryList,
   ViewChildren,
 } from "@angular/core";
-import {
-  AbstractControl,
-  UntypedFormArray,
-  UntypedFormControl,
-  UntypedFormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslocoService } from "@ngneat/transloco";
 import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
@@ -33,6 +24,15 @@ import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-se
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { BackendApiService } from "../../backend-api.service";
+import {
+  AbstractControl,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -375,7 +375,7 @@ export class FeedCreatePostComponent implements OnInit {
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         post.editPostHashHex /*PostHashHexToModify*/,
         this.isReply ? this.parentPost?.PostHashHex ?? "" : parentPost?.PostHashHex ?? "" /*ParentPostHashHex*/,
-        { ...bodyObj } /*BodyObj*/,
+        bodyObj /*BodyObj*/,
         repostedPostHashHex,
         postExtraData,
         false /*IsHidden*/
@@ -430,7 +430,6 @@ export class FeedCreatePostComponent implements OnInit {
         this.submittedPost = null;
       })
       .catch((e) => {
-        console.error(e);
         const parsedError = this.backendApi.parseErrorMessage(e);
         this.globalVars._alertError(parsedError);
         this.tracking.log(`post : ${action}`, {
