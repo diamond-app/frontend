@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
       ? this.globalVars.localNode
       : `https://${this.globalVars.localNode}`;
     configure({
+      identityURI: environment.identityURL,
       nodeURI,
       mediaURI: `https://${environment.uploadVideoHostname}`,
       spendingLimitOptions: {
@@ -101,6 +102,7 @@ export class AppComponent implements OnInit {
       },
       MinFeeRateNanosPerKB: 1000,
       network: this.globalVars.getDesoNetworkFromURL(nodeURI),
+      appName: "Diamond App",
     });
 
     // log interaction events emitted by identity
