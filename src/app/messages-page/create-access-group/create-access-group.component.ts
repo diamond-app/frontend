@@ -1,13 +1,13 @@
 import { Component, Input } from "@angular/core";
 import {
-  addAccessGroupMembers,
-  ChatType,
-  createAccessGroup,
-  DecryptedMessageEntryResponse,
-  encrypt,
-  getBulkAccessGroups,
-  identity,
-  ProfileEntryResponse,
+    addAccessGroupMembers,
+    ChatType,
+    createAccessGroup,
+    DecryptedMessageEntryResponse,
+    encrypt,
+    getBulkAccessGroups,
+    identity,
+    ProfileEntryResponse
 } from "deso-protocol";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../../global-vars.service";
@@ -127,7 +127,7 @@ export class CreateAccessGroupComponent {
         }
       );
 
-      const identityState = identity.snapshot();
+      const identityState = identity.snapshotSync();
       const TimestampNanos = Date.now() * 1e6;
       this.afterAccessGroupCreated?.({
         ChatType: ChatType.GROUPCHAT,

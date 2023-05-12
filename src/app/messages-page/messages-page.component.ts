@@ -2,15 +2,15 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
-  AccessGroupEntryResponse,
-  ChatType,
-  checkPartyAccessGroups,
-  DecryptedMessageEntryResponse,
-  getAllAccessGroups,
-  getAllMessageThreads,
-  identity,
-  ProfileEntryResponse,
-  PublicKeyToProfileEntryResponseMap,
+    AccessGroupEntryResponse,
+    ChatType,
+    checkPartyAccessGroups,
+    DecryptedMessageEntryResponse,
+    getAllAccessGroups,
+    getAllMessageThreads,
+    identity,
+    ProfileEntryResponse,
+    PublicKeyToProfileEntryResponseMap
 } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
@@ -59,7 +59,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { currentUser } = identity.snapshot();
+    const { currentUser } = identity.snapshotSync();
     if (!currentUser) {
       this.globalVars._alertError("You must be logged in to create a new thread.");
       return;
@@ -220,7 +220,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           // least show up. This is not a great UX, but to deal with it properly
           // would take more thought and time which is unfortunately not
           // available atm.
-          const identityState = identity.snapshot();
+          const identityState = identity.snapshotSync();
           const TimestampNanos = Date.now() * 1e6;
           const groupsOwnedWithoutMessages: DecryptedMessageEntryResponse[] = this.accessGroupsOwned
             .filter(

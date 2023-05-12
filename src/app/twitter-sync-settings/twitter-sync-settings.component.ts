@@ -6,10 +6,10 @@ import { forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import {
-  GetCurrentSubscriptionsResponse,
-  GetDerivedKeyStatusResponse,
-  SetuService,
-  SubscriptionType,
+    GetCurrentSubscriptionsResponse,
+    GetDerivedKeyStatusResponse,
+    SetuService,
+    SubscriptionType
 } from "src/app/setu.service";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "src/lib/helpers/swal-helper";
@@ -140,7 +140,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         return this.setu.submitTx(signedTransactionHex);
       }),
       switchMap(() => {
-        const { currentUser } = identity.snapshot();
+        const { currentUser } = identity.snapshotSync();
         if (!currentUser) throw new Error("no current user found in identity");
         const derivedPublicKey = currentUser.primaryDerivedKey.derivedPublicKeyBase58Check;
         return this.setu.changeSignedStatus({
@@ -164,7 +164,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       throw new Error("cannot sync tweets without a profile");
     }
 
-    const { currentUser } = identity.snapshot();
+    const { currentUser } = identity.snapshotSync();
 
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
@@ -247,7 +247,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       }
 
       this.isProcessingSubscription = true;
-      const { currentUser } = identity.snapshot();
+      const { currentUser } = identity.snapshotSync();
 
       if (!currentUser) throw new Error("no current user found in identity");
 

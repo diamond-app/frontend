@@ -5,15 +5,15 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import ConfettiGenerator from "confetti-js";
 import {
-  AccessGroupEntryResponse,
-  BalanceEntryResponse,
-  createAccessGroup,
-  DeSoNetwork,
-  DeSoNode,
-  getAllAccessGroupsOwned,
-  identity,
-  PostEntryResponse,
-  User,
+    AccessGroupEntryResponse,
+    BalanceEntryResponse,
+    createAccessGroup,
+    DeSoNetwork,
+    DeSoNode,
+    getAllAccessGroupsOwned,
+    identity,
+    PostEntryResponse,
+    User
 } from "deso-protocol";
 import { isNil } from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
@@ -571,7 +571,7 @@ export class GlobalVarsService {
         if (defaultMessagingGroup) {
           return defaultMessagingGroup;
         } else {
-          const { currentUser } = identity.snapshot();
+          const { currentUser } = identity.snapshotSync();
 
           if (!currentUser) {
             throw new Error("Cannot create an access group without an identity user.");
