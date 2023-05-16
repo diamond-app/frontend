@@ -127,7 +127,7 @@ export class CreateAccessGroupComponent {
         }
       );
 
-      const identityState = identity.snapshotSync();
+      const identityState = identity.snapshot();
       const TimestampNanos = Date.now() * 1e6;
       this.afterAccessGroupCreated?.({
         ChatType: ChatType.GROUPCHAT,

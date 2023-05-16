@@ -159,7 +159,7 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    const { currentUser } = identity.snapshotSync();
+    const { currentUser } = identity.snapshot();
 
     return zip(
       this.backendApi.GetUsersStateless([currentUser?.publicKey], false),
@@ -350,7 +350,7 @@ export class AppComponent implements OnInit {
   loadApp() {
     // Load service worker for push notifications.
     this.globalVars.initializeWebPush();
-    const { currentUser, alternateUsers } = identity.snapshotSync();
+    const { currentUser, alternateUsers } = identity.snapshot();
     this.tracking.log("page : load", { isLoggedIn: !!currentUser });
 
     let publicKeys = [];

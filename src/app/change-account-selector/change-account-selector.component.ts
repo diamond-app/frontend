@@ -28,7 +28,7 @@ export class ChangeAccountSelectorComponent {
 
   launchLogoutFlow() {
     from(identity.logout()).subscribe(() => {
-      const { alternateUsers } = identity.snapshotSync();
+      const { alternateUsers } = identity.snapshot();
       const users = Object.keys(alternateUsers ?? {});
 
       this.globalVars.userList = this.globalVars.userList.filter((user) => {

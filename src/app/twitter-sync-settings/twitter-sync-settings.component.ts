@@ -140,7 +140,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
         return this.setu.submitTx(signedTransactionHex);
       }),
       switchMap(() => {
-        const { currentUser } = identity.snapshotSync();
+        const { currentUser } = identity.snapshot();
         if (!currentUser) throw new Error("no current user found in identity");
         const derivedPublicKey = currentUser.primaryDerivedKey.derivedPublicKeyBase58Check;
         return this.setu.changeSignedStatus({
@@ -164,7 +164,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       throw new Error("cannot sync tweets without a profile");
     }
 
-    const { currentUser } = identity.snapshotSync();
+    const { currentUser } = identity.snapshot();
 
     const params = {
       username_deso: this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
@@ -247,7 +247,7 @@ export class TwitterSyncSettingsComponent implements OnDestroy {
       }
 
       this.isProcessingSubscription = true;
-      const { currentUser } = identity.snapshotSync();
+      const { currentUser } = identity.snapshot();
 
       if (!currentUser) throw new Error("no current user found in identity");
 

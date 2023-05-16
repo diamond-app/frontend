@@ -439,7 +439,7 @@ export class BackendApiService {
           })
         ).pipe(
           switchMap((resp) => {
-            const identityState = identity.snapshotSync();
+            const identityState = identity.snapshot();
             if (!identityState.currentUser) {
               throw new Error("No identityState.currentUser");
             }
@@ -488,7 +488,7 @@ export class BackendApiService {
       })
     ).pipe(
       switchMap((resp) => {
-        const identityState = identity.snapshotSync();
+        const identityState = identity.snapshot();
         if (!identityState.currentUser) {
           throw new Error("No identityState.currentUser");
         }
@@ -591,7 +591,7 @@ export class BackendApiService {
           })
         ).pipe(
           switchMap((resp) => {
-            const identityState = identity.snapshotSync();
+            const identityState = identity.snapshot();
             if (!identityState.currentUser) {
               throw new Error("No identityState.currentUser");
             }

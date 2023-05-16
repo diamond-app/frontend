@@ -571,7 +571,7 @@ export class GlobalVarsService {
         if (defaultMessagingGroup) {
           return defaultMessagingGroup;
         } else {
-          const { currentUser } = identity.snapshotSync();
+          const { currentUser } = identity.snapshot();
 
           if (!currentUser) {
             throw new Error("Cannot create an access group without an identity user.");

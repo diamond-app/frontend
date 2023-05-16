@@ -59,7 +59,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { currentUser } = identity.snapshotSync();
+    const { currentUser } = identity.snapshot();
     if (!currentUser) {
       this.globalVars._alertError("You must be logged in to create a new thread.");
       return;
@@ -220,7 +220,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           // least show up. This is not a great UX, but to deal with it properly
           // would take more thought and time which is unfortunately not
           // available atm.
-          const identityState = identity.snapshotSync();
+          const identityState = identity.snapshot();
           const TimestampNanos = Date.now() * 1e6;
           const groupsOwnedWithoutMessages: DecryptedMessageEntryResponse[] = this.accessGroupsOwned
             .filter(
