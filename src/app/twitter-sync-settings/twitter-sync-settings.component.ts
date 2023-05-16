@@ -6,10 +6,10 @@ import { forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import {
-  GetCurrentSubscriptionsResponse,
-  GetDerivedKeyStatusResponse,
-  SetuService,
-  SubscriptionType,
+    GetCurrentSubscriptionsResponse,
+    GetDerivedKeyStatusResponse,
+    SetuService,
+    SubscriptionType
 } from "src/app/setu.service";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "src/lib/helpers/swal-helper";

@@ -2,15 +2,15 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
-  AccessGroupEntryResponse,
-  ChatType,
-  checkPartyAccessGroups,
-  DecryptedMessageEntryResponse,
-  getAllAccessGroups,
-  getAllMessageThreads,
-  identity,
-  ProfileEntryResponse,
-  PublicKeyToProfileEntryResponseMap,
+    AccessGroupEntryResponse,
+    ChatType,
+    checkPartyAccessGroups,
+    DecryptedMessageEntryResponse,
+    getAllAccessGroups,
+    getAllMessageThreads,
+    identity,
+    ProfileEntryResponse,
+    PublicKeyToProfileEntryResponseMap
 } from "deso-protocol";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "src/app/global-vars.service";
