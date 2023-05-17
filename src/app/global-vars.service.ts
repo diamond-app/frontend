@@ -5,15 +5,15 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import ConfettiGenerator from "confetti-js";
 import {
-  AccessGroupEntryResponse,
-  BalanceEntryResponse,
-  createAccessGroup,
-  DeSoNetwork,
-  DeSoNode,
-  getAllAccessGroupsOwned,
-  identity,
-  PostEntryResponse,
-  User,
+    AccessGroupEntryResponse,
+    BalanceEntryResponse,
+    createAccessGroup,
+    DeSoNetwork,
+    DeSoNode,
+    getAllAccessGroupsOwned,
+    identity,
+    PostEntryResponse,
+    User
 } from "deso-protocol";
 import isNil from "lodash/isNil";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
