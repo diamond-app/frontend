@@ -111,8 +111,8 @@ export class PollComponent implements OnInit {
         .GetAllPostAssociations(this.post.PostHashHex, AssociationType.pollResponse, undefined, this.pollOptions, true)
         .pipe(
           map(({ Associations, PublicKeyToProfileEntryResponse }) => {
-            const userBalanceByKey = Object.values(PublicKeyToProfileEntryResponse).reduce(
-              (acc, curr) => ({ ...acc, [curr.PublicKeyBase58Check]: curr.DESOBalanceNanos }),
+            const userBalanceByKey = Object.entries(PublicKeyToProfileEntryResponse).reduce(
+              (acc, [key, value]) => ({ ...acc, [key]: value?.DESOBalanceNanos || 0 }),
               {}
             );
 
