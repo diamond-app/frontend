@@ -143,7 +143,7 @@ export class FeedCreatePostComponent implements OnInit {
   embedUrlParserService = EmbedUrlParserService;
 
   readonly REQUIRED_POLL_OPTIONS: number = 2;
-  readonly MAX_POLL_OPTIONS: number = 5;
+  readonly MAX_POLL_OPTIONS: number = 20;
   readonly MAX_POLL_CHARACTERS: number = 50;
   readonly POLL_WEIGHT_TYPE_LABELS = {
     [PollWeightType.unweighted]: "Simple poll",
