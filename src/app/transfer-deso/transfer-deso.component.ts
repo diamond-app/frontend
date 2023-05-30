@@ -184,7 +184,8 @@ export class TransferDeSoComponent implements OnInit {
             // If this is a max send request, the amount passed to the
             // deso-protocol lib to construct the transaction will be -1. This
             // will cause it to incorrectly calculate the amount of deso we need
-            // available on the derived key using to broadcast the transaction.
+            // available on the derived key used to construct and broadcast the
+            // transaction.
             let requestPermissions$: Observable<any> = of(null);
             if (amountToSend === -1) {
               if (
