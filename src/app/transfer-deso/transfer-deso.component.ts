@@ -187,10 +187,11 @@ export class TransferDeSoComponent implements OnInit {
             // available on the derived key used to construct and broadcast the
             // transaction.
             let requestPermissions$: Observable<any> = of(null);
+            const userBalance = this.globalVars.loggedInUser.BalanceNanos;
             if (amountToSend === -1) {
               if (
                 !identity.hasPermissions({
-                  GlobalDESOLimit: this.globalVars.loggedInUser.BalanceNanos,
+                  GlobalDESOLimit: userBalance,
                   TransactionCountLimitMap: {
                     BASIC_TRANSFER: 1,
                   },
@@ -198,7 +199,7 @@ export class TransferDeSoComponent implements OnInit {
               ) {
                 requestPermissions$ = from(
                   identity.requestPermissions({
-                    GlobalDESOLimit: this.globalVars.loggedInUser?.BalanceNanos + 1e9,
+                    GlobalDESOLimit: userBalance + 1e9,
                     TransactionCountLimitMap: {
                       BASIC_TRANSFER: "UNLIMITED",
                     },
