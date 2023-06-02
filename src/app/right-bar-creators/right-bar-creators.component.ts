@@ -27,6 +27,7 @@ export class RightBarCreatorsComponent implements OnInit, OnDestroy {
   @Input() inTutorial: boolean = false;
   isDestroyed: boolean = false;
   earningsProfile?: ProfileEntryResponse;
+  showEarningsCard: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
