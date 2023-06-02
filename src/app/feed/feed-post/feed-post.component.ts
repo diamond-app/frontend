@@ -786,7 +786,7 @@ export class FeedPostComponent implements OnInit {
         return;
       }
       this.livepeerVideo = true;
-      this.videoURL = this.postContent.VideoURLs[0] + "&autoplay=false";
+      this.videoURL = this.postContent.VideoURLs[0] + "&autoPlay=false";
     }
   }
 
