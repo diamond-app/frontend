@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
+import { identity, ProfileEntryResponse } from "deso-protocol";
+import { from, Observable, of } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { RouteNames } from "../app-routing.module";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { ProfileEntryResponse } from "deso-protocol";
 
 const MESSAGE_PLACEHOLDER = "%s";
 
@@ -167,8 +169,48 @@ export class TransferDeSoComponent implements OnInit {
         }).then((res: any) => {
           if (res.isConfirmed) {
             const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9;
-            this.backendApi
-              .SendDeSo(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.payToPublicKey, amountToSend)
+
+            if (!this.globalVars.loggedInUser) {
+              throw new Error("Cannot send DeSo without a logged in user.");
+            }
+
+            // If this is a max send request, the amount passed to the
+            // deso-protocol lib to construct the transaction will be -1. This
+            // will cause it to incorrectly calculate the amount of deso we need
+            // available on the derived key used to construct and broadcast the
+            // transaction.
+            let requestPermissions$: Observable<any> = of(null);
+            const userBalance = this.globalVars.loggedInUser.BalanceNanos;
+            if (amountToSend === -1) {
+              if (
+                !identity.hasPermissions({
+                  GlobalDESOLimit: userBalance,
+                  TransactionCountLimitMap: {
+                    BASIC_TRANSFER: 1,
+                  },
+                })
+              ) {
+                requestPermissions$ = from(
+                  identity.requestPermissions({
+                    GlobalDESOLimit: userBalance + 1e9,
+                    TransactionCountLimitMap: {
+                      BASIC_TRANSFER: "UNLIMITED",
+                    },
+                  })
+                );
+              }
+            }
+
+            requestPermissions$
+              .pipe(
+                switchMap(() =>
+                  this.backendApi.SendDeSo(
+                    this.globalVars.loggedInUser?.PublicKeyBase58Check,
+                    this.payToPublicKey,
+                    amountToSend
+                  )
+                )
+              )
               .subscribe(
                 (res: any) => {
                   const { TotalInputNanos, SpendAmountNanos, ChangeAmountNanos, FeeNanos, TransactionIDBase58Check } =

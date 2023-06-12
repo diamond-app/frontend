@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { configure, identity, User } from "deso-protocol";
+import { Identity } from "deso-protocol/src/identity/identity";
 import * as introJs from "intro.js/intro.js";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
@@ -56,6 +57,16 @@ export class AppComponent implements OnInit {
           SUBMIT_POST: "UNLIMITED",
           NEW_MESSAGE: "UNLIMITED",
           BASIC_TRANSFER: "UNLIMITED",
+          FOLLOW: "UNLIMITED",
+          LIKE: "UNLIMITED",
+          CREATOR_COIN: "UNLIMITED",
+          CREATOR_COIN_TRANSFER: "UNLIMITED",
+          ACCEPT_NFT_BID: "UNLIMITED",
+          BURN_NFT: "UNLIMITED",
+          CREATE_USER_ASSOCIATION: "UNLIMITED",
+          CREATE_POST_ASSOCIATION: "UNLIMITED",
+          ACCESS_GROUP: "UNLIMITED",
+          ACCESS_GROUP_MEMBERS: "UNLIMITED",
         },
         CreatorCoinOperationLimitMap: {
           "": { any: "UNLIMITED" },
@@ -159,7 +170,7 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    const { currentUser } = identity.snapshot();
+    const { currentUser } = (identity as Identity<Storage>).snapshot();
 
     return zip(
       this.backendApi.GetUsersStateless([currentUser?.publicKey], false),
@@ -350,7 +361,7 @@ export class AppComponent implements OnInit {
   loadApp() {
     // Load service worker for push notifications.
     this.globalVars.initializeWebPush();
-    const { currentUser, alternateUsers } = identity.snapshot();
+    const { currentUser, alternateUsers } = (identity as Identity<Storage>).snapshot();
     this.tracking.log("page : load", { isLoggedIn: !!currentUser });
 
     let publicKeys = [];

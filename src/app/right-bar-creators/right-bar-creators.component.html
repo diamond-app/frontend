@@ -72,7 +72,10 @@
     </div>
   </div>
 
-  <app-earnings-card *ngIf="this.earningsProfile" [profile]="this.earningsProfile"></app-earnings-card>
+  <app-earnings-card
+    *ngIf="this.earningsProfile && showEarningsCard"
+    [profile]="this.earningsProfile"
+  ></app-earnings-card>
 
   <div class="trend-box" *ngIf="!inTutorial">
     <!-- Title -->

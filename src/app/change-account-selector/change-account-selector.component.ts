@@ -1,6 +1,7 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
 import { identity } from "deso-protocol";
+import { Identity } from "deso-protocol/src/identity/identity";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { from } from "rxjs";
 import { BackendApiService } from "../backend-api.service";
@@ -28,7 +29,7 @@ export class ChangeAccountSelectorComponent {
 
   launchLogoutFlow() {
     from(identity.logout()).subscribe(() => {
-      const { alternateUsers } = identity.snapshot();
+      const { alternateUsers } = (identity as Identity<Storage>).snapshot();
       const users = Object.keys(alternateUsers ?? {});
 
       this.globalVars.userList = this.globalVars.userList.filter((user) => {

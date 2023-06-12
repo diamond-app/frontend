@@ -143,7 +143,7 @@ export class FeedCreatePostComponent implements OnInit {
   embedUrlParserService = EmbedUrlParserService;
 
   readonly REQUIRED_POLL_OPTIONS: number = 2;
-  readonly MAX_POLL_OPTIONS: number = 5;
+  readonly MAX_POLL_OPTIONS: number = 20;
   readonly MAX_POLL_CHARACTERS: number = 50;
   readonly POLL_WEIGHT_TYPE_LABELS = {
     [PollWeightType.unweighted]: "Simple poll",
@@ -517,8 +517,8 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   async uploadVideo(file: File): Promise<any> {
-    if (file.size > 65 * 1024 * 1024) {
-      this.globalVars._alertError("File is too large. Please choose a file less than 65MB");
+    if (file.size > 250 * 1024 * 1024) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 250MB");
       return;
     }
     this.currentPostModel.isUploadingMedia = true;
