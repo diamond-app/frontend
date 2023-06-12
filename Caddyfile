@@ -50,6 +50,7 @@ header @html Content-Security-Policy "
     explorer.bitclout.com:*
     megaswap.dev
     megaswap.xyz
+    heroswap.com
     https://api.blockchain.com/ticker
     https://api.blockchain.com/mempool/fees
     https://ka-f.fontawesome.com/
@@ -123,6 +124,7 @@ header @html Content-Security-Policy "
     identity.bitclout.green
     megaswap.dev
     megaswap.xyz
+    heroswap.com
     https://geo.captcha-delivery.com
     https://www.youtube.com
     https://iframe.videodelivery.net/

@@ -23,7 +23,7 @@ export const environment = {
     url: "https://bitclout.com",
     logoAssetDir: "/assets/bitclout/",
   },
-  megaswapURL: "https://megaswap.xyz",
+  megaswapURL: "https://heroswap.com",
   megaswapAPI: "https://megaswap.dev",
   megaswapAffiliateAddress: "BC1YLgTKfwSeHuNWtuqQmwduJM2QZ7ZQ9C7HFuLpyXuunUN7zTEr5WL",
   openfundURL: "https://openfund.com",
