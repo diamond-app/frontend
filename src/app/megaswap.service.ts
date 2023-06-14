@@ -78,7 +78,7 @@ const MAINNET_EXPLORER_URLS = {
   blockcypher: "https://live.blockcypher.com/btc",
   deso: "https://node.deso.org",
   etherscan: "https://etherscan.io",
-  megaswap: "https://megaswap.dev",
+  megaswap: "https://heroswap.com",
   solana: "https://explorer.solana.com",
 };
 
@@ -86,7 +86,7 @@ export const TESTNET_EXPLORER_URLS = {
   blockcypher: "https://live.blockcypher.com/btc-testnet",
   deso: "https://test.deso.org",
   etherscan: "https://goerli.etherscan.io",
-  megaswap: "https://dev.megaswap.dev",
+  megaswap: "https://dev.heroswap.com",
   solana: "https://explorer.solana.com?cluster=devnet",
 };
 
