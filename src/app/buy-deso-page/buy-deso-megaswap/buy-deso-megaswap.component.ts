@@ -20,7 +20,7 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
       greenish: "dark-green",
       icydark: "dark-icy",
       legends: "dark-brown",
-      light: "light-white",
+      light: "default",
     }[localStorage.getItem("theme")] || "default";
 
   constructor(public globalVars: GlobalVarsService, private sanitizer: DomSanitizer, private route: ActivatedRoute) {}
