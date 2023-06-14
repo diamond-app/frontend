@@ -20,7 +20,7 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
       greenish: "dark-green",
       icydark: "dark-icy",
       legends: "dark-brown",
-      light: "default",
+      light: "light-white",
     }[localStorage.getItem("theme")] || "default";
 
   constructor(public globalVars: GlobalVarsService, private sanitizer: DomSanitizer, private route: ActivatedRoute) {}
@@ -29,6 +29,10 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
     window.scroll(0, 0);
     if (this.theme === "default" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       this.theme = "dark-gray";
+    }
+
+    if (this.theme === "light-white") {
+      this.theme = "default";
     }
 
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
