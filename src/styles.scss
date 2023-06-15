@@ -579,7 +579,9 @@ i-feather[name="check-circle"] {
   -webkit-box-orient: vertical;
 }
 
-.modal-backdrop.show {opacitY: 0.9 !important}
+.modal-backdrop.show {
+  opacity: 0.9 !important;
+}
 
 .global__container {
   min-height: 100vh;
@@ -1462,7 +1464,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1489,7 +1491,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1512,7 +1514,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1528,7 +1530,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1545,7 +1547,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1561,7 +1563,7 @@ input.bs-timepicker-field {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -2813,7 +2815,7 @@ bs-dropdown-container {
   }
   font-weight: normal;
   font-size: 15px;
-  line-hieght: 24px;
+  line-height: 24px;
 }
 
 .feed-post-icon-row__icon.reply-icon {
@@ -3031,7 +3033,7 @@ feed {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -3039,7 +3041,7 @@ feed {
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
     -webkit-transform: translate3d(0, 0, 0);
-    backface-bisibility: hidden;
+    backface-visibility: hidden;
     perspective: 1000;
     transform: translate3d(0, 0, 0);
     transform: translateZ(0);
@@ -6537,18 +6539,13 @@ sell-nft-modal {
 }
 
 .link-preview-description {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
+  display: flex;
+  flex-direction: column;
   word-break: break-word;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 3;
-  -moz-box-lines: 3;
-  box-lines: 3;
+  line-clamp: 3;
 }
 
 .single-line-no-overflow-ellipsis {

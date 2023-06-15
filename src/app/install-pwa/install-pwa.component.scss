@@ -39,10 +39,13 @@ $arrow-down-icon-wrapper-size: 50px;
     top: -25px;
   }
 
+
   .arrow-down-icon__wrapper {
-    width: $arrow-down-icon-wrapper-size;
-    height: $arrow-down-icon-wrapper-size;
-    bottom: -($arrow-down-icon-wrapper-size / 2);
+    $size: $arrow-down-icon-wrapper-size;
+
+    width: $size;
+    height: $size;
+    bottom: calc(-#{$size} / 2);
     border-radius: 12px;
     background: var(--norm);
     color: var(--text-inverted);

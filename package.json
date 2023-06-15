@@ -1,5 +1,5 @@
 {
-  "name": "DiamondApp",
+  "name": "diamond-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint --fix",
     "e2e": "ng e2e",
-    "build_prod": "ng build --configuration production --base-href / --deploy-url /",
+    "build_prod": "ng build --configuration production --base-href /",
     "ngcc": "ngcc --properties es2015",
     "build:stats": "ng build --stats-json",
     "analyze": "webpack-bundle-analyzer dist/stats.json"

@@ -32,18 +32,28 @@ $y-shift-sizes: (
     &.#{$size} {
       .tick-wrapper {
         &:nth-child(1) {
-          top: -(map-get(map-get($y-shift-sizes, $size), bottom-tick));
-          left: calc(50% - #{map-get($x-shift-sizes, $size)} - #{map-get($properties, width) / 2});
+          $width: map-get($properties, width);
+          $x-shift: map-get($x-shift-sizes, $size);
+          $y-shift: map-get(map-get($y-shift-sizes, $size), bottom-tick);
+
+          top: -$y-shift;
+          left: calc(50% - #{$x-shift} - (#{$width} / 2));
         }
 
         &:nth-child(2) {
+          $width: map-get($properties, width);
+
           top: -(map-get(map-get($y-shift-sizes, $size), top-tick));
-          left: calc(50% - #{map-get($properties, width) / 2});
+          left: calc(50% - (#{$width} / 2));
         }
 
         &:nth-child(3) {
-          top: -(map-get(map-get($y-shift-sizes, $size), bottom-tick));
-          left: calc(50% + #{map-get($x-shift-sizes, $size)} - #{map-get($properties, width) / 2});
+          $width: map-get($properties, width);
+          $x-shift: map-get($x-shift-sizes, $size);
+          $y-shift: map-get(map-get($y-shift-sizes, $size), bottom-tick);
+
+          top: -$y-shift;
+          left: calc(50% + #{$x-shift} - (#{$width} / 2));
         }
       }
 
