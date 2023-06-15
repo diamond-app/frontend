@@ -6,7 +6,7 @@ import isNumber from "lodash/isNumber";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
 import { concatMap, last, map } from "rxjs/operators";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../tracking.service";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";

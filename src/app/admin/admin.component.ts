@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import sumBy from "lodash/sumBy";
-import { environment } from "src/environments/environment";
+import { environment } from "../../environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";

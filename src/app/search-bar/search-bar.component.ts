@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import debounce from "lodash/debounce";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../tracking.service";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";

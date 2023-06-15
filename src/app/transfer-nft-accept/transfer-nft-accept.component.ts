@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import isNumber from "lodash/isNumber";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../tracking.service";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { NFTEntryResponse, PostEntryResponse } from "deso-protocol";

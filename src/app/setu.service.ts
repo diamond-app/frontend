@@ -4,8 +4,8 @@ import { Injectable } from "@angular/core";
 import { identity } from "deso-protocol";
 import { from, Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "./global-vars.service";
+import { environment } from "../environments/environment";
 
 const buildURL = (endpoint: string) => `${environment.setuAPI}/${endpoint}`;
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { environment } from "src/environments/environment";
+import { environment } from "../../../../environments/environment";
 import { BackendApiService } from "../../../backend-api.service";
 import { GlobalVarsService } from "../../../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";

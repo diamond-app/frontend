@@ -1,8 +1,8 @@
 // @ts-strict
 import { AfterViewInit, Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { BackendApiService } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
 import { PageLayoutService } from "../../page-layout.service";
 

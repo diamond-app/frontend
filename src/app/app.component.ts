@@ -8,12 +8,12 @@ import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { IdentityMigrationModalComponent } from "src/app/identity-migration-modal/identity-migration-modal.component";
-import { TrackingService } from "src/app/tracking.service";
 import { environment } from "../environments/environment";
 import { BackendApiService } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
+import { IdentityMigrationModalComponent } from "./identity-migration-modal/identity-migration-modal.component";
 import { ThemeService } from "./theme/theme.service";
+import { TrackingService } from "./tracking.service";
 
 @Component({
   selector: "app-root",

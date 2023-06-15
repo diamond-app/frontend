@@ -6,9 +6,8 @@ import filter from "lodash/filter";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { FeedCreatePostModalComponent } from "src/app/feed/feed-create-post-modal/feed-create-post-modal.component";
-import RouteNamesService from "src/app/route-names.service";
-import { TrackingService } from "src/app/tracking.service";
+import RouteNamesService from "../../route-names.service";
+import { TrackingService } from "../../tracking.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FollowService } from "../../../lib/services/follow/follow.service";
 import { BackendApiService } from "../../backend-api.service";
@@ -17,6 +16,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { NftBurnModalComponent } from "../../nft-burn/nft-burn-modal/nft-burn-modal.component";
 import { TransferNftModalComponent } from "../../transfer-nft/transfer-nft-modal/transfer-nft-modal.component";
 import { PostMultiplierComponent } from "./post-multiplier/post-multiplier.component";
+import { FeedCreatePostModalComponent } from "../feed-create-post-modal/feed-create-post-modal.component";
 
 const RouteNames = RouteNamesService;
 @Component({

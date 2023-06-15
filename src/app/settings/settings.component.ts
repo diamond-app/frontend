@@ -12,8 +12,8 @@ import {
   AppUser,
   SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
   SUBSCRIBED_PUSH_APP_USER_DEFAULTS,
-} from "src/app/api-internal.service";
-import { environment } from "src/environments/environment";
+} from "../api-internal.service";
+import { environment } from "../../environments/environment";
 import { getUTCOffset, localHourToUtcHour } from "../../lib/helpers/date-helpers";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";

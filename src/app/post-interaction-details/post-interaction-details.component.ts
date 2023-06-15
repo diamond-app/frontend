@@ -1,12 +1,12 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { DiamondsModalComponent } from "src/app/diamonds-details/diamonds-modal/diamonds-modal.component";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { ReactionsModalComponent } from "src/app/reactions-details/reactions-modal/reactions-modal.component";
-import { QuoteRepostsModalComponent } from "src/app/quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
-import { RepostsModalComponent } from "src/app/reposts-details/reposts-modal/reposts-modal.component";
 import { PostEntryResponse, AssociationCountsResponse } from "deso-protocol";
+import { GlobalVarsService } from "../global-vars.service";
+import { DiamondsModalComponent } from "../diamonds-details/diamonds-modal/diamonds-modal.component";
+import { ReactionsModalComponent } from "../reactions-details/reactions-modal/reactions-modal.component";
+import { RepostsModalComponent } from "../reposts-details/reposts-modal/reposts-modal.component";
+import { QuoteRepostsModalComponent } from "../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
 
 @Component({
   selector: "post-interaction-details",

@@ -1,5 +1,5 @@
 import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from "@angular/core";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../tracking.service";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({

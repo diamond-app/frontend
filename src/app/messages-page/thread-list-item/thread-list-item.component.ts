@@ -1,7 +1,7 @@
 // @ts-strict
 import { Component, Input } from "@angular/core";
 import { ChatType, DecryptedMessageEntryResponse, PublicKeyToProfileEntryResponseMap } from "deso-protocol";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "thread-list-item",

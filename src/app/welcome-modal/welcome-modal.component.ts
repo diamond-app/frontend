@@ -2,8 +2,8 @@
 import { AfterViewInit, Component, Input, OnDestroy } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { first } from "rxjs/operators";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { TrackingService } from "src/app/tracking.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { TrackingService } from "../tracking.service";
 
 @Component({
   selector: "app-welcome-modal",

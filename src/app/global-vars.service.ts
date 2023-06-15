@@ -13,14 +13,13 @@ import {
   getAllAccessGroupsOwned,
   identity,
   PostEntryResponse,
-  User
+  User,
 } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import isNil from "lodash/isNil";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { from, Observable, Observer, of, Subscription } from "rxjs";
 import { catchError, share } from "rxjs/operators";
-import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
@@ -37,6 +36,7 @@ import { DirectToNativeBrowserModalComponent } from "./direct-to-native-browser/
 import { EmailSubscribeComponent } from "./email-subscribe-modal/email-subscribe.component";
 import { FeedComponent } from "./feed/feed.component";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { TrackingService } from "./tracking.service";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",

@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import currencyToSymbolMap from "currency-symbol-map/map";
 import debounce from "lodash/debounce";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../../tracking.service";
 import Swal from "sweetalert2";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { WyreService } from "../../../lib/services/wyre/wyre";

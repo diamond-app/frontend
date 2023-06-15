@@ -9,13 +9,13 @@ import escape from "lodash/escape";
 import has from "lodash/has";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { BackendApiService } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { BackendApiService } from "../../app/backend-api.service";
+import { GlobalVarsService } from "../../app/global-vars.service";
+import { WelcomeModalComponent } from "../../app/welcome-modal/welcome-modal.component";
 import { catchError, finalize, mergeMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { dataURLtoFile } from "src/lib/helpers/data-url-helpers";
+import { dataURLtoFile } from "../../lib/helpers/data-url-helpers";
 import { ManageDraftsModalComponent } from "../manage-drafts-modal/manage-drafts-modal.component";
 import { ApiInternalService, DraftBlogPostResponse } from "../../app/api-internal.service";
 

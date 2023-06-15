@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TrackingService } from "src/app/tracking.service";
-import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { TrackingService } from "../tracking.service";
+import { WelcomeModalComponent } from "../welcome-modal/welcome-modal.component";
 import { AssociationReactionValue } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../../tracking.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { RightBarCreatorsComponent } from "../right-bar-creators.component";
 

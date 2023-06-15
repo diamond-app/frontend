@@ -1,9 +1,9 @@
 // @ts-strict
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Ticker } from "src/app/megaswap.service";
-import { TrackingService } from "src/app/tracking.service";
-import { environment } from "src/environments/environment";
+import { Ticker } from "../../megaswap.service";
+import { TrackingService } from "../../tracking.service";
+import { environment } from "../../../environments/environment";
 import { GlobalVarsService } from "../../global-vars.service";
 
 const SUPPORTED_DEPOSIT_TICKERS = ["BTC", "SOL", "USDC", "ETH", "DUSD"];

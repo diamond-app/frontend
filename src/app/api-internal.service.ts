@@ -4,9 +4,9 @@ import { Injectable } from "@angular/core";
 import { identity } from "deso-protocol";
 import { from, Observable, of } from "rxjs";
 import { catchError, map, switchMap } from "rxjs/operators";
-import { BackendApiService } from "src/app/backend-api.service";
-import { environment } from "src/environments/environment";
+import { environment } from "../environments/environment";
 import { OpenProsperAPIResult, OpenProsperEarningsDetail } from "../lib/services/openProsper/openprosper-service";
+import { BackendApiService } from "./backend-api.service";
 
 export interface DraftBlogPostResponse {
   Id?: string;

@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
-import { environment } from "src/environments/environment";
+import { environment } from "../../environments/environment";
 import { GlobalVarsService } from "../global-vars.service";
 import { PageLayoutService } from "../../page-layout.service";
 

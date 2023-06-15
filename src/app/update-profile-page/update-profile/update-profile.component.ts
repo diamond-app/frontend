@@ -12,9 +12,9 @@ import {
   AppUser,
   NEW_APP_USER_DEFAULTS,
   SUBSCRIBED_EMAIL_APP_USER_DEFAULTS,
-} from "src/app/api-internal.service";
-import { TrackingService } from "src/app/tracking.service";
-import { environment } from "src/environments/environment";
+} from "../../api-internal.service";
+import { TrackingService } from "../../tracking.service";
+import { environment } from "../../../environments/environment";
 import { getUTCOffset, localHourToUtcHour } from "../../../lib/helpers/date-helpers";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";

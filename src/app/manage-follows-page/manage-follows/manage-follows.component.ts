@@ -2,7 +2,7 @@ import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { InfiniteScroller } from "../../infinite-scroller";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";

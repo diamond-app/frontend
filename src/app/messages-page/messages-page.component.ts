@@ -14,9 +14,9 @@ import {
 } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { CreateAccessGroupComponent } from "src/app/messages-page/create-access-group/create-access-group.component";
-import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../global-vars.service";
+import { CreateAccessGroupComponent } from "./create-access-group/create-access-group.component";
+import { environment } from "../../environments/environment";
 import { BackendApiService } from "../backend-api.service";
 import { PageLayoutService } from "../../page-layout.service";
 

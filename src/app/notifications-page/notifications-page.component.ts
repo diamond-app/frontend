@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../global-vars.service";
+import { environment } from "../../environments/environment";
 
 @Component({
   selector: "app-notifications-page",

@@ -16,9 +16,9 @@ import { TranslocoService } from "@ngneat/transloco";
 import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
 import escape from "lodash/escape";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { TrackingService } from "src/app/tracking.service";
-import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TrackingService } from "../../tracking.service";
+import { WelcomeModalComponent } from "../../welcome-modal/welcome-modal.component";
 import { environment } from "../../../environments/environment";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { Mentionify } from "../../../lib/services/mention-autofill/mentionify";
@@ -342,7 +342,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     if (post.showPoll) {
-      postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e) => e && e.trim()));
+      postExtraData.PollOptions = JSON.stringify(this.pollOptions.value.filter((e: string) => e && e.trim()));
       postExtraData.PollExpirationBlockHeight = ""; // leaving it empty for now since it's unused
       postExtraData.PollWeightType = this.currentPostModel.pollType;
 
@@ -637,7 +637,7 @@ export class FeedCreatePostComponent implements OnInit {
   addPollOption() {
     this.pollOptions.push(this.getNewPollOptionFormItem());
     this.changeRef.detectChanges();
-    this.pollOptionsRef.last.nativeElement.focus();
+    this.pollOptionsRef?.last.nativeElement.focus();
   }
 
   removePollOption(index: number) {

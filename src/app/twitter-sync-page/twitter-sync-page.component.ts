@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from "@angular/core";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "app-twitter-sync-page",

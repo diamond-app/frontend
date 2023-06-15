@@ -8,7 +8,7 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Subscription } from "rxjs";
-import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
+import { WelcomeModalComponent } from "../welcome-modal/welcome-modal.component";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
 import { FollowService } from "../../lib/services/follow/follow.service";

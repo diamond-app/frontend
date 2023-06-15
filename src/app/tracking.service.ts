@@ -1,7 +1,7 @@
 //@ts-strict
 import { identify, Identify, init, setUserId, track } from "@amplitude/marketing-analytics-browser";
 import { Injectable } from "@angular/core";
-import { environment } from "src/environments/environment";
+import { environment } from "../environments/environment";
 
 @Injectable({
   providedIn: "root",

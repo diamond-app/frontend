@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { environment } from "../../../environments/environment";
 import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({

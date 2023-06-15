@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { environment } from "src/environments/environment";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "update-profile-modal",

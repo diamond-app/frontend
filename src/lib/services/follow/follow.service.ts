@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../../../app/tracking.service";
 import { BackendApiService } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { FollowChangeObservableResult } from "../../observable-results/follow-change-observable-result";

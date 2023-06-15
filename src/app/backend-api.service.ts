@@ -108,12 +108,12 @@ import {
   uploadImage,
   uploadVideo,
   UploadVideoV2Response,
-  verifyEmail
+  verifyEmail,
 } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, expand, map, reduce, switchMap, tap } from "rxjs/operators";
-import { environment } from "src/environments/environment";
+import { environment } from "../environments/environment";
 import { parseCleanErrorMsg } from "../lib/helpers/pretty-errors";
 
 export class BackendRoutes {

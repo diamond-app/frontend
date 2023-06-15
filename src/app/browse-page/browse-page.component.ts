@@ -1,7 +1,5 @@
 import { Component, HostListener, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { environment } from "src/environments/environment";
+import { environment } from "../../environments/environment";
 import { FeedComponent } from "../feed/feed.component";
 import { GlobalVarsService } from "../global-vars.service";
 import { PageLayoutService } from "../../page-layout.service";

@@ -5,7 +5,7 @@ import orderBy from "lodash/orderBy";
 import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";

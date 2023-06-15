@@ -1,16 +1,16 @@
 //@ts-strict
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { finalize, first, switchMap, takeWhile } from "rxjs/operators";
-import { BackendApiService } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
 import {
   CreateAddrsResponse,
   DepositEvent,
   DestinationAmountForDepositAmount,
   MegaswapService,
   Ticker,
-} from "src/app/megaswap.service";
-import { TrackingService } from "src/app/tracking.service";
+} from "../../megaswap.service";
+import { TrackingService } from "../../tracking.service";
 import { environment } from "../../../environments/environment";
 
 const LAST_USED_ADDRESSES_LOCAL_STORAGE_KEY = "lastUsedMegaswapCashOutAddresses";

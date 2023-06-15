@@ -12,7 +12,7 @@ import {
   PublicKeyToProfileEntryResponseMap,
   sendMessage,
 } from "deso-protocol";
-import { GlobalVarsService } from "src/app/global-vars.service";
+import { GlobalVarsService } from "../../global-vars.service";
 import debounce from "lodash/debounce";
 
 const THREAD_PAGE_SIZE = 10;

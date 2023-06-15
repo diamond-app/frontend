@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
+import { BuyDeSoComponent } from "../../buy-deso-page/buy-deso/buy-deso.component";
 import { RouteNames } from "../../app-routing.module";
 import { BackendApiService } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";

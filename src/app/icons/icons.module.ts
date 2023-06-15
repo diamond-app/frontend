@@ -96,7 +96,7 @@ import {
   MultipleNfts,
   Quote,
   SingleNft,
-} from "src/assets/img/feather";
+} from "../../assets/img/feather";
 
 const icons = {
   AlertCircle,

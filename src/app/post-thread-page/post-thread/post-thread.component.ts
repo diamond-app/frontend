@@ -7,7 +7,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
-import { environment } from "src/environments/environment";
+import { environment } from "../../../environments/environment";
 import { BackendApiService } from "../../backend-api.service";
 import { PostEntryResponse } from "deso-protocol";
 import { GlobalVarsService } from "../../global-vars.service";
@@ -298,10 +298,11 @@ export class PostThreadComponent implements AfterViewInit {
         this.currentPost = res.PostFound as PostEntryResponse;
         this.threadManager = new ThreadManager(res.PostFound);
         const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
-        this.postLoaded.emit(
-          `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
-        );
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+
+        const username = this.currentPost.ProfileEntryResponse?.Username || "";
+
+        this.postLoaded.emit(`${this.globalVars.addOwnershipApostrophe(username)} ${postType}`);
+        this.titleService.setTitle(username + ` on ${environment.node.name}`);
       },
       (err) => {
         // TODO: post threads: rollbar

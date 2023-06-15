@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { BalanceEntryResponse, ProfileEntryResponse } from "deso-protocol";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { InfiniteScroller } from "../../infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import isNil from "lodash/isNil";

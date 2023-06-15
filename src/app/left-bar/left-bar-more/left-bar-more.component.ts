@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, Renderer2, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { TrackingService } from "src/app/tracking.service";
-import { environment } from "src/environments/environment";
+import { TrackingService } from "../../tracking.service";
+import { environment } from "../../../environments/environment";
 import { AppRoutingModule } from "../../app-routing.module";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { BuyDesoModalComponent } from "../../buy-deso-page/buy-deso-modal/buy-deso-modal.component";

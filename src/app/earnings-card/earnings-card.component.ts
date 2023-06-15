@@ -1,7 +1,7 @@
 //@ts-strict
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { finalize, first, takeWhile } from "rxjs/operators";
-import { OpenProsperEarningsDetail } from "src/lib/services/openProsper/openprosper-service";
+import { OpenProsperEarningsDetail } from "../../lib/services/openProsper/openprosper-service";
 import { ApiInternalService } from "../api-internal.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { ProfileEntryResponse } from "deso-protocol";

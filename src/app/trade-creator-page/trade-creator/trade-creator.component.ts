@@ -11,7 +11,7 @@ import * as introJs from "intro.js/intro.js";
 import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Subscription } from "rxjs";
-import { TrackingService } from "src/app/tracking.service";
+import { TrackingService } from "../../tracking.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { RouteNames } from "../../app-routing.module";

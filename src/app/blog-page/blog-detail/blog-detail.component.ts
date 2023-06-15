@@ -8,14 +8,14 @@ import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { forkJoin, of } from "rxjs";
 import { finalize } from "rxjs/operators";
-import { AssociationReactionValue, AssociationType, BackendApiService } from "src/app/backend-api.service";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { Thread, ThreadManager } from "src/app/post-thread-page/helpers/thread-manager";
-import { TrackingService } from "src/app/tracking.service";
-import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { environment } from "src/environments/environment";
-import { SwalHelper } from "src/lib/helpers/swal-helper";
-import { FollowService } from "src/lib/services/follow/follow.service";
+import { AssociationReactionValue, AssociationType, BackendApiService } from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { Thread, ThreadManager } from "../../post-thread-page/helpers/thread-manager";
+import { TrackingService } from "../../tracking.service";
+import { WelcomeModalComponent } from "../../welcome-modal/welcome-modal.component";
+import { environment } from "../../../environments/environment";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 import { TradeCreatorModalComponent } from "../../trade-creator-page/trade-creator-modal/trade-creator-modal.component";
 import {
   AssociationCountsResponse,

@@ -5,15 +5,15 @@ import { identity, IdentityDerivePayload } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import { forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, finalize, first, switchMap, takeWhile } from "rxjs/operators";
-import { GlobalVarsService } from "src/app/global-vars.service";
 import {
   GetCurrentSubscriptionsResponse,
   GetDerivedKeyStatusResponse,
   SetuService,
-  SubscriptionType
-} from "src/app/setu.service";
-import { TrackingService } from "src/app/tracking.service";
-import { SwalHelper } from "src/lib/helpers/swal-helper";
+  SubscriptionType,
+} from "../setu.service";
+import { TrackingService } from "../tracking.service";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { GlobalVarsService } from "../global-vars.service";
 
 interface TwitterUserData {
   twitter_user_id: string;

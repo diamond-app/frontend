@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { Ticker } from "src/app/megaswap.service";
-import { environment } from "src/environments/environment";
+import { GlobalVarsService } from "../../global-vars.service";
+import { Ticker } from "../../megaswap.service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "buy-deso-megaswap",

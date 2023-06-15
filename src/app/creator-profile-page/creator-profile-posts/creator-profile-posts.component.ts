@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { InfiniteScroller } from "../../infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";

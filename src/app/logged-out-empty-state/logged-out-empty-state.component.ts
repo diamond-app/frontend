@@ -1,7 +1,7 @@
 //@ts-strict
 import { Component, Input } from "@angular/core";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { TrackingService } from "src/app/tracking.service";
+import { GlobalVarsService } from "../global-vars.service";
+import { TrackingService } from "../tracking.service";
 
 @Component({
   selector: "app-logged-out-empty-state",

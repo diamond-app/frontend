@@ -3,8 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError, timer } from "rxjs";
 import { delay, last, map, mergeMap, repeatWhen, retryWhen, takeWhile } from "rxjs/operators";
-import { GlobalVarsService } from "src/app/global-vars.service";
-import { environment } from "src/environments/environment";
+import { environment } from "../environments/environment";
+import { GlobalVarsService } from "./global-vars.service";
 
 const buildUrl = (endpoint: string) => `${environment.megaswapAPI}/api/v1/${endpoint}`;
 const PENDING_SWAP_STATUSES = new Set([

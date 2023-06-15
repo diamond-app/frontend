@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import isNil from "lodash/isNil";
-import { environment } from "src/environments/environment";
+import { environment } from "../../../../environments/environment";
 import { SwalHelper } from "../../../../lib/helpers/swal-helper";
 import { AppRoutingModule } from "../../../app-routing.module";
 import { BackendApiService, TutorialStatus } from "../../../backend-api.service";

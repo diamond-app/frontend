@@ -2,7 +2,7 @@
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { finalize, takeWhile } from "rxjs/operators";
-import { DepositEvent, MegaswapService, Ticker } from "src/app/megaswap.service";
+import { DepositEvent, MegaswapService, Ticker } from "../../megaswap.service";
 
 @Component({
   selector: "deposit-event-history",
