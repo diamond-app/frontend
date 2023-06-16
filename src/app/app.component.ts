@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/cor
 import { ActivatedRoute, Router } from "@angular/router";
 import { configure, identity, User } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
-import * as introJs from "intro.js/intro.js";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -355,7 +354,6 @@ export class AppComponent implements OnInit {
     this.globalVars.pollUnreadNotifications();
 
     this.installDD();
-    introJs().start();
   }
 
   loadApp() {

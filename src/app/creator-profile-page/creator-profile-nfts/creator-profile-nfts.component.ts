@@ -89,7 +89,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   @Output() blockUser = new EventEmitter();
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,

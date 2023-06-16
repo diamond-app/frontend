@@ -7,7 +7,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as introJs from "intro.js/intro.js";
 import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Observable, Subscription } from "rxjs";
@@ -35,7 +34,6 @@ export class TradeCreatorComponent implements OnInit {
   @Input() username: string;
   @Input() tradeType: string;
   @Output() hideModal = new EventEmitter<any>();
-  introJS = introJs();
   TRADE_CREATOR_FORM_SCREEN = "trade_creator_form_screen";
   TRADE_CREATOR_PREVIEW_SCREEN = "trade_creator_preview_screen";
   TRADE_CREATOR_COMPLETE_SCREEN = "trade_creator_complete_screen";

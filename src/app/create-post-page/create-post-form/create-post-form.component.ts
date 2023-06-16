@@ -3,7 +3,6 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { Router } from "@angular/router";
 import { FeedComponent } from "../../feed/feed.component";
 import { TutorialStatus } from "../../backend-api.service";
-import * as introJs from "intro.js/intro";
 
 @Component({
   selector: "create-post-form",
@@ -12,7 +11,6 @@ import * as introJs from "intro.js/intro";
 })
 export class CreatePostFormComponent implements AfterViewInit {
   @Input() inTutorial: boolean = false;
-  introJS = introJs();
   skipTutorialExitPrompt = false;
   constructor(public globalVars: GlobalVarsService, public router: Router) {}
 
@@ -46,40 +44,8 @@ export class CreatePostFormComponent implements AfterViewInit {
         });
       } else {
         this.globalVars.preventBackButton();
-        this.initiateIntro();
       }
     }
-  }
-
-  initiateIntro() {
-    setTimeout(() => this.postIntro(), 50);
-  }
-
-  postIntro() {
-    this.introJS = introJs();
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Create a Post <span class="ml-5px tutorial-header-step">Step 4/4</span>';
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: true,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `Last step! Create your first post so that other users can find you and invest in you. When you're done, <b>click the post button</b>`,
-          element: document.querySelector("#tutorial-post-container"),
-        },
-      ],
-    });
-    this.introJS.onexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
   }
 
   skipPostStep() {
@@ -91,7 +57,6 @@ export class CreatePostFormComponent implements AfterViewInit {
 
   exitTutorial() {
     this.skipTutorialExitPrompt = true;
-    this.introJS.exit(true);
     this.skipTutorialExitPrompt = false;
   }
 }

@@ -22,7 +22,7 @@ export class CreatorProfileBlogPostsComponent implements AfterViewInit {
   @Output() blockUser = new EventEmitter();
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private cdr: ChangeDetectorRef
   ) {}

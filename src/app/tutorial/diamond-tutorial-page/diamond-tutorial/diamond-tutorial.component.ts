@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
-import * as introJs from "intro.js/intro";
 import { TrackingService } from "../../../tracking.service";
 import { environment } from "../../../../environments/environment";
 import { RouteNames } from "../../../app-routing.module";
@@ -23,7 +22,6 @@ export class DiamondTutorialComponent implements OnInit {
     private tracking: TrackingService
   ) {}
 
-  introJS = introJs();
   skipTutorialExitPrompt = false;
   post: PostEntryResponse;
   // Use this posthash in testnet.
@@ -53,54 +51,17 @@ export class DiamondTutorialComponent implements OnInit {
     }, 6000);
   }
 
-  initiateIntro() {
-    setTimeout(() => this.diamondIntro(), 50);
-  }
+  initiateIntro() {}
 
   skipDiamondsStep() {
     this.exitTutorial();
     this.globalVars.skipToNextTutorialStep(TutorialStatus.DIAMOND, "tutorial : diamond : send : skip");
   }
 
-  diamondIntro() {
-    this.introJS = introJs();
-    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
-    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-    const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 3/4</span>';
-    let diamondValue = this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2);
-    diamondValue = diamondValue === "0.00" ? "0.01" : diamondValue;
-    this.introJS.setOptions({
-      tooltipClass,
-      hideNext: true,
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      overlayOpacity: 0.8,
-      steps: [
-        {
-          title,
-          intro: `Diamonds are a way to tip the author of a post and send money directly to them.`,
-          element: document.querySelector("#diamond-tutorial-container"),
-        },
-        {
-          title,
-          intro: `<b>Click the diamond</b> to send $${diamondValue}.`,
-          element: document.querySelector("#diamond-button"),
-        },
-      ],
-    });
-    this.introJS.onexit(() => {
-      if (!this.skipTutorialExitPrompt) {
-        this.globalVars.skipTutorial(this);
-      }
-    });
-    this.introJS.start();
-  }
-
   tutorialCleanUp() {}
 
   exitTutorial() {
     this.skipTutorialExitPrompt = true;
-    this.introJS.exit(true);
     this.skipTutorialExitPrompt = false;
   }
 }

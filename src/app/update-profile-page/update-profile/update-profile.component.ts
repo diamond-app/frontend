@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angu
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { updateProfile } from "deso-protocol";
-import * as introJs from "intro.js/intro.js";
 import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, from, Observable, of } from "rxjs";
@@ -49,7 +48,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   @Output() profileSaved = new EventEmitter();
   environment = environment;
 
-  introJS = introJs();
   skipTutorialExitPrompt = false;
   showTutorialInstructions: boolean = false;
   updateProfileBeingCalled: boolean = false;
@@ -481,11 +479,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     reader.onload = (event: any) => {
       const base64Image = btoa(event.target.result);
       this.profilePicInput = `data:${file.type};base64,${base64Image}`;
-      if (this.inTutorial) {
-        setTimeout(() => {
-          this.introJS.refresh();
-        }, 5);
-      }
     };
   }
 

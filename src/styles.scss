@@ -5752,12 +5752,6 @@ sell-nft-modal {
   border: 1px solid var(--border);
 }
 
-.tutorial-header-hide {
-  .introjs-skipbutton {
-    display: none;
-  }
-}
-
 .tutorial-tooltip-right {
   left: auto !important;
   right: 0px !important;
@@ -5771,21 +5765,6 @@ sell-nft-modal {
   border-radius: 6px;
   background: var(--tile-bg);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  .introjs-button {
-    text-shadow: none;
-    border-radius: 12px !important;
-    background: none;
-    border: 1px solid var(--text-secondary) !important;
-    color: var(--text-secondary) !important;
-    &:hover {
-      color: var(--text-secondary) !important;
-    }
-    &.introjs-disabled {
-      background: var(--tile-bg) !important;
-      color: var(--text-muted) !important;
-      border-color: var(--text-muted) !important;
-    }
-  }
 }
 
 .swal2-popup {
