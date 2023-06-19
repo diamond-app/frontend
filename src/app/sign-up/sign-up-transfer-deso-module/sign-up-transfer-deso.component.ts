@@ -45,11 +45,11 @@ export class SignUpTransferDesoComponent implements OnInit {
     this.globalVars.updateEverything();
   }
 
-  openBuyDeSoModal(isFiat: boolean) {
+  openBuyDeSoModal() {
     this.showModal = false;
     this.modalReappear = false;
     const initialState = {
-      activeTabInput: isFiat ? BuyDeSoComponent.BUY_WITH_USD : BuyDeSoComponent.BUY_WITH_MEGASWAP,
+      activeTabInput: BuyDeSoComponent.BUY_WITH_MEGASWAP,
     };
     const modalDetails = this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",

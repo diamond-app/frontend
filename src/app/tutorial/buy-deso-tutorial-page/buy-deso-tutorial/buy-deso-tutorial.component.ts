@@ -57,9 +57,9 @@ export class BuyDesoTutorialComponent implements OnInit {
 
   ngOnInit() {}
 
-  openBuyDeSoModal(isFiat: boolean) {
+  openBuyDeSoModal() {
     const initialState = {
-      activeTabInput: isFiat ? BuyDeSoComponent.BUY_WITH_USD : BuyDeSoComponent.BUY_WITH_MEGASWAP,
+      activeTabInput: BuyDeSoComponent.BUY_WITH_MEGASWAP,
     };
     this.modalService.show(BuyDesoModalComponent, {
       class: "modal-dialog-centered buy-deso-modal",

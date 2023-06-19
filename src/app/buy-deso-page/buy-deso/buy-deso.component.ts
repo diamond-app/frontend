@@ -24,11 +24,11 @@ export class BuyDeSoComponent implements OnInit {
   BuyDeSoComponent = BuyDeSoComponent;
 
   static BUY_WITH_MEGASWAP = "Buy with Crypto";
-  static BUY_WITH_USD = "Buy with fiat";
+  // static BUY_WITH_USD = "Buy with fiat";
   static BUY_ON_CB = "Buy on Coinbase";
   static CB_LINK = "https://www.coinbase.com/price/decentralized-social";
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP, BuyDeSoComponent.BUY_WITH_USD, BuyDeSoComponent.BUY_ON_CB];
+  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP, /*BuyDeSoComponent.BUY_WITH_USD,*/ BuyDeSoComponent.BUY_ON_CB];
   activeTab?: string;
   linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
 

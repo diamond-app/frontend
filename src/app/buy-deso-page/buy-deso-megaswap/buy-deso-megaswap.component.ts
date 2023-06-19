@@ -38,7 +38,7 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       [
         environment.megaswapURL,
-        "/#/iframe/v1?",
+        "/widget?",
         `network=${environment.production ? "mainnet" : "testnet"}`,
         `&theme=${this.theme}`,
         `&depositTicker=${this.depositTicker ?? "BTC"}`,
