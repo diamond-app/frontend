@@ -131,8 +131,8 @@ export class SignUpComponent implements OnDestroy {
       .subscribe(() => {
         this.globalVars.updateEverything().add(() => {
           const signUpRedirect = this.backendApi.GetStorage("signUpRedirect");
-          const twitterSyncPath = `/${this.globalVars.RouteNames.TWITTER_SYNC}`;
-          const redirectPath = isNil(signUpRedirect) ? twitterSyncPath : signUpRedirect;
+          const browsePath = `/${this.globalVars.RouteNames.BROWSE}`;
+          const redirectPath = isNil(signUpRedirect) ? browsePath : signUpRedirect;
           this.router.navigate([redirectPath], {
             queryParamsHandling: "merge",
             state: { fromSignUp: true },
