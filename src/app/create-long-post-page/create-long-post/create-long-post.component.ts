@@ -112,7 +112,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
   isSubmittingPost = false;
   isLoading: boolean;
   isDraftSaving: boolean = false;
-  placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
+  placeholder = "Test new deployment";
   contentAsPlainText?: string;
   editorState: "collapsed" | "expanded" = "collapsed";
   editedDraftBlogPostId: string = "";

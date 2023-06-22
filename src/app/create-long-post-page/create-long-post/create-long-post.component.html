@@ -141,7 +141,7 @@
         [modules]="quillModules"
         [(ngModel)]="model.ContentDelta"
         format="object"
-        [placeholder]="placeholder | transloco"
+        [placeholder]="placeholder"
         (onFocus)="toggleEditorFocus('expanded')"
         (onContentChanged)="onContentChange($event)"
         [formats]="[
