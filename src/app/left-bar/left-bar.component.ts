@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { Router } from "@angular/router";
 import { identity } from "deso-protocol";
-import { filter } from "lodash";
+import filter from "lodash/filter";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TrackingService } from "src/app/tracking.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";

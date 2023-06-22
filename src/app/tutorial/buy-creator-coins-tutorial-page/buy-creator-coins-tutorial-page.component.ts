@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { PageLayoutService } from "../../../page-layout.service";
 
 @Component({
   selector: "buy-creator-coins-tutorial-page",
@@ -6,5 +7,9 @@ import { Component } from "@angular/core";
   styleUrls: ["./buy-creator-coins-tutorial-page.component.scss"],
 })
 export class BuyCreatorCoinsTutorialPageComponent {
-  constructor() {}
+  constructor(private pageLayoutService: PageLayoutService) {
+    this.pageLayoutService.updateConfig({
+      inTutorial: true,
+    });
+  }
 }

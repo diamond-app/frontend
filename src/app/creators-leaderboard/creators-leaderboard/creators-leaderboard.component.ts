@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";

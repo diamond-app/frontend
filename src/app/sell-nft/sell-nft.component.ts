@@ -1,11 +1,14 @@
 import { Location } from "@angular/common";
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
+import uniq from "lodash/uniq";
+import map from "lodash/map";
+import sumBy from "lodash/sumBy";
+import orderBy from "lodash/orderBy";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { of } from "rxjs";
-import { concatMap, last, map } from "rxjs/operators";
+import { concatMap, last, map as mapRx } from "rxjs/operators";
 import { TrackingService } from "src/app/tracking.service";
 import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
 import { BackendApiService } from "../backend-api.service";
@@ -56,7 +59,7 @@ export class SellNftComponent implements OnInit {
     this.nftEntries = state.nftEntries;
     this.selectedBidEntries = state.selectedBidEntries;
     this.sellToNamesString();
-    this.sellingPrice = _.sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
+    this.sellingPrice = sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
     const coinRoyaltyBasisPoints = this.post.NFTRoyaltyToCoinBasisPoints;
     const creatorRoyaltyBasisPoints = this.post.NFTRoyaltyToCreatorBasisPoints;
 
@@ -70,14 +73,14 @@ export class SellNftComponent implements OnInit {
   sellNFTCounter: number = 0;
 
   sellToNamesString(): void {
-    this.bidEntryUsernames = _.uniq(
-      _.map(_.orderBy(this.selectedBidEntries, ["BidAmountNanos"], ["desc"]), "ProfileEntryResponse.Username")
+    this.bidEntryUsernames = uniq(
+      map(orderBy(this.selectedBidEntries, ["BidAmountNanos"], ["desc"]), "ProfileEntryResponse.Username")
     );
   }
 
   // Calculate earnings for each bid entry, add to selected bid entry object
   addEarningsToSelectedBidEntries(): void {
-    this.selectedBidEntries = _.map(this.selectedBidEntries, (selectedBidEntry: NFTBidEntryResponse) => {
+    this.selectedBidEntries = map(this.selectedBidEntries, (selectedBidEntry: NFTBidEntryResponse) => {
       const sellingPrice = selectedBidEntry.BidAmountNanos;
       const creatorRoyalty = sellingPrice * (this.post.NFTRoyaltyToCreatorBasisPoints / (100 * 100));
       const coinRoyalty = sellingPrice * (this.post.NFTRoyaltyToCoinBasisPoints / (100 * 100));
@@ -121,7 +124,7 @@ export class SellNftComponent implements OnInit {
               this.globalVars.defaultFeeRateNanosPerKB
             )
             .pipe(
-              map((res) => {
+              mapRx((res) => {
                 this.sellNFTCounter++;
                 return res;
               })

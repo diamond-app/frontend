@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ProfileEntryResponse, User } from "deso-protocol";
-import * as _ from "lodash";
+import filter from "lodash/filter";
 import { Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { BackendApiService } from "../../../app/backend-api.service";
@@ -119,7 +119,7 @@ export class PulseService {
       .pipe(
         map((res: any) => {
           if (!skipFilters) {
-            res.UserList = _.filter(res.UserList, (o) => o.ProfileEntryResponse && !o.IsGraylisted && !o.IsBlacklisted);
+            res.UserList = filter(res.UserList, (o) => o.ProfileEntryResponse && !o.IsGraylisted && !o.IsBlacklisted);
             if (res.UserList.length > 10) {
               res.UserList = res.UserList.slice(0, 10);
             }

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DraftBlogPostParsed } from "../manage-drafts-modal/manage-drafts-modal.component";
-import { GlobalVarsService } from "../../global-vars.service";
+import { GlobalVarsService } from "../../app/global-vars.service";
 
 @Component({
   selector: "drafts-table",

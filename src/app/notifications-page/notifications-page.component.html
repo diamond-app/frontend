@@ -1,4 +1,4 @@
-<app-page>
+<ng-container>
   <app-logged-out-empty-state
     *ngIf="!this.globalVars.loggedInUser; else notifications"
     [headingText]="'See who\'s mentioning you, or simply just giving you money.'"
@@ -11,4 +11,4 @@
   <ng-template #notifications>
     <app-notifications-list></app-notifications-list>
   </ng-template>
-</app-page>
+</ng-container>

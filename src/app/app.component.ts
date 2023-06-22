@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { configure, identity, User } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import * as introJs from "intro.js/intro.js";
-import * as _ from "lodash";
-import { isNil } from "lodash";
+import isEqual from "lodash/isEqual";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { of, Subscription, zip } from "rxjs";
 import { catchError } from "rxjs/operators";
@@ -215,7 +215,7 @@ export class AppComponent implements OnInit {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && currentUser?.publicKey) {
+        if (!isEqual(this.globalVars.loggedInUser, loggedInUser) && currentUser?.publicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -372,7 +372,7 @@ export class AppComponent implements OnInit {
       publicKeys.push(...Object.keys(alternateUsers));
     }
     this.backendApi.GetUsersStateless(publicKeys, true).subscribe((res) => {
-      if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+      if (!isEqual(this.globalVars.userList, res.UserList)) {
         this.globalVars.userList = res.UserList || [];
       }
       this.globalVars.updateEverything();

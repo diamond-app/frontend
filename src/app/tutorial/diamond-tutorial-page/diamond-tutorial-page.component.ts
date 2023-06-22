@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { GlobalVarsService } from "../../global-vars.service";
+import { PageLayoutService } from "../../../page-layout.service";
 
 @Component({
   selector: "diamond-tutorial-page",
@@ -6,5 +8,9 @@ import { Component } from "@angular/core";
   styleUrls: ["./diamond-tutorial-page.component.scss"],
 })
 export class DiamondTutorialPageComponent {
-  constructor() {}
+  constructor(public globalVars: GlobalVarsService, private pageLayoutService: PageLayoutService) {
+    this.pageLayoutService.updateConfig({
+      inTutorial: true,
+    });
+  }
 }

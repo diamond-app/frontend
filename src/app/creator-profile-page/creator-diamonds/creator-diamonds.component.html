@@ -127,7 +127,7 @@
               </div>
             </div>
           </div>
-          <div *ngIf="row.anonDiamondsRow">
+          <div class="diamond-row">
             <div class="link--unstyled">
               <div class="row no-gutters py-10px border-bottom mb-0">
                 <div class="col-5 d-flex align-items-left mb-0">
@@ -146,12 +146,11 @@
                   </div>
                 </div>
                 <div class="col-4 mb-0 d-flex align-items-center justify-flex-start">
-                  <i
+                  <i-feather
                     *ngFor="let diamond of counter(highestAnonDiamondLevel)"
-                    class="icon-diamond fs-20px d-block"
-                    style="margin-right: -7px"
-                  ></i>
-                  <i-feather name="diamond" class="feather-medium fc-default"></i-feather>
+                    name="diamond"
+                    class="feather-medium fc-default"
+                  ></i-feather>
                 </div>
                 <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
                   {{ totalAnonDiamonds }}

@@ -3,7 +3,7 @@ import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BalanceEntryResponse } from "deso-protocol";
 import * as introJs from "intro.js/intro";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { document } from "ngx-bootstrap/utils";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";

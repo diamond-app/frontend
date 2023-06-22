@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";

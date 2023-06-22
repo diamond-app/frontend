@@ -579,7 +579,9 @@ i-feather[name="check-circle"] {
   -webkit-box-orient: vertical;
 }
 
-.modal-backdrop.show {opacitY: 0.9 !important}
+.modal-backdrop.show {
+  opacity: 0.9 !important;
+}
 
 .global__container {
   min-height: 100vh;
@@ -970,9 +972,6 @@ input.bs-timepicker-field {
   font-weight: 500;
 }
 
-app-landing-page {
-  background: white;
-}
 @keyframes slideInFromTopRight {
   0% {
     transform: translate(-100px, 0px) rotate(0deg);
@@ -1024,12 +1023,6 @@ app-landing-page {
 
 .appear {
   animation: .5s ease 0s 1 appear forwards;
-}
-
-app-landing-page {
-  .aos-init {
-    z-index: 1;
-  }
 }
 
 .landing-page-top-bar {
@@ -1471,7 +1464,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1498,7 +1491,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1521,7 +1514,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1537,7 +1530,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1554,7 +1547,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -1570,7 +1563,7 @@ app-landing-page {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -2518,12 +2511,6 @@ sign-up {
   }
 }
 
-trends {
-  .icon-diamond {
-    margin-left: 0px !important;
-  }
-}
-
 .trends-scroll-container {
   height: calc(100vh - 210px) !important;
 }
@@ -2768,6 +2755,10 @@ bs-dropdown-container {
   font-size: 19px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 20px;
+
+  svg {
+    vertical-align: baseline;
+  }
 }
 
 .feed-post-icon-row__icon {
@@ -2824,7 +2815,7 @@ bs-dropdown-container {
   }
   font-weight: normal;
   font-size: 15px;
-  line-hieght: 24px;
+  line-height: 24px;
 }
 
 .feed-post-icon-row__icon.reply-icon {
@@ -2845,26 +2836,11 @@ bs-dropdown-container {
   }
 }
 
-.feed-post-icon-row__icon.icon-heart-fill{
-  svg {
-    fill: currentColor;
-  }
-}
-
 /* diamond button hover animation */
 .feed-post-icon-row__icon.diamond-icon{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
-  }
-}
-
-/* copy link button hover animation */
-.feed-post-icon-row__icon.icon-link{
-  &:hover{
-    background-color: $link-btn-hover;
-    color: $link-btn-color;
-
   }
 }
 
@@ -3057,7 +3033,7 @@ feed {
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
-  backface-bisibility: hidden;
+  backface-visibility: hidden;
   perspective: 1000;
   transform: translate3d(0, 0, 0);
   transform: translateZ(0);
@@ -3065,7 +3041,7 @@ feed {
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
     -webkit-transform: translate3d(0, 0, 0);
-    backface-bisibility: hidden;
+    backface-visibility: hidden;
     perspective: 1000;
     transform: translate3d(0, 0, 0);
     transform: translateZ(0);
@@ -6563,18 +6539,13 @@ sell-nft-modal {
 }
 
 .link-preview-description {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
+  display: flex;
+  flex-direction: column;
   word-break: break-word;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 3;
-  -moz-box-lines: 3;
-  box-lines: 3;
+  line-clamp: 3;
 }
 
 .single-line-no-overflow-ellipsis {
@@ -6626,6 +6597,17 @@ sell-nft-modal {
 
 .ql-container.ql-snow {
   height: 100%;
+}
+
+.creator-leaderboard__diamond-icon {
+  position: relative;
+  top: 1px;
+  width: 20px !important;
+  height: 20px !important;
+
+  svg {
+    vertical-align: baseline;
+  }
 }
 
 .new-draft-blog-modal-container {

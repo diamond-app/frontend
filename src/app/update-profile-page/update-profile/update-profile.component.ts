@@ -3,7 +3,7 @@ import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { updateProfile } from "deso-protocol";
 import * as introJs from "intro.js/intro.js";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, from, Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";

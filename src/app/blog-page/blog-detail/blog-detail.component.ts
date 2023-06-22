@@ -23,6 +23,7 @@ import {
   PostEntryResponse,
   ProfileEntryResponse,
 } from "deso-protocol";
+import { PageLayoutService } from "../../../page-layout.service";
 
 @Component({
   selector: "app-blog-detail",
@@ -106,8 +107,15 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     private followService: FollowService,
     private tracking: TrackingService,
     public globalVars: GlobalVarsService,
-    public location: Location
+    public location: Location,
+    private pageLayoutService: PageLayoutService
   ) {
+    this.pageLayoutService.updateConfig({
+      simpleTopBar: true,
+      title: this.title,
+      hideSidebar: true,
+    });
+
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;

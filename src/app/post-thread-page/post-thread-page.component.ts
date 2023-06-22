@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { PageLayoutService } from "../../page-layout.service";
 
 @Component({
   selector: "post-thread-page",
@@ -9,5 +10,10 @@ export class PostThreadPageComponent {
   isLeftBarMobileOpen: boolean = false;
   title: string = null;
 
-  constructor() {}
+  constructor(private pageLayoutService: PageLayoutService) {
+    this.pageLayoutService.updateConfig({
+      simpleTopBar: true,
+      title: this.title,
+    });
+  }
 }

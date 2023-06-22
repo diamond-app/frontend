@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
-import { sprintf } from "sprintf-js";
+import sumBy from "lodash/sumBy";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
@@ -590,10 +589,10 @@ export class AdminComponent implements OnInit {
       .subscribe(
         (res) => {
           this.mempoolSummaryStats = res.TransactionSummaryStats;
-          this.mempoolTxnCount = _.sumBy(Object.values(this.mempoolSummaryStats), (o) => {
+          this.mempoolTxnCount = sumBy(Object.values(this.mempoolSummaryStats), (o) => {
             return o["Count"];
           });
-          this.mempoolTotalBytes = _.sumBy(Object.values(this.mempoolSummaryStats), (o) => {
+          this.mempoolTotalBytes = sumBy(Object.values(this.mempoolSummaryStats), (o) => {
             return o["TotalBytes"];
           });
         },
@@ -1006,7 +1005,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSoCoinbase / 100)
+                `Successfully updated the reserve exchange to $${res.USDCentsPerDeSoCoinbase / 100}/DeSo`
               );
             },
             (err: any) => {
@@ -1039,7 +1038,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSoCoinbase / 100)
+                `Successfully updated the Buy DeSo Fee to ${res.USDCentsPerDeSoCoinbase / 100}%`
               );
             },
             (err: any) => {
@@ -1108,11 +1107,7 @@ export class AdminComponent implements OnInit {
                 const totalFeeDeSo = res.FeeNanos / 1e9;
 
                 this.globalVars._alertSuccess(
-                  sprintf(
-                    "Successfully updated global params rate. TxID: %s for a fee of %d DeSo",
-                    res.TransactionIDBase58Check,
-                    totalFeeDeSo
-                  )
+                  `Successfully updated global params rate. TxID: ${res.TransactionIDBase58Check} for a fee of ${totalFeeDeSo} DeSo`
                 );
               },
               (error) => {

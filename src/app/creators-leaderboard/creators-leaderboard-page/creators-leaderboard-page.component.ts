@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { PageLayoutService } from "../../../page-layout.service";
 
 @Component({
   selector: "app-creators-leaderboard-page",
@@ -8,5 +9,9 @@ import { Component } from "@angular/core";
 export class CreatorsLeaderboardPageComponent {
   isLeftBarMobileOpen: boolean = false;
 
-  constructor() {}
+  constructor(private pageLayoutService: PageLayoutService) {
+    this.pageLayoutService.updateConfig({
+      hideSidebar: true,
+    });
+  }
 }

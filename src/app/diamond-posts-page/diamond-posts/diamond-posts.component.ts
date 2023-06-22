@@ -1,13 +1,13 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
+import cloneDeep from "lodash/cloneDeep";
 
 class DiamondsPost {
   Post: PostEntryResponse;
@@ -142,9 +142,9 @@ export class DiamondPostsComponent {
         if (currentPost.PostHashHex === uiPostParent.PostHashHex) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
-          currentPost.Comments.unshift(_.cloneDeep(newComment));
+          currentPost.Comments.unshift(cloneDeep(newComment));
           currentPost.CommentCount += 1;
-          currentPost = _.cloneDeep(currentPost);
+          currentPost = cloneDeep(currentPost);
           return [currentPost];
         }
         return true;

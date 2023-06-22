@@ -4,7 +4,6 @@ import { ActivatedRoute } from "@angular/router";
 import { identity, ProfileEntryResponse } from "deso-protocol";
 import { from, Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { sprintf } from "sprintf-js";
 import { TrackingService } from "src/app/tracking.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
@@ -12,15 +11,16 @@ import { RouteNames } from "../app-routing.module";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
+const MESSAGE_PLACEHOLDER = "%s";
+
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
-  static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
-  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s. %s";
-  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s. %s";
+  static CONFIRM_TRANSFER_TO_PUBKEY = `Send ${MESSAGE_PLACEHOLDER} $DESO with a fee of ${MESSAGE_PLACEHOLDER} DeSo for a total of ${MESSAGE_PLACEHOLDER} DeSo to public key ${MESSAGE_PLACEHOLDER}. ${MESSAGE_PLACEHOLDER}`;
+  static CONFIRM_TRANSFER_TO_USERNAME = `Send ${MESSAGE_PLACEHOLDER} $DESO with a fee of ${MESSAGE_PLACEHOLDER} DeSo for a total of ${MESSAGE_PLACEHOLDER} DeSo to username ${MESSAGE_PLACEHOLDER}. ${MESSAGE_PLACEHOLDER}`;
   static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
 }
 
@@ -153,19 +153,12 @@ export class TransferDeSoComponent implements OnInit {
           return;
         }
 
+        const message = isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY;
+
         SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
           title: "Are you ready?",
-          html: sprintf(
-            isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY,
-            this.globalVars.nanosToDeSo(res.SpendAmountNanos),
-            this.globalVars.nanosToDeSo(res.FeeNanos),
-            this.globalVars.nanosToDeSo(res.SpendAmountNanos + res.FeeNanos),
-            this.payToPublicKey,
-            res.SpendAmountNanos / 1e9 === this.maxSendAmount
-              ? "Note: this is a max send. All your DESO is being transferred."
-              : ""
-          ),
+          html: this.formatTransferMessage(message, { SpendAmountNanos: res.SpendAmountNanos, FeeNanos: res.FeeNanos }),
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {
@@ -278,7 +271,7 @@ export class TransferDeSoComponent implements OnInit {
 
   _sendDeSoSuccess(comp: any) {
     // the button should no longer say "Working..."
-    comp.globalVars._alertSuccess(sprintf("Successfully completed transaction."));
+    comp.globalVars._alertSuccess("Successfully completed transaction.");
     comp.sendingDeSo = false;
   }
 
@@ -365,5 +358,28 @@ export class TransferDeSoComponent implements OnInit {
   _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
     this.payToCreator = creator;
     this.payToPublicKey = creator?.Username || creator?.PublicKeyBase58Check || "";
+  }
+
+  private formatTransferMessage(
+    messageWithPlaceholders: string,
+    {
+      SpendAmountNanos,
+      FeeNanos,
+    }: {
+      SpendAmountNanos: number;
+      FeeNanos: number;
+    }
+  ) {
+    return [
+      this.globalVars.nanosToDeSo(SpendAmountNanos),
+      this.globalVars.nanosToDeSo(FeeNanos),
+      this.globalVars.nanosToDeSo(SpendAmountNanos + FeeNanos),
+      this.payToPublicKey,
+      SpendAmountNanos / 1e9 === this.maxSendAmount
+        ? "Note: this is a max send. All your DESO is being transferred."
+        : "",
+    ].reduce((acc, curr) => {
+      return acc.replace(MESSAGE_PLACEHOLDER, curr);
+    }, messageWithPlaceholders);
   }
 }

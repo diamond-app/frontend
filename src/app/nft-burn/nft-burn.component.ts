@@ -1,8 +1,8 @@
 import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import * as _ from "lodash";
-import { isNumber } from "lodash";
+import values from "lodash/values";
+import isNumber from "lodash/isNumber";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
@@ -63,7 +63,7 @@ export class NftBurnComponent implements OnInit {
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
+        this.availableSerialNumbers = values(res.SerialNumberToNFTEntryResponse);
         this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
         this.filteredSerialNumbers = this.burnNFTEntryResponses;
       })

@@ -24,7 +24,14 @@
 <div *ngIf="!loading">
   <div class="px-15px pb-15px fs-15px">
     <div *ngIf="!hideDateTimeAdjuster" [ngClass]="{ 'd-flex align-items-center': !globalVars.isMobile() }">
-      <input type="text" [(ngModel)]="dropTime" placeholder="Datepicker" class="form-control fs-15px" bsDatepicker />
+      <input
+        type="date"
+        [valueAsDate]="dropTime"
+        (change)="setDropTime($event)"
+        placeholder="Datepicker"
+        class="form-control fs-15px"
+      />
+
       <div class="d-flex align-items-center justify-content-between">
         <timepicker
           [(ngModel)]="dropTime"

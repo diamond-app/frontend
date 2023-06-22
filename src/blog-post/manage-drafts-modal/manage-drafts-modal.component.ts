@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
-import { ApiInternalService, DraftBlogPostResponse } from "../../api-internal.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { orderBy } from "lodash";
+import { ApiInternalService, DraftBlogPostResponse } from "../../app/api-internal.service";
+import { GlobalVarsService } from "../../app/global-vars.service";
+import orderBy from "lodash/orderBy";
 import { finalize } from "rxjs/operators";
 
 export interface DraftBlogPostParsed extends DraftBlogPostResponse {

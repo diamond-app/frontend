@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import currencyToSymbolMap from "currency-symbol-map/map";
-import * as _ from "lodash";
+import debounce from "lodash/debounce";
 import { TrackingService } from "src/app/tracking.service";
 import Swal from "sweetalert2";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -54,7 +54,7 @@ export class BuyDeSoUSDComponent implements OnInit {
     this.wyreService.getSupportedCountries().subscribe((res) => {
       this.supportedCountries = res;
     });
-    this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
+    this.debouncedGetQuotation = debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
         this.tracking.log("fiat : buy", { ...queryParams, service: "wyre" });

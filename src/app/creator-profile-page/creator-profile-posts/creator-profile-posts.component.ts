@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";
-import { isNil } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isNil from "lodash/isNil";
 
 @Component({
   selector: "creator-profile-posts",
@@ -125,7 +125,7 @@ export class CreatorProfilePostsComponent {
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
-          currentPost.Comments.unshift(_.cloneDeep(newComment));
+          currentPost.Comments.unshift(cloneDeep(newComment));
           return [this.globalVars.incrementCommentCount(currentPost)];
         } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
           // We also want to increment the comment count on any other notifications related to the same post hash hex.

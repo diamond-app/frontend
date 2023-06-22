@@ -7,7 +7,7 @@ import { finalize, map, switchMap, tap } from "rxjs/operators";
 import { AssociationReactionValue, AssociationType, BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
-import { orderBy } from "lodash";
+import orderBy from "lodash/orderBy";
 import { ProfileEntryResponse, AssociationCountsResponse } from "deso-protocol";
 
 @Component({

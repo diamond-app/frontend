@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";

@@ -4,7 +4,7 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 
 @Component({
   selector: "creator-profile-hodlers",

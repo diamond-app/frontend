@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import * as introJs from "intro.js/intro.js";
-import { includes } from "lodash";
+import includes from "lodash/includes";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyDeSoComponent } from "src/app/buy-deso-page/buy-deso/buy-deso.component";
 import { environment } from "src/environments/environment";

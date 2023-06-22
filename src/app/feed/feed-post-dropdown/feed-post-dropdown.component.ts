@@ -2,7 +2,7 @@ import { PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { NFTEntryResponse, PostEntryResponse, waitForTransactionFound } from "deso-protocol";
-import * as _ from "lodash";
+import filter from "lodash/filter";
 import { BsDropdownDirective } from "ngx-bootstrap/dropdown";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
@@ -530,7 +530,7 @@ export class FeedPostDropdownComponent implements OnInit {
   openBurnNFTModal(event): void {
     this.pauseVideos.emit(true);
     this.tracking.log("nft-burn-button : click");
-    const burnNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+    const burnNFTEntryResponses = filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
       return (
         !nftEntryResponse.IsForSale &&
         nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check

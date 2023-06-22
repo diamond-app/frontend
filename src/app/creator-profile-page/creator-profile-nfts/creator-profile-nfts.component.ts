@@ -10,7 +10,6 @@ import {
   ViewChildren,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { of, Subscription } from "rxjs";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -20,7 +19,10 @@ import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { GlobalVarsService } from "../../global-vars.service";
 import { InfiniteScroller } from "../../infinite-scroller";
 import { map, tap } from "rxjs/operators";
-import { isNil } from "lodash";
+import orderBy from "lodash/orderBy";
+import cloneDeep from "lodash/cloneDeep";
+import isNil from "lodash/isNil";
+import forIn from "lodash/forIn";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -127,8 +129,8 @@ export class CreatorProfileNftsComponent implements OnInit {
   updateNFTOrder(order: string): void {
     this.orderNFTsBy = order;
     const sortDetails = this.sortFields[this.orderNFTsBy];
-    this.myBids = _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]) as Array<NFTBidEntryResponse>;
-    this.nftResponse = _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]) as Array<{
+    this.myBids = orderBy(this.myBids, [sortDetails.field], [sortDetails.order]) as Array<NFTBidEntryResponse>;
+    this.nftResponse = orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]) as Array<{
       NFTEntryResponses: NFTEntryResponse[];
       PostEntryResponse: PostEntryResponse;
     }>;
@@ -146,7 +148,7 @@ export class CreatorProfileNftsComponent implements OnInit {
             PostHashHexToPostEntryResponse: { [k: string]: PostEntryResponse };
             NFTBidEntries: NFTBidEntryResponse[];
           }) => {
-            _.forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
+            forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
               value.ProfileEntryResponse =
                 res.PublicKeyBase58CheckToProfileEntryResponse[value.PosterPublicKeyBase58Check];
               res.PostHashHexToPostEntryResponse[key] = value;
@@ -157,7 +159,7 @@ export class CreatorProfileNftsComponent implements OnInit {
             });
             this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
             const sortDetails = this.sortFields[this.orderNFTsBy];
-            return _.orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
+            return orderBy(this.myBids, [sortDetails.field], [sortDetails.order]);
           }
         )
       );
@@ -190,7 +192,7 @@ export class CreatorProfileNftsComponent implements OnInit {
             }
             this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
             const sortDetails = this.sortFields[this.orderNFTsBy];
-            return _.orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
+            return orderBy(this.nftResponse, [sortDetails.field], [sortDetails.order]);
           }
         )
       );
@@ -221,7 +223,7 @@ export class CreatorProfileNftsComponent implements OnInit {
         if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
-          currentPost.Comments.unshift(_.cloneDeep(newComment));
+          currentPost.Comments.unshift(cloneDeep(newComment));
           return [this.globalVars.incrementCommentCount(currentPost)];
         } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
           // We also want to increment the comment count on any other notifications related to the same post hash hex.

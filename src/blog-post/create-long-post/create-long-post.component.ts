@@ -5,19 +5,19 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GetSinglePostResponse, ProfileEntryResponse, waitForTransactionFound } from "deso-protocol";
-import { escape, has } from "lodash";
+import escape from "lodash/escape";
+import has from "lodash/has";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
-import "quill-mention";
 import { BackendApiService } from "src/app/backend-api.service";
 import { GlobalVarsService } from "src/app/global-vars.service";
 import { WelcomeModalComponent } from "src/app/welcome-modal/welcome-modal.component";
-import { dataURLtoFile } from "src/lib/helpers/data-url-helpers";
 import { catchError, finalize, mergeMap, tap } from "rxjs/operators";
-import { ApiInternalService, DraftBlogPostResponse } from "../../api-internal.service";
 import { of } from "rxjs";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { dataURLtoFile } from "src/lib/helpers/data-url-helpers";
 import { ManageDraftsModalComponent } from "../manage-drafts-modal/manage-drafts-modal.component";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { ApiInternalService, DraftBlogPostResponse } from "../../app/api-internal.service";
 
 const RANDOM_MOVIE_QUOTES = [
   "feed_create_post.quotes.quote1",
@@ -110,7 +110,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
   model = new FormModel();
   isDraggingFileOverDropZone = false;
   isSubmittingPost = false;
-  isLoading: boolean;
+  isLoading: boolean = true;
   isDraftSaving: boolean = false;
   placeholder = RANDOM_MOVIE_QUOTES[Math.floor(Math.random() * RANDOM_MOVIE_QUOTES.length)];
   contentAsPlainText?: string;
@@ -178,9 +178,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
     public location: Location,
     private modalService: BsModalService,
     private apiInternalService: ApiInternalService
-  ) {
-    this.isLoading = !!this.route.snapshot.params?.postHashHex;
-  }
+  ) {}
 
   ngOnDestroy() {
     window.clearInterval(this.autoSaveDraftBlogPostInterval);
@@ -335,30 +333,34 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.titleService.setTitle(`Publish Blog Post`);
 
-    if (this.editPostHashHex) {
-      try {
-        const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
-        if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
-          const editPostData = editPost.PostFound?.PostExtraData;
-          const contentDelta = JSON.parse(editPostData.BlogDeltaRtfFormat);
-          Object.assign(this.model, { ...editPostData, ContentDelta: contentDelta });
-          this.contentAsPlainText = contentDelta.ops.reduce(
-            (text: string, op: any) => `${text}${typeof op.insert === "string" ? op.insert : ""}`,
-            ""
-          );
+    import("quill-mention" as any).then(async () => {
+      if (this.editPostHashHex) {
+        this.isLoading = !!this.route.snapshot.params?.postHashHex;
+
+        try {
+          const editPost = await this.getBlogPostToEdit(this.editPostHashHex);
+          if (editPost.PostFound?.PostExtraData?.BlogDeltaRtfFormat) {
+            const editPostData = editPost.PostFound?.PostExtraData;
+            const contentDelta = JSON.parse(editPostData.BlogDeltaRtfFormat);
+            Object.assign(this.model, { ...editPostData, ContentDelta: contentDelta });
+            this.contentAsPlainText = contentDelta.ops.reduce(
+              (text: string, op: any) => `${text}${typeof op.insert === "string" ? op.insert : ""}`,
+              ""
+            );
+          }
+        } catch (e) {
+          console.error(e);
+          // This is assuming 404 which might hide other types of errors, but this is currently what the
+          // post thread page does...
+          this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+        } finally {
+          this.isLoading = false;
+          this.titleInput?.nativeElement?.focus();
         }
-      } catch (e) {
-        console.error(e);
-        // This is assuming 404 which might hide other types of errors, but this is currently what the
-        // post thread page does...
-        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
-      } finally {
-        this.isLoading = false;
-        this.titleInput?.nativeElement?.focus();
+      } else {
+        this.getDefaultDraftBlogPost();
       }
-    } else {
-      this.getDefaultDraftBlogPost();
-    }
+    });
   }
 
   async getUsersFromMentionPrefix(prefix: string): Promise<ProfileEntryResponse[]> {
@@ -508,7 +510,7 @@ export class CreateLongPostComponent implements OnInit, OnDestroy {
     try {
       this.model.ContentDelta = await this.postProcessDelta(this.model.ContentDelta);
 
-      const twitter = require("../../../vendor/twitter-text-3.1.0.js");
+      const twitter = require("../../vendor/twitter-text-3.1.0.js");
       const entities = Array.from(
         new Set(
           twitter

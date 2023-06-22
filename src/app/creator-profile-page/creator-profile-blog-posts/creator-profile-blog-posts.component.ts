@@ -1,6 +1,6 @@
 // @ts-strict
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
-import { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 import { BackendApiService } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse, ProfileEntryResponse } from "deso-protocol";

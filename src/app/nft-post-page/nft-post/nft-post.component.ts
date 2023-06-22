@@ -2,7 +2,8 @@ import { Location } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import * as _ from "lodash";
+import minBy from "lodash/minBy";
+import maxBy from "lodash/maxBy";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
@@ -187,8 +188,8 @@ export class NftPostComponent {
             this.activeTab = this.activeTab === NftPostComponent.MY_BIDS ? this.tabs[0] : this.activeTab;
           }
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = _.maxBy(this.nftBidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
-          this.lowBid = _.minBy(this.nftBidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
+          this.highBid = maxBy(this.nftBidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
+          this.lowBid = minBy(this.nftBidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
           this.owners = this.nftBidData.NFTEntryResponses;
         },
         (err) => {

@@ -1,4 +1,4 @@
-<app-page>
+<ng-container>
   <app-logged-out-empty-state
     *ngIf="!this.globalVars.loggedInUser; else updateProfile"
     [headingText]="'Finally, a decentralized social identity to escape the craziness of web2.'"
@@ -11,4 +11,4 @@
   <ng-template #updateProfile>
     <update-profile [loggedInUser]="globalVars.loggedInUser"></update-profile>
   </ng-template>
-</app-page>
+</ng-container>

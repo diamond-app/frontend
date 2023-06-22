@@ -2,7 +2,7 @@ import { Location } from "@angular/common";
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ProfileEntryResponse } from "deso-protocol";
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import { ToastrService } from "ngx-toastr";
 import { TrackingService } from "src/app/tracking.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";

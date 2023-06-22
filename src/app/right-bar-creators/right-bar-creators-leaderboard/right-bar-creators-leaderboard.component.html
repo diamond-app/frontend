@@ -58,9 +58,9 @@
           <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
             +${{ globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.DeSoLockedGained), 2) }}
           </div>
-          <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
+          <div class="fc-blue d-flex align-items-center" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
             {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}
-            <i class="icon-diamond" style="margin-left: -5px"></i>
+            <i-feather name="diamond" class="diamond-icon ml-1 creator-leaderboard__diamond-icon"></i-feather>
           </div>
           <div
             [ngClass]="{

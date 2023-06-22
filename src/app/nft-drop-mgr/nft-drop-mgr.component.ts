@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BackendApiService } from "../backend-api.service";
@@ -334,5 +334,20 @@ export class NftDropMgrComponent implements OnInit {
       canUpdateDrop = true;
     }
     this.isUpdatable = canUpdateDrop;
+  }
+
+  setDropTime(e) {
+    const newDate = e.target.valueAsDate;
+
+    // make a copy of the existing date object
+    const updatedDate = new Date(this.dropTime.getTime());
+
+    // modify date-month-year
+    updatedDate.setDate(newDate.getDate());
+    updatedDate.setMonth(newDate.getMonth());
+    updatedDate.setFullYear(newDate.getFullYear());
+
+    // assign the updated date
+    this.dropTime = updatedDate;
   }
 }
