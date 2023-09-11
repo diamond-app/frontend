@@ -342,12 +342,16 @@
       class="feed-create-post__post-btn btn"
       [disabled]="
         (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
-        (currentPostModel.showPoll && !currentPostModel.pollForm.valid)
+        (currentPostModel.showPoll && !currentPostModel.pollForm.valid) ||
+        postModels[0].isUploadingMedia ||
+        postModels[0].isProcessingMedia
       "
       [ngClass]="{
         disabled:
           (postModels[0].text.length <= 0 && !postModels[0].postImageSrc && !postModels[0].postVideoSrc) ||
-          (currentPostModel.showPoll && !currentPostModel.pollForm.valid),
+          (currentPostModel.showPoll && !currentPostModel.pollForm.valid) ||
+          postModels[0].isUploadingMedia ||
+          postModels[0].isProcessingMedia,
         'btn-loading': submittingPost,
         wiggle: inTutorial,
         'feed-create-post__post-btn--in-modal': inModal
