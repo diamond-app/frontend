@@ -16,7 +16,7 @@ import { ProfileEntryResponse } from "deso-protocol";
   styleUrls: ["./creator-profile-details.component.scss"],
 })
 export class CreatorProfileDetailsComponent implements OnInit {
-  @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
+  @ViewChild(CreatorProfileTopCardComponent, {static: false}) childTopCardComponent;
 
   static TABS = {
     posts: "Posts",
@@ -39,6 +39,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
   profile: ProfileEntryResponse;
   activeTab: string;
   loading: boolean;
+  showEarningsCard = false;
 
   // emits the UserUnblocked event
   @Output() userUnblocked = new EventEmitter();
@@ -72,6 +73,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
   userBlocked() {
     this.childTopCardComponent._unfollowIfBlocked();
   }
+
   unblockUser() {
     this.unblock();
   }
@@ -128,7 +130,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
             (err) => {
               console.log(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.tracking.log("profile : unblock", { error: parsedError });
+              this.tracking.log("profile : unblock", {error: parsedError});
               this.globalVars._alertError(parsedError);
             }
           );
@@ -172,7 +174,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
               (err) => {
                 console.error(err);
                 const parsedError = this.backendApi.stringifyError(err);
-                this.tracking.log("profile : block", { error: parsedError });
+                this.tracking.log("profile : block", {error: parsedError});
                 this.globalVars._alertError(parsedError);
               }
             ),
@@ -198,7 +200,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
       (res) => {
         if (!res || res.IsBlacklisted) {
           this.loading = false;
-          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, {skipLocationChange: true});
           return;
         }
         this.profile = res.Profile;
@@ -214,7 +216,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     this.activeTab = tabName;
     // Update query params to reflect current tab
     const urlTree = this.router.createUrlTree([], {
-      queryParams: { tab: CreatorProfileDetailsComponent.TABS_LOOKUP[tabName] || "posts" },
+      queryParams: {tab: CreatorProfileDetailsComponent.TABS_LOOKUP[tabName] || "posts"},
       queryParamsHandling: "merge",
       preserveFragment: true,
     });
