@@ -416,7 +416,7 @@ export class EmbedUrlParserService {
       return link.indexOf("/sets/") > -1 ? 350 : 180;
     }
     if (this.isValidMousaiEmbedURL(link)) {
-      return 165;
+      return 380;
     }
     return 315;
   }
