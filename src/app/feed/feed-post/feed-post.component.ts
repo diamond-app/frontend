@@ -772,6 +772,11 @@ export class FeedPostComponent implements OnInit {
   isCloudflareVideo(videoUrl: String): boolean {
     return videoUrl.split("/").length > 2 && videoUrl.split("/")[2] === "iframe.videodelivery.net";
   }
+  
+  //Check if it's a mypinata video. Used by NFTz
+  isPinataVideo(videoUrl: String): boolean {
+    return videoUrl.indexOf(".mypinata.cloud/ipfs/") > -1;
+  }
 
   getCloudflareVideoId(videoUrl: String): String {
     const cloudflareVideoId = videoUrl.split("/").pop();
@@ -783,6 +788,10 @@ export class FeedPostComponent implements OnInit {
       if (this.isCloudflareVideo(this.postContent.VideoURLs[0])) {
         const cloudflareVideoId = this.getCloudflareVideoId(this.postContent.VideoURLs[0]);
         this.videoURL = `https://videos.deso.org/${cloudflareVideoId}.mp4`;
+        return;
+      }
+      if (this.isPinataVideo(this.postContent.VideoURLs[0])) {
+        this.videoURL = this.postContent.VideoURLs[0];
         return;
       }
       this.livepeerVideo = true;
