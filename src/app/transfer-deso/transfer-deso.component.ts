@@ -175,7 +175,7 @@ export class TransferDeSoComponent implements OnInit {
           reverseButtons: true,
         }).then((res: any) => {
           if (res.isConfirmed) {
-            const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9;
+            const amountToSend = this.transferAmount === this.maxSendAmount ? -1 : Math.round(this.transferAmount * 1e9);
 
             if (!this.globalVars.loggedInUser) {
               throw new Error("Cannot send DeSo without a logged in user.");
@@ -306,7 +306,7 @@ export class TransferDeSoComponent implements OnInit {
       .SendDeSoPreview(
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.payToPublicKey,
-        this.transferAmount === this.maxSendAmount ? -1 : Math.floor(this.transferAmount * 1e9)
+        this.transferAmount === this.maxSendAmount ? -1 : Math.round(this.transferAmount * 1e9)
       )
       .toPromise()
       .then(
