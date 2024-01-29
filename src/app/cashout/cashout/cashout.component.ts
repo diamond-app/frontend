@@ -183,13 +183,13 @@ export class CashoutComponent implements OnDestroy, OnChanges {
           }
         },
         (e) => {
-          const megaswapApiErrorMessage = e.toString();
-          if (typeof megaswapApiErrorMessage === "string") {
+          const megaswapApiErrorMessage = "error" in e["error"] ? e["error"]["error"] : null;
+          if (typeof megaswapApiErrorMessage !== "string") {
             this.createAddrsErrorMessage = megaswapApiErrorMessage.includes("not a valid public address")
               ? `Please enter a valid ${this.destinationTicker} address.`
               : megaswapApiErrorMessage;
           } else {
-            this.createAddrsErrorMessage = "An unexpected network error occurred. Try reloading the page.";
+            this.createAddrsErrorMessage = `An unexpected network error occurred. Try reloading the page.\n${e.message}`;
           }
         }
       );
@@ -265,11 +265,11 @@ export class CashoutComponent implements OnDestroy, OnChanges {
             destinationAddress: this.depositAddresses.DestinationAddress,
           });
 
-          const maybeMegaswapError = e.toString();
+          const maybeMegaswapError = "error" in e["error"] ? e["error"]["error"] : null;
           this.cashOutErrorMessage =
             typeof maybeMegaswapError === "string"
               ? maybeMegaswapError
-              : "An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status.";
+              : `An unexpected network error occurred while confirming your cash out. Try refreshing the page to see it's latest status. ${e.message}`;
         }
       );
   }

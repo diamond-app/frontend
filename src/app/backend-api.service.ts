@@ -108,7 +108,7 @@ import {
   uploadImage,
   uploadVideo,
   UploadVideoV2Response,
-  verifyEmail
+  verifyEmail,
 } from "deso-protocol";
 import { Identity } from "deso-protocol/src/identity/identity";
 import { EMPTY, forkJoin, from, Observable, of, throwError } from "rxjs";
@@ -160,7 +160,8 @@ export type AssociationValue = AssociationReactionValue | string;
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) {
+  }
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -248,7 +249,7 @@ export class BackendApiService {
   }
 
   jwtPost(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
-    return from(identity.jwt()).pipe(switchMap((JWT) => this.post(endpoint, path, { JWT, ...body })));
+    return from(identity.jwt()).pipe(switchMap((JWT) => this.post(endpoint, path, {JWT, ...body})));
   }
 
   GetExchangeRate(): Observable<GetExchangeRateResponse> {
@@ -266,12 +267,12 @@ export class BackendApiService {
   }
 
   GetTxn(TxnHashHex: string): Observable<GetTxnResponse> {
-    return from(getTransaction({ TxnHashHex }));
+    return from(getTransaction({TxnHashHex}));
   }
 
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
+      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, {withCredentials: true})
       .pipe(catchError(this._handleError));
   }
 
@@ -287,7 +288,7 @@ export class BackendApiService {
           RecipientPublicKeyOrUsername,
           AmountNanos,
         },
-        { broadcast: false }
+        {broadcast: false, checkPermissions: false}
       ).then((res) => res.constructedTransactionResponse)
     );
   }
@@ -320,11 +321,11 @@ export class BackendApiService {
   }
 
   UploadImage(UserPublicKeyBase58Check: string, file: File): Observable<any> {
-    return from(uploadImage({ UserPublicKeyBase58Check, file }, { nodeURI: "https://node.deso.org" }));
+    return from(uploadImage({UserPublicKeyBase58Check, file}, {nodeURI: "https://node.deso.org"}));
   }
 
   UploadVideo(file: File, publicKeyBase58Check: string): Observable<UploadVideoV2Response> {
-    return from(uploadVideo({ file, UserPublicKeyBase58Check: publicKeyBase58Check }));
+    return from(uploadVideo({file, UserPublicKeyBase58Check: publicKeyBase58Check}));
   }
 
   CreateNft(
@@ -432,27 +433,27 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? from(
-          checkPartyAccessGroups({
-            SenderAccessGroupKeyName: "default-key",
-            RecipientAccessGroupKeyName: "default-key",
-            SenderPublicKeyBase58Check: UpdaterPublicKeyBase58Check,
-            RecipientPublicKeyBase58Check: BidderPublicKeyBase58Check,
-          })
-        ).pipe(
-          switchMap((resp) => {
-            const identityState = (identity as Identity<Storage>).snapshot();
-            if (!identityState.currentUser) {
-              throw new Error("No identityState.currentUser");
-            }
-            return from(
-              encryptChatMessage(
-                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
-                resp.RecipientAccessGroupPublicKeyBase58Check,
-                UnencryptedUnlockableText
-              )
-            );
-          })
-        )
+        checkPartyAccessGroups({
+          SenderAccessGroupKeyName: "default-key",
+          RecipientAccessGroupKeyName: "default-key",
+          SenderPublicKeyBase58Check: UpdaterPublicKeyBase58Check,
+          RecipientPublicKeyBase58Check: BidderPublicKeyBase58Check,
+        })
+      ).pipe(
+        switchMap((resp) => {
+          const identityState = (identity as Identity<Storage>).snapshot();
+          if (!identityState.currentUser) {
+            throw new Error("No identityState.currentUser");
+          }
+          return from(
+            encryptChatMessage(
+              identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+              resp.RecipientAccessGroupPublicKeyBase58Check,
+              UnencryptedUnlockableText
+            )
+          );
+        })
+      )
       : of("");
     return request.pipe(
       switchMap((EncryptedUnlockableText) => {
@@ -584,27 +585,27 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? from(
-          checkPartyAccessGroups({
-            SenderAccessGroupKeyName: "default-key",
-            RecipientAccessGroupKeyName: "default-key",
-            SenderPublicKeyBase58Check: SenderPublicKeyBase58Check,
-            RecipientPublicKeyBase58Check: ReceiverPublicKeyBase58Check,
-          })
-        ).pipe(
-          switchMap((resp) => {
-            const identityState = (identity as Identity<Storage>).snapshot();
-            if (!identityState.currentUser) {
-              throw new Error("No identityState.currentUser");
-            }
-            return from(
-              encryptChatMessage(
-                identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
-                resp.RecipientAccessGroupPublicKeyBase58Check,
-                UnencryptedUnlockableText
-              )
-            );
-          })
-        )
+        checkPartyAccessGroups({
+          SenderAccessGroupKeyName: "default-key",
+          RecipientAccessGroupKeyName: "default-key",
+          SenderPublicKeyBase58Check: SenderPublicKeyBase58Check,
+          RecipientPublicKeyBase58Check: ReceiverPublicKeyBase58Check,
+        })
+      ).pipe(
+        switchMap((resp) => {
+          const identityState = (identity as Identity<Storage>).snapshot();
+          if (!identityState.currentUser) {
+            throw new Error("No identityState.currentUser");
+          }
+          return from(
+            encryptChatMessage(
+              identityState.currentUser.primaryDerivedKey.messagingPrivateKey,
+              resp.RecipientAccessGroupPublicKeyBase58Check,
+              UnencryptedUnlockableText
+            )
+          );
+        })
+      )
       : of("");
 
     return request.pipe(
@@ -949,7 +950,7 @@ export class BackendApiService {
         ASSOCIATIONS_PER_REQUEST_LIMIT,
         IncludeTransactorProfile
       ).pipe(
-        tap(({ Associations }) => {
+        tap(({Associations}) => {
           receivedItems = [...receivedItems, ...Associations];
         })
       );
@@ -992,8 +993,8 @@ export class BackendApiService {
         TransactorPublicKeyBase58Check,
         PostHashHex,
         AssociationType: AssociationType,
-        ...(isArray && { AssociationValues: AssociationValues as string[] }),
-        ...(!isArray && AssociationValues && { AssociationValue: AssociationValues as string }),
+        ...(isArray && {AssociationValues: AssociationValues as string[]}),
+        ...(!isArray && AssociationValues && {AssociationValue: AssociationValues as string}),
         LastSeenAssociationID,
         Limit,
         IncludeTransactorProfile,
@@ -1019,7 +1020,7 @@ export class BackendApiService {
           return response;
         }
 
-        const { Counts, Total } = response;
+        const {Counts, Total} = response;
 
         return {
           Counts: {
@@ -1166,6 +1167,7 @@ export class BackendApiService {
           },
           {
             broadcast,
+            checkPermissions: broadcast,
           }
         )
       ).pipe(map(mergeTxResponse));
@@ -1181,7 +1183,10 @@ export class BackendApiService {
             MinDeSoExpectedNanos,
             MinCreatorCoinExpectedNanos,
           },
-          { broadcast }
+          {
+            broadcast,
+            checkPermissions: broadcast,
+          }
         )
       ).pipe(map(mergeTxResponse));
     }
@@ -1202,7 +1207,7 @@ export class BackendApiService {
           ReceiverUsernameOrPublicKeyBase58Check,
           CreatorCoinToTransferNanos: Math.floor(CreatorCoinToTransferNanos),
         },
-        { broadcast }
+        {broadcast, checkPermissions: broadcast}
       )
     ).pipe(map(mergeTxResponse));
   }
@@ -1294,11 +1299,11 @@ export class BackendApiService {
     Email: string,
     MessageReadStateUpdatesByContact: any
   ): Observable<any> {
-    return from(updateUserGlobalMetadata({ UserPublicKeyBase58Check, Email, MessageReadStateUpdatesByContact }));
+    return from(updateUserGlobalMetadata({UserPublicKeyBase58Check, Email, MessageReadStateUpdatesByContact}));
   }
 
   GetUserGlobalMetadata(UserPublicKeyBase58Check: string): Observable<any> {
-    return from(getUserGlobalMetadata({ UserPublicKeyBase58Check }));
+    return from(getUserGlobalMetadata({UserPublicKeyBase58Check}));
   }
 
   ResendVerifyEmail(PublicKey: string) {
@@ -1319,7 +1324,7 @@ export class BackendApiService {
   }
 
   GetUserMetadata(PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
-    return from(getUserMetadata({ PublicKeyBase58Check }, { nodeURI: "https://node.deso.org" }));
+    return from(getUserMetadata({PublicKeyBase58Check}, {nodeURI: "https://node.deso.org"}));
   }
 
   AdminGetVerifiedUsers(): Observable<any> {
@@ -1688,7 +1693,7 @@ export class BackendApiService {
   }
 
   GetVideoStatus(videoId: string): Observable<any> {
-    return from(getVideoStatus({ videoId }));
+    return from(getVideoStatus({videoId}));
   }
 
   GetLinkPreview(url: string): Observable<any> {
@@ -1727,6 +1732,6 @@ export class BackendApiService {
   }
 }
 
-function mergeTxResponse({ constructedTransactionResponse, submittedTransactionResponse }) {
-  return { ...constructedTransactionResponse, ...submittedTransactionResponse };
+function mergeTxResponse({constructedTransactionResponse, submittedTransactionResponse}) {
+  return {...constructedTransactionResponse, ...submittedTransactionResponse};
 }

@@ -35,7 +35,7 @@
     "autolinker": "^3.14.2",
     "confetti-js": "github:deso-protocol/confetti-js",
     "currency-symbol-map": "^5.0.1",
-    "deso-protocol": "^2.0.5",
+    "deso-protocol": "^2.6.4",
     "intro.js": "^4.2.2",
     "lodash": "^4.17.15",
     "ngx-bootstrap": "^6.2.0",
