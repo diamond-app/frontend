@@ -366,6 +366,9 @@ export class NotificationsListComponent implements OnInit {
           return result;
         } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           const post = this.postMap[postHash];
+          if (post === null) {
+            return;
+          }
           result.icon = "repeat";
           result.category = "repost";
           result.iconClass = "fc-blue";
