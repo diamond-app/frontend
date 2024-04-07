@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { isNil, range } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { forkJoin, of } from "rxjs";
