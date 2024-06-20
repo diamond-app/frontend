@@ -2,7 +2,7 @@ import { AfterViewInit, Component, HostListener, Input } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { GlobalVarsService } from "../global-vars.service";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
   selector: "comment-modal",

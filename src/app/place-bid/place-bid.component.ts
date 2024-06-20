@@ -1,7 +1,7 @@
 import { Location } from "@angular/common";
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import * as _ from "lodash";
 import { isNil, isNumber } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";

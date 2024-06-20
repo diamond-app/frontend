@@ -9,7 +9,7 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
   selector: "swipe-to-choose",
