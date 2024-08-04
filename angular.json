@@ -93,18 +93,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "diamond-app:build"
+            "buildTarget": "diamond-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "diamond-app:build:production"
+              "buildTarget": "diamond-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "diamond-app:build"
+            "buildTarget": "diamond-app:build"
           }
         },
         "test": {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { filter, isNumber } from "lodash";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { of } from "rxjs";

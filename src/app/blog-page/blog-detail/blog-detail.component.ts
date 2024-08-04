@@ -2,7 +2,7 @@ import { Location } from "@angular/common";
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";

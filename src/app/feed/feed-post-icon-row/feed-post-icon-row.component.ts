@@ -1,7 +1,7 @@
 import { KeyValue, PlatformLocation } from "@angular/common";
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { debounce, includes, isNil, round, set } from "lodash";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PopoverDirective } from "ngx-bootstrap/popover";
