@@ -70,7 +70,7 @@ header @html Content-Security-Policy "
     wss://*.hotjar.com
     https://diamondapp.com;
   script-src 'self'
-    https://kit.fontawesome.com/070ca4195b.js
+    https://kit.fontawesome.com/5209775539.js
     https://ka-f.fontawesome.com/
     https://script.hotjar.com/modules.352fddba5b21bbfc3a08.js
     https://cdn.heapanalytics.com
