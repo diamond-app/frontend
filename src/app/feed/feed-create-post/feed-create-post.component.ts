@@ -12,7 +12,7 @@ import {
   ViewChildren,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { pollForVideoReady, PostEntryResponse, ProfileEntryResponse, uploadVideo } from "deso-protocol";
 import * as _ from "lodash";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";

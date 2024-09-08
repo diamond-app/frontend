@@ -74,10 +74,13 @@ export class NotificationsListComponent implements OnInit {
 
   ngOnDestroy() {
     // reset query params before leaving the page
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {},
-    });
+    // Removed by sungkhum because this causes a double route error in Angular 16+
+    // see https://github.com/angular/angular/issues/34051
+    // Changed query param reset to left-bar-button code
+    //this.router.navigate([], {
+    //  relativeTo: this.route,
+    //  queryParams: {},
+    //});
   }
 
   updateSettings(settings) {

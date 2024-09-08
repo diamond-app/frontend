@@ -3,7 +3,7 @@ import { Location } from "@angular/common";
 import { AfterViewInit, Component, EventEmitter, Input, Output } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TranslocoService } from "@ngneat/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 import { ToastrService } from "ngx-toastr";
 import { Datasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
