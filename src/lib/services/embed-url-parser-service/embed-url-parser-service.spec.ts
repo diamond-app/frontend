@@ -69,6 +69,13 @@ describe("EmbedUrlParserService", () => {
 
   const validTikTokEmbedURLs = [`https://www.tiktok.com/embed/v2/${tiktokVideoID}`];
 
+  const twitterPostID = "1819749725568110806";
+  const validTwitterURLs = [
+    `https://twitter.com/teslaownersSV/status/${twitterPostID}`,
+    `https://x.com/teslaownersSV/status/${twitterPostID}`,
+  ];
+  const validTwitterEmbedURLs = [`https://platform.twitter.com/embed/Tweet.html?id=${twitterPostID}`];
+
   const giphyID = "J1ABRhlfvQNwIOiAas";
   const validGiphyURLs = [
     `https://giphy.com/gifs/memecandy-${giphyID}`,
@@ -149,6 +156,7 @@ describe("EmbedUrlParserService", () => {
     "123abc.com/1234556",
     `https://wwwzyoutube.com/embed/${youtubeVideoID}`,
     `https://nottiktok.com/embed/v2/${tiktokShortVideoID}`,
+    `https://notx.com/embed/Tweet.html?id=${twitterPostID}`,
     `https://giphy.com/gifs/abc-def-${giphyID}-;<script></script>`,
     `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
     `https://w.soundcloud.com/player/<script>?url=maliciousscript</script>?hide_related=true&show_comments=false`,
@@ -227,6 +235,22 @@ describe("EmbedUrlParserService", () => {
           expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
         }
       );
+    }
+  });
+
+  it("parses twitter URLs from user input correctly and only validates embed urls", () => {
+    for (const link of validTwitterURLs) {
+      expect(EmbedUrlParserService.isTwitterLink(link)).toBeTruthy();
+      const embedURL = EmbedUrlParserService.constructTwitterEmbedURL(new URL(link));
+      expect(embedURL).toEqual(`https://platform.twitter.com/embed/Tweet.html?id=${twitterPostID}`);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+    }
+    for (const embedLink of validTwitterEmbedURLs) {
+      expect(EmbedUrlParserService.isTwitterLink(embedLink)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+      const constructedEmbedURL = EmbedUrlParserService.constructTwitterEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
     }
   });
 
