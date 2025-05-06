@@ -504,9 +504,9 @@ export class FeedPostComponent implements OnInit {
     }
 
     this.tracking.log("post : click", {
-      isAuthorVerified: this.postContent.ProfileEntryResponse.IsVerified,
-      authorUsername: this.postContent.ProfileEntryResponse.Username,
-      authorPublicKey: this.postContent.ProfileEntryResponse.PublicKeyBase58Check,
+      isAuthorVerified: this.postContent.ProfileEntryResponse?.IsVerified,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check || this.postContent.PosterPublicKeyBase58Check,
       isReply: !!this.parentPost,
       postHashHex: this.postContent.PostHashHex,
     });
@@ -640,9 +640,9 @@ export class FeedPostComponent implements OnInit {
           .subscribe(
             () => {
               this.tracking.log("profile : block", {
-                username: this.post.ProfileEntryResponse.Username,
+                username: this.post.ProfileEntryResponse?.Username,
                 publicKey: this.post.PosterPublicKeyBase58Check,
-                isVerified: this.post.ProfileEntryResponse.IsVerified,
+                isVerified: this.post.ProfileEntryResponse?.IsVerified,
               });
               this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);

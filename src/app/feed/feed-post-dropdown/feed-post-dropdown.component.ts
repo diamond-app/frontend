@@ -61,15 +61,15 @@ export class FeedPostDropdownComponent implements OnInit {
 
   ngOnInit() {
     this.showUnfollowUser = this.followService._isLoggedInUserFollowing(
-      this.postContent.ProfileEntryResponse.PublicKeyBase58Check
+      this.postContent.PosterPublicKeyBase58Check
     );
   }
 
   reportPost(): void {
     this.tracking.log("post : report", {
       postHashHex: this.postContent.PostHashHex,
-      authorUsername: this.postContent.ProfileEntryResponse.Username,
-      authorPublicKey: this.postContent.ProfileEntryResponse.PublicKeyBase58Check,
+      authorUsername: this.postContent.ProfileEntryResponse?.Username,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check || this.postContent.PosterPublicKeyBase58Check,
     });
     window.open(
       `https://desoreporting.aidaform.com/content?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}&ReportedAccountPublicKey=${this.post?.PosterPublicKeyBase58Check}&ReportedAccountUsername=${this.post?.ProfileEntryResponse?.Username}`
@@ -380,7 +380,7 @@ export class FeedPostDropdownComponent implements OnInit {
     this.tracking.log("post : share", {
       postHashHex: this.postContent.PostHashHex,
       authorUsername: this.postContent.ProfileEntryResponse?.Username,
-      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check || this.postContent.PosterPublicKeyBase58Check,
     });
 
     // Prevent the post from navigating.
@@ -428,7 +428,7 @@ export class FeedPostDropdownComponent implements OnInit {
           "/" +
             this.globalVars.RouteNames.USER_PREFIX +
             "/" +
-            this.postContent.ProfileEntryResponse.Username +
+            this.postContent.ProfileEntryResponse?.Username || this.postContent.PosterPublicKeyBase58Check +
             "/" +
             this.globalVars.RouteNames.BLOG +
             "/" +
@@ -496,7 +496,7 @@ export class FeedPostDropdownComponent implements OnInit {
     this.tracking.log("nft-transfer-button : click", {
       postHashHex: this.postContent.PostHashHex,
       authorUsername: this.postContent.ProfileEntryResponse?.Username,
-      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check,
+      authorPublicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check || this.postContent.PosterPublicKeyBase58Check,
       hasText: this.postContent.Body.length > 0,
       hasImage: (this.postContent.ImageURLs?.length ?? 0) > 0,
       hasVideo: (this.postContent.VideoURLs?.length ?? 0) > 0,

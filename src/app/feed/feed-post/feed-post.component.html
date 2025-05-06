@@ -24,15 +24,15 @@
           nft__avatar: postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
         }"
         class="feed-post__avatar"
-        [avatar]="postContent?.ProfileEntryResponse?.PublicKeyBase58Check"
+        [avatar]="postContent?.ProfileEntryResponse?.PublicKeyBase58Check || postContent?.PosterPublicKeyBase58Check"
         [nftProfileUrl]="postContent?.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
+        [routerLink]="postContent?.ProfileEntryResponse ? ['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username] : ''"
         queryParamsHandling="merge"
         (click)="
           this.tracking.log('post-profile-link : click', {
             isVerified: this.postContent.ProfileEntryResponse?.IsVerified,
             username: this.postContent.ProfileEntryResponse?.Username,
-            publicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check
+            publicKey: this.postContent.ProfileEntryResponse?.PublicKeyBase58Check || this.postContent?.PosterPublicKeyBase58Check
           })
         "
       ></a>
@@ -99,10 +99,17 @@
         style="text-align: center"
         [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username])"
         queryParamsHandling="merge"
+        *ngIf="post?.ProfileEntryResponse; else elseMissingBlockedProfileBlock"
       >
         {{ "feed_post.this_post_from" | transloco }} {{ post.ProfileEntryResponse.Username }}
         {{ "feed_post.who_you_have_blocked" | transloco }}
       </a>
+      <ng-template #elseMissingBlockedProfileBlock>
+        <span style="text-align: center">
+          {{ "feed_post.this_post_from" | transloco }} <span class="creator-profile__ellipsis-restriction">{{ post.PosterPublicKeyBase58Check }}</span>
+          {{ "feed_post.who_you_have_blocked" | transloco }}
+        </span>
+      </ng-template>
     </div>
 
     <div
@@ -136,9 +143,15 @@
                 post.ParentPosts[0].ProfileEntryResponse.Username
               ])
             "
+            *ngIf="post.ParentPosts[0].ProfileEntryResponse; else elseMissingParentPostProfileBlock"
           >
             replying to {{ post.ParentPosts[0].ProfileEntryResponse.Username }}
           </a>
+          <ng-template #elseMissingParentPostProfileBlock>
+            <span class="fc-muted font-weight-semibold fs-15px">
+              replying to <span class="creator-profile__ellipsis-restriction">{{ post.ParentPosts[0].PosterPublicKeyBase58Check }}</span>
+            </span>
+          </ng-template>
         </div>
         <div
           *ngIf="reposterProfile"
@@ -210,7 +223,7 @@
           </a>
         </div>
 
-        <ng-template #creatorCoinInfo>
+        <ng-template #creatorCoinInfo *ngIf="postContent?.ProfileEntryResponse">
           <!-- Coin price-->
           <a
             class="feed-post__coin-price-holder"
@@ -250,22 +263,22 @@
                   nft__avatar: postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl
                 }"
                 class="feed-post__avatar"
-                [avatar]="postContent.ProfileEntryResponse?.PublicKeyBase58Check"
+                [avatar]="postContent.ProfileEntryResponse?.PublicKeyBase58Check || postContent.PosterPublicKeyBase58Check"
                 [nftProfileUrl]="postContent.ProfileEntryResponse?.ExtraData?.NFTProfilePictureUrl"
                 [routerLink]="
                   inTutorial
                     ? []
-                    : getRouterLink([
+                    : postContent?.ProfileEntryResponse ? getRouterLink([
                         '/' + globalVars.RouteNames.USER_PREFIX,
                         postContent.ProfileEntryResponse.Username
-                      ])
+                      ]) : ''
                 "
                 queryParamsHandling="merge"
                 (click)="
                   this.tracking.log('post-profile-link : click', {
-                    isVerified: postContent.ProfileEntryResponse.IsVerified,
-                    username: postContent.ProfileEntryResponse.Username,
-                    publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                    isVerified: postContent?.ProfileEntryResponse?.IsVerified,
+                    username: postContent?.ProfileEntryResponse?.Username,
+                    publicKey: postContent?.ProfileEntryResponse?.PublicKeyBase58Check || postContent?.PosterPublicKeyBase58Check
                   })
                 "
               ></a>
@@ -285,17 +298,24 @@
                   queryParamsHandling="merge"
                   (click)="
                     this.tracking.log('post-profile-link : click', {
-                      isVerified: postContent.ProfileEntryResponse.IsVerified,
-                      username: postContent.ProfileEntryResponse.Username,
-                      publicKey: postContent.ProfileEntryResponse.PublicKeyBase58Check
+                      isVerified: postContent?.ProfileEntryResponse?.IsVerified,
+                      username: postContent?.ProfileEntryResponse?.Username,
+                      publicKey: postContent?.ProfileEntryResponse?.PublicKeyBase58Check
                     })
                   "
+                  *ngIf="postContent?.ProfileEntryResponse; else elseMissingProfileBlock"
                 >
-                  {{ postContent.ProfileEntryResponse.Username }}
+                  {{ postContent.ProfileEntryResponse?.Username }}
                   <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">/ blog</span>
                 </a>
+                <ng-template #elseMissingProfileBlock>
+                  <span class="feed-post__username fc-default font-weight-bold creator-profile__ellipsis-restriction">
+                    {{ postContent.PosterPublicKeyBase58Check }}
+                      <span *ngIf="postContent.PostExtraData?.BlogDeltaRtfFormat">/ blog</span>
+                  </span>
+                </ng-template>
 
-                <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+                <span *ngIf="postContent?.ProfileEntryResponse?.IsVerified" class="ml-1 text-primary">
                   <i-feather class="feather-small" name="check-circle"></i-feather>
                 </span>
                 <div class="desktop-creator-coin-info">
@@ -324,7 +344,7 @@
               <!-- Follow button-->
               <div class="feed-post__second-header-ln">
                 <follow-button
-                  *ngIf="!hideFollowLink && !isFollowing"
+                  *ngIf="!hideFollowLink && !isFollowing && postContent.ProfileEntryResponse"
                   class="fs-12px"
                   [displayAsLink]="true"
                   [followLinkClass]="'link--unstyled fc-secondary fs-13px'"
@@ -345,9 +365,15 @@
                       ])
                     "
                     queryParamsHandling="merge"
+                    *ngIf="parentPost.ProfileEntryResponse; else elseMissingParentProfileBlock"
                   >
                     @{{ parentPost.ProfileEntryResponse.Username }}
                   </a>
+                  <ng-template #elseMissingParentProfileBlock>
+                    <span class="creator-profile__ellipsis-restriction">
+                      @{{ parentPost.PosterPublicKeyBase58Check }}
+                    </span>
+                  </ng-template>
                 </div>
 
                 <!-- Content -->
@@ -383,12 +409,12 @@
                     <div class="mt-2">
                       <a
                         *ngIf="postContent.CommentCount"
-                        [routerLink]="[
+                        [routerLink]="postContent.ProfileEntryResponse ? [
                           '/' + this.globalVars.RouteNames.USER_PREFIX,
                           postContent.ProfileEntryResponse.Username,
                           globalVars.RouteNames.BLOG,
                           postContent.PostExtraData.BlogTitleSlug
-                        ]"
+                        ] : ''"
                         [queryParams]="{ section: 'comments' }"
                       >
                         View comments

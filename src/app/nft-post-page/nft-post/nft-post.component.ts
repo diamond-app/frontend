@@ -142,9 +142,9 @@ export class NftPostComponent {
         // Set current post
         this.nftPost = res.PostFound;
         this.postLoaded.emit(
-          `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
+          `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse?.Username || this.nftPost.PosterPublicKeyBase58Check)} NFT`
         );
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse?.Username || this.nftPost.PosterPublicKeyBase58Check + ` on ${environment.node.name}`);
         this._handleTabClick(this.activeTab);
         this.loading = false;
         this.refreshBidData();

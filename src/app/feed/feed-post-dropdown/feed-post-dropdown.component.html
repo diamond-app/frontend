@@ -65,6 +65,7 @@
       </a>
       <a
         *ngIf="
+          globalVars.loggedInUser &&
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
           (post.Body !== '' || post.ImageURLs?.length || post.VideoURLs?.length || post.PostExtraData?.EmbedVideoURL)
         "
@@ -75,6 +76,7 @@
       </a>
       <a
         *ngIf="
+          globalVars.loggedInUser &&
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
           post.IsNFT &&
           !post.IsFrozen
@@ -86,6 +88,7 @@
       </a>
       <a
         *ngIf="
+          globalVars.loggedInUser &&
           globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check &&
           !post.IsNFT &&
           !post.ParentStakeID
