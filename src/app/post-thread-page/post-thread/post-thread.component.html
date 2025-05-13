@@ -10,7 +10,7 @@
 
         <div>
           <i-feather name="arrow-left" (click)="location.back()"></i-feather>
-          <span>{{ globalVars.addOwnershipApostrophe(currentPost.ProfileEntryResponse.Username) }} Post</span>
+          <span>{{ globalVars.addOwnershipApostrophe(currentPost.ProfileEntryResponse?.Username || currentPost.PosterPublicKeyBase58Check) }} Post</span>
         </div>
       </div>
     </div>
@@ -60,7 +60,6 @@
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
         <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
         <feed-post
-          *ngIf="thread.parent.ProfileEntryResponse"
           [includePaddingOnPost]="true"
           [post]="thread.parent"
           [parentPost]="currentPost"
@@ -81,7 +80,6 @@
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
-              *ngIf="subcommentPost.ProfileEntryResponse"
               [includePaddingOnPost]="true"
               [post]="subcommentPost"
               [parentPost]="thread.children[j - 1] || thread.parent"

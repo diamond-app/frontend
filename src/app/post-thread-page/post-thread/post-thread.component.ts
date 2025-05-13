@@ -299,9 +299,9 @@ export class PostThreadComponent implements AfterViewInit {
         this.threadManager = new ThreadManager(res.PostFound);
         const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
         this.postLoaded.emit(
-          `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
+          `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse?.Username || this.currentPost.PosterPublicKeyBase58Check)} ${postType}`
         );
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse?.Username || this.currentPost.PosterPublicKeyBase58Check + ` on ${environment.node.name}`);
       },
       (err) => {
         // TODO: post threads: rollbar
