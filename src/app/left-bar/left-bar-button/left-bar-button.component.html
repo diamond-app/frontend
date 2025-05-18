@@ -6,12 +6,13 @@
     #rla="routerLinkActive"
     [ngClass]="{ 'left-bar-active-indicator-active': rla.isActive }"
   ></div>
+  <!-- Modified to queryParamsHandling="" to reset query params properly  -->
   <div
     [routerLink]="[link]"
     routerLinkActive
     #rla="routerLinkActive"
     [ngClass]="{ 'left-bar-active': rla.isActive }"
-    queryParamsHandling="merge"
+    queryParamsHandling=""
     class="d-flex justify-content-center align-items-center left-bar-button left-bar-link"
   >
     <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
@@ -20,7 +21,7 @@
       (click)="globalVars.isLeftBarMobileOpen = false; (true)"
       [routerLink]="[link]"
       [queryParams]="_queryParamsForLink(link)"
-      queryParamsHandling="merge"
+      queryParamsHandling=""
     >
       <span>
         <i-feather *ngIf="iconName" name="{{ iconName }}"></i-feather>

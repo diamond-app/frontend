@@ -9,25 +9,25 @@
     <div class="fs-15px fc-muted mint-nft__section">
       <div class="mint-nft__title">{{ "sell_nft.sell_an_nft" | transloco }}</div>
       <span>You are about to sell your NFT to</span>
-      <span class="fc-default" *ngIf="bidEntryUsernames.length === 1">@{{ bidEntryUsernames[0] }}</span>
+      <span class="fc-default" *ngIf="bidEntryUsernames.length === 1">&#64;{{ bidEntryUsernames[0] }}</span>
       <span *ngIf="bidEntryUsernames.length === 2">
-        <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[0] }}</span>
         <span>{{ "sell_nft.and" | transloco }}</span>
-        <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[1] }}</span>
       </span>
       <span *ngIf="bidEntryUsernames.length === 3">
-        <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[0] }}</span>
         <span>,</span>
-        <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[1] }}</span>
         <span>{{ "sell_nft.and" | transloco }}</span>
-        <span class="fc-default">@{{ bidEntryUsernames[2] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[2] }}</span>
       </span>
       <span *ngIf="bidEntryUsernames.length > 3">
-        <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[0] }}</span>
         <span>,</span>
-        <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames[1] }}</span>
         <span>{{ "sell_nft.and" | transloco }}</span>
-        <span class="fc-default">@{{ bidEntryUsernames.length - 2 }}</span>
+        <span class="fc-default">&#64;{{ bidEntryUsernames.length - 2 }}</span>
       </span>
       <span>. {{ "sell_nft.are_you_sure" | transloco }}</span>
     </div>

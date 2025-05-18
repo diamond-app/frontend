@@ -111,7 +111,7 @@
       <i class="fas fa-heart fa-md text-grey5"></i>
     </div>
     <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }" class="text-grey5">
-      @{{ creatorCoinTrade.creatorProfile.Username }} will receive
+      &#64;{{ creatorCoinTrade.creatorProfile.Username }} will receive
       <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number : "0.0-9" }}%</span>
       of your purchase as a
       <span style="white-space: nowrap">

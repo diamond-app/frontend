@@ -8,7 +8,7 @@
   <div *ngIf="!loading">
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{ 'd-none': !showSelectedSerialNumbers }">
       <div class="fs-15px text-grey5">
-        {{ "place_bid.place_bid" | transloco }} @{{ post.ProfileEntryResponse.Username }}.
+        {{ "place_bid.place_bid" | transloco }} &#64;{{ post.ProfileEntryResponse.Username }}.
       </div>
 
       <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
