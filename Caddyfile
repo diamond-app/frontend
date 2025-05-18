@@ -132,6 +132,10 @@ header @html Content-Security-Policy "
     https://youtube.com
     https://player.vimeo.com
     https://www.tiktok.com
+    https://platform.twitter.com
+    https://twitter.com
+    https://platform.x.com
+    https://x.com
     https://giphy.com
     https://open.spotify.com
     https://embed-standalone.spotify.com

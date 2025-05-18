@@ -179,6 +179,24 @@ export class EmbedUrlParserService {
     );
   }
 
+  static twitterParser(url): string | boolean {
+    const regExp = /status\/(\d+)/;
+    const match = url.match(regExp);
+    if(match && match[1].length >= 1) {
+      return match[1]
+    } else {
+      const regExp2 = /id=(\d+)/;
+      const match2 = url.match(regExp2);
+      return match2 && match2[1].length >= 1 ? match2[1] : false;
+    }
+  }
+
+  static constructTwitterEmbedURL(url: URL): string {
+    const twitterPostID = this.twitterParser(url.toString());
+    // If we can't find the postID, return the empty string which stops the iframe from loading.
+    return twitterPostID ? `https://platform.twitter.com/embed/Tweet.html?id=${twitterPostID}` : "";
+  }
+
   static getEmbedURL(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
@@ -208,6 +226,9 @@ export class EmbedUrlParserService {
     }
     if (this.isTiktokFromURL(url)) {
       return this.constructTikTokEmbedURL(backendApi, globalVars, url);
+    }
+    if (this.isTwitterFromURL(url)) {
+      return of(this.constructTwitterEmbedURL(url));
     }
     if (this.isGiphyFromURL(url)) {
       return of(this.constructGiphyEmbedURL(url));
@@ -280,6 +301,20 @@ export class EmbedUrlParserService {
   static isTiktokFromURL(url: URL): boolean {
     const pattern = /\btiktok\.com$/;
     return pattern.test(url.hostname);
+  }
+
+  static isTwitterLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isTwitterFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isTwitterFromURL(url: URL): boolean {
+    const patterns = [/\btwitter\.com$/, /\bx\.com$/];
+    return patterns.some((p) => p.test(url.hostname));
   }
 
   static isGiphyLink(link: string): boolean {
@@ -358,6 +393,11 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidTwitterEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/platform\.twitter\.com\/embed\/Tweet.html\?id=(\d{0,30}))$/;
+    return !!link.match(regExp);
+  }
+
   static isValidGiphyEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/giphy\.com\/embed\/([A-Za-z0-9]{0,20}))$/;
     return !!link.match(regExp);
@@ -395,6 +435,7 @@ export class EmbedUrlParserService {
         this.isValidYoutubeEmbedURL(link) ||
         this.isValidMousaiEmbedURL(link) ||
         this.isValidTiktokEmbedURL(link) ||
+        this.isValidTwitterEmbedURL(link) ||
         this.isValidGiphyEmbedURL(link) ||
         this.isValidSpotifyEmbedURL(link) ||
         this.isValidSoundCloudEmbedURL(link) ||
@@ -407,7 +448,16 @@ export class EmbedUrlParserService {
 
   static getEmbedHeight(link: string): number {
     if (this.isValidTiktokEmbedURL(link)) {
-      return 700;
+      return 760;
+    }
+    if (this.isTikTokLink(link)) {
+      return 760;
+    }
+    if (this.isValidTwitterEmbedURL(link)) {
+      return 500;
+    }
+    if (this.isTwitterLink(link)) {
+      return 500;
     }
     if (this.isValidSpotifyEmbedURL(link)) {
       return link.indexOf("embed-podcast") > -1 ? 232 : 380;
