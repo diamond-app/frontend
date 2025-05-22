@@ -89,3 +89,10 @@ can communicate via postMessage with the [setu deso](https://web3setu.com/) doma
 - Reload the page again and if everything was done properly you should now
   be able to see your local development copy being served on
   https://dev.diamondapp.com
+
+# Have more questions?
+
+DeepWiki (powered by Devin AI) provides up-to-date documentation you can talk to for this repo, click the button below to try it out.
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/diamond-app/frontend)
+
