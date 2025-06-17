@@ -146,8 +146,13 @@ export class NotificationsListComponent implements OnInit {
           // Map all notifications to a format that is easy for our template to render
           // Filter out any null notifications we couldn't process
 
-          const chunk = res.Notifications.map((notification) => this.transformNotification(notification)).filter(
-            Boolean
+          const chunk = res.Notifications.flatMap((notification) => {
+              if (notification.Metadata.TxnType === 'ATOMIC_TXNS_WRAPPER') {
+                return notification.Metadata.AtomicTxnsWrapperTxindexMetadata.InnerTxnsTransactionMetadata.map(
+                  (innerTxn) => this.transformNotification(innerTxn));
+              }
+              return [this.transformNotification(notification)];
+            }
           );
 
           // Index 0 means we're done. if the array is empty we're done.
@@ -182,7 +187,10 @@ export class NotificationsListComponent implements OnInit {
   // NOTE: We support rendering unfollows and unlikes but they're currently filtered
   // out by frontend_server's TxnMetaIsNotification
   protected transformNotification(notification: any) {
-    const txnMeta = notification.Metadata;
+    let txnMeta = notification.Metadata;
+    if (!txnMeta) {
+      txnMeta = notification;
+    }
     const userPublicKeyBase58Check = this.globalVars.loggedInUser?.PublicKeyBase58Check;
 
     if (txnMeta == null) {
