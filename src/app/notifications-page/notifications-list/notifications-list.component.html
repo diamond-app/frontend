@@ -29,6 +29,7 @@
   <div #uiScroll *uiScroll="let item of datasource; let index = index">
     <div
       class="notifications__list-item"
+      *ngIf="item"
       [ngClass]="{
         'last-item': index === totalItems - 1,
         'border-none': !item.action && !expandNotifications
